@@ -1,0 +1,10 @@
+image: ruby:2.3
+
+before_script:
+  - gem install bundler
+  - bundle install --path=/cache/bundler
+
+tests:
+    script: "bundle exec rake"
+    tags:
+        - ruby

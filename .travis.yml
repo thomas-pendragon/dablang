@@ -1,0 +1,7 @@
+language: ruby
+
+sudo: false
+
+os: linux
+
+script: "bundle install && bundle exec rake"

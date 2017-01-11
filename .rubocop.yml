@@ -1,0 +1,134 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  DisplayCopNames: true
+
+Rails:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+  EnforcedStyle: compact
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Style/AccessorMethodName:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Style/IndentHash:
+  Enabled: false
+  EnforcedStyle: align_braces
+
+Style/IndentationConsistency:
+  Enabled: true
+
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/NumericLiterals:
+  Enabled: false
+
+Lint/Void:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+AccessModifierIndentation:
+  EnforcedStyle: outdent
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/PerlBackrefs:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Lint/EndAlignment:
+  AutoCorrect: true
+
+Lint/DefEndAlignment:
+  AutoCorrect: true
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+Metrics/ClassLength:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/PredicateName:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/InfiniteLoop:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/TernaryParentheses:
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
