@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	var a = "test var";
+	print(a);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+test var

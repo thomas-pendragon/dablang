@@ -105,6 +105,7 @@ class DabVM
     @stack = []
     @functions = {}
     @functions['print'] = :print
+    @local_vars = {}
   end
 
   def define_function(name, body)
@@ -139,14 +140,30 @@ class DabVM
         elsif opcode == 'CALL'
           data = @stack.pop(arg + 1)
           call_function(data[0].to_s, *data[1..-1])
+        elsif opcode == 'DEFINE_VAR'
+          args = @stack.pop(2)
+          define_local_variable(args[0], args[1])
+        elsif opcode == 'VAR'
+          get_local_variable(@stack.pop)
+        else 
+          raise 'unknown opcode'
         end
       end
     end
   end
 
+  def get_local_variable(name)
+    @stack << @local_vars[name]
+  end
+
+  def define_local_variable(name, value)
+    @local_vars[name] = value
+  end
+
   def call_function(name, *args)
     errap ['call function', name, 'args', args]
     @constants = []
+    @local_vars = {}
     body = @functions[name]
     if body.is_a? String
       execute(body)

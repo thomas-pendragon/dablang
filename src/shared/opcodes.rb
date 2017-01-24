@@ -5,6 +5,8 @@ OPCODES = {
   0x03 => {name: 'PUSH_CONSTANT', arg: :uint16},
   0x04 => {name: 'CALL', arg: :uint16},
   0x05 => {name: 'END_FUNCTION'},
+  0x06 => {name: 'DEFINE_VAR'},
+  0x07 => {name: 'VAR'},
 }
 
 OPCODES_REV = OPCODES.map { |k,v| [v[:name], v.merge(opcode: k)] }.to_h

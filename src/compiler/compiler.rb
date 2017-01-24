@@ -236,6 +236,10 @@ class DabNodeLiteralString < DabNodeLiteral
     output.print('CONSTANT_STRING', extra_dump)
   end
 
+  def compile(output)
+    compile_constant(output)
+  end
+
   def extra_value
     extra_dump
   end
@@ -258,9 +262,49 @@ class DabNodeCall < DabNode
 
   def compile(output)
     output.push(identifier)
-    args.each { |arg| output.push(arg) }
+    args.each { |arg| arg.compile(output) }
     output.comment(identifier.extra_value)
     output.print('CALL', args.count.to_s)
+  end
+end
+
+class DabNodeDefineLocalVar < DabNode
+  def initialize(identifier, value)
+    super()
+    insert(identifier)
+    insert(value)
+  end
+
+  def identifier
+    children[0]
+  end
+
+  def value
+    children[1]
+  end
+
+  def compile(output)
+    output.push(identifier)
+    value.compile(output)
+    output.comment("var #{identifier.extra_value}")
+    output.print('DEFINE_VAR')
+  end
+end
+
+class DabNodeLocalVar < DabNode
+  def initialize(identifier)
+    super()
+    insert(identifier)
+  end
+
+  def identifier
+    children[0]
+  end
+
+  def compile(output)
+    output.push(identifier)
+    output.comment(identifier.extra_value)
+    output.print('VAR')
   end
 end
 
@@ -322,8 +366,17 @@ class DabNodeFunction < DabNode
 end
 
 class DabContext
+  attr_reader :stream
+  attr_accessor :local_vars
+
   def initialize(stream)
     @stream = stream
+    @local_vars = []
+  end
+
+  def add_local_var(id)
+    err("add local var <#{id}>")
+    @local_vars << id
   end
 
   def read_program
@@ -368,7 +421,37 @@ class DabContext
   end
 
   def read_instruction
-    read_call
+    read_var || read_call
+  end
+
+  def read_local_var
+    on_subcontext do |subcontext|
+      id = subcontext.read_identifier
+      err ("check id <#{id}> against <#{@local_vars}>")
+      if @local_vars.include? id
+        err ("check ok")
+        DabNodeLocalVar.new(id)
+      else
+        err("nope")
+        false
+      end
+    end
+  end
+
+  def read_var
+    on_subcontext do |subcontext|
+      vark = subcontext.read_keyword("var")
+      next false unless vark
+      id = subcontext.read_identifier
+      next false unless id
+      eq = subcontext.read_operator('=')
+      next false unless eq
+      value = subcontext.read_value
+      next false unless value
+
+      subcontext.add_local_var(id)
+      DabNodeDefineLocalVar.new(id, value)
+    end
   end
 
   def read_call
@@ -398,7 +481,7 @@ class DabContext
     end
   end
 
-  def read_value
+  def read_literal_value
     on_subcontext do |subcontext|
       str = subcontext.read_string
       next false unless str
@@ -406,12 +489,27 @@ class DabContext
     end
   end
 
-  def on_subcontext
+  def read_value
+    read_literal_value || read_local_var
+  end
+
+  def clone
     substream = @stream.clone
-    subcontext = DabContext.new(substream)
+    ret = DabContext.new(substream)
+    ret.local_vars = @local_vars.clone
+    ret
+  end
+
+  def merge!(other_context)
+    @stream.merge!(other_context.stream)
+    @local_vars = other_context.local_vars
+  end
+
+  def on_subcontext
+    subcontext = self.clone
     ret = yield(subcontext)
     if ret
-      @stream.merge!(substream)
+      merge!(subcontext)
     end
     ret
   end
@@ -477,6 +575,10 @@ class DabNodeConstantReference < DabNode
 
   def real_value
     target.real_value
+  end
+
+  def compile(output)
+    output.push(self)
   end
 end
 
