@@ -42,19 +42,19 @@ class DabInputStream
 
   def read_uint8
     _read(1).unpack('C')[0]
-  rescue 
+  rescue
     nil
   end
 
   def read_uint16
     _read(2).unpack('S<')[0]
-  rescue 
+  rescue
     nil
   end
 
   def read_uint64
     _read(8).unpack('Q<')[0]
-  rescue 
+  rescue
     nil
   end
 
@@ -111,7 +111,7 @@ class DabVM
   def define_function(name, body)
     errap ['define fun', name, body.length, body]
     @functions[name] = body
-  end    
+  end
 
   def run
     errap @stream.read_preamble
@@ -145,7 +145,7 @@ class DabVM
           define_local_variable(args[0], args[1])
         elsif opcode == 'VAR'
           get_local_variable(@stack.pop)
-        else 
+        else
           raise 'unknown opcode'
         end
       end
@@ -168,7 +168,7 @@ class DabVM
     if body.is_a? String
       execute(body)
     else
-      errap ["Kernel.send(name.to_sym -> " + name.to_sym.to_s + ", *args -> " + args.to_s]
+      errap ['Kernel.send(name.to_sym -> ' + name.to_sym.to_s + ', *args -> ' + args.to_s]
       Kernel.send(name.to_sym, *args)
     end
   end

@@ -1,4 +1,4 @@
-require 'awesome_print' 
+require 'awesome_print'
 
 require_relative '../shared/opcodes.rb'
 
@@ -21,13 +21,13 @@ class InputStream
   attr_reader :lines
 
   def initialize
-    @lines = STDIN.read.split("\n").map do |line| map_line(line) end
+    @lines = STDIN.read.split("\n").map { |line| map_line(line) }
     errap @lines
   end
 
   def map_line(line)
     if line.start_with? '/*'
-      line = line[line.index('*/ ')+3..-1]
+      line = line[line.index('*/ ') + 3..-1]
     end
     line = line.split(',')
     line[0] = line[0].strip
@@ -43,13 +43,13 @@ class InputStream
       return args.map(&:strip).map(&:to_sym)
     end
     if call == 'CONSTANT_STRING'
-      return args.map(&:strip).map{|s|s[1..-2]}
-    end    
+      return args.map(&:strip).map { |s| s[1..-2] }
+    end
     args
   end
 
   def each
-    @lines.each do |line| yield(line) end
+    @lines.each { |line| yield(line) }
   end
 end
 

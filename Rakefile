@@ -1,7 +1,7 @@
 def psystem(cmd)
   puts cmd
   unless system cmd
-    raise "error in cmd"
+    raise 'error in cmd'
   end
 end
 
@@ -41,7 +41,7 @@ inputs.each do |input_test_file|
   text, test_body = read_test_file(input_test_file)
 
   file input_file => sources + [input_test_file] do
-    File.open(input_file, 'wb') do |f| f << text end
+    File.open(input_file, 'wb') { |f| f << text }
   end
   file output_file => sources + [input_file] do
     psystem("ruby src/compiler/compiler.rb < #{input_file} > #{output_file}")
@@ -49,7 +49,7 @@ inputs.each do |input_test_file|
   file output_binary_file => sources + [output_file] do
     psystem("ruby src/tobinary/tobinary.rb < #{output_file} > #{output_binary_file}")
   end
-  file output_output_file => sources + [input_test_file,output_binary_file] do
+  file output_output_file => sources + [input_test_file, output_binary_file] do
     psystem("ruby src/vm/vm.rb < #{output_binary_file} > #{output_output_file}")
     if open(output_output_file).read.strip == test_body
       puts "#{input_file}... OK"

@@ -7,6 +7,6 @@ OPCODES = {
   0x05 => {name: 'END_FUNCTION'},
   0x06 => {name: 'DEFINE_VAR'},
   0x07 => {name: 'VAR'},
-}
+}.freeze
 
-OPCODES_REV = OPCODES.map { |k,v| [v[:name], v.merge(opcode: k)] }.to_h
+OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

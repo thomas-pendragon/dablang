@@ -357,11 +357,11 @@ class DabNodeFunction < DabNode
 
   def compile(output)
     output.function(identifier.real_value.symbol) do
-    constants.each do |constant|
-      constant.compile(output)
+      constants.each do |constant|
+        constant.compile(output)
+      end
+      body.compile(output)
     end
-    body.compile(output)
-  end
   end
 end
 
@@ -427,12 +427,12 @@ class DabContext
   def read_local_var
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
-      err ("check id <#{id}> against <#{@local_vars}>")
+      err "check id <#{id}> against <#{@local_vars}>"
       if @local_vars.include? id
-        err ("check ok")
+        err 'check ok'
         DabNodeLocalVar.new(id)
       else
-        err("nope")
+        err('nope')
         false
       end
     end
@@ -440,7 +440,7 @@ class DabContext
 
   def read_var
     on_subcontext do |subcontext|
-      vark = subcontext.read_keyword("var")
+      vark = subcontext.read_keyword('var')
       next false unless vark
       id = subcontext.read_identifier
       next false unless id
@@ -460,7 +460,7 @@ class DabContext
       next false unless id
       next false unless subcontext.read_operator('(')
       value = subcontext.read_value
-      
+
       next false unless subcontext.read_operator(')')
       DabNodeCall.new(id, value)
     end
@@ -623,7 +623,7 @@ class DabOutput
   end
 
   def function(name)
-    print('START_FUNCTION', name) 
+    print('START_FUNCTION', name)
     yield
     print('END_FUNCTION')
   end
