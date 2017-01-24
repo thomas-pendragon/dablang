@@ -1,6 +1,8 @@
 def psystem(cmd)
   puts cmd
-  system cmd
+  unless system cmd
+    raise "error in cmd"
+  end
 end
 
 def read_test_file(fname)
