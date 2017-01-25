@@ -1,5 +1,5 @@
 OPCODES = {
-  0x00 => {name: 'START_FUNCTION', arg: :vlc, arg2: :uint16, arg3: :uint16},
+  0x00 => {name: 'START_FUNCTION', args: %i(vlc uint16 uint16)},
   0x01 => {name: 'CONSTANT_SYMBOL', arg: :vlc},
   0x02 => {name: 'CONSTANT_STRING', arg: :vlc},
   0x03 => {name: 'PUSH_CONSTANT', arg: :uint16},

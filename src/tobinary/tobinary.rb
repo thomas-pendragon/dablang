@@ -69,35 +69,32 @@ class OutputStream
     @metadata_source = metadata_source
   end
 
+  def _push_vlc(arg)
+    len = arg.length
+    if len < 255
+      _push_uint8(len)
+    else
+      _push_uint8(255)
+      _push_uint64(len)
+    end
+    _push(arg.to_s)
+  end
+
   def write(line)
     code = OPCODES_REV[line[0]]
     raise 'unknown token' unless code
 
     _push_uint8(code[:opcode])
-    if code[:arg] == :uint16
-      raise 'no arg' unless line[1]
-      _push_uint16(line[1])
-    end
-    if code[:arg] == :vlc
-      errap line
-      raise 'no arg' unless line[1]
-      arg = line[1]
-      len = arg.length
-      if len < 255
-        _push_uint8(len)
-      else
-        _push_uint8(255)
-        _push_uint64(len)
-      end
-      _push(arg.to_s)
-    end
-    if code[:arg2] == :uint16
-      raise 'no arg2' unless line[2]
-      _push_uint16(line[2])
-    end
-    if code[:arg3] == :uint16
-      raise 'no arg3' unless line[3]
-      _push_uint16(line[3])
+
+    opcode = code
+    arg_specifiers = opcode[:args]
+    arg_specifiers = [opcode[:arg]] unless arg_specifiers
+    arg_specifiers.compact!
+
+    arg_specifiers.each_with_index do |kind, index|
+      arg = line[index + 1]
+      raise "No arg#{index}" unless arg
+      send("_push_#{kind}", arg)
     end
   end
 

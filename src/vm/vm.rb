@@ -58,41 +58,35 @@ class DabInputStream
     nil
   end
 
+  def read_vlc
+    len = read_uint8
+    if len == 255
+      len = read_uint64
+    end
+    arg = _read(len)
+    arg
+  end
+
   def read_line
     opcode = read_uint8
     return nil unless opcode
     opcode = OPCODES[opcode]
     raise 'unknown op' unless opcode
 
-    arg = nil
-    arg2 = nil
-    arg3 = nil
-    arg4 = nil
+    arg_specifiers = opcode[:args]
+    arg_specifiers = [opcode[:arg]] unless arg_specifiers
+    arg_specifiers.compact!
 
-    if opcode[:arg] == :uint16
-      arg = read_uint16
-    end
-    if opcode[:arg] == :vlc
-      len = read_uint8
-      if len == 255
-        len = read_uint64
-      end
-      arg = _read(len)
-    end
-
-    if opcode[:arg2] == :uint16
-      arg2 = read_uint16
-    end
-
-    if opcode[:arg3] == :uint16
-      arg3 = read_uint16
+    args = []
+    arg_specifiers.each do |kind|
+      args << send("read_#{kind}")
     end
 
     if opcode[:name] == 'START_FUNCTION'
-      arg4 = _read(arg3)
+      args << _read(args[2])
     end
 
-    [opcode[:name], arg, arg2, arg3, arg4]
+    [opcode[:name], *args]
   end
 
   def each
