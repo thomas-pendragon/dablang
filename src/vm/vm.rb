@@ -65,6 +65,10 @@ class DabInputStream
     raise 'unknown op' unless opcode
 
     arg = nil
+    arg2 = nil
+    arg3 = nil
+    arg4 = nil
+
     if opcode[:arg] == :uint16
       arg = read_uint16
     end
@@ -76,14 +80,19 @@ class DabInputStream
       arg = _read(len)
     end
 
-    if opcode[:name] == 'START_FUNCTION'
-      @function_cache = ''
-    end
-    if opcode[:name] == 'END_FUNCTION'
-      arg = @function_cache[0..-2]
+    if opcode[:arg2] == :uint16
+      arg2 = read_uint16
     end
 
-    [opcode[:name], arg]
+    if opcode[:arg3] == :uint16
+      arg3 = read_uint16
+    end
+
+    if opcode[:name] == 'START_FUNCTION'
+      arg4 = _read(arg3)
+    end
+
+    [opcode[:name], arg, arg2, arg3, arg4]
   end
 
   def each
@@ -92,6 +101,16 @@ class DabInputStream
       break unless args
       yield(*args)
     end
+  end
+end
+
+class DabIntFunction
+  attr_reader :body
+  attr_reader :n_local_vars
+
+  def initialize(body, n_local_vars)
+    @body = body
+    @n_local_vars = n_local_vars
   end
 end
 
@@ -105,12 +124,12 @@ class DabVM
     @stack = []
     @functions = {}
     @functions['print'] = :print
-    @local_vars = {}
+    @local_vars = []
   end
 
-  def define_function(name, body)
-    errap ['define fun', name, body.length, body]
-    @functions[name] = body
+  def define_function(name, body, n_local_vars)
+    errap ['define fun', name, body.length, body, n_local_vars]
+    @functions[name] = DabIntFunction.new(body, n_local_vars)
   end
 
   def run
@@ -119,35 +138,28 @@ class DabVM
   end
 
   def run_stream(stream)
-    stream.each do |opcode, arg|
+    stream.each do |opcode, arg, arg2, arg3, arg4|
       break unless opcode
-      if @in_function
-        if opcode == 'END_FUNCTION'
-          define_function(@function_name, arg)
-          @in_function = false
-        end
+      errap ['opcode', opcode, [arg, arg2, arg3, arg4], 'constants:', @constants, 'stack', @stack, 'locals:', @local_vars]
+      if opcode == 'START_FUNCTION'
+        body = arg4
+        define_function(arg, body, arg2)
+      elsif opcode == 'CONSTANT_SYMBOL'
+        @constants << arg.to_sym
+      elsif opcode == 'CONSTANT_STRING'
+        @constants << arg.to_s
+      elsif opcode == 'PUSH_CONSTANT'
+        @stack << @constants[arg]
+      elsif opcode == 'CALL'
+        data = @stack.pop(arg + 1)
+        call_function(data[0].to_s, *data[1..-1])
+      elsif opcode == 'SET_VAR'
+        value = @stack.pop
+        define_local_variable(arg, value)
+      elsif opcode == 'VAR'
+        get_local_variable(arg)
       else
-        errap ['opcode', opcode, arg, 'constants:', @constants, 'stack', @stack]
-        if opcode == 'START_FUNCTION'
-          @in_function = true
-          @function_name = arg
-        elsif opcode == 'CONSTANT_SYMBOL'
-          @constants << arg.to_sym
-        elsif opcode == 'CONSTANT_STRING'
-          @constants << arg.to_s
-        elsif opcode == 'PUSH_CONSTANT'
-          @stack << @constants[arg]
-        elsif opcode == 'CALL'
-          data = @stack.pop(arg + 1)
-          call_function(data[0].to_s, *data[1..-1])
-        elsif opcode == 'DEFINE_VAR'
-          args = @stack.pop(2)
-          define_local_variable(args[0], args[1])
-        elsif opcode == 'VAR'
-          get_local_variable(@stack.pop)
-        else
-          raise 'unknown opcode'
-        end
+        raise 'unknown opcode'
       end
     end
   end
@@ -163,10 +175,11 @@ class DabVM
   def call_function(name, *args)
     errap ['call function', name, 'args', args]
     @constants = []
-    @local_vars = {}
+    @local_vars = []
     body = @functions[name]
-    if body.is_a? String
-      execute(body)
+    if body.is_a? DabIntFunction
+      @local_vars = [nil] * body.n_local_vars
+      execute(body.body)
     else
       errap ['Kernel.send(name.to_sym -> ' + name.to_sym.to_s + ', *args -> ' + args.to_s]
       Kernel.send(name.to_sym, *args)

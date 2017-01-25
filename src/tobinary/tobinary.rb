@@ -36,11 +36,13 @@ class InputStream
   end
 
   def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL'
+    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'VAR'
       return args.map(&:to_i)
     end
     if call == 'START_FUNCTION' || call == 'CONSTANT_SYMBOL'
-      return args.map(&:strip).map(&:to_sym)
+      name = args[0].strip.to_sym
+      n_local = args[1].to_i
+      return [name, n_local]
     end
     if call == 'CONSTANT_STRING'
       return args.map(&:strip).map { |s| s[1..-2] }
@@ -54,8 +56,10 @@ class InputStream
 end
 
 class OutputStream
-  def initialize
-    @stream = STDOUT
+  attr_reader :code
+
+  def initialize(target = nil)
+    @stream = target || STDOUT
     @preamble = []
     @code = ''
     @metadata_source = nil
@@ -86,6 +90,14 @@ class OutputStream
         _push_uint64(len)
       end
       _push(arg.to_s)
+    end
+    if code[:arg2] == :uint16
+      raise 'no arg2' unless line[2]
+      _push_uint16(line[2])
+    end
+    if code[:arg3] == :uint16
+      raise 'no arg3' unless line[3]
+      _push_uint16(line[3])
     end
   end
 
@@ -143,7 +155,25 @@ class Parser
   def run!
     @output_stream.begin(self)
     @input_stream.each do |line|
-      @output_stream.write(line)
+      errap ['read line:', line]
+      if line[0] == 'START_FUNCTION'
+        @in_function = true
+        @function_line = line.dup
+        @function_string = StringIO.new
+        @function_stream = OutputStream.new(@function_string)
+      elsif line[0] == 'END_FUNCTION'
+        @function_line[3] = @function_stream.code.length
+        @output_stream.write(@function_line)
+        @output_stream._push(@function_stream.code)
+
+        @function_line = nil
+        @function_string = nil
+        @function_stream = nil
+      elsif @in_function
+        @function_stream.write(line)
+      else
+        @output_stream.write(line)
+      end
     end
     @output_stream.finalize
   end

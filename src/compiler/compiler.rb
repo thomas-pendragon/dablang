@@ -141,6 +141,9 @@ class DabNode
     err('%s - %s %s', '  ' * level, self.class.name, extra_dump)
     @children.each do |child|
       if child.is_a? DabNode
+        if child.parent != self
+          raise "child #{child} is broken, parent is '#{child.parent}', should be '#{self}'"
+        end
         child.dump(level + 1)
       else
         err('%s ~ %s', '  ' * (level + 1), child.to_s)
@@ -269,6 +272,8 @@ class DabNodeCall < DabNode
 end
 
 class DabNodeDefineLocalVar < DabNode
+  attr_accessor :index
+
   def initialize(identifier, value)
     super()
     insert(identifier)
@@ -283,15 +288,21 @@ class DabNodeDefineLocalVar < DabNode
     children[1]
   end
 
+  def real_identifier
+    identifier.extra_value
+  end
+
   def compile(output)
-    output.push(identifier)
+    raise 'no index' unless @index
     value.compile(output)
-    output.comment("var #{identifier.extra_value}")
-    output.print('DEFINE_VAR')
+    output.comment("var #{index} #{identifier.extra_value}")
+    output.print('SET_VAR', index)
   end
 end
 
 class DabNodeLocalVar < DabNode
+  attr_accessor :index
+
   def initialize(identifier)
     super()
     insert(identifier)
@@ -301,10 +312,14 @@ class DabNodeLocalVar < DabNode
     children[0]
   end
 
+  def real_identifier
+    identifier.extra_value
+  end
+
   def compile(output)
-    output.push(identifier)
-    output.comment(identifier.extra_value)
-    output.print('VAR')
+    raise 'no index' unless @index
+    output.comment("var #{index} #{identifier.extra_value}")
+    output.print('VAR', index)
   end
 end
 
@@ -329,11 +344,14 @@ class DabNodeSymbol < DabNodeLiteral
 end
 
 class DabNodeFunction < DabNode
+  attr_accessor :n_local_vars
+
   def initialize(identifier, body)
     super()
     insert(identifier)
     insert(body)
     insert(DabNode.new)
+    self.n_local_vars = 0
   end
 
   def identifier
@@ -356,7 +374,7 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
-    output.function(identifier.real_value.symbol) do
+    output.function(identifier.real_value.symbol, n_local_vars) do
       constants.each do |constant|
         constant.compile(output)
       end
@@ -474,7 +492,7 @@ class DabContext
         instr = subcontext.read_instruction
         break unless instr
         next false unless subcontext.read_operator(';')
-        ret.children << instr
+        ret.insert(instr)
       end
       next false unless subcontext.read_operator('}')
       ret
@@ -596,6 +614,22 @@ class DabPPFixLiterals
   end
 end
 
+class DabPPFixLocalvars
+  def run(program)
+    program.visit_all(DabNodeFunction) do |function|
+      local_vars = {}
+      function.visit_all(DabNodeDefineLocalVar) do |node|
+        node.index = local_vars.count
+        local_vars[node.real_identifier] = node.index
+      end
+      function.visit_all(DabNodeLocalVar) do |node|
+        node.index = local_vars[node.real_identifier]
+      end
+      function.n_local_vars = local_vars.count
+    end
+  end
+end
+
 class DabOutput
   def start_function
     print('START_FUNCTION')
@@ -622,8 +656,8 @@ class DabOutput
     print('PUSH_CONSTANT', node.index)
   end
 
-  def function(name)
-    print('START_FUNCTION', name)
+  def function(name, n_local_vars)
+    print('START_FUNCTION', name, n_local_vars)
     yield
     print('END_FUNCTION')
   end
@@ -634,6 +668,7 @@ compiler = DabCompiler.new(stream)
 program = compiler.program
 
 DabPPFixLiterals.new.run(program)
+DabPPFixLocalvars.new.run(program)
 
 program.dump
 

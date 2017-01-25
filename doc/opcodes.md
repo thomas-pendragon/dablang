@@ -19,9 +19,11 @@ all binary numbers are little endian
 
 VM OPCODES
 
-0x00 [VLC] - START FUNCTION + symbol name
+0x00 [VLC + 16bit + 16bit] - START FUNCTION + symbol name + number of local variables + code size
 0x01 [VLC] - CONSTANT SYMBOL + symbol name
 0x02 [VLC] - CONSTANT STRING + string
 0x03 [2bytes index into constants] - PUSH CONSTANT
 0x04 [16bit] - CALL + number of arguments
-0x05 - END FUNCTION
+0x05 - END FUNCTION [deprecated]
+0x06 [16bit] - SET LOCAL VARIABLE
+0x07 [16bit] - GET LOCAL VARIABLE
