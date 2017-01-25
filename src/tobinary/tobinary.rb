@@ -163,6 +163,7 @@ class Parser
         @output_stream.write(@function_line)
         @output_stream._push(@function_stream.code)
 
+        @in_function = false
         @function_line = nil
         @function_string = nil
         @function_stream = nil
