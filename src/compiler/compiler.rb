@@ -195,7 +195,6 @@ class DabNode
   def compile(output); end
 
   def function
-    # err "function get: [#{self.class} / parent = #{parent.class}]"
     return self if self.is_a? DabNodeFunction
     parent.function
   end
@@ -393,7 +392,6 @@ class DabContext
   end
 
   def add_local_var(id)
-    err("add local var <#{id}>")
     @local_vars << id
   end
 
@@ -417,7 +415,6 @@ class DabContext
       next false unless rparen
       code = subcontext.read_codeblock
       next false unless code
-      err('create func [%s]', ident)
       DabNodeFunction.new(ident, code)
     end
   end
@@ -445,12 +442,9 @@ class DabContext
   def read_local_var
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
-      err "check id <#{id}> against <#{@local_vars}>"
       if @local_vars.include? id
-        err 'check ok'
         DabNodeLocalVar.new(id)
       else
-        err('nope')
         false
       end
     end
@@ -587,7 +581,6 @@ class DabNodeConstantReference < DabNode
   end
 
   def extra_value
-    #  err "self = #{self} target = #{target}"
     target.extra_value
   end
 
