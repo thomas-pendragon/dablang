@@ -20,7 +20,6 @@ end
 class DabInputStream
   def initialize(stream = nil)
     @stream = stream || STDIN
-    @function_cache = ''
   end
 
   def read_preamble
@@ -35,9 +34,7 @@ class DabInputStream
 
   def _read(n)
     return nil if @stream.eof?
-    ret = @stream.read(n)
-    @function_cache += ret
-    ret
+    @stream.read(n)
   end
 
   def read_uint8
