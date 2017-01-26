@@ -49,9 +49,14 @@ inputs.each do |input_test_file|
   end
   file output_output_file => sources + [input_test_file, output_binary_file] do
     psystem("ruby src/vm/vm.rb < #{output_binary_file} > #{output_output_file}")
-    if open(output_output_file).read.strip == test_body
+    actual_body = open(output_output_file).read.strip
+    if actual_body == test_body
       puts "#{input_file}... OK"
     else
+      puts 'Expected:'
+      puts test_body
+      puts 'Received:'
+      puts actual_body
       puts "#{input_file}... Error"
       raise 'error'
     end
