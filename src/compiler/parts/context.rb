@@ -23,14 +23,10 @@ class DabContext
   def read_function
     on_subcontext do |subcontext|
       next false unless subcontext.read_keyword('func')
-      ident = subcontext.read_identifier
-      next false unless ident
-      lparen = subcontext.read_operator('(')
-      next false unless lparen
-      rparen = subcontext.read_operator(')')
-      next false unless rparen
-      code = subcontext.read_codeblock
-      next false unless code
+      next false unless ident = subcontext.read_identifier
+      next false unless subcontext.read_operator('(')
+      next false unless subcontext.read_operator(')')
+      next false unless code = subcontext.read_codeblock
       DabNodeFunction.new(ident, code)
     end
   end
@@ -68,14 +64,10 @@ class DabContext
 
   def read_var
     on_subcontext do |subcontext|
-      vark = subcontext.read_keyword('var')
-      next false unless vark
-      id = subcontext.read_identifier
-      next false unless id
-      eq = subcontext.read_operator('=')
-      next false unless eq
-      value = subcontext.read_value
-      next false unless value
+      next false unless subcontext.read_keyword('var')
+      next false unless id = subcontext.read_identifier
+      next false unless subcontext.read_operator('=')
+      next false unless value = subcontext.read_value
 
       subcontext.add_local_var(id)
       DabNodeDefineLocalVar.new(id, value)
