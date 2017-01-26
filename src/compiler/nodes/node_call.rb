@@ -1,10 +1,10 @@
 require_relative 'node.rb'
 
 class DabNodeCall < DabNode
-  def initialize(identifier, *args)
+  def initialize(identifier, args)
     super()
     insert(identifier)
-    args.each { |arg| insert(arg) }
+    args&.each { |arg| insert(arg) }
   end
 
   def identifier

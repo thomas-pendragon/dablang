@@ -90,6 +90,8 @@ class DabIntFunction
 end
 
 class DabVM
+  attr_accessor :functions
+
   def initialize(stream)
     @stream = stream
 
@@ -147,18 +149,27 @@ class DabVM
     @local_vars[name] = value
   end
 
+  def fork
+    sub = DabVM.new(nil)
+    sub.functions = self.functions.dup
+    sub
+  end
+
   def call_function(name, *args)
     errap ['call function', name, 'args', args]
-    @constants = []
-    @local_vars = []
     body = @functions[name]
     if body.is_a? DabIntFunction
-      @local_vars = [nil] * body.n_local_vars
-      execute(body.body, args)
+      sub_vm = self.fork
+      sub_vm.reserve_local_vars(body.n_local_vars)
+      sub_vm.execute(body.body, args)
     else
       errap ['Kernel.send(name.to_sym -> ' + name.to_sym.to_s + ', *args -> ' + args.to_s]
       Kernel.send(name.to_sym, *args)
     end
+  end
+
+  def reserve_local_vars(n_local_vars)
+    @local_vars = [nil] * n_local_vars
   end
 
   def execute(binary, args)

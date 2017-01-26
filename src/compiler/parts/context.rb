@@ -21,21 +21,25 @@ class DabContext
     ret
   end
 
-  def read_arglist
+  def _read_list(item_method)
     on_subcontext do |subcontext|
       ret = DabNode.new
 
-      next false unless arg = subcontext.read_identifier
+      next false unless arg = subcontext.send(item_method)
       ret.insert(arg)
 
       subcontext.on_subcontext do |subsubcontext|
         next false unless subsubcontext.read_keyword(',')
-        next false unless next_arg = subsubcontext.read_identifier
+        next false unless next_arg = subsubcontext.send(item_method)
         ret.insert(next_arg)
       end
 
       ret
     end
+  end
+
+  def read_arglist
+    _read_list(:read_identifier)
   end
 
   def read_function
@@ -97,15 +101,18 @@ class DabContext
     end
   end
 
+  def read_valuelist
+    _read_list(:read_value)
+  end
+
   def read_call
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next false unless id
       next false unless subcontext.read_operator('(')
-      value = subcontext.read_value
-
+      valuelist = subcontext.read_valuelist || nil
       next false unless subcontext.read_operator(')')
-      DabNodeCall.new(id, value)
+      DabNodeCall.new(id, valuelist)
     end
   end
 
