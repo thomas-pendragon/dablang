@@ -12,12 +12,10 @@ def read_test_file(fname)
   open(fname).read.split("\n").map(&:strip).each do |line|
     if line.start_with? '## '
       mode = line
-    else
-      if mode == '## CODE'
-        text += line + "\n"
-      elsif mode == '## EXPECT OK'
-        test_body += line + "\n"
-      end
+    elsif mode == '## CODE'
+      text += line + "\n"
+    elsif mode == '## EXPECT OK'
+      test_body += line + "\n"
     end
   end
   [text, test_body].map(&:strip)

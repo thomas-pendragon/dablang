@@ -132,3 +132,12 @@ Style/IfUnlessModifier:
 
 Style/RedundantSelf:
   Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/LiteralInCondition:
+  Enabled: false
+
+Style/For:
+  Enabled: false
