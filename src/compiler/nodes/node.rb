@@ -7,18 +7,24 @@ class DabNode
   end
 
   def insert(child)
+    @children << claim(child)
+  end
+
+  def claim(child)
     unless child.is_a? DabNode
       child = DabNodeSymbol.new(child)
     end
 
     child.parent = self
-    @children << child
+    child
   end
 
   def dump(level = 0)
     err('%s - %s %s', '  ' * level, self.class.name, extra_dump)
     @children.each do |child|
-      if child.is_a? DabNode
+      if child.nil?
+        err('%s ~ [nil]', '  ' * (level + 1))
+      elsif child.is_a? DabNode
         if child.parent != self
           raise "child #{child} is broken, parent is '#{child.parent}', should be '#{self}'"
         end
@@ -70,6 +76,12 @@ class DabNode
     end
   end
 
+  def each_with_index
+    @children.each_with_index do |child, index|
+      yield(child, index)
+    end
+  end
+
   def compile(output); end
 
   def function
@@ -87,5 +99,9 @@ class DabNode
 
   def real_value
     self
+  end
+
+  def pre_insert(node)
+    @children.unshift(claim(node))
   end
 end

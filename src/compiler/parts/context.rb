@@ -8,6 +8,7 @@ class DabContext
   end
 
   def add_local_var(id)
+    raise "id must be string, is #{id.class}" unless id.is_a? String
     @local_vars << id
   end
 
@@ -20,14 +21,36 @@ class DabContext
     ret
   end
 
+  def read_arglist
+    on_subcontext do |subcontext|
+      ret = DabNode.new
+
+      next false unless arg = subcontext.read_identifier
+      ret.insert(arg)
+
+      subcontext.on_subcontext do |subsubcontext|
+        next false unless subsubcontext.read_keyword(',')
+        next false unless next_arg = subsubcontext.read_identifier
+        ret.insert(next_arg)
+      end
+
+      ret
+    end
+  end
+
   def read_function
     on_subcontext do |subcontext|
       next false unless subcontext.read_keyword('func')
       next false unless ident = subcontext.read_identifier
       next false unless subcontext.read_operator('(')
+      if arglist = subcontext.read_arglist || nil
+        arglist.each do |symbol|
+          subcontext.add_local_var(symbol.extra_value)
+        end
+      end
       next false unless subcontext.read_operator(')')
       next false unless code = subcontext.read_codeblock
-      DabNodeFunction.new(ident, code)
+      DabNodeFunction.new(ident, code, arglist)
     end
   end
 

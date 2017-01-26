@@ -1,0 +1,19 @@
+## CODE
+
+func reprint(a)
+{
+	print(a);
+}
+
+func main()
+{
+	reprint("test arg");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+test arg
