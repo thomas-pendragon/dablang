@@ -109,10 +109,10 @@ class DabVM
 
   def run
     errap @stream.read_preamble
-    run_stream(@stream)
+    run_stream(@stream, [])
   end
 
-  def run_stream(stream)
+  def run_stream(stream, fun_args)
     stream.each do |opcode, arg, arg2, arg3, arg4|
       break unless opcode
       errap ['opcode', opcode, [arg, arg2, arg3, arg4], 'constants:', @constants, 'stack', @stack, 'locals:', @local_vars]
@@ -133,6 +133,8 @@ class DabVM
         define_local_variable(arg, value)
       elsif opcode == 'VAR'
         get_local_variable(arg)
+      elsif opcode == 'ARG'
+        @stack << fun_args[arg]
       else
         raise 'unknown opcode'
       end
@@ -154,17 +156,17 @@ class DabVM
     body = @functions[name]
     if body.is_a? DabIntFunction
       @local_vars = [nil] * body.n_local_vars
-      execute(body.body)
+      execute(body.body, args)
     else
       errap ['Kernel.send(name.to_sym -> ' + name.to_sym.to_s + ', *args -> ' + args.to_s]
       Kernel.send(name.to_sym, *args)
     end
   end
 
-  def execute(binary)
+  def execute(binary, args)
     stream = StringIO.new(binary)
     stream = DabInputStream.new(stream)
-    run_stream(stream)
+    run_stream(stream, args)
   end
 end
 

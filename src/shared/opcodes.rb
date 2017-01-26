@@ -6,6 +6,7 @@ OPCODES = {
   0x04 => {name: 'CALL', arg: :uint16}, # n = number of arguments, pop(n + 1)
   0x05 => {name: 'SET_VAR', arg: :uint16}, # local variable index, pop(1)
   0x06 => {name: 'VAR', arg: :uint16}, # local variable index, push(1)
+  0x07 => {name: 'ARG', arg: :uint16}, # argument index, push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

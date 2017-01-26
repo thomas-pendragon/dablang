@@ -20,7 +20,7 @@ class InputStream
   end
 
   def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'VAR'
+    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'VAR' || call == 'ARG'
       return args.map(&:to_i)
     end
     if call == 'START_FUNCTION' || call == 'CONSTANT_SYMBOL'
