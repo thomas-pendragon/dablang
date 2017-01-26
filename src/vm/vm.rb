@@ -92,8 +92,6 @@ end
 class DabVM
   def initialize(stream)
     @stream = stream
-    @in_function = false
-    @function_name = nil
 
     @constants = []
     @stack = []
