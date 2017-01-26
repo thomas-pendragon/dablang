@@ -19,6 +19,6 @@ class DabNodeLocalVar < DabNode
   def compile(output)
     raise 'no index' unless @index
     output.comment("var #{index} #{identifier.extra_value}")
-    output.print('VAR', index)
+    output.print('PUSH_VAR', index)
   end
 end

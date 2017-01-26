@@ -13,6 +13,6 @@ class DabNodeArg < DabNode
   end
 
   def compile(output)
-    output.print('ARG', @index)
+    output.print('PUSH_ARG', @index)
   end
 end

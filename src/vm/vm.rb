@@ -131,9 +131,9 @@ class DabVM
       elsif opcode == 'SET_VAR'
         value = @stack.pop
         define_local_variable(arg, value)
-      elsif opcode == 'VAR'
+      elsif opcode == 'PUSH_VAR'
         get_local_variable(arg)
-      elsif opcode == 'ARG'
+      elsif opcode == 'PUSH_ARG'
         @stack << fun_args[arg]
       else
         raise 'unknown opcode'
