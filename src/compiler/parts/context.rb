@@ -21,7 +21,7 @@ class DabContext
     ret
   end
 
-  def _read_list(item_method)
+  def _read_list(item_method, separator = ',')
     on_subcontext do |subcontext|
       ret = DabNode.new
 
@@ -29,11 +29,26 @@ class DabContext
       ret.insert(arg)
 
       subcontext.on_subcontext do |subsubcontext|
-        next false unless subsubcontext.read_keyword(',')
+        next false unless subsubcontext.read_keyword(separator)
         next false unless next_arg = subsubcontext.send(item_method)
         ret.insert(next_arg)
       end
 
+      ret
+    end
+  end
+
+  def _read_list_or_single(method, separator, klass)
+    list = _read_list(method, separator)
+    return list unless list
+    if list.count == 1
+      list[0]
+    else
+      list = list.children
+      ret = list[0]
+      for i in 1...list.count do
+        ret = klass.new(ret, list[i], separator)
+      end
       ret
     end
   end
@@ -155,8 +170,13 @@ class DabContext
     read_literal_string || read_literal_number
   end
 
-  def read_value
+  def read_simple_value
     read_literal_value || read_local_var
+  end
+
+  def read_value
+    add_op = _read_list_or_single(:read_simple_value, '+', DabNodeOperator)
+    add_op
   end
 
   def clone

@@ -99,6 +99,7 @@ class DabVM
     @stack = []
     @functions = {}
     @functions['print'] = :print
+    @functions['+'] = ->(a, b) { a + b }
     @local_vars = []
   end
 
@@ -164,6 +165,8 @@ class DabVM
       sub_vm = self.fork
       sub_vm.reserve_local_vars(body.n_local_vars)
       sub_vm.execute(body.body, args)
+    elsif body.is_a? Proc
+      @stack << body[*args]
     else
       errap ['Kernel.send(name.to_sym -> ' + name.to_sym.to_s + ', *args -> ' + args.to_s]
       Kernel.send(name.to_sym, *args)
