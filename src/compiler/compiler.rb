@@ -1,6 +1,7 @@
 require_relative '../shared/debug_output.rb'
 require_relative 'nodes/node.rb'
 require_relative 'nodes/node_arg.rb'
+require_relative 'nodes/node_arg_definition.rb'
 require_relative 'nodes/node_call.rb'
 require_relative 'nodes/node_code_block.rb'
 require_relative 'nodes/node_constant.rb'

@@ -12,7 +12,7 @@ class DabNodeFunction < DabNode
     insert(arglist)
     self.n_local_vars = 0
     arglist&.each_with_index do |arg, index|
-      body.pre_insert(DabNodeDefineLocalVar.new(arg.extra_value, DabNodeArg.new(index)))
+      body.pre_insert(DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index)))
     end
   end
 

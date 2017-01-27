@@ -56,8 +56,23 @@ class DabContext
     end
   end
 
+  def read_argument
+    on_subcontext do |subcontext|
+      id = subcontext.read_identifier
+      next false unless id
+
+      DabNodeArgDefinition.new(-1, id)
+    end
+  end
+
   def read_arglist
-    _read_list(:read_identifier)
+    list = _read_list(:read_argument)
+    if list
+      list.each_with_index do |item, index|
+        item.index = index
+      end
+    end
+    list
   end
 
   def read_function
@@ -66,8 +81,9 @@ class DabContext
       next false unless ident = subcontext.read_identifier
       next false unless subcontext.read_operator('(')
       if arglist = subcontext.read_arglist || nil
-        arglist.each do |symbol|
-          subcontext.add_local_var(symbol.extra_value)
+        arglist.each do |arg|
+          symbol = arg.identifier
+          subcontext.add_local_var(symbol)
         end
       end
       next false unless subcontext.read_operator(')')
