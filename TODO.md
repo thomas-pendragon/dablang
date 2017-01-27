@@ -1,1 +1,2 @@
 - dumping AST tree before and after postprocessing
+- empty argument list should not create empty symbol
