@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	print("a = ");
+	print(12);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+a = 12

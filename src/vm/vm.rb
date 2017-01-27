@@ -123,6 +123,8 @@ class DabVM
         @constants << arg.to_sym
       elsif opcode == 'CONSTANT_STRING'
         @constants << arg.to_s
+      elsif opcode == 'CONSTANT_NUMBER'
+        @constants << arg.to_i
       elsif opcode == 'PUSH_CONSTANT'
         @stack << @constants[arg]
       elsif opcode == 'CALL'

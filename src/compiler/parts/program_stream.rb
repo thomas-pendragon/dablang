@@ -81,11 +81,29 @@ class DabProgramStream
     ret
   end
 
+  def read_number
+    debug('number ?')
+    skip_whitespace
+    return false unless current_char_digit?
+    ret = ''
+    while current_char_digit?
+      break unless current_char
+      ret += current_char
+      advance!
+    end
+    debug('number ok')
+    ret
+  end
+
   def input_match(word)
     for i in 0...word.length do
       return false if current_char(i) != word[i]
     end
     true
+  end
+
+  def current_char_digit?
+    current_char =~ /[0-9]/
   end
 
   def skip_whitespace

@@ -70,6 +70,10 @@ class DabContext
     @stream.read_string(*args)
   end
 
+  def read_number(*args)
+    @stream.read_number(*args)
+  end
+
   def read_keyword(*args)
     @stream.read_keyword(*args)
   end
@@ -131,12 +135,24 @@ class DabContext
     end
   end
 
-  def read_literal_value
+  def read_literal_string
     on_subcontext do |subcontext|
       str = subcontext.read_string
       next false unless str
       DabNodeLiteralString.new(str)
     end
+  end
+
+  def read_literal_number
+    on_subcontext do |subcontext|
+      str = subcontext.read_number
+      next false unless str
+      DabNodeLiteralNumber.new(str.to_i)
+    end
+  end
+
+  def read_literal_value
+    read_literal_string || read_literal_number
   end
 
   def read_value
