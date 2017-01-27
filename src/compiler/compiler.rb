@@ -19,6 +19,7 @@ require_relative 'parts/output.rb'
 require_relative 'parts/program_stream.rb'
 require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
+require_relative 'postproc/reuse_constants.rb'
 
 stream = DabProgramStream.new(STDIN.read)
 compiler = DabCompiler.new(stream)
@@ -28,6 +29,7 @@ program.dump
 
 DabPPFixLiterals.new.run(program)
 DabPPFixLocalvars.new.run(program)
+DabPPReuseConstants.new.run(program)
 
 program.dump
 

@@ -1,7 +1,7 @@
 require_relative 'node.rb'
 
 class DabNodeConstantReference < DabNode
-  attr_reader :index
+  attr_accessor :index
   def initialize(index)
     super()
     @index = index
