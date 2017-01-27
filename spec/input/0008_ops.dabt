@@ -1,0 +1,21 @@
+## CODE
+
+func reprint(a, b)
+{
+	print(a + b);
+	print(";");
+}
+
+func main()
+{
+	reprint(12, 4);
+	reprint("12", "4");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+16;124;
