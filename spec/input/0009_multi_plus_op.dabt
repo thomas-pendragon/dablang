@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(2 + 3 + 4);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+9

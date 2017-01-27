@@ -28,10 +28,13 @@ class DabContext
       next false unless arg = subcontext.send(item_method)
       ret.insert(arg)
 
-      subcontext.on_subcontext do |subsubcontext|
-        next false unless subsubcontext.read_keyword(separator)
-        next false unless next_arg = subsubcontext.send(item_method)
-        ret.insert(next_arg)
+      while true
+        next_item = subcontext.on_subcontext do |subsubcontext|
+          next false unless subsubcontext.read_keyword(separator)
+          next false unless next_arg = subsubcontext.send(item_method)
+          ret.insert(next_arg)
+        end
+        break unless next_item
       end
 
       ret
