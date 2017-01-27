@@ -40,7 +40,8 @@ class DabNode
   end
 
   def visit_all(klass, &block)
-    if self.is_a? klass
+    klass = [klass] unless klass.is_a? Array
+    if klass.any? { |item| self.is_a? item }
       yield(self)
     end
 
@@ -103,5 +104,9 @@ class DabNode
 
   def pre_insert(node)
     @children.unshift(claim(node))
+  end
+
+  def remove_child(node)
+    @children -= [node]
   end
 end

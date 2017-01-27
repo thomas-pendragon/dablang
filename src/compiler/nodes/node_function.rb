@@ -38,6 +38,10 @@ class DabNodeFunction < DabNode
     DabNodeConstantReference.new(index)
   end
 
+  def remove_constant_node(node)
+    constants.remove_child(node)
+  end
+
   def compile(output)
     output.function(identifier.real_value.symbol, n_local_vars) do
       constants.each do |constant|

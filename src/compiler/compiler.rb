@@ -17,6 +17,7 @@ require_relative 'parts/compiler.rb'
 require_relative 'parts/context.rb'
 require_relative 'parts/output.rb'
 require_relative 'parts/program_stream.rb'
+require_relative 'postproc/compact_constants.rb'
 require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
 require_relative 'postproc/reuse_constants.rb'
@@ -30,6 +31,7 @@ program.dump
 DabPPFixLiterals.new.run(program)
 DabPPFixLocalvars.new.run(program)
 DabPPReuseConstants.new.run(program)
+DabPPCompactConstants.new.run(program)
 
 program.dump
 

@@ -1,7 +1,7 @@
 require_relative 'node.rb'
 
 class DabNodeConstant < DabNode
-  attr_reader :index
+  attr_accessor :index
   def initialize(value, index)
     super()
     insert(value)
