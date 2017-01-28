@@ -3,19 +3,36 @@ class DabOutput
     print('START_FUNCTION')
   end
 
-  def comment(text)
-    t = sprintf('/* %-12s */ ', text.to_s[0...12])
+  def _print(t)
     errn t
     Kernel.print t
-    @cmt = true
+  end
+
+  def comment(text)
+    @comment = text
+  end
+
+  def label(text)
+    @label = text
   end
 
   def print(*args)
-    comment('') unless @cmt
+    _print sprintf('/* %-12s */ ', @comment.to_s[0...12])
+
+    t = if @label
+          sprintf('%-12s: ', @label.to_s[0...12])
+        else
+          ' ' * 14
+        end
+    _print t
+
     t = args.join(', ').to_s
-    err t
-    puts t
-    @cmt = false
+
+    _print(t)
+    _print("\n")
+
+    @comment = nil
+    @label = nil
   end
 
   def push(node)
