@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(8 * 3 + 4 * 2 - 1);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+31

@@ -203,13 +203,12 @@ class DabContext
     read_literal_value || read_local_var
   end
 
-  def read_add_value
-    add_op = _read_list_or_single(:read_simple_value, ['+', '-'], DabNodeOperator)
-    add_op
+  def read_mul_value
+    _read_list_or_single(:read_simple_value, ['*', '/'], DabNodeOperator)
   end
 
   def read_value
-    _read_list_or_single(:read_add_value, ['*', '/'], DabNodeOperator)
+    _read_list_or_single(:read_mul_value, ['+', '-'], DabNodeOperator)
   end
 
   def clone
