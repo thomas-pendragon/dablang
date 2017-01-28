@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	print("true=");
+	print(true);
+	print(" 1=");
+	print(1);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+true=true 1=1
