@@ -31,9 +31,9 @@ class DabContext
 
       while true
         next_item = subcontext.on_subcontext do |subsubcontext|
-          next false unless separator = subsubcontext.read_any_operator(separator)
+          next false unless sep = subsubcontext.read_any_operator(separator)
           next false unless next_arg = subsubcontext.send(item_method)
-          ret.insert(DabNodeListNode.new(next_arg, separator))
+          ret.insert(DabNodeListNode.new(next_arg, sep))
         end
         break unless next_item
       end
