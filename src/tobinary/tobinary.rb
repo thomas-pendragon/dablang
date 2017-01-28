@@ -136,7 +136,6 @@ class Parser
   def run!
     @output_stream.begin(self)
     @input_stream.each do |line|
-      errap ['read line:', line]
       if line[0] == 'START_FUNCTION'
         @in_function = true
         @function_line = line.dup
