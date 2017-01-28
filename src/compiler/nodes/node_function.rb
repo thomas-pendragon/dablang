@@ -14,6 +14,7 @@ class DabNodeFunction < DabNode
     arglist&.each_with_index do |arg, index|
       body.pre_insert(DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index)))
     end
+    @labels = 0
   end
 
   def extra_dump
@@ -41,6 +42,12 @@ class DabNodeFunction < DabNode
 
   def remove_constant_node(node)
     constants.remove_child(node)
+  end
+
+  def reserve_label
+    ret = @labels
+    @labels += 1
+    "L#{ret}"
   end
 
   def compile(output)
