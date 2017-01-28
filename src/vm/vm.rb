@@ -100,6 +100,7 @@ class DabVM
     @functions = {}
     @functions['print'] = :print
     @functions['+'] = ->(a, b) { a + b }
+    @functions['-'] = ->(a, b) { a - b }
     @local_vars = []
   end
 

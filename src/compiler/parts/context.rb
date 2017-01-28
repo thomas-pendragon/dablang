@@ -204,7 +204,7 @@ class DabContext
   end
 
   def read_value
-    add_op = _read_list_or_single(:read_simple_value, ['+'], DabNodeOperator)
+    add_op = _read_list_or_single(:read_simple_value, ['+', '-'], DabNodeOperator)
     add_op
   end
 
