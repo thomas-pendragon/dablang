@@ -10,12 +10,18 @@ class InputStream
   end
 
   def map_line(line)
+    label = nil
     if line.start_with? '/*'
       line = line[line.index('*/ ') + 3..-1]
+    end
+    if line[/(\w+)\s*:(.*)$/]
+      label = $1.strip
+      line = $2.strip
     end
     line = line.split(',')
     line[0] = line[0].strip
     line[1..-1] = map_args(line[0], line[1..-1])
+    line.unshift(label)
     line
   end
 
@@ -35,7 +41,7 @@ class InputStream
   end
 
   def each
-    @lines.each { |line| yield(line) }
+    @lines.each { |line| yield(line[1..-1], line[0]) }
   end
 end
 
