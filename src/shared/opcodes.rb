@@ -9,6 +9,9 @@ OPCODES = {
   0x07 => {name: 'PUSH_ARG', arg: :uint16}, # argument index, push(1)
   0x08 => {name: 'CONSTANT_NUMBER', arg: :uint64}, # number
   0x09 => {name: 'RETURN'}, # pop(1)
+  0x0A => {name: 'JMP', arg: :uint16}, # add +arg to PC
+  0x0B => {name: 'JMP_IFN', arg: :uint16}, # pop(1), add +arg to PC if value from stack is false
+  0x0C => {name: 'NOP'}, #
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

@@ -77,6 +77,10 @@ class DabInputStream
       yield(*args)
     end
   end
+
+  def skip(n)
+    _read(n)
+  end
 end
 
 class DabIntFunction
@@ -143,8 +147,16 @@ class DabVM
         @stack << fun_args[arg]
       elsif opcode == 'RETURN'
         return @stack.pop
+      elsif opcode == 'JMP'
+        stream.skip(arg - 3)
+      elsif opcode == 'JMP_IFN'
+        value = @stack.pop
+        unless value
+          stream.skip(arg - 3)
+        end
+      elsif opcode == 'NOP'
       else
-        raise 'unknown opcode'
+        raise "unknown opcode #{opcode}"
       end
     end
   end
