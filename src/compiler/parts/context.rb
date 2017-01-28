@@ -132,7 +132,23 @@ class DabContext
   end
 
   def read_instruction
-    read_return || read_var || read_call
+    read_if || read_return || read_var || read_call
+  end
+
+  def read_if
+    on_subcontext do |subcontext|
+      next false unless subcontext.read_keyword('if')
+      next false unless subcontext.read_operator('(')
+      next false unless condition = subcontext.read_value
+      next false unless subcontext.read_operator(')')
+      next false unless if_true = subcontext.read_codeblock
+      elsek = subcontext.read_keyword('else')
+      if elsek
+        next false unless if_false = subcontext.read_codeblock
+      end
+
+      DabNodeIf.new(condition, if_true, if_false)
+    end
   end
 
   def read_local_var

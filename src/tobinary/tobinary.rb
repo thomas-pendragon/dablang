@@ -28,11 +28,13 @@ class InputStream
   def map_args(call, args)
     if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER'
       return args.map(&:to_i)
-    end
-    if call == 'START_FUNCTION' || call == 'CONSTANT_SYMBOL'
+    elsif call == 'START_FUNCTION'
       name = args[0].strip.to_sym
       n_local = args[1].to_i
       return [name, n_local]
+    end
+    if call == 'CONSTANT_SYMBOL' || call == 'JMP' || call == 'JMP_IFN'
+      return args.map(&:strip).map(&:to_sym)
     end
     if call == 'CONSTANT_STRING'
       return args.map(&:strip).map { |s| s[1..-2] }
@@ -72,7 +74,7 @@ class OutputStream
 
   def write(line)
     code = OPCODES_REV[line[0]]
-    raise 'unknown token' unless code
+    raise "unknown token (#{line[0]})" unless code
 
     _push_uint8(code[:opcode])
 
@@ -123,6 +125,32 @@ class OutputStream
     write_uint64(crc)
     _write(@code)
   end
+
+  def pos
+    @code.length
+  end
+
+  def _rewind(pos)
+    @rewrite_pos = pos
+  end
+
+  def _rewrite_uint16(value)
+    data = [value].pack('S')
+    @code = @code[0...@rewrite_pos] + data + @code[@rewrite_pos + 2..-1]
+  end
+
+  def fix_jumps(labels, jumps)
+    errap ['jumps:', jumps, 'labels:', labels]
+    jumps.each do |jump|
+      jump_pos = jump[0]
+      jump_label = jump[1]
+
+      _rewind(jump_pos + 1) # opcode is 1 byte
+      diff = labels[jump_label] - jump_pos
+      raise 'diff must be >0' unless diff > 0
+      _rewrite_uint16(diff)
+    end
+  end
 end
 
 class Parser
@@ -139,15 +167,23 @@ class Parser
     1
   end
 
+  def function_pos
+    @function_stream.pos
+  end
+
   def run!
     @output_stream.begin(self)
-    @input_stream.each do |line|
+    @input_stream.each do |line, label|
       if line[0] == 'START_FUNCTION'
         @in_function = true
         @function_line = line.dup
         @function_string = StringIO.new
         @function_stream = OutputStream.new(@function_string)
+        @label_positions = {}
+        @jump_corrections = []
       elsif line[0] == 'END_FUNCTION'
+        @function_stream.fix_jumps(@label_positions, @jump_corrections)
+
         @function_line[3] = @function_stream.code.length
         @output_stream.write(@function_line)
         @output_stream._push(@function_stream.code)
@@ -156,10 +192,19 @@ class Parser
         @function_line = nil
         @function_string = nil
         @function_stream = nil
+        @label_positions = {}
+        @jump_corrections = []
       elsif @in_function
+        if label
+          @label_positions[label.to_s] = function_pos
+        end
+        if line[0] == 'JMP' || line[0] == 'JMP_IFN'
+          @jump_corrections << [function_pos, line[1].to_s]
+          line[1] = 0
+        end
         @function_stream.write(line)
       else
-        @output_stream.write(line)
+        raise 'unknown op outside function' # @output_stream.write(line)
       end
     end
     @output_stream.finalize
