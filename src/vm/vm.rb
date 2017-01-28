@@ -141,6 +141,8 @@ class DabVM
         get_local_variable(arg)
       elsif opcode == 'PUSH_ARG'
         @stack << fun_args[arg]
+      elsif opcode == 'RETURN'
+        return @stack.pop
       else
         raise 'unknown opcode'
       end
@@ -167,7 +169,7 @@ class DabVM
     if body.is_a? DabIntFunction
       sub_vm = self.fork
       sub_vm.reserve_local_vars(body.n_local_vars)
-      sub_vm.execute(body.body, args)
+      @stack << sub_vm.execute(body.body, args)
     elsif body.is_a? Proc
       @stack << body[*args]
     else

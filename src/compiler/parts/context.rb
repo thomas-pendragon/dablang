@@ -122,8 +122,17 @@ class DabContext
     @stream.read_keyword(*args)
   end
 
+  def read_return
+    on_subcontext do |subcontext|
+      next false unless subcontext.read_keyword('return')
+      next false unless value = subcontext.read_value
+
+      DabNodeReturn.new(value)
+    end
+  end
+
   def read_instruction
-    read_var || read_call
+    read_return || read_var || read_call
   end
 
   def read_local_var
@@ -200,7 +209,7 @@ class DabContext
   end
 
   def read_simple_value
-    read_literal_value || read_local_var
+    read_literal_value || read_local_var || read_call
   end
 
   def read_mul_value

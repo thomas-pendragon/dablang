@@ -1,0 +1,19 @@
+## CODE
+
+func fun()
+{
+	return "retval";
+}
+
+func main()
+{
+	print(fun());
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+retval
