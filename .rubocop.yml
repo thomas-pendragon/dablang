@@ -141,3 +141,6 @@ Lint/LiteralInCondition:
 
 Style/For:
   Enabled: false
+
+Style/TrivialAccessors:
+  Enabled: false
