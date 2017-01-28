@@ -220,8 +220,15 @@ class DabContext
     end
   end
 
+  def read_literal_boolean
+    on_subcontext do |subcontext|
+      next false unless keyword = subcontext.read_any_operator(%w(true false))
+      DabNodeLiteralBoolean.new(keyword == 'true')
+    end
+  end
+
   def read_literal_value
-    read_literal_string || read_literal_number
+    read_literal_string || read_literal_number || read_literal_boolean
   end
 
   def read_simple_value

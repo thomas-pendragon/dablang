@@ -108,10 +108,10 @@ class DabProgramStream
   end
 
   def input_match_any(array)
-    raise 'input_match_any error' unless array.all? { |item| item.length == 1 }
-    if array.include? current_char
-      current_char
+    array.each do |item|
+      return item if input_match(item)
     end
+    nil
   end
 
   def current_char_digit?
