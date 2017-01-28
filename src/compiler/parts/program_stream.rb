@@ -56,12 +56,17 @@ class DabProgramStream
   end
 
   def read_operator(operator)
+    read_any_operator([operator])
+  end
+
+  def read_any_operator(operator)
+    operator = [operator] unless operator.is_a? Array
     debug("operator #{operator} ?")
     skip_whitespace
-    return false unless input_match(operator)
-    advance!(operator.length)
-    debug("operator #{operator} ok")
-    true
+    return false unless op = input_match_any(operator)
+    advance!(op.length)
+    debug("operator #{operator} - #{op} ok")
+    op
   end
 
   def read_string
@@ -100,6 +105,13 @@ class DabProgramStream
       return false if current_char(i) != word[i]
     end
     true
+  end
+
+  def input_match_any(array)
+    raise 'input_match_any error' unless array.all? { |item| item.length == 1 }
+    if array.include? current_char
+      current_char
+    end
   end
 
   def current_char_digit?

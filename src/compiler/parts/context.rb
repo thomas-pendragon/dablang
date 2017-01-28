@@ -22,17 +22,18 @@ class DabContext
   end
 
   def _read_list(item_method, separator = ',')
+    separator = [separator] unless separator.is_a? Array
     on_subcontext do |subcontext|
       ret = DabNode.new
 
       next false unless arg = subcontext.send(item_method)
-      ret.insert(arg)
+      ret.insert(DabNodeListNode.new(arg, nil))
 
       while true
         next_item = subcontext.on_subcontext do |subsubcontext|
-          next false unless subsubcontext.read_keyword(separator)
+          next false unless separator = subsubcontext.read_any_operator(separator)
           next false unless next_arg = subsubcontext.send(item_method)
-          ret.insert(next_arg)
+          ret.insert(DabNodeListNode.new(next_arg, separator))
         end
         break unless next_item
       end
@@ -41,19 +42,24 @@ class DabContext
     end
   end
 
+  def _read_simple_list(item_method, separator = ',')
+    list = _read_list(item_method, separator)
+    return nil unless list
+    ret = DabNode.new
+    list.children.map(&:value).each { |item| ret.insert(item) }
+    ret
+  end
+
   def _read_list_or_single(method, separator, klass)
     list = _read_list(method, separator)
     return list unless list
-    if list.count == 1
-      list[0]
-    else
-      list = list.children
-      ret = list[0]
+    ret = list[0].value
+    if list.count > 1
       for i in 1...list.count do
-        ret = klass.new(ret, list[i], separator)
+        ret = klass.new(ret, list[i].value, list[i].separator)
       end
-      ret
     end
+    ret
   end
 
   def read_argument
@@ -66,7 +72,7 @@ class DabContext
   end
 
   def read_arglist
-    list = _read_list(:read_argument)
+    list = _read_simple_list(:read_argument)
     if list
       list.each_with_index do |item, index|
         item.index = index
@@ -98,6 +104,10 @@ class DabContext
 
   def read_operator(*args)
     @stream.read_operator(*args)
+  end
+
+  def read_any_operator(*args)
+    @stream.read_any_operator(*args)
   end
 
   def read_string(*args)
@@ -140,7 +150,7 @@ class DabContext
   end
 
   def read_valuelist
-    _read_list(:read_value)
+    _read_simple_list(:read_value)
   end
 
   def read_call
@@ -194,7 +204,7 @@ class DabContext
   end
 
   def read_value
-    add_op = _read_list_or_single(:read_simple_value, '+', DabNodeOperator)
+    add_op = _read_list_or_single(:read_simple_value, ['+'], DabNodeOperator)
     add_op
   end
 
