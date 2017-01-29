@@ -236,7 +236,7 @@ class DabContext
   end
 
   def read_mul_value
-    _read_list_or_single(:read_simple_value, ['*', '/'], DabNodeOperator)
+    _read_list_or_single(:read_simple_value, ['*', '/', '%'], DabNodeOperator)
   end
 
   def read_value

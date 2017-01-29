@@ -107,6 +107,7 @@ class DabVM
     @functions['-'] = ->(a, b) { a - b }
     @functions['*'] = ->(a, b) { a * b }
     @functions['/'] = ->(a, b) { a / b }
+    @functions['%'] = ->(a, b) { a % b }
     @local_vars = []
   end
 

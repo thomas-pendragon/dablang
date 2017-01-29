@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	print(12 % 3);
+	print(" ");
+	print(13 % 3);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+0 1
