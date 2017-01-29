@@ -239,8 +239,12 @@ class DabContext
     _read_list_or_single(:read_simple_value, ['*', '/', '%'], DabNodeOperator)
   end
 
-  def read_value
+  def read_add_value
     _read_list_or_single(:read_mul_value, ['+', '-'], DabNodeOperator)
+  end
+
+  def read_value
+    _read_list_or_single(:read_add_value, ['=='], DabNodeOperator)
   end
 
   def clone

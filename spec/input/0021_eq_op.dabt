@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	print(12 == 3);
+	print(" ");
+	print(3 == 3);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+false true
