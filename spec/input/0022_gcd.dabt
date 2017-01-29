@@ -1,0 +1,30 @@
+## CODE
+
+func gcd(a, b)
+{
+	if (b == 0)
+	{
+		return a;
+	}
+	else
+	{
+		return gcd(b, a % b);
+	};
+}
+
+func main()
+{
+	print(gcd(8, 12));
+	print(" ");
+	print(gcd(127, 13));
+	print(" ");
+	print(gcd(981924124, 14 * 981924124));
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+4 1 981924124
