@@ -3,6 +3,7 @@ GEM
   specs:
     ast (2.3.0)
     awesome_print (1.7.0)
+    colorize (0.8.1)
     parser (2.3.1.2)
       ast (~> 2.2)
     powerpack (0.1.1)
@@ -22,6 +23,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
+  colorize
   rake
   rubocop
 
