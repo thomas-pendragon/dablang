@@ -1,13 +1,27 @@
 require 'colorize'
 
 class SystemCommandError < RuntimeError
+  attr_accessor :stderr
+  def initialize(message, stderr)
+    super(message)
+    @stderr = stderr
+  end
 end
 
-def psystem(cmd)
+def psystem(cmd, capture_stderr = false)
   puts " > #{cmd.yellow}"
-  unless system cmd
-    raise SystemCommandError.new("Error during executing #{cmd}")
+  tempfile = nil
+  if capture_stderr
+    tempfile = Tempfile.new('stderr')
+    cmd += " 2> #{tempfile.path}"
   end
+  unless system cmd
+    stderr = open(tempfile.path).read if tempfile
+    raise SystemCommandError.new("Error during executing #{cmd}", stderr)
+  end
+ensure
+  tempfile&.close
+  tempfile&.unlink
 end
 
 def psystem_noecho(cmd)
@@ -15,6 +29,6 @@ def psystem_noecho(cmd)
   begin
     psystem cmd_noecho
   rescue SystemCommandError
-    psystem cmd
+    psystem(cmd, true)
   end
 end

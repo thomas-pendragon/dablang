@@ -28,18 +28,29 @@ raise 'no input' unless settings[:input]
 def read_test_file(fname)
   text = ''
   test_body = ''
+  compile_error = ''
   mode = nil
+  expected_status = nil
   open(fname).read.split("\n").map(&:strip).each do |line|
     if line.start_with? '## '
       mode = line
     elsif mode == '## CODE'
       text += line + "\n"
+    elsif mode == '## EXPECT COMPILE ERROR'
+      expected_status = :compile_error
+      compile_error += line + "\n"
     elsif mode == '## EXPECT OK'
+      expected_status = :ok
       test_body += line + "\n"
     end
   end
   data = [text, test_body].map(&:strip)
-  {code: data[0], expected_status: true, expected_body: data[1]}
+  {
+    code: data[0],
+    expected_status: expected_status,
+    expected_body: data[1],
+    expected_compile_error: compile_error.strip,
+  }
 end
 
 def describe_action(input, output, action)
@@ -79,35 +90,60 @@ def extract_source(input, output)
   end
 end
 
+def compare_output(info, actual, expected, soft_match = false)
+  match = if soft_match
+            actual.split("\n").last.include? expected
+          else
+            actual == expected
+          end
+  if match
+    puts "#{info}... OK!".green
+  else
+    puts 'Received:'.bold
+    puts actual
+    puts 'Expected:'.bold
+    puts expected
+    puts "#{info}... ERROR!".red.bold
+    raise 'test error'
+  end
+end
+
 def run_test(settings)
   input = settings[:input]
   test_output_dir = settings[:test_output_dir] || '.'
 
+  data = read_test_file(input)
+
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
   FileUtils.mkdir_p(test_output_dir)
+
   dab = Pathname.new(test_output_dir).join(File.basename(input).ext('.dab')).to_s
-  extract_source(input, dab)
   asm = Pathname.new(test_output_dir).join(File.basename(input).ext('.dabca')).to_s
-  compile_to_asm(dab, asm)
   bin = Pathname.new(test_output_dir).join(File.basename(input).ext('.dabcb')).to_s
-  assemble(asm, bin)
   out = Pathname.new(test_output_dir).join(File.basename(input).ext('.out')).to_s
+
+  extract_source(input, dab)
+  begin
+    compile_to_asm(dab, asm)
+  rescue SystemCommandError => e
+    if data[:expected_status] == :compile_error
+      compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
+      FileUtils.touch(out)
+      return
+    else
+      raise e
+    end
+  end
+  if data[:expected_status] == :compile_error
+    raise "Expected compiler error in #{input}"
+  end
+  assemble(asm, bin)
   execute(bin, out)
 
-  test_body = read_test_file(input)[:expected_body]
-
+  test_body = data[:expected_body]
   actual_body = open(out).read.strip
-  if actual_body == test_body
-    puts "#{info}... OK!".green
-  else
-    puts 'Expected:'.bold
-    puts test_body
-    puts 'Received:'.bold
-    puts actual_body
-    puts "#{info}... ERROR!".red.bold
-    raise 'test error'
-  end
+  compare_output(info, actual_body, test_body)
 end
 
 if settings[:input].downcase.end_with? '.dabt'

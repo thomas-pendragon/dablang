@@ -1,15 +1,26 @@
 class DabContext
   attr_reader :stream
   attr_accessor :local_vars
+  attr_accessor :functions
 
   def initialize(stream)
     @stream = stream
     @local_vars = []
+    @functions = ['print']
   end
 
   def add_local_var(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
     @local_vars << id
+  end
+
+  def add_function(id)
+    raise "id must be string, is #{id.class}" unless id.is_a? String
+    @functions << id
+  end
+
+  def has_function?(id)
+    @functions.include? id
   end
 
   def read_program
@@ -85,6 +96,7 @@ class DabContext
     on_subcontext do |subcontext|
       next false unless subcontext.read_keyword('func')
       next false unless ident = subcontext.read_identifier
+      subcontext.add_function(ident)
       next false unless subcontext.read_operator('(')
       if arglist = subcontext.read_arglist || nil
         arglist.each do |arg|
@@ -182,6 +194,7 @@ class DabContext
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next false unless id
+      raise DabCompileUnknownFunctionError.new(id, nil) unless has_function?(id)
       next false unless subcontext.read_operator('(')
       valuelist = subcontext.read_valuelist || nil
       next false unless subcontext.read_operator(')')
@@ -251,12 +264,14 @@ class DabContext
     substream = @stream.clone
     ret = DabContext.new(substream)
     ret.local_vars = @local_vars.clone
+    ret.functions = @functions.clone
     ret
   end
 
   def merge!(other_context)
     @stream.merge!(other_context.stream)
     @local_vars = other_context.local_vars
+    @functions = other_context.functions
   end
 
   def on_subcontext
