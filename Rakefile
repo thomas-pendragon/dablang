@@ -1,6 +1,6 @@
 require_relative 'src/shared/system.rb'
 
-inputs = Dir.glob('spec/input/*.dabt')
+inputs = Dir.glob('spec/input/*.dabt').sort.reverse
 outputs = []
 sources = Dir.glob('src/**/*.rb')
 
