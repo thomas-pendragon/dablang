@@ -28,18 +28,24 @@ require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
 require_relative 'postproc/reuse_constants.rb'
 
-stream = DabProgramStream.new(STDIN.read)
-compiler = DabCompiler.new(stream)
-program = compiler.program
+begin
+  stream = DabProgramStream.new(STDIN.read)
+  compiler = DabCompiler.new(stream)
+  program = compiler.program
 
-program.dump
+  program.dump
 
-DabPPFixLiterals.new.run(program)
-DabPPFixLocalvars.new.run(program)
-DabPPReuseConstants.new.run(program)
-DabPPCompactConstants.new.run(program)
+  DabPPFixLiterals.new.run(program)
+  DabPPFixLocalvars.new.run(program)
+  DabPPReuseConstants.new.run(program)
+  DabPPCompactConstants.new.run(program)
 
-program.dump
+  program.dump
 
-output = DabOutput.new
-program.compile(output)
+  output = DabOutput.new
+  program.compile(output)
+rescue DabCompilerError => e
+  STDERR.puts e.inspect
+  STDERR.puts sprintf('E%04d: %s', e.error_code, e.to_s)
+  exit(1)
+end
