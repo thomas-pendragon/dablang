@@ -1,13 +1,13 @@
 ## CODE
 
-func main()
-{
-	second();
-}
-
 func second()
 {
 	print("test ok");
+}
+
+func main()
+{
+	second();
 }
 
 ## RUN
