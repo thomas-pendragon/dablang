@@ -92,7 +92,7 @@ end
 
 def compare_output(info, actual, expected, soft_match = false)
   match = if soft_match
-            actual.split("\n").last.include? expected
+            actual.include? expected
           else
             actual == expected
           end
