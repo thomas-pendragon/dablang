@@ -20,6 +20,15 @@ class DabProgramStream
     @content = content.freeze
     @position = 0
     @length = @content.length
+
+    line = 1
+    @lines = (0...content.length).map do |n|
+      c = content[n]
+      if c == "\n"
+        line += 1
+      end
+      [n, line]
+    end.to_h
   end
 
   def eof?
@@ -55,7 +64,16 @@ class DabProgramStream
     true
   end
 
+  def filename
+    '<input>'
+  end
+
+  def _return_source(string, start_pos)
+    SourceString.new(string, filename, @lines[start_pos], start_pos, @position)
+  end
+
   def read_identifier
+    start_pos = @position
     debug('identifier ?')
     skip_whitespace
     ret = ''
@@ -66,7 +84,7 @@ class DabProgramStream
     skip_whitespace
     unless ret.empty?
       debug('identifier ok')
-      ret
+      _return_source(ret, start_pos)
     end
   end
 
