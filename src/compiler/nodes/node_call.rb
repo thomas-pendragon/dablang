@@ -11,6 +11,10 @@ class DabNodeCall < DabNode
     children[0]
   end
 
+  def real_identifier
+    identifier.extra_value
+  end
+
   def args
     children[1..-1]
   end
@@ -18,7 +22,7 @@ class DabNodeCall < DabNode
   def compile(output)
     output.push(identifier)
     args.each { |arg| arg.compile(output) }
-    output.comment(identifier.extra_value)
+    output.comment(real_identifier)
     output.print('CALL', args.count.to_s)
   end
 end
