@@ -1,3 +1,18 @@
+class SourceString < String
+  attr_accessor :source_file
+  attr_accessor :source_line
+  attr_accessor :source_cstart
+  attr_accessor :source_cend
+
+  def initialize(source, file, line, cstart, cend)
+    super(source)
+    @source_file = file
+    @source_line = line
+    @source_cstart = cstart
+    @source_cend = cend
+  end
+end
+
 class DabProgramStream
   attr_reader :position
 
