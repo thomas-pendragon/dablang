@@ -4,6 +4,8 @@ class DabNode
 
   def initialize
     @children = []
+    @self_errors = []
+    @self_source_parts = []
   end
 
   def insert(child)
@@ -108,5 +110,41 @@ class DabNode
 
   def remove_child(node)
     @children -= [node]
+  end
+
+  def add_error(error)
+    @self_errors << error
+  end
+
+  def errors
+    @self_errors + @children.flat_map(&:errors)
+  end
+
+  def has_errors?
+    errors.count > 0
+  end
+
+  def has_function?(id)
+    return true if id == 'print'
+    self.visit_all(DabNodeFunction) do |function|
+      return true if function.identifier == id
+    end
+    false
+  end
+
+  def add_source_part(part)
+    @self_source_parts << part
+  end
+
+  def source_parts
+    @self_source_parts + @children.flat_map(&:source_parts)
+  end
+
+  def source_file
+    source_parts.first&.source_file
+  end
+
+  def source_line
+    source_parts.first&.source_line
   end
 end

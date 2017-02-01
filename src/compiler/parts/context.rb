@@ -192,13 +192,16 @@ class DabContext
 
   def read_call
     on_subcontext do |subcontext|
-      id = subcontext.read_identifier
-      next false unless id
-      raise DabCompileUnknownFunctionError.new(id, nil) unless has_function?(id)
-      next false unless subcontext.read_operator('(')
+      next false unless id = subcontext.read_identifier
+      next false unless op1 = subcontext.read_operator('(')
       valuelist = subcontext.read_valuelist || nil
-      next false unless subcontext.read_operator(')')
-      DabNodeCall.new(id, valuelist)
+      next false unless op2 = subcontext.read_operator(')')
+      ret = DabNodeCall.new(id, valuelist)
+      ret.add_source_part(id)
+      ret.add_source_part(op1)
+      ret.add_source_part(valuelist)
+      ret.add_source_part(op2)
+      ret
     end
   end
 

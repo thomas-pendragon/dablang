@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	unknownfun();
+	anotherfun();
+}
+
+## RUN
+
+main 
+
+## EXPECT COMPILE ERROR
+
+<input>:3: error E0001: Unknown function <unknownfun>.
+<input>:4: error E0001: Unknown function <anotherfun>.

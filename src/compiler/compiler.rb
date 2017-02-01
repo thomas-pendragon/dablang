@@ -23,29 +23,32 @@ require_relative 'parts/context.rb'
 require_relative 'parts/exceptions.rb'
 require_relative 'parts/output.rb'
 require_relative 'parts/program_stream.rb'
+require_relative 'postproc/check_functions.rb'
 require_relative 'postproc/compact_constants.rb'
 require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
 require_relative 'postproc/reuse_constants.rb'
 
-begin
-  stream = DabProgramStream.new(STDIN.read)
-  compiler = DabCompiler.new(stream)
-  program = compiler.program
+stream = DabProgramStream.new(STDIN.read)
+compiler = DabCompiler.new(stream)
+program = compiler.program
 
-  program.dump
+program.dump
 
-  DabPPFixLiterals.new.run(program)
-  DabPPFixLocalvars.new.run(program)
-  DabPPReuseConstants.new.run(program)
-  DabPPCompactConstants.new.run(program)
+DabPPFixLiterals.new.run(program)
+DabPPFixLocalvars.new.run(program)
+DabPPReuseConstants.new.run(program)
+DabPPCompactConstants.new.run(program)
+DabPPCheckFunctions.new.run(program)
 
-  program.dump
+program.dump
 
+if program.has_errors?
+  program.errors.each do |e|
+    STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line, e.error_code, e.message)
+  end
+  exit(1)
+else
   output = DabOutput.new
   program.compile(output)
-rescue DabCompilerError => e
-  STDERR.puts e.inspect
-  STDERR.puts sprintf('E%04d: %s', e.error_code, e.to_s)
-  exit(1)
 end
