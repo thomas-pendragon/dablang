@@ -22,4 +22,8 @@ class DabNodeLiteralString < DabNodeLiteral
   def extra_value
     extra_dump
   end
+
+  def my_type
+    DabTypeString.new
+  end
 end

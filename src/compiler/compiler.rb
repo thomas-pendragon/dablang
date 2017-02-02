@@ -18,12 +18,15 @@ require_relative 'nodes/node_local_var.rb'
 require_relative 'nodes/node_operator.rb'
 require_relative 'nodes/node_return.rb'
 require_relative 'nodes/node_symbol.rb'
+require_relative 'nodes/node_type.rb'
 require_relative 'parts/compiler.rb'
 require_relative 'parts/context.rb'
 require_relative 'parts/exceptions.rb'
 require_relative 'parts/output.rb'
 require_relative 'parts/program_stream.rb'
+require_relative 'parts/types.rb'
 require_relative 'postproc/check_functions.rb'
+require_relative 'postproc/check_setvar_types.rb'
 require_relative 'postproc/compact_constants.rb'
 require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
@@ -40,6 +43,7 @@ DabPPFixLocalvars.new.run(program)
 DabPPReuseConstants.new.run(program)
 DabPPCompactConstants.new.run(program)
 DabPPCheckFunctions.new.run(program)
+DabPPCheckSetvarTypes.new.run(program)
 
 program.dump
 

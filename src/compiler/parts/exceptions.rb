@@ -16,3 +16,13 @@ class DabCompileUnknownFunctionError < DabCompilerError
     1
   end
 end
+
+class DabCompileSetvarTypeError < DabCompilerError
+  def initialize(type1, type2, source)
+    super("Cannot assign <#{type1.type_string}> to a variable of type <#{type2.type_string}>.", source)
+  end
+
+  def error_code
+    2
+  end
+end

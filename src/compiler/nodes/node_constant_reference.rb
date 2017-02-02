@@ -27,4 +27,8 @@ class DabNodeConstantReference < DabNode
   def compile(output)
     output.push(self)
   end
+
+  def my_type
+    target.my_type
+  end
 end

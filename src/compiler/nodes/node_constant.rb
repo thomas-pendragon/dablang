@@ -24,4 +24,8 @@ class DabNodeConstant < DabNode
   def real_value
     @children[0].real_value
   end
+
+  def my_type
+    @children[0].my_type
+  end
 end

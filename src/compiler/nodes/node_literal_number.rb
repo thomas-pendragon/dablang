@@ -22,4 +22,8 @@ class DabNodeLiteralNumber < DabNodeLiteral
   def extra_value
     extra_dump
   end
+
+  def my_type
+    DabTypeFixnum.new
+  end
 end

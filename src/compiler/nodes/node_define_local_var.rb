@@ -4,14 +4,20 @@ class DabNodeDefineLocalVar < DabNode
   attr_accessor :index
   attr_reader :identifier
 
-  def initialize(identifier, value)
+  def initialize(identifier, value, type)
     super()
     @identifier = identifier
     insert(value)
+    type ||= DabNodeType.new(nil)
+    insert(type)
   end
 
   def value
     children[0]
+  end
+
+  def var_type
+    children[1]
   end
 
   def real_identifier

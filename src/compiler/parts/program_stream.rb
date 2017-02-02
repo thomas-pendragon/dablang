@@ -54,14 +54,14 @@ class DabProgramStream
   end
 
   def read_keyword(keyword)
+    start_pos = @position
     debug("keyword #{keyword} ?")
     skip_whitespace
     return false unless input_match(keyword)
     advance!(keyword.length)
-    return false unless current_char_whitespace?
-    advance!
+    return false unless current_char_whitespace_or_symbol?
     debug("keyword #{keyword} ok")
-    true
+    _return_source(keyword, start_pos)
   end
 
   def filename
@@ -159,8 +159,12 @@ class DabProgramStream
     current_char == ' ' || current_char == "\t" || current_char == "\r" || current_char == "\n"
   end
 
+  def current_char_whitespace_or_symbol?
+    current_char_whitespace? || current_char == '<' || current_char == '>'
+  end
+
   def current_char_identifier?
-    current_char =~ /[a-z]/
+    current_char =~ /[a-zA-Z]/
   end
 
   def current_char(offset = 0)

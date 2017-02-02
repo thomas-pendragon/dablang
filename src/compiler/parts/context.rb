@@ -92,6 +92,14 @@ class DabContext
     list
   end
 
+  def read_type
+    on_subcontext do |subcontext|
+      typename = subcontext.read_identifier
+      next false unless typename
+      DabNodeType.new(typename)
+    end
+  end
+
   def read_function
     on_subcontext do |subcontext|
       next false unless subcontext.read_keyword('func')
@@ -176,13 +184,26 @@ class DabContext
 
   def read_var
     on_subcontext do |subcontext|
-      next false unless subcontext.read_keyword('var')
+      next false unless keyw = subcontext.read_keyword('var')
+      lbrace = subcontext.read_operator('<')
+      if lbrace
+        next false unless type = subcontext.read_type
+        next false unless rbrace = subcontext.read_operator('>')
+      end
       next false unless id = subcontext.read_identifier
-      next false unless subcontext.read_operator('=')
+      next false unless eq = subcontext.read_operator('=')
       next false unless value = subcontext.read_value
 
       subcontext.add_local_var(id)
-      DabNodeDefineLocalVar.new(id, value)
+      ret = DabNodeDefineLocalVar.new(id, value, type)
+      ret.add_source_part(keyw)
+      ret.add_source_part(lbrace)
+      ret.add_source_part(type)
+      ret.add_source_part(rbrace)
+      ret.add_source_part(id)
+      ret.add_source_part(eq)
+      ret.add_source_part(value)
+      ret
     end
   end
 

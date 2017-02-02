@@ -22,7 +22,8 @@ class DabNode
   end
 
   def dump(level = 0)
-    err('%s - %s %s', '  ' * level, self.class.name, extra_dump)
+    tt = sprintf('(%s)', self.my_type.type_string).white
+    err('%s - %s %s %s', '  ' * level, self.class.name, extra_dump, tt)
     @children.each do |child|
       if child.nil?
         err('%s ~ [nil]', '  ' * (level + 1))
@@ -146,5 +147,9 @@ class DabNode
 
   def source_line
     source_parts.first&.source_line
+  end
+
+  def my_type
+    DabTypeAny.new
   end
 end

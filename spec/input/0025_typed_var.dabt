@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	var<String> a = "test string var";
+	print(a);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+test string var
