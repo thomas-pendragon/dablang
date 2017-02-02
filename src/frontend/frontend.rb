@@ -64,7 +64,7 @@ def run_ruby_part(input, output, action, tool)
   describe_action(input, output, action) do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "ruby src/#{tool}/#{tool}.rb < #{input} > #{output}"
+    cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb < #{input} > #{output}"
     psystem_noecho cmd
   end
 end
