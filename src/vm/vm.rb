@@ -141,7 +141,7 @@ class DabVM
         @stack << @constants[arg]
       elsif opcode == 'CALL'
         data = @stack.pop(arg + 1)
-        call_function(data[0].to_s, *data[1..-1])
+        call_function(data[-1].to_s, *data[0..-2])
       elsif opcode == 'SET_VAR'
         value = @stack.pop
         define_local_variable(arg, value)

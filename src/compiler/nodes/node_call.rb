@@ -20,8 +20,8 @@ class DabNodeCall < DabNode
   end
 
   def compile(output)
-    output.push(identifier)
     args.each { |arg| arg.compile(output) }
+    output.push(identifier)
     output.comment(real_identifier)
     output.print('CALL', args.count.to_s)
   end
