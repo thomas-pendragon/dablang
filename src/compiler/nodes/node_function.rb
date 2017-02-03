@@ -56,6 +56,8 @@ class DabNodeFunction < DabNode
         constant.compile(output)
       end
       body.compile(output)
+      output.print('PUSH_NIL')
+      output.print('RETURN')
     end
   end
 end

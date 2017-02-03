@@ -13,6 +13,7 @@ OPCODES = {
   0x0B => {name: 'JMP_IFN', arg: :uint16}, # pop(1), add +arg to PC if value from stack is false
   0x0C => {name: 'NOP'}, #
   0x0D => {name: 'CONSTANT_BOOLEAN', arg: :uint16}, # bool (true/false)
+  0x0E => {name: 'PUSH_NIL'}, # push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

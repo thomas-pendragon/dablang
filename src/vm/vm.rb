@@ -159,6 +159,8 @@ class DabVM
           stream.skip(arg - 3)
         end
       elsif opcode == 'NOP'
+      elsif opcode == 'PUSH_NIL'
+        @stack << nil
       else
         raise "unknown opcode #{opcode}"
       end
