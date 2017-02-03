@@ -5,6 +5,9 @@ require 'rake'
 require 'shellwords'
 require 'fileutils'
 
+class DabCompareError < RuntimeError
+end
+
 args = ARGV.dup
 flag = nil
 settings = {}
@@ -104,7 +107,7 @@ def compare_output(info, actual, expected, soft_match = false)
     puts 'Expected:'.bold
     puts expected
     puts "#{info}... ERROR!".red.bold
-    raise 'test error'
+    raise DabCompareError.new('test error')
   end
 end
 
@@ -143,7 +146,12 @@ def run_test(settings)
 
   test_body = data[:expected_body]
   actual_body = open(out).read.strip
-  compare_output(info, actual_body, test_body)
+  begin
+    compare_output(info, actual_body, test_body)
+  rescue DabCompareError
+    FileUtils.rm(out)
+    raise
+  end
 end
 
 if settings[:input].downcase.end_with? '.dabt'
