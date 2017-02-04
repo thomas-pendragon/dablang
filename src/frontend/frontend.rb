@@ -68,7 +68,14 @@ def run_ruby_part(input, output, action, tool)
     input = input.to_s.shellescape
     output = output.to_s.shellescape
     cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb < #{input} > #{output}"
-    psystem_noecho cmd
+    begin
+      psystem_noecho cmd
+    rescue SystemCommandError => e
+      STDERR.puts
+      STDERR.puts e.stderr
+      STDERR.puts
+      raise
+    end
   end
 end
 
