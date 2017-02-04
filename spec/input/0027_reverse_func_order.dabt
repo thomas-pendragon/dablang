@@ -1,0 +1,19 @@
+## CODE
+
+func main()
+{
+	second();
+}
+
+func second()
+{
+	print("test ok");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+test ok
