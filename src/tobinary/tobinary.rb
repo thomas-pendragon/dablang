@@ -26,7 +26,7 @@ class InputStream
   end
 
   def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN'
+    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' || call == 'KERNELCALL'
       return args.map(&:to_i)
     elsif call == 'START_FUNCTION'
       name = args[0].strip.to_sym

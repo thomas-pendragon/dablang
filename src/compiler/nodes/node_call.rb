@@ -1,4 +1,5 @@
 require_relative 'node.rb'
+require_relative '../../shared/opcodes.rb'
 
 class DabNodeCall < DabNode
   def initialize(identifier, args)
@@ -21,8 +22,12 @@ class DabNodeCall < DabNode
 
   def compile(output)
     args.each { |arg| arg.compile(output) }
-    output.push(identifier)
-    output.comment(real_identifier)
-    output.print('CALL', args.count.to_s)
+    if real_identifier == 'print'
+      output.print('KERNELCALL', KERNELCODES_REV['PRINT'])
+    else
+      output.push(identifier)
+      output.comment(real_identifier)
+      output.print('CALL', args.count.to_s)
+    end
   end
 end

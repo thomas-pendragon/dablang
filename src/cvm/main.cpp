@@ -294,6 +294,12 @@ enum
     OP_NOP              = 0x0C,
     OP_CONSTANT_BOOLEAN = 0x0D,
     OP_PUSH_NIL         = 0x0E,
+    OP_KERNELCALL       = 0x0F,
+};
+
+enum
+{
+    KERNEL_PRINT = 0x00,
 };
 
 #define STR2(s) #s
@@ -357,25 +363,22 @@ struct DabVM
 
     DabVM()
     {
-        DabFunction print_fun;
-        print_fun.name    = "print";
-        print_fun.regular = false;
-        print_fun.extra   = [this]() {
-            auto arg = stack_pop();
-            fprintf(stderr, "[ ");
-            arg.print(stderr);
-            fprintf(stderr, " ]\n");
-            arg.print(stdout);
-            stack_push_nil();
-        };
-        functions["print"] = print_fun;
-
         DAB_DEFINE_OP_STR(+);
         DAB_DEFINE_OP(-);
         DAB_DEFINE_OP(*);
         DAB_DEFINE_OP(/);
         DAB_DEFINE_OP(%);
         DAB_DEFINE_OP_BOOL(==);
+    }
+
+    void kernel_print()
+    {
+        auto arg = stack_pop();
+        fprintf(stderr, "[ ");
+        arg.print(stderr);
+        fprintf(stderr, " ]\n");
+        arg.print(stdout);
+        stack_push_nil();
     }
 
     void pop_frame(bool regular)
@@ -744,8 +747,30 @@ struct DabVM
             push(var);
             break;
         }
+        case OP_KERNELCALL:
+        {
+            auto call = input.read_uint8();
+            kernelcall(call);
+            break;
+        }
         default:
             fprintf(stderr, "VM error: Unknown opcode <%d>.\n", (int)opcode);
+            exit(1);
+            break;
+        }
+    }
+
+    void kernelcall(int call)
+    {
+        switch (call)
+        {
+        case KERNEL_PRINT:
+        {
+            kernel_print();
+            break;
+        }
+        default:
+            fprintf(stderr, "VM error: Unknown kernel call <%d>.\n", (int)call);
             exit(1);
             break;
         }

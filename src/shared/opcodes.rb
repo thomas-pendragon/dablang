@@ -14,6 +14,13 @@ OPCODES = {
   0x0C => {name: 'NOP'}, #
   0x0D => {name: 'CONSTANT_BOOLEAN', arg: :uint16}, # bool (true/false)
   0x0E => {name: 'PUSH_NIL'}, # push(1)
+  0x0F => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
+
+KERNELCODES = {
+  0x00 => 'PRINT',
+}.freeze
+
+KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
