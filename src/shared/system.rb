@@ -16,7 +16,9 @@ def psystem(cmd, capture_stderr = false)
     cmd += " 2> #{tempfile.path}"
   end
   unless system cmd
-    stderr = open(tempfile.path).read if tempfile
+    if tempfile
+      stderr = open(tempfile.path).read
+    end
     raise SystemCommandError.new("Error during executing #{cmd}", stderr)
   end
 ensure

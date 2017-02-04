@@ -81,7 +81,20 @@ def assemble(input, output)
 end
 
 def execute(input, output)
-  run_ruby_part(input, output, 'run', 'vm')
+  describe_action(input, output, 'VM') do
+    input = input.to_s.shellescape
+    output = output.to_s.shellescape
+    cmd = "timeout 10 ./bin/cvm < #{input} > #{output}"
+    begin
+      psystem_noecho cmd
+    rescue SystemCommandError => e
+      STDERR.puts
+      STDERR.puts e.stderr
+      STDERR.puts
+      FileUtils.rm(output)
+      raise
+    end
+  end
 end
 
 def extract_source(input, output)

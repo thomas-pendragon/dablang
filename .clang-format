@@ -1,0 +1,61 @@
+---
+Language:        Cpp
+# BasedOnStyle:  LLVM
+BreakBeforeBraces: Allman
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+IndentWidth:     4
+Standard:        Cpp11
+TabWidth:        4
+UseTab:          Never
+SortIncludes: false
+ColumnLimit:     100
+AllowShortFunctionsOnASingleLine: None #Inline
+NamespaceIndentation: None
+MaxEmptyLinesToKeep: 1
+AlwaysBreakTemplateDeclarations: true
+
+# AccessModifierOffset: -2
+# AlignEscapedNewlinesLeft: false
+# AlignTrailingComments: true
+# AllowAllParametersOfDeclarationOnNextLine: true
+# AllowShortBlocksOnASingleLine: false
+# AllowShortIfStatementsOnASingleLine: false
+# AllowShortLoopsOnASingleLine: false
+# AlwaysBreakBeforeMultilineStrings: false
+# BinPackParameters: true
+# BreakBeforeBinaryOperators: false
+# BreakBeforeTernaryOperators: true
+# BreakConstructorInitializersBeforeComma: false
+# CommentPragmas:  '^ IWYU pragma:'
+# ConstructorInitializerAllOnOneLineOrOnePerLine: false
+# ConstructorInitializerIndentWidth: 4
+# ContinuationIndentWidth: 4
+# Cpp11BracedListStyle: true
+# DerivePointerAlignment: false
+# DisableFormat:   false
+# ExperimentalAutoDetectBinPacking: false
+# ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+# IndentCaseLabels: false
+# IndentFunctionDeclarationAfterType: false
+# IndentWrappedFunctionNames: false
+# KeepEmptyLinesAtTheStartOfBlocks: true
+# ObjCSpaceAfterProperty: false
+# ObjCSpaceBeforeProtocolList: true
+# PenaltyBreakBeforeFirstCallParameter: 19
+# PenaltyBreakComment: 300
+# PenaltyBreakFirstLessLess: 120
+# PenaltyBreakString: 1000
+# PenaltyExcessCharacter: 1000000
+# PenaltyReturnTypeOnItsOwnLine: 60
+# PointerAlignment: Right
+# SpaceBeforeAssignmentOperators: true
+# SpaceBeforeParens: ControlStatements
+# SpaceInEmptyParentheses: false
+# SpacesBeforeTrailingComments: 1
+# SpacesInAngles:  false
+# SpacesInContainerLiterals: true
+# SpacesInCStyleCastParentheses: false
+# SpacesInParentheses: false
+...
+

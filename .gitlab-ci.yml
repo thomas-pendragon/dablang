@@ -5,6 +5,8 @@ before_script:
   - bundle install --path=/cache/bundler
 
 tests:
+    variables:
+      COMPILER: g++
     script: "bundle exec rake"
     tags:
         - ruby

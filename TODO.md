@@ -1,3 +1,11 @@
 - dumping AST tree before and after postprocessing
 - empty argument list should not create empty symbol
 - not require semicolons after if
+- endianness in cvm/main.cpp
+- number of constants should be a part of function description
+- global constants
+- "Kernel calls" instead of magic functions
+- void calls
+- return values should be reserved on stack
+- don't transform read-only function arguments to local variables
+- negative offsets for JMP
