@@ -629,120 +629,125 @@ struct DabVM
     {
         while (!input.eof())
         {
-            fprintf(stderr, "\n");
-            dump();
-            auto opcode = input.read_uint8();
-            fprintf(stderr, "Opcode: %d\n", (int)opcode);
-            switch (opcode)
+            execute_single(input);
+        }
+    }
+
+    void execute_single(Stream &input)
+    {
+        fprintf(stderr, "\n");
+        dump();
+        auto opcode = input.read_uint8();
+        fprintf(stderr, "Opcode: %d\n", (int)opcode);
+        switch (opcode)
+        {
+        case OP_START_FUNCTION:
+        {
+            auto name        = input.read_vlc_string();
+            auto n_locals    = input.read_uint16();
+            auto body_length = input.read_uint16();
+            add_function(input, name, n_locals, body_length);
+            break;
+        }
+        case OP_CONSTANT_SYMBOL:
+        {
+            auto name = input.read_vlc_string();
+            push_constant_symbol(name);
+            break;
+        }
+        case OP_CONSTANT_STRING:
+        {
+            auto name = input.read_vlc_string();
+            push_constant_string(name);
+            break;
+        }
+        case OP_CONSTANT_NUMBER:
+        {
+            auto value = input.read_uint64();
+            push_constant_fixnum(value);
+            break;
+        }
+        case OP_CONSTANT_BOOLEAN:
+        {
+            auto value = input.read_uint16();
+            push_constant_boolean(value);
+            break;
+        }
+        case OP_PUSH_CONSTANT:
+        {
+            auto index = input.read_uint16();
+            push(constants[start_of_constants().fixnum + index]);
+            break;
+        }
+        case OP_CALL:
+        {
+            auto name   = stack_pop_symbol();
+            auto n_args = input.read_uint16();
+            call(name, n_args);
+            break;
+        }
+        case OP_PUSH_NIL:
+        {
+            stack_push_nil();
+            break;
+        }
+        case OP_RETURN:
+        {
+            auto &retval = get_retval();
+            retval       = stack_pop();
+            retval.kind  = VAL_RETVAL;
+            pop_frame(true);
+            break;
+        }
+        case OP_JMP:
+        {
+            auto mod = input.read_uint16() - 3;
+            fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
+                    (void *)(ip() + mod));
+            instructions.seek(ip() + mod);
+            break;
+        }
+        case OP_JMP_IFN:
+        {
+            auto mod   = input.read_uint16() - 3;
+            auto value = stack_pop();
+            if (!value.truthy())
             {
-            case OP_START_FUNCTION:
-            {
-                auto name        = input.read_vlc_string();
-                auto n_locals    = input.read_uint16();
-                auto body_length = input.read_uint16();
-                add_function(input, name, n_locals, body_length);
-                break;
-            }
-            case OP_CONSTANT_SYMBOL:
-            {
-                auto name = input.read_vlc_string();
-                push_constant_symbol(name);
-                break;
-            }
-            case OP_CONSTANT_STRING:
-            {
-                auto name = input.read_vlc_string();
-                push_constant_string(name);
-                break;
-            }
-            case OP_CONSTANT_NUMBER:
-            {
-                auto value = input.read_uint64();
-                push_constant_fixnum(value);
-                break;
-            }
-            case OP_CONSTANT_BOOLEAN:
-            {
-                auto value = input.read_uint16();
-                push_constant_boolean(value);
-                break;
-            }
-            case OP_PUSH_CONSTANT:
-            {
-                auto index = input.read_uint16();
-                push(constants[start_of_constants().fixnum + index]);
-                break;
-            }
-            case OP_CALL:
-            {
-                auto name   = stack_pop_symbol();
-                auto n_args = input.read_uint16();
-                call(name, n_args);
-                break;
-            }
-            case OP_PUSH_NIL:
-            {
-                stack_push_nil();
-                break;
-            }
-            case OP_RETURN:
-            {
-                auto &retval = get_retval();
-                retval       = stack_pop();
-                retval.kind  = VAL_RETVAL;
-                pop_frame(true);
-                break;
-            }
-            case OP_JMP:
-            {
-                auto mod = input.read_uint16() - 3;
-                fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
-                        (void *)(ip() + mod));
                 instructions.seek(ip() + mod);
-                break;
             }
-            case OP_JMP_IFN:
-            {
-                auto mod   = input.read_uint16() - 3;
-                auto value = stack_pop();
-                if (!value.truthy())
-                {
-                    instructions.seek(ip() + mod);
-                }
-                break;
-            }
-            case OP_NOP:
-            {
-                break;
-            }
-            case OP_SETVAR:
-            {
-                auto  index = input.read_uint16();
-                auto  value = stack_pop();
-                auto &var   = get_var(index);
-                var         = value;
-                var.kind    = VAL_VARIABLE;
-                break;
-            }
-            case OP_PUSH_VAR:
-            {
-                auto index = input.read_uint16();
-                auto var   = get_var(index);
-                push(var);
-                break;
-            }
-            case OP_PUSH_ARG:
-            {
-                auto index = input.read_uint16();
-                auto var   = get_arg(index);
-                push(var);
-                break;
-            }
-            default:
-                fprintf(stderr, "VM error: Unknown opcode <%d>.\n", (int)opcode);
-                exit(1);
-                break;
-            }
+            break;
+        }
+        case OP_NOP:
+        {
+            break;
+        }
+        case OP_SETVAR:
+        {
+            auto  index = input.read_uint16();
+            auto  value = stack_pop();
+            auto &var   = get_var(index);
+            var         = value;
+            var.kind    = VAL_VARIABLE;
+            break;
+        }
+        case OP_PUSH_VAR:
+        {
+            auto index = input.read_uint16();
+            auto var   = get_var(index);
+            push(var);
+            break;
+        }
+        case OP_PUSH_ARG:
+        {
+            auto index = input.read_uint16();
+            auto var   = get_arg(index);
+            push(var);
+            break;
+        }
+        default:
+            fprintf(stderr, "VM error: Unknown opcode <%d>.\n", (int)opcode);
+            exit(1);
+            break;
         }
     }
 
