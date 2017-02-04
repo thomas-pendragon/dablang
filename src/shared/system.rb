@@ -27,10 +27,5 @@ ensure
 end
 
 def psystem_noecho(cmd)
-  cmd_noecho = "#{cmd} 2>/dev/null"
-  begin
-    psystem cmd_noecho
-  rescue SystemCommandError
-    psystem(cmd, true)
-  end
+  psystem(cmd, true)
 end
