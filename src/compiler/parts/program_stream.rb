@@ -120,6 +120,7 @@ class DabProgramStream
   end
 
   def read_number
+    start_pos = @position
     debug('number ?')
     skip_whitespace
     return false unless current_char_digit?
@@ -130,7 +131,7 @@ class DabProgramStream
       advance!
     end
     debug('number ok')
-    ret
+    _return_source(ret, start_pos)
   end
 
   def input_match(word)

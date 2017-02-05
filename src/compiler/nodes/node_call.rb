@@ -30,4 +30,8 @@ class DabNodeCall < DabNode
       output.print('CALL', args.count.to_s)
     end
   end
+
+  def target_function
+    root.has_function?(real_identifier)
+  end
 end

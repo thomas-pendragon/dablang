@@ -25,6 +25,7 @@ require_relative 'parts/exceptions.rb'
 require_relative 'parts/output.rb'
 require_relative 'parts/program_stream.rb'
 require_relative 'parts/types.rb'
+require_relative 'postproc/check_call_args_types.rb'
 require_relative 'postproc/check_functions.rb'
 require_relative 'postproc/check_setvar_types.rb'
 require_relative 'postproc/compact_constants.rb'
@@ -44,6 +45,7 @@ DabPPReuseConstants.new.run(program)
 DabPPCompactConstants.new.run(program)
 DabPPCheckFunctions.new.run(program)
 DabPPCheckSetvarTypes.new.run(program)
+DabPPCheckCallArgsTypes.new.run(program)
 
 program.dump
 

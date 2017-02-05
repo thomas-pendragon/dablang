@@ -12,7 +12,9 @@ class DabNodeFunction < DabNode
     insert(arglist)
     self.n_local_vars = 0
     arglist&.each_with_index do |arg, index|
-      body.pre_insert(DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index), DabNodeType.new(nil)))
+      define_var = DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index, arg.my_type), arg.my_type, true)
+      define_var.clone_source_parts_from(arg)
+      body.pre_insert(define_var)
     end
     @labels = 0
   end
@@ -37,7 +39,9 @@ class DabNodeFunction < DabNode
     index = self.constants.count
     const = DabNodeConstant.new(literal, index)
     self.constants.insert(const)
-    DabNodeConstantReference.new(index)
+    ret = DabNodeConstantReference.new(index)
+    ret.clone_source_parts_from(literal)
+    ret
   end
 
   def remove_constant_node(node)

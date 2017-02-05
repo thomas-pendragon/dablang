@@ -77,8 +77,18 @@ class DabContext
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next false unless id
+      lbrace = subcontext.read_operator('<')
+      if lbrace
+        next false unless type = subcontext.read_type
+        next false unless rbrace = subcontext.read_operator('>')
+      end
 
-      DabNodeArgDefinition.new(-1, id)
+      ret = DabNodeArgDefinition.new(-1, id, type)
+      ret.add_source_part(id)
+      ret.add_source_part(lbrace)
+      ret.add_source_part(type)
+      ret.add_source_part(rbrace)
+      ret
     end
   end
 
@@ -253,7 +263,9 @@ class DabContext
     on_subcontext do |subcontext|
       str = subcontext.read_number
       next false unless str
-      DabNodeLiteralNumber.new(str.to_i)
+      ret = DabNodeLiteralNumber.new(str.to_i)
+      ret.add_source_part(str)
+      ret
     end
   end
 

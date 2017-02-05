@@ -1,0 +1,19 @@
+## CODE
+
+func other(a<String>)
+{
+	print(a);
+}
+
+func main()
+{
+	other(21);
+}
+
+## RUN
+
+main 
+
+## EXPECT COMPILE ERROR
+
+<input>:8: error E0003: Cannot pass <Fixnum> to an argument of type <String>.

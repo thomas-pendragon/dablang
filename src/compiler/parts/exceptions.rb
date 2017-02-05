@@ -26,3 +26,13 @@ class DabCompileSetvarTypeError < DabCompilerError
     2
   end
 end
+
+class DabCompileSetargTypeError < DabCompilerError
+  def initialize(type1, type2, source)
+    super("Cannot pass <#{type1.type_string}> to an argument of type <#{type2.type_string}>.", source)
+  end
+
+  def error_code
+    3
+  end
+end

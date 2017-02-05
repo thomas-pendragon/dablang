@@ -2,10 +2,12 @@ require_relative 'node.rb'
 
 class DabNodeArg < DabNode
   attr_reader :index
+  attr_reader :my_type
 
-  def initialize(index)
+  def initialize(index, type)
     super()
     @index = index
+    @my_type = type
   end
 
   def extra_dump

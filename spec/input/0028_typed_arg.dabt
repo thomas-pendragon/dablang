@@ -1,0 +1,19 @@
+## CODE
+
+func other(a<String>)
+{
+	print(a);
+}
+
+func main()
+{
+	other("typed ok");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+typed ok

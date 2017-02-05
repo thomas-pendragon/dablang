@@ -23,7 +23,8 @@ class DabNode
 
   def dump(level = 0)
     tt = sprintf('(%s)', self.my_type.type_string).white
-    err('%s - %s %s %s', '  ' * level, self.class.name, extra_dump, tt)
+    src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
+    err('%s - %s %s %s %s', '  ' * level, self.class.name, extra_dump, tt, src.white)
     @children.each do |child|
       if child.nil?
         err('%s ~ [nil]', '  ' * (level + 1))
@@ -125,10 +126,14 @@ class DabNode
     errors.count > 0
   end
 
+  def root
+    @parent ? @parent.root : self
+  end
+
   def has_function?(id)
     return true if id == 'print'
     self.visit_all(DabNodeFunction) do |function|
-      return true if function.identifier == id
+      return function if function.identifier == id
     end
     false
   end
@@ -147,6 +152,10 @@ class DabNode
 
   def source_line
     source_parts.first&.source_line
+  end
+
+  def clone_source_parts_from(source)
+    @self_source_parts = source.source_parts.dup
   end
 
   def my_type
