@@ -1,5 +1,4 @@
 - dumping AST tree before and after postprocessing
-- empty argument list should not create empty symbol
 - not require semicolons after if
 - endianness in cvm/main.cpp
 - number of constants should be a part of function description

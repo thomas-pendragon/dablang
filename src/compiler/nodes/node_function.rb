@@ -9,7 +9,7 @@ class DabNodeFunction < DabNode
     @identifier = identifier
     insert(body)
     insert(DabNode.new)
-    insert(arglist)
+    insert(arglist) if arglist
     self.n_local_vars = 0
     arglist&.each_with_index do |arg, index|
       define_var = DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index, arg.my_type), arg.my_type, true)
