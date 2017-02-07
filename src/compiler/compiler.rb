@@ -40,13 +40,21 @@ program = compiler.program
 
 program.dump
 
-DabPPFixLiterals.new.run(program)
-DabPPFixLocalvars.new.run(program)
-DabPPReuseConstants.new.run(program)
-DabPPCompactConstants.new.run(program)
-DabPPCheckFunctions.new.run(program)
-DabPPCheckSetvarTypes.new.run(program)
-DabPPCheckCallArgsTypes.new.run(program)
+postprocess = [
+  DabPPFixLiterals,
+  DabPPFixLocalvars,
+  DabPPReuseConstants,
+  DabPPCompactConstants,
+  DabPPCheckFunctions,
+  DabPPCheckSetvarTypes,
+  DabPPCheckCallArgsTypes,
+]
+
+postprocess.each do |klass|
+  STDERR.puts "Will run postprocess <#{klass}>"
+  klass.new.run(program)
+  program.dump
+end
 
 program.dump
 
