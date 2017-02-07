@@ -187,8 +187,6 @@ enum
     VAL_INVALID = 0,
     VAL_FRAME_PREV_IP,
     VAL_FRAME_PREV_STACK,
-    VAL_FRAME_START_CONST,
-    VAL_FRAME_COUNT_CONST,
     VAL_FRAME_COUNT_ARGS,
     VAL_FRAME_COUNT_VARS,
     VAL_RETVAL,
@@ -218,8 +216,8 @@ struct DabValue
 
     void dump() const
     {
-        static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "sCnst", "nCnst", "nArgs",
-                                      "nVars", "RETVL", "CONST", "VARIA", "STACK"};
+        static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "nArgs", "nVars",
+                                      "RETVL", "CONST", "VARIA", "STACK"};
         static const char *types[] = {
             "INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB",
         };
@@ -385,7 +383,6 @@ struct DabVM
     {
         int    frame_loc = frame_position;
         int    n_args    = number_of_args();
-        int    n_const   = 0; // number_of_constants().fixnum;
         size_t prev_pos  = prev_frame_position();
         auto   retval    = get_retval();
         auto   prev_ip   = get_prev_ip();
@@ -394,9 +391,6 @@ struct DabVM
         {
             exit(0);
         }
-
-        for (int i = 0; i < n_const; i++)
-            constants.pop_back();
 
         stack.resize(frame_loc - 2 - n_args);
 
@@ -477,10 +471,8 @@ struct DabVM
         push(VAL_FRAME_PREV_IP, (uint64_t)ip());
         push(VAL_FRAME_PREV_STACK, (uint64_t)frame_position); // push previous frame
         frame_position = stack_position();
-        push(VAL_FRAME_START_CONST, (uint64_t)constants.size()); // start of constants
-        push(VAL_FRAME_COUNT_CONST, 0);                          // number of constants
-        push(VAL_FRAME_COUNT_ARGS, n_args);                      // number of arguments
-        push(VAL_FRAME_COUNT_VARS, n_locals);                    // number of locals
+        push(VAL_FRAME_COUNT_ARGS, n_args);   // number of arguments
+        push(VAL_FRAME_COUNT_VARS, n_locals); // number of locals
         {
             // push retvalue
             DabValue val;
@@ -564,13 +556,13 @@ struct DabVM
 
     DabValue &get_var(int var_index)
     {
-        auto index = frame_position + 5 + var_index;
+        auto index = frame_position + 3 + var_index;
         return stack[index];
     }
 
     DabValue &get_retval()
     {
-        auto index = frame_position + 4;
+        auto index = frame_position + 2;
         return stack[index];
     }
 
@@ -584,15 +576,14 @@ struct DabVM
         return stack[frame_position - 1].fixnum;
     }
 
-
     int number_of_args()
     {
-        return stack[frame_position + 2].fixnum;
+        return stack[frame_position + 0].fixnum;
     }
 
     int number_of_vars()
     {
-        return stack[frame_position + 3].fixnum;
+        return stack[frame_position + 1].fixnum;
     }
 
     void push_constant(const DabValue &value)
