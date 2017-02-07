@@ -26,7 +26,6 @@ class DabNodeFunction < DabNode
     children[0]
   end
 
-
   def arglist
     children[1]
   end
