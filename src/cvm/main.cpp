@@ -385,7 +385,7 @@ struct DabVM
     {
         int    frame_loc = frame_position;
         int    n_args    = number_of_args();
-        int    n_const   = number_of_constants().fixnum;
+        int    n_const   = 0; // number_of_constants().fixnum;
         size_t prev_pos  = prev_frame_position();
         auto   retval    = get_retval();
         auto   prev_ip   = get_prev_ip();
@@ -584,10 +584,6 @@ struct DabVM
         return stack[frame_position - 1].fixnum;
     }
 
-    DabValue &number_of_constants()
-    {
-        return stack[frame_position + 1];
-    }
 
     int number_of_args()
     {
@@ -602,8 +598,6 @@ struct DabVM
     void push_constant(const DabValue &value)
     {
         constants.push_back(value);
-        auto &ref = number_of_constants();
-        ref.fixnum += 1;
     }
 
     void call(const std::string &name, int n_args)
@@ -679,7 +673,7 @@ struct DabVM
         case OP_PUSH_CONSTANT:
         {
             auto index = input.read_uint16();
-            push(constants[start_of_constants().fixnum + index]);
+            push(constants[index]);
             break;
         }
         case OP_CALL:

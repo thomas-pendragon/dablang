@@ -24,9 +24,9 @@ class DabContext
   end
 
   def read_program
-    ret = DabNodeCodeBlock.new
+    ret = DabNodeUnit.new
     until @stream.eof?
-      ret.insert(read_function)
+      ret.add_function(read_function)
       @stream.skip_whitespace
     end
     ret

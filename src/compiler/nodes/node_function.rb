@@ -8,7 +8,6 @@ class DabNodeFunction < DabNode
     super()
     @identifier = identifier
     insert(body)
-    insert(DabNode.new)
     insert(arglist) if arglist
     self.n_local_vars = 0
     arglist&.each_with_index do |arg, index|
@@ -27,25 +26,13 @@ class DabNodeFunction < DabNode
     children[0]
   end
 
-  def constants
+
+  def arglist
     children[1]
   end
 
-  def arglist
-    children[2]
-  end
-
-  def add_constant(literal)
-    index = self.constants.count
-    const = DabNodeConstant.new(literal, index)
-    self.constants.insert(const)
-    ret = DabNodeConstantReference.new(index)
-    ret.clone_source_parts_from(literal)
-    ret
-  end
-
-  def remove_constant_node(node)
-    constants.remove_child(node)
+  def constants
+    self.root.constants
   end
 
   def reserve_label
@@ -56,12 +43,13 @@ class DabNodeFunction < DabNode
 
   def compile(output)
     output.function(identifier, n_local_vars) do
-      constants.each do |constant|
-        constant.compile(output)
-      end
       body.compile(output)
       output.print('PUSH_NIL')
       output.print('RETURN')
     end
+  end
+
+  def add_constant(literal)
+    self.root.add_constant(literal)
   end
 end

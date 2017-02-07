@@ -203,6 +203,8 @@ class Parser
           line[1] = 0
         end
         @function_stream.write(line)
+      elsif line[0].start_with? 'CONSTANT'
+        @output_stream.write(line)
       else
         raise 'unknown op outside function' # @output_stream.write(line)
       end
