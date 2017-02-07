@@ -13,6 +13,7 @@ class DabNodeConstantReference < DabNode
 
   def target
     raise 'no func' unless function
+    raise 'no index' unless index
     function.constants[index]
   end
 
