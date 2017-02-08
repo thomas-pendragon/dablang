@@ -1,4 +1,5 @@
 require 'awesome_print'
+require 'colorize'
 
 def errn(str, *args)
   if args.count > 0
