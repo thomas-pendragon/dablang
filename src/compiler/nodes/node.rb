@@ -24,7 +24,15 @@ class DabNode
   def dump(level = 0)
     tt = sprintf('(%s)', self.my_type.type_string).white
     src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
-    err('%s - %s %s %s %s', '  ' * level, self.class.name, extra_dump, tt, src.white)
+    text = sprintf('%s - %s %s %s %s', '  ' * level, self.class.name, extra_dump, tt, src.white)
+    if has_errors?
+      text = if @self_errors.count > 0
+               text.light_red.bold + " (#{@self_errors.map(&:message).join(', ')})"
+             else
+               text.light_red
+             end
+    end
+    err(text)
     @children.each do |child|
       if child.nil?
         err('%s ~ [nil]', '  ' * (level + 1))
