@@ -9,7 +9,6 @@ class DabPPFixLocalvars
       function.visit_all(DabNodeLocalVar) do |node|
         node.index = local_vars[node.real_identifier]
       end
-      function.n_local_vars = local_vars.count
     end
   end
 end

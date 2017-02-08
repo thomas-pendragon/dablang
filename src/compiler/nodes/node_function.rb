@@ -1,7 +1,6 @@
 require_relative 'node.rb'
 
 class DabNodeFunction < DabNode
-  attr_accessor :n_local_vars
   attr_reader :identifier
 
   def initialize(identifier, body, arglist)
@@ -9,7 +8,6 @@ class DabNodeFunction < DabNode
     @identifier = identifier
     insert(body)
     insert(arglist) if arglist
-    self.n_local_vars = 0
     arglist&.each_with_index do |arg, index|
       define_var = DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index, arg.my_type), arg.my_type, true)
       define_var.clone_source_parts_from(arg)
@@ -50,5 +48,13 @@ class DabNodeFunction < DabNode
 
   def add_constant(literal)
     self.root.add_constant(literal)
+  end
+
+  def n_local_vars
+    count = 0
+    visit_all(DabNodeDefineLocalVar) do
+      count += 1
+    end
+    count
   end
 end
