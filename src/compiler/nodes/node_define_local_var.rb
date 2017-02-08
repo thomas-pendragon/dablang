@@ -30,4 +30,12 @@ class DabNodeDefineLocalVar < DabNode
     output.comment("var #{index} #{identifier}")
     output.print('SET_VAR', index)
   end
+
+  def var_uses
+    ret = []
+    function.visit_all(DabNodeLocalVar) do |local_var|
+      ret << local_var if local_var.var_definition == self
+    end
+    ret
+  end
 end

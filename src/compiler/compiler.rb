@@ -33,6 +33,7 @@ require_relative 'postproc/compact_constants.rb'
 require_relative 'postproc/fix_literals.rb'
 require_relative 'postproc/fix_localvars.rb'
 require_relative 'postproc/reuse_constants.rb'
+require_relative 'postproc/strip_single_vars.rb'
 
 stream = DabProgramStream.new(STDIN.read)
 compiler = DabCompiler.new(stream)
@@ -48,6 +49,7 @@ postprocess = [
   DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
   DabPPCheckCallArgsTypes,
+  DabPPStripSingleVars,
 ]
 
 postprocess.each do |klass|

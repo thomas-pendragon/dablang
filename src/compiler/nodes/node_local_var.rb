@@ -22,4 +22,13 @@ class DabNodeLocalVar < DabNode
     output.comment("var #{index} #{identifier}")
     output.print('PUSH_VAR', index)
   end
+
+  def var_definition
+    function.visit_all(DabNodeDefineLocalVar) do |define_var|
+      if define_var.real_identifier == self.real_identifier
+        return define_var
+      end
+    end
+    nil
+  end
 end

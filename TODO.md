@@ -3,6 +3,6 @@
 - endianness in cvm/main.cpp
 - void calls
 - return values should be reserved on stack
-- don't transform read-only function arguments to local variables
 - negative offsets for JMP
 - autogenerate opcode/kernel C enums
+- strip single-use variables only if value is a literal/constexpr

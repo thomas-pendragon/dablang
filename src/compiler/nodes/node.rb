@@ -169,4 +169,22 @@ class DabNode
   def my_type
     DabTypeAny.new
   end
+
+  def remove!
+    parent.remove_child(self)
+  end
+
+  def replace_child(from, to)
+    @children.map! do |node|
+      if node == from
+        claim(to)
+      else
+        node
+      end
+    end
+  end
+
+  def replace_with!(other)
+    parent.replace_child(self, other)
+  end
 end
