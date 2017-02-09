@@ -42,7 +42,7 @@ class DabNodeFunction < DabNode
     output.function(identifier, n_local_vars) do
       body.compile(output)
       output.print('PUSH_NIL')
-      output.print('RETURN')
+      output.print('RETURN', '1')
     end
   end
 

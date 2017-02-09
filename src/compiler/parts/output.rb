@@ -17,6 +17,8 @@ class DabOutput
   end
 
   def print(*args)
+    return _print("\n") if args.count == 0 || args[0].nil?
+
     _print sprintf('/* %-12s */ ', @comment.to_s[0...12])
 
     t = if @label
@@ -45,5 +47,6 @@ class DabOutput
     print('START_FUNCTION', name, n_local_vars)
     yield
     print('END_FUNCTION')
+    print('')
   end
 end

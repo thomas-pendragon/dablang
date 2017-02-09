@@ -671,6 +671,7 @@ struct DabVM
         {
             auto name   = stack_pop_symbol();
             auto n_args = input.read_uint16();
+            auto n_rets = input.read_uint16();
             call(name, n_args);
             break;
         }
@@ -681,6 +682,7 @@ struct DabVM
         }
         case OP_RETURN:
         {
+            auto  nrets  = input.read_uint16();
             auto &retval = get_retval();
             retval       = stack_pop();
             retval.kind  = VAL_RETVAL;

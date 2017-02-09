@@ -26,7 +26,7 @@ class InputStream
   end
 
   def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' || call == 'KERNELCALL'
+    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' || call == 'KERNELCALL' || call == 'RETURN'
       return args.map(&:to_i)
     elsif call == 'START_FUNCTION'
       name = args[0].strip.to_sym
@@ -85,7 +85,7 @@ class OutputStream
 
     arg_specifiers.each_with_index do |kind, index|
       arg = line[index + 1]
-      raise "No arg#{index}" unless arg
+      raise "line = #{line} - No arg#{index}" unless arg
       send("_push_#{kind}", arg)
     end
   end
@@ -205,6 +205,7 @@ class Parser
         @function_stream.write(line)
       elsif line[0].start_with? 'CONSTANT'
         @output_stream.write(line)
+      elsif line[0] == '' || line[0].nil?
       else
         raise 'unknown op outside function' # @output_stream.write(line)
       end

@@ -12,6 +12,6 @@ class DabNodeReturn < DabNode
 
   def compile(output)
     value.compile(output)
-    output.print('RETURN')
+    output.print('RETURN', '1')
   end
 end

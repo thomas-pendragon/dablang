@@ -27,7 +27,7 @@ class DabNodeCall < DabNode
     else
       output.push(identifier)
       output.comment(real_identifier)
-      output.print('CALL', args.count.to_s)
+      output.print('CALL', args.count.to_s, '1')
     end
   end
 
