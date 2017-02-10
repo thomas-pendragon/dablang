@@ -28,4 +28,8 @@ class DabNodeConstant < DabNode
   def my_type
     @children[0].my_type
   end
+
+  def constant?
+    @children[0].constant?
+  end
 end

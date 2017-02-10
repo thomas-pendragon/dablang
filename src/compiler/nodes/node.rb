@@ -24,7 +24,9 @@ class DabNode
   def dump(level = 0)
     tt = sprintf('(%s)', self.my_type.type_string).white
     src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
-    text = sprintf('%s - %s %s %s %s', '  ' * level, self.class.name, extra_dump, tt, src.white)
+    flags = ''
+    flags = ' [C]'.bold.green if constant?
+    text = sprintf('%s - %s %s%s %s %s', '  ' * level, self.class.name, extra_dump, flags, tt, src.white)
     if has_errors?
       text = if @self_errors.count > 0
                text.light_red.bold + " (#{@self_errors.map(&:message).join(', ')})"
@@ -186,5 +188,9 @@ class DabNode
 
   def replace_with!(other)
     parent.replace_child(self, other)
+  end
+
+  def constant?
+    false
   end
 end

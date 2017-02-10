@@ -32,4 +32,8 @@ class DabNodeConstantReference < DabNode
   def my_type
     target.my_type
   end
+
+  def constant?
+    target.constant?
+  end
 end

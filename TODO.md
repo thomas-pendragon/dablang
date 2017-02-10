@@ -5,4 +5,3 @@
 - return values should be reserved on stack
 - negative offsets for JMP
 - autogenerate opcode/kernel C enums
-- strip single-use variables only if value is a literal/constexpr

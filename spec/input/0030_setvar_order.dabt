@@ -1,0 +1,22 @@
+## CODE
+
+func fun()
+{
+	print("a");
+	return "c";
+}
+
+func main()
+{
+	var a = fun();
+	print("b");
+	print(a);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+abc

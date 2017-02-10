@@ -58,6 +58,8 @@ postprocess.each do |klass|
   program.dump
 end
 
+STDERR.puts "\n--\n\n"
+
 program.dump
 
 if program.has_errors?
