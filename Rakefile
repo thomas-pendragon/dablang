@@ -21,7 +21,17 @@ inputs.each do |input_test_file|
   end
 end
 
-task default: [cvm] + outputs do
+gitlab = '.gitlab-ci.yml'
+gitlab_base = 'gitlab_base.rb'
+
+file gitlab => [gitlab_base] do
+  psystem("ruby #{gitlab_base} > #{gitlab}")
+end
+
+task spec: outputs do
+end
+
+task default: [gitlab] + [cvm] + [:spec] do
 end
 
 task :clean do
