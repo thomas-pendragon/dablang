@@ -9,7 +9,8 @@ cvm = 'bin/cvm'
 
 file cvm => cvm_sources do
   compiler = ENV['COMPILER'] || 'clang++'
-  psystem("#{compiler} -std=c++11 #{cvm_sources.join(' ')} -o #{cvm}")
+  cxxflags = ENV['CXXFLAGS'] || ''
+  psystem("#{compiler} -std=c++11 #{cvm_sources.join(' ')} #{cxxflags} -o #{cvm}")
 end
 
 inputs.each do |input_test_file|
