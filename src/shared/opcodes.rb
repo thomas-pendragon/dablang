@@ -15,6 +15,7 @@ OPCODES = {
   0x0D => {name: 'CONSTANT_BOOLEAN', arg: :uint16}, # bool (true/false)
   0x0E => {name: 'PUSH_NIL'}, # push(1)
   0x0F => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
+  0x10 => {name: 'PROPGET'}, # pop(2), push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

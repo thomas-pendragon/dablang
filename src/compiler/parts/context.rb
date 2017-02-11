@@ -280,8 +280,20 @@ class DabContext
     read_literal_string || read_literal_number || read_literal_boolean
   end
 
-  def read_simple_value
+  def read_base_value
     read_literal_value || read_local_var || read_call
+  end
+
+  def read_simple_value
+    on_subcontext do |subcontext|
+      value = subcontext.read_base_value
+      next false unless value
+      dot = subcontext.read_operator('.')
+      next value unless dot
+      prop_name = subcontext.read_identifier
+      next false unless prop_name
+      DabNodePropertyGet.new(value, prop_name)
+    end
   end
 
   def read_mul_value

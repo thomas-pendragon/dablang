@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 #include <functional>
+#include <algorithm>
+#include <cctype>
 
 typedef unsigned char byte;
 
@@ -225,6 +227,31 @@ struct DabValue
         print(stderr, true);
     }
 
+    std::string class_name() const
+    {
+        switch (type)
+        {
+        case TYPE_FIXNUM:
+            return "Fixnum";
+            break;
+        case TYPE_STRING:
+            return "String";
+            break;
+        case TYPE_SYMBOL:
+            return "Symbol";
+            break;
+        case TYPE_BOOLEAN:
+            return "Boolean";
+            break;
+        case TYPE_NIL:
+            return "NilClass";
+            break;
+        default:
+            assert(false);
+            break;
+        }
+    }
+
     void print(FILE *out, bool debug = false) const
     {
         switch (type)
@@ -293,6 +320,7 @@ enum
     OP_CONSTANT_BOOLEAN = 0x0D,
     OP_PUSH_NIL         = 0x0E,
     OP_KERNELCALL       = 0x0F,
+    OP_PROPGET          = 0x10,
 };
 
 enum
@@ -367,6 +395,23 @@ struct DabVM
         DAB_DEFINE_OP(/);
         DAB_DEFINE_OP(%);
         DAB_DEFINE_OP_BOOL(==);
+
+        add_c_function("String::upcase", [this]() {
+            auto arg0 = stack_pop();
+            assert(arg0.type == TYPE_STRING);
+            auto &s = arg0.string;
+            std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+            stack.push_back(arg0);
+        });
+    }
+
+    void add_c_function(const std::string &name, std::function<void()> func)
+    {
+        DabFunction fun;
+        fun.name        = name;
+        fun.regular     = false;
+        fun.extra       = func;
+        functions[name] = fun;
     }
 
     void kernel_print()
@@ -740,11 +785,25 @@ struct DabVM
             kernelcall(call);
             break;
         }
+        case OP_PROPGET:
+        {
+            auto name  = stack_pop_symbol();
+            auto value = stack_pop();
+            prop_get(value, name);
+            break;
+        }
         default:
             fprintf(stderr, "VM error: Unknown opcode <%d>.\n", (int)opcode);
             exit(1);
             break;
         }
+    }
+
+    void prop_get(const DabValue &value, const std::string &name)
+    {
+        auto func = value.class_name() + "::" + name;
+        stack.push_back(value);
+        call(func, 1);
     }
 
     void kernelcall(int call)
