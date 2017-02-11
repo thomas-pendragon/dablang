@@ -162,7 +162,7 @@ class DabContext
   end
 
   def read_instruction
-    read_if || read_return || read_var || read_call
+    read_if || read_return || read_define_var || read_call
   end
 
   def read_if
@@ -192,7 +192,7 @@ class DabContext
     end
   end
 
-  def read_var
+  def read_define_var
     on_subcontext do |subcontext|
       next false unless keyw = subcontext.read_keyword('var')
       lbrace = subcontext.read_operator('<')
