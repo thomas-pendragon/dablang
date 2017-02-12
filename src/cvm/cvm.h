@@ -69,3 +69,13 @@ struct Stream
         return ret;
     }
 };
+
+struct DabFunction
+{
+    bool                  regular = true;
+    std::function<void()> extra   = nullptr;
+
+    size_t      address = -1;
+    std::string name;
+    int         n_locals = 0;
+};
