@@ -35,8 +35,8 @@ enum
         fun.regular = false;                                                                       \
         fun.extra   = [this]() {                                                                   \
             dump();                                                                                \
-            auto     arg1 = stack_pop();                                                           \
-            auto     arg0 = stack_pop();                                                           \
+            auto     arg1 = stack.pop_value();                                                     \
+            auto     arg0 = stack.pop_value();                                                     \
             uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
             auto str      = arg0.string op arg1.string;                                            \
             if (arg0.type == TYPE_FIXNUM)                                                          \
@@ -54,8 +54,8 @@ enum
         fun.regular = false;                                                                       \
         fun.extra   = [this]() {                                                                   \
             dump();                                                                                \
-            auto     arg1 = stack_pop();                                                           \
-            auto     arg0 = stack_pop();                                                           \
+            auto     arg1 = stack.pop_value();                                                     \
+            auto     arg0 = stack.pop_value();                                                     \
             uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
             stack_push(num);                                                                       \
         };                                                                                         \
@@ -69,8 +69,8 @@ enum
         fun.regular = false;                                                                       \
         fun.extra   = [this]() {                                                                   \
             dump();                                                                                \
-            auto arg1 = stack_pop();                                                               \
-            auto arg0 = stack_pop();                                                               \
+            auto arg1 = stack.pop_value();                                                         \
+            auto arg0 = stack.pop_value();                                                         \
             bool test = arg0.fixnum op arg1.fixnum;                                                \
             stack_push(test);                                                                      \
         };                                                                                         \
@@ -95,7 +95,7 @@ struct DabVM
         DAB_DEFINE_OP_BOOL(==);
 
         add_c_function("String::upcase", [this]() {
-            auto arg0 = stack_pop();
+            auto arg0 = stack.pop_value();
             assert(arg0.type == TYPE_STRING);
             auto &s = arg0.string;
             std::transform(s.begin(), s.end(), s.begin(), ::toupper);
@@ -103,7 +103,7 @@ struct DabVM
         });
 
         add_c_function("String::class", [this]() {
-            stack_pop();
+            stack.pop_value();
             stack_push(std::string("LiteralString"));
         });
     }
@@ -119,7 +119,7 @@ struct DabVM
 
     void kernel_print()
     {
-        auto arg = stack_pop();
+        auto arg = stack.pop_value();
         fprintf(stderr, "[ ");
         arg.print(stderr);
         fprintf(stderr, " ]\n");
@@ -432,7 +432,7 @@ struct DabVM
         {
             auto  nrets  = input.read_uint16();
             auto &retval = get_retval();
-            retval       = stack_pop();
+            retval       = stack.pop_value();
             retval.kind  = VAL_RETVAL;
             pop_frame(true);
             break;
@@ -448,7 +448,7 @@ struct DabVM
         case OP_JMP_IFN:
         {
             auto mod   = input.read_uint16() - 3;
-            auto value = stack_pop();
+            auto value = stack.pop_value();
             if (!value.truthy())
             {
                 instructions.seek(ip() + mod);
@@ -462,7 +462,7 @@ struct DabVM
         case OP_SETVAR:
         {
             auto  index = input.read_uint16();
-            auto  value = stack_pop();
+            auto  value = stack.pop_value();
             auto &var   = get_var(index);
             var         = value;
             var.kind    = VAL_VARIABLE;
@@ -491,7 +491,7 @@ struct DabVM
         case OP_PROPGET:
         {
             auto name  = stack_pop_symbol();
-            auto value = stack_pop();
+            auto value = stack.pop_value();
             prop_get(value, name);
             break;
         }
@@ -525,15 +525,9 @@ struct DabVM
         }
     }
 
-    DabValue stack_pop()
-    {
-        auto last = stack.pop_value();
-        return last;
-    }
-
     std::string stack_pop_symbol()
     {
-        auto val = stack_pop();
+        auto val = stack.pop_value();
         if (val.type != TYPE_SYMBOL)
         {
             fprintf(stderr, "VM error: value is not a symbol.\n");
