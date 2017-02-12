@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print("hello".class);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+LiteralString

@@ -403,6 +403,11 @@ struct DabVM
             std::transform(s.begin(), s.end(), s.begin(), ::toupper);
             stack.push_back(arg0);
         });
+
+        add_c_function("String::class", [this]() {
+            stack_pop();
+            stack_push(std::string("LiteralString"));
+        });
     }
 
     void add_c_function(const std::string &name, std::function<void()> func)
