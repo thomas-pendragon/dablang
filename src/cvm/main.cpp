@@ -82,7 +82,7 @@ struct DabVM
     Stream instructions;
     std::map<std::string, DabFunction> functions;
     size_t                frame_position = -1;
-    std::vector<DabValue> stack;
+    Stack                 stack;
     std::vector<DabValue> constants;
 
     DabVM()
@@ -99,7 +99,7 @@ struct DabVM
             assert(arg0.type == TYPE_STRING);
             auto &s = arg0.string;
             std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-            stack.push_back(arg0);
+            stack.push(arg0);
         });
 
         add_c_function("String::class", [this]() {
@@ -158,7 +158,7 @@ struct DabVM
         val.kind   = kind;
         val.type   = TYPE_FIXNUM;
         val.fixnum = value;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     void push(int kind, uint64_t value)
@@ -167,7 +167,7 @@ struct DabVM
         val.kind   = kind;
         val.type   = TYPE_FIXNUM;
         val.fixnum = value;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     void push(int kind, bool value)
@@ -176,7 +176,7 @@ struct DabVM
         val.kind    = kind;
         val.type    = TYPE_BOOLEAN;
         val.boolean = value;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     void stack_push(const std::string &value)
@@ -200,13 +200,13 @@ struct DabVM
         val.kind   = kind;
         val.type   = TYPE_STRING;
         val.string = value;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     void push(DabValue val)
     {
         val.kind = VAL_STACK;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     size_t stack_position() const
@@ -226,14 +226,14 @@ struct DabVM
             DabValue val;
             val.kind = VAL_RETVAL;
             val.type = TYPE_INVALID;
-            stack.push_back(val);
+            stack.push_value(val);
         }
         for (int i = 0; i < n_locals; i++)
         {
             DabValue val;
             val.kind = VAL_VARIABLE;
             val.type = TYPE_INVALID;
-            stack.push_back(val);
+            stack.push_value(val);
         }
     }
 
@@ -264,7 +264,7 @@ struct DabVM
                     fun.regular ? "regular" : "extra", (void *)fun.address);
         }
         _dump("constants", constants);
-        _dump("stack", stack);
+        _dump("stack", stack._data);
     }
 
     int run(Stream &input)
@@ -505,7 +505,7 @@ struct DabVM
     void prop_get(const DabValue &value, const std::string &name)
     {
         auto func = value.class_name() + "::" + name;
-        stack.push_back(value);
+        stack.push_value(value);
         call(func, 1);
     }
 
@@ -527,13 +527,7 @@ struct DabVM
 
     DabValue stack_pop()
     {
-        if (stack.size() == 0)
-        {
-            fprintf(stderr, "VM error: empty stack.\n");
-            exit(1);
-        }
-        auto last = stack[stack.size() - 1];
-        stack.pop_back();
+        auto last = stack.pop_value();
         return last;
     }
 
@@ -553,7 +547,7 @@ struct DabVM
         DabValue val;
         val.kind = VAL_STACK;
         val.type = TYPE_NIL;
-        stack.push_back(val);
+        stack.push_value(val);
     }
 
     void push_constant_symbol(const std::string &name)

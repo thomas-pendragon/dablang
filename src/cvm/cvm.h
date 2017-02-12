@@ -119,4 +119,65 @@ struct DabValue
     void print(FILE *out, bool debug = false) const;
 
     bool truthy() const;
+
+    DabValue()
+    {
+    }
+    DabValue(const std::string &value) : type(TYPE_STRING), string(value)
+    {
+    }
+};
+
+struct Stack
+{
+    template <typename T>
+    void push(T value, int kind = VAL_STACK)
+    {
+        push_value(DabValue(value), kind);
+    }
+
+    DabValue pop_value()
+    {
+        if (!size())
+        {
+            fprintf(stderr, "VM error: empty stack.\n");
+            exit(1);
+        }
+        auto ret = _data[_data.size() - 1];
+        _data.pop_back();
+        return ret;
+    }
+
+    void push_value(DabValue value, int kind = VAL_STACK)
+    {
+        value.kind = kind;
+        _data.push_back(value);
+    }
+
+    void resize(size_t size)
+    {
+        _data.resize(size);
+    }
+
+    size_t size() const
+    {
+        return _data.size();
+    }
+
+    DabValue &operator[](int64_t offset)
+    {
+        if (offset < 0)
+        {
+            offset = size() + offset;
+        }
+        if (offset >= size())
+        {
+            assert(false);
+        }
+        return _data[offset];
+    }
+
+  private:
+    std::vector<DabValue> _data;
+    friend class DabVM;
 };
