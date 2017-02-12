@@ -5,9 +5,10 @@ outputs = []
 sources = Dir.glob('src/**/*.rb')
 
 cvm_sources = Dir.glob('src/cvm/*.cpp')
+cvm_headers = Dir.glob('src/cvm/*.h')
 cvm = 'bin/cvm'
 
-file cvm => cvm_sources do
+file cvm => cvm_sources + cvm_headers do
   compiler = ENV['COMPILER'] || 'clang++'
   cxxflags = ENV['CXXFLAGS'] || ''
   psystem("#{compiler} -std=c++11 #{cvm_sources.join(' ')} #{cxxflags} -o #{cvm}")
