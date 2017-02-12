@@ -124,7 +124,7 @@ struct DabVM
         arg.print(stderr);
         fprintf(stderr, " ]\n");
         arg.print(stdout);
-        stack_push_nil();
+        stack.push_nil();
     }
 
     void pop_frame(bool regular)
@@ -425,7 +425,7 @@ struct DabVM
         }
         case OP_PUSH_NIL:
         {
-            stack_push_nil();
+            stack.push_nil();
             break;
         }
         case OP_RETURN:
@@ -540,11 +540,6 @@ struct DabVM
             exit(1);
         }
         return val.string;
-    }
-
-    void stack_push_nil()
-    {
-        stack.push_nil();
     }
 
     void push_constant_symbol(const std::string &name)
