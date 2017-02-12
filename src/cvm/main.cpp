@@ -544,10 +544,7 @@ struct DabVM
 
     void stack_push_nil()
     {
-        DabValue val;
-        val.kind = VAL_STACK;
-        val.type = TYPE_NIL;
-        stack.push_value(val);
+        stack.push_nil();
     }
 
     void push_constant_symbol(const std::string &name)

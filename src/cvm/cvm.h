@@ -123,6 +123,9 @@ struct DabValue
     DabValue()
     {
     }
+    DabValue(std::nullptr_t) : type(TYPE_NIL)
+    {
+    }
     DabValue(const std::string &value) : type(TYPE_STRING), string(value)
     {
     }
@@ -134,6 +137,11 @@ struct Stack
     void push(T value, int kind = VAL_STACK)
     {
         push_value(DabValue(value), kind);
+    }
+
+    void push_nil()
+    {
+        push(nullptr);
     }
 
     DabValue pop_value()
