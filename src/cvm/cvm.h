@@ -79,3 +79,44 @@ struct DabFunction
     std::string name;
     int         n_locals = 0;
 };
+
+enum
+{
+    VAL_INVALID = 0,
+    VAL_FRAME_PREV_IP,
+    VAL_FRAME_PREV_STACK,
+    VAL_FRAME_COUNT_ARGS,
+    VAL_FRAME_COUNT_VARS,
+    VAL_RETVAL,
+    VAL_CONSTANT,
+    VAL_VARIABLE,
+    VAL_STACK,
+};
+
+enum
+{
+    TYPE_INVALID = 0,
+    TYPE_FIXNUM,
+    TYPE_STRING,
+    TYPE_BOOLEAN,
+    TYPE_NIL,
+    TYPE_SYMBOL,
+};
+
+struct DabValue
+{
+    int kind = VAL_INVALID;
+    int type = TYPE_INVALID;
+
+    int64_t     fixnum;
+    std::string string;
+    bool        boolean;
+
+    void dump() const;
+
+    std::string class_name() const;
+
+    void print(FILE *out, bool debug = false) const;
+
+    bool truthy() const;
+};
