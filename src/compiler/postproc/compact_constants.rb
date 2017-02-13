@@ -23,5 +23,7 @@ class DabPPCompactConstants
     program.visit_all([DabNodeConstant, DabNodeConstantReference]) do |node|
       node.index = constant_remapping[node.index]
     end
+
+    program.reorder_constants!
   end
 end

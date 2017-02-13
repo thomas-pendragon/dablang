@@ -33,4 +33,8 @@ class DabNodeUnit < DabNode
   def remove_constant_node(node)
     @constants.remove_child(node)
   end
+
+  def reorder_constants!
+    @constants.children.sort_by!(&:index)
+  end
 end
