@@ -18,4 +18,8 @@ class DabNodeSymbol < DabNodeLiteral
   def compile_constant(output)
     output.print('CONSTANT_SYMBOL', symbol)
   end
+
+  def my_type
+    DabTypeSymbol.new
+  end
 end

@@ -49,3 +49,13 @@ class DabTypeFixnum < DabType
     other_type.is_a? DabTypeFixnum
   end
 end
+
+class DabTypeSymbol < DabType
+  def type_string
+    'Symbol'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeSymbol
+  end
+end
