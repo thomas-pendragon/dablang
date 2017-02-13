@@ -30,6 +30,16 @@ class DabTypeString < DabType
   end
 end
 
+class DabTypeLiteralString < DabTypeString
+  def type_string
+    'LiteralString'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeLiteralString
+  end
+end
+
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'

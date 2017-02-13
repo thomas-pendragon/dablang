@@ -24,6 +24,6 @@ class DabNodeLiteralString < DabNodeLiteral
   end
 
   def my_type
-    DabTypeString.new
+    DabTypeLiteralString.new
   end
 end
