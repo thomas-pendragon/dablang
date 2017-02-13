@@ -1,0 +1,24 @@
+## CODE
+
+func printclass(a)
+{
+	print(a);
+	print(": ");
+	print(a.class);
+	print(". ");
+}
+
+func main()
+{
+	printclass(123);
+	printclass("foo");
+	printclass(true);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+123: LiteralFixnum. foo: LiteralString. true: LiteralBoolean.

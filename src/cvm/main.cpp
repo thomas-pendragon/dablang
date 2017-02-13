@@ -106,6 +106,16 @@ struct DabVM
             stack.pop_value();
             stack_push(std::string("LiteralString"));
         });
+
+        add_c_function("Fixnum::class", [this]() {
+            stack.pop_value();
+            stack_push(std::string("LiteralFixnum"));
+        });
+
+        add_c_function("Boolean::class", [this]() {
+            stack.pop_value();
+            stack_push(std::string("LiteralBoolean"));
+        });
     }
 
     void add_c_function(const std::string &name, std::function<void()> func)
