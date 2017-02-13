@@ -25,4 +25,14 @@ class DabNodePropertyGet < DabNode
     output.comment(".#{real_identifier}")
     output.print('PROPGET')
   end
+
+  def constant?
+    value.constant?
+  end
+
+  def simplify_constant
+    if real_identifier == 'class'
+      DabNodeLiteralString.new(value.my_type.type_string)
+    end
+  end
 end
