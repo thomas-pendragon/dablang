@@ -16,6 +16,10 @@ class DabNodeDefineLocalVar < DabNode
     @arg_var = arg_var
   end
 
+  def extra_dump
+    "<#{real_identifier}>"
+  end
+
   def value
     children[0]
   end
