@@ -27,6 +27,7 @@ class DabNode
     flags = ''
     flags = ' [C]'.bold.green if constant?
     text = sprintf('%s - %s %s%s %s %s', '  ' * level, self.class.name, extra_dump, flags, tt, src.white)
+    text = text.green if constant?
     if has_errors?
       text = if @self_errors.count > 0
                text.light_red.bold + " (#{@self_errors.map(&:message).join(', ')})"
