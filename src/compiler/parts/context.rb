@@ -26,7 +26,11 @@ class DabContext
   def read_program
     ret = DabNodeUnit.new
     until @stream.eof?
-      ret.add_function(read_function)
+      if f = read_function
+        ret.add_function(f)
+      elsif c = read_class
+        ret.add_class(c)
+      end
       @stream.skip_whitespace
     end
     ret
@@ -107,6 +111,16 @@ class DabContext
       typename = subcontext.read_identifier
       next false unless typename
       DabNodeType.new(typename)
+    end
+  end
+
+  def read_class
+    on_subcontext do |subcontext|
+      next false unless subcontext.read_keyword('class')
+      next false unless ident = subcontext.read_identifier
+      next false unless subcontext.read_operator('{')
+      next false unless subcontext.read_operator('}')
+      DabNodeClass.new(ident)
     end
   end
 

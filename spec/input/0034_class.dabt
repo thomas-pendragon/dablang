@@ -1,0 +1,15 @@
+## CODE
+
+class MyObject
+{
+}
+
+func main()
+{
+}
+
+## RUN
+
+main
+
+## EXPECT OK

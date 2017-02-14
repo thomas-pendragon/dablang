@@ -7,8 +7,10 @@ class DabNodeUnit < DabNode
     super()
     @functions = DabNode.new
     @constants = DabNode.new
+    @classes = DabNode.new
     insert(@functions)
     insert(@constants)
+    insert(@classes)
   end
 
   def add_constant(literal)
@@ -22,6 +24,10 @@ class DabNodeUnit < DabNode
 
   def add_function(function)
     @functions.insert(function)
+  end
+
+  def add_class(klass)
+    @classes.insert(klass)
   end
 
   def compile(output)
