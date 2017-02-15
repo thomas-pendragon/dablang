@@ -179,6 +179,15 @@ class Parser
     @jump_corrections = []
   end
 
+  def reset_substream
+    @in_function = false
+    @function_line = nil
+    @function_string = nil
+    @function_stream = nil
+    @label_positions = {}
+    @jump_corrections = []
+  end
+
   def run!
     @output_stream.begin(self)
     @input_stream.each do |line, label|
@@ -192,12 +201,7 @@ class Parser
         @output_stream.write(@function_line)
         @output_stream._push(@function_stream.code)
 
-        @in_function = false
-        @function_line = nil
-        @function_string = nil
-        @function_stream = nil
-        @label_positions = {}
-        @jump_corrections = []
+        reset_substream
       elsif @in_function
         if label
           @label_positions[label.to_s] = function_pos
