@@ -215,6 +215,17 @@ class DabContext
     end
   end
 
+  def read_class
+    on_subcontext do |subcontext|
+      id = subcontext.read_identifier
+      if @classes.include? id
+        DabNodeClass.new(id)
+      else
+        false
+      end
+    end
+  end
+
   def read_define_var
     on_subcontext do |subcontext|
       next false unless keyw = subcontext.read_keyword('var')
@@ -304,7 +315,7 @@ class DabContext
   end
 
   def read_base_value
-    read_literal_value || read_local_var || read_call
+    read_class || read_literal_value || read_local_var || read_call
   end
 
   def read_simple_value

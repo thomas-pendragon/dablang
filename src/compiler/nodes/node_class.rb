@@ -11,4 +11,13 @@ class DabNodeClass < DabNode
   def extra_dump
     identifier
   end
+
+  def number
+    root.class_number(@identifier)
+  end
+
+  def compile(output)
+    output.comment(@identifier)
+    output.print('PUSH_CLASS', number)
+  end
 end

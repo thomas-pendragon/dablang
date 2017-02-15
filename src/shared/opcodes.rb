@@ -16,6 +16,8 @@ OPCODES = {
   0x0E => {name: 'PUSH_NIL'}, # push(1)
   0x0F => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
   0x10 => {name: 'PROPGET'}, # pop(2), push(1)
+  0x11 => {name: 'START_CLASS', args: %i(vlc uint16)},
+  0x12 => {name: 'PUSH_CLASS', arg: :uint16},
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
@@ -25,3 +27,17 @@ KERNELCODES = {
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
+
+STANDARD_CLASSES = [
+  'Object',
+  'String',
+  'LiteralString',
+  'Fixnum',
+  'LiteralFixnum',
+  'Boolean',
+  'LiteralBoolean', # ??
+].freeze
+
+STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h
+
+USER_CLASSES_OFFSET = 0x100

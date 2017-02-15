@@ -1,0 +1,18 @@
+## CODE
+
+class MyObject
+{
+}
+
+func main()
+{
+	print(MyObject.new);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+#MyObject

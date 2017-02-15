@@ -1,14 +1,12 @@
 #include "cvm.h"
 
-void DabValue::dump() const
+void DabValue::dump(BaseDabVM &vm) const
 {
     static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "nArgs", "nVars",
                                   "RETVL", "CONST", "VARIA", "STACK"};
-    static const char *types[] = {
-        "INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB",
-    };
+    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS"};
     fprintf(stderr, "%s %s ", kinds[kind], types[type]);
-    print(stderr, true);
+    print(vm, stderr, true);
 }
 
 std::string DabValue::class_name() const
@@ -30,13 +28,16 @@ std::string DabValue::class_name() const
     case TYPE_NIL:
         return "NilClass";
         break;
+    case TYPE_CLASS:
+        return "Class";
+        break;
     default:
         assert(false);
         break;
     }
 }
 
-void DabValue::print(FILE *out, bool debug) const
+void DabValue::print(BaseDabVM &vm, FILE *out, bool debug) const
 {
     switch (type)
     {
@@ -54,6 +55,9 @@ void DabValue::print(FILE *out, bool debug) const
         break;
     case TYPE_NIL:
         fprintf(out, "nil");
+        break;
+    case TYPE_CLASS:
+        fprintf(out, "class <%s>", vm.classes[fixnum].name.c_str());
         break;
     default:
         fprintf(out, "?");

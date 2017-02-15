@@ -19,6 +19,8 @@ enum
     OP_PUSH_NIL         = 0x0E,
     OP_KERNELCALL       = 0x0F,
     OP_PROPGET          = 0x10,
+    OP_START_CLASS      = 0x11,
+    OP_PUSH_CLASS       = 0x12,
 };
 
 enum
@@ -77,14 +79,8 @@ enum
         functions[STR(op)] = fun;                                                                  \
     }
 
-struct DabVM
+struct DabVM : public BaseDabVM
 {
-    Stream instructions;
-    std::map<std::string, DabFunction> functions;
-    size_t                frame_position = -1;
-    Stack                 stack;
-    std::vector<DabValue> constants;
-
     DabVM()
     {
         DAB_DEFINE_OP_STR(+);
@@ -116,6 +112,11 @@ struct DabVM
             stack.pop_value();
             stack_push(std::string("LiteralBoolean"));
         });
+
+        add_c_function("Class::new", [this]() {
+            stack.pop_value();
+            stack_push(std::string("#MyObject"));
+        });
     }
 
     void add_c_function(const std::string &name, std::function<void()> func)
@@ -131,9 +132,9 @@ struct DabVM
     {
         auto arg = stack.pop_value();
         fprintf(stderr, "[ ");
-        arg.print(stderr);
+        arg.print(*this, stderr);
         fprintf(stderr, " ]\n");
-        arg.print(stdout);
+        arg.print(*this, stdout);
         stack.push_nil();
     }
 
@@ -253,7 +254,7 @@ struct DabVM
         for (size_t i = 0; i < data.size(); i++)
         {
             fprintf(stderr, "[%4zu] ", i);
-            data[i].dump();
+            data[i].dump(*this);
             fprintf(stderr, "\n");
         }
     }
@@ -505,11 +506,38 @@ struct DabVM
             prop_get(value, name);
             break;
         }
+        case OP_START_CLASS:
+        {
+            auto name  = input.read_vlc_string();
+            auto index = input.read_uint16();
+            add_class(name, index);
+            break;
+        }
+        case OP_PUSH_CLASS:
+        {
+            auto index = input.read_uint16();
+            push_class(index);
+            break;
+        }
         default:
-            fprintf(stderr, "VM error: Unknown opcode <%d>.\n", (int)opcode);
+            fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
             exit(1);
             break;
         }
+    }
+
+    void push_class(int index)
+    {
+        stack.push(classes[index]);
+    }
+
+    void add_class(const std::string &name, int index)
+    {
+        DabClass klass;
+        klass.name     = name;
+        klass.index    = index;
+        klass.builtin  = false;
+        classes[index] = klass;
     }
 
     void prop_get(const DabValue &value, const std::string &name)

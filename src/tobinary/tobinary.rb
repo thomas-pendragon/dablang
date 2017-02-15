@@ -26,9 +26,11 @@ class InputStream
   end
 
   def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' || call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' || call == 'KERNELCALL' || call == 'RETURN'
+    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' ||
+       call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' ||
+       call == 'KERNELCALL' || call == 'RETURN' || call == 'PUSH_CLASS'
       return args.map(&:to_i)
-    elsif call == 'START_FUNCTION'
+    elsif call == 'START_FUNCTION' || call == 'START_CLASS'
       name = args[0].strip.to_sym
       n_local = args[1].to_i
       return [name, n_local]
@@ -188,6 +190,7 @@ class Parser
     @jump_corrections = []
   end
 
+  @in_class = false
   def run!
     @output_stream.begin(self)
     @input_stream.each do |line, label|
@@ -202,6 +205,12 @@ class Parser
         @output_stream._push(@function_stream.code)
 
         reset_substream
+      elsif line[0] == 'START_CLASS'
+        @in_class = true
+        start_substream(line)
+      elsif line[0] == 'END_CLASS'
+        @in_class = false
+        @output_stream.write(@function_line)
       elsif @in_function
         if label
           @label_positions[label.to_s] = function_pos

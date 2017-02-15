@@ -101,7 +101,17 @@ enum
     TYPE_BOOLEAN,
     TYPE_NIL,
     TYPE_SYMBOL,
+    TYPE_CLASS,
 };
+
+struct DabClass
+{
+    std::string name;
+    int         index;
+    bool        builtin;
+};
+
+struct BaseDabVM;
 
 struct DabValue
 {
@@ -112,11 +122,11 @@ struct DabValue
     std::string string;
     bool        boolean;
 
-    void dump() const;
+    void dump(BaseDabVM &vm) const;
 
     std::string class_name() const;
 
-    void print(FILE *out, bool debug = false) const;
+    void print(BaseDabVM &vm, FILE *out, bool debug = false) const;
 
     bool truthy() const;
 
@@ -127,6 +137,9 @@ struct DabValue
     {
     }
     DabValue(const std::string &value) : type(TYPE_STRING), string(value)
+    {
+    }
+    DabValue(const DabClass &klass) : type(TYPE_CLASS), fixnum(klass.index)
     {
     }
 };
@@ -188,4 +201,14 @@ struct Stack
   private:
     std::vector<DabValue> _data;
     friend class DabVM;
+};
+
+struct BaseDabVM
+{
+    Stream instructions;
+    std::map<std::string, DabFunction> functions;
+    size_t                frame_position = -1;
+    Stack                 stack;
+    std::vector<DabValue> constants;
+    std::map<int, DabClass> classes;
 };

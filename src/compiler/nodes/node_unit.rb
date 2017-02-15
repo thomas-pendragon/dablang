@@ -11,6 +11,11 @@ class DabNodeUnit < DabNode
     insert(@functions)
     insert(@constants)
     insert(@classes)
+    @class_numbers = STANDARD_CLASSES_REV.invert.dup
+  end
+
+  def class_number(id)
+    @class_numbers[id]
   end
 
   def add_constant(literal)
@@ -27,11 +32,14 @@ class DabNodeUnit < DabNode
   end
 
   def add_class(klass)
+    number = USER_CLASSES_OFFSET + @classes.count
+    klass.assign_number(number)
     @classes.insert(klass)
+    @class_numbers[klass.identifier] = number
   end
 
   def compile(output)
-    (@constants.children + @functions.children).each do |node|
+    (@constants.children + @classes.children + @functions.children).each do |node|
       node.compile(output)
     end
   end
