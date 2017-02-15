@@ -171,16 +171,20 @@ class Parser
     @function_stream.pos
   end
 
+  def start_substream(line)
+    @function_line = line.dup
+    @function_string = StringIO.new
+    @function_stream = OutputStream.new(@function_string)
+    @label_positions = {}
+    @jump_corrections = []
+  end
+
   def run!
     @output_stream.begin(self)
     @input_stream.each do |line, label|
       if line[0] == 'START_FUNCTION'
         @in_function = true
-        @function_line = line.dup
-        @function_string = StringIO.new
-        @function_stream = OutputStream.new(@function_string)
-        @label_positions = {}
-        @jump_corrections = []
+        start_substream(line)
       elsif line[0] == 'END_FUNCTION'
         @function_stream.fix_jumps(@label_positions, @jump_corrections)
 
