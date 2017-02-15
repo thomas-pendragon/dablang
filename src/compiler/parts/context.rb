@@ -28,7 +28,7 @@ class DabContext
     until @stream.eof?
       if f = read_function
         ret.add_function(f)
-      elsif c = read_class
+      elsif c = read_define_class
         ret.add_class(c)
       end
       @stream.skip_whitespace
@@ -114,13 +114,13 @@ class DabContext
     end
   end
 
-  def read_class
+  def read_define_class
     on_subcontext do |subcontext|
       next false unless subcontext.read_keyword('class')
       next false unless ident = subcontext.read_identifier
       next false unless subcontext.read_operator('{')
       next false unless subcontext.read_operator('}')
-      DabNodeClass.new(ident)
+      DabNodeClassDefinition.new(ident)
     end
   end
 
