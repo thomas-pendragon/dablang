@@ -2,11 +2,13 @@ class DabContext
   attr_reader :stream
   attr_accessor :local_vars
   attr_accessor :functions
+  attr_accessor :classes
 
   def initialize(stream)
     @stream = stream
     @local_vars = []
     @functions = ['print']
+    @classes = ['String']
   end
 
   def add_local_var(id)
@@ -17,6 +19,11 @@ class DabContext
   def add_function(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
     @functions << id
+  end
+
+  def add_class(id)
+    raise "id must be string, is #{id.class}" unless id.is_a? String
+    @classes << id
   end
 
   def has_function?(id)
@@ -120,6 +127,7 @@ class DabContext
       next false unless ident = subcontext.read_identifier
       next false unless subcontext.read_operator('{')
       next false unless subcontext.read_operator('}')
+      subcontext.add_class(ident)
       DabNodeClassDefinition.new(ident)
     end
   end
@@ -327,6 +335,7 @@ class DabContext
     ret = DabContext.new(substream)
     ret.local_vars = @local_vars.clone
     ret.functions = @functions.clone
+    ret.classes = @classes.clone
     ret
   end
 
@@ -334,6 +343,7 @@ class DabContext
     @stream.merge!(other_context.stream)
     @local_vars = other_context.local_vars
     @functions = other_context.functions
+    @classes = other_context.classes
   end
 
   def on_subcontext
