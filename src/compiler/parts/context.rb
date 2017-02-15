@@ -76,10 +76,9 @@ class DabContext
     list = _read_list(method, separator)
     return list unless list
     ret = list[0].value
-    if list.count > 1
-      for i in 1...list.count do
-        ret = klass.new(ret, list[i].value, list[i].separator)
-      end
+    (list.count - 1).times do |n|
+      i = n + 1
+      ret = klass.new(ret, list[i].value, list[i].separator)
     end
     ret
   end
