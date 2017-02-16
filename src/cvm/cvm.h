@@ -124,7 +124,7 @@ struct DabValue
 
     void dump(BaseDabVM &vm) const;
 
-    std::string class_name() const;
+    std::string class_name(BaseDabVM &vm) const;
 
     void print(BaseDabVM &vm, FILE *out, bool debug = false) const;
 

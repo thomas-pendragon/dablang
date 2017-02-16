@@ -9,7 +9,7 @@ void DabValue::dump(BaseDabVM &vm) const
     print(vm, stderr, true);
 }
 
-std::string DabValue::class_name() const
+std::string DabValue::class_name(BaseDabVM &vm) const
 {
     switch (type)
     {

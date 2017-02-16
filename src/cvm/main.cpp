@@ -542,7 +542,7 @@ struct DabVM : public BaseDabVM
 
     void prop_get(const DabValue &value, const std::string &name)
     {
-        auto func = value.class_name() + "::" + name;
+        auto func = value.class_name(*this) + "::" + name;
         stack.push_value(value);
         call(func, 1);
     }
