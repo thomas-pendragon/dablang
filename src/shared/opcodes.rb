@@ -36,6 +36,7 @@ STANDARD_CLASSES = [
   'LiteralFixnum',
   'Boolean',
   'LiteralBoolean', # ??
+  'NilClass',
 ].freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h
