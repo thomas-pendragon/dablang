@@ -138,6 +138,7 @@ struct DabValue
 
     void dump(BaseDabVM &vm) const;
 
+    int         class_index() const;
     std::string class_name(BaseDabVM &vm) const;
 
     void print(BaseDabVM &vm, FILE *out, bool debug = false) const;
@@ -226,5 +227,9 @@ struct BaseDabVM
     std::vector<DabValue> constants;
     std::map<int, DabClass> classes;
 
+    DabClass &get_class(int index)
+    {
+        return classes[index];
+    }
     void define_default_classes();
 };

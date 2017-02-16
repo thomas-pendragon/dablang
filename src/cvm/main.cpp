@@ -115,7 +115,7 @@ struct DabVM : public BaseDabVM
             stack_push(std::string("LiteralBoolean"));
         });
 
-        add_c_function("Class::new", [this]() {
+        add_c_function("MyObject::new", [this]() {
             stack.pop_value();
             stack_push(std::string("#MyObject"));
         });

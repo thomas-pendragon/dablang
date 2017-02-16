@@ -9,32 +9,37 @@ void DabValue::dump(BaseDabVM &vm) const
     print(vm, stderr, true);
 }
 
-std::string DabValue::class_name(BaseDabVM &vm) const
+int DabValue::class_index() const
 {
     switch (type)
     {
     case TYPE_FIXNUM:
-        return "Fixnum";
+        return CLASS_FIXNUM;
         break;
     case TYPE_STRING:
-        return "String";
+        return CLASS_STRING;
         break;
     case TYPE_SYMBOL:
-        return "Symbol";
+        return CLASS_INT_SYMBOL;
         break;
     case TYPE_BOOLEAN:
-        return "Boolean";
+        return CLASS_BOOLEAN;
         break;
     case TYPE_NIL:
-        return "NilClass";
+        return CLASS_NILCLASS;
         break;
     case TYPE_CLASS:
-        return "Class";
+        return fixnum;
         break;
     default:
         assert(false);
         break;
     }
+}
+
+std::string DabValue::class_name(BaseDabVM &vm) const
+{
+    return vm.get_class(class_index()).name;
 }
 
 void DabValue::print(BaseDabVM &vm, FILE *out, bool debug) const
