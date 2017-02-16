@@ -358,12 +358,15 @@ struct DabVM : public BaseDabVM
             fprintf(stderr, "VM error: Unknown function <%s>.\n", name.c_str());
             exit(1);
         }
-        auto &fun = functions[name];
+        call_function(functions[name], n_args);
+    }
 
+    void call_function(const DabFunction &fun, int n_args)
+    {
         if (fun.regular)
         {
             push_new_frame(n_args, fun.n_locals);
-            fprintf(stderr, "VM: %s has %d local vars.\n", name.c_str(), fun.n_locals);
+            fprintf(stderr, "VM: %s has %d local vars.\n", fun.name.c_str(), fun.n_locals);
             instructions.seek(fun.address);
         }
         else
