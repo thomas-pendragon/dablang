@@ -104,6 +104,20 @@ enum
     TYPE_CLASS,
 };
 
+enum
+{
+    CLASS_OBJECT         = 0,
+    CLASS_STRING         = 1,
+    CLASS_LITERALSTRING  = 2,
+    CLASS_FIXNUM         = 3,
+    CLASS_LITERALFIXNUM  = 4,
+    CLASS_BOOLEAN        = 5,
+    CLASS_LITERALBOOLEAN = 6,
+    CLASS_NILCLASS       = 7,
+
+    CLASS_INT_SYMBOL = 0xFE,
+};
+
 struct DabClass
 {
     std::string name;
