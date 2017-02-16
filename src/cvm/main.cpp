@@ -83,6 +83,8 @@ struct DabVM : public BaseDabVM
 {
     DabVM()
     {
+        define_default_classes();
+
         DAB_DEFINE_OP_STR(+);
         DAB_DEFINE_OP(-);
         DAB_DEFINE_OP(*);

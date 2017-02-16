@@ -225,4 +225,6 @@ struct BaseDabVM
     Stack                 stack;
     std::vector<DabValue> constants;
     std::map<int, DabClass> classes;
+
+    void define_default_classes();
 };
