@@ -238,3 +238,90 @@ struct BaseDabVM
     }
     void define_default_classes();
 };
+
+struct DabVM : public BaseDabVM
+{
+    void define_defaults();
+
+    DabVM();
+
+    void add_c_function(const std::string &name, std::function<void()> func);
+
+    void kernel_print();
+
+    void pop_frame(bool regular);
+
+    void push(int kind, int value);
+
+    void push(int kind, uint64_t value);
+
+    void push(int kind, bool value);
+
+    void stack_push(const std::string &value);
+
+    void stack_push(uint64_t value);
+
+    void stack_push(bool value);
+
+    void push(int kind, const std::string &value);
+
+    void push(DabValue val);
+
+    size_t stack_position() const;
+
+    void push_new_frame(int n_args, int n_locals);
+
+    void _dump(const char *name, const std::vector<DabValue> &data);
+
+    size_t ip() const;
+
+    void dump();
+
+    int run(Stream &input);
+
+    DabValue &start_of_constants();
+
+    DabValue &get_arg(int arg_index);
+
+    DabValue &get_var(int var_index);
+
+    DabValue &get_retval();
+
+    size_t get_prev_ip();
+
+    size_t prev_frame_position();
+
+    int number_of_args();
+
+    int number_of_vars();
+
+    void push_constant(const DabValue &value);
+
+    void call(const std::string &name, int n_args);
+
+    void call_function(const DabFunction &fun, int n_args);
+
+    void execute(Stream &input);
+
+    void execute_single(Stream &input);
+
+    void push_class(int index);
+
+    void add_class(const std::string &name, int index);
+
+    void prop_get(const DabValue &value, const std::string &name);
+
+    void kernelcall(int call);
+
+    std::string stack_pop_symbol();
+
+    void push_constant_symbol(const std::string &name);
+
+    void push_constant_string(const std::string &name);
+
+    void push_constant_fixnum(uint64_t value);
+
+    void push_constant_boolean(bool value);
+
+    void add_function(Stream &input, const std::string &name, size_t n_locals, size_t body_length);
+};
