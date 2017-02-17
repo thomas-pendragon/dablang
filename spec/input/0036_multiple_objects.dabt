@@ -1,0 +1,24 @@
+## CODE
+
+class MyObject
+{
+}
+
+class AnotherObject
+{
+}
+
+func main()
+{
+	print(MyObject.new);
+	print(" ");
+	print(AnotherObject.new);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+#MyObject #AnotherObject
