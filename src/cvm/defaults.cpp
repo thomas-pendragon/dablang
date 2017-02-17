@@ -61,32 +61,4 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP(/);
     DAB_DEFINE_OP(%);
     DAB_DEFINE_OP_BOOL(==);
-
-    add_c_function("String::upcase", [this]() {
-        auto arg0 = stack.pop_value();
-        assert(arg0.type == TYPE_STRING);
-        auto &s = arg0.string;
-        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-        stack.push(arg0);
-    });
-
-    add_c_function("String::class", [this]() {
-        stack.pop_value();
-        stack_push(std::string("LiteralString"));
-    });
-
-    add_c_function("Fixnum::class", [this]() {
-        stack.pop_value();
-        stack_push(std::string("LiteralFixnum"));
-    });
-
-    add_c_function("Boolean::class", [this]() {
-        stack.pop_value();
-        stack_push(std::string("LiteralBoolean"));
-    });
-
-    add_c_function("MyObject::new", [this]() {
-        stack.pop_value();
-        stack_push(std::string("#MyObject"));
-    });
 }
