@@ -102,6 +102,7 @@ enum
     TYPE_NIL,
     TYPE_SYMBOL,
     TYPE_CLASS,
+    TYPE_OBJECT,
 };
 
 enum
