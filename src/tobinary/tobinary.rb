@@ -5,21 +5,18 @@ class InputStream
   attr_reader :lines
 
   def initialize
-    @lines = STDIN.read.split("\n").map { |line| map_line(line) }
+    @lines = STDIN.read.split("\n").map { |line| map_line(line) }.compact
     errap @lines
   end
 
   def map_line(line)
-    label = nil
-    if line.start_with? '/*'
-      line = line[line.index('*/ ') + 3..-1]
-    end
-    if line[/(\w+)\s*:(.*)$/]
-      label = $1.strip
-      line = $2.strip
-    end
+    raise 'parse error' unless line[/^(\/\*.*\*\/)?\s*((\w+)\s*:)?(.*)$/]
+    *items = $1, $2, $3, $4
+    return nil if items[3].strip.empty?
+    label = items[2]&.strip
+    line = items[3]&.strip || ''
     line = line.split(',')
-    line[0] = line[0].strip
+    line[0] = line[0]&.strip
     line[1..-1] = map_args(line[0], line[1..-1])
     line.unshift(label)
     line
