@@ -39,7 +39,12 @@ int DabValue::class_index() const
 
 std::string DabValue::class_name(BaseDabVM &vm) const
 {
-    return vm.get_class(class_index()).name;
+    return get_class(vm).name;
+}
+
+DabClass &DabValue::get_class(BaseDabVM &vm) const
+{
+    return vm.get_class(class_index());
 }
 
 void DabValue::print(BaseDabVM &vm, FILE *out, bool debug) const
