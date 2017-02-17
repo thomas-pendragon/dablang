@@ -119,14 +119,28 @@ enum
     CLASS_INT_SYMBOL = 0xFE,
 };
 
+struct BaseDabVM;
+struct DabValue;
+
 struct DabClass
 {
     std::string name;
     int         index;
-    bool        builtin;
-};
+    bool        builtin = false;
+    std::map<std::string, DabFunction> functions;
+    std::map<std::string, DabFunction> static_functions;
+    int superclass_index = CLASS_OBJECT;
 
-struct BaseDabVM;
+    const DabFunction &get_function(BaseDabVM &vm, const DabValue &klass,
+                                    const std::string &name) const;
+
+    const DabFunction &get_static_function(BaseDabVM &vm, const DabValue &klass,
+                                           const std::string &name) const;
+
+  private:
+    const DabFunction &_get_function(bool _static, BaseDabVM &vm, const DabValue &klass,
+                                     const std::string &name) const;
+};
 
 struct DabValue
 {
