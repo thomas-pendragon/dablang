@@ -165,7 +165,7 @@ class DabProgramStream
   end
 
   def current_char_identifier?
-    current_char =~ /[a-zA-Z]/
+    current_char =~ /[a-zA-Z_]/
   end
 
   def current_char(offset = 0)
