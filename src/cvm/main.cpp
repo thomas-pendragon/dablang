@@ -464,9 +464,16 @@ void DabVM::add_class(const std::string &name, int index)
 
 void DabVM::prop_get(const DabValue &value, const std::string &name)
 {
-    auto func = value.class_name(*this) + "::" + name;
-    stack.push_value(value);
-    call(func, 1);
+    auto  class_index = value.class_index();
+    auto &klass       = get_class(class_index);
+    call_instance(klass, name, value);
+}
+
+void DabVM::call_instance(const DabClass &klass, const std::string &name, const DabValue &object)
+{
+    stack.push(object);
+    auto &fun = klass.get_function(*this, object, name);
+    call_function(fun, 1);
 }
 
 void DabVM::kernelcall(int call)

@@ -329,6 +329,11 @@ struct DabVM : public BaseDabVM
 
     void prop_get(const DabValue &value, const std::string &name);
 
+    void call_static_instance(const DabClass &klass, const std::string &name,
+                              const DabValue &object);
+
+    void call_instance(const DabClass &klass, const std::string &name, const DabValue &object);
+
     void kernelcall(int call);
 
     std::string stack_pop_symbol();
