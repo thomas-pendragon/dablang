@@ -31,6 +31,9 @@ int DabValue::class_index() const
     case TYPE_CLASS:
         return fixnum;
         break;
+    case TYPE_OBJECT:
+        return fixnum;
+        break;
     default:
         assert(false);
         break;
