@@ -1,0 +1,32 @@
+## CODE
+
+class MyObject
+{
+}
+
+class AnotherObject
+{
+}
+
+func print_info(a)
+{
+	print("Object: ");
+	print(a);
+	print(" (");
+	print(a.class);
+	print("); ");
+}
+
+func main()
+{
+	print_info(MyObject.new);
+	print_info(AnotherObject.new);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+Object: #MyObject (MyObject); Object: #AnotherObject (AnotherObject);
