@@ -159,6 +159,8 @@ struct DabValue
     DabValue(const DabClass &klass) : type(TYPE_CLASS), fixnum(klass.index)
     {
     }
+
+    DabValue create_instance() const;
 };
 
 struct Stack

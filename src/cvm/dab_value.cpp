@@ -101,3 +101,11 @@ bool DabValue::truthy() const
         break;
     }
 }
+
+DabValue DabValue::create_instance() const
+{
+    assert(type == TYPE_CLASS);
+    auto copy = *this;
+    copy.type = TYPE_OBJECT;
+    return copy;
+}
