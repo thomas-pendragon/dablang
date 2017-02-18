@@ -15,8 +15,10 @@ end
 
 class DabParser
   attr_reader :position
+  attr_reader :nl_is_whitespace
 
-  def initialize(content)
+  def initialize(content, nl_is_whitespace = true)
+    @nl_is_whitespace = nl_is_whitespace
     @content = content.freeze
     @position = 0
     @length = @content.length
@@ -157,7 +159,11 @@ class DabParser
   end
 
   def current_char_whitespace?
-    current_char == ' ' || current_char == "\t" || current_char == "\r" || current_char == "\n"
+    if nl_is_whitespace
+      current_char == ' ' || current_char == "\t" || current_char == "\r" || current_char == "\n"
+    else
+      current_char == ' ' || current_char == "\t" || current_char == "\r"
+    end
   end
 
   def current_char_whitespace_or_symbol?
