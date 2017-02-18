@@ -1,11 +1,12 @@
-class DabContext
-  attr_reader :stream
+require_relative '../../shared/base_context.rb'
+
+class DabContext < DabBaseContext
   attr_accessor :local_vars
   attr_accessor :functions
   attr_accessor :classes
 
   def initialize(stream)
-    @stream = stream
+    super(stream)
     @local_vars = []
     @functions = ['print']
     @classes = ['String']
@@ -149,30 +150,6 @@ class DabContext
       next false unless code = subcontext.read_codeblock
       DabNodeFunction.new(ident, code, arglist)
     end
-  end
-
-  def read_identifier(*args)
-    @stream.read_identifier(*args)
-  end
-
-  def read_operator(*args)
-    @stream.read_operator(*args)
-  end
-
-  def read_any_operator(*args)
-    @stream.read_any_operator(*args)
-  end
-
-  def read_string(*args)
-    @stream.read_string(*args)
-  end
-
-  def read_number(*args)
-    @stream.read_number(*args)
-  end
-
-  def read_keyword(*args)
-    @stream.read_keyword(*args)
   end
 
   def read_return
@@ -343,8 +320,7 @@ class DabContext
   end
 
   def clone
-    substream = @stream.clone
-    ret = DabContext.new(substream)
+    ret = super
     ret.local_vars = @local_vars.clone
     ret.functions = @functions.clone
     ret.classes = @classes.clone
@@ -352,18 +328,9 @@ class DabContext
   end
 
   def merge!(other_context)
-    @stream.merge!(other_context.stream)
+    super(other_context)
     @local_vars = other_context.local_vars
     @functions = other_context.functions
     @classes = other_context.classes
-  end
-
-  def on_subcontext
-    subcontext = self.clone
-    ret = yield(subcontext)
-    if ret
-      merge!(subcontext)
-    end
-    ret
   end
 end

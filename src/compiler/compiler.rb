@@ -1,3 +1,4 @@
+require_relative '../shared/base_context.rb'
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/parser.rb'
 require_relative 'nodes/node.rb'
