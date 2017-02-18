@@ -138,7 +138,7 @@ class DabParser
   end
 
   def input_match(word)
-    for i in 0...word.length do
+    for i in 0...word.length
       return false if current_char(i) != word[i]
     end
     true
