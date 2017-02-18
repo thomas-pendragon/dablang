@@ -75,9 +75,9 @@ class DabParser
   end
 
   def read_identifier
+    skip_whitespace
     start_pos = @position
     debug('identifier ?')
-    skip_whitespace
     ret = ''
     while current_char_identifier?
       ret += current_char
