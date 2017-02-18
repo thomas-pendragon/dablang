@@ -89,16 +89,21 @@ class OutputStream
     end
   end
 
+  def _push_fixnum(value, spec)
+    raise TypeError.new("expected Fixnum, got #{value} (#{value.class})") unless value.is_a? Fixnum
+    @code += [value].pack(spec)
+  end
+
   def _push_uint8(value)
-    @code += [value].pack('C')
+    _push_fixnum(value, 'C')
   end
 
   def _push_uint16(value)
-    @code += [value].pack('S')
+    _push_fixnum(value, 'S')
   end
 
   def _push_uint64(value)
-    @code += [value].pack('Q<')
+    _push_fixnum(value, 'Q<')
   end
 
   def _push(arg)
