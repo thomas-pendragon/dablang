@@ -132,6 +132,28 @@ class DabParser
     ret
   end
 
+  def read_c_comment
+    start_pos = @position
+    debug('c-comment ?')
+    skip_whitespace
+    return false unless input_match('/*')
+    ret = ''
+    2.times do
+      ret += current_char
+      advance!
+    end
+    until input_match('*/')
+      ret += current_char
+      advance!
+    end
+    2.times do
+      ret += current_char
+      advance!
+    end
+    debug('c-comment ok')
+    _return_source(ret, start_pos)
+  end
+
   def read_number
     start_pos = @position
     debug('number ?')
