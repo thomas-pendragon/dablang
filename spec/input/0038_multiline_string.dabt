@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	print("a\nb");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+a
+b

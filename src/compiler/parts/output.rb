@@ -19,7 +19,7 @@ class DabOutput
   def print(*args)
     return _print("\n") if args.count == 0 || args[0].nil?
 
-    _print sprintf('/* %-12s */ ', @comment.to_s[0...12])
+    _print sprintf('/* %-12s */ ', @comment.to_s[0...12].gsub(/[^a-zA-Z \-\._]/, ''))
 
     t = if @label
           sprintf('%-12s: ', @label.to_s[0...12])
@@ -28,13 +28,20 @@ class DabOutput
         end
     _print t
 
-    t = args[0] + ' ' + args[1..-1].join(', ')
+    t = args[0] + ' ' + args[1..-1].map { |item| _printable(item) }.join(', ')
 
     _print(t)
     _print("\n")
 
     @comment = nil
     @label = nil
+  end
+
+  def _printable(item)
+    if item.is_a? String
+      return item.gsub("\n", '\\n')
+    end
+    item
   end
 
   def push(node)

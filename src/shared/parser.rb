@@ -129,7 +129,11 @@ class DabParser
     return false unless input_match('"')
     advance!
     debug('string ok')
-    ret
+    _parse_string(ret)
+  end
+
+  def _parse_string(ret)
+    ret.gsub('\\n', "\n")
   end
 
   def read_c_comment
