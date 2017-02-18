@@ -28,7 +28,7 @@ class DabOutput
         end
     _print t
 
-    t = args.join(', ').to_s
+    t = args[0] + ' ' + args[1..-1].join(', ')
 
     _print(t)
     _print("\n")

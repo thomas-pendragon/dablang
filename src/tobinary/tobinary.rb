@@ -1,48 +1,20 @@
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/opcodes.rb'
+require_relative '../shared/parser.rb'
+require_relative './asm_context.rb'
 
 class InputStream
   attr_reader :lines
 
-  def initialize
-    @lines = STDIN.read.split("\n").map { |line| map_line(line) }.compact
+  def initialize(input = STDIN)
+    @stream = DabParser.new(input.read, false)
+    @context = DabAsmContext.new(@stream)
+    @lines = @context.read_program
     errap @lines
   end
 
-  def map_line(line)
-    raise 'parse error' unless line[/^(\/\*.*\*\/)?\s*((\w+)\s*:)?(.*)$/]
-    *items = $1, $2, $3, $4
-    return nil if items[3].strip.empty?
-    label = items[2]&.strip
-    line = items[3]&.strip || ''
-    line = line.split(',')
-    line[0] = line[0]&.strip
-    line[1..-1] = map_args(line[0], line[1..-1])
-    line.unshift(label)
-    line
-  end
-
-  def map_args(call, args)
-    if call == 'PUSH_CONSTANT' || call == 'CALL' || call == 'SET_VAR' || call == 'PUSH_VAR' ||
-       call == 'PUSH_ARG' || call == 'CONSTANT_NUMBER' || call == 'CONSTANT_BOOLEAN' ||
-       call == 'KERNELCALL' || call == 'RETURN' || call == 'PUSH_CLASS'
-      return args.map(&:to_i)
-    elsif call == 'START_FUNCTION' || call == 'START_CLASS'
-      name = args[0].strip.to_sym
-      n_local = args[1].to_i
-      return [name, n_local]
-    end
-    if call == 'CONSTANT_SYMBOL' || call == 'JMP' || call == 'JMP_IFN'
-      return args.map(&:strip).map(&:to_sym)
-    end
-    if call == 'CONSTANT_STRING'
-      return args.map(&:strip).map { |s| s[1..-2] }
-    end
-    args
-  end
-
   def each
-    @lines.each { |line| yield(line[1..-1], line[0]) }
+    @lines.each { |line| yield(line) }
   end
 end
 
@@ -195,7 +167,11 @@ class Parser
   @in_class = false
   def run!
     @output_stream.begin(self)
-    @input_stream.each do |line, label|
+    @input_stream.each do |instr|
+      errap instr
+      line = [instr[:op]] + (instr[:arglist] || [])
+      errap line
+      label = instr[:label]
       if line[0] == 'START_FUNCTION'
         @in_function = true
         start_substream(line)

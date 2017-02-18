@@ -16,7 +16,9 @@ class DabNodeSymbol < DabNodeLiteral
   end
 
   def compile_constant(output)
-    output.print('CONSTANT_SYMBOL', symbol)
+    val = symbol
+    val = "\"#{symbol}\"" unless symbol =~ /^[a-z_]+$/i
+    output.print('CONSTANT_SYMBOL', val)
   end
 
   def my_type
