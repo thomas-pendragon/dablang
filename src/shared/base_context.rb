@@ -28,6 +28,14 @@ class DabBaseContext
     @stream.read_keyword(*args)
   end
 
+  def read_c_comment(*args)
+    @stream.read_c_comment(*args)
+  end
+
+  def read_newline(*args)
+    @stream.read_newline(*args)
+  end
+
   def clone
     substream = @stream.clone
     ret = DabContext.new(substream)
