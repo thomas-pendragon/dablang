@@ -79,6 +79,7 @@ class DabParser
     start_pos = @position
     debug('identifier ?')
     ret = ''
+    return nil unless current_char_identifier_start?
     while current_char_identifier?
       ret += current_char
       advance!
@@ -170,8 +171,12 @@ class DabParser
     current_char_whitespace? || current_char == '<' || current_char == '>'
   end
 
-  def current_char_identifier?
+  def current_char_identifier_start?
     current_char =~ /[a-zA-Z_]/
+  end
+
+  def current_char_identifier?
+    current_char_identifier_start? || current_char_digit?
   end
 
   def current_char(offset = 0)
