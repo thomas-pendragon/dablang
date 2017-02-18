@@ -46,4 +46,25 @@ class DabBaseContext
     end
     ret
   end
+
+  def __read_list(item_method, separator, init_value)
+    separator = [separator] unless separator.is_a? Array
+    on_subcontext do |subcontext|
+      ret = init_value
+
+      next false unless arg = subcontext.send(item_method)
+      yield(ret, arg)
+
+      while true
+        next_item = subcontext.on_subcontext do |subsubcontext|
+          next false unless sep = subsubcontext.read_any_operator(separator)
+          next false unless next_arg = subsubcontext.send(item_method)
+          yield(ret, next_arg, sep)
+        end
+        break unless next_item
+      end
+
+      ret
+    end
+  end
 end

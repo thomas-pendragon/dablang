@@ -47,23 +47,8 @@ class DabContext < DabBaseContext
   end
 
   def _read_list(item_method, separator = ',')
-    separator = [separator] unless separator.is_a? Array
-    on_subcontext do |subcontext|
-      ret = DabNode.new
-
-      next false unless arg = subcontext.send(item_method)
-      ret.insert(DabNodeListNode.new(arg, nil))
-
-      while true
-        next_item = subcontext.on_subcontext do |subsubcontext|
-          next false unless sep = subsubcontext.read_any_operator(separator)
-          next false unless next_arg = subsubcontext.send(item_method)
-          ret.insert(DabNodeListNode.new(next_arg, sep))
-        end
-        break unless next_item
-      end
-
-      ret
+    __read_list(item_method, separator, DabNode.new) do |base, item, sep|
+      base.insert(DabNodeListNode.new(item, sep))
     end
   end
 
