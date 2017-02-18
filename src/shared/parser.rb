@@ -105,6 +105,16 @@ class DabParser
     op
   end
 
+  def read_newline
+    debug('newline ?')
+    skip_whitespace
+    return false unless input_match("\n")
+    ret = current_char
+    advance!
+    debug('newline ok')
+    ret
+  end
+
   def read_string
     debug('string ?')
     skip_whitespace
