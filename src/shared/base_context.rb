@@ -38,7 +38,7 @@ class DabBaseContext
 
   def clone
     substream = @stream.clone
-    ret = DabContext.new(substream)
+    ret = self.class.new(substream)
     ret
   end
 
