@@ -7,3 +7,4 @@
 - autogenerate opcode/kernel C enums
 - rake format checks in gitlab.yml
 - prebuild/pretest tasks in gitlab.yml (early fail)
+- parser should strip comments
