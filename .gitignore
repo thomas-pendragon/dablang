@@ -1,3 +1,4 @@
 spec/output
+spec/examples.txt
 bin
 *.o

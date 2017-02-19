@@ -16,10 +16,11 @@ end
 class DabParser
   attr_reader :position
   attr_reader :nl_is_whitespace
+  attr_reader :content
 
   def initialize(content, nl_is_whitespace = true)
     @nl_is_whitespace = nl_is_whitespace
-    @content = content.freeze
+    @content = _strip_comments(content).freeze
     @position = 0
     @length = @content.length
 
@@ -31,6 +32,17 @@ class DabParser
       end
       [n, line]
     end.to_h
+  end
+
+  def _strip_comments(text)
+    lpos = 0
+    while pos = text.index('/*', lpos)
+      break unless rpos = text.index('*/', pos + 2)
+      rpos += 1
+      text[pos..rpos] = ' '
+      lpos = pos
+    end
+    text
   end
 
   def eof?
