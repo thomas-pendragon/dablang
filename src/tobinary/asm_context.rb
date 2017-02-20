@@ -6,7 +6,6 @@ class DabAsmContext < DabBaseContext
     until @stream.eof?
       if instr = read_instruction
         ret << instr
-      elsif read_comment
       elsif read_newline
       else
         raise 'unknown token'
@@ -18,7 +17,6 @@ class DabAsmContext < DabBaseContext
 
   def read_instruction
     on_subcontext do |subcontext|
-      comment = subcontext.read_comment
       label = subcontext.read_label
       next unless op = subcontext.read_identifier
       arglist = subcontext.read_arglist
@@ -27,13 +25,8 @@ class DabAsmContext < DabBaseContext
         op: op,
         arglist: arglist,
         label: label,
-        comment: comment,
       }
     end
-  end
-
-  def read_comment
-    read_c_comment
   end
 
   def read_label
