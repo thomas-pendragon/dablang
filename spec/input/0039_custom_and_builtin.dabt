@@ -1,0 +1,44 @@
+## CODE
+
+class MyObject
+{
+}
+
+class AnotherObject
+{
+}
+
+func print_info(a)
+{
+	print("'");
+	print(a);
+	print("' (");
+	print(a.class);
+	print(")\n");
+}
+
+func main()
+{
+	print_info(MyObject.new);
+	print_info(AnotherObject.new);
+	print_info(String.new);
+	print_info("Example");
+	print_info(true);
+	print_info(false);
+	print_info(100);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+'#MyObject' (MyObject)
+'#AnotherObject' (AnotherObject)
+'' (String)
+'Example' (LiteralString)
+'true' (LiteralBoolean)
+'false' (LiteralBoolean)
+'100' (LiteralFixnum)
+

@@ -11,7 +11,7 @@ class DabNodeUnit < DabNode
     insert(@functions)
     insert(@constants)
     insert(@classes)
-    @class_numbers = STANDARD_CLASSES_REV.invert.dup
+    @class_numbers = STANDARD_CLASSES_REV.dup
   end
 
   def class_number(id)

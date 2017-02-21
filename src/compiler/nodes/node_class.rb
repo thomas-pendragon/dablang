@@ -17,6 +17,7 @@ class DabNodeClass < DabNode
   end
 
   def compile(output)
+    raise "no class for <#{@identifier}>" unless number
     output.comment(@identifier)
     output.print('PUSH_CLASS', number)
   end
