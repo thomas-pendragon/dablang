@@ -1,0 +1,29 @@
+## CODE
+
+func print_info(a)
+{
+	print("'");
+	print(a);
+	print("' (");
+	print(a.class);
+	print(")\n");
+}
+
+func main()
+{
+	print_info(String.new);
+	print_info(String.new("allocated string"));
+	print_info("");
+	print_info("literal string");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+'' (String)
+'allocated string' (String)
+'' (LiteralString)
+'literal string' (LiteralString)

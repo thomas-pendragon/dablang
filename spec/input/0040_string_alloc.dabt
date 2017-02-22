@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(String.new("foo"));
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+foo
