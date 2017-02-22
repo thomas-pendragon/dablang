@@ -507,9 +507,10 @@ void DabVM::push_constant_symbol(const std::string &name)
 void DabVM::push_constant_string(const std::string &name)
 {
     DabValue val;
-    val.kind   = VAL_CONSTANT;
-    val.type   = TYPE_STRING;
-    val.string = name;
+    val.kind        = VAL_CONSTANT;
+    val.type        = TYPE_STRING;
+    val.string      = name;
+    val.is_constant = true;
     push_constant(val);
 }
 

@@ -151,6 +151,8 @@ struct DabValue
     std::string string;
     bool        boolean;
 
+    bool is_constant = false;
+
     void dump(BaseDabVM &vm) const;
 
     int         class_index() const;

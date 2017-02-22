@@ -17,7 +17,7 @@ int DabValue::class_index() const
         return CLASS_LITERALFIXNUM;
         break;
     case TYPE_STRING:
-        return CLASS_LITERALSTRING;
+        return is_constant ? CLASS_LITERALSTRING : CLASS_STRING;
         break;
     case TYPE_SYMBOL:
         return CLASS_INT_SYMBOL;
