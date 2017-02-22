@@ -53,6 +53,27 @@ void BaseDabVM::define_default_classes()
             };
             klass.functions["upcase"] = fun;
         }
+        {
+            DabFunction fun;
+            fun.name    = "new";
+            fun.regular = false;
+            fun.extra   = [this](size_t n_args, size_t n_ret) {
+                assert(n_args == 1 || n_args == 2);
+                assert(n_ret == 1);
+                auto     klass = stack.pop_value();
+                DabValue ret_value;
+                ret_value.type = TYPE_STRING;
+                ret_value.kind = VAL_STACK;
+                if (n_args == 2)
+                {
+                    auto arg = stack.pop_value();
+                    assert(arg.type == TYPE_STRING);
+                    ret_value.string = arg.string;
+                }
+                stack.push_value(ret_value);
+            };
+            klass.static_functions["new"] = fun;
+        }
         classes[CLASS_STRING] = klass;
     }
 
