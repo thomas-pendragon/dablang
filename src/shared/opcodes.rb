@@ -18,6 +18,7 @@ OPCODES = {
   0x10 => {name: 'PROPGET'}, # pop(2), push(1)
   0x11 => {name: 'START_CLASS', args: %i(vlc uint16)},
   0x12 => {name: 'PUSH_CLASS', arg: :uint16},
+  0x13 => {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

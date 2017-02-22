@@ -288,7 +288,16 @@ class DabContext < DabBaseContext
       next value unless dot
       prop_name = subcontext.read_identifier
       next false unless prop_name
-      DabNodePropertyGet.new(value, prop_name)
+      lparen = subcontext.read_operator('(')
+      if lparen
+        arglist = subcontext.read_valuelist
+        next false unless arglist
+        rparen = subcontext.read_operator(')')
+        next false unless rparen
+        DabNodeInstanceCall.new(value, prop_name, arglist)
+      else
+        DabNodePropertyGet.new(value, prop_name)
+      end
     end
   end
 
