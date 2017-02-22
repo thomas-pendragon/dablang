@@ -10,7 +10,9 @@ void BaseDabVM::define_default_classes()
         DabFunction fun;
         fun.name    = "new";
         fun.regular = false;
-        fun.extra   = [this]() {
+        fun.extra   = [this](size_t n_args, size_t n_ret) {
+            assert(n_args == 1);
+            assert(n_ret == 1);
             auto arg = stack.pop_value();
             assert(arg.type == TYPE_CLASS);
             stack.push_value(arg.create_instance());
@@ -21,7 +23,9 @@ void BaseDabVM::define_default_classes()
         DabFunction fun;
         fun.name    = "class";
         fun.regular = false;
-        fun.extra   = [this]() {
+        fun.extra   = [this](size_t n_args, size_t n_ret) {
+            assert(n_args == 1);
+            assert(n_ret == 1);
             auto arg = stack.pop_value();
             stack.push_value(arg.get_class(*this));
         };
@@ -38,7 +42,9 @@ void BaseDabVM::define_default_classes()
             DabFunction fun;
             fun.name    = "upcase";
             fun.regular = false;
-            fun.extra   = [this]() {
+            fun.extra   = [this](size_t n_args, size_t n_ret) {
+                assert(n_args == 1);
+                assert(n_ret == 1);
                 auto arg0 = stack.pop_value();
                 assert(arg0.type == TYPE_STRING);
                 auto &s = arg0.string;

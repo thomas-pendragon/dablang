@@ -72,8 +72,8 @@ struct Stream
 
 struct DabFunction
 {
-    bool                  regular = true;
-    std::function<void()> extra   = nullptr;
+    bool regular = true;
+    std::function<void(size_t, size_t)> extra = nullptr;
 
     size_t      address = -1;
     std::string name;

@@ -281,7 +281,8 @@ void DabVM::call_function(const DabFunction &fun, int n_args)
     }
     else
     {
-        fun.extra();
+        const auto n_ret = 1;
+        fun.extra(n_args, n_ret);
     }
 }
 

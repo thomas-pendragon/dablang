@@ -7,8 +7,10 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this]() {                                                                   \
+        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
             dump();                                                                                \
+            assert(n_args == 2);                                                                   \
+            assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
             auto     arg0 = stack.pop_value();                                                     \
             uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
@@ -26,8 +28,10 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this]() {                                                                   \
+        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
             dump();                                                                                \
+            assert(n_args == 2);                                                                   \
+            assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
             auto     arg0 = stack.pop_value();                                                     \
             uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
@@ -41,8 +45,10 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this]() {                                                                   \
+        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
             dump();                                                                                \
+            assert(n_args == 2);                                                                   \
+            assert(n_ret == 1);                                                                    \
             auto arg1 = stack.pop_value();                                                         \
             auto arg0 = stack.pop_value();                                                         \
             bool test = arg0.fixnum op arg1.fixnum;                                                \
