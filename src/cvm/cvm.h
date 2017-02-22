@@ -263,8 +263,6 @@ struct DabVM : public BaseDabVM
 
     DabVM();
 
-    void add_c_function(const std::string &name, std::function<void()> func);
-
     void kernel_print();
 
     void pop_frame(bool regular);

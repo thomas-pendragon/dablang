@@ -33,15 +33,6 @@ DabVM::DabVM()
     define_defaults();
 }
 
-void DabVM::add_c_function(const std::string &name, std::function<void()> func)
-{
-    DabFunction fun;
-    fun.name        = name;
-    fun.regular     = false;
-    fun.extra       = func;
-    functions[name] = fun;
-}
-
 void DabVM::kernel_print()
 {
     auto arg = stack.pop_value();
