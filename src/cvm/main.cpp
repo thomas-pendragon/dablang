@@ -21,6 +21,7 @@ enum
     OP_PROPGET          = 0x10,
     OP_START_CLASS      = 0x11,
     OP_PUSH_CLASS       = 0x12,
+    OP_INSTCALL         = 0x13,
 };
 
 enum
@@ -433,6 +434,15 @@ void DabVM::execute_single(Stream &input)
         push_class(index);
         break;
     }
+    case OP_INSTCALL:
+    {
+        auto name   = stack_pop_symbol();
+        auto recv   = stack.pop_value();
+        auto n_args = input.read_uint16();
+        auto n_rets = input.read_uint16();
+        instcall(recv, name, n_args, n_rets);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
@@ -459,6 +469,15 @@ void DabVM::prop_get(const DabValue &value, const std::string &name)
     auto  class_index = value.class_index();
     auto &klass       = get_class(class_index);
     call_instance(klass, name, value);
+}
+
+void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets)
+{
+    auto  class_index = recv.class_index();
+    auto &klass       = get_class(class_index);
+    stack.push(recv);
+    auto &fun = klass.get_function(*this, recv, name);
+    call_function(fun, 1 + n_args);
 }
 
 void DabVM::call_instance(const DabClass &klass, const std::string &name, const DabValue &object)

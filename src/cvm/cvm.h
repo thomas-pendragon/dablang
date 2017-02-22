@@ -347,4 +347,6 @@ struct DabVM : public BaseDabVM
     void push_constant_boolean(bool value);
 
     void add_function(Stream &input, const std::string &name, size_t n_locals, size_t body_length);
+
+    void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets);
 };
