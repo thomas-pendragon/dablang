@@ -5,6 +5,7 @@ before_script:
   - bundle install --path=/cache/bundler
 
 stages:
+  - prebuild
   - build
   - test
 
@@ -21,6 +22,20 @@ stages:
     - ruby
   script:
     - bundle exec rake spec
+
+RSpec:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rspec
+
+Rubocop:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rubocop
 
 .env_g_4_7: &env_g_4_7
   variables:
