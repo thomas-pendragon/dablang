@@ -345,4 +345,7 @@ struct DabVM
     void add_function(Stream &input, const std::string &name, size_t n_locals, size_t body_length);
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets);
+
+    DabClass &define_builtin_class(const std::string &name, size_t class_index,
+                                   size_t superclass_index = CLASS_OBJECT);
 };

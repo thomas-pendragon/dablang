@@ -1,5 +1,17 @@
 #include "cvm.h"
 
+DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_index,
+                                      size_t superclass_index)
+{
+    DabClass klass;
+    klass.index            = class_index;
+    klass.name             = name;
+    klass.builtin          = true;
+    klass.superclass_index = superclass_index;
+    classes[class_index]   = klass;
+    return classes[class_index];
+}
+
 void DabVM::define_default_classes()
 {
     DabClass object_class;
