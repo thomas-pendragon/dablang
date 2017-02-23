@@ -174,9 +174,18 @@ void DabVM::dump()
 {
     fprintf(stderr, "IP = %p (%d) Frame = %d\n", (void *)ip(), (int)ip(), (int)frame_position);
     fprintf(stderr, "Classes:\n");
-    for (auto &it : classes)
+    for (const auto &it : classes)
     {
-        fprintf(stderr, " - 0x%04x %s\n", it.first, it.second.name.c_str());
+        fprintf(stderr, " - 0x%04x %s (super = 0x%04x)\n", it.first, it.second.name.c_str(),
+                it.second.superclass_index);
+        for (const auto &fin : it.second.static_functions)
+        {
+            fprintf(stderr, "   ::%s\n", fin.first.c_str());
+        }
+        for (const auto &fin : it.second.functions)
+        {
+            fprintf(stderr, "    .%s\n", fin.first.c_str());
+        }
     }
     fprintf(stderr, "Dump of functions:\n");
     for (auto it : functions)
