@@ -70,10 +70,12 @@ struct Stream
     }
 };
 
+typedef std::function<void(size_t, size_t)> dab_function_t;
+
 struct DabFunction
 {
-    bool regular = true;
-    std::function<void(size_t, size_t)> extra = nullptr;
+    bool           regular = true;
+    dab_function_t extra   = nullptr;
 
     size_t      address = -1;
     std::string name;
