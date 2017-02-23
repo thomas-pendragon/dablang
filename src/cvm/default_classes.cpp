@@ -84,11 +84,35 @@ void BaseDabVM::define_default_classes()
     literal_string_class.superclass_index = CLASS_STRING;
     classes[CLASS_LITERALSTRING]          = literal_string_class;
 
-    DabClass fixnum_class;
-    fixnum_class.index    = CLASS_FIXNUM;
-    fixnum_class.name     = "Fixnum";
-    fixnum_class.builtin  = true;
-    classes[CLASS_FIXNUM] = fixnum_class;
+    {
+        DabClass klass;
+        klass.index   = CLASS_FIXNUM;
+        klass.name    = "Fixnum";
+        klass.builtin = true;
+        {
+            DabFunction fun;
+            fun.name    = "new";
+            fun.regular = false;
+            fun.extra   = [this](size_t n_args, size_t n_ret) {
+                assert(n_args == 1 || n_args == 2);
+                assert(n_ret == 1);
+                auto     klass = stack.pop_value();
+                DabValue ret_value;
+                ret_value.type   = TYPE_FIXNUM;
+                ret_value.kind   = VAL_STACK;
+                ret_value.fixnum = 0;
+                if (n_args == 2)
+                {
+                    auto arg = stack.pop_value();
+                    assert(arg.type == TYPE_FIXNUM);
+                    ret_value.fixnum = arg.fixnum;
+                }
+                stack.push_value(ret_value);
+            };
+            klass.static_functions["new"] = fun;
+        }
+        classes[CLASS_FIXNUM] = klass;
+    }
 
     DabClass literal_fixnum_class;
     literal_fixnum_class.index            = CLASS_LITERALFIXNUM;

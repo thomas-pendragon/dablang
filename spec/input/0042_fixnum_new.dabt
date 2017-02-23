@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(Fixnum.new);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+0
