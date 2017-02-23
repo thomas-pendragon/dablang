@@ -139,6 +139,7 @@ struct DabClass
     const DabFunction &get_static_function(DabVM &vm, const DabValue &klass,
                                            const std::string &name) const;
 
+    void add_function(const std::string &name, dab_function_t body);
   private:
     const DabFunction &_get_function(bool _static, DabVM &vm, const DabValue &klass,
                                      const std::string &name) const;

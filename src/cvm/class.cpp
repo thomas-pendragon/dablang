@@ -36,3 +36,12 @@ const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabVal
     }
     return collection.at(name);
 }
+
+void DabClass::add_function(const std::string &name, dab_function_t body)
+{
+    DabFunction fun;
+    fun.name        = name;
+    fun.regular     = false;
+    fun.extra       = body;
+    functions[name] = fun;
+}
