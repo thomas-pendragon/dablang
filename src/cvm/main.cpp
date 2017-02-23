@@ -545,9 +545,10 @@ void DabVM::push_constant_string(const std::string &name)
 void DabVM::push_constant_fixnum(uint64_t value)
 {
     DabValue val;
-    val.kind   = VAL_CONSTANT;
-    val.type   = TYPE_FIXNUM;
-    val.fixnum = value;
+    val.kind        = VAL_CONSTANT;
+    val.type        = TYPE_FIXNUM;
+    val.fixnum      = value;
+    val.is_constant = true;
     push_constant(val);
 }
 
