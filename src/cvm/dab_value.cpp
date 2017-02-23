@@ -1,6 +1,6 @@
 #include "cvm.h"
 
-void DabValue::dump(BaseDabVM &vm) const
+void DabValue::dump(DabVM &vm) const
 {
     static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "nArgs", "nVars",
                                   "RETVL", "CONST", "VARIA", "STACK"};
@@ -40,17 +40,17 @@ int DabValue::class_index() const
     }
 }
 
-std::string DabValue::class_name(BaseDabVM &vm) const
+std::string DabValue::class_name(DabVM &vm) const
 {
     return get_class(vm).name;
 }
 
-DabClass &DabValue::get_class(BaseDabVM &vm) const
+DabClass &DabValue::get_class(DabVM &vm) const
 {
     return vm.get_class(class_index());
 }
 
-void DabValue::print(BaseDabVM &vm, FILE *out, bool debug) const
+void DabValue::print(DabVM &vm, FILE *out, bool debug) const
 {
     switch (type)
     {

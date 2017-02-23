@@ -1,6 +1,6 @@
 #include "cvm.h"
 
-const DabFunction &DabClass::get_function(BaseDabVM &vm, const DabValue &klass,
+const DabFunction &DabClass::get_function(DabVM &vm, const DabValue &klass,
                                           const std::string &name) const
 {
     if (klass.type == TYPE_CLASS)
@@ -10,13 +10,13 @@ const DabFunction &DabClass::get_function(BaseDabVM &vm, const DabValue &klass,
     return _get_function(false, vm, klass, name);
 }
 
-const DabFunction &DabClass::get_static_function(BaseDabVM &vm, const DabValue &klass,
+const DabFunction &DabClass::get_static_function(DabVM &vm, const DabValue &klass,
                                                  const std::string &name) const
 {
     return _get_function(true, vm, klass, name);
 }
 
-const DabFunction &DabClass::_get_function(bool _static, BaseDabVM &vm, const DabValue &klass,
+const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabValue &klass,
                                            const std::string &name) const
 {
     auto &collection = _static ? static_functions : functions;

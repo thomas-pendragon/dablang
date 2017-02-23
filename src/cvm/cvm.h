@@ -119,7 +119,7 @@ enum
     CLASS_INT_SYMBOL = 0xFE,
 };
 
-struct BaseDabVM;
+struct DabVM;
 struct DabValue;
 
 struct DabClass
@@ -131,14 +131,14 @@ struct DabClass
     std::map<std::string, DabFunction> static_functions;
     int superclass_index = CLASS_OBJECT;
 
-    const DabFunction &get_function(BaseDabVM &vm, const DabValue &klass,
+    const DabFunction &get_function(DabVM &vm, const DabValue &klass,
                                     const std::string &name) const;
 
-    const DabFunction &get_static_function(BaseDabVM &vm, const DabValue &klass,
+    const DabFunction &get_static_function(DabVM &vm, const DabValue &klass,
                                            const std::string &name) const;
 
   private:
-    const DabFunction &_get_function(bool _static, BaseDabVM &vm, const DabValue &klass,
+    const DabFunction &_get_function(bool _static, DabVM &vm, const DabValue &klass,
                                      const std::string &name) const;
 };
 
@@ -153,13 +153,13 @@ struct DabValue
 
     bool is_constant = false;
 
-    void dump(BaseDabVM &vm) const;
+    void dump(DabVM &vm) const;
 
     int         class_index() const;
-    std::string class_name(BaseDabVM &vm) const;
-    DabClass &get_class(BaseDabVM &vm) const;
+    std::string class_name(DabVM &vm) const;
+    DabClass &get_class(DabVM &vm) const;
 
-    void print(BaseDabVM &vm, FILE *out, bool debug = false) const;
+    void print(DabVM &vm, FILE *out, bool debug = false) const;
 
     bool truthy() const;
 
@@ -238,7 +238,7 @@ struct Stack
     friend class DabVM;
 };
 
-struct BaseDabVM
+struct DabVM
 {
     Stream instructions;
     std::map<std::string, DabFunction> functions;
@@ -257,10 +257,6 @@ struct BaseDabVM
         return classes[index];
     }
     void define_default_classes();
-};
-
-struct DabVM : public BaseDabVM
-{
     void define_defaults();
 
     DabVM();

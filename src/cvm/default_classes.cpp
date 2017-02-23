@@ -1,6 +1,6 @@
 #include "cvm.h"
 
-void BaseDabVM::define_default_classes()
+void DabVM::define_default_classes()
 {
     DabClass object_class;
     object_class.index   = CLASS_OBJECT;
