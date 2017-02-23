@@ -1,0 +1,29 @@
+## CODE
+
+func print_info(a)
+{
+	print("'");
+	print(a);
+	print("' (");
+	print(a.class);
+	print(")\n");
+}
+
+func main()
+{
+	print_info(Fixnum.new);
+	print_info(Fixnum.new(123));
+	print_info(0);
+	print_info(456);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+'0' (Fixnum)
+'123' (Fixnum)
+'0' (LiteralFixnum)
+'456' (LiteralFixnum)
