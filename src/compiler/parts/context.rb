@@ -9,7 +9,7 @@ class DabContext < DabBaseContext
     super(stream)
     @local_vars = []
     @functions = ['print']
-    @classes = ['String']
+    @classes = %w(String Fixnum)
   end
 
   def add_local_var(id)
