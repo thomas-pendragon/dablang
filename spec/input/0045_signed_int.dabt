@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(-123);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+-123

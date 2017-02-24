@@ -152,8 +152,12 @@ class DabParser
     start_pos = @position
     debug('number ?')
     skip_whitespace
-    return false unless current_char_digit?
+    return false unless current_char_digit_start?
     ret = ''
+    if current_char == '-'
+      ret += current_char
+      advance!
+    end
     while current_char_digit?
       break unless current_char
       ret += current_char
@@ -179,6 +183,10 @@ class DabParser
 
   def current_char_digit?
     current_char =~ /[0-9]/
+  end
+
+  def current_char_digit_start?
+    current_char_digit? || current_char == '-'
   end
 
   def skip_whitespace
