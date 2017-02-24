@@ -4,6 +4,10 @@ class DabOutput
   end
 
   def _print(t)
+    if @last_p == " \n" && t == " \n"
+      return
+    end
+    @last_p = t
     errn t
     Kernel.print t
   end
@@ -54,6 +58,10 @@ class DabOutput
     print('START_FUNCTION', name, n_local_vars)
     yield
     print('END_FUNCTION')
-    print('')
+    separate
+  end
+
+  def separate
+    _print(" \n")
   end
 end

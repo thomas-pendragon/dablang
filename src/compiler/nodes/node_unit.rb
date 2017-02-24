@@ -39,8 +39,11 @@ class DabNodeUnit < DabNode
   end
 
   def compile(output)
-    (@constants.children + @classes.children + @functions.children).each do |node|
-      node.compile(output)
+    [@constants.children, @classes.children, @functions.children].each do |list|
+      list.each do |node|
+        node.compile(output)
+      end
+      output.separate
     end
   end
 
