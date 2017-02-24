@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(String.new("fooBar").upcase);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+FOOBAR

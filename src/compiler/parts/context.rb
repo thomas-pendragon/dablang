@@ -284,20 +284,23 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       value = subcontext.read_base_value
       next false unless value
-      dot = subcontext.read_operator('.')
-      next value unless dot
-      prop_name = subcontext.read_identifier
-      next false unless prop_name
-      lparen = subcontext.read_operator('(')
-      if lparen
-        arglist = subcontext.read_valuelist
-        next false unless arglist
-        rparen = subcontext.read_operator(')')
-        next false unless rparen
-        DabNodeInstanceCall.new(value, prop_name, arglist)
-      else
-        DabNodePropertyGet.new(value, prop_name)
+      while true
+        dot = subcontext.read_operator('.')
+        break unless dot
+        prop_name = subcontext.read_identifier
+        next false unless prop_name
+        lparen = subcontext.read_operator('(')
+        if lparen
+          arglist = subcontext.read_valuelist
+          next false unless arglist
+          rparen = subcontext.read_operator(')')
+          next false unless rparen
+          value = DabNodeInstanceCall.new(value, prop_name, arglist)
+        else
+          value = DabNodePropertyGet.new(value, prop_name)
+        end
       end
+      value
     end
   end
 
