@@ -19,7 +19,7 @@ class DabOutput
   def print(*args)
     return _print("\n") if args.count == 0 || args[0].nil?
 
-    _print sprintf('/* %-12s */ ', @comment.to_s[0...12].gsub(/[^a-zA-Z \-\._]/, ''))
+    _print sprintf('/* %-12s */ ', @comment.to_s[0...12].gsub(/[^a-zA-Z0-9 \-\._]/, ''))
 
     t = if @label
           sprintf('%-12s: ', @label.to_s[0...12])
