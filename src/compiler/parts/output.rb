@@ -54,8 +54,8 @@ class DabOutput
     print('PUSH_CONSTANT', node.index)
   end
 
-  def function(name, n_local_vars)
-    print('START_FUNCTION', name, n_local_vars)
+  def function(name, class_index, n_local_vars)
+    print('START_FUNCTION', name, class_index, n_local_vars)
     yield
     print('END_FUNCTION')
     separate

@@ -16,6 +16,20 @@ class DabNodeFunction < DabNode
     @labels = 0
   end
 
+  def parent_class
+    c = parent.parent
+    return c if c.is_a? DabNodeClassDefinition
+    nil
+  end
+
+  def instance_function?
+    !!parent_class
+  end
+
+  def parent_class_index
+    instance_function? ? parent_class.number : -1
+  end
+
   def extra_dump
     identifier
   end
@@ -39,7 +53,7 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
-    output.function(identifier, n_local_vars) do
+    output.function(identifier, parent_class_index, n_local_vars) do
       body.compile(output)
       output.print('PUSH_NIL')
       output.print('RETURN', '1')

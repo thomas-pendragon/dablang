@@ -315,9 +315,10 @@ void DabVM::execute_single(Stream &input)
     case OP_START_FUNCTION:
     {
         auto name        = input.read_vlc_string();
+        auto class_index = input.read_uint16();
         auto n_locals    = input.read_uint16();
         auto body_length = input.read_uint16();
-        add_function(input, name, n_locals, body_length);
+        add_function(input, name, class_index, n_locals, body_length);
         break;
     }
     case OP_CONSTANT_SYMBOL:
@@ -561,8 +562,8 @@ void DabVM::push_constant_boolean(bool value)
     push_constant(val);
 }
 
-void DabVM::add_function(Stream &input, const std::string &name, size_t n_locals,
-                         size_t body_length)
+void DabVM::add_function(Stream &input, const std::string &name, uint16_t class_index,
+                         size_t n_locals, size_t body_length)
 {
     auto position = instructions.length();
     fprintf(stderr, "VM: read function <%s>.\n", name.c_str());
@@ -570,7 +571,14 @@ void DabVM::add_function(Stream &input, const std::string &name, size_t n_locals
     function.address  = position;
     function.n_locals = n_locals;
     function.name     = name;
-    functions[name]   = function;
+    if (class_index == 0xFFFF)
+    {
+        functions[name] = function;
+    }
+    else
+    {
+        get_class(class_index).functions[name] = function;
+    }
     instructions.append(input, body_length);
 }
 

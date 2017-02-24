@@ -1,5 +1,5 @@
 OPCODES = {
-  0x00 => {name: 'START_FUNCTION', args: %i(vlc uint16 uint16)}, # function name, number of local variables, body length
+  0x00 => {name: 'START_FUNCTION', args: %i(vlc uint16 uint16 uint16)}, # function name, class index (or -1), number of local variables, body length
   0x01 => {name: 'CONSTANT_SYMBOL', arg: :vlc}, # symbol
   0x02 => {name: 'CONSTANT_STRING', arg: :vlc}, # string
   0x03 => {name: 'PUSH_CONSTANT', arg: :uint16}, # constant index, push(1)

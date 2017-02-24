@@ -1,0 +1,22 @@
+## CODE
+
+class MyObject
+{
+	func foo()
+	{
+		return "funcall ok";
+	}
+}
+
+func main()
+{
+	print(MyObject.new.foo);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+funcall ok

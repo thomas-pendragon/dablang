@@ -113,9 +113,16 @@ class DabContext < DabBaseContext
       next false unless subcontext.read_keyword('class')
       next false unless ident = subcontext.read_identifier
       next false unless subcontext.read_operator('{')
+
+      functions = []
+      while true
+        break unless func = subcontext.read_function
+        functions << func
+      end
+
       next false unless subcontext.read_operator('}')
       subcontext.add_class(ident)
-      DabNodeClassDefinition.new(ident)
+      DabNodeClassDefinition.new(ident, functions)
     end
   end
 

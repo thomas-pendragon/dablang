@@ -178,7 +178,7 @@ class Parser
       elsif line[0] == 'END_FUNCTION'
         @function_stream.fix_jumps(@label_positions, @jump_corrections)
 
-        @function_line[3] = @function_stream.code.length
+        @function_line[4] = @function_stream.code.length
         @output_stream.write(@function_line)
         @output_stream._push(@function_stream.code)
 
