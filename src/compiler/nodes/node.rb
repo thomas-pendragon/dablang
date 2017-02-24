@@ -25,7 +25,9 @@ class DabNode
     tt = sprintf('(%s)', self.my_type.type_string).white
     src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
     flags = ''
-    text = sprintf('%s - %s %s%s %s %s', '  ' * level, self.class.name, extra_dump, flags, tt, src.white)
+    exdump = extra_dump.to_s
+    exdump = ' ' + exdump.bold unless exdump.empty?
+    text = sprintf('%s - %s%s%s %s %s', '  ' * level, self.class.name, exdump, flags, tt, src.white)
     text = text.green if constant?
     if has_errors?
       text = if @self_errors.count > 0

@@ -9,7 +9,7 @@ class DabNodeConstant < DabNode
   end
 
   def extra_dump
-    " $#{index}"
+    "$#{index}"
   end
 
   def compile(output)
