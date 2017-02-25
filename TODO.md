@@ -4,5 +4,5 @@
 - void calls
 - return values should be reserved on stack
 - negative offsets for JMP
-- autogenerate opcode/kernel C enums
+- autogenerate kernel C enums
 - prebuild/pretest tasks in gitlab.yml (early fail)

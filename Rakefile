@@ -8,7 +8,14 @@ cvm_sources = Dir.glob('src/cvm/*.cpp')
 cvm_headers = Dir.glob('src/cvm/*.h')
 cvm = 'bin/cvm'
 
-file cvm => cvm_sources + cvm_headers do
+cvm_opcodes = 'src/cvm/opcodes.h'
+opcode_task = 'tasks/opcodelist.rb'
+
+file cvm_opcodes => ['src/shared/opcodes.rb', opcode_task] do
+  psystem("ruby #{opcode_task} > #{cvm_opcodes}")
+end
+
+file cvm => cvm_sources + cvm_headers + [cvm_opcodes] do
   compiler = ENV['COMPILER'] || 'clang++'
   cxxflags = ENV['CXXFLAGS'] || ''
   psystem("#{compiler} -std=c++11 #{cvm_sources.join(' ')} #{cxxflags} -o #{cvm}")
