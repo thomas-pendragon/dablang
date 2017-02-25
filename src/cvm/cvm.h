@@ -328,8 +328,6 @@ struct DabVM
 
     void add_class(const std::string &name, int index);
 
-    void prop_get(const DabValue &value, const std::string &name);
-
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 

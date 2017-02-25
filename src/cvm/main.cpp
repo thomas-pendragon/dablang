@@ -18,10 +18,9 @@ enum
     OP_CONSTANT_BOOLEAN = 0x0D,
     OP_PUSH_NIL         = 0x0E,
     OP_KERNELCALL       = 0x0F,
-    OP_PROPGET          = 0x10,
-    OP_START_CLASS      = 0x11,
-    OP_PUSH_CLASS       = 0x12,
-    OP_INSTCALL         = 0x13,
+    OP_START_CLASS      = 0x10,
+    OP_PUSH_CLASS       = 0x11,
+    OP_INSTCALL         = 0x12,
 };
 
 enum
@@ -424,13 +423,6 @@ void DabVM::execute_single(Stream &input)
         kernelcall(call);
         break;
     }
-    case OP_PROPGET:
-    {
-        auto name  = stack_pop_symbol();
-        auto value = stack.pop_value();
-        prop_get(value, name);
-        break;
-    }
     case OP_START_CLASS:
     {
         auto name  = input.read_vlc_string();
@@ -472,13 +464,6 @@ void DabVM::add_class(const std::string &name, int index)
     klass.index    = index;
     klass.builtin  = false;
     classes[index] = klass;
-}
-
-void DabVM::prop_get(const DabValue &value, const std::string &name)
-{
-    auto  class_index = value.class_index();
-    auto &klass       = get_class(class_index);
-    call_instance(klass, name, value);
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets)
