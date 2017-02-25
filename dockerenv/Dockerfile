@@ -12,3 +12,4 @@ RUN apt-get install -y clang-3.6
 RUN apt-get install -y clang-3.7
 RUN apt-get install -y clang-3.8
 RUN apt-get install -y clang-3.9
+RUN apt-get install -y clang-format

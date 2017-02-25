@@ -1,4 +1,4 @@
-image: dablang/dablangenv:0.1
+image: dablang/dablangenv:0.2
 
 before_script:
   - gem install bundler
@@ -40,6 +40,13 @@ Rubocop:
     - ruby
   script:
     - bundle exec rubocop
+
+ClangFormat:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:cpp_check
 
 .env_g_4_7: &env_g_4_7
   variables:

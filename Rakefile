@@ -42,15 +42,27 @@ task :clean do
   end
 end
 
+def cpp_check
+  files = (%w(cpp mm m h).map { |ext| Dir.glob("src/**/*.#{ext}") }).flatten(1)
+  files.each do |file|
+    yield(file)
+  end
+end
+
 namespace :format do
   task :ruby do
     psystem('rubocop -a')
   end
 
   task :cpp do
-    files = (%w(cpp mm m h).map { |ext| Dir.glob("src/**/*.#{ext}") }).flatten(1)
-    files.each do |file|
+    cpp_check do |file|
       psystem("clang-format -i #{file}")
+    end
+  end
+
+  task :cpp_check do
+    cpp_check do |file|
+      psystem("clang-format #{file} | diff #{file} -")
     end
   end
 end
