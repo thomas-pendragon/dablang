@@ -6,3 +6,19 @@
 - negative offsets for JMP
 - autogenerate kernel C enums
 - prebuild/pretest tasks in gitlab.yml (early fail)
+- test: var<String> a; a = 15 should error
+- rename KERNELCALL to SYSCALL
+- instance variables
+	- automatic reference counting
+- constructors/destructors
+- subclassing
+	- function override
+		- final functions
+- function overloads
+- default arguments
+- native compilation
+- debugging
+- IDE
+- package management
+- game demo
+- web demo
