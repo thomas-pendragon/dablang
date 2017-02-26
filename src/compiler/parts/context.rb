@@ -290,12 +290,21 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_self
+    on_subcontext do |subcontext|
+      next unless keyword = subcontext.read_operator('self')
+      ret = DabNodeSelf.new
+      ret.add_source_part(keyword)
+      ret
+    end
+  end
+
   def read_literal_value
     read_literal_string || read_literal_number || read_literal_boolean
   end
 
   def read_base_value
-    read_class || read_literal_value || read_local_var || read_call
+    read_self || read_class || read_literal_value || read_local_var || read_call
   end
 
   def read_simple_value
