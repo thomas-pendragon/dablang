@@ -93,6 +93,7 @@ enum
     VAL_CONSTANT,
     VAL_VARIABLE,
     VAL_STACK,
+    VAL_SELF,
 };
 
 enum
@@ -288,7 +289,7 @@ struct DabVM
 
     size_t stack_position() const;
 
-    void push_new_frame(int n_args, int n_locals);
+    void push_new_frame(const DabValue &self, int n_args, int n_locals);
 
     void _dump(const char *name, const std::vector<DabValue> &data);
 
@@ -306,6 +307,8 @@ struct DabVM
 
     DabValue &get_retval();
 
+    DabValue &get_self();
+
     size_t get_prev_ip();
 
     size_t prev_frame_position();
@@ -318,7 +321,7 @@ struct DabVM
 
     void call(const std::string &name, int n_args);
 
-    void call_function(const DabFunction &fun, int n_args);
+    void call_function(const DabValue &self, const DabFunction &fun, int n_args);
 
     void execute(Stream &input);
 

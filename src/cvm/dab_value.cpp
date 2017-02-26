@@ -3,7 +3,7 @@
 void DabValue::dump(DabVM &vm) const
 {
     static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "nArgs", "nVars",
-                                  "RETVL", "CONST", "VARIA", "STACK"};
+                                  "RETVL", "CONST", "VARIA", "STACK", "self "};
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
     fprintf(stderr, "%s %s ", kinds[kind], types[type]);
     print(vm, stderr, true);

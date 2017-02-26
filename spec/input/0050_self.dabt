@@ -1,0 +1,28 @@
+## CODE
+
+class MyObject
+{
+	func foo()
+	{
+		print(self);
+		print("\n");
+		print(self.class);
+		print("\n");
+		return "ok";
+	}
+}
+
+func main()
+{
+	print(MyObject.new.foo);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+#MyObject
+MyObject
+ok

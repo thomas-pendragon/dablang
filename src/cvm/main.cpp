@@ -109,13 +109,14 @@ size_t DabVM::stack_position() const
     return stack.size();
 }
 
-void DabVM::push_new_frame(int n_args, int n_locals)
+void DabVM::push_new_frame(const DabValue &self, int n_args, int n_locals)
 {
     push(VAL_FRAME_PREV_IP, (uint64_t)ip());
     push(VAL_FRAME_PREV_STACK, (uint64_t)frame_position); // push previous frame
     frame_position = stack_position();
     push(VAL_FRAME_COUNT_ARGS, n_args);   // number of arguments
     push(VAL_FRAME_COUNT_VARS, n_locals); // number of locals
+    stack.push(self, VAL_SELF);
     {
         // push retvalue
         DabValue val;
@@ -202,7 +203,7 @@ int DabVM::run(Stream &input)
 
 DabValue &DabVM::get_var(int var_index)
 {
-    auto index = frame_position + 3 + var_index;
+    auto index = frame_position + 4 + var_index;
     return stack[index];
 }
 
@@ -218,6 +219,12 @@ DabValue &DabVM::get_arg(int arg_index)
 }
 
 DabValue &DabVM::get_retval()
+{
+    auto index = frame_position + 3;
+    return stack[index];
+}
+
+DabValue &DabVM::get_self()
 {
     auto index = frame_position + 2;
     return stack[index];
@@ -256,14 +263,14 @@ void DabVM::call(const std::string &name, int n_args)
         fprintf(stderr, "VM error: Unknown function <%s>.\n", name.c_str());
         exit(1);
     }
-    call_function(functions[name], n_args);
+    call_function(nullptr, functions[name], n_args);
 }
 
-void DabVM::call_function(const DabFunction &fun, int n_args)
+void DabVM::call_function(const DabValue &self, const DabFunction &fun, int n_args)
 {
     if (fun.regular)
     {
-        push_new_frame(n_args, fun.n_locals);
+        push_new_frame(self, n_args, fun.n_locals);
         fprintf(stderr, "VM: %s has %d local vars.\n", fun.name.c_str(), fun.n_locals);
         instructions.seek(fun.address);
     }
@@ -424,6 +431,11 @@ void DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets);
         break;
     }
+    case OP_PUSH_SELF:
+    {
+        push(get_self());
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
@@ -451,7 +463,7 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     auto &klass       = get_class(class_index);
     stack.push(recv);
     auto &fun = klass.get_function(*this, recv, name);
-    call_function(fun, 1 + n_args);
+    call_function(recv, fun, 1 + n_args);
 }
 
 void DabVM::kernelcall(int call)
