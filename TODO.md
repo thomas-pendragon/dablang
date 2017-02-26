@@ -7,6 +7,9 @@
 - autogenerate kernel C enums
 - prebuild/pretest tasks in gitlab.yml (early fail)
 - test: var<String> a; a = 15 should error
+- test: self outside of class method should error
+- parsing property getters with ()
+- property getters/instance calls as instructions
 - rename KERNELCALL to SYSCALL
 - instance variables
 	- automatic reference counting
