@@ -132,7 +132,7 @@ class DabContext < DabBaseContext
       next unless ident = subcontext.read_identifier
       subcontext.add_function(ident)
       next unless subcontext.read_operator('(')
-      if arglist = subcontext.read_arglist || nil
+      if arglist = subcontext.read_arglist
         arglist.each do |arg|
           symbol = arg.identifier
           subcontext.add_local_var(symbol)
@@ -243,7 +243,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless id = subcontext.read_identifier
       next unless op1 = subcontext.read_operator('(')
-      valuelist = subcontext.read_optional_valuelist || nil
+      valuelist = subcontext.read_optional_valuelist
       next unless op2 = subcontext.read_operator(')')
       ret = DabNodeCall.new(id, valuelist)
       ret.add_source_part(id)
