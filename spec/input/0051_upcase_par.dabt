@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print("foo".upcase());
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+FOO

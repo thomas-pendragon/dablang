@@ -235,11 +235,15 @@ class DabContext < DabBaseContext
     _read_simple_list(:read_value)
   end
 
+  def read_optional_valuelist
+    read_valuelist || DabNode.new
+  end
+
   def read_call
     on_subcontext do |subcontext|
       next false unless id = subcontext.read_identifier
       next false unless op1 = subcontext.read_operator('(')
-      valuelist = subcontext.read_valuelist || nil
+      valuelist = subcontext.read_optional_valuelist || nil
       next false unless op2 = subcontext.read_operator(')')
       ret = DabNodeCall.new(id, valuelist)
       ret.add_source_part(id)
@@ -318,7 +322,7 @@ class DabContext < DabBaseContext
         next false unless prop_name
         lparen = subcontext.read_operator('(')
         if lparen
-          arglist = subcontext.read_valuelist
+          arglist = subcontext.read_optional_valuelist
           next false unless arglist
           rparen = subcontext.read_operator(')')
           next false unless rparen
