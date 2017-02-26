@@ -60,13 +60,13 @@ class DabBaseContext
     on_subcontext do |subcontext|
       ret = init_value
 
-      next false unless arg = subcontext.send(item_method)
+      next unless arg = subcontext.send(item_method)
       yield(ret, arg)
 
       while true
         next_item = subcontext.on_subcontext do |subsubcontext|
-          next false unless sep = subsubcontext.read_any_operator(separator)
-          next false unless next_arg = subsubcontext.send(item_method)
+          next unless sep = subsubcontext.read_any_operator(separator)
+          next unless next_arg = subsubcontext.send(item_method)
           yield(ret, next_arg, sep)
         end
         break unless next_item
