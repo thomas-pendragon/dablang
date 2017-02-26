@@ -454,13 +454,6 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     call_function(fun, 1 + n_args);
 }
 
-void DabVM::call_instance(const DabClass &klass, const std::string &name, const DabValue &object)
-{
-    stack.push(object);
-    auto &fun = klass.get_function(*this, object, name);
-    call_function(fun, 1);
-}
-
 void DabVM::kernelcall(int call)
 {
     switch (call)
