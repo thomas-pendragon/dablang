@@ -109,12 +109,13 @@ class DabParser
 
   def read_any_operator(operator)
     operator = [operator] unless operator.is_a? Array
-    debug("operator #{operator} ?")
     skip_whitespace
+    start_pos = @position
+    debug("operator #{operator} ?")
     return false unless op = input_match_any(operator)
     advance!(op.length)
     debug("operator #{operator} - #{op} ok")
-    op
+    _return_source(op, start_pos)
   end
 
   def read_newline
