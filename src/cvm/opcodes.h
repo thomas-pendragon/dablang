@@ -22,4 +22,5 @@ enum
     OP_PUSH_CLASS       = 0x11,
     OP_INSTCALL         = 0x12,
     OP_PUSH_SELF        = 0x13,
+    OP_PUSH_INSTVAR     = 0x14,
 };

@@ -36,6 +36,10 @@ class DabBaseContext
     @stream.read_newline(*args)
   end
 
+  def read_classvar(*args)
+    @stream.read_classvar(*args)
+  end
+
   def clone
     substream = @stream.clone
     ret = self.class.new(substream)

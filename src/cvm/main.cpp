@@ -436,6 +436,12 @@ void DabVM::execute_single(Stream &input)
         push(get_self());
         break;
     }
+    case OP_PUSH_INSTVAR:
+    {
+        auto name = input.read_vlc_string();
+        stack.push_nil();
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);

@@ -102,6 +102,24 @@ class DabParser
     end
   end
 
+  def read_classvar
+    skip_whitespace
+    start_pos = @position
+    debug('classvar ?')
+    ret = ''
+    return nil unless current_char == '@'
+    ret += current_char
+    advance!
+    while current_char_identifier?
+      ret += current_char
+      advance!
+    end
+    unless ret.empty?
+      debug('classvar ok')
+      _return_source(ret, start_pos)
+    end
+  end
+
   def read_operator(operator)
     read_any_operator([operator])
   end

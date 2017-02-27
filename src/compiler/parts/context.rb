@@ -115,14 +115,29 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('{')
 
       functions = []
+      vars = []
       while true
-        break unless func = subcontext.read_function
-        functions << func
+        if func = subcontext.read_function
+          functions << func
+        elsif var = subcontext.read_class_var_definition
+          vars << var
+        else
+          break
+        end
       end
 
       next unless subcontext.read_operator('}')
       subcontext.add_class(ident)
       DabNodeClassDefinition.new(ident, functions)
+    end
+  end
+
+  def read_class_var_definition
+    on_subcontext do |subcontext|
+      next unless subcontext.read_keyword('var')
+      next unless id = subcontext.read_classvar
+      next unless subcontext.read_operator(';')
+      DabNodeClassVarDefinition.new(id)
     end
   end
 
@@ -314,8 +329,15 @@ class DabContext < DabBaseContext
     read_literal_string || read_literal_number || read_literal_boolean || read_literal_nil
   end
 
+  def read_instvar
+    on_subcontext do |subcontext|
+      next unless id = subcontext.read_classvar
+      DabNodeClassVar.new(id)
+    end
+  end
+
   def read_base_value
-    read_self || read_class || read_literal_value || read_local_var || read_call
+    read_instvar || read_self || read_class || read_literal_value || read_local_var || read_call
   end
 
   def read_simple_value

@@ -1,0 +1,25 @@
+## CODE
+
+class MyObject
+{
+	var @foo;
+	func run()
+	{
+		print(@foo);
+	}
+}
+
+func pass(a){}
+
+func main()
+{
+	pass(MyObject.new.run);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+nil
