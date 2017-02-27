@@ -1,0 +1,46 @@
+## CODE
+
+class MyObject {}
+
+func info(a)
+{
+	print(a);
+	print(": ");
+	print(a.class);
+	if (a)
+	{
+		print(" [true]");
+	};
+	print("\n");
+}
+
+func main()
+{
+	info(nil);
+	info(0);
+	info(1);
+	info("");
+	info("a");
+	info(true);
+	info(false);
+	info(String.new);
+	info(String.new("foo"));
+	info(MyObject.new);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+nil: NilClass
+0: LiteralFixnum
+1: LiteralFixnum [true]
+: LiteralString
+a: LiteralString [true]
+true: LiteralBoolean [true]
+false: LiteralBoolean
+: String
+foo: String [true]
+#MyObject: MyObject [true]

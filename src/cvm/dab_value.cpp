@@ -93,9 +93,6 @@ bool DabValue::truthy() const
     case TYPE_STRING:
         return string.length();
         break;
-    case TYPE_SYMBOL:
-        return true;
-        break;
     case TYPE_BOOLEAN:
         return boolean;
         break;
@@ -103,7 +100,7 @@ bool DabValue::truthy() const
         return false;
         break;
     default:
-        return false;
+        return true;
         break;
     }
 }
