@@ -16,7 +16,7 @@ OPCODES = {
   0x0E => {name: 'PUSH_NIL'}, # push(1)
   0x0F => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
   0x10 => {name: 'START_CLASS', args: %i(vlc uint16)},
-  0x11 => {name: 'PUSH_CLASS', arg: :uint16},
+  0x11 => {name: 'PUSH_CLASS', arg: :uint16}, # push(1)
   0x12 => {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
   0x13 => {name: 'PUSH_SELF'}, # push(1)
 }.freeze
