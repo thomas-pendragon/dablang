@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	print(nil);
+	print(", ");
+	print(nil.class);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+nil, NilClass

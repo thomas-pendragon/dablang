@@ -80,4 +80,6 @@ void DabVM::define_default_classes()
     define_builtin_class("Boolean", CLASS_BOOLEAN);
 
     define_builtin_class("LiteralBoolean", CLASS_LITERALBOOLEAN, CLASS_BOOLEAN);
+
+    define_builtin_class("NilClass", CLASS_NILCLASS);
 }
