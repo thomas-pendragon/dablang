@@ -9,9 +9,21 @@
 - test: var<String> a; a = 15 should error
 - test: self outside of class method should error
 - property getters/instance calls as instructions
+- specs for locating line/column for parsed nodes
+- remove LiteralBooleans/Nils
+- remove booleans from constant section
 - rename KERNELCALL to SYSCALL
 - instance variables
 	- automatic reference counting
+		- weak pointers
+			- weak arrays
+- type: array
+	- Array.sort
+	- Array.max
+	- Array.min
+	- Array.join
+- type: hash
+- type: set
 - constructors/destructors
 - subclassing
 	- function override
