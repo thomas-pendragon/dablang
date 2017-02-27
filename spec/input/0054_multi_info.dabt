@@ -39,8 +39,8 @@ nil: NilClass
 1: LiteralFixnum [true]
 : LiteralString
 a: LiteralString [true]
-true: LiteralBoolean [true]
-false: LiteralBoolean
+true: Boolean [true]
+false: Boolean
 : String
 foo: String [true]
 #MyObject: MyObject [true]

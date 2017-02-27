@@ -23,7 +23,7 @@ int DabValue::class_index() const
         return CLASS_INT_SYMBOL;
         break;
     case TYPE_BOOLEAN:
-        return CLASS_LITERALBOOLEAN;
+        return CLASS_BOOLEAN;
         break;
     case TYPE_NIL:
         return CLASS_NILCLASS;

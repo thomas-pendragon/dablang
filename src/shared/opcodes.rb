@@ -30,16 +30,15 @@ KERNELCODES = {
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
-STANDARD_CLASSES = [
-  'Object',
-  'String',
-  'LiteralString',
-  'Fixnum',
-  'LiteralFixnum',
-  'Boolean',
-  'LiteralBoolean', # ??
-  'NilClass',
-].freeze
+STANDARD_CLASSES = %w(
+  Object
+  String
+  LiteralString
+  Fixnum
+  LiteralFixnum
+  Boolean
+  NilClass
+).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h
 

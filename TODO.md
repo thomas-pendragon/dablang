@@ -11,7 +11,6 @@
 - test: self outside of class method should error
 - property getters/instance calls as instructions
 - specs for locating line/column for parsed nodes
-- remove LiteralBooleans/Nils
 - remove booleans from constant section
 - rename KERNELCALL to SYSCALL
 - instance variables

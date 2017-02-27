@@ -21,4 +21,4 @@ main
 
 ## EXPECT OK
 
-123: LiteralFixnum. foo: LiteralString. true: LiteralBoolean.
+123: LiteralFixnum. foo: LiteralString. true: Boolean.
