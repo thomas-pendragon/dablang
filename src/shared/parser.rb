@@ -96,7 +96,6 @@ class DabParser
       ret += current_char
       advance!
     end
-    skip_whitespace
     unless ret.empty?
       debug('identifier ok')
       _return_source(ret, start_pos)
