@@ -72,6 +72,14 @@ namespace :format do
       psystem("clang-format #{file} | diff #{file} -")
     end
   end
+
+  task :sort do
+    psystem('ruby ./tasks/sort.rb')
+  end
+
+  task :sort_check do
+    psystem('ruby ./tasks/sort.rb --check')
+  end
 end
 
-task format: ['format:ruby', 'format:cpp']
+task format: ['format:sort', 'format:ruby', 'format:cpp']

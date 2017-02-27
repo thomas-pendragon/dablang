@@ -48,6 +48,13 @@ ClangFormat:
   script:
     - bundle exec rake format:cpp_check
 
+SortCheck:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:sort_check
+
 .env_g_4_7: &env_g_4_7
   variables:
     COMPILER: g++-4.7
