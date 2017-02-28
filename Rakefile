@@ -58,7 +58,7 @@ end
 
 namespace :format do
   task :ruby do
-    psystem('rubocop -a')
+    psystem('rubocop || rubocop -a')
   end
 
   task :cpp do
