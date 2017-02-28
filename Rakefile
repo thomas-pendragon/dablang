@@ -83,3 +83,11 @@ namespace :format do
 end
 
 task format: ['format:sort', 'format:ruby', 'format:cpp']
+
+task :master do
+  psystem('git checkout master; git merge develop; git multipush; git checkout develop')
+end
+
+task :dev do
+  psystem('git checkout develop; git multipush gitlab master --force')
+end
