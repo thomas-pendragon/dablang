@@ -67,4 +67,19 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP(/);
     DAB_DEFINE_OP(%);
     DAB_DEFINE_OP_BOOL(==);
+
+    {
+        DabFunction fun;
+        fun.name    = "||";
+        fun.regular = false;
+        fun.extra   = [this](size_t n_args, size_t n_ret) {
+            dump();
+            assert(n_args == 2);
+            assert(n_ret == 1);
+            auto arg1 = stack.pop_value();
+            auto arg0 = stack.pop_value();
+            stack.push_value(arg0.truthy() ? arg0 : arg1);
+        };
+        functions["||"] = fun;
+    }
 }

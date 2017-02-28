@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	print("this" || "nope");
+	print(false || "is");
+	print(nil || "ok");
+	print("!" || 1);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+thisisok!

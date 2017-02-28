@@ -2,6 +2,7 @@
 - dumping AST tree before and after postprocessing
 - not require semicolons after if
 - endianness in cvm/main.cpp
+- || && should short-circuit
 - void calls
 - return values should be reserved on stack
 - negative offsets for JMP
