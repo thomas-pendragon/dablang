@@ -439,7 +439,14 @@ void DabVM::execute_single(Stream &input)
     case OP_PUSH_INSTVAR:
     {
         auto name = input.read_vlc_string();
-        stack.push_nil();
+        get_instvar(name);
+        break;
+    }
+    case OP_SET_INSTVAR:
+    {
+        auto name  = input.read_vlc_string();
+        auto value = stack.pop_value();
+        set_instvar(name, value);
         break;
     }
     default:
@@ -447,6 +454,16 @@ void DabVM::execute_single(Stream &input)
         exit(1);
         break;
     }
+}
+
+void DabVM::get_instvar(const std::string &name)
+{
+    stack.push_value(get_self().get_instvar(name));
+}
+
+void DabVM::set_instvar(const std::string &name, const DabValue &value)
+{
+    get_self().set_instvar(name, value);
 }
 
 void DabVM::push_class(int index)

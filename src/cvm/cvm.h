@@ -156,6 +156,8 @@ struct DabValue
     std::string string;
     bool        boolean;
 
+    std::map<std::string, DabValue> instvars;
+
     bool is_constant = false;
 
     void dump(DabVM &vm) const;
@@ -167,6 +169,20 @@ struct DabValue
     void print(DabVM &vm, FILE *out, bool debug = false) const;
 
     bool truthy() const;
+
+    DabValue get_instvar(const std::string &name)
+    {
+        if (!instvars.count(name))
+        {
+            return DabValue(nullptr);
+        }
+        return instvars[name];
+    }
+
+    void set_instvar(const std::string &name, const DabValue &value)
+    {
+        instvars[name] = value;
+    }
 
     DabValue()
     {
@@ -352,4 +368,7 @@ struct DabVM
 
     DabClass &define_builtin_class(const std::string &name, size_t class_index,
                                    size_t superclass_index = CLASS_OBJECT);
+
+    void get_instvar(const std::string &name);
+    void set_instvar(const std::string &name, const DabValue &value);
 };

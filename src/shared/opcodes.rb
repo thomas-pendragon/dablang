@@ -20,6 +20,7 @@ OPCODES = {
   0x12 => {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
   0x13 => {name: 'PUSH_SELF'}, # push(1)
   0x14 => {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
+  0x15 => {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

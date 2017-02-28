@@ -23,4 +23,5 @@ enum
     OP_INSTCALL         = 0x12,
     OP_PUSH_SELF        = 0x13,
     OP_PUSH_INSTVAR     = 0x14,
+    OP_SET_INSTVAR      = 0x15,
 };

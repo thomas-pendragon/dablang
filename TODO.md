@@ -13,10 +13,13 @@
 - specs for locating line/column for parsed nodes
 - remove booleans from constant section
 - rename KERNELCALL to SYSCALL
-- instance variables
-	- automatic reference counting
-		- weak pointers
-			- weak arrays
+- offset-based instance variables
+- typed instance variables
+- weak instance variables
+- passing by reference
+- automatic reference counting
+	- weak pointers
+		- weak arrays
 - type: array
 	- Array.sort
 	- Array.max
