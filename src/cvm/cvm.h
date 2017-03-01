@@ -170,19 +170,9 @@ struct DabValue
 
     bool truthy() const;
 
-    DabValue get_instvar(const std::string &name)
-    {
-        if (!instvars.count(name))
-        {
-            return DabValue(nullptr);
-        }
-        return instvars[name];
-    }
+    DabValue get_instvar(const std::string &name);
 
-    void set_instvar(const std::string &name, const DabValue &value)
-    {
-        instvars[name] = value;
-    }
+    void set_instvar(const std::string &name, const DabValue &value);
 
     DabValue()
     {

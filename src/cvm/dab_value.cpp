@@ -112,3 +112,17 @@ DabValue DabValue::create_instance() const
     copy.type = TYPE_OBJECT;
     return copy;
 }
+
+DabValue DabValue::get_instvar(const std::string &name)
+{
+    if (!instvars.count(name))
+    {
+        return DabValue(nullptr);
+    }
+    return instvars[name];
+}
+
+void DabValue::set_instvar(const std::string &name, const DabValue &value)
+{
+    instvars[name] = value;
+}
