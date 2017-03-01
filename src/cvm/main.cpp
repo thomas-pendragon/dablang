@@ -574,15 +574,32 @@ void DabVM::add_function(Stream &input, const std::string &name, uint16_t class_
     instructions.append(input, body_length);
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    FILE *stream = stdin;
+    FILE *file   = nullptr;
+    if (argc > 1)
+    {
+        file = fopen(argv[1], "rb");
+        if (!file)
+        {
+            fprintf(stderr, "VM: cannot open file <%s> for reading!\n", argv[1]);
+            exit(1);
+        }
+        stream = file;
+    }
     Stream input;
     byte   buffer[1024];
-    while (!feof(stdin))
+    while (!feof(stream))
     {
-        size_t bytes = fread(buffer, 1, 1024, stdin);
+        size_t bytes = fread(buffer, 1, 1024, stream);
         input.append(buffer, bytes);
     }
     DabVM vm;
-    return vm.run(input);
+    auto  ret_value = vm.run(input);
+    if (file)
+    {
+        fclose(file);
+    }
+    return ret_value;
 }
