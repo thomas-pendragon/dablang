@@ -1,4 +1,5 @@
-spec/output
-spec/examples.txt
-bin
+/spec/output
+/spec/examples.txt
+/bin
+/build
 *.o
