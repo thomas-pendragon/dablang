@@ -8,7 +8,7 @@
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
         fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
-            dump();                                                                                \
+            /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
@@ -29,7 +29,7 @@
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
         fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
-            dump();                                                                                \
+            /* dump();*/                                                                           \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
@@ -46,7 +46,7 @@
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
         fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
-            dump();                                                                                \
+            /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
             auto arg1 = stack.pop_value();                                                         \
@@ -73,7 +73,7 @@ void DabVM::define_defaults()
         fun.name    = "||";
         fun.regular = false;
         fun.extra   = [this](size_t n_args, size_t n_ret) {
-            dump();
+            // dump();
             assert(n_args == 2);
             assert(n_ret == 1);
             auto arg1 = stack.pop_value();
