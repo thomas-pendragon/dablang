@@ -73,10 +73,7 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
         fprintf(out, "%s", vm.classes[fixnum].name.c_str());
         break;
     case TYPE_OBJECT:
-        if (fixnum == CLASS_STRING)
-            fprintf(out, "");
-        else
-            fprintf(out, "#%s", vm.classes[fixnum].name.c_str());
+        fprintf(out, "#%s", vm.classes[fixnum].name.c_str());
         break;
     default:
         fprintf(out, "?");
