@@ -147,18 +147,33 @@ struct DabClass
                                      const std::string &name) const;
 };
 
-struct DabValue
+struct DabObject;
+
+struct DabObjectProxy
+{
+    DabObject *object;
+    size_t     count_strong;
+
+    void retain();
+    void release();
+};
+
+struct DabValueData
 {
     int kind = VAL_INVALID;
     int type = TYPE_INVALID;
 
-    int64_t     fixnum;
-    std::string string;
-    bool        boolean;
-
-    std::map<std::string, DabValue> instvars;
+    int64_t         fixnum;
+    std::string     string;
+    bool            boolean;
+    DabObjectProxy *object = nullptr;
 
     bool is_constant = false;
+};
+
+struct DabValue
+{
+    DabValueData data;
 
     void dump(DabVM &vm) const;
 
@@ -170,24 +185,43 @@ struct DabValue
 
     bool truthy() const;
 
-    DabValue get_instvar(const std::string &name);
+    DabValue _get_instvar(DabVM &vm, const std::string &name);
+    DabValue get_instvar(DabVM &vm, const std::string &name);
 
-    void set_instvar(const std::string &name, const DabValue &value);
+    void set_instvar(DabVM &vm, const std::string &name, const DabValue &value);
+
+    void set_data(const DabValueData &other_data);
 
     DabValue()
     {
     }
-    DabValue(std::nullptr_t) : type(TYPE_NIL)
+    DabValue(std::nullptr_t)
     {
+        data.type = TYPE_NIL;
     }
-    DabValue(const std::string &value) : type(TYPE_STRING), string(value)
+    DabValue(const std::string &value)
     {
+        data.type   = TYPE_STRING;
+        data.string = value;
     }
-    DabValue(const DabClass &klass) : type(TYPE_CLASS), fixnum(klass.index)
+    DabValue(const DabClass &klass)
     {
+        data.type   = TYPE_CLASS;
+        data.fixnum = klass.index;
     }
 
+    DabValue(const DabValue &other);
+    DabValue &operator=(const DabValue &other);
+
+    ~DabValue();
+
     DabValue create_instance() const;
+};
+
+struct DabObject
+{
+    uint64_t klass;
+    std::map<std::string, DabValue> instvars;
 };
 
 struct Stack
@@ -217,7 +251,7 @@ struct Stack
 
     void push_value(DabValue value, int kind = VAL_STACK)
     {
-        value.kind = kind;
+        value.data.kind = kind;
         _data.push_back(value);
     }
 

@@ -1,0 +1,30 @@
+## CODE
+
+class MyObject
+{
+	var @foo;
+	func run()
+	{
+		@foo = @foo || 0;
+		@foo = @foo + 1;
+		print(@foo);
+	}
+}
+
+func pass(a){}
+
+func main()
+{
+	var a = MyObject.new;
+	pass(a.run);
+	pass(a.run);
+	pass(a.run);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+123

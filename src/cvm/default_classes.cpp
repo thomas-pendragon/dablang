@@ -19,7 +19,7 @@ void DabVM::define_default_classes()
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg = stack.pop_value();
-        assert(arg.type == TYPE_CLASS);
+        assert(arg.data.type == TYPE_CLASS);
         stack.push_value(arg.create_instance());
     });
     object_class.add_function("class", [this](size_t n_args, size_t n_ret) {
@@ -34,8 +34,8 @@ void DabVM::define_default_classes()
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg0 = stack.pop_value();
-        assert(arg0.type == TYPE_STRING);
-        auto &s = arg0.string;
+        assert(arg0.data.type == TYPE_STRING);
+        auto &s = arg0.data.string;
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         stack.push(arg0);
     });
@@ -44,13 +44,13 @@ void DabVM::define_default_classes()
         assert(n_ret == 1);
         auto     klass = stack.pop_value();
         DabValue ret_value;
-        ret_value.type = TYPE_STRING;
-        ret_value.kind = VAL_STACK;
+        ret_value.data.type = TYPE_STRING;
+        ret_value.data.kind = VAL_STACK;
         if (n_args == 2)
         {
             auto arg = stack.pop_value();
-            assert(arg.type == TYPE_STRING);
-            ret_value.string = arg.string;
+            assert(arg.data.type == TYPE_STRING);
+            ret_value.data.string = arg.data.string;
         }
         stack.push_value(ret_value);
     });
@@ -63,14 +63,14 @@ void DabVM::define_default_classes()
         assert(n_ret == 1);
         auto     klass = stack.pop_value();
         DabValue ret_value;
-        ret_value.type   = TYPE_FIXNUM;
-        ret_value.kind   = VAL_STACK;
-        ret_value.fixnum = 0;
+        ret_value.data.type   = TYPE_FIXNUM;
+        ret_value.data.kind   = VAL_STACK;
+        ret_value.data.fixnum = 0;
         if (n_args == 2)
         {
             auto arg = stack.pop_value();
-            assert(arg.type == TYPE_FIXNUM);
-            ret_value.fixnum = arg.fixnum;
+            assert(arg.data.type == TYPE_FIXNUM);
+            ret_value.data.fixnum = arg.data.fixnum;
         }
         stack.push_value(ret_value);
     });

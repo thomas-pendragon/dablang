@@ -50,27 +50,27 @@ void DabVM::pop_frame(bool regular)
 void DabVM::push(int kind, int value)
 {
     DabValue val;
-    val.kind   = kind;
-    val.type   = TYPE_FIXNUM;
-    val.fixnum = value;
+    val.data.kind   = kind;
+    val.data.type   = TYPE_FIXNUM;
+    val.data.fixnum = value;
     stack.push_value(val);
 }
 
 void DabVM::push(int kind, uint64_t value)
 {
     DabValue val;
-    val.kind   = kind;
-    val.type   = TYPE_FIXNUM;
-    val.fixnum = value;
+    val.data.kind   = kind;
+    val.data.type   = TYPE_FIXNUM;
+    val.data.fixnum = value;
     stack.push_value(val);
 }
 
 void DabVM::push(int kind, bool value)
 {
     DabValue val;
-    val.kind    = kind;
-    val.type    = TYPE_BOOLEAN;
-    val.boolean = value;
+    val.data.kind    = kind;
+    val.data.type    = TYPE_BOOLEAN;
+    val.data.boolean = value;
     stack.push_value(val);
 }
 
@@ -92,15 +92,15 @@ void DabVM::stack_push(bool value)
 void DabVM::push(int kind, const std::string &value)
 {
     DabValue val;
-    val.kind   = kind;
-    val.type   = TYPE_STRING;
-    val.string = value;
+    val.data.kind   = kind;
+    val.data.type   = TYPE_STRING;
+    val.data.string = value;
     stack.push_value(val);
 }
 
 void DabVM::push(DabValue val)
 {
-    val.kind = VAL_STACK;
+    val.data.kind = VAL_STACK;
     stack.push_value(val);
 }
 
@@ -120,15 +120,15 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, int n_locals)
     {
         // push retvalue
         DabValue val;
-        val.kind = VAL_RETVAL;
-        val.type = TYPE_INVALID;
+        val.data.kind = VAL_RETVAL;
+        val.data.type = TYPE_INVALID;
         stack.push_value(val);
     }
     for (int i = 0; i < n_locals; i++)
     {
         DabValue val;
-        val.kind = VAL_VARIABLE;
-        val.type = TYPE_INVALID;
+        val.data.kind = VAL_VARIABLE;
+        val.data.type = TYPE_INVALID;
         stack.push_value(val);
     }
 }
@@ -232,22 +232,22 @@ DabValue &DabVM::get_self()
 
 size_t DabVM::get_prev_ip()
 {
-    return stack[frame_position - 2].fixnum;
+    return stack[frame_position - 2].data.fixnum;
 }
 
 size_t DabVM::prev_frame_position()
 {
-    return stack[frame_position - 1].fixnum;
+    return stack[frame_position - 1].data.fixnum;
 }
 
 int DabVM::number_of_args()
 {
-    return stack[frame_position + 0].fixnum;
+    return stack[frame_position + 0].data.fixnum;
 }
 
 int DabVM::number_of_vars()
 {
-    return stack[frame_position + 1].fixnum;
+    return stack[frame_position + 1].data.fixnum;
 }
 
 void DabVM::push_constant(const DabValue &value)
@@ -351,10 +351,10 @@ void DabVM::execute_single(Stream &input)
     }
     case OP_RETURN:
     {
-        auto  nrets  = input.read_uint16();
-        auto &retval = get_retval();
-        retval       = stack.pop_value();
-        retval.kind  = VAL_RETVAL;
+        auto  nrets      = input.read_uint16();
+        auto &retval     = get_retval();
+        retval           = stack.pop_value();
+        retval.data.kind = VAL_RETVAL;
         pop_frame(true);
         break;
     }
@@ -382,11 +382,11 @@ void DabVM::execute_single(Stream &input)
     }
     case OP_SET_VAR:
     {
-        auto  index = input.read_uint16();
-        auto  value = stack.pop_value();
-        auto &var   = get_var(index);
-        var         = value;
-        var.kind    = VAL_VARIABLE;
+        auto  index   = input.read_uint16();
+        auto  value   = stack.pop_value();
+        auto &var     = get_var(index);
+        var           = value;
+        var.data.kind = VAL_VARIABLE;
         break;
     }
     case OP_PUSH_VAR:
@@ -458,12 +458,12 @@ void DabVM::execute_single(Stream &input)
 
 void DabVM::get_instvar(const std::string &name)
 {
-    stack.push_value(get_self().get_instvar(name));
+    stack.push_value(get_self().get_instvar(*this, name));
 }
 
 void DabVM::set_instvar(const std::string &name, const DabValue &value)
 {
-    get_self().set_instvar(name, value);
+    get_self().set_instvar(*this, name, value);
 }
 
 void DabVM::push_class(int index)
@@ -508,49 +508,49 @@ void DabVM::kernelcall(int call)
 std::string DabVM::stack_pop_symbol()
 {
     auto val = stack.pop_value();
-    if (val.type != TYPE_SYMBOL)
+    if (val.data.type != TYPE_SYMBOL)
     {
         fprintf(stderr, "VM error: value is not a symbol.\n");
         exit(1);
     }
-    return val.string;
+    return val.data.string;
 }
 
 void DabVM::push_constant_symbol(const std::string &name)
 {
     DabValue val;
-    val.kind   = VAL_CONSTANT;
-    val.type   = TYPE_SYMBOL;
-    val.string = name;
+    val.data.kind   = VAL_CONSTANT;
+    val.data.type   = TYPE_SYMBOL;
+    val.data.string = name;
     push_constant(val);
 }
 
 void DabVM::push_constant_string(const std::string &name)
 {
     DabValue val;
-    val.kind        = VAL_CONSTANT;
-    val.type        = TYPE_STRING;
-    val.string      = name;
-    val.is_constant = true;
+    val.data.kind        = VAL_CONSTANT;
+    val.data.type        = TYPE_STRING;
+    val.data.string      = name;
+    val.data.is_constant = true;
     push_constant(val);
 }
 
 void DabVM::push_constant_fixnum(uint64_t value)
 {
     DabValue val;
-    val.kind        = VAL_CONSTANT;
-    val.type        = TYPE_FIXNUM;
-    val.fixnum      = value;
-    val.is_constant = true;
+    val.data.kind        = VAL_CONSTANT;
+    val.data.type        = TYPE_FIXNUM;
+    val.data.fixnum      = value;
+    val.data.is_constant = true;
     push_constant(val);
 }
 
 void DabVM::push_constant_boolean(bool value)
 {
     DabValue val;
-    val.kind    = VAL_CONSTANT;
-    val.type    = TYPE_BOOLEAN;
-    val.boolean = value;
+    val.data.kind    = VAL_CONSTANT;
+    val.data.type    = TYPE_BOOLEAN;
+    val.data.boolean = value;
     push_constant(val);
 }
 

@@ -17,7 +17,6 @@
 - offset-based instance variables
 - typed instance variables
 - weak instance variables
-- passing by reference
 - automatic reference counting
 	- weak pointers
 		- weak arrays

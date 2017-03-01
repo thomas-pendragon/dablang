@@ -13,9 +13,9 @@
             assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
             auto     arg0 = stack.pop_value();                                                     \
-            uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
-            auto str      = arg0.string op arg1.string;                                            \
-            if (arg0.type == TYPE_FIXNUM)                                                          \
+            uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
+            auto str      = arg0.data.string op arg1.data.string;                                  \
+            if (arg0.data.type == TYPE_FIXNUM)                                                     \
                 stack_push(num);                                                                   \
             else                                                                                   \
                 stack_push(str);                                                                   \
@@ -34,7 +34,7 @@
             assert(n_ret == 1);                                                                    \
             auto     arg1 = stack.pop_value();                                                     \
             auto     arg0 = stack.pop_value();                                                     \
-            uint64_t num  = arg0.fixnum op arg1.fixnum;                                            \
+            uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
             stack_push(num);                                                                       \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
@@ -51,7 +51,7 @@
             assert(n_ret == 1);                                                                    \
             auto arg1 = stack.pop_value();                                                         \
             auto arg0 = stack.pop_value();                                                         \
-            bool test = arg0.fixnum op arg1.fixnum;                                                \
+            bool test = arg0.data.fixnum op arg1.data.fixnum;                                      \
             stack_push(test);                                                                      \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \

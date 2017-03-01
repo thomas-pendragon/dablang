@@ -3,7 +3,7 @@
 const DabFunction &DabClass::get_function(DabVM &vm, const DabValue &klass,
                                           const std::string &name) const
 {
-    if (klass.type == TYPE_CLASS)
+    if (klass.data.type == TYPE_CLASS)
     {
         return get_static_function(vm, klass, name);
     }

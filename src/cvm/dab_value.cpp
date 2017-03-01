@@ -5,19 +5,19 @@ void DabValue::dump(DabVM &vm) const
     static const char *kinds[] = {"INVAL", "PrvIP", "PrvSP", "nArgs", "nVars",
                                   "RETVL", "CONST", "VARIA", "STACK", "self "};
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
-    fprintf(stderr, "%s %s ", kinds[kind], types[type]);
+    fprintf(stderr, "%s %s ", kinds[data.kind], types[data.type]);
     print(vm, stderr, true);
 }
 
 int DabValue::class_index() const
 {
-    switch (type)
+    switch (data.type)
     {
     case TYPE_FIXNUM:
-        return is_constant ? CLASS_LITERALFIXNUM : CLASS_FIXNUM;
+        return data.is_constant ? CLASS_LITERALFIXNUM : CLASS_FIXNUM;
         break;
     case TYPE_STRING:
-        return is_constant ? CLASS_LITERALSTRING : CLASS_STRING;
+        return data.is_constant ? CLASS_LITERALSTRING : CLASS_STRING;
         break;
     case TYPE_SYMBOL:
         return CLASS_INT_SYMBOL;
@@ -29,10 +29,10 @@ int DabValue::class_index() const
         return CLASS_NILCLASS;
         break;
     case TYPE_CLASS:
-        return fixnum;
+        return data.fixnum;
         break;
     case TYPE_OBJECT:
-        return fixnum;
+        return this->data.object->object->klass;
         break;
     default:
         assert(false);
@@ -52,19 +52,19 @@ DabClass &DabValue::get_class(DabVM &vm) const
 
 void DabValue::print(DabVM &vm, FILE *out, bool debug) const
 {
-    switch (type)
+    switch (data.type)
     {
     case TYPE_FIXNUM:
-        fprintf(out, "%zd", fixnum);
+        fprintf(out, "%zd", data.fixnum);
         break;
     case TYPE_STRING:
-        fprintf(out, debug ? "\"%s\"" : "%s", string.c_str());
+        fprintf(out, debug ? "\"%s\"" : "%s", data.string.c_str());
         break;
     case TYPE_SYMBOL:
-        fprintf(out, ":%s", string.c_str());
+        fprintf(out, ":%s", data.string.c_str());
         break;
     case TYPE_BOOLEAN:
-        fprintf(out, "%s", boolean ? "true" : "false");
+        fprintf(out, "%s", data.boolean ? "true" : "false");
         break;
     case TYPE_NIL:
         fprintf(out, "nil");
@@ -83,15 +83,15 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
 
 bool DabValue::truthy() const
 {
-    switch (type)
+    switch (data.type)
     {
     case TYPE_FIXNUM:
-        return fixnum;
+        return data.fixnum;
     case TYPE_STRING:
-        return string.length();
+        return data.string.length();
         break;
     case TYPE_BOOLEAN:
-        return boolean;
+        return data.boolean;
         break;
     case TYPE_NIL:
         return false;
@@ -104,14 +104,31 @@ bool DabValue::truthy() const
 
 DabValue DabValue::create_instance() const
 {
-    assert(type == TYPE_CLASS);
-    auto copy = *this;
-    copy.type = TYPE_OBJECT;
-    return copy;
+    assert(data.type == TYPE_CLASS);
+
+    DabObjectProxy *proxy = new DabObjectProxy;
+    proxy->object         = new DabObject;
+    proxy->count_strong   = 1;
+    proxy->object->klass  = this->data.fixnum;
+
+    DabValue ret;
+    ret.data.type   = TYPE_OBJECT;
+    ret.data.object = proxy;
+    return ret;
 }
 
-DabValue DabValue::get_instvar(const std::string &name)
+DabValue DabValue::_get_instvar(DabVM &vm, const std::string &name)
 {
+    assert(this->data.type == TYPE_OBJECT);
+    assert(this->data.object);
+
+    if (!this->data.object->object)
+    {
+        return DabValue(nullptr);
+    }
+
+    auto &instvars = this->data.object->object->instvars;
+
     if (!instvars.count(name))
     {
         return DabValue(nullptr);
@@ -119,7 +136,76 @@ DabValue DabValue::get_instvar(const std::string &name)
     return instvars[name];
 }
 
-void DabValue::set_instvar(const std::string &name, const DabValue &value)
+DabValue DabValue::get_instvar(DabVM &vm, const std::string &name)
 {
+    auto ret = _get_instvar(vm, name);
+    fprintf(stderr, "VM: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
+            (int)this->data.object->count_strong, name.c_str());
+    ret.print(vm, stderr);
+    fprintf(stderr, "\n");
+    return ret;
+}
+
+void DabValue::set_instvar(DabVM &vm, const std::string &name, const DabValue &value)
+{
+    assert(this->data.type == TYPE_OBJECT);
+    assert(this->data.object);
+
+    fprintf(stderr, "VM: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
+            (int)this->data.object->count_strong, name.c_str());
+    value.print(vm, stderr);
+    fprintf(stderr, "\n");
+
+    if (!this->data.object->object)
+    {
+        return;
+    }
+
+    auto &instvars = this->data.object->object->instvars;
     instvars[name] = value;
+}
+
+void DabValue::set_data(const DabValueData &other_data)
+{
+    data = other_data;
+    if (data.type == TYPE_OBJECT)
+    {
+        data.object->retain();
+    }
+}
+
+DabValue::DabValue(const DabValue &other)
+{
+    set_data(other.data);
+}
+
+DabValue &DabValue::operator=(const DabValue &other)
+{
+    set_data(other.data);
+    return *this;
+}
+
+DabValue::~DabValue()
+{
+    if (this->data.type == TYPE_OBJECT)
+    {
+        this->data.object->release();
+    }
+}
+
+//
+
+void DabObjectProxy::retain()
+{
+    count_strong += 1;
+}
+
+void DabObjectProxy::release()
+{
+    count_strong -= 1;
+    if (count_strong == 0)
+    {
+        delete object;
+        delete this;
+    }
 }
