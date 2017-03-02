@@ -114,6 +114,9 @@ DabValue DabValue::create_instance() const
     DabValue ret;
     ret.data.type   = TYPE_OBJECT;
     ret.data.object = proxy;
+
+    fprintf(stderr, "VM: proxy %p (strong %d): ! created\n", proxy, (int)proxy->count_strong);
+
     return ret;
 }
 
@@ -198,13 +201,16 @@ DabValue::~DabValue()
 void DabObjectProxy::retain()
 {
     count_strong += 1;
+    fprintf(stderr, "VM: proxy %p (strong %d): + retained\n", this, (int)this->count_strong);
 }
 
 void DabObjectProxy::release()
 {
     count_strong -= 1;
+    fprintf(stderr, "VM: proxy %p (strong %d): - released\n", this, (int)this->count_strong);
     if (count_strong == 0)
     {
+        fprintf(stderr, "VM: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
         delete object;
         delete this;
     }
