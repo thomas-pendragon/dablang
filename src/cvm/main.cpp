@@ -574,22 +574,70 @@ void DabVM::add_function(Stream &input, const std::string &name, uint16_t class_
     instructions.append(input, body_length);
 }
 
-int main(int argc, char **argv)
+struct DabRunOptions
 {
-    FILE *stream = stdin;
-    FILE *file   = nullptr;
-    if (argc > 1)
+    FILE *input      = stdin;
+    bool  close_file = false;
+    bool  autorun    = true;
+
+    void parse(const std::vector<std::string> &args);
+};
+
+void DabRunOptions::parse(const std::vector<std::string> &args)
+{
+    std::map<std::string, bool> flags;
+    std::vector<std::string> others;
+
+    for (auto &arg : args)
     {
-        file = fopen(argv[1], "rb");
+        if (arg.substr(0, 2) == "--")
+        {
+            flags[arg] = true;
+        }
+        else
+        {
+            others.push_back(arg);
+        }
+    }
+
+    if (others.size() > 1)
+    {
+        fprintf(stderr, "VM: too many file arguments.\n");
+        exit(1);
+    }
+
+    if (others.size() == 1)
+    {
+        auto filename = others[0].c_str();
+        auto file     = fopen(filename, "rb");
         if (!file)
         {
-            fprintf(stderr, "VM: cannot open file <%s> for reading!\n", argv[1]);
+            fprintf(stderr, "VM: cannot open file <%s> for reading!\n", filename);
             exit(1);
         }
-        stream = file;
+        this->input      = file;
+        this->close_file = true;
     }
+
+    if (flags["--debug"])
+    {
+        this->autorun = false;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    DabRunOptions            options;
+    std::vector<std::string> args;
+    for (int i = 1; i < argc; i++)
+    {
+        args.push_back(argv[i]);
+    }
+    options.parse(args);
+
     Stream input;
     byte   buffer[1024];
+    auto   stream = options.input;
     while (!feof(stream))
     {
         size_t bytes = fread(buffer, 1, 1024, stream);
@@ -597,9 +645,9 @@ int main(int argc, char **argv)
     }
     DabVM vm;
     auto  ret_value = vm.run(input);
-    if (file)
+    if (options.close_file)
     {
-        fclose(file);
+        fclose(stream);
     }
     return ret_value;
 }
