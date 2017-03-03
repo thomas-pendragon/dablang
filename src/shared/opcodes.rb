@@ -21,6 +21,7 @@ OPCODES = {
   0x13 => {name: 'PUSH_SELF'}, # push(1)
   0x14 => {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
   0x15 => {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)
+  0x16 => {name: 'PUSH_ARRAY', arg: :uint16}, # pop(arg), push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
@@ -39,6 +40,7 @@ STANDARD_CLASSES = %w(
   LiteralFixnum
   Boolean
   NilClass
+  Array
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

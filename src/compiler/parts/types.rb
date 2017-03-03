@@ -59,3 +59,13 @@ class DabTypeSymbol < DabType
     other_type.is_a? DabTypeSymbol
   end
 end
+
+class DabTypeArray < DabTypeString
+  def type_string
+    'Array'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeArray
+  end
+end

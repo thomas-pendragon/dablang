@@ -335,8 +335,21 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_literal_array
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('@')
+      next unless subcontext.read_operator('[')
+      next unless subcontext.read_operator(']')
+      DabNodeLiteralArray.new
+    end
+  end
+
+  def read_extended_literal
+    read_literal_array
+  end
+
   def read_literal_value
-    read_literal_string || read_literal_number || read_literal_boolean || read_literal_nil
+    read_extended_literal || read_literal_string || read_literal_number || read_literal_boolean || read_literal_nil
   end
 
   def read_instvar

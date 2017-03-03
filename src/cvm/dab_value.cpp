@@ -28,6 +28,9 @@ int DabValue::class_index() const
     case TYPE_NIL:
         return CLASS_NILCLASS;
         break;
+    case TYPE_ARRAY:
+        return CLASS_ARRAY;
+        break;
     case TYPE_CLASS:
         return data.fixnum;
         break;

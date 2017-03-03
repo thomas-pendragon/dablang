@@ -20,6 +20,7 @@
 - automatic reference counting
 	- weak pointers
 		- weak arrays
+- nullables and non-null force
 - type: array
 	- Array.sort
 	- Array.max

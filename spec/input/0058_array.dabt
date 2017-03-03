@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+	print(@[].class);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+Array

@@ -108,6 +108,7 @@ class DabParser
     debug('classvar ?')
     ret = ''
     return nil unless current_char == '@'
+    return nil unless current_char_identifier_start?(1)
     ret += current_char
     advance!
     while current_char_identifier?
@@ -223,8 +224,8 @@ class DabParser
     current_char_whitespace? || current_char == '<' || current_char == '>'
   end
 
-  def current_char_identifier_start?
-    current_char =~ /[a-zA-Z_]/
+  def current_char_identifier_start?(n = 0)
+    current_char(n) =~ /[a-zA-Z_]/
   end
 
   def current_char_identifier?

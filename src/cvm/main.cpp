@@ -449,6 +449,15 @@ void DabVM::execute_single(Stream &input)
         set_instvar(name, value);
         break;
     }
+    case OP_PUSH_ARRAY:
+    {
+        auto n = input.read_uint16();
+        assert(n == 0);
+        DabValue value;
+        value.data.type = TYPE_ARRAY;
+        stack.push_value(value);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);

@@ -24,4 +24,5 @@ enum
     OP_PUSH_SELF        = 0x13,
     OP_PUSH_INSTVAR     = 0x14,
     OP_SET_INSTVAR      = 0x15,
+    OP_PUSH_ARRAY       = 0x16,
 };

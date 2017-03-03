@@ -106,6 +106,7 @@ enum
     TYPE_SYMBOL,
     TYPE_CLASS,
     TYPE_OBJECT,
+    TYPE_ARRAY,
 };
 
 enum
@@ -117,6 +118,7 @@ enum
     CLASS_LITERALFIXNUM = 4,
     CLASS_BOOLEAN       = 5,
     CLASS_NILCLASS      = 6,
+    CLASS_ARRAY         = 7,
 
     CLASS_INT_SYMBOL = 0xFE,
 };
