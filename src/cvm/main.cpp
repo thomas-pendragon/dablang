@@ -149,35 +149,7 @@ size_t DabVM::ip() const
     return instructions.position();
 }
 
-void DabVM::dump()
-{
-    fprintf(stderr, "IP = %p (%d) Frame = %d\n", (void *)ip(), (int)ip(), (int)frame_position);
-    fprintf(stderr, "Classes:\n");
-    for (const auto &it : classes)
-    {
-        fprintf(stderr, " - 0x%04x %s (super = 0x%04x)\n", it.first, it.second.name.c_str(),
-                it.second.superclass_index);
-        for (const auto &fin : it.second.static_functions)
-        {
-            fprintf(stderr, "   ::%s\n", fin.first.c_str());
-        }
-        for (const auto &fin : it.second.functions)
-        {
-            fprintf(stderr, "    .%s\n", fin.first.c_str());
-        }
-    }
-    fprintf(stderr, "Dump of functions:\n");
-    for (auto it : functions)
-    {
-        auto &fun = it.second;
-        fprintf(stderr, " - %s: %s at %p\n", fun.name.c_str(), fun.regular ? "regular" : "extra",
-                (void *)fun.address);
-    }
-    _dump("constants", constants);
-    _dump("stack", stack._data);
-}
-
-int DabVM::run(Stream &input)
+int DabVM::run(Stream &input, bool autorun)
 {
     auto mark1 = input.read_uint8();
     auto mark2 = input.read_uint8();
@@ -196,7 +168,14 @@ int DabVM::run(Stream &input)
     execute(input);
 
     call("main", 0);
-    execute(instructions);
+    if (autorun)
+    {
+        execute(instructions);
+    }
+    else
+    {
+        execute_debug(instructions);
+    }
 
     return 0;
 }
@@ -653,7 +632,7 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
-    auto  ret_value = vm.run(input);
+    auto  ret_value = vm.run(input, options.autorun);
     if (options.close_file)
     {
         fclose(stream);

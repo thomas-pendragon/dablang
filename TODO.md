@@ -42,6 +42,7 @@
 - default arguments
 - native compilation
 - debugging
+- disassembler
 - IDE
 - package management
 - game demo

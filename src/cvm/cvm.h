@@ -283,6 +283,7 @@ struct Stack
   private:
     std::vector<DabValue> _data;
     friend class DabVM;
+    friend class DabVM_debug;
 };
 
 struct DabVM
@@ -336,9 +337,7 @@ struct DabVM
 
     size_t ip() const;
 
-    void dump();
-
-    int run(Stream &input);
+    int run(Stream &input, bool autorun);
 
     DabValue &start_of_constants();
 
@@ -363,6 +362,8 @@ struct DabVM
     void call(const std::string &name, int n_args);
 
     void call_function(const DabValue &self, const DabFunction &fun, int n_args);
+
+    void execute_debug(Stream &input);
 
     void execute(Stream &input);
 
