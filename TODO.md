@@ -21,11 +21,17 @@
 	- weak pointers
 		- weak arrays
 - nullables and non-null force
-- type: array
-	- Array.sort
-	- Array.max
-	- Array.min
-	- Array.join
+- class parameters (Foo<String>)
+	- typed arrays
+- Array []
+- setters
+	- Array []=
+- Array.first
+- Array.last
+- Array.sort
+- Array.max
+- Array.min
+- Array.join
 - type: hash
 - type: set
 - constructors/destructors
