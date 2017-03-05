@@ -270,10 +270,7 @@ void DabVM::execute(Stream &input)
 
 void DabVM::execute_single(Stream &input)
 {
-    fprintf(stderr, "\n");
-    // dump();
     auto opcode = input.read_uint8();
-    fprintf(stderr, "Opcode: %d\n", (int)opcode);
     switch (opcode)
     {
     case OP_START_FUNCTION:
