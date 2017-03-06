@@ -1,0 +1,57 @@
+image: dablang/dablangenv:0.2
+
+before_script:
+  - gem install bundler
+  - bundle install --path=/cache/bundler
+
+stages:
+  - prebuild
+  - build
+  - test
+
+.build_base: &build_base
+  stage: build
+  tags:
+    - ruby
+  script:
+    - bundle exec rake bin/cvm
+  artifacts:
+    paths:
+    - bin/cvm
+    expire_in: 1 week
+
+.test_base: &test_base
+  stage: test
+  tags:
+    - ruby
+  script:
+    - bundle exec rake spec
+
+RSpec:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rspec
+
+Rubocop:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rubocop
+
+ClangFormat:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:cpp_check
+
+SortCheck:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:sort_check
+

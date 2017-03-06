@@ -1,30 +1,8 @@
-puts <<-EOT
-image: dablang/dablangenv:0.1
+require 'yaml'
 
-before_script:
-  - gem install bundler
-  - bundle install --path=/cache/bundler
+base_path = 'gitlab_base.yml'
 
-stages:
-  - build
-  - test
-
-.build_base: &build_base
-  stage: build
-  tags:
-    - ruby
-  script:
-    - bundle exec rake bin/cvm
-
-.test_base: &test_base
-  stage: test
-  tags:
-    - ruby
-  script:
-    - bundle exec rake spec
-EOT
-
-puts
+data = YAML.load_file(base_path)
 
 compilers = [
   'g++-4.7',
@@ -45,19 +23,24 @@ compilers = compilers.map do |compiler|
 end.to_h
 
 compilers.each do |compiler, env|
-  puts ".#{env}: &#{env}"
-  puts '  variables:'
-  puts "    COMPILER: #{compiler}"
-  puts
+  data[".#{env}"] = {
+    'variables' => {
+      'COMPILER' => compiler,
+    },
+  }
 end
 
 compilers.each do |compiler, env|
-  puts "'Build #{compiler}':"
-  puts '  <<: *build_base'
-  puts "  <<: *#{env}"
-  puts
-  puts "'Test #{compiler}':"
-  puts '  <<: *test_base'
-  puts "  <<: *#{env}"
-  puts
+  %w(Build Test).each do |stage|
+    task_name = "#{stage} #{compiler}"
+    task = {}
+    task.merge! data[".#{stage.downcase}_base"]
+    task.merge! data[".#{env}"]
+    if stage == 'Test'
+      task['dependencies'] = ["Build #{compiler}"]
+    end
+    data[task_name] = task
+  end
 end
+
+puts YAML.dump(data)

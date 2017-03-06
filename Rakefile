@@ -46,7 +46,7 @@ end
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
 
-file gitlab => [gitlab_base] do
+file gitlab => [gitlab_base, 'gitlab_base.yml'] do
   psystem("ruby #{gitlab_base} > #{gitlab}")
 end
 
