@@ -1,196 +1,209 @@
+---
 image: dablang/dablangenv:0.2
-
 before_script:
-  - gem install bundler
-  - bundle install --path=/cache/bundler
-
+- gem install bundler
+- bundle install --path=/cache/bundler
 stages:
-  - prebuild
-  - build
-  - test
-
-.build_base: &build_base
+- prebuild
+- build
+- test
+".build_base":
   stage: build
-  tags:
-    - ruby
-  script:
-    - bundle exec rake bin/cvm
-  artifacts:
+  tags: &1
+  - ruby
+  script: &2
+  - bundle exec rake bin/cvm
+  artifacts: &3
     paths:
     - bin/cvm
     expire_in: 1 week
-
-.test_base: &test_base
+".test_base":
   stage: test
-  tags:
-    - ruby
-  script:
-    - bundle exec rake spec
-
+  tags: &5
+  - ruby
+  script: &6
+  - bundle exec rake spec
 RSpec:
   stage: prebuild
   tags:
-    - ruby
+  - ruby
   script:
-    - bundle exec rspec
-
+  - bundle exec rspec
 Rubocop:
   stage: prebuild
   tags:
-    - ruby
+  - ruby
   script:
-    - bundle exec rubocop
-
+  - bundle exec rubocop
 ClangFormat:
   stage: prebuild
   tags:
-    - ruby
+  - ruby
   script:
-    - bundle exec rake format:cpp_check
-
+  - bundle exec rake format:cpp_check
 SortCheck:
   stage: prebuild
   tags:
-    - ruby
+  - ruby
   script:
-    - bundle exec rake format:sort_check
-
-.env_g_4_7: &env_g_4_7
-  variables:
+  - bundle exec rake format:sort_check
+".env_g_4_7":
+  variables: &4
     COMPILER: g++-4.7
-
-.env_g_4_8: &env_g_4_8
-  variables:
+".env_g_4_8":
+  variables: &7
     COMPILER: g++-4.8
-
-.env_g_4_9: &env_g_4_9
-  variables:
+".env_g_4_9":
+  variables: &8
     COMPILER: g++-4.9
-
-.env_g_5: &env_g_5
-  variables:
+".env_g_5":
+  variables: &9
     COMPILER: g++-5
-
-.env_g_6: &env_g_6
-  variables:
+".env_g_6":
+  variables: &10
     COMPILER: g++-6
-
-.env_clang_3_5: &env_clang_3_5
-  variables:
+".env_clang_3_5":
+  variables: &11
     COMPILER: clang++-3.5
-
-.env_clang_3_6: &env_clang_3_6
-  variables:
+".env_clang_3_6":
+  variables: &12
     COMPILER: clang++-3.6
-
-.env_clang_3_7: &env_clang_3_7
-  variables:
+".env_clang_3_7":
+  variables: &13
     COMPILER: clang++-3.7
-
-.env_clang_3_8: &env_clang_3_8
-  variables:
+".env_clang_3_8":
+  variables: &14
     COMPILER: clang++-3.8
-
-.env_clang_3_9: &env_clang_3_9
-  variables:
+".env_clang_3_9":
+  variables: &15
     COMPILER: clang++-3.9
-
-'Build g++-4.7':
-  <<: *build_base
-  <<: *env_g_4_7
-
-'Test g++-4.7':
-  <<: *test_base
-  <<: *env_g_4_7
+Build g++-4.7:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *4
+Test g++-4.7:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *4
   dependencies:
   - Build g++-4.7
-
-'Build g++-4.8':
-  <<: *build_base
-  <<: *env_g_4_8
-
-'Test g++-4.8':
-  <<: *test_base
-  <<: *env_g_4_8
+Build g++-4.8:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *7
+Test g++-4.8:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *7
   dependencies:
   - Build g++-4.8
-
-'Build g++-4.9':
-  <<: *build_base
-  <<: *env_g_4_9
-
-'Test g++-4.9':
-  <<: *test_base
-  <<: *env_g_4_9
+Build g++-4.9:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *8
+Test g++-4.9:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *8
   dependencies:
   - Build g++-4.9
-
-'Build g++-5':
-  <<: *build_base
-  <<: *env_g_5
-
-'Test g++-5':
-  <<: *test_base
-  <<: *env_g_5
+Build g++-5:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *9
+Test g++-5:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *9
   dependencies:
   - Build g++-5
-
-'Build g++-6':
-  <<: *build_base
-  <<: *env_g_6
-
-'Test g++-6':
-  <<: *test_base
-  <<: *env_g_6
+Build g++-6:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *10
+Test g++-6:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *10
   dependencies:
   - Build g++-6
-
-'Build clang++-3.5':
-  <<: *build_base
-  <<: *env_clang_3_5
-
-'Test clang++-3.5':
-  <<: *test_base
-  <<: *env_clang_3_5
+Build clang++-3.5:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *11
+Test clang++-3.5:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *11
   dependencies:
   - Build clang++-3.5
-
-'Build clang++-3.6':
-  <<: *build_base
-  <<: *env_clang_3_6
-
-'Test clang++-3.6':
-  <<: *test_base
-  <<: *env_clang_3_6
+Build clang++-3.6:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *12
+Test clang++-3.6:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *12
   dependencies:
   - Build clang++-3.6
-
-'Build clang++-3.7':
-  <<: *build_base
-  <<: *env_clang_3_7
-
-'Test clang++-3.7':
-  <<: *test_base
-  <<: *env_clang_3_7
+Build clang++-3.7:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *13
+Test clang++-3.7:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *13
   dependencies:
   - Build clang++-3.7
-
-'Build clang++-3.8':
-  <<: *build_base
-  <<: *env_clang_3_8
-
-'Test clang++-3.8':
-  <<: *test_base
-  <<: *env_clang_3_8
+Build clang++-3.8:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *14
+Test clang++-3.8:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *14
   dependencies:
   - Build clang++-3.8
-
-'Build clang++-3.9':
-  <<: *build_base
-  <<: *env_clang_3_9
-
-'Test clang++-3.9':
-  <<: *test_base
-  <<: *env_clang_3_9
+Build clang++-3.9:
+  stage: build
+  tags: *1
+  script: *2
+  artifacts: *3
+  variables: *15
+Test clang++-3.9:
+  stage: test
+  tags: *5
+  script: *6
+  variables: *15
   dependencies:
   - Build clang++-3.9
