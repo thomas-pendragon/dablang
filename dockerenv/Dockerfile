@@ -13,3 +13,6 @@ RUN apt-get install -y clang-3.7
 RUN apt-get install -y clang-3.8
 RUN apt-get install -y clang-3.9
 RUN apt-get install -y clang-format
+RUN apt-get install -y wget
+RUN cd /usr/bin/ ; wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz ; tar xf premake-5.0.0-alpha11-linux.tar.gz
+RUN apt-get install -y make

@@ -3,5 +3,11 @@ language: ruby
 sudo: false
 
 os: linux
+dist: trusty
 
-script: "bundle install && bundle exec rake"
+before_script:
+  - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz
+  - tar xf premake-5.0.0-alpha11-linux.tar.gz
+
+script:
+  - PREMAKE='./premake5' bundle exec rake

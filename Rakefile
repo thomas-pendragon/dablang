@@ -1,12 +1,15 @@
 require_relative 'src/shared/system.rb'
 require 'colorize'
+require 'yaml'
 
 inputs = Dir.glob('spec/input/*.dabt').sort.reverse
 outputs = []
 sources = Dir.glob('src/**/*.rb')
 
-cvm_sources = Dir.glob('src/cvm/*.cpp')
-cvm_headers = Dir.glob('src/cvm/*.h')
+makefile = 'build/Makefile'
+premake = ENV['PREMAKE'] || 'premake5'
+premake = "#{premake} gmake"
+premake_source = 'premake5.lua'
 cvm = 'bin/cvm'
 filelist = 'tmp/c_files.txt'
 
@@ -29,10 +32,14 @@ file cvm_opcodes => ['src/shared/opcodes.rb', opcode_task] do
   psystem("ruby #{opcode_task} > #{cvm_opcodes}")
 end
 
-file cvm => cvm_sources + cvm_headers + [cvm_opcodes] do
-  compiler = ENV['COMPILER'] || 'clang++'
-  cxxflags = ENV['CXXFLAGS'] || ''
-  psystem("#{compiler} -std=c++11 #{cvm_sources.join(' ')} #{cxxflags} -o #{cvm}")
+file makefile => [premake_source, filelist] do
+  psystem(premake.to_s)
+end
+
+file cvm => csources + [makefile] do
+  Dir.chdir('build') do
+    psystem('make cvm verbose=1')
+  end
 end
 
 inputs.each do |input_test_file|
@@ -48,6 +55,11 @@ gitlab_base = 'gitlab_base.rb'
 
 file gitlab => [gitlab_base, 'gitlab_base.yml'] do
   psystem("ruby #{gitlab_base} > #{gitlab}")
+end
+
+task :docker do
+  tag = YAML.load_file('gitlab_base.yml')['image']
+  psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
 end
 
 task spec: outputs do

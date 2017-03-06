@@ -25,7 +25,7 @@ end.to_h
 compilers.each do |compiler, env|
   data[".#{env}"] = {
     'variables' => {
-      'COMPILER' => compiler,
+      'CXX' => compiler,
     },
   }
 end
