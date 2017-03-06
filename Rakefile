@@ -72,7 +72,7 @@ end
 
 namespace :format do
   task :ruby do
-    psystem('rubocop || rubocop -a')
+    psystem('rubocop >/dev/null 2>/dev/null || rubocop -a')
   end
 
   task :cpp do
