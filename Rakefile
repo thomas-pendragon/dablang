@@ -57,9 +57,13 @@ task default: [gitlab] + [cvm] + [:spec] do
 end
 
 task :clean do
-  (Dir.glob('./spec/output/*') + Dir.glob('./bin/*')).each do |file|
+  files = Dir.glob('./spec/output/**/*') + Dir.glob('./bin/**/') + Dir.glob('./build/**/*')
+  files.each do |file|
     next if file == '.gitkeep'
-    FileUtils.rm(file)
+    if File.file?(file)
+      puts "> Remove file #{file}"
+      FileUtils.rm(file)
+    end
   end
 end
 
