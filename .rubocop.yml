@@ -144,3 +144,6 @@ Style/For:
 
 Style/TrivialAccessors:
   Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
