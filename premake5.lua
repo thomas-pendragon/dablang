@@ -6,8 +6,7 @@ project "cvm"
   kind "ConsoleApp"
   language "C++"
   targetdir "bin/"
-  buildoptions "-std=c++11 -stdlib=libc++"
-  linkoptions "-stdlib=libc++"
+  buildoptions "-std=c++11"
 
   files { "src/cvm/**.h", "src/cvm/**.cpp" }
 
@@ -17,3 +16,7 @@ project "cvm"
 
   filter "configurations:Release"
     optimize "On"
+
+  filter "action:xcode4"
+    buildoptions "-stdlib=libc++"
+    linkoptions "-stdlib=libc++"
