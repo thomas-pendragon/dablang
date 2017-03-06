@@ -2,4 +2,5 @@
 /spec/examples.txt
 /bin
 /build
+/tmp
 *.o
