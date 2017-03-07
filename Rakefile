@@ -16,8 +16,11 @@ filelist = 'tmp/c_files.txt'
 cvm_opcodes = 'src/cshared/opcodes.h'
 opcode_task = 'tasks/opcodelist.rb'
 
+cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
+opcode_debug_task = 'tasks/opcode_debuglist.rb'
+
 csources = Dir.glob('src/{cvm,cshared}/**/*')
-csources += [cvm_opcodes]
+csources += [cvm_opcodes, cvm_opcodes_debug]
 csources.sort!
 csources.uniq!
 
@@ -30,6 +33,10 @@ end
 
 file cvm_opcodes => ['src/shared/opcodes.rb', opcode_task] do
   psystem("ruby #{opcode_task} > #{cvm_opcodes}")
+end
+
+file cvm_opcodes_debug => ['src/shared/opcodes.rb', opcode_debug_task] do
+  psystem("ruby #{opcode_debug_task} > #{cvm_opcodes_debug}")
 end
 
 file makefile => [premake_source, filelist] do
