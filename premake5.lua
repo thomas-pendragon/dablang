@@ -25,3 +25,4 @@ function dab_common_setup(name)
 end
 
 dab_common_setup("cvm")
+dab_common_setup("cdisasm")

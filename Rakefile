@@ -11,6 +11,7 @@ premake = ENV['PREMAKE'] || 'premake5'
 premake = "#{premake} gmake"
 premake_source = 'premake5.lua'
 cvm = 'bin/cvm'
+cdisasm = 'bin/cdisasm'
 filelist = 'tmp/c_files.txt'
 
 cvm_opcodes = 'src/cshared/opcodes.h'
@@ -19,7 +20,7 @@ opcode_task = 'tasks/opcodelist.rb'
 cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
 opcode_debug_task = 'tasks/opcode_debuglist.rb'
 
-csources = Dir.glob('src/{cvm,cshared}/**/*')
+csources = Dir.glob('src/{cvm,cshared,cdisasm}/**/*')
 csources += [cvm_opcodes, cvm_opcodes_debug]
 csources.sort!
 csources.uniq!
@@ -41,6 +42,12 @@ end
 
 file makefile => [premake_source, filelist] do
   psystem(premake.to_s)
+end
+
+file cdisasm => csources + [makefile] do
+  Dir.chdir('build') do
+    psystem('make cdisasm verbose=1')
+  end
 end
 
 file cvm => csources + [makefile] do
