@@ -13,10 +13,10 @@ premake_source = 'premake5.lua'
 cvm = 'bin/cvm'
 filelist = 'tmp/c_files.txt'
 
-cvm_opcodes = 'src/cvm/opcodes.h'
+cvm_opcodes = 'src/cshared/opcodes.h'
 opcode_task = 'tasks/opcodelist.rb'
 
-csources = Dir.glob('src/cvm/**/*')
+csources = Dir.glob('src/{cvm,cshared}/**/*')
 csources += [cvm_opcodes]
 csources.sort!
 csources.uniq!

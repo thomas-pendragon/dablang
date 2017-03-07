@@ -1,6 +1,6 @@
 #include "cvm.h"
 
-#include "opcodes.h"
+#include "../cshared/opcodes.h"
 
 enum
 {
