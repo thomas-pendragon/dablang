@@ -5,7 +5,7 @@ puts
 
 puts 'const DabOpcodeInfo g_opcodes[] = {'
 
-format = "    {OP_%s, \"OP_%s\", {%s}},\n"
+format = "    {OP_%s, \"%s\", {%s}},\n"
 
 OPCODES.each do |_key, opcode|
   name = opcode[:name]
