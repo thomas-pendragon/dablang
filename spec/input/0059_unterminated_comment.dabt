@@ -1,0 +1,11 @@
+## CODE
+
+/* unterminated*
+
+## RUN
+
+main
+
+## EXPECT COMPILE ERROR
+
+error E0004: Unexpected end of file.

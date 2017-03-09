@@ -36,3 +36,13 @@ class DabCompileSetargTypeError < DabCompilerError
     3
   end
 end
+
+class DabUnexpectedEOFError < DabCompilerError
+  def initialize(source)
+    super('Unexpected end of file.', source)
+  end
+
+  def error_code
+    4
+  end
+end

@@ -13,6 +13,9 @@ class SourceString < String
   end
 end
 
+class DabEndOfStreamError < RuntimeError
+end
+
 class DabParser
   attr_reader :position
   attr_reader :nl_is_whitespace
@@ -20,7 +23,7 @@ class DabParser
 
   def initialize(content, nl_is_whitespace = true)
     @nl_is_whitespace = nl_is_whitespace
-    @content = _strip_comments(content).freeze
+    @content = content.freeze
     @position = 0
     @length = @content.length
 
@@ -32,17 +35,6 @@ class DabParser
       end
       [n, line]
     end.to_h
-  end
-
-  def _strip_comments(text)
-    lpos = 0
-    while pos = text.index('/*', lpos)
-      break unless rpos = text.index('*/', pos + 2)
-      rpos += 1
-      text[pos..rpos] = ' '
-      lpos = pos
-    end
-    text
   end
 
   def eof?
@@ -208,8 +200,42 @@ class DabParser
     current_char_digit? || current_char == '-'
   end
 
+  def current_comment?
+    lookup(2) == '/*'
+  end
+
+  def skip_comment!
+    advance!(2)
+    advance! until lookup(2) == '*/'
+    advance!(2)
+  end
+
+  def read_any_character
+    if current_comment?
+      skip_comment!
+      return ' '
+    end
+    ret = current_char
+    advance!
+    ret
+  end
+
+  def non_comment_content
+    ret = ''
+    ret += read_any_character until eof?
+    ret
+  end
+
   def skip_whitespace
-    advance! while current_char_whitespace?
+    while true
+      if current_char_whitespace?
+        advance! while current_char_whitespace?
+      elsif current_comment?
+        skip_comment!
+      else
+        break
+      end
+    end
   end
 
   def current_char_whitespace?
@@ -237,6 +263,7 @@ class DabParser
   end
 
   def advance!(length = 1)
+    raise DabEndOfStreamError.new if eof? || (@position + length) > @length
     @position += length
   end
 end

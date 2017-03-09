@@ -45,6 +45,8 @@
 	- ncurses
 	- disassembler support
 - exceptions
+- test frontend: don't show errors on should-fail test cases (eg. 59)
+- lexer: pass actual EOF mark to compiler (see 59)
 - IDE
 - package management
 - game demo
