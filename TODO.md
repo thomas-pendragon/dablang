@@ -44,6 +44,7 @@
 - separate debugging app
 	- ncurses
 	- disassembler support
+- exceptions
 - IDE
 - package management
 - game demo
