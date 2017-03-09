@@ -41,8 +41,9 @@
 - function overloads
 - default arguments
 - native compilation
-- debugging
-- disassembler
+- separate debugging app
+	- ncurses
+	- disassembler support
 - IDE
 - package management
 - game demo
