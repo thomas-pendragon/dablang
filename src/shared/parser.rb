@@ -68,9 +68,9 @@ class DabParser
   end
 
   def read_keyword(keyword)
+    skip_whitespace
     start_pos = @position
     debug("keyword #{keyword} ?")
-    skip_whitespace
     return false unless input_match(keyword)
     advance!(keyword.length)
     return false unless current_char_whitespace_or_symbol?
@@ -126,8 +126,8 @@ class DabParser
   end
 
   def read_any_operator(operator)
-    operator = [operator] unless operator.is_a? Array
     skip_whitespace
+    operator = [operator] unless operator.is_a? Array
     start_pos = @position
     debug("operator #{operator} ?")
     return false unless op = input_match_any(operator)
@@ -137,8 +137,8 @@ class DabParser
   end
 
   def read_newline
-    debug('newline ?')
     skip_whitespace
+    debug('newline ?')
     return false unless input_match("\n")
     ret = current_char
     advance!
@@ -147,8 +147,8 @@ class DabParser
   end
 
   def read_string
-    debug('string ?')
     skip_whitespace
+    debug('string ?')
     return false unless input_match('"')
     advance!
     ret = ''
@@ -168,9 +168,9 @@ class DabParser
   end
 
   def read_number
+    skip_whitespace
     start_pos = @position
     debug('number ?')
-    skip_whitespace
     return false unless current_char_digit_start?
     ret = ''
     if current_char == '-'
