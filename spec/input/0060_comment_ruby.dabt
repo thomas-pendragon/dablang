@@ -1,0 +1,16 @@
+## CODE
+
+# Ruby-style comment
+
+func main()
+{
+	print("OK"); # This is OK
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+OK
