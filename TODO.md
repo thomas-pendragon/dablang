@@ -1,4 +1,3 @@
-- // and # comments
 - dumping AST tree before and after postprocessing
 - not require semicolons after if
 - endianness in cvm/main.cpp

@@ -208,6 +208,10 @@ class DabParser
     lookup == '#'
   end
 
+  def current_cpp_comment?
+    lookup(2) == '//'
+  end
+
   def skip_comment!
     advance!(2)
     advance! until lookup(2) == '*/'
@@ -219,12 +223,26 @@ class DabParser
     advance! until lookup == "\n"
   end
 
-  def read_any_character
+  def skip_cpp_comment!
+    advance!(2)
+    advance! until lookup == "\n"
+  end
+
+  def test_and_skip_any_comment
     if current_comment?
       skip_comment!
-      return ' '
     elsif current_ruby_comment?
       skip_ruby_comment!
+    elsif current_cpp_comment?
+      skip_cpp_comment!
+    else
+      return false
+    end
+    true
+  end
+
+  def read_any_character
+    if test_and_skip_any_comment
       return ' '
     end
     ret = current_char
@@ -242,10 +260,7 @@ class DabParser
     while true
       if current_char_whitespace?
         advance! while current_char_whitespace?
-      elsif current_comment?
-        skip_comment!
-      elsif current_ruby_comment?
-        skip_ruby_comment!
+      elsif test_and_skip_any_comment
       else
         break
       end
