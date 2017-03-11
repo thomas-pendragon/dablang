@@ -428,10 +428,7 @@ void DabVM::execute_single(Stream &input)
     case OP_PUSH_ARRAY:
     {
         auto n = input.read_uint16();
-        assert(n == 0);
-        DabValue value;
-        value.data.type = TYPE_ARRAY;
-        stack.push_value(value);
+        push_array(n);
         break;
     }
     default:
@@ -439,6 +436,18 @@ void DabVM::execute_single(Stream &input)
         exit(1);
         break;
     }
+}
+
+void DabVM::push_array(size_t n)
+{
+    DabValue value;
+    value.data.type = TYPE_ARRAY;
+    value.data.array.resize(n);
+    for (size_t i = 0; i < n; i++)
+    {
+        value.data.array[i] = stack.pop_value();
+    }
+    stack.push_value(value);
 }
 
 void DabVM::get_instvar(const std::string &name)

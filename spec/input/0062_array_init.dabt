@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	var a = @[1, 2, 3];
+	print(a.class);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+Array

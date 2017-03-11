@@ -165,10 +165,11 @@ struct DabValueData
     int kind = VAL_INVALID;
     int type = TYPE_INVALID;
 
-    int64_t         fixnum;
-    std::string     string;
-    bool            boolean;
-    DabObjectProxy *object = nullptr;
+    int64_t               fixnum;
+    std::string           string;
+    bool                  boolean;
+    DabObjectProxy *      object = nullptr;
+    std::vector<DabValue> array;
 
     bool is_constant = false;
 };
@@ -398,4 +399,5 @@ struct DabVM
 
     void get_instvar(const std::string &name);
     void set_instvar(const std::string &name, const DabValue &value);
+    void push_array(size_t n);
 };

@@ -339,8 +339,9 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('@')
       next unless subcontext.read_operator('[')
+      values = subcontext.read_valuelist
       next unless subcontext.read_operator(']')
-      DabNodeLiteralArray.new
+      DabNodeLiteralArray.new(values)
     end
   end
 
