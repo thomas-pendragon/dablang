@@ -25,6 +25,7 @@
 - Array []
 - setters
 	- Array []=
+- Array.count
 - Array.first
 - Array.last
 - Array.sort
