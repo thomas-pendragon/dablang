@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	print(@[].count);
+	print("\n");
+	print(@[1, 2, 3].count);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+0
+3

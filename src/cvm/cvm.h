@@ -212,6 +212,11 @@ struct DabValue
         data.type   = TYPE_CLASS;
         data.fixnum = klass.index;
     }
+    DabValue(size_t value)
+    {
+        data.type   = TYPE_FIXNUM;
+        data.fixnum = value;
+    }
 
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);

@@ -81,5 +81,13 @@ void DabVM::define_default_classes()
 
     define_builtin_class("NilClass", CLASS_NILCLASS);
 
-    define_builtin_class("Array", CLASS_ARRAY);
+    auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
+    array_class.add_function("count", [this](size_t n_args, size_t n_ret) {
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        assert(arg0.data.type == TYPE_ARRAY);
+        auto &a = arg0.data.array;
+        stack.push(a.size());
+    });
 }
