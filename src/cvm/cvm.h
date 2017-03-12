@@ -70,7 +70,10 @@ struct Stream
     }
 };
 
+struct DabValue;
+
 typedef std::function<void(size_t, size_t)> dab_function_t;
+typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
 struct DabFunction
 {
@@ -143,6 +146,8 @@ struct DabClass
 
     void add_function(const std::string &name, dab_function_t body);
     void add_static_function(const std::string &name, dab_function_t body);
+
+    void add_simple_function(DabVM &vm, const std::string &name, dab_simple_function_t body);
 
   private:
     const DabFunction &_get_function(bool _static, DabVM &vm, const DabValue &klass,

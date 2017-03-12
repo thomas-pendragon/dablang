@@ -54,3 +54,14 @@ void DabClass::add_function(const std::string &name, dab_function_t body)
     fun.extra       = body;
     functions[name] = fun;
 }
+
+void DabClass::add_simple_function(DabVM &vm, const std::string &name, dab_simple_function_t body)
+{
+    add_function(name, [&vm, body](size_t n_args, size_t n_ret) {
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto self = vm.stack.pop_value();
+        auto ret  = body(self);
+        vm.stack.push_value(ret);
+    });
+}
