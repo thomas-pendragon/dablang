@@ -43,6 +43,7 @@
 	- ncurses
 	- disassembler support
 - exceptions
+- keyword arguments
 - test frontend: don't show errors on should-fail test cases (eg. 59)
 - lexer: pass actual EOF mark to compiler (see 59)
 - IDE
