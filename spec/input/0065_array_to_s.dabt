@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	var b = @[12, "foo", true];
+
+	print(b);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[12, foo, true]

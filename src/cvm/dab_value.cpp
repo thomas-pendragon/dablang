@@ -78,6 +78,16 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
     case TYPE_OBJECT:
         fprintf(out, "#%s", class_name(vm).c_str());
         break;
+    case TYPE_ARRAY:
+        fprintf(out, "[");
+        for (size_t i = 0; i < data.array.size(); i++)
+        {
+            if (i)
+                fprintf(out, ", ");
+            data.array[i].print(vm, out, debug);
+        }
+        fprintf(out, "]");
+        break;
     default:
         fprintf(out, "?");
         break;
