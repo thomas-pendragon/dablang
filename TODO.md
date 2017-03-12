@@ -22,7 +22,6 @@
 - nullables and non-null force
 - class parameters (Foo<String>)
 	- typed arrays
-- Array []
 - setters
 	- Array []=
 - Array.first

@@ -1,0 +1,45 @@
+## CODE
+
+func aprint(name, array, index)
+{
+	print(name);
+	print("[");
+	print(index);
+	print("] = ");
+	print(array[index]);
+	print("\n");
+}
+
+func main()
+{
+	var a = @[];
+	var b = @[12, "foo", true];
+
+	aprint("a", a, 0);
+
+	aprint("b", b, 0);
+	aprint("b", b, 1);
+	aprint("b", b, 2);
+	aprint("b", b, 3);
+
+	aprint("b", b, -1);
+	aprint("b", b, -2);
+	aprint("b", b, -3);
+	aprint("b", b, -4);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+a[0] = nil
+b[0] = 12
+b[1] = foo
+b[2] = true
+b[3] = nil
+b[-1] = true
+b[-2] = foo
+b[-3] = 12
+b[-4] = nil
