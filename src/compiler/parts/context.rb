@@ -378,7 +378,7 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_postfix(base_value)
+  def read_dot_postfix(base_value)
     on_subcontext do |subcontext|
       dot = subcontext.read_operator('.')
       next unless dot
@@ -395,6 +395,19 @@ class DabContext < DabBaseContext
         next DabNodePropertyGet.new(base_value, prop_name)
       end
     end
+  end
+
+  def read_array_get_postfix(base_value)
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('[')
+      next unless value = subcontext.read_value
+      next unless subcontext.read_operator(']')
+      next DabNodeInstanceCall.new(base_value, :[], [value])
+    end
+  end
+
+  def read_postfix(base_value)
+    read_dot_postfix(base_value) || read_array_get_postfix(base_value)
   end
 
   def read_mul_value

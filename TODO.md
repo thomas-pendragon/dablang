@@ -22,8 +22,7 @@
 - nullables and non-null force
 - class parameters (Foo<String>)
 	- typed arrays
-- indexed getters
-	- Array []
+- Array []
 - setters
 	- Array []=
 - Array.first

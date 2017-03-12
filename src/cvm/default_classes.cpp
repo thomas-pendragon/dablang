@@ -39,6 +39,17 @@ void DabVM::define_default_classes()
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         stack.push(arg0);
     });
+    string_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        auto arg1 = stack.pop_value();
+        assert(arg0.data.type == TYPE_STRING);
+        assert(arg1.data.type == TYPE_FIXNUM);
+        auto &s = arg0.data.string;
+        auto  n = arg1.data.fixnum;
+        stack.push(s.substr(n, 1));
+    });
     string_class.add_static_function("new", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 1 || n_args == 2);
         assert(n_ret == 1);
