@@ -445,7 +445,7 @@ void DabVM::push_array(size_t n)
     value.data.array.resize(n);
     for (size_t i = 0; i < n; i++)
     {
-        value.data.array[i] = stack.pop_value();
+        value.data.array[n - i - 1] = stack.pop_value();
     }
     stack.push_value(value);
 }
