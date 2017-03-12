@@ -24,11 +24,9 @@ void DabVM::define_default_classes()
         assert(arg.data.type == TYPE_CLASS);
         stack.push_value(arg.create_instance());
     });
-    object_class.add_function("class", [this](size_t n_args, size_t n_ret) {
-        assert(n_args == 1);
-        assert(n_ret == 1);
-        auto arg = stack.pop_value();
-        stack.push_value(arg.get_class(*this));
+    object_class.add_simple_function(vm, "class", [this](DabValue self) {
+        auto arg = self;
+        return arg.get_class(*this);
     });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
