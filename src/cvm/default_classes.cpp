@@ -14,6 +14,8 @@ DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_inde
 
 void DabVM::define_default_classes()
 {
+    auto &vm = *this;
+
     auto &object_class = define_builtin_class("Object", CLASS_OBJECT);
     object_class.add_static_function("new", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 1);
@@ -30,14 +32,12 @@ void DabVM::define_default_classes()
     });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
-    string_class.add_function("upcase", [this](size_t n_args, size_t n_ret) {
-        assert(n_args == 1);
-        assert(n_ret == 1);
-        auto arg0 = stack.pop_value();
+    string_class.add_simple_function(vm, "upcase", [](DabValue self) {
+        auto arg0 = self;
         assert(arg0.data.type == TYPE_STRING);
         auto &s = arg0.data.string;
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-        stack.push(arg0);
+        return arg0;
     });
     string_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 2);
