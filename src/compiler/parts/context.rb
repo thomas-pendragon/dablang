@@ -369,22 +369,31 @@ class DabContext < DabBaseContext
       value = subcontext.read_base_value
       next unless value
       while true
-        dot = subcontext.read_operator('.')
-        break unless dot
-        prop_name = subcontext.read_identifier
-        next unless prop_name
-        lparen = subcontext.read_operator('(')
-        if lparen
-          arglist = subcontext.read_optional_valuelist
-          next unless arglist
-          rparen = subcontext.read_operator(')')
-          next unless rparen
-          value = DabNodeInstanceCall.new(value, prop_name, arglist)
-        else
-          value = DabNodePropertyGet.new(value, prop_name)
+        if postfix = subcontext.read_postfix(value)
+          value = postfix
+        else break
         end
       end
       value
+    end
+  end
+
+  def read_postfix(base_value)
+    on_subcontext do |subcontext|
+      dot = subcontext.read_operator('.')
+      next unless dot
+      prop_name = subcontext.read_identifier
+      next unless prop_name
+      lparen = subcontext.read_operator('(')
+      if lparen
+        arglist = subcontext.read_optional_valuelist
+        next unless arglist
+        rparen = subcontext.read_operator(')')
+        next unless rparen
+        next DabNodeInstanceCall.new(base_value, prop_name, arglist)
+      else
+        next DabNodePropertyGet.new(base_value, prop_name)
+      end
     end
   end
 
