@@ -79,19 +79,30 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
         fprintf(out, "#%s", class_name(vm).c_str());
         break;
     case TYPE_ARRAY:
+    {
         fprintf(out, "[");
-        for (size_t i = 0; i < data.array.size(); i++)
+        size_t i = 0;
+        for (auto &item : array())
         {
             if (i)
                 fprintf(out, ", ");
-            data.array[i].print(vm, out, debug);
+            item.print(vm, out, debug);
+            i++;
         }
         fprintf(out, "]");
-        break;
+    }
+    break;
     default:
         fprintf(out, "?");
         break;
     }
+}
+
+std::vector<DabValue> &DabValue::array() const
+{
+    assert(data.type == TYPE_ARRAY);
+    auto *obj = (DabArray *)data.object->object;
+    return obj->array;
 }
 
 bool DabValue::truthy() const
@@ -119,13 +130,25 @@ DabValue DabValue::create_instance() const
 {
     assert(data.type == TYPE_CLASS);
 
+    DabBaseObject *object = nullptr;
+    auto           type   = TYPE_OBJECT;
+    if (data.fixnum == CLASS_ARRAY)
+    {
+        object = new DabArray;
+        type   = TYPE_ARRAY;
+    }
+    else
+    {
+        object = new DabObject;
+    }
+
     DabObjectProxy *proxy = new DabObjectProxy;
-    proxy->object         = new DabObject;
+    proxy->object         = object;
     proxy->count_strong   = 1;
     proxy->object->klass  = this->data.fixnum;
 
     DabValue ret;
-    ret.data.type   = TYPE_OBJECT;
+    ret.data.type   = type;
     ret.data.object = proxy;
 
     fprintf(stderr, "VM: proxy %p (strong %d): ! created\n", proxy, (int)proxy->count_strong);
@@ -143,7 +166,8 @@ DabValue DabValue::_get_instvar(DabVM &vm, const std::string &name)
         return DabValue(nullptr);
     }
 
-    auto &instvars = this->data.object->object->instvars;
+    auto  object   = (DabObject *)this->data.object->object;
+    auto &instvars = object->instvars;
 
     if (!instvars.count(name))
     {
@@ -177,14 +201,15 @@ void DabValue::set_instvar(DabVM &vm, const std::string &name, const DabValue &v
         return;
     }
 
-    auto &instvars = this->data.object->object->instvars;
+    auto  object   = (DabObject *)this->data.object->object;
+    auto &instvars = object->instvars;
     instvars[name] = value;
 }
 
 void DabValue::set_data(const DabValueData &other_data)
 {
     data = other_data;
-    if (data.type == TYPE_OBJECT)
+    if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
         data.object->retain();
     }
@@ -203,7 +228,7 @@ DabValue &DabValue::operator=(const DabValue &other)
 
 DabValue::~DabValue()
 {
-    if (this->data.type == TYPE_OBJECT)
+    if (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
         this->data.object->release();
     }

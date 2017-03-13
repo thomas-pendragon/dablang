@@ -91,7 +91,7 @@ void DabVM::define_default_classes()
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
     array_class.add_simple_function(vm, "count", [this](DabValue self) {
         assert(self.data.type == TYPE_ARRAY);
-        return self.data.array.size();
+        return self.array().size();
     });
     array_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 2);
@@ -100,7 +100,7 @@ void DabVM::define_default_classes()
         auto arg1 = stack.pop_value();
         assert(arg0.data.type == TYPE_ARRAY);
         assert(arg1.data.type == TYPE_FIXNUM);
-        auto &a = arg0.data.array;
+        auto &a = arg0.array();
         auto  n = arg1.data.fixnum;
         if (n < 0)
             n = a.size() + n;

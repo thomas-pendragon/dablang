@@ -154,12 +154,12 @@ struct DabClass
                                      const std::string &name) const;
 };
 
-struct DabObject;
+struct DabBaseObject;
 
 struct DabObjectProxy
 {
-    DabObject *object;
-    size_t     count_strong;
+    DabBaseObject *object;
+    size_t         count_strong;
 
     void retain();
     void release();
@@ -170,11 +170,10 @@ struct DabValueData
     int kind = VAL_INVALID;
     int type = TYPE_INVALID;
 
-    int64_t               fixnum;
-    std::string           string;
-    bool                  boolean;
-    DabObjectProxy *      object = nullptr;
-    std::vector<DabValue> array;
+    int64_t         fixnum;
+    std::string     string;
+    bool            boolean;
+    DabObjectProxy *object = nullptr;
 
     bool is_constant = false;
 };
@@ -228,13 +227,27 @@ struct DabValue
 
     ~DabValue();
 
+    std::vector<DabValue> &array() const;
+
     DabValue create_instance() const;
 };
 
-struct DabObject
+struct DabBaseObject
 {
     uint64_t klass;
+    virtual ~DabBaseObject()
+    {
+    }
+};
+
+struct DabObject : public DabBaseObject
+{
     std::map<std::string, DabValue> instvars;
+};
+
+struct DabArray : public DabBaseObject
+{
+    std::vector<DabValue> array;
 };
 
 struct Stack

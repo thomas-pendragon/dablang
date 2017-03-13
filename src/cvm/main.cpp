@@ -440,12 +440,13 @@ void DabVM::execute_single(Stream &input)
 
 void DabVM::push_array(size_t n)
 {
-    DabValue value;
-    value.data.type = TYPE_ARRAY;
-    value.data.array.resize(n);
+    DabValue array_class = classes[CLASS_ARRAY];
+    DabValue value       = array_class.create_instance();
+    auto &   array       = value.array();
+    array.resize(n);
     for (size_t i = 0; i < n; i++)
     {
-        value.data.array[n - i - 1] = stack.pop_value();
+        array[n - i - 1] = stack.pop_value();
     }
     stack.push_value(value);
 }
