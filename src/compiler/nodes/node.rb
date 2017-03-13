@@ -195,4 +195,8 @@ class DabNode
   def constant?
     false
   end
+
+  def lower!
+    children.any?(&:lower!)
+  end
 end

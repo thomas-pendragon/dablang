@@ -7,6 +7,7 @@ program = compiler.program
 program.dump
 
 postprocess = [
+  DabPPLower,
   DabPPFixLiterals,
   DabPPFixLocalvars,
   DabPPReuseConstants,
