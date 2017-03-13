@@ -109,4 +109,27 @@ void DabVM::define_default_classes()
         else
             stack.push_value(a[n]);
     });
+    array_class.add_function("[]=", [this](size_t n_args, size_t n_ret) {
+        assert(n_args == 3);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        auto arg2 = stack.pop_value();
+        auto arg1 = stack.pop_value();
+        assert(arg0.data.type == TYPE_ARRAY);
+        assert(arg1.data.type == TYPE_FIXNUM);
+        auto &a = arg0.array();
+        auto  n = arg1.data.fixnum;
+        if (n < 0)
+            n = a.size() + n;
+        if (n < 0 || n >= a.size())
+        {
+            fprintf(stderr, "VM: index outside of array bounds.\n");
+            exit(1);
+        }
+        else
+        {
+            a[n] = arg2;
+            stack.push_value(nullptr);
+        }
+    });
 }

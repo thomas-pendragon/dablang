@@ -169,7 +169,53 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction
-    read_instvarset || read_varset || read_if || read_return || read_define_var || read_call
+    read_instvarset || read_varset || read_if || read_return || read_define_var || read_call || read_complex_setter
+  end
+
+  def read_complex_setter
+    on_subcontext do |subcontext|
+      next unless var = subcontext.read_complex_reference
+      next unless eq = subcontext.read_operator('=')
+      next unless value = subcontext.read_value
+      ret = DabNodeSetter.new(var, value)
+      ret.add_source_parts(var, eq, value)
+      ret
+    end
+  end
+
+  def read_postfix_reference(base)
+    read_index_reference(base)
+  end
+
+  def read_complex_reference
+    on_subcontext do |subcontext|
+      next unless ref = subcontext.read_simple_reference
+      while true
+        if postfix = subcontext.read_postfix_reference(ref)
+          ref = postfix
+        else
+          break
+        end
+      end
+      ref
+    end
+  end
+
+  def read_index_reference(base)
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('[')
+      next unless index = subcontext.read_value
+      next unless subcontext.read_operator(']')
+      DabNodeReferenceIndex.new(base, index)
+    end
+  end
+
+  def read_simple_reference
+    on_subcontext do |subcontext|
+      id = subcontext.read_identifier
+      next unless @local_vars.include?(id)
+      DabNodeReferenceLocalVar.new(id)
+    end
   end
 
   def read_varset
