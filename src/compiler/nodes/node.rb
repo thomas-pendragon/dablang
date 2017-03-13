@@ -154,6 +154,12 @@ class DabNode
     @self_source_parts << part
   end
 
+  def add_source_parts(*parts)
+    parts.each do |part|
+      @self_source_parts << part
+    end
+  end
+
   def source_parts
     @self_source_parts + @children.flat_map(&:source_parts)
   end
