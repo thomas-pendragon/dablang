@@ -1,3 +1,6 @@
+- alternative syntax (end instead of {})
+- optional semicolons
+- automatic formatting
 - dumping AST tree before and after postprocessing
 - not require semicolons after if
 - endianness in cvm/main.cpp
