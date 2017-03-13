@@ -17,8 +17,9 @@ stages:
     - bundle exec rake bin/cvm
   artifacts:
     paths:
-    - bin/cvm
-    - build/Makefile
+    - bin/*
+    - build/*
+    - tmp/c_files.txt
     expire_in: 1 week
 
 .test_base: &test_base
