@@ -34,4 +34,9 @@ class DabNodeCall < DabNode
   def target_function
     root.has_function?(real_identifier)
   end
+
+  def formatted_source(options)
+    argstxt = args.map { |item| item.formatted_source(options) }.join(', ')
+    real_identifier + '(' + argstxt + ')' + ';'
+  end
 end

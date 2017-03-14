@@ -205,4 +205,12 @@ class DabNode
   def lower!
     children.any?(&:lower!)
   end
+
+  def formatted_source(_options)
+    raise "unknown source for #{self.class.name}"
+  end
+
+  def _indent(text)
+    text.lines.map { |line| "  #{line}" }.join("\n")
+  end
 end

@@ -71,4 +71,8 @@ class DabNodeFunction < DabNode
     end
     count
   end
+
+  def formatted_source(options)
+    "func #{@identifier}()\n{\n" + _indent(body.formatted_source(options)) + "}\n"
+  end
 end

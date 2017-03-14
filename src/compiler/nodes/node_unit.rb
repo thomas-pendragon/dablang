@@ -58,4 +58,8 @@ class DabNodeUnit < DabNode
   def reorder_constants!
     @constants.children.sort_by!(&:index)
   end
+
+  def formatted_source(options)
+    _items.flatten(1).map { |item| item.formatted_source(options) }.join("\n")
+  end
 end
