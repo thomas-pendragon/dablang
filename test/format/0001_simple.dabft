@@ -1,0 +1,12 @@
+## INPUT
+
+func main(){print("ok");}
+
+## OPTIONS
+
+## OUTPUT
+
+func main()
+{
+  print("ok");
+}

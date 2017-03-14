@@ -4,6 +4,10 @@ require 'yaml'
 
 inputs = Dir.glob('spec/input/*.dabt').sort.reverse
 outputs = []
+
+format_inputs = Dir.glob('test/format/*.dabft').sort.reverse
+format_outputs = []
+
 sources = Dir.glob('src/**/*.rb')
 
 makefile = 'build/Makefile'
@@ -64,6 +68,14 @@ inputs.each do |input_test_file|
   end
 end
 
+format_inputs.each do |input_test_file|
+  output_output_file = input_test_file.gsub('/test/format/', '/tmp/test_format_').gsub('.dabft', '.out')
+  format_outputs << output_output_file
+  file output_output_file => sources + [input_test_file] do
+    psystem("ruby src/frontend/frontend_format.rb #{input_test_file} --test_output_prefix test_format_ --test_output_dir ./tmp/")
+  end
+end
+
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
 
@@ -79,7 +91,10 @@ end
 task spec: outputs do
 end
 
-task default: [gitlab] + [cvm] + [:spec] do
+task format_spec: format_outputs do
+end
+
+task default: [gitlab] + [cvm] + [:spec] + [:format_spec] do
 end
 
 task :clean do

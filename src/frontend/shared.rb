@@ -33,22 +33,34 @@ def read_test_file(fname)
   test_body = ''
   compile_error = ''
   mode = nil
+  input = ''
+  options = ''
+  output = ''
   expected_status = nil
-  open(fname).read.split("\n").map(&:strip).each do |line|
+  open(fname).read.split("\n").each do |line|
     if line.start_with? '## '
-      mode = line
+      mode = line.strip
     elsif mode == '## CODE'
-      text += line + "\n"
+      text += line.strip + "\n"
+    elsif mode == '## INPUT'
+      input += line + "\n"
+    elsif mode == '## OPTIONS'
+      options += line + "\n"
+    elsif mode == '## OUTPUT'
+      output += line + "\n"
     elsif mode == '## EXPECT COMPILE ERROR'
       expected_status = :compile_error
-      compile_error += line + "\n"
+      compile_error += line.strip + "\n"
     elsif mode == '## EXPECT OK'
       expected_status = :ok
-      test_body += line + "\n"
+      test_body += line.strip + "\n"
     end
   end
-  data = [text, test_body].map(&:strip)
+  data = [text, test_body, input, options, output].map(&:strip)
   {
+    input: data[2],
+    options: data[3],
+    output: data[4],
     code: data[0],
     expected_status: expected_status,
     expected_body: data[1],

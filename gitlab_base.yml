@@ -29,6 +29,13 @@ stages:
   script:
     - bundle exec rake spec
 
+FormatSpec:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format_spec  
+
 RSpec:
   stage: prebuild
   tags:
