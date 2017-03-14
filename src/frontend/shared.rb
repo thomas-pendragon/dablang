@@ -63,11 +63,12 @@ def describe_action(input, output, action)
   puts "#{info.white} #{'[OK]'.green}"
 end
 
-def run_ruby_part(input, output, action, tool)
+def run_ruby_part(input, output, action, tool, options = '')
   describe_action(input, output, action) do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb < #{input} > #{output}"
+    options = options.to_s.shellescape
+    cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb #{options} < #{input} > #{output}"
     begin
       psystem_noecho cmd
     rescue SystemCommandError => e
