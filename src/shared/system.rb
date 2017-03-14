@@ -1,4 +1,5 @@
 require 'colorize'
+require 'tempfile'
 
 class SystemCommandError < RuntimeError
   attr_accessor :stderr
