@@ -38,8 +38,12 @@ class DabNodeUnit < DabNode
     @class_numbers[klass.identifier] = number
   end
 
+  def _items
+    [@constants.children, @classes.children, @functions.children]
+  end
+
   def compile(output)
-    [@constants.children, @classes.children, @functions.children].each do |list|
+    _items.each do |list|
       list.each do |node|
         node.compile(output)
       end
