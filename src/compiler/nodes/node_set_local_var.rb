@@ -36,6 +36,6 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def formatted_source(options)
-    real_identifier + ' = ' + value.formatted_source(options)
+    real_identifier + ' = ' + value.formatted_source(options) + ';'
   end
 end

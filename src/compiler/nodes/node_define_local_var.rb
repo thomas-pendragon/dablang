@@ -10,6 +10,6 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
   end
 
   def formatted_source(options)
-    'var ' + super + ';'
+    'var ' + super
   end
 end
