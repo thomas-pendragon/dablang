@@ -332,7 +332,7 @@ class DabContext < DabBaseContext
       while true
         instr = subcontext.read_instruction
         break unless instr
-        next unless subcontext.read_operator(';')
+        raise 'expected ;' unless subcontext.read_operator(';')
         ret.insert(instr)
       end
       next unless subcontext.read_operator('}')

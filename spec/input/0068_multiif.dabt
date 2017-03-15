@@ -1,0 +1,27 @@
+## CODE
+
+func main(){
+  if (true)
+  {
+print("ok");
+if (1)
+{
+  print("one");
+}
+else
+{
+  print("no");
+};
+};
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+okone
+
+
+
