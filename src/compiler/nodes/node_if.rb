@@ -41,4 +41,18 @@ class DabNodeIf < DabNode
     output.label(label_end)
     output.print('NOP')
   end
+
+  def formatted_source(options)
+    ret = 'if (' + condition.formatted_source(options) + ")\n"
+    ret += "{\n"
+    ret += _indent(if_true.formatted_source(options))
+    ret += '}'
+    if if_false
+      ret += "\nelse\n{\n"
+      ret += _indent(if_false.formatted_source(options))
+      ret += '}'
+    end
+    ret += ';'
+    ret
+  end
 end

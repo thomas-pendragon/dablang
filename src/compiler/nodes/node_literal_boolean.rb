@@ -22,4 +22,8 @@ class DabNodeLiteralBoolean < DabNodeLiteral
   def extra_value
     extra_dump
   end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

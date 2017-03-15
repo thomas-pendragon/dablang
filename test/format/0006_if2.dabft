@@ -1,0 +1,36 @@
+## INPUT
+
+func main(){
+  if (true)
+  {
+print("ok");
+if (1)
+{
+  print("one");
+}
+else
+{
+  print("no");
+};
+};
+}
+
+## OPTIONS
+
+## OUTPUT
+
+func main()
+{
+  if (true)
+  {
+    print("ok");
+    if (1)
+    {
+      print("one");
+    }
+    else
+    {
+      print("no");
+    };
+  };
+}
