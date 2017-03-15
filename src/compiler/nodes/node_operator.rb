@@ -27,4 +27,8 @@ class DabNodeOperator < DabNode
     output.comment("op #{identifier.extra_value}")
     output.print('CALL', 2, 1)
   end
+
+  def formatted_source(options)
+    left.formatted_source(options) + " #{identifier.extra_value} " + right.formatted_source(options)
+  end
 end

@@ -1,0 +1,14 @@
+## INPUT
+
+func main(){
+  print (  3*4 +1)   ;
+  }
+
+## OPTIONS
+
+## OUTPUT
+
+func main()
+{
+  print(3 * 4 + 1);
+}
