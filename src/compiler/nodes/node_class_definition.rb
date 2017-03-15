@@ -30,4 +30,12 @@ class DabNodeClassDefinition < DabNode
   def assign_number(number)
     @number = number
   end
+
+  def formatted_source(options)
+    ret = "class #{identifier}\n{\n"
+    functions = @functions.children.map { |fun| fun.formatted_source(options) }
+    ret += _indent(functions.join("\n"))
+    ret += "}\n"
+    ret
+  end
 end

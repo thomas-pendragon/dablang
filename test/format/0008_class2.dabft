@@ -1,0 +1,20 @@
+## INPUT
+
+class Foo{func a(){print("ok");}func b(){print("ok");}}
+
+## OPTIONS
+
+## OUTPUT
+
+class Foo
+{
+  func a()
+  {
+    print("ok");
+  }
+  
+  func b()
+  {
+    print("ok");
+  }
+}

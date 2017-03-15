@@ -1,0 +1,11 @@
+## INPUT
+
+class Foo{}
+
+## OPTIONS
+
+## OUTPUT
+
+class Foo
+{
+}
