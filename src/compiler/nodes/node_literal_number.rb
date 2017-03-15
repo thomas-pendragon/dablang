@@ -26,4 +26,8 @@ class DabNodeLiteralNumber < DabNodeLiteral
   def my_type
     DabTypeFixnum.new
   end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

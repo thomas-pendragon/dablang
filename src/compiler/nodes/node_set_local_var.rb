@@ -34,4 +34,8 @@ class DabNodeSetLocalVar < DabNode
     output.comment("var #{index} #{identifier}")
     output.print('SET_VAR', index)
   end
+
+  def formatted_source(options)
+    real_identifier + ' = ' + value.formatted_source(options)
+  end
 end

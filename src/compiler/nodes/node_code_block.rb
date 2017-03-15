@@ -8,6 +8,7 @@ class DabNodeCodeBlock < DabNode
   end
 
   def formatted_source(options)
-    @children.map { |item| item.formatted_source(options) }.join("\n") + "\n"
+    lines = @children.map { |item| item.formatted_source(options) }
+    lines.join("\n") + "\n"
   end
 end

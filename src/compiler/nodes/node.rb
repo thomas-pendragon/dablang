@@ -211,6 +211,6 @@ class DabNode
   end
 
   def _indent(text)
-    text.lines.map { |line| "  #{line}" }.join("\n")
+    text.lines.map { |line| "  #{line}" }.join
   end
 end

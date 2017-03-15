@@ -1,0 +1,13 @@
+## INPUT
+
+func main(){var a =      14;print(a);}
+
+## OPTIONS
+
+## OUTPUT
+
+func main()
+{
+  var a = 14;
+  print(a);
+}

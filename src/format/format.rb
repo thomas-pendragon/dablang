@@ -6,4 +6,5 @@ program = compiler.program
 
 options = {}
 
+program.dump
 puts program.formatted_source(options)

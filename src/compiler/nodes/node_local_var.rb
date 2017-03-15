@@ -31,4 +31,8 @@ class DabNodeLocalVar < DabNode
     end
     nil
   end
+
+  def formatted_source(_options)
+    real_identifier
+  end
 end
