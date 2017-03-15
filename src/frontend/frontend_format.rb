@@ -1,5 +1,9 @@
 require_relative './shared.rb'
 
+def read_test_file(fname)
+  base_read_test_file(fname)
+end
+
 def format_source(input, output)
   run_ruby_part(input, output, 'format source', 'format', $settings[:options])
 end

@@ -1,5 +1,24 @@
 require_relative './shared.rb'
 
+def read_test_file(fname)
+  base = base_read_test_file(fname)
+
+  code = base[:code]
+  expected_status = nil
+  body = base[:expect_ok]
+  compile_error = base[:expect_compile_error].presence
+  if compile_error
+    expected_status = :compile_error
+  end
+
+  {
+    code: code,
+    expected_status: expected_status,
+    expected_body: body,
+    expected_compile_error: compile_error,
+  }
+end
+
 def compile_to_asm(input, output)
   run_ruby_part(input, output, 'compile to DabASM', 'compiler')
 end
