@@ -69,7 +69,7 @@ inputs.each do |input_test_file|
 end
 
 format_inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('/test/format/', '/tmp/test_format_').gsub('.dabft', '.out')
+  output_output_file = input_test_file.gsub('test/format/', 'tmp/test_format_').gsub('.dabft', '.out')
   format_outputs << output_output_file
   file output_output_file => sources + [input_test_file] do
     psystem("ruby src/frontend/frontend_format.rb #{input_test_file} --test_output_prefix test_format_ --test_output_dir ./tmp/")
