@@ -2,17 +2,14 @@ require_relative 'node.rb'
 
 class DabNodeFunction < DabNode
   attr_reader :identifier
+  attr_accessor :arglist_converted
 
   def initialize(identifier, body, arglist)
     super()
     @identifier = identifier
     insert(body)
-    insert(arglist) if arglist
-    arglist&.each_with_index do |arg, index|
-      define_var = DabNodeDefineLocalVar.new(arg.identifier, DabNodeArg.new(index, arg.my_type), arg.my_type, true)
-      define_var.clone_source_parts_from(arg)
-      body.pre_insert(define_var)
-    end
+    arglist ||= DabNode.new
+    insert(arglist)
     @labels = 0
   end
 
