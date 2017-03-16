@@ -15,4 +15,8 @@ class DabNodeArgDefinition < DabNode
   def extra_dump
     "##{@index}[#{identifier}]"
   end
+
+  def formatted_source(_options)
+    @identifier
+  end
 end

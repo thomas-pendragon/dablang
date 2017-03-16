@@ -70,6 +70,11 @@ class DabNodeFunction < DabNode
   end
 
   def formatted_source(options)
-    "func #{@identifier}()\n{\n" + _indent(body.formatted_source(options)) + "}\n"
+    fargs = []
+    arglist.each do |arg|
+      fargs << arg.formatted_source(options)
+    end
+    fargs = fargs.join(', ')
+    "func #{@identifier}(#{fargs})\n{\n" + _indent(body.formatted_source(options)) + "}\n"
   end
 end

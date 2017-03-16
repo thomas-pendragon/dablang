@@ -1,0 +1,12 @@
+## INPUT
+
+func f(a){print(a);}
+
+## OPTIONS
+
+## OUTPUT
+
+func f(a)
+{
+  print(a);
+}
