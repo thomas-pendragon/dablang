@@ -1,0 +1,27 @@
+## CODE
+
+func sub(a)
+{
+  print(a);
+  a = "new";
+  print(a);
+}
+
+func main()
+{
+  var v = "old";
+  print(v);
+  sub(v);
+  print(v);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+oldoldnewold
+
+
+
