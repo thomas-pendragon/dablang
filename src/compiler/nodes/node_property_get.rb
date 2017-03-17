@@ -35,4 +35,8 @@ class DabNodePropertyGet < DabNode
       DabNodeLiteralString.new(value.my_type.type_string)
     end
   end
+
+  def formatted_source(options)
+    value.formatted_source(options) + '.' + real_identifier
+  end
 end
