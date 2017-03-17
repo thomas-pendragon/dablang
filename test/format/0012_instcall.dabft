@@ -1,0 +1,12 @@
+## INPUT
+
+func f(a){print(a.upcase());}
+
+## OPTIONS
+
+## OUTPUT
+
+func f(a)
+{
+  print(a.upcase());
+}

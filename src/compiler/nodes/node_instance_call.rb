@@ -35,4 +35,8 @@ class DabNodeInstanceCall < DabNode
   def constant?
     value.constant?
   end
+
+  def formatted_source(options)
+    value.formatted_source(options) + ".#{real_identifier}(" + ')'
+  end
 end
