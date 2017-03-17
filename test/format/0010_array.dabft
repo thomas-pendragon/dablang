@@ -1,0 +1,12 @@
+## INPUT
+
+func f(a){print(@[1,2,3]);}
+
+## OPTIONS
+
+## OUTPUT
+
+func f(a)
+{
+  print(@[1, 2, 3]);
+}

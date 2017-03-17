@@ -20,4 +20,8 @@ class DabNodeLiteralArray < DabNode
   def my_type
     DabTypeArray.new
   end
+
+  def formatted_source(options)
+    '@[' + valuelist.children.map { |item| item.formatted_source(options) }.join(', ') + ']'
+  end
 end
