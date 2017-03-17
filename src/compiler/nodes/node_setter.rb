@@ -25,4 +25,8 @@ class DabNodeSetter < DabNode
     end
     false
   end
+
+  def formatted_source(options)
+    reference.formatted_source(options) + ' = ' + value.formatted_source(options) + ';'
+  end
 end

@@ -9,4 +9,8 @@ class DabNodeReferenceLocalVar < DabNodeReference
   def compiled
     DabNodeLocalVar.new(@name)
   end
+
+  def formatted_source(_options)
+    @name
+  end
 end
