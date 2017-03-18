@@ -15,4 +15,8 @@ class DabNodeClassVar < DabNode
   def compile(output)
     output.print('PUSH_INSTVAR', identifier[1..-1])
   end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

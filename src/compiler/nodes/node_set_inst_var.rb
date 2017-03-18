@@ -21,4 +21,8 @@ class DabNodeSetInstVar < DabNode
     value.compile(output)
     output.print('SET_INSTVAR', identifier[1..-1])
   end
+
+  def formatted_source(options)
+    identifier + ' = ' + value.formatted_source(options) + ';'
+  end
 end

@@ -21,4 +21,8 @@ class DabNodeClass < DabNode
     output.comment(@identifier)
     output.print('PUSH_CLASS', number)
   end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

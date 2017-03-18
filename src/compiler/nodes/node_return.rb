@@ -14,4 +14,8 @@ class DabNodeReturn < DabNode
     value.compile(output)
     output.print('RETURN', '1')
   end
+
+  def formatted_source(options)
+    'return ' + value.formatted_source(options) + ';'
+  end
 end
