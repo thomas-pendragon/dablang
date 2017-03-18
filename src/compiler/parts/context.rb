@@ -144,7 +144,7 @@ class DabContext < DabBaseContext
   def read_function
     on_subcontext do |subcontext|
       next unless subcontext.read_keyword('func')
-      next unless ident = subcontext.read_identifier
+      next unless ident = subcontext.read_identifier_fname
       subcontext.add_function(ident)
       next unless subcontext.read_operator('(')
       if arglist = subcontext.read_arglist
@@ -156,6 +156,16 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
       DabNodeFunction.new(ident, code, arglist)
+    end
+  end
+
+  def read_identifier_fname
+    on_subcontext do |subcontext|
+      next unless ident = subcontext.read_identifier
+      if subcontext.read_operator('=')
+        ident += '='
+      end
+      ident
     end
   end
 
@@ -184,7 +194,7 @@ class DabContext < DabBaseContext
   end
 
   def read_postfix_reference(base)
-    read_index_reference(base)
+    read_index_reference(base) || read_member_reference(base)
   end
 
   def read_complex_reference
@@ -207,6 +217,14 @@ class DabContext < DabBaseContext
       next unless index = subcontext.read_value
       next unless subcontext.read_operator(']')
       DabNodeReferenceIndex.new(base, index)
+    end
+  end
+
+  def read_member_reference(base)
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('.')
+      next unless member = subcontext.read_identifier
+      DabNodeReferenceMember.new(base, member)
     end
   end
 

@@ -29,6 +29,16 @@ class DabAsmContext < DabBaseContext
     end
   end
 
+  def read_identifier_fname
+    on_subcontext do |subcontext|
+      next unless ident = subcontext.read_identifier
+      if subcontext.read_operator('=')
+        ident += '='
+      end
+      ident
+    end
+  end
+
   def read_label
     on_subcontext do |subcontext|
       next unless identifier = subcontext.read_identifier
@@ -49,7 +59,7 @@ class DabAsmContext < DabBaseContext
   end
 
   def read_arg
-    read_identifier || read_fixnum || read_string
+    read_identifier_fname || read_fixnum || read_string
   end
 
   def _read_list(item_method, separator = ',')

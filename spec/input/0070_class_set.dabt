@@ -1,0 +1,37 @@
+## CODE
+
+class MyObject
+{
+	var @foo;
+	func value()
+	{
+   	 return @foo;
+	}
+	func value= (new_value)
+	{
+	 @foo = new_value;
+	}
+	func dump()
+	{
+	  print("Object value = ");
+	  print(@foo);
+	  print("\n");
+	}
+}
+func skip(a){}
+func main()
+{
+  var a = MyObject.new;
+  skip(a.dump());
+  a.value = 123;
+  skip(a.dump());
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+Object value = nil
+Object value = 123

@@ -22,6 +22,14 @@ class DabNodeSetter < DabNode
       setcall = DabNodeInstanceCall.new(base, :[]=, [index, value])
       replace_with!(setcall)
       true
+    elsif reference.is_a? DabNodeReferenceMember
+      base = reference.base.compiled
+      name = reference.name
+      setcall = DabNodeInstanceCall.new(base, "#{name}=".to_sym, [value])
+      replace_with!(setcall)
+      true
+    else
+      raise "unknown reference #{reference}"
     end
     false
   end

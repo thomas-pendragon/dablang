@@ -33,8 +33,6 @@
 - type: regexp
 - class parameters (Foo<String>)
     - typed arrays
-- setters
-    - Array []=
 - nullables and non-null force
 - constructors/destructors
 - subclassing
