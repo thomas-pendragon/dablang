@@ -1,0 +1,20 @@
+## CODE
+
+class MyObject
+{
+	func value()
+	{
+   	 return @[1,2,3];
+	}
+}
+func main()
+{
+  var a =MyObject.new;
+  a.value[1] = 123;
+}
+
+## RUN
+
+main
+
+## EXPECT OK

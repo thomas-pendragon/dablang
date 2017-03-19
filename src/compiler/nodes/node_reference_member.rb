@@ -15,6 +15,10 @@ class DabNodeReferenceMember < DabNodeReference
     @name
   end
 
+  def compiled
+    DabNodePropertyGet.new(base.compiled, @name)
+  end
+
   def formatted_source(options)
     base.formatted_source(options) + '.' + name
   end
