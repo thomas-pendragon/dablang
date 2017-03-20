@@ -56,6 +56,7 @@ end
 def run_test(settings)
   input = settings[:input]
   test_output_dir = settings[:test_output_dir] || '.'
+  test_prefix = settings[:test_output_prefix] || ''
 
   data = read_test_file(input)
 
@@ -63,10 +64,13 @@ def run_test(settings)
   puts info
   FileUtils.mkdir_p(test_output_dir)
 
-  dab = Pathname.new(test_output_dir).join(File.basename(input).ext('.dab')).to_s
-  asm = Pathname.new(test_output_dir).join(File.basename(input).ext('.dabca')).to_s
-  bin = Pathname.new(test_output_dir).join(File.basename(input).ext('.dabcb')).to_s
-  out = Pathname.new(test_output_dir).join(File.basename(input).ext('.out')).to_s
+  dab = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dab')).to_s
+  asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabca')).to_s
+  bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabcb')).to_s
+  vmo = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.vm')).to_s
+  out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
+
+  FileUtils.rm(out) if File.exist?(out)
 
   extract_source(input, dab)
   begin
@@ -74,7 +78,7 @@ def run_test(settings)
   rescue SystemCommandError => e
     if data[:expected_status] == :compile_error
       compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
-      FileUtils.touch(out)
+      File.open(out, 'wb') { |f| f << '1' }
       return
     else
       raise e
@@ -84,14 +88,14 @@ def run_test(settings)
     raise "Expected compiler error in #{input}"
   end
   assemble(asm, bin)
-  execute(bin, out)
+  execute(bin, vmo)
 
   test_body = data[:expected_body]
-  actual_body = open(out).read.strip
+  actual_body = open(vmo).read.strip
   begin
     compare_output(info, actual_body, test_body)
+    File.open(out, 'wb') { |f| f << '1' }
   rescue DabCompareError
-    FileUtils.rm(out)
     raise
   end
 end

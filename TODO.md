@@ -58,7 +58,6 @@
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
-- `.out` should store spec result, not VM output, so we don't skip broken specs
 
 ## CI ##
 

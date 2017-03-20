@@ -2,7 +2,7 @@ require_relative 'src/shared/system.rb'
 require 'colorize'
 require 'yaml'
 
-inputs = Dir.glob('spec/input/*.dabt').sort.reverse
+inputs = Dir.glob('test/dab/*.dabt').sort.reverse
 outputs = []
 
 format_inputs = Dir.glob('test/format/*.dabft').sort.reverse
@@ -61,10 +61,10 @@ file cvm => csources + [makefile] do
 end
 
 inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('/input/', '/output/').gsub('.dabt', '.out')
+  output_output_file = input_test_file.gsub('test/dab/', 'tmp/test_dab_').gsub('.dabt', '.out')
   outputs << output_output_file
   file output_output_file => sources + [input_test_file, cvm] do
-    psystem("ruby src/frontend/frontend.rb #{input_test_file} --test_output_dir ./spec/output/")
+    psystem("ruby src/frontend/frontend.rb #{input_test_file} --test_output_prefix test_dab_ --test_output_dir ./tmp/")
   end
 end
 
@@ -98,7 +98,7 @@ task default: [gitlab] + [cvm] + [:spec] + [:format_spec] do
 end
 
 task :clean do
-  files = Dir.glob('./spec/output/**/*') + Dir.glob('./bin/**/') + Dir.glob('./build/**/*')
+  files = Dir.glob('./tmp/**/*') + Dir.glob('./bin/**/') + Dir.glob('./build/**/*')
   files.each do |file|
     next if file == '.gitkeep'
     if File.file?(file)
