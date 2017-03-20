@@ -1,31 +1,41 @@
-def fun()
-	print("hello world")
-end
+Typed function calls.
 
-func fun()
+Untyped arguments are always `Nullable<Object>` (`Object?`).
+
+If an actual type is known (specified as concrete class `Foo!` either by compiler marking a concrete type or because `Foo` is a leaf), it uses static dispatch. Otherwise dynamic dispatch is used.
+
+So for example
+
+```
+func foo(a)
 {
-	print("hello world");
+    print(a.class_name);
 }
+```
 
-DEFINE_FUN fun 2
-PUSH "hello world"
-CALL print, 1
+initially we compile method
 
-func fun()
+```
+`foo_[Object?]`:
+   - $a := GET_ARG0 [Object?]
+   - $b := VIRT_CALL :class_name, $a
+   - VIRT_CALL :print, $b
+```
+
+However if we call this method in other function:
+
+```
+func main()
 {
-	var a = 12;
-	var b;
-	b = 14;
-	print(a + b);
+    foo("hello");
 }
+```
 
-DEFINE_FUN fun
-> PUSH_UINT32 12
-> LOCAL_VARIABLE a Integer <InitialValue> [1]
-> LOCAL_VARIABLE b Any?
-> PUSH_UINT32 14
-> SET_LOCAL b
-> PUSH_LOCAL a
-> PUSH_LOCAL b
-> CALL + 2
-> CALL print
+we recompile `foo` to
+
+```
+`foo_[LiteralString!]`:
+   - <$a optimized away>
+   - $b := "LiteralString" <because .class_name is pure>
+   - STATIC_CALL :print_[LiteralString!], $b <which can be optimized to kernel print>
+```
