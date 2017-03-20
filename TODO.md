@@ -11,6 +11,7 @@
 
 - test: var<String> a; a = 15 should error
 - test: self outside of class method should error
+- don't insert `RET` if we already have one
 
 ## New tools ##
 
@@ -54,6 +55,11 @@
 
 ## VM ##
 
+## Testing ##
+
+- test frontend: don't show errors on should-fail test cases (eg. 59)
+- `.out` should store spec result, not VM output, so we don't skip broken specs
+
 ## CI ##
 
 - prebuild/pretest tasks in gitlab.yml (early fail)
@@ -76,5 +82,4 @@
 	- weak pointers
 		- weak arrays
 - native compilation
-- test frontend: don't show errors on should-fail test cases (eg. 59)
 - lexer: pass actual EOF mark to compiler (see 59)
