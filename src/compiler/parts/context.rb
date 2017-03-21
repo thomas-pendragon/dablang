@@ -229,6 +229,10 @@ class DabContext < DabBaseContext
   end
 
   def read_simple_reference
+    read_localvar_reference
+  end
+
+  def read_localvar_reference
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next unless @local_vars.include?(id)
