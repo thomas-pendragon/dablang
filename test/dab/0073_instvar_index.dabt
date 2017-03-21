@@ -1,0 +1,25 @@
+## CODE
+
+class MyObject
+{
+	var @foo;
+	func test()
+	{
+   	 @foo = @[1, 2, 3];
+   	 @foo[2] = -5;
+   	 print(@foo);
+	}
+}
+func skip(a){}
+func main()
+{
+  skip(MyObject.new.test);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[1, 2, -5]
