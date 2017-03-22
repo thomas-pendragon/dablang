@@ -1,6 +1,8 @@
 require_relative 'node_reference.rb'
 
 class DabNodeReferenceLocalVar < DabNodeReference
+  attr_reader :name
+
   def initialize(name)
     super()
     @name = name

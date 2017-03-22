@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	var foo = 12;
+	foo = @[1, 2, 3];
+   	foo[2] = -5;
+   	print(foo);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[1, 2, -5]

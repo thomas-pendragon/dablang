@@ -179,7 +179,7 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction
-    read_varset || read_if || read_return || read_define_var || read_call || read_complex_setter
+    read_if || read_return || read_define_var || read_call || read_complex_setter
   end
 
   def read_complex_setter
@@ -244,17 +244,6 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless id = subcontext.read_classvar
       DabNodeReferenceInstVar.new(id)
-    end
-  end
-
-  def read_varset
-    on_subcontext do |subcontext|
-      id = subcontext.read_identifier
-      next unless @local_vars.include?(id)
-      next unless subcontext.read_operator('=')
-      value = subcontext.read_value
-      raise 'expected value' unless value
-      DabNodeSetLocalVar.new(id, value)
     end
   end
 

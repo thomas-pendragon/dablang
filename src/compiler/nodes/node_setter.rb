@@ -33,6 +33,10 @@ class DabNodeSetter < DabNode
       setcall = DabNodeSetInstVar.new(base.identifier, value)
       replace_with!(setcall)
       true
+    elsif reference.is_a? DabNodeReferenceLocalVar
+      setcall = DabNodeSetLocalVar.new(reference.name, value)
+      replace_with!(setcall)
+      true
     else
       raise "unknown reference #{reference}"
     end
