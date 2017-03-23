@@ -58,9 +58,9 @@ end
 
 def compare_output(info, actual, expected, soft_match = false)
   match = if soft_match
-            actual.include? expected
+            actual.uncolorize.include? expected.uncolorize
           else
-            actual == expected
+            actual.uncolorize == expected.uncolorize
           end
   if match
     puts "#{info}... OK!".green
