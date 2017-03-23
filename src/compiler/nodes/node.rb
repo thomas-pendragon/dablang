@@ -172,6 +172,14 @@ class DabNode
     source_parts.first&.source_line
   end
 
+  def source_cstart
+    source_parts.map(&:source_cstart).compact.min
+  end
+
+  def source_cend
+    source_parts.map(&:source_cend).compact.max
+  end
+
   def clone_source_parts_from(source)
     @self_source_parts = source.source_parts.dup
   end

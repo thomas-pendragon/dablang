@@ -1,9 +1,20 @@
 class DabCompilerError
   attr_reader :message
   attr_reader :source
+  attr_reader :source_infos
   def initialize(message, source)
     @message = message
     @source = source
+    @source_infos = []
+  end
+
+  def add_source_info(node, info)
+    @source_infos << [node, info]
+  end
+
+  def annotated_source(stream)
+    return '' unless source.source_line >= 0
+    stream.annotated_node(source)
   end
 end
 

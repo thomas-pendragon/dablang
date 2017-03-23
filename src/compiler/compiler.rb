@@ -68,6 +68,7 @@ end
 
 if program.has_errors?
   program.errors.each do |e|
+    STDERR.puts e.annotated_source(stream)
     STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line, e.error_code, e.message)
   end
   exit(1)

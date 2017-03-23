@@ -352,7 +352,9 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       str = subcontext.read_string
       next unless str
-      DabNodeLiteralString.new(str)
+      ret = DabNodeLiteralString.new(str)
+      ret.add_source_parts(str)
+      ret
     end
   end
 

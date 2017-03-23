@@ -37,6 +37,38 @@ class DabParser
     end.to_h
   end
 
+  def character_in_line_with_char(char, type)
+    line = @lines[char]
+    @lines.map do |k, v|
+      [k, v]
+    end.select do |(_k, v)|
+      v == line
+    end.map do |(k, _v)|
+      k
+    end.send(type)
+  end
+
+  def annotated_node(source)
+    sline = source.source_line
+    cstart = source.source_cstart
+    cend = source.source_cend
+    lstart = character_in_line_with_char(cstart, :min) + 1
+    lend = character_in_line_with_char(cend, :max)
+    cstart -= lstart
+    cend -= lstart
+    text = @content[lstart..lend]
+    text = text.gsub(/./).each_with_index.map do |char, index|
+      if index >= cstart && index < cend
+        char = char.colorize(color: :light_white, background: :red)
+      end
+      char
+    end.join
+
+    text.lines.each_with_index.map do |line, index|
+      sprintf('%4d: ', sline + index).white + line
+    end.join("\n") + "\n"
+  end
+
   def eof?
     @position == @length
   end
@@ -140,6 +172,7 @@ class DabParser
 
   def read_string
     skip_whitespace
+    start_pos = @position
     debug('string ?')
     return false unless input_match('"')
     advance!
@@ -152,7 +185,8 @@ class DabParser
     return false unless input_match('"')
     advance!
     debug('string ok')
-    _parse_string(ret)
+    ret = _parse_string(ret)
+    _return_source(ret, start_pos)
   end
 
   def _parse_string(ret)
