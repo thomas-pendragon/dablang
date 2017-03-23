@@ -3,7 +3,8 @@ flag = nil
 $settings = {}
 
 while args.count > 0
-  arg = args.shift
+  arg = args.shift.strip
+  next if arg.empty?
   if flag.nil?
     if arg.start_with? '--'
       flag = arg[2..-1].to_sym
