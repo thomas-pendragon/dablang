@@ -3,9 +3,9 @@ require_relative 'node.rb'
 class DabNodeIf < DabNode
   def initialize(condition, if_true, if_false)
     super()
-    insert(condition)
-    insert(if_true)
-    insert(if_false) if if_false
+    insert(condition, 'condition')
+    insert(if_true, 'true')
+    insert(if_false, 'false') if if_false
   end
 
   def condition

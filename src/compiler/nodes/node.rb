@@ -1,6 +1,7 @@
 class DabNode
   attr_reader :parent, :children
   attr_writer :parent
+  attr_accessor :parent_info
 
   def initialize
     @children = []
@@ -8,7 +9,8 @@ class DabNode
     @self_source_parts = []
   end
 
-  def insert(child)
+  def insert(child, parent_info = nil)
+    child.parent_info = parent_info if child.respond_to? :parent_info=
     @children << claim(child)
   end
 
@@ -27,7 +29,11 @@ class DabNode
     flags = ''
     exdump = extra_dump.to_s
     exdump = ' ' + exdump.bold unless exdump.empty?
-    text = sprintf('%s - %s%s%s %s %s', '  ' * level, self.class.name, exdump, flags, tt, src.white)
+    pinfo = ''
+    if parent_info
+      pinfo = "#{parent_info}: ".bold
+    end
+    text = sprintf('%s - %s%s%s%s %s %s', '  ' * level, pinfo, self.class.name, exdump, flags, tt, src.white)
     text = text.green if constant?
     if has_errors?
       text = if @self_errors.count > 0
