@@ -6,8 +6,6 @@ class DabNodeIf < DabNode
     insert(condition)
     insert(if_true)
     insert(if_false) if if_false
-    errap 'IF CREATED'
-    self.dump
   end
 
   def condition

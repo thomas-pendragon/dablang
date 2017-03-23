@@ -46,7 +46,7 @@ class DabParser
   end
 
   def debug(info = '')
-    STDERR.printf("[%-32s] pos %5d next: [%s]\n", info, @position, safe_lookup(32))
+    STDERR.printf("[%-32s] pos %5d next: [%s]\n", info, @position, safe_lookup(32)) if $debug
   end
 
   def safe_lookup(n)

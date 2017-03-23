@@ -1,4 +1,5 @@
 require_relative '_requires.rb'
+$debug = $settings[:debug]
 
 file = STDIN
 if $settings[:input]
@@ -9,7 +10,9 @@ stream = DabProgramStream.new(file.read)
 compiler = DabCompiler.new(stream)
 program = compiler.program
 
-program.dump
+if $debug || $settings[:dump] == 'raw'
+  program.dump
+end
 if $settings[:dump] == 'raw'
   exit(0)
 end
@@ -23,6 +26,20 @@ pp1 = [
   DabPPCheckCallArgsTypes,
 ]
 
+pp1.each do |klass|
+  next if program.has_errors?
+  STDERR.puts "Will run postprocess <#{klass}>" if $debug
+  klass.new.run(program)
+  program.dump if $debug
+end
+
+if $debug || $settings[:dump] == 'middle'
+  program.dump
+end
+if $settings[:dump] == 'middle'
+  exit(0)
+end
+
 postprocess = [
   DabPPFixLiterals,
   DabPPReuseConstants,
@@ -31,25 +48,23 @@ postprocess = [
   DabPPSimplifyConstantProperties,
 ]
 
-pp1.each do |klass|
-  next if program.has_errors?
-  STDERR.puts "Will run postprocess <#{klass}>"
-  klass.new.run(program)
-  program.dump
-end
-
 2.times do
   postprocess.each do |klass|
     next if program.has_errors?
-    STDERR.puts "Will run postprocess <#{klass}>"
+    STDERR.puts "Will run postprocess <#{klass}>" if $debug
     klass.new.run(program)
-    program.dump
+    program.dump if $debug
   end
 end
 
-STDERR.puts "\n--\n\n"
+STDERR.puts "\n--\n\n" if $debug
 
-program.dump
+if $debug || $settings[:dump] == 'post'
+  program.dump
+end
+if $settings[:dump] == 'post'
+  exit(0)
+end
 
 if program.has_errors?
   program.errors.each do |e|

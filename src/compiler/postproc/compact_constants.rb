@@ -7,7 +7,7 @@ class DabPPCompactConstants
       constant_counters[constant_reference.index] ||= 0
       constant_counters[constant_reference.index] += 1
     end
-    errap ['constant_counters', constant_counters, 'remapping', constant_remapping]
+    errap ['constant_counters', constant_counters, 'remapping', constant_remapping] if $debug
 
     to_remove = []
     program.visit_all(DabNodeConstant) do |constant|

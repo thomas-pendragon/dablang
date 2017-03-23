@@ -8,7 +8,7 @@ class DabOutput
       return
     end
     @last_p = t
-    errn t
+    # errn t
     Kernel.print t
   end
 
