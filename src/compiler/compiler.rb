@@ -1,6 +1,11 @@
 require_relative '_requires.rb'
 
-stream = DabProgramStream.new(STDIN.read)
+file = STDIN
+if $settings[:input]
+  file = File.open($settings[:input], 'rb')
+end
+
+stream = DabProgramStream.new(file.read)
 compiler = DabCompiler.new(stream)
 program = compiler.program
 
