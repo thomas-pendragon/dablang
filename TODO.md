@@ -65,7 +65,6 @@
 
 ## Misc ##
 
-- dumping AST tree before and after postprocessing
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
 - negative offsets for JMP

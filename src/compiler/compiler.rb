@@ -10,6 +10,9 @@ compiler = DabCompiler.new(stream)
 program = compiler.program
 
 program.dump
+if $settings[:dump] == 'raw'
+  exit(0)
+end
 
 pp1 = [
   DabPPConvertArgToLocalvar,
