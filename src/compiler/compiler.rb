@@ -6,27 +6,37 @@ program = compiler.program
 
 program.dump
 
-postprocess = [
+pp1 = [
   DabPPConvertArgToLocalvar,
   DabPPLower,
-  DabPPFixLiterals,
   DabPPFixLocalvars,
-  DabPPReuseConstants,
-  DabPPCompactConstants,
   DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
   DabPPCheckCallArgsTypes,
+]
+
+postprocess = [
+  DabPPFixLiterals,
+  DabPPReuseConstants,
+  DabPPCompactConstants,
   DabPPStripSingleVars,
   DabPPSimplifyConstantProperties,
 ]
 
+pp1.each do |klass|
+  next if program.has_errors?
+  STDERR.puts "Will run postprocess <#{klass}>"
+  klass.new.run(program)
+  program.dump
+end
+
 2.times do
   postprocess.each do |klass|
+    next if program.has_errors?
     STDERR.puts "Will run postprocess <#{klass}>"
     klass.new.run(program)
     program.dump
   end
-  break if program.has_errors?
 end
 
 STDERR.puts "\n--\n\n"
