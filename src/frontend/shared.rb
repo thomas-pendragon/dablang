@@ -10,23 +10,7 @@ require 'fileutils'
 class DabCompareError < RuntimeError
 end
 
-args = ARGV.dup
-flag = nil
-$settings = {}
-
-while args.count > 0
-  arg = args.shift
-  if flag.nil?
-    if arg.start_with? '--'
-      flag = arg[2..-1].to_sym
-    else
-      $settings[:input] = arg
-    end
-  else
-    $settings[flag] = arg
-    flag = nil
-  end
-end
+require_relative '../shared/args.rb'
 
 raise 'no input' unless $settings[:input]
 
