@@ -47,7 +47,6 @@
 ## Standard library ##
 
 - Array.first
-- Array.last
 - Array.sort
 - Array.max
 - Array.min

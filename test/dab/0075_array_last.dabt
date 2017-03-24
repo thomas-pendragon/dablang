@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	var foo = @[1, 5, 3];
+   	print(foo.last);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+3
