@@ -221,6 +221,11 @@ struct DabValue
         data.type   = TYPE_FIXNUM;
         data.fixnum = value;
     }
+    DabValue(bool value)
+    {
+        data.type    = TYPE_BOOLEAN;
+        data.boolean = value;
+    }
 
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);
@@ -409,8 +414,6 @@ struct DabVM
     void push_constant_string(const std::string &name);
 
     void push_constant_fixnum(uint64_t value);
-
-    void push_constant_boolean(bool value);
 
     void add_function(Stream &input, const std::string &name, uint16_t class_index, size_t n_locals,
                       size_t body_length);

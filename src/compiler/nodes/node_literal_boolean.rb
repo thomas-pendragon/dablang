@@ -1,6 +1,6 @@
-require_relative 'node_literal.rb'
+require_relative 'node.rb'
 
-class DabNodeLiteralBoolean < DabNodeLiteral
+class DabNodeLiteralBoolean < DabNode
   attr_reader :boolean
   def initialize(boolean)
     super()
@@ -11,12 +11,8 @@ class DabNodeLiteralBoolean < DabNodeLiteral
     boolean.to_s
   end
 
-  def compile_constant(output)
-    output.print('CONSTANT_BOOLEAN', boolean ? 1 : 0)
-  end
-
   def compile(output)
-    compile_constant(output)
+    output.print(@boolean ? 'PUSH_TRUE' : 'PUSH_FALSE')
   end
 
   def extra_value
@@ -25,5 +21,9 @@ class DabNodeLiteralBoolean < DabNodeLiteral
 
   def formatted_source(_options)
     extra_dump
+  end
+
+  def constant?
+    true
   end
 end

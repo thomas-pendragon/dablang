@@ -300,12 +300,6 @@ void DabVM::execute_single(Stream &input)
         push_constant_fixnum(value);
         break;
     }
-    case OP_CONSTANT_BOOLEAN:
-    {
-        auto value = input.read_uint16();
-        push_constant_boolean(value);
-        break;
-    }
     case OP_PUSH_CONSTANT:
     {
         auto index = input.read_uint16();
@@ -431,6 +425,16 @@ void DabVM::execute_single(Stream &input)
         push_array(n);
         break;
     }
+    case OP_PUSH_TRUE:
+    {
+        stack.push(true);
+        break;
+    }
+    case OP_PUSH_FALSE:
+    {
+        stack.push(false);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
@@ -537,15 +541,6 @@ void DabVM::push_constant_fixnum(uint64_t value)
     val.data.type        = TYPE_FIXNUM;
     val.data.fixnum      = value;
     val.data.is_constant = true;
-    push_constant(val);
-}
-
-void DabVM::push_constant_boolean(bool value)
-{
-    DabValue val;
-    val.data.kind    = VAL_CONSTANT;
-    val.data.type    = TYPE_BOOLEAN;
-    val.data.boolean = value;
     push_constant(val);
 }
 

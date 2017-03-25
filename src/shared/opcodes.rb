@@ -12,7 +12,7 @@ OPCODES = {
   0x0A => {name: 'JMP', arg: :uint16}, # add +arg to PC
   0x0B => {name: 'JMP_IFN', arg: :uint16}, # pop(1), add +arg to PC if value from stack is false
   0x0C => {name: 'NOP'}, #
-  0x0D => {name: 'CONSTANT_BOOLEAN', arg: :uint16}, # bool (true/false)
+  # 0x0D CONSTANT_BOOLEAN
   0x0E => {name: 'PUSH_NIL'}, # push(1)
   0x0F => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
   0x10 => {name: 'START_CLASS', args: %i(vlc uint16)},
@@ -22,6 +22,8 @@ OPCODES = {
   0x14 => {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
   0x15 => {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)
   0x16 => {name: 'PUSH_ARRAY', arg: :uint16}, # pop(arg), push(1)
+  0x17 => {name: 'PUSH_TRUE'}, # push(1)
+  0x18 => {name: 'PUSH_FALSE'}, # push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

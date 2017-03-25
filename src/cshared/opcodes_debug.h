@@ -14,7 +14,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_JMP, "JMP", {ARG_UINT16}},
     {OP_JMP_IFN, "JMP_IFN", {ARG_UINT16}},
     {OP_NOP, "NOP", {}},
-    {OP_CONSTANT_BOOLEAN, "CONSTANT_BOOLEAN", {ARG_UINT16}},
     {OP_PUSH_NIL, "PUSH_NIL", {}},
     {OP_KERNELCALL, "KERNELCALL", {ARG_UINT8}},
     {OP_START_CLASS, "START_CLASS", {ARG_VLC, ARG_UINT16}},
@@ -24,4 +23,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_PUSH_INSTVAR, "PUSH_INSTVAR", {ARG_VLC}},
     {OP_SET_INSTVAR, "SET_INSTVAR", {ARG_VLC}},
     {OP_PUSH_ARRAY, "PUSH_ARRAY", {ARG_UINT16}},
+    {OP_PUSH_TRUE, "PUSH_TRUE", {}},
+    {OP_PUSH_FALSE, "PUSH_FALSE", {}},
 };
