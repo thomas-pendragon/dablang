@@ -75,4 +75,9 @@ class DabNodeFunction < DabNode
     fargs = fargs.join(', ')
     "func #{@identifier}(#{fargs})\n{\n" + _indent(body.formatted_source(options)) + "}\n"
   end
+
+  def new_named_codeblock
+    label = reserve_label
+    DabNodeCodeBlock.new(label)
+  end
 end

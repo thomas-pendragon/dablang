@@ -231,4 +231,8 @@ class DabNode
   def ends_with?(klass)
     @children.last.is_a? klass
   end
+
+  def empty?
+    false
+  end
 end

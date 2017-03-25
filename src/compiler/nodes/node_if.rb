@@ -20,24 +20,26 @@ class DabNodeIf < DabNode
     children[2]
   end
 
-  def compile(output)
-    label_false = self.function.reserve_label if if_false
-    label_end = self.function.reserve_label
+  def lower!
+    if_block = self.function.new_named_codeblock
+    true_block = self.function.new_named_codeblock
+    false_block = self.function.new_named_codeblock
+    continue_block = self.function.new_named_codeblock
 
-    condition.compile(output)
-    output.print('JMP_IFN', if_false ? label_false : label_end)
+    true_block.insert(if_true)
+    false_block.insert(if_false)
 
-    if_true.compile(output)
-    output.print('JMP', label_end)
+    jmp_false = DabNodeJump.new(false_block.label, condition)
+    jmp_continue = DabNodeJump.new(continue_block.label)
 
-    if if_false
-      output.label(label_false)
-      output.print('NOP')
-      if_false.compile(output)
-    end
+    true_block.insert(jmp_continue)
 
-    output.label(label_end)
-    output.print('NOP')
+    if_block.insert(jmp_false)
+    if_block.insert(true_block)
+    if_block.insert(false_block)
+    if_block.insert(continue_block)
+
+    replace_with!(if_block)
   end
 
   def formatted_source(options)
