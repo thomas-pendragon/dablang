@@ -30,4 +30,8 @@ class DabNodeLiteralString < DabNodeLiteral
   def formatted_source(_options)
     '"' + string.gsub("\n", '\\n') + '"'
   end
+
+  def constant_value
+    @string
+  end
 end

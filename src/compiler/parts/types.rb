@@ -69,3 +69,13 @@ class DabTypeArray < DabTypeString
     other_type.is_a? DabTypeArray
   end
 end
+
+class DabTypeNil < DabType
+  def type_string
+    'NilClass'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeNil
+  end
+end
