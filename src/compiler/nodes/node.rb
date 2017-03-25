@@ -61,10 +61,10 @@ class DabNode
     ''
   end
 
-  def visit_all(klass, &block)
+  def visit_all(klass, options = {}, &block)
     klass = [klass] unless klass.is_a? Array
     if klass.any? { |item| self.is_a? item }
-      yield(self)
+      yield(self) unless options[:skip_self]
     end
 
     children_nodes.each { |node| node.visit_all(klass, &block) }
@@ -199,13 +199,12 @@ class DabNode
   end
 
   def replace_child(from, to)
-    @children.map! do |node|
-      if node == from
-        claim(to)
-      else
-        node
-      end
+    to = [to] unless to.is_a? Array
+    to = to.map { |item| claim(item) }
+    if index = @children.index(from)
+      @children[index] = to
     end
+    @children.flatten!
   end
 
   def replace_with!(other)
