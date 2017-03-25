@@ -9,24 +9,36 @@ class DabNodeCodeBlock < DabNode
   end
 
   def extra_dump
-    ".#{label}" if label
+    ret = []
+    ret << ".#{label}" if label
+    ret << '<empty>' if empty?
+    ret.join(' ')
   end
 
   def compile(output)
     output.label(label) if label
-    if label && empty?
-      output.print('NOP')
-    else
-      @children.each do |child|
-        child.compile(output)
-      end
+    @children.each do |child|
+      child.compile(output)
     end
   end
 
   def lower!
+    return true if super
     return blockify! if has_subblocks? && !only_has_subblocks?
     return unlabelify! if has_subblocks? && has_label?
-    super
+    return nopify! if label && empty?
+    return prune! if only_has_subblocks? && has_empty_subblocks?
+    false
+  end
+
+  def nopify!
+    insert(DabNodeNop.new)
+    true
+  end
+
+  def prune!
+    @children.delete_if(&:empty?)
+    true
   end
 
   def blockify!
@@ -51,6 +63,10 @@ class DabNodeCodeBlock < DabNode
 
   def has_label?
     !!label
+  end
+
+  def has_empty_subblocks?
+    @children.any?(&:empty?)
   end
 
   def only_has_subblocks?
