@@ -30,4 +30,8 @@ class DabNodeLiteralNumber < DabNodeLiteral
   def formatted_source(_options)
     extra_dump
   end
+
+  def constant_value
+    @number
+  end
 end

@@ -219,6 +219,10 @@ class DabNode
     children.any?(&:lower!)
   end
 
+  def optimize!
+    children.any?(&:optimize!)
+  end
+
   def formatted_source(_options)
     raise "unknown source for #{self.class.name}"
   end
@@ -233,5 +237,9 @@ class DabNode
 
   def empty?
     false
+  end
+
+  def constant_value
+    raise 'no constant value'
   end
 end

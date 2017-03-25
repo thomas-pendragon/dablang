@@ -26,4 +26,8 @@ class DabNodeLiteralBoolean < DabNode
   def constant?
     true
   end
+
+  def constant_value
+    @boolean
+  end
 end

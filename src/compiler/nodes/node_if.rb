@@ -20,6 +20,15 @@ class DabNodeIf < DabNode
     children[2]
   end
 
+  def optimize!
+    if condition.constant?
+      test = condition.constant_value
+      replace_with!(test ? if_true : if_false)
+      return true
+    end
+    false
+  end
+
   def lower!
     if_block = self.function.new_named_codeblock
     true_block = self.function.new_named_codeblock
