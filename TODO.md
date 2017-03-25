@@ -11,7 +11,6 @@
 
 - test: var<String> a; a = 15 should error
 - test: self outside of class method should error
-- don't insert `RET` if we already have one
 
 ## New tools ##
 

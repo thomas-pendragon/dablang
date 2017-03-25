@@ -227,4 +227,8 @@ class DabNode
   def _indent(text)
     text.lines.map { |line| "  #{line}" }.join
   end
+
+  def ends_with?(klass)
+    @children.last.is_a? klass
+  end
 end

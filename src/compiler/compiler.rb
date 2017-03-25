@@ -19,6 +19,7 @@ end
 
 pp1 = [
   DabPPConvertArgToLocalvar,
+  DabPPAddMissingReturns,
   DabPPLower,
   DabPPFixLocalvars,
   DabPPCheckFunctions,

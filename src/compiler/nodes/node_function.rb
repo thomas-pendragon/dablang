@@ -52,8 +52,6 @@ class DabNodeFunction < DabNode
   def compile(output)
     output.function(identifier, parent_class_index, n_local_vars) do
       body.compile(output)
-      output.print('PUSH_NIL')
-      output.print('RETURN', '1')
     end
   end
 
