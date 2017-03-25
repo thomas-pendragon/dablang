@@ -8,7 +8,7 @@ class DabNodeConstantReference < DabNode
   end
 
   def extra_dump
-    "$$#{index}"
+    "$$#{index} [#{target.extra_value}]"
   end
 
   def target
