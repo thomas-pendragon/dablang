@@ -8,9 +8,9 @@ class DabNodeUnit < DabNode
     @functions = DabNode.new
     @constants = DabNode.new
     @classes = DabNode.new
-    insert(@functions)
-    insert(@constants)
-    insert(@classes)
+    insert(@functions, 'functions')
+    insert(@constants, 'constants')
+    insert(@classes, 'classes')
     @class_numbers = STANDARD_CLASSES_REV.dup
   end
 

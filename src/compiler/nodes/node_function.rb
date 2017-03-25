@@ -7,9 +7,9 @@ class DabNodeFunction < DabNode
   def initialize(identifier, body, arglist)
     super()
     @identifier = identifier
-    insert(body)
+    insert(body, 'body')
     arglist ||= DabNode.new
-    insert(arglist)
+    insert(arglist, 'arglist')
     @labels = 0
   end
 
