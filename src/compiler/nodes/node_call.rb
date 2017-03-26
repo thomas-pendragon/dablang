@@ -24,6 +24,8 @@ class DabNodeCall < DabNode
     args.each { |arg| arg.compile(output) }
     if real_identifier == 'print'
       output.print('KERNELCALL', KERNELCODES_REV['PRINT'])
+    elsif real_identifier == 'exit'
+      output.print('KERNELCALL', KERNELCODES_REV['EXIT'])
     else
       output.push(identifier)
       output.comment(real_identifier)

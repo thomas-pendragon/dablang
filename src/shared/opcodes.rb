@@ -30,6 +30,7 @@ OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
 
 KERNELCODES = {
   0x00 => 'PRINT',
+  0x01 => 'EXIT',
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h

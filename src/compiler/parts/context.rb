@@ -8,7 +8,7 @@ class DabContext < DabBaseContext
   def initialize(stream)
     super(stream)
     @local_vars = []
-    @functions = ['print']
+    @functions = %w(print exit)
     @classes = %w(String Fixnum)
   end
 

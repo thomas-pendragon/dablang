@@ -5,6 +5,7 @@
 enum
 {
     KERNEL_PRINT = 0x00,
+    KERNEL_EXIT  = 0x01,
 };
 
 DabVM::DabVM()
@@ -495,6 +496,12 @@ void DabVM::kernelcall(int call)
     case KERNEL_PRINT:
     {
         kernel_print();
+        break;
+    }
+    case KERNEL_EXIT:
+    {
+        auto value = stack.pop_value();
+        exit(value.data.fixnum);
         break;
     }
     default:
