@@ -7,8 +7,12 @@ def read_test_file(fname)
   expected_status = nil
   body = base[:expect_ok]
   compile_error = base[:expect_compile_error].presence
+  runtime_error = base[:expect_runtime_error].presence
   if compile_error
     expected_status = :compile_error
+  end
+  if runtime_error
+    expected_status = :runtime_error
   end
 
   {
@@ -16,6 +20,7 @@ def read_test_file(fname)
     expected_status: expected_status,
     expected_body: body,
     expected_compile_error: compile_error,
+    expected_runtime_error: runtime_error,
   }
 end
 
@@ -88,7 +93,18 @@ def run_test(settings)
     raise "Expected compiler error in #{input}"
   end
   assemble(asm, bin)
-  execute(bin, vmo)
+
+  begin
+    execute(bin, vmo)
+  rescue SystemCommandError => e
+    if data[:expected_status] == :runtime_error
+      compare_output('compare runtime output', e.stderr, data[:expected_runtime_error], true)
+      File.open(out, 'wb') { |f| f << '1' }
+      return
+    else
+      raise e
+    end
+  end
 
   test_body = data[:expected_body]
   actual_body = open(vmo).read.strip

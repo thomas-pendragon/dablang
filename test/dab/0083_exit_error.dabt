@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	print("test error");
+	exit(1);
+	print("don't print");
+}
+
+## RUN
+
+main 
+
+## EXPECT RUNTIME ERROR
+
+test error
