@@ -1,0 +1,21 @@
+## CODE
+
+func main()
+{
+	var a = nil;
+	a = "a";
+	var b = nil;
+	b = 12;
+	print(a != "a"); print(" ");
+	print(a != "b"); print(" ");
+	print(b != 12);   print(" ");
+	print(b != 7);    print(" ");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+false true false true

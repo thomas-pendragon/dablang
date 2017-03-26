@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	print("a" != "a"); print(" ");
+	print("a" != "b"); print(" ");
+	print(12 != 12);   print(" ");
+	print(12 != 7);    print(" ");
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+false true false true

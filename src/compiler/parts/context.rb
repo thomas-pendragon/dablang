@@ -479,7 +479,7 @@ class DabContext < DabBaseContext
   end
 
   def read_value
-    _read_list_or_single(:read_or_value, ['=='], DabNodeOperator)
+    _read_list_or_single(:read_or_value, ['==', '!='], DabNodeOperator)
   end
 
   def clone

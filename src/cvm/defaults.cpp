@@ -51,7 +51,15 @@
             assert(n_ret == 1);                                                                    \
             auto arg1 = stack.pop_value();                                                         \
             auto arg0 = stack.pop_value();                                                         \
-            bool test = arg0.data.fixnum op arg1.data.fixnum;                                      \
+            bool test = false;                                                                     \
+            if (arg0.data.type == TYPE_FIXNUM)                                                     \
+            {                                                                                      \
+                test = arg0.data.fixnum op arg1.data.fixnum;                                       \
+            }                                                                                      \
+            else if (arg0.data.type == TYPE_STRING)                                                \
+            {                                                                                      \
+                test = arg0.data.string op arg1.data.string;                                       \
+            }                                                                                      \
             stack_push(test);                                                                      \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
@@ -67,6 +75,7 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP(/);
     DAB_DEFINE_OP(%);
     DAB_DEFINE_OP_BOOL(==);
+    DAB_DEFINE_OP_BOOL(!=);
 
     {
         DabFunction fun;

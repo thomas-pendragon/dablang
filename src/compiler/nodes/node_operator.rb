@@ -49,7 +49,7 @@ class DabNodeOperator < DabNode
     if numeric && %i(+ - * / %).include?(id)
       replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
       return true
-    elsif numeric && %i(==).include?(id)
+    elsif %i(== !=).include?(id)
       replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
       return true
     else

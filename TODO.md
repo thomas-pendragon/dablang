@@ -53,6 +53,8 @@
 
 ## VM ##
 
+- `==` and `!=` operators on mismatching types
+
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
