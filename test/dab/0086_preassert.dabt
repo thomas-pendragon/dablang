@@ -1,0 +1,19 @@
+## CODE
+
+func assert_equal(expected, value)
+{
+	if (value != expected)
+	{
+	};
+}
+
+func main()
+{
+	assert_equal("foo", 1, 2);
+	print("all test ok");
+}
+
+## EXPECT COMPILE ERROR
+
+  10: 	assert_equal("foo", 1, 2);
+<input>:10: error E0005: Incorrect number of arguments in <assert_equal> call; got 3, expected 2.
