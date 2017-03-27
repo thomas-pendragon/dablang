@@ -1,5 +1,5 @@
 ---
-image: dablang/dablangenv:0.4
+image: dablang/dablangenv:0.5
 before_script:
 - gem install bundler
 - bundle install --path=/cache/bundler

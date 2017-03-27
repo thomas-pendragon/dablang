@@ -1,5 +1,7 @@
 require 'awesome_print'
 require 'colorize'
+require 'pry'
+require 'pry-byebug'
 
 def errn(str, *args)
   if args.count > 0

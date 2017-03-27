@@ -3,11 +3,21 @@ GEM
   specs:
     ast (2.3.0)
     awesome_print (1.7.0)
+    byebug (9.0.6)
+    coderay (1.1.1)
     colorize (0.8.1)
     diff-lcs (1.2.5)
+    method_source (0.8.2)
     parser (2.3.1.2)
       ast (~> 2.2)
     powerpack (0.1.1)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.2)
+      byebug (~> 9.0)
+      pry (~> 0.10)
     rainbow (2.1.0)
     rake (11.3.0)
     rspec (3.5.0)
@@ -30,6 +40,7 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
+    slop (3.6.0)
     unicode-display_width (1.1.0)
 
 PLATFORMS
@@ -38,9 +49,11 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   colorize
+  pry
+  pry-byebug
   rake
   rspec
   rubocop
 
 BUNDLED WITH
-   1.13.6
+   1.14.6
