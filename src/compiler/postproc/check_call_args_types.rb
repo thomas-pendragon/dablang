@@ -5,7 +5,7 @@ class DabPPCheckCallArgsTypes
       next unless function.is_a? DabNodeFunction
       arglist = function.arglist
       call.args.each_with_index do |call_arg, index|
-        arg = arglist[index]
+        next unless arg = arglist[index]
 
         arg_type = arg.my_type
         value_type = call_arg.my_type

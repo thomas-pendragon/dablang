@@ -57,3 +57,13 @@ class DabUnexpectedEOFError < DabCompilerError
     4
   end
 end
+
+class DabCompileCallArgCountError < DabCompilerError
+  def initialize(func, actual, expected, source)
+    super("Incorrect number of arguments in <#{func}> call; got #{actual}, expected #{expected}.", source)
+  end
+
+  def error_code
+    5
+  end
+end

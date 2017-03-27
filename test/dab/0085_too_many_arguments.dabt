@@ -1,0 +1,19 @@
+## CODE
+
+func other(a)
+{
+}
+
+func main()
+{
+	other(1, 2, 3);
+}
+
+## RUN
+
+main 
+
+## EXPECT COMPILE ERROR
+
+   7: 	other(1, 2, 3);
+<input>:7: error E0005: Incorrect number of arguments in <other> call; got 3, expected 1.

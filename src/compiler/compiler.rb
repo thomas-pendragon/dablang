@@ -26,6 +26,7 @@ pp1 = [
   DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
   DabPPCheckCallArgsTypes,
+  DabPPCheckCallArgsCount,
 ]
 
 pp1.each do |klass|
