@@ -94,6 +94,8 @@ end
 task format_spec: format_outputs do
 end
 
+task reverse: outputs.reverse
+
 task default: [gitlab] + [cvm] + [:spec] + [:format_spec] do
 end
 
