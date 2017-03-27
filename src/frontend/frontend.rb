@@ -6,6 +6,7 @@ def read_test_file(fname)
   code = base[:code]
   expected_status = nil
   body = base[:expect_ok]
+  run = base[:run]
   compile_error = base[:expect_compile_error].presence
   runtime_error = base[:expect_runtime_error].presence
   if compile_error
@@ -14,6 +15,10 @@ def read_test_file(fname)
   if runtime_error
     expected_status = :runtime_error
   end
+  if run == 'minitest0'
+    included_file = 'minitest0'
+    body = 'all test ok'
+  end
 
   {
     code: code,
@@ -21,6 +26,7 @@ def read_test_file(fname)
     expected_body: body,
     expected_compile_error: compile_error,
     expected_runtime_error: runtime_error,
+    included_file: included_file,
   }
 end
 
@@ -49,10 +55,13 @@ def execute(input, output)
   end
 end
 
-def extract_source(input, output)
+def extract_source(input, output, text, extra_file = nil)
   describe_action(input, output, 'extract source') do
-    text = read_test_file(input)[:code]
     File.open(output, 'wb') do |file|
+      if extra_file
+        file << File.read("./test/shared/#{extra_file}.dab")
+        file << "\n"
+      end
       file << text
     end
   end
@@ -77,7 +86,7 @@ def run_test(settings)
 
   FileUtils.rm(out) if File.exist?(out)
 
-  extract_source(input, dab)
+  extract_source(input, dab, data[:code], data[:included_file])
   begin
     compile_to_asm(dab, asm)
   rescue SystemCommandError => e

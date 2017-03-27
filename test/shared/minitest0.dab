@@ -1,0 +1,18 @@
+func assert_equal(text, expected, actual)
+{
+	if (actual != expected)
+	{
+		print(text);
+		print(": equality assertion failed.\n\nExpected: ");
+		print(expected);
+		print("\nReceived: ");
+		print(actual);
+		exit(0);
+	};
+}
+
+func main()
+{
+	test();
+	print("all test ok");
+}

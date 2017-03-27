@@ -24,6 +24,8 @@ opcode_task = 'tasks/opcodelist.rb'
 cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
 opcode_debug_task = 'tasks/opcode_debuglist.rb'
 
+shared_spec_code = Dir.glob('test/shared/*.dab')
+
 csources = Dir.glob('src/{cvm,cshared,cdisasm}/**/*')
 csources += [cvm_opcodes, cvm_opcodes_debug]
 csources.sort!
@@ -63,7 +65,7 @@ end
 inputs.each do |input_test_file|
   output_output_file = input_test_file.gsub('test/dab/', 'tmp/test_dab_').gsub('.dabt', '.out')
   outputs << output_output_file
-  file output_output_file => sources + [input_test_file, cvm] do
+  file output_output_file => sources + [input_test_file, cvm] + shared_spec_code do
     psystem("ruby src/frontend/frontend.rb #{input_test_file} --test_output_prefix test_dab_ --test_output_dir ./tmp/")
   end
 end
