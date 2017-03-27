@@ -1,0 +1,22 @@
+## CODE
+
+func test(a)
+{
+	if (a)
+	{
+		print("ok");
+	};
+}
+
+func main()
+{
+	test(1);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+ok

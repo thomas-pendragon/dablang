@@ -3,6 +3,7 @@ require_relative 'node_literal.rb'
 class DabNodeSymbol < DabNodeLiteral
   attr_reader :symbol
   def initialize(symbol)
+    raise "empty symbol (#{symbol})" if symbol.to_s.empty?
     super()
     @symbol = symbol
   end

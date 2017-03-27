@@ -1,0 +1,16 @@
+## CODE
+
+func assert_equal(text, expected, value)
+{
+	print(expected);
+	print(value);
+}
+
+func main()
+{
+	assert_equal("2 + 2", 5, 2 + 2);
+}
+
+## EXPECT OK
+
+54

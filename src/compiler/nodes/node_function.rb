@@ -80,4 +80,12 @@ class DabNodeFunction < DabNode
     label = reserve_label
     DabNodeCodeBlock.new(label)
   end
+
+  def remove_localvar_index(index)
+    visit_all([DabNodeSetLocalVar, DabNodeLocalVar]) do |node|
+      if node.index > index
+        node.index -= 1
+      end
+    end
+  end
 end

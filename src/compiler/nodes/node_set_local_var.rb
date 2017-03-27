@@ -17,7 +17,7 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def extra_dump
-    "<#{real_identifier}>"
+    "<#{real_identifier}> [#{@index}]"
   end
 
   def value

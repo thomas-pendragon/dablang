@@ -1,0 +1,18 @@
+## CODE
+
+func assert_equal(text, expected, value)
+{
+	if (value != expected)
+	{
+	};
+}
+
+func main()
+{
+	assert_equal("foo", 1, 2);
+	print("all test ok");
+}
+
+## EXPECT OK
+
+all test ok

@@ -3,7 +3,7 @@ require_relative 'node.rb'
 class DabNodeLiteralArray < DabNode
   def initialize(valuelist)
     super()
-    insert(valuelist)
+    insert(valuelist || DabNode.new)
   end
 
   def valuelist

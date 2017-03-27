@@ -43,7 +43,9 @@ class DabNodeCodeBlock < DabNode
 
   def blockify!
     @children = @children.map do |child|
-      if !child.is_a?(DabNodeCodeBlock)
+      if child.is_a? Symbol
+        raise "unexpected symbol #{child}"
+      elsif !child.is_a?(DabNodeCodeBlock)
         block = DabNodeCodeBlock.new
         block.insert(child)
         claim(block)

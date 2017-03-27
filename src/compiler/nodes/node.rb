@@ -199,6 +199,7 @@ class DabNode
   end
 
   def replace_child(from, to)
+    to = [] if to.nil?
     to = [to] unless to.is_a? Array
     to = to.map { |item| claim(item) }
     if index = @children.index(from)

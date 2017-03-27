@@ -36,16 +36,16 @@ class DabNodeIf < DabNode
     continue_block = self.function.new_named_codeblock
 
     true_block.insert(if_true)
-    false_block.insert(if_false)
+    false_block.insert(if_false) if if_false
 
-    jmp_false = DabNodeJump.new(false_block.label, condition)
+    jmp_false = DabNodeJump.new(if_false ? false_block.label : continue_block.label, condition)
     jmp_continue = DabNodeJump.new(continue_block.label)
 
     true_block.insert(jmp_continue)
 
     if_block.insert(jmp_false)
     if_block.insert(true_block)
-    if_block.insert(false_block)
+    if_block.insert(false_block) if if_false
     if_block.insert(continue_block)
 
     replace_with!(if_block)
