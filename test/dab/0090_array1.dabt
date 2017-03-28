@@ -1,0 +1,13 @@
+## CODE
+
+func test()
+{
+	var a = @[1, "foo", true, nil, false];
+	assert_equal(".count", a.count, 5);
+	assert_equal(".first", a.first, 1);
+	assert_equal(".last", a.last, false);
+}
+
+## RUN
+
+minitest0

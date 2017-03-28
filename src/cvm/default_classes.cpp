@@ -143,4 +143,15 @@ void DabVM::define_default_classes()
         else
             stack.push_value(a[a.size() - 1]);
     });
+    array_class.add_function("first", [this](size_t n_args, size_t n_ret) {
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        assert(arg0.data.type == TYPE_ARRAY);
+        auto &a = arg0.array();
+        if (!a.size())
+            stack.push_value(nullptr);
+        else
+            stack.push_value(a[0]);
+    });
 }
