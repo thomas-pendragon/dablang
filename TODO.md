@@ -42,6 +42,7 @@
 - default arguments
 - exceptions
 - keyword arguments
+- functions with blocks
 
 ## Standard library ##
 
