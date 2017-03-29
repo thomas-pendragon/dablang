@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+	puts("a");
+	puts("b");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+a
+b
