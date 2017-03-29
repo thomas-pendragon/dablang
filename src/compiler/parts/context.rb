@@ -8,7 +8,6 @@ class DabContext < DabBaseContext
   def initialize(stream)
     super(stream)
     @local_vars = []
-    @functions = %w(print exit)
     @classes = %w(String Fixnum)
   end
 
@@ -17,18 +16,9 @@ class DabContext < DabBaseContext
     @local_vars << id
   end
 
-  def add_function(id)
-    raise "id must be string, is #{id.class}" unless id.is_a? String
-    @functions << id
-  end
-
   def add_class(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
     @classes << id
-  end
-
-  def has_function?(id)
-    @functions.include? id
   end
 
   def read_program
@@ -145,7 +135,6 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
-      subcontext.add_function(ident)
       next unless subcontext.read_operator('(')
       if arglist = subcontext.read_arglist
         arglist.each do |arg|
@@ -485,7 +474,6 @@ class DabContext < DabBaseContext
   def clone
     ret = super
     ret.local_vars = @local_vars.clone
-    ret.functions = @functions.clone
     ret.classes = @classes.clone
     ret
   end
