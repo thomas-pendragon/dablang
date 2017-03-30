@@ -81,6 +81,11 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
+    fixnum_class.add_simple_function(vm, "to_s", [](DabValue self) {
+        char ret[32];
+        sprintf(ret, "%zd", self.data.fixnum);
+        return std::string(ret);
+    });
 
     define_builtin_class("LiteralFixnum", CLASS_LITERALFIXNUM, CLASS_FIXNUM);
 
