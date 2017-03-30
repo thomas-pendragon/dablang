@@ -49,11 +49,12 @@
 - Array.sort
 - Array.max
 - Array.min
-- Array.join
+- Array.join should take parameter
 
 ## VM ##
 
 - `==` and `!=` operators on mismatching types
+- breakpoints
 
 ## Testing ##
 

@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+	var a = @[1, "foo", true];
+	print(a.join);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+1, foo, true
