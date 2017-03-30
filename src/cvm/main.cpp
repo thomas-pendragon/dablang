@@ -15,7 +15,16 @@ DabVM::DabVM()
 
 void DabVM::kernel_print()
 {
-    auto arg = stack.pop_value();
+    auto stack_pos = stack.size();
+    auto arg       = stack.pop_value();
+    instcall(arg, "to_s", 0, 1);
+    // temporary hack
+    while (stack.size() != stack_pos)
+    {
+        execute_single(instructions);
+    }
+    arg = stack.pop_value();
+
     fprintf(stderr, "[ ");
     arg.print(*this, stderr);
     fprintf(stderr, " ]\n");
@@ -484,7 +493,7 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 {
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
-    stack.push(recv);
+    stack.push_value(recv);
     auto &fun = klass.get_function(*this, recv, name);
     call_function(recv, fun, 1 + n_args);
 }

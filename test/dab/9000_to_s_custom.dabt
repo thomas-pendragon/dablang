@@ -1,0 +1,26 @@
+## CODE
+
+class MyObject
+{
+	func to_s()
+	{
+		return "My Object";
+	}
+}
+
+func main()
+{
+	var a = MyObject.new;
+	print(a.to_s);
+	print("\n");
+	print(a);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+My Object
+My Object
