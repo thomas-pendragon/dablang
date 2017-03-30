@@ -94,7 +94,8 @@ void DabVM::define_default_classes()
         return std::string(self.data.boolean ? "true" : "false");
     });
 
-    define_builtin_class("NilClass", CLASS_NILCLASS);
+    auto &nil_class = define_builtin_class("NilClass", CLASS_NILCLASS);
+    nil_class.add_simple_function(vm, "to_s", [](DabValue self) { return std::string("nil"); });
 
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
     array_class.add_simple_function(vm, "count", [this](DabValue self) {
