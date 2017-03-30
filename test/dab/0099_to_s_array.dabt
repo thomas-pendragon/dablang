@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	var a = @[1, "foo", true];
+	print(a.to_s); print("\n");
+	print(a);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[1, foo, true]
+[1, foo, true]

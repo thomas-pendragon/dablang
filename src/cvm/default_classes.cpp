@@ -185,4 +185,9 @@ void DabVM::define_default_classes()
         }
         return ret;
     });
+    array_class.add_simple_function(vm, "to_s", [this](DabValue self) {
+        instcall(self, "join", 0, 1);
+        auto inner = stack.pop_value();
+        return std::string("[" + inner.data.string + "]");
+    });
 }
