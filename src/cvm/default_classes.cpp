@@ -67,6 +67,7 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
+    string_class.add_simple_function(vm, "to_s", [](DabValue self) { return self; });
 
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
