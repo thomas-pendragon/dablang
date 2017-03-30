@@ -31,7 +31,7 @@ def read_test_file(fname)
 end
 
 def compile_to_asm(input, output)
-  run_ruby_part(input, output, 'compile to DabASM', 'compiler')
+  run_ruby_part(input, output, 'compile to DabASM', 'compiler', nil, true)
 end
 
 def assemble(input, output)
