@@ -36,14 +36,14 @@ class DabContext < DabBaseContext
     ret
   end
 
-  def _read_list(item_method, separator = ',')
-    __read_list(item_method, separator, DabNode.new) do |base, item, sep|
+  def _read_list(item_method, separator = ',', accept_extra_separator: false)
+    __read_list(item_method, separator, DabNode.new, accept_extra_separator: accept_extra_separator) do |base, item, sep|
       base.insert(DabNodeListNode.new(item, sep))
     end
   end
 
-  def _read_simple_list(item_method, separator = ',')
-    list = _read_list(item_method, separator)
+  def _read_simple_list(item_method, separator = ',', accept_extra_separator: false)
+    list = _read_list(item_method, separator, accept_extra_separator: accept_extra_separator)
     return nil unless list
     ret = DabNode.new
     list.children.map(&:value).each { |item| ret.insert(item) }
@@ -300,7 +300,7 @@ class DabContext < DabBaseContext
   end
 
   def read_valuelist
-    _read_simple_list(:read_value)
+    _read_simple_list(:read_value, accept_extra_separator: true)
   end
 
   def read_optional_valuelist

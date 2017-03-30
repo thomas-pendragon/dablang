@@ -59,7 +59,7 @@ class DabBaseContext
     ret
   end
 
-  def __read_list(item_method, separator, init_value)
+  def __read_list(item_method, separator, init_value, accept_extra_separator: false)
     separator = [separator] unless separator.is_a? Array
     on_subcontext do |subcontext|
       ret = init_value
@@ -68,12 +68,18 @@ class DabBaseContext
       yield(ret, arg)
 
       while true
-        next_item = subcontext.on_subcontext do |subsubcontext|
-          next unless sep = subsubcontext.read_any_operator(separator)
-          next unless next_arg = subsubcontext.send(item_method)
+        if accept_extra_separator
+          break unless sep = subcontext.read_any_operator(separator)
+          break unless next_arg = subcontext.send(item_method)
           yield(ret, next_arg, sep)
+        else
+          next_item = subcontext.on_subcontext do |subsubcontext|
+            next unless sep = subsubcontext.read_any_operator(separator)
+            next unless next_arg = subsubcontext.send(item_method)
+            yield(ret, next_arg, sep)
+          end
+          break unless next_item
         end
-        break unless next_item
       end
 
       ret
