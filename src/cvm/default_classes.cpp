@@ -26,6 +26,12 @@ void DabVM::define_default_classes()
     });
     object_class.add_simple_function(vm, "class",
                                      [this](DabValue self) { return self.get_class(*this); });
+    object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret) {
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto arg = stack.pop_value();
+        stack.push_value(arg.get_class(*this).name);
+    });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
     string_class.add_simple_function(vm, "upcase", [](DabValue self) {

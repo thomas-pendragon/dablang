@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	var a = Array;
+	print(a.to_s); print("\n");
+	print(a);	   print("\n");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+Array
+Array
