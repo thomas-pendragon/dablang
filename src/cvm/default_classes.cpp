@@ -26,6 +26,8 @@ void DabVM::define_default_classes()
     });
     object_class.add_simple_function(vm, "class",
                                      [this](DabValue self) { return self.get_class(*this); });
+    object_class.add_simple_function(
+        vm, "to_s", [this](DabValue self) { return "#" + self.get_class(*this).name; });
     object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 1);
         assert(n_ret == 1);

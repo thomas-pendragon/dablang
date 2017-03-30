@@ -1,0 +1,21 @@
+## CODE
+
+class CustomObject
+{
+}
+
+func main()
+{
+	var a = CustomObject.new;
+	print(a.to_s); print("\n");
+	print(a);	   print("\n");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+#CustomObject
+#CustomObject
