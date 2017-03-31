@@ -14,7 +14,6 @@
 
 ## New tools ##
 
-- automatic formatting
 - IDE
 - package management
 - game demo
