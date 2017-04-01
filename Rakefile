@@ -148,9 +148,9 @@ end
 task format: ['format:sort', 'format:ruby', 'format:cpp']
 
 task :master do
-  psystem('git checkout master; git merge develop; git multipush; git checkout develop')
+  psystem('git checkout master; git merge develop; git multipush github; git checkout develop')
 end
 
 task :dev do
-  psystem('git checkout develop; git multipush gitlab master --force')
+  psystem('git checkout develop; git multipush origin --force')
 end
