@@ -12,10 +12,17 @@ class DabNodeUnit < DabNode
     insert(@constants, 'constants')
     insert(@classes, 'classes')
     @class_numbers = STANDARD_CLASSES_REV.dup
+    @labels = 0
   end
 
   def class_number(id)
     @class_numbers[id]
+  end
+
+  def reserve_label
+    ret = @labels
+    @labels += 1
+    "L#{ret}"
   end
 
   def add_constant(literal)

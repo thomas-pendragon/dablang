@@ -10,7 +10,6 @@ class DabNodeFunction < DabNode
     insert(body, 'body')
     arglist ||= DabNode.new
     insert(arglist, 'arglist')
-    @labels = 0
   end
 
   def parent_class
@@ -43,12 +42,6 @@ class DabNodeFunction < DabNode
     self.root.constants
   end
 
-  def reserve_label
-    ret = @labels
-    @labels += 1
-    "L#{ret}"
-  end
-
   def compile(output)
     output.function(identifier, parent_class_index, n_local_vars) do
       body.compile(output)
@@ -77,7 +70,7 @@ class DabNodeFunction < DabNode
   end
 
   def new_named_codeblock
-    label = reserve_label
+    label = root.reserve_label
     DabNodeCodeBlock.new(label)
   end
 

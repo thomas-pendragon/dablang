@@ -1,0 +1,31 @@
+## CODE
+
+func a(arg)
+{
+  if (arg)
+  {
+    print("ok");
+  };
+}
+
+func b(arg)
+{
+  if (arg)
+  {
+    print("ok");
+  };
+}
+
+func main()
+{
+  a(1);
+  b(1);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+okok
