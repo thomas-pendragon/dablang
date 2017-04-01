@@ -348,8 +348,6 @@ struct DabVM
 
     void push(int kind, bool value);
 
-    void stack_push(const std::string &value);
-
     void push(int kind, const std::string &value);
 
     void push(DabValue val);
