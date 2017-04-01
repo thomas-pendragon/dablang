@@ -107,9 +107,9 @@ void DabVM::define_default_classes()
     nil_class.add_simple_function(vm, "to_s", [](DabValue self) { return std::string("nil"); });
 
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
-    array_class.add_simple_function(vm, "count", [this](DabValue self) {
+    array_class.add_simple_function(vm, "count", [](DabValue self) {
         assert(self.data.type == TYPE_ARRAY);
-        return self.array().size();
+        return (uint64_t)self.array().size();
     });
     array_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
         assert(n_args == 2);
