@@ -296,6 +296,17 @@ struct Stack
         return _data.size();
     }
 
+    std::string pop_symbol()
+    {
+        auto val = pop_value();
+        if (val.data.type != TYPE_SYMBOL)
+        {
+            fprintf(stderr, "VM error: value is not a symbol.\n");
+            exit(1);
+        }
+        return val.data.string;
+    }
+
     DabValue &operator[](int64_t offset)
     {
         if (offset < 0)
@@ -398,8 +409,6 @@ struct DabVM
                               const DabValue &object);
 
     void kernelcall(int call);
-
-    std::string stack_pop_symbol();
 
     void push_constant_symbol(const std::string &name);
 

@@ -298,7 +298,7 @@ void DabVM::execute_single(Stream &input)
     }
     case OP_CALL:
     {
-        auto name   = stack_pop_symbol();
+        auto name   = stack.pop_symbol();
         auto n_args = input.read_uint16();
         auto n_rets = input.read_uint16();
         call(name, n_args);
@@ -384,7 +384,7 @@ void DabVM::execute_single(Stream &input)
     }
     case OP_INSTCALL:
     {
-        auto name   = stack_pop_symbol();
+        auto name   = stack.pop_symbol();
         auto recv   = stack.pop_value();
         auto n_args = input.read_uint16();
         auto n_rets = input.read_uint16();
@@ -498,17 +498,6 @@ void DabVM::kernelcall(int call)
         exit(1);
         break;
     }
-}
-
-std::string DabVM::stack_pop_symbol()
-{
-    auto val = stack.pop_value();
-    if (val.data.type != TYPE_SYMBOL)
-    {
-        fprintf(stderr, "VM error: value is not a symbol.\n");
-        exit(1);
-    }
-    return val.data.string;
 }
 
 void DabVM::push_constant_symbol(const std::string &name)
