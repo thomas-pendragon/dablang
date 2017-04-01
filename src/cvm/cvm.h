@@ -216,7 +216,7 @@ struct DabValue
         data.type   = TYPE_CLASS;
         data.fixnum = klass.index;
     }
-    DabValue(size_t value)
+    DabValue(uint64_t value)
     {
         data.type   = TYPE_FIXNUM;
         data.fixnum = value;
@@ -349,10 +349,6 @@ struct DabVM
     void push(int kind, bool value);
 
     void stack_push(const std::string &value);
-
-    void stack_push(uint64_t value);
-
-    void stack_push(bool value);
 
     void push(int kind, const std::string &value);
 

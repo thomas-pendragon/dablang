@@ -89,16 +89,6 @@ void DabVM::stack_push(const std::string &value)
     push(VAL_STACK, value);
 }
 
-void DabVM::stack_push(uint64_t value)
-{
-    push(VAL_STACK, value);
-}
-
-void DabVM::stack_push(bool value)
-{
-    push(VAL_STACK, value);
-}
-
 void DabVM::push(int kind, const std::string &value)
 {
     DabValue val;

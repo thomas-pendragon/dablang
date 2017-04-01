@@ -16,9 +16,9 @@
             uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
             auto str      = arg0.data.string op arg1.data.string;                                  \
             if (arg0.data.type == TYPE_FIXNUM)                                                     \
-                stack_push(num);                                                                   \
+                stack.push(num);                                                                   \
             else                                                                                   \
-                stack_push(str);                                                                   \
+                stack.push(str);                                                                   \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
@@ -35,7 +35,7 @@
             auto     arg1 = stack.pop_value();                                                     \
             auto     arg0 = stack.pop_value();                                                     \
             uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
-            stack_push(num);                                                                       \
+            stack.push(num);                                                                       \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
@@ -60,7 +60,7 @@
             {                                                                                      \
                 test = arg0.data.string op arg1.data.string;                                       \
             }                                                                                      \
-            stack_push(test);                                                                      \
+            stack.push(test);                                                                      \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
