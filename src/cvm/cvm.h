@@ -368,8 +368,6 @@ struct DabVM
 
     int run(Stream &input, bool autorun);
 
-    DabValue &start_of_constants();
-
     DabValue &get_arg(int arg_index);
 
     DabValue &get_var(int var_index);

@@ -196,11 +196,6 @@ DabValue &DabVM::get_var(int var_index)
     return stack[index];
 }
 
-DabValue &DabVM::start_of_constants()
-{
-    return stack[frame_position];
-}
-
 DabValue &DabVM::get_arg(int arg_index)
 {
     auto index = frame_position - number_of_args() - 2 + arg_index;
