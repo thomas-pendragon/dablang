@@ -144,7 +144,7 @@ size_t DabVM::ip() const
     return instructions.position();
 }
 
-int DabVM::run(Stream &input, bool autorun)
+int DabVM::run(Stream &input, bool autorun, bool raw)
 {
     auto mark1 = input.read_uint8();
     auto mark2 = input.read_uint8();
@@ -162,14 +162,17 @@ int DabVM::run(Stream &input, bool autorun)
 
     execute(input);
 
-    call("main", 0);
-    if (autorun)
+    if (!raw)
     {
-        execute(instructions);
-    }
-    else
-    {
-        execute_debug(instructions);
+        call("main", 0);
+        if (autorun)
+        {
+            execute(instructions);
+        }
+        else
+        {
+            execute_debug(instructions);
+        }
     }
 
     return 0;
@@ -554,6 +557,7 @@ struct DabRunOptions
     FILE *input      = stdin;
     bool  close_file = false;
     bool  autorun    = true;
+    bool  raw        = false;
 
     void parse(const std::vector<std::string> &args);
 };
@@ -598,6 +602,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->autorun = false;
     }
+
+    if (flags["--raw"])
+    {
+        this->raw = true;
+    }
 }
 
 int main(int argc, char **argv)
@@ -619,7 +628,7 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
-    auto  ret_value = vm.run(input, options.autorun);
+    auto  ret_value = vm.run(input, options.autorun, options.raw);
     if (options.close_file)
     {
         fclose(stream);

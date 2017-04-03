@@ -371,7 +371,7 @@ struct DabVM
 
     size_t ip() const;
 
-    int run(Stream &input, bool autorun);
+    int run(Stream &input, bool autorun, bool raw);
 
     DabValue &get_arg(int arg_index);
 
