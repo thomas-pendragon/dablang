@@ -11,6 +11,16 @@
 struct AsmStream
 {
     std::vector<unsigned char> data;
+    size_t &                   _position;
+
+    AsmStream(size_t &position) : _position(position)
+    {
+    }
+
+    size_t position() const
+    {
+        return _position;
+    }
 
     void *read(size_t size = 1)
     {
@@ -18,6 +28,7 @@ struct AsmStream
         data.resize(old_size + size);
         auto buffer = &data[old_size];
         fread(buffer, 1, size, stdin);
+        _position += size;
         return buffer;
     }
 
@@ -84,9 +95,11 @@ int main()
     unsigned char header[header_size];
     fread(header, 1, header_size, stdin);
 
+    size_t position = 0;
     while (!feof(stdin))
     {
-        AsmStream stream;
+        auto      pos = position;
+        AsmStream stream(position);
         stream.read();
         unsigned char opcode = stream[0];
         assert(opcode < countof(g_opcodes));
@@ -111,7 +124,7 @@ int main()
             }
         }
         info = data.name + " " + info;
-        printf("%s\n", info.c_str());
+        printf("%8lX: %s\n", pos, info.c_str());
     }
 
     return 0;
