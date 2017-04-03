@@ -26,4 +26,6 @@ enum
     OP_PUSH_ARRAY      = 0x15,
     OP_PUSH_TRUE       = 0x16,
     OP_PUSH_FALSE      = 0x17,
+    OP_MULTISEGMENT    = 0x18,
+    OP_LOAD_FUNCTION   = 0x19,
 };
