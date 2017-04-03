@@ -14,7 +14,7 @@ OPCODES = {
   0x0C => {name: 'NOP'}, #
   0x0D => {name: 'PUSH_NIL'}, # push(1)
   0x0E => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
-  0x0F => {name: 'START_CLASS', args: %i(vlc uint16)},
+  0x0F => {name: 'START_CLASS', args: %i(vlc uint16)}, # DEPRECATED
   0x10 => {name: 'PUSH_CLASS', arg: :uint16}, # push(1)
   0x11 => {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
   0x12 => {name: 'PUSH_SELF'}, # push(1)
@@ -25,6 +25,7 @@ OPCODES = {
   0x17 => {name: 'PUSH_FALSE'}, # push(1)
   0x18 => {name: 'MULTISEGMENT', args: %i(uint64 uint64)}, # n = sizeof self, n2 = sizeof functions
   0x19 => {name: 'LOAD_FUNCTION', args: %i(vlc uint64 uint64 uint16 uint16)}, # [name, address, sizeof, classIndex, nLocals]
+  0x20 => {name: 'DEFINE_CLASS', args: %i(vlc uint16)}, # n = name, n2 = base class index
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

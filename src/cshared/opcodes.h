@@ -28,4 +28,5 @@ enum
     OP_PUSH_FALSE      = 0x17,
     OP_MULTISEGMENT    = 0x18,
     OP_LOAD_FUNCTION   = 0x19,
+    OP_DEFINE_CLASS    = 0x20,
 };

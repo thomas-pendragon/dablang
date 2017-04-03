@@ -183,12 +183,6 @@ class Parser
         @output_stream._push(@function_stream.code)
 
         reset_substream
-      elsif line[0] == 'START_CLASS'
-        @in_class = true
-        start_substream(line)
-      elsif line[0] == 'END_CLASS'
-        @in_class = false
-        @output_stream.write(@function_line)
       elsif @in_function
         if label
           @label_positions[label.to_s] = function_pos
@@ -198,7 +192,7 @@ class Parser
           line[1] = 0
         end
         @function_stream.write(line)
-      elsif line[0].start_with? 'CONSTANT'
+      elsif line[0].start_with?('CONSTANT') || line[0] == 'DEFINE_CLASS'
         @output_stream.write(line)
       elsif line[0] == '' || line[0].nil?
       else

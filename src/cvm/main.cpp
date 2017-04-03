@@ -369,7 +369,7 @@ void DabVM::execute_single(Stream &input)
         kernelcall(call);
         break;
     }
-    case OP_START_CLASS:
+    case OP_DEFINE_CLASS:
     {
         auto name  = input.read_vlc_string();
         auto index = input.read_uint16();
