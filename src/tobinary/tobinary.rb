@@ -192,11 +192,11 @@ class Parser
           line[1] = 0
         end
         @function_stream.write(line)
-      elsif line[0].start_with?('CONSTANT') || line[0] == 'DEFINE_CLASS'
-        @output_stream.write(line)
+      elsif line[0].start_with?('JMP')
+        raise 'jumps outside functions not supported yet'
       elsif line[0] == '' || line[0].nil?
       else
-        raise 'unknown op outside function' # @output_stream.write(line)
+        @output_stream.write(line)
       end
     end
     @output_stream.finalize
