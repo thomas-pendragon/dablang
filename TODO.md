@@ -54,6 +54,7 @@
 
 - `==` and `!=` operators on mismatching types
 - breakpoints
+- use exceptions
 
 ## Testing ##
 
