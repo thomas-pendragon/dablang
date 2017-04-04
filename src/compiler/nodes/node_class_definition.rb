@@ -14,6 +14,10 @@ class DabNodeClassDefinition < DabNode
     insert(@functions)
   end
 
+  def functions
+    @functions
+  end
+
   def extra_dump
     identifier
   end
