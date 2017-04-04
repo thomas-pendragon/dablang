@@ -56,6 +56,10 @@
 - breakpoints
 - use exceptions
 
+## Assembler ##
+
+- remove `NOP`s, merge labels
+
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
@@ -67,6 +71,7 @@
 
 ## Misc ##
 
+- use Bundler, or at least a sane place to load deps (currently in `debug_output.rb`)
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
 - negative offsets for JMP
