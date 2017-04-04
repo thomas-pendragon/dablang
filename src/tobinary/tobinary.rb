@@ -143,62 +143,30 @@ class Parser
     1
   end
 
-  def function_pos
-    @function_stream.pos
+  def pos
+    @output_stream.pos
   end
 
-  def start_substream(line)
-    @function_line = line.dup
-    @function_string = StringIO.new
-    @function_stream = OutputStream.new(@function_string)
-    @label_positions = {}
-    @jump_corrections = []
-  end
-
-  def reset_substream
-    @in_function = false
-    @function_line = nil
-    @function_string = nil
-    @function_stream = nil
-    @label_positions = {}
-    @jump_corrections = []
-  end
-
-  @in_class = false
   def run!
+    @label_positions = {}
+    @jump_corrections = []
     @output_stream.begin(self)
     @input_stream.each do |instr|
       errap instr
       line = [instr[:op]] + (instr[:arglist] || [])
       errap line
       label = instr[:label]
-      if line[0] == 'START_FUNCTION'
-        @in_function = true
-        start_substream(line)
-      elsif line[0] == 'END_FUNCTION'
-        @function_stream.fix_jumps(@label_positions, @jump_corrections)
-
-        @function_line[4] = @function_stream.code.length
-        @output_stream.write(@function_line)
-        @output_stream._push(@function_stream.code)
-
-        reset_substream
-      elsif @in_function
-        if label
-          @label_positions[label.to_s] = function_pos
-        end
-        if line[0] == 'JMP' || line[0] == 'JMP_IFN'
-          @jump_corrections << [function_pos, line[1].to_s]
-          line[1] = 0
-        end
-        @function_stream.write(line)
-      elsif line[0].start_with?('JMP')
-        raise 'jumps outside functions not supported yet'
-      elsif line[0] == '' || line[0].nil?
-      else
-        @output_stream.write(line)
+      next if line[0] == '' || line[0].nil?
+      if line[0] == 'LOAD_FUNCTION' || line[0] == 'JMP' || line[0] == 'JMP_IFN'
+        @jump_corrections << [pos, line[1].to_s]
+        line[1] = 0
       end
+      if label
+        @label_positions[label.to_s] = pos
+      end
+      @output_stream.write(line)
     end
+    @output_stream.fix_jumps(@label_positions, @jump_corrections)
     @output_stream.finalize
   end
 end

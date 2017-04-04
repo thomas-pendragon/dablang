@@ -160,7 +160,10 @@ int DabVM::run(Stream &input, bool autorun, bool raw)
     auto code_length      = input.read_uint64();
     auto code_crc         = input.read_uint64();
 
-    execute(input);
+    instructions.append(input);
+
+    execute(instructions);
+    instructions.rewind();
 
     if (!raw)
     {
@@ -269,13 +272,14 @@ bool DabVM::execute_single(Stream &input)
     auto opcode = input.read_uint8();
     switch (opcode)
     {
-    case OP_START_FUNCTION:
+    case OP_LOAD_FUNCTION:
     {
-        auto name        = input.read_vlc_string();
-        auto class_index = input.read_uint16();
-        auto n_locals    = input.read_uint16();
-        auto body_length = input.read_uint16();
-        add_function(input, name, class_index, n_locals, body_length);
+        size_t _ip         = ip() - 1;
+        size_t address     = input.read_uint16();
+        auto   name        = input.read_vlc_string();
+        auto   class_index = input.read_uint16();
+        auto   n_locals    = input.read_uint16();
+        add_function(address + _ip, name, class_index, n_locals);
         break;
     }
     case OP_CONSTANT_SYMBOL:
@@ -540,13 +544,13 @@ void DabVM::push_constant_fixnum(uint64_t value)
     push_constant(val);
 }
 
-void DabVM::add_function(Stream &input, const std::string &name, uint16_t class_index,
-                         size_t n_locals, size_t body_length)
+void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index,
+                         size_t n_locals)
+
 {
-    auto position = instructions.length();
-    fprintf(stderr, "VM: read function <%s>.\n", name.c_str());
+    fprintf(stderr, "VM: add function <%s>.\n", name.c_str());
     DabFunction function;
-    function.address  = position;
+    function.address  = address;
     function.n_locals = n_locals;
     function.name     = name;
     if (class_index == 0xFFFF)
@@ -557,7 +561,6 @@ void DabVM::add_function(Stream &input, const std::string &name, uint16_t class_
     {
         get_class(class_index).functions[name] = function;
     }
-    instructions.append(input, body_length);
 }
 
 struct DabRunOptions

@@ -45,6 +45,10 @@ struct Stream
 
     void append(const byte *data, size_t length);
 
+    void append(Stream &stream)
+    {
+        append(stream, stream.remaining());
+    }
     void append(Stream &stream, size_t length);
 
     void seek(size_t position);
@@ -53,12 +57,18 @@ struct Stream
     size_t position() const;
     bool   eof() const;
 
+    void rewind()
+    {
+        seek(0);
+    }
+
+    size_t remaining() const;
+
   private:
     Buffer buffer;
     size_t _position = 0;
 
-    byte * data() const;
-    size_t remaining() const;
+    byte *data() const;
 
     template <typename T>
     T _read()
@@ -416,8 +426,8 @@ struct DabVM
 
     void push_constant_fixnum(uint64_t value);
 
-    void add_function(Stream &input, const std::string &name, uint16_t class_index, size_t n_locals,
-                      size_t body_length);
+    void add_function(size_t address, const std::string &name, uint16_t class_index,
+                      size_t n_locals);
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets);
 
