@@ -399,7 +399,7 @@ struct DabVM
 
     void execute(Stream &input);
 
-    void execute_single(Stream &input);
+    bool execute_single(Stream &input);
 
     void push_class(int index);
 

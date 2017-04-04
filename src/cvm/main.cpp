@@ -257,11 +257,14 @@ void DabVM::execute(Stream &input)
 {
     while (!input.eof())
     {
-        execute_single(input);
+        if (!execute_single(input))
+        {
+            break;
+        }
     }
 }
 
-void DabVM::execute_single(Stream &input)
+bool DabVM::execute_single(Stream &input)
 {
     auto opcode = input.read_uint8();
     switch (opcode)
@@ -428,11 +431,16 @@ void DabVM::execute_single(Stream &input)
         stack.push(false);
         break;
     }
+    case OP_BREAK_LOAD:
+    {
+        return false;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
         break;
     }
+    return true;
 }
 
 void DabVM::push_array(size_t n)
