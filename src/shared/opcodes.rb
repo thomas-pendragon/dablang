@@ -23,7 +23,7 @@ OPCODES = {
   0x15 => {name: 'PUSH_ARRAY', arg: :uint16}, # pop(arg), push(1)
   0x16 => {name: 'PUSH_TRUE'}, # push(1)
   0x17 => {name: 'PUSH_FALSE'}, # push(1)
-  0x18 => {name: 'MULTISEGMENT', args: %i(uint64 uint64)}, # n = sizeof self, n2 = sizeof functions
+  0x18 => {name: 'BREAK_LOAD'}, # stop loading the code
   0x19 => {name: 'LOAD_FUNCTION', args: %i(vlc uint64 uint64 uint16 uint16)}, # [name, address, sizeof, classIndex, nLocals]
   0x20 => {name: 'DEFINE_CLASS', args: %i(vlc uint16)}, # n = name, n2 = base class index
 }.freeze
