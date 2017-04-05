@@ -396,8 +396,6 @@ struct DabVM
 
     int number_of_args();
 
-    int number_of_vars();
-
     void push_constant(const DabValue &value);
 
     void call(const std::string &name, int n_args);

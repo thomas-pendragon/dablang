@@ -213,11 +213,6 @@ int DabVM::number_of_args()
     return stack[frame_position + 0].data.fixnum;
 }
 
-int DabVM::number_of_vars()
-{
-    return stack[frame_position + 1].data.fixnum;
-}
-
 void DabVM::push_constant(const DabValue &value)
 {
     constants.push_back(value);
