@@ -49,7 +49,7 @@ class DabNodeFunction < DabNode
 
   def compile_body(output)
     output.label(@flabel)
-    output.print('NOP')
+    output.print('STACK_RESERVE', n_local_vars)
     body.compile(output)
   end
 

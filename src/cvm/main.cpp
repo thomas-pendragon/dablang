@@ -119,13 +119,6 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, int n_locals)
         val.data.type = TYPE_INVALID;
         stack.push_value(val);
     }
-    for (int i = 0; i < n_locals; i++)
-    {
-        DabValue val;
-        val.data.kind = VAL_VARIABLE;
-        val.data.type = TYPE_INVALID;
-        stack.push_value(val);
-    }
 }
 
 void DabVM::_dump(const char *name, const std::vector<DabValue> &data)
@@ -438,6 +431,15 @@ bool DabVM::execute_single(Stream &input)
     case OP_BREAK_LOAD:
     {
         return false;
+    }
+    case OP_STACK_RESERVE:
+    {
+        auto n = input.read_uint16();
+        for (auto i = 0; i < n; i++)
+        {
+            stack.push(nullptr);
+        }
+        break;
     }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);

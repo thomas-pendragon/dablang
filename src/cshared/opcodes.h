@@ -29,4 +29,5 @@ enum
     OP_BREAK_LOAD      = 0x18,
     OP_LOAD_FUNCTION   = 0x19,
     OP_DEFINE_CLASS    = 0x1A,
+    OP_STACK_RESERVE   = 0x1B,
 };
