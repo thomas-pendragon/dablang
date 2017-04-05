@@ -92,7 +92,6 @@ struct DabFunction
 
     size_t      address = -1;
     std::string name;
-    int         n_locals = 0;
 };
 
 enum
@@ -375,7 +374,7 @@ struct DabVM
 
     size_t stack_position() const;
 
-    void push_new_frame(const DabValue &self, int n_args, int n_locals);
+    void push_new_frame(const DabValue &self, int n_args);
 
     void _dump(const char *name, const std::vector<DabValue> &data);
 
@@ -426,8 +425,7 @@ struct DabVM
 
     void push_constant_fixnum(uint64_t value);
 
-    void add_function(size_t address, const std::string &name, uint16_t class_index,
-                      size_t n_locals);
+    void add_function(size_t address, const std::string &name, uint16_t class_index);
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets);
 

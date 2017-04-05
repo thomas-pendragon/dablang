@@ -104,13 +104,13 @@ size_t DabVM::stack_position() const
     return stack.size();
 }
 
-void DabVM::push_new_frame(const DabValue &self, int n_args, int n_locals)
+void DabVM::push_new_frame(const DabValue &self, int n_args)
 {
     push(VAL_FRAME_PREV_IP, (uint64_t)ip());
     push(VAL_FRAME_PREV_STACK, (uint64_t)frame_position); // push previous frame
     frame_position = stack_position();
-    push(VAL_FRAME_COUNT_ARGS, n_args);   // number of arguments
-    push(VAL_FRAME_COUNT_VARS, n_locals); // number of locals
+    push(VAL_FRAME_COUNT_ARGS, n_args); // number of arguments
+    push(VAL_FRAME_COUNT_VARS, 0);      // number of locals
     stack.push(self, VAL_SELF);
     {
         // push retvalue
@@ -238,8 +238,7 @@ void DabVM::call_function(const DabValue &self, const DabFunction &fun, int n_ar
 {
     if (fun.regular)
     {
-        push_new_frame(self, n_args, fun.n_locals);
-        fprintf(stderr, "VM: %s has %d local vars.\n", fun.name.c_str(), fun.n_locals);
+        push_new_frame(self, n_args);
         instructions.seek(fun.address);
     }
     else
@@ -271,8 +270,7 @@ bool DabVM::execute_single(Stream &input)
         size_t address     = input.read_uint16();
         auto   name        = input.read_vlc_string();
         auto   class_index = input.read_uint16();
-        auto   n_locals    = input.read_uint16();
-        add_function(address + _ip, name, class_index, n_locals);
+        add_function(address + _ip, name, class_index);
         break;
     }
     case OP_CONSTANT_SYMBOL:
@@ -546,15 +544,12 @@ void DabVM::push_constant_fixnum(uint64_t value)
     push_constant(val);
 }
 
-void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index,
-                         size_t n_locals)
-
+void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
 {
     fprintf(stderr, "VM: add function <%s>.\n", name.c_str());
     DabFunction function;
-    function.address  = address;
-    function.n_locals = n_locals;
-    function.name     = name;
+    function.address = address;
+    function.name    = name;
     if (class_index == 0xFFFF)
     {
         functions[name] = function;

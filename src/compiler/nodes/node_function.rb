@@ -44,7 +44,7 @@ class DabNodeFunction < DabNode
 
   def compile(output)
     @flabel = root.reserve_label
-    output.print('LOAD_FUNCTION', @flabel, identifier, parent_class_index, n_local_vars)
+    output.print('LOAD_FUNCTION', @flabel, identifier, parent_class_index)
   end
 
   def compile_body(output)
