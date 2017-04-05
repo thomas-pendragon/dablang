@@ -110,7 +110,6 @@ void DabVM::push_new_frame(const DabValue &self, int n_args)
     push(VAL_FRAME_PREV_STACK, (uint64_t)frame_position); // push previous frame
     frame_position = stack_position();
     push(VAL_FRAME_COUNT_ARGS, n_args); // number of arguments
-    push(VAL_FRAME_COUNT_VARS, 0);      // number of locals
     stack.push(self, VAL_SELF);
     {
         // push retvalue
@@ -176,7 +175,7 @@ int DabVM::run(Stream &input, bool autorun, bool raw)
 
 DabValue &DabVM::get_var(int var_index)
 {
-    auto index = frame_position + 4 + var_index;
+    auto index = frame_position + 3 + var_index;
     return stack[index];
 }
 
@@ -188,13 +187,13 @@ DabValue &DabVM::get_arg(int arg_index)
 
 DabValue &DabVM::get_retval()
 {
-    auto index = frame_position + 3;
+    auto index = frame_position + 2;
     return stack[index];
 }
 
 DabValue &DabVM::get_self()
 {
-    auto index = frame_position + 2;
+    auto index = frame_position + 1;
     return stack[index];
 }
 
