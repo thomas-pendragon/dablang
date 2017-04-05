@@ -437,4 +437,6 @@ struct DabVM
     void get_instvar(const std::string &name);
     void set_instvar(const std::string &name, const DabValue &value);
     void push_array(size_t n);
+
+    void extract(const std::string &name);
 };

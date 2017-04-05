@@ -163,10 +163,10 @@ int DabVM::run(Stream &input, bool autorun, bool raw)
     instructions.append(input);
 
     execute(instructions);
-    instructions.rewind();
 
     if (!raw)
     {
+        instructions.rewind();
         call("main", 0);
         if (autorun)
         {
@@ -563,26 +563,53 @@ void DabVM::add_function(size_t address, const std::string &name, uint16_t class
     }
 }
 
+void DabVM::extract(const std::string &name)
+{
+    if (name == "rip")
+    {
+        printf("%zu", ip());
+    }
+    else
+    {
+        fprintf(stderr, "VM: unknown extract option <%s>.\n", name.c_str());
+        exit(1);
+    }
+}
+
 struct DabRunOptions
 {
-    FILE *input      = stdin;
-    bool  close_file = false;
-    bool  autorun    = true;
-    bool  raw        = false;
+    FILE *      input      = stdin;
+    bool        close_file = false;
+    bool        autorun    = true;
+    bool        extract    = false;
+    bool        raw        = false;
+    std::string extract_part;
 
     void parse(const std::vector<std::string> &args);
 };
 
 void DabRunOptions::parse(const std::vector<std::string> &args)
 {
-    std::map<std::string, bool> flags;
+    std::map<std::string, bool>        flags;
+    std::map<std::string, std::string> options;
     std::vector<std::string> others;
 
     for (auto &arg : args)
     {
         if (arg.substr(0, 2) == "--")
         {
-            flags[arg] = true;
+            auto pos = arg.find("=");
+            if (pos != std::string::npos)
+            {
+                auto argname     = arg.substr(0, pos);
+                auto argvalue    = arg.substr(pos + 1);
+                options[argname] = argvalue;
+                fprintf(stderr, "[%s]=[%s]\n", argname.c_str(), argvalue.c_str());
+            }
+            else
+            {
+                flags[arg] = true;
+            }
         }
         else
         {
@@ -594,6 +621,12 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         fprintf(stderr, "VM: too many file arguments.\n");
         exit(1);
+    }
+
+    if (options.count("--output"))
+    {
+        this->extract      = true;
+        this->extract_part = options["--output"];
     }
 
     if (others.size() == 1)
@@ -640,6 +673,10 @@ int main(int argc, char **argv)
     }
     DabVM vm;
     auto  ret_value = vm.run(input, options.autorun, options.raw);
+    if (options.extract)
+    {
+        vm.extract(options.extract_part);
+    }
     if (options.close_file)
     {
         fclose(stream);

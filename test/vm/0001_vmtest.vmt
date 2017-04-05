@@ -1,0 +1,15 @@
+## CODE
+
+NOP
+
+## COMMENT
+
+NOP is 1-byte op, RIP register should equal 1 after execution.
+
+## TESTCASE
+
+$rip
+
+## EXPECT
+
+1
