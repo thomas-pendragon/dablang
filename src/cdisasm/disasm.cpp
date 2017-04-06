@@ -88,12 +88,17 @@ struct AsmStream
     }
 };
 
-int main()
+int main(int argc, char **argv)
 {
-    // skip header
-    const auto    header_size = 3 + 4 * 8;
-    unsigned char header[header_size];
-    fread(header, 1, header_size, stdin);
+    bool raw = (argc == 2) && (std::string(argv[1]) == "--raw");
+
+    if (!raw)
+    {
+        // skip header
+        const auto    header_size = 3 + 4 * 8;
+        unsigned char header[header_size];
+        fread(header, 1, header_size, stdin);
+    }
 
     size_t position = 0;
     while (!feof(stdin))
