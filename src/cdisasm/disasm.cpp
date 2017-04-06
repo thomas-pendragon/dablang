@@ -26,8 +26,10 @@ struct AsmStream
     {
         auto old_size = data.size();
         data.resize(old_size + size);
-        auto buffer = &data[old_size];
-        fread(buffer, 1, size, stdin);
+        auto buffer    = &data[old_size];
+        auto real_size = fread(buffer, 1, size, stdin);
+        if (!real_size)
+            return nullptr;
         _position += size;
         return buffer;
     }
@@ -105,7 +107,10 @@ int main(int argc, char **argv)
     {
         auto      pos = position;
         AsmStream stream(position);
-        stream.read();
+        if (!stream.read())
+        {
+            break;
+        }
         unsigned char opcode = stream[0];
         assert(opcode < countof(g_opcodes));
         const auto &data = g_opcodes[opcode];
