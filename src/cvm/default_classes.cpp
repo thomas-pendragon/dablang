@@ -60,7 +60,6 @@ void DabVM::define_default_classes()
         auto     klass = stack.pop_value();
         DabValue ret_value;
         ret_value.data.type = TYPE_STRING;
-        ret_value.data.kind = VAL_STACK;
         if (n_args == 2)
         {
             auto arg = stack.pop_value();
@@ -80,7 +79,6 @@ void DabVM::define_default_classes()
         auto     klass = stack.pop_value();
         DabValue ret_value;
         ret_value.data.type   = TYPE_FIXNUM;
-        ret_value.data.kind   = VAL_STACK;
         ret_value.data.fixnum = 0;
         if (n_args == 2)
         {

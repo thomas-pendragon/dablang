@@ -96,19 +96,6 @@ struct DabFunction
 
 enum
 {
-    VAL_INVALID = 0,
-    VAL_FRAME_PREV_IP,
-    VAL_FRAME_PREV_STACK,
-    VAL_FRAME_COUNT_ARGS,
-    VAL_RETVAL,
-    VAL_CONSTANT,
-    VAL_VARIABLE,
-    VAL_STACK,
-    VAL_SELF,
-};
-
-enum
-{
     TYPE_INVALID = 0,
     TYPE_FIXNUM,
     TYPE_STRING,
@@ -175,7 +162,6 @@ struct DabObjectProxy
 
 struct DabValueData
 {
-    int kind = VAL_INVALID;
     int type = TYPE_INVALID;
 
     int64_t         fixnum;
@@ -266,9 +252,9 @@ struct DabArray : public DabBaseObject
 struct Stack
 {
     template <typename T>
-    void push(T value, int kind = VAL_STACK)
+    void push(T value)
     {
-        push_value(DabValue(value), kind);
+        push_value(DabValue(value));
     }
 
     void push_nil()
@@ -288,9 +274,8 @@ struct Stack
         return ret;
     }
 
-    void push_value(DabValue value, int kind = VAL_STACK)
+    void push_value(DabValue value)
     {
-        value.data.kind = kind;
         _data.push_back(value);
     }
 
@@ -361,13 +346,13 @@ struct DabVM
 
     void pop_frame(bool regular);
 
-    void push(int kind, int value);
+    void push(int value);
 
-    void push(int kind, uint64_t value);
+    void push(uint64_t value);
 
-    void push(int kind, bool value);
+    void push(bool value);
 
-    void push(int kind, const std::string &value);
+    void push(const std::string &value);
 
     void push(DabValue val);
 
