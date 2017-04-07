@@ -176,7 +176,7 @@ struct DabValue
 {
     DabValueData data;
 
-    void dump(DabVM &vm) const;
+    void dump(DabVM &vm, FILE *file = stderr) const;
 
     int         class_index() const;
     std::string class_name(DabVM &vm) const;

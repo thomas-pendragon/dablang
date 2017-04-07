@@ -1,10 +1,10 @@
 #include "cvm.h"
 
-void DabValue::dump(DabVM &vm) const
+void DabValue::dump(DabVM &vm, FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
-    fprintf(stderr, "%s ", types[data.type]);
-    print(vm, stderr, true);
+    fprintf(file, "%s ", types[data.type]);
+    print(vm, file, true);
 }
 
 int DabValue::class_index() const
