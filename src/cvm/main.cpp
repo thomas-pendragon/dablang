@@ -549,6 +549,15 @@ void DabVM::extract(const std::string &name)
     {
         printf("%zu", ip());
     }
+    else if (name == "stack[-1]")
+    {
+        if (stack.size() == 0)
+        {
+            fprintf(stderr, "VM: empty stack.\n");
+            exit(1);
+        }
+        stack[stack.size() - 1].dump(*this, stdout);
+    }
     else
     {
         fprintf(stderr, "VM: unknown extract option <%s>.\n", name.c_str());

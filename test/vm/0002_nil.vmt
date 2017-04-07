@@ -1,0 +1,15 @@
+## CODE
+
+PUSH_NIL
+
+## COMMENT
+
+Last stack element should be NIL.
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+NIL  nil

@@ -51,7 +51,7 @@ def run_test(settings)
   expected = data[:expect]
 
   index = 0
-  testcase.gsub!(/\$(\w+)/) do |_match|
+  testcase.gsub!(/\$([^\s]+)/) do |_match|
     output = $1
     part = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext(".part#{index}")).to_s
     index += 1
