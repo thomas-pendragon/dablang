@@ -51,47 +51,10 @@ void DabVM::pop_frame(bool regular)
 
     if (regular)
     {
-        push(retval);
+        stack.push(retval);
         fprintf(stderr, "VM: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         instructions.seek(prev_ip);
     }
-}
-
-void DabVM::push(int value)
-{
-    DabValue val;
-    val.data.type   = TYPE_FIXNUM;
-    val.data.fixnum = value;
-    stack.push_value(val);
-}
-
-void DabVM::push(uint64_t value)
-{
-    DabValue val;
-    val.data.type   = TYPE_FIXNUM;
-    val.data.fixnum = value;
-    stack.push_value(val);
-}
-
-void DabVM::push(bool value)
-{
-    DabValue val;
-    val.data.type    = TYPE_BOOLEAN;
-    val.data.boolean = value;
-    stack.push_value(val);
-}
-
-void DabVM::push(const std::string &value)
-{
-    DabValue val;
-    val.data.type   = TYPE_STRING;
-    val.data.string = value;
-    stack.push_value(val);
-}
-
-void DabVM::push(DabValue val)
-{
-    stack.push_value(val);
 }
 
 size_t DabVM::stack_position() const
@@ -101,10 +64,10 @@ size_t DabVM::stack_position() const
 
 void DabVM::push_new_frame(const DabValue &self, int n_args)
 {
-    push((uint64_t)ip());
-    push((uint64_t)frame_position); // push previous frame
+    stack.push((uint64_t)ip());
+    stack.push((uint64_t)frame_position); // push previous frame
     frame_position = stack_position();
-    push(n_args); // number of arguments
+    stack.push((uint64_t)n_args); // number of arguments
     stack.push(self);
     {
         // push retvalue
@@ -282,7 +245,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_PUSH_CONSTANT:
     {
         auto index = input.read_uint16();
-        push(constants[index]);
+        stack.push(constants[index]);
         break;
     }
     case OP_CALL:
@@ -340,14 +303,14 @@ bool DabVM::execute_single(Stream &input)
     {
         auto index = input.read_uint16();
         auto var   = get_var(index);
-        push(var);
+        stack.push(var);
         break;
     }
     case OP_PUSH_ARG:
     {
         auto index = input.read_uint16();
         auto var   = get_arg(index);
-        push(var);
+        stack.push(var);
         break;
     }
     case OP_KERNELCALL:
@@ -380,7 +343,7 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_PUSH_SELF:
     {
-        push(get_self());
+        stack.push(get_self());
         break;
     }
     case OP_PUSH_INSTVAR:

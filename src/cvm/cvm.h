@@ -251,10 +251,9 @@ struct DabArray : public DabBaseObject
 
 struct Stack
 {
-    template <typename T>
-    void push(T value)
+    void push(DabValue value)
     {
-        push_value(DabValue(value));
+        push_value(value);
     }
 
     void push_nil()
@@ -345,16 +344,6 @@ struct DabVM
     void kernel_print();
 
     void pop_frame(bool regular);
-
-    void push(int value);
-
-    void push(uint64_t value);
-
-    void push(bool value);
-
-    void push(const std::string &value);
-
-    void push(DabValue val);
 
     size_t stack_position() const;
 
