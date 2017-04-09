@@ -310,7 +310,7 @@ class DabParser
   end
 
   def current_char_whitespace_or_symbol?
-    current_char_whitespace? || current_char == '<' || current_char == '>'
+    current_char_whitespace? || current_char == '<' || current_char == '>' || current_char == '(' || current_char == ')'
   end
 
   def current_char_identifier_start?(n = 0)

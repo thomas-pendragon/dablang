@@ -1,6 +1,5 @@
 ## Parser ##
 
-- `if(true)` should pass
 - allow semicolon after class/function
 - alternative syntax (end instead of {})
 - optional semicolons
