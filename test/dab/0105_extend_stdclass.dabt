@@ -1,0 +1,25 @@
+## CODE
+
+class Array
+{
+  func second()
+  {
+    return self[1];
+  }
+}
+
+func main()
+{
+  var a = @["foo", "bar", "quux"];
+  puts(a.first);
+  puts(a.second);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+foo
+bar
