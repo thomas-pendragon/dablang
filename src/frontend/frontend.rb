@@ -58,11 +58,16 @@ end
 def extract_source(input, output, text, extra_file = nil)
   describe_action(input, output, 'extract source') do
     File.open(output, 'wb') do |file|
+      stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
+      stdlib_glob = stdlib_path + '/*.dab'
+      file << text
+      Dir.glob(stdlib_glob).each do |fn|
+        file << File.read(fn)
+      end
       if extra_file
         file << File.read("./test/shared/#{extra_file}.dab")
         file << "\n"
       end
-      file << text
     end
   end
 end
