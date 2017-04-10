@@ -426,11 +426,14 @@ void DabVM::push_class(int index)
 
 void DabVM::add_class(const std::string &name, int index)
 {
-    DabClass klass;
-    klass.name     = name;
-    klass.index    = index;
-    klass.builtin  = false;
-    classes[index] = klass;
+    if (!classes.count(index))
+    {
+        DabClass klass;
+        klass.name     = name;
+        klass.index    = index;
+        klass.builtin  = false;
+        classes[index] = klass;
+    }
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets)

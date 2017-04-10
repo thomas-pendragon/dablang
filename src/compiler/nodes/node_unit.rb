@@ -39,7 +39,8 @@ class DabNodeUnit < DabNode
   end
 
   def add_class(klass)
-    number = USER_CLASSES_OFFSET + @classes.count
+    number = @class_numbers[klass.identifier]
+    number ||= USER_CLASSES_OFFSET + @classes.count
     klass.assign_number(number)
     @classes.insert(klass)
     @class_numbers[klass.identifier] = number
