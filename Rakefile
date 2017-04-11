@@ -14,6 +14,9 @@ vm_outputs = []
 disasm_inputs = Dir.glob('test/disasm/*.dat').sort.reverse
 disasm_outputs = []
 
+asm_inputs = Dir.glob('test/asm/*.asmt').sort.reverse
+asm_outputs = []
+
 sources = Dir.glob('src/**/*.rb')
 
 makefile = 'build/Makefile'
@@ -100,6 +103,14 @@ disasm_inputs.each do |input_test_file|
   end
 end
 
+asm_inputs.each do |input_test_file|
+  output_output_file = input_test_file.gsub('test/asm/', 'tmp/test_asm_').gsub('.asmt', '.out')
+  asm_outputs << output_output_file
+  file output_output_file => sources + [input_test_file] do
+    psystem("ruby src/frontend/frontend_asm.rb #{input_test_file} --test_output_prefix test_asm_ --test_output_dir ./tmp/")
+  end
+end
+
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
 
@@ -122,6 +133,9 @@ task vm_spec: vm_outputs do
 end
 
 task disasm_spec: disasm_outputs do
+end
+
+task asm_spec: asm_outputs do
 end
 
 task reverse: outputs.reverse
