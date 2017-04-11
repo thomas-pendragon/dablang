@@ -14,6 +14,12 @@ class DabOutput
     end
   end
 
+  def get_filename(filename)
+    ret = @filenames[filename]
+    raise "unregistered filename <#{filename}>" unless ret
+    ret
+  end
+
   def _print(t)
     if @last_p == " \n" && t == " \n"
       return
@@ -50,6 +56,13 @@ class DabOutput
 
     @comment = nil
     @label = nil
+  end
+
+  def printex(node, *args)
+    if $with_cov && node.source_line
+      print('COV', get_filename(node.source_file), node.source_line)
+    end
+    print(*args)
   end
 
   def _printable(item)

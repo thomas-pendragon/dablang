@@ -13,8 +13,8 @@ def extract_format_source(input, output)
   end
 end
 
-def compile(input, output)
-  run_ruby_part(input, output, 'compile', 'compiler', '--raw')
+def compile(input, output, options)
+  run_ruby_part(input, output, 'compile', 'compiler', options)
 end
 
 def run_test(settings)
@@ -23,6 +23,8 @@ def run_test(settings)
   test_prefix = settings[:test_output_prefix] || ''
 
   data = read_test_file(input)
+
+  options = data[:options] || ''
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
@@ -34,7 +36,7 @@ def run_test(settings)
   FileUtils.rm(out) if File.exist?(out)
 
   extract_format_source(input, dab)
-  compile(dab, asm)
+  compile(dab, asm, options)
 
   expected = data[:expect].strip
 

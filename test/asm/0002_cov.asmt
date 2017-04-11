@@ -1,0 +1,28 @@
+## CODE
+
+func main()
+{
+  print("Test");
+}
+
+## OPTIONS
+
+--with-cov
+
+## EXPECT
+
+/*              */               COV_FILE 1, "<input>"
+ 
+/* 0            */               CONSTANT_SYMBOL print
+/* 1            */               CONSTANT_STRING "Test"
+ 
+/*              */               LOAD_FUNCTION L0, main, -1
+ 
+/*              */               BREAK_LOAD 
+ 
+/*              */ L0          : STACK_RESERVE 0
+/* Test         */               PUSH_CONSTANT 1
+/*              */               COV 1, 3
+/*              */               KERNELCALL 0
+/*              */               PUSH_NIL 
+/*              */               RETURN 1
