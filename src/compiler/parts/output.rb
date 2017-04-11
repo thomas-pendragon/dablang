@@ -1,6 +1,17 @@
 class DabOutput
+  def initialize
+    @filenames = {}
+  end
+
   def start_function
     print('START_FUNCTION')
+  end
+
+  def register_filename(filename)
+    unless @filenames[filename]
+      @filenames[filename] = @filenames.count + 1
+      print('COV_FILE', @filenames[filename], "\"#{filename}\"")
+    end
   end
 
   def _print(t)

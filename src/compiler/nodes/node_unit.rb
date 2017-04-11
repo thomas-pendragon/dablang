@@ -51,6 +51,11 @@ class DabNodeUnit < DabNode
   end
 
   def compile(output)
+    if $with_cov
+      register_filename(output)
+      output.separate
+    end
+
     [@constants.children, @classes.children].each do |list|
       list.each do |node|
         node.compile(output)

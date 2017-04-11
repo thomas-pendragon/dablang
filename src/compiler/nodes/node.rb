@@ -243,4 +243,11 @@ class DabNode
   def constant_value
     raise 'no constant value'
   end
+
+  def register_filename(output)
+    output.register_filename(source_file) if source_file
+    @children.each do |child|
+      child.register_filename(output)
+    end
+  end
 end
