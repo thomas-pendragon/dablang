@@ -10,6 +10,7 @@
 
 - test: var<String> a; a = 15 should error
 - test: self outside of class method should error
+- handle file arguments
 
 ## New tools ##
 
