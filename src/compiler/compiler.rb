@@ -1,5 +1,6 @@
 require_relative '_requires.rb'
 $debug = $settings[:debug]
+$with_cov = $settings[:with_cov]
 
 file = STDIN
 if $settings[:input]

@@ -7,7 +7,7 @@ while args.count > 0
   next if arg.empty?
   if flag.nil?
     if arg.start_with? '--'
-      flag = arg[2..-1].to_sym
+      flag = arg[2..-1].tr('-', '_').to_sym
       $settings[flag] = true
     else
       $settings[:input] = arg
