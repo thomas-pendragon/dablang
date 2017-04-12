@@ -5,6 +5,7 @@ $settings = {}
 while args.count > 0
   arg = args.shift.strip
   next if arg.empty?
+  flag = nil if arg.start_with? '--'
   if flag.nil?
     if arg.start_with? '--'
       flag = arg[2..-1].tr('-', '_').to_sym
