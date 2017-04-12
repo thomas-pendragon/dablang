@@ -133,18 +133,20 @@ class DabContext < DabBaseContext
 
   def read_function
     on_subcontext do |subcontext|
-      next unless subcontext.read_keyword('func')
+      next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
-      next unless subcontext.read_operator('(')
+      next unless op1 = subcontext.read_operator('(')
       if arglist = subcontext.read_arglist
         arglist.each do |arg|
           symbol = arg.identifier
           subcontext.add_local_var(symbol)
         end
       end
-      next unless subcontext.read_operator(')')
+      next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      DabNodeFunction.new(ident, code, arglist)
+      ret = DabNodeFunction.new(ident, code, arglist)
+      ret.add_source_parts(keyw, ident, op1, op2)
+      ret
     end
   end
 

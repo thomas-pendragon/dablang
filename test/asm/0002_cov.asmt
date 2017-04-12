@@ -16,6 +16,7 @@ func main()
 /* 0            */               CONSTANT_SYMBOL print
 /* 1            */               CONSTANT_STRING "Test"
  
+/*              */               COV 1, 1
 /*              */               LOAD_FUNCTION L0, main, -1
  
 /*              */               BREAK_LOAD 
