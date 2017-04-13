@@ -13,6 +13,7 @@ stages:
   - ruby
   script: &3
   - bundle exec rake bin/cvm
+  - bundle exec rake bin/cdisasm
   artifacts: &4
     paths:
     - bin/*
