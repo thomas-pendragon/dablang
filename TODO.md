@@ -68,6 +68,7 @@
 ## CI ##
 
 - prebuild/pretest tasks in gitlab.yml (early fail)
+- split `spec` into parallel parts
 
 ## Misc ##
 
