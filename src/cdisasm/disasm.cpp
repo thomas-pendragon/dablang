@@ -9,6 +9,62 @@
 
 #define countof(x) (sizeof(x) / sizeof(x[0]))
 
+struct AsmStream : public BaseAsmStream
+{
+    AsmStream(size_t position) : BaseAsmStream(position)
+    {
+    }
+
+    void read_uint8(std::string &info)
+    {
+        auto value = _read<uint8_t>();
+        char output[32];
+        sprintf(output, "%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
+    void read_uint16(std::string &info)
+    {
+        auto value = _read<uint16_t>();
+        char output[32];
+        sprintf(output, "%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
+    void read_uint64(std::string &info)
+    {
+        auto value = _read<uint64_t>();
+        char output[32];
+        sprintf(output, "%llu", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
+    void read_vlc(std::string &info)
+    {
+        size_t length = _read<uint8_t>();
+        if (length == 256)
+        {
+            length = _read<uint64_t>();
+        }
+        auto        ptr = read(length);
+        std::string output((const char *)ptr, length);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
+    unsigned char operator[](size_t index) const
+    {
+        return data[index];
+    }
+};
+
 int main(int argc, char **argv)
 {
     bool raw = (argc == 2) && (std::string(argv[1]) == "--raw");
