@@ -9,7 +9,7 @@ stages:
   - build
   - test
 
-.build_base: &build_base
+.build_base:
   stage: build
   tags:
     - ruby
@@ -26,8 +26,26 @@ stages:
   stage: test
   tags:
     - ruby
+
+.test_base_spec:
+  <<: *test_base
   script:
     - bundle exec rake spec
+
+.test_base_vm_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake vm_spec
+
+.test_base_disasm_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake disasm_spec
+
+.test_base_asm_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake asm_spec
 
 FormatSpec:
   stage: prebuild

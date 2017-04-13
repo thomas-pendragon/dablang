@@ -30,16 +30,24 @@ compilers.each do |compiler, env|
   }
 end
 
+stage_jobs = {
+  'Build' => [''],
+  'Test' => %w(spec vm_spec disasm_spec asm_spec),
+}
+
 compilers.each do |compiler, env|
   %w(Build Test).each do |stage|
-    task_name = "#{stage} #{compiler}"
-    task = {}
-    task.merge! data[".#{stage.downcase}_base"]
-    task.merge! data[".#{env}"]
-    if stage == 'Test'
-      task['dependencies'] = ["Build #{compiler}"]
+    stage_jobs[stage].each do |job|
+      lookup = ".#{stage.downcase}_base_#{job}".gsub(/_$/, '')
+      task_name = "#{stage} #{compiler} #{job}".strip
+      task = {}
+      task.merge! data[lookup]
+      task.merge! data[".#{env}"]
+      if stage == 'Test'
+        task['dependencies'] = ["Build #{compiler}"]
+      end
+      data[task_name] = task
     end
-    data[task_name] = task
   end
 end
 

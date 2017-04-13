@@ -9,11 +9,11 @@ stages:
 - test
 ".build_base":
   stage: build
-  tags: &1
+  tags: &2
   - ruby
-  script: &2
+  script: &3
   - bundle exec rake bin/cvm
-  artifacts: &3
+  artifacts: &4
     paths:
     - bin/*
     - build/*
@@ -21,10 +21,28 @@ stages:
     expire_in: 1 week
 ".test_base":
   stage: test
-  tags: &5
+  tags: &1
   - ruby
+".test_base_spec":
+  stage: test
+  tags: *1
   script: &6
   - bundle exec rake spec
+".test_base_vm_spec":
+  stage: test
+  tags: *1
+  script: &7
+  - bundle exec rake vm_spec
+".test_base_disasm_spec":
+  stage: test
+  tags: *1
+  script: &8
+  - bundle exec rake disasm_spec
+".test_base_asm_spec":
+  stage: test
+  tags: *1
+  script: &9
+  - bundle exec rake asm_spec
 FormatSpec:
   stage: prebuild
   tags:
@@ -56,34 +74,76 @@ SortCheck:
   script:
   - bundle exec rake format:sort_check
 ".env_g_4_7":
-  variables: &4
+  variables: &5
     CXX: g++-4.7
 ".env_clang_3_5":
-  variables: &7
+  variables: &10
     CXX: clang++-3.5
 Build g++-4.7:
   stage: build
-  tags: *1
-  script: *2
-  artifacts: *3
-  variables: *4
-Test g++-4.7:
+  tags: *2
+  script: *3
+  artifacts: *4
+  variables: *5
+Test g++-4.7 spec:
   stage: test
-  tags: *5
+  tags: *1
   script: *6
-  variables: *4
+  variables: *5
+  dependencies:
+  - Build g++-4.7
+Test g++-4.7 vm_spec:
+  stage: test
+  tags: *1
+  script: *7
+  variables: *5
+  dependencies:
+  - Build g++-4.7
+Test g++-4.7 disasm_spec:
+  stage: test
+  tags: *1
+  script: *8
+  variables: *5
+  dependencies:
+  - Build g++-4.7
+Test g++-4.7 asm_spec:
+  stage: test
+  tags: *1
+  script: *9
+  variables: *5
   dependencies:
   - Build g++-4.7
 Build clang++-3.5:
   stage: build
-  tags: *1
-  script: *2
-  artifacts: *3
-  variables: *7
-Test clang++-3.5:
+  tags: *2
+  script: *3
+  artifacts: *4
+  variables: *10
+Test clang++-3.5 spec:
   stage: test
-  tags: *5
+  tags: *1
   script: *6
-  variables: *7
+  variables: *10
+  dependencies:
+  - Build clang++-3.5
+Test clang++-3.5 vm_spec:
+  stage: test
+  tags: *1
+  script: *7
+  variables: *10
+  dependencies:
+  - Build clang++-3.5
+Test clang++-3.5 disasm_spec:
+  stage: test
+  tags: *1
+  script: *8
+  variables: *10
+  dependencies:
+  - Build clang++-3.5
+Test clang++-3.5 asm_spec:
+  stage: test
+  tags: *1
+  script: *9
+  variables: *10
   dependencies:
   - Build clang++-3.5
