@@ -163,7 +163,7 @@ end
 
 namespace :format do
   task :ruby do
-    psystem('rubocop >/dev/null 2>/dev/null || rubocop -a')
+    psystem('bundle exec rubocop >/dev/null 2>/dev/null || bundle exec rubocop -a')
   end
 
   task :cpp do
