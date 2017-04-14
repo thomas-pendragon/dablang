@@ -2,6 +2,11 @@
 #include <vector>
 #include <assert.h>
 
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+#include <inttypes.h>
+
 #include "../cshared/opcodes.h"
 #include "../cshared/opcodes_format.h"
 #include "../cshared/opcodes_debug.h"
@@ -39,7 +44,7 @@ struct AsmStream : public BaseAsmStream
     {
         auto value = _read<uint64_t>();
         char output[32];
-        sprintf(output, "%llu", value);
+        sprintf(output, "%" PRIu64, value);
         if (info.length())
             info += ", ";
         info += output;
