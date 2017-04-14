@@ -48,6 +48,16 @@ stages:
   script:
     - bundle exec rake asm_spec
 
+.test_base_format_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake format_spec
+
+.test_base_dumpcov_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake dumpcov_spec
+
 FormatSpec:
   stage: prebuild
   tags:

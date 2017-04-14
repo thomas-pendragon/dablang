@@ -101,7 +101,7 @@ end
 
 task reverse: :dab_spec_reverse
 
-task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec] do
+task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec] do
 end
 
 task :clean do
