@@ -14,6 +14,7 @@ stages:
   script: &3
   - bundle exec rake bin/cvm
   - bundle exec rake bin/cdisasm
+  - bundle exec rake bin/cdumpcov
   artifacts: &4
     paths:
     - bin/*
