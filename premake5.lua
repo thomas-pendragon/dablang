@@ -26,3 +26,4 @@ end
 
 dab_common_setup("cvm")
 dab_common_setup("cdisasm")
+dab_common_setup("cdumpcov")

@@ -1,0 +1,18 @@
+## CODE
+
+COV_FILE 1, "foobar"
+COV_FILE 100, "xyz"
+NOP
+PUSH_TRUE
+NOP
+COV 1, 12
+PUSH_SELF
+COV 100, 101
+COV 100, 101
+COV 100, 102
+NOP
+COV 1, 10
+
+## EXPECT
+
+[{"file": "foobar", "lines": [10, 12]},{"file": "xyz", "lines": [101, 102]}]

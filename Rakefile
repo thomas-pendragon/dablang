@@ -10,6 +10,7 @@ premake = "#{premake} gmake"
 premake_source = 'premake5.lua'
 cvm = 'bin/cvm'
 cdisasm = 'bin/cdisasm'
+cdumpcov = 'bin/cdumpcov'
 filelist = 'tmp/c_files.txt'
 
 cvm_opcodes = 'src/cshared/opcodes.h'
@@ -20,7 +21,7 @@ opcode_debug_task = 'tasks/opcode_debuglist.rb'
 
 $shared_spec_code = Dir.glob('test/shared/*.dab')
 
-csources = Dir.glob('src/{cvm,cshared,cdisasm}/**/*')
+csources = Dir.glob('src/{cvm,cshared,cdisasm,cdumpcov}/**/*')
 csources += [cvm_opcodes, cvm_opcodes_debug]
 csources.sort!
 csources.uniq!
@@ -56,6 +57,12 @@ file cvm => csources + [makefile] do
   end
 end
 
+file cdumpcov => csources + [makefile] do
+  Dir.chdir('build') do
+    psystem('make cdumpcov verbose=1')
+  end
+end
+
 def setup_tests(directory, extension, frontend_type, extras = [])
   inputs = Dir.glob('test/' + directory + '/*.' + extension).sort.reverse
   outputs = []
@@ -75,6 +82,7 @@ setup_tests('format', 'dabft', 'frontend_format')
 setup_tests('vm', 'vmt', 'frontend_vm')
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm')
+setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
