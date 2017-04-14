@@ -2,22 +2,7 @@ require_relative 'src/shared/system.rb'
 require 'colorize'
 require 'yaml'
 
-inputs = Dir.glob('test/dab/*.dabt').sort.reverse
-outputs = []
-
-format_inputs = Dir.glob('test/format/*.dabft').sort.reverse
-format_outputs = []
-
-vm_inputs = Dir.glob('test/vm/*.vmt').sort.reverse
-vm_outputs = []
-
-disasm_inputs = Dir.glob('test/disasm/*.dat').sort.reverse
-disasm_outputs = []
-
-asm_inputs = Dir.glob('test/asm/*.asmt').sort.reverse
-asm_outputs = []
-
-sources = Dir.glob('src/**/*.rb')
+$sources = Dir.glob('src/**/*.rb')
 
 makefile = 'build/Makefile'
 premake = ENV['PREMAKE'] || 'premake5'
@@ -33,7 +18,7 @@ opcode_task = 'tasks/opcodelist.rb'
 cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
 opcode_debug_task = 'tasks/opcode_debuglist.rb'
 
-shared_spec_code = Dir.glob('test/shared/*.dab')
+$shared_spec_code = Dir.glob('test/shared/*.dab')
 
 csources = Dir.glob('src/{cvm,cshared,cdisasm}/**/*')
 csources += [cvm_opcodes, cvm_opcodes_debug]
@@ -71,45 +56,25 @@ file cvm => csources + [makefile] do
   end
 end
 
-inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('test/dab/', 'tmp/test_dab_').gsub('.dabt', '.out')
-  outputs << output_output_file
-  file output_output_file => sources + [input_test_file, cvm] + shared_spec_code do
-    psystem("ruby src/frontend/frontend.rb #{input_test_file} --test_output_prefix test_dab_ --test_output_dir ./tmp/")
+def setup_tests(directory, extension, frontend_type, extras = [])
+  inputs = Dir.glob('test/' + directory + '/*.' + extension).sort.reverse
+  outputs = []
+  inputs.each do |input_test_file|
+    output_output_file = input_test_file.gsub('test/' + directory + '/', 'tmp/test_' + directory + '_').gsub('.' + extension, '.out')
+    outputs << output_output_file
+    file output_output_file => $sources + [input_test_file] + $shared_spec_code + extras do
+      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix test_#{directory}_ --test_output_dir ./tmp/")
+    end
   end
+  task "#{directory}_spec".to_sym => outputs
+  task "#{directory}_spec_reverse".to_sym => outputs.reverse
 end
 
-format_inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('test/format/', 'tmp/test_format_').gsub('.dabft', '.out')
-  format_outputs << output_output_file
-  file output_output_file => sources + [input_test_file] do
-    psystem("ruby src/frontend/frontend_format.rb #{input_test_file} --test_output_prefix test_format_ --test_output_dir ./tmp/")
-  end
-end
-
-vm_inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('test/vm/', 'tmp/test_vm_').gsub('.vmt', '.out')
-  vm_outputs << output_output_file
-  file output_output_file => sources + [cvm, input_test_file] do
-    psystem("ruby src/frontend/frontend_vm.rb #{input_test_file} --test_output_prefix test_vm_ --test_output_dir ./tmp/")
-  end
-end
-
-disasm_inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('test/disasm/', 'tmp/test_disasm_').gsub('.dat', '.out')
-  disasm_outputs << output_output_file
-  file output_output_file => sources + [cdisasm, input_test_file] do
-    psystem("ruby src/frontend/frontend_disasm.rb #{input_test_file} --test_output_prefix test_disasm_ --test_output_dir ./tmp/")
-  end
-end
-
-asm_inputs.each do |input_test_file|
-  output_output_file = input_test_file.gsub('test/asm/', 'tmp/test_asm_').gsub('.asmt', '.out')
-  asm_outputs << output_output_file
-  file output_output_file => sources + [input_test_file] do
-    psystem("ruby src/frontend/frontend_asm.rb #{input_test_file} --test_output_prefix test_asm_ --test_output_dir ./tmp/")
-  end
-end
+setup_tests('dab', 'dabt', 'frontend', [cvm])
+setup_tests('format', 'dabft', 'frontend_format')
+setup_tests('vm', 'vmt', 'frontend_vm')
+setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
+setup_tests('asm', 'asmt', 'frontend_asm')
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
@@ -123,24 +88,12 @@ task :docker do
   psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
 end
 
-task spec: outputs do
+task spec: :dab_spec do
 end
 
-task format_spec: format_outputs do
-end
+task reverse: :dab_spec_reverse
 
-task vm_spec: vm_outputs do
-end
-
-task disasm_spec: disasm_outputs do
-end
-
-task asm_spec: asm_outputs do
-end
-
-task reverse: outputs.reverse
-
-task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec] do
+task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec] do
 end
 
 task :clean do
