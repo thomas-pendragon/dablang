@@ -156,6 +156,7 @@ DabValue DabValue::create_instance() const
 
 DabValue DabValue::_get_instvar(DabVM &vm, const std::string &name)
 {
+    (void)vm;
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 

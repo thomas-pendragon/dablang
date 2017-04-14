@@ -92,7 +92,6 @@ void parse_asm(bool raw, std::function<void(Op)> func)
     size_t position = 0;
     while (!feof(stdin))
     {
-        auto      pos = position;
         AsmStream stream(position);
         if (!stream.read())
         {

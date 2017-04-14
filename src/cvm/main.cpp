@@ -40,7 +40,7 @@ void DabVM::pop_frame(bool regular)
     auto   retval    = get_retval();
     auto   prev_ip   = get_prev_ip();
 
-    if (prev_pos == -1)
+    if (prev_pos == (size_t)-1)
     {
         exit(0);
     }
@@ -108,6 +108,11 @@ int DabVM::run(Stream &input, bool autorun, bool raw)
     auto vm_version       = input.read_uint64();
     auto code_length      = input.read_uint64();
     auto code_crc         = input.read_uint64();
+
+    (void)compiler_version;
+    (void)vm_version;
+    (void)code_length;
+    (void)code_crc;
 
     instructions.append(input);
 
@@ -253,6 +258,7 @@ bool DabVM::execute_single(Stream &input)
         auto name   = stack.pop_symbol();
         auto n_args = input.read_uint16();
         auto n_rets = input.read_uint16();
+        assert(n_rets == 1);
         call(name, n_args);
         break;
     }
@@ -263,7 +269,8 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_RETURN:
     {
-        auto  nrets  = input.read_uint16();
+        auto nrets = input.read_uint16();
+        assert(nrets == 1);
         auto &retval = get_retval();
         retval       = stack.pop_value();
         pop_frame(true);
@@ -438,6 +445,7 @@ void DabVM::add_class(const std::string &name, int index)
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets)
 {
+    assert(n_rets == 1);
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
     stack.push_value(recv);

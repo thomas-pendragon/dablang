@@ -305,7 +305,7 @@ struct Stack
         {
             offset = size() + offset;
         }
-        if (offset >= size())
+        if (offset >= (int64_t)size())
         {
             assert(false);
         }
@@ -314,8 +314,8 @@ struct Stack
 
   private:
     std::vector<DabValue> _data;
-    friend class DabVM;
-    friend class DabVM_debug;
+    friend struct DabVM;
+    friend struct DabVM_debug;
 };
 
 struct DabVM

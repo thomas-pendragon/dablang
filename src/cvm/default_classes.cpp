@@ -102,7 +102,7 @@ void DabVM::define_default_classes()
     });
 
     auto &nil_class = define_builtin_class("NilClass", CLASS_NILCLASS);
-    nil_class.add_simple_function(vm, "to_s", [](DabValue self) { return std::string("nil"); });
+    nil_class.add_simple_function(vm, "to_s", [](DabValue) { return std::string("nil"); });
 
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
     array_class.add_simple_function(vm, "count", [](DabValue self) {
@@ -120,7 +120,7 @@ void DabVM::define_default_classes()
         auto  n = arg1.data.fixnum;
         if (n < 0)
             n = a.size() + n;
-        if (n < 0 || n >= a.size())
+        if (n < 0 || n >= (int64_t)a.size())
             stack.push_value(nullptr);
         else
             stack.push_value(a[n]);
@@ -137,7 +137,7 @@ void DabVM::define_default_classes()
         auto  n = arg1.data.fixnum;
         if (n < 0)
             n = a.size() + n;
-        if (n < 0 || n >= a.size())
+        if (n < 0 || n >= (int64_t)a.size())
         {
             fprintf(stderr, "VM: index outside of array bounds.\n");
             exit(1);

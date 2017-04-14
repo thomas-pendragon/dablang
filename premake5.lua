@@ -9,6 +9,9 @@ function dab_common_setup(name)
     targetdir "bin/"
     buildoptions "-std=c++11"
 
+    warnings "Extra"
+    flags "FatalCompileWarnings"
+
     files { "src/cshared/**.h", "src/cshared/**.cpp" }
     files { "src/"..name.."/**.h", "src/"..name.."/**.cpp" }
 
