@@ -318,8 +318,22 @@ struct Stack
     friend struct DabVM_debug;
 };
 
+struct Coverage
+{
+    void add_file(uint64_t hash, const std::string &filename);
+    void add_line(uint64_t hash, uint64_t line);
+    void dump(FILE *out = stdout) const;
+
+  private:
+    std::map<uint64_t, std::string> files;
+    std::map<uint64_t, std::map<uint64_t, uint64_t>> lines;
+};
+
 struct DabVM
 {
+    Coverage coverage;
+    bool     coverage_testing;
+
     Stream instructions;
     std::map<std::string, DabFunction> functions;
     size_t                frame_position = -1;
@@ -343,7 +357,7 @@ struct DabVM
 
     void kernel_print();
 
-    void pop_frame(bool regular);
+    bool pop_frame(bool regular);
 
     size_t stack_position() const;
 
@@ -353,7 +367,7 @@ struct DabVM
 
     size_t ip() const;
 
-    int run(Stream &input, bool autorun, bool raw);
+    int run(Stream &input, bool autorun, bool raw, bool coverage_testing);
 
     DabValue &get_arg(int arg_index);
 

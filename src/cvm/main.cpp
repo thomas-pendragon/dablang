@@ -28,11 +28,14 @@ void DabVM::kernel_print()
     fprintf(stderr, "[ ");
     arg.print(*this, stderr);
     fprintf(stderr, " ]\n");
-    arg.print(*this, stdout);
+    if (!coverage_testing)
+    {
+        arg.print(*this, stdout);
+    }
     stack.push_nil();
 }
 
-void DabVM::pop_frame(bool regular)
+bool DabVM::pop_frame(bool regular)
 {
     int    frame_loc = frame_position;
     int    n_args    = number_of_args();
@@ -42,7 +45,7 @@ void DabVM::pop_frame(bool regular)
 
     if (prev_pos == (size_t)-1)
     {
-        exit(0);
+        return false;
     }
 
     stack.resize(frame_loc - 2 - n_args);
@@ -55,6 +58,8 @@ void DabVM::pop_frame(bool regular)
         fprintf(stderr, "VM: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         instructions.seek(prev_ip);
     }
+
+    return true;
 }
 
 size_t DabVM::stack_position() const
@@ -93,8 +98,10 @@ size_t DabVM::ip() const
     return instructions.position();
 }
 
-int DabVM::run(Stream &input, bool autorun, bool raw)
+int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
+    this->coverage_testing = coverage_testing;
+
     auto mark1 = input.read_uint8();
     auto mark2 = input.read_uint8();
     auto mark3 = input.read_uint8();
@@ -273,7 +280,11 @@ bool DabVM::execute_single(Stream &input)
         assert(nrets == 1);
         auto &retval = get_retval();
         retval       = stack.pop_value();
-        pop_frame(true);
+        if (!pop_frame(true))
+        {
+            return false;
+        }
+
         break;
     }
     case OP_JMP:
@@ -393,6 +404,20 @@ bool DabVM::execute_single(Stream &input)
         {
             stack.push(nullptr);
         }
+        break;
+    }
+    case OP_COV_FILE:
+    {
+        auto hash  = input.read_uint16();
+        auto fname = input.read_vlc_string();
+        coverage.add_file(hash, fname);
+        break;
+    }
+    case OP_COV:
+    {
+        auto hash = input.read_uint16();
+        auto line = input.read_uint16();
+        coverage.add_line(hash, line);
         break;
     }
     default:
@@ -546,6 +571,7 @@ struct DabRunOptions
     bool        autorun    = true;
     bool        extract    = false;
     bool        raw        = false;
+    bool        cov        = false;
     std::string extract_part;
 
     void parse(const std::vector<std::string> &args);
@@ -614,6 +640,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->raw = true;
     }
+
+    if (flags["--cov"])
+    {
+        this->cov = true;
+    }
 }
 
 int main(int argc, char **argv)
@@ -625,6 +656,8 @@ int main(int argc, char **argv)
         args.push_back(argv[i]);
     }
     options.parse(args);
+    fprintf(stderr, "VM options: autorun %s raw %s cov %s\n", options.autorun ? "yes" : "no",
+            options.raw ? "yes" : "no", options.cov ? "yes" : "no");
 
     Stream input;
     byte   buffer[1024];
@@ -635,7 +668,7 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
-    auto  ret_value = vm.run(input, options.autorun, options.raw);
+    auto  ret_value = vm.run(input, options.autorun, options.raw, options.cov);
     if (options.extract)
     {
         vm.extract(options.extract_part);
@@ -643,6 +676,10 @@ int main(int argc, char **argv)
     if (options.close_file)
     {
         fclose(stream);
+    }
+    if (options.cov)
+    {
+        vm.coverage.dump(stdout);
     }
     return ret_value;
 }
