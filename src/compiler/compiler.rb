@@ -3,11 +3,13 @@ $debug = $settings[:debug]
 $with_cov = $settings[:with_cov]
 
 file = STDIN
+filename = '<input>'
 if $settings[:input]
   file = File.open($settings[:input], 'rb')
+  filename = $settings[:input]
 end
 
-stream = DabProgramStream.new(file.read)
+stream = DabProgramStream.new(file.read, true, filename)
 compiler = DabCompiler.new(stream)
 program = compiler.program
 

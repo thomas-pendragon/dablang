@@ -16,4 +16,4 @@ main
 ## EXPECT COMPILE ERROR
 
    7: 	other();
-<input>:7: error E0005: Incorrect number of arguments in <other> call; got 0, expected 1.
+./tmp/test_dab_0084_too_few_arguments.dab:7: error E0005: Incorrect number of arguments in <other> call; got 0, expected 1.

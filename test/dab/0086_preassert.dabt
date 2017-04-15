@@ -16,4 +16,4 @@ func main()
 ## EXPECT COMPILE ERROR
 
   10: 	assert_equal("foo", 1, 2);
-<input>:10: error E0005: Incorrect number of arguments in <assert_equal> call; got 3, expected 2.
+./tmp/test_dab_0086_preassert.dab:10: error E0005: Incorrect number of arguments in <assert_equal> call; got 3, expected 2.

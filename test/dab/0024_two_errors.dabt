@@ -13,6 +13,6 @@ main
 ## EXPECT COMPILE ERROR
 
    3: 	unknownfun();
-<input>:3: error E0001: Unknown function <unknownfun>.
+./tmp/test_dab_0024_two_errors.dab:3: error E0001: Unknown function <unknownfun>.
    4: 	anotherfun();
-<input>:4: error E0001: Unknown function <anotherfun>.
+./tmp/test_dab_0024_two_errors.dab:4: error E0001: Unknown function <anotherfun>.

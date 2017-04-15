@@ -20,12 +20,14 @@ class DabParser
   attr_reader :position
   attr_reader :nl_is_whitespace
   attr_reader :content
+  attr_reader :filename
 
-  def initialize(content, nl_is_whitespace = true)
+  def initialize(content, nl_is_whitespace = true, filename = '<input>')
     @nl_is_whitespace = nl_is_whitespace
     @content = content.freeze
     @position = 0
     @length = @content.length
+    @filename = filename
 
     line = 1
     @lines = (0...content.length).map do |n|
@@ -100,10 +102,6 @@ class DabParser
     return false unless current_char_whitespace_or_symbol?
     debug("keyword #{keyword} ok")
     _return_source(keyword, start_pos)
-  end
-
-  def filename
-    '<input>'
   end
 
   def _return_source(string, start_pos)
