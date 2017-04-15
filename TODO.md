@@ -70,6 +70,10 @@
 - prebuild/pretest tasks in gitlab.yml (early fail)
 - split `spec` into parallel parts
 
+## Coverage ##
+
+- measure `if` coverage
+
 ## Misc ##
 
 - use Bundler, or at least a sane place to load deps (currently in `debug_output.rb`)

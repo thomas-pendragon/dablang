@@ -2,6 +2,7 @@ require 'awesome_print'
 require 'colorize'
 require 'pry'
 require 'pry-byebug'
+require 'json'
 
 def errn(str, *args)
   if args.count > 0
