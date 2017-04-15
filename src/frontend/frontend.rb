@@ -61,8 +61,10 @@ def extract_source(input, output, text, extra_file = nil)
       stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
       stdlib_glob = stdlib_path + '/*.dab'
       file << text
+      file << "\n"
       Dir.glob(stdlib_glob).each do |fn|
         file << File.read(fn)
+        file << "\n"
       end
       if extra_file
         file << File.read("./test/shared/#{extra_file}.dab")
