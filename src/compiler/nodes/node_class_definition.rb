@@ -23,7 +23,7 @@ class DabNodeClassDefinition < DabNode
   end
 
   def compile(output)
-    output.print('DEFINE_CLASS', identifier, number)
+    output.printex(self, 'DEFINE_CLASS', identifier, number)
     @functions.each do |fun|
       fun.compile(output)
     end

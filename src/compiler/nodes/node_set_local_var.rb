@@ -32,7 +32,7 @@ class DabNodeSetLocalVar < DabNode
     raise 'no index' unless @index
     value.compile(output)
     output.comment("var #{index} #{identifier}")
-    output.print('SET_VAR', index)
+    output.printex(self, 'SET_VAR', index)
   end
 
   def formatted_source(options)

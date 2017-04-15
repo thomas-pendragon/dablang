@@ -23,7 +23,7 @@ class DabNodePropertyGet < DabNode
     value.compile(output)
     output.push(identifier)
     output.comment(".#{real_identifier}")
-    output.print('INSTCALL', 0, 1)
+    output.printex(self, 'INSTCALL', 0, 1)
   end
 
   def constant?

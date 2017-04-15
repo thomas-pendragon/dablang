@@ -12,7 +12,7 @@ class DabNodeReturn < DabNode
 
   def compile(output)
     value.compile(output)
-    output.print('RETURN', '1')
+    output.printex(self, 'RETURN', '1')
   end
 
   def formatted_source(options)
