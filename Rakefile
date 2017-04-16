@@ -83,6 +83,7 @@ setup_tests('vm', 'vmt', 'frontend_vm')
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm')
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
+setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'

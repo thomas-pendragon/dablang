@@ -10,7 +10,7 @@ class SystemCommandError < RuntimeError
 end
 
 def psystem(cmd, capture_stderr = false)
-  puts " > #{cmd.yellow}"
+  STDERR.puts " > #{cmd.yellow}"
   tempfile = nil
   if capture_stderr
     tempfile = Tempfile.new('stderr')

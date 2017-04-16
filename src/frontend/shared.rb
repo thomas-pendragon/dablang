@@ -44,7 +44,7 @@ def run_ruby_part(input, output, action, tool, options = '', input_as_arg = fals
     input = input.to_s.shellescape
     output = output.to_s.shellescape
     options = options.presence
-    options = options.to_s.shellescape if options
+    options = options.to_s if options
     input_part = input_as_arg ? ' ' : '<'
     cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb #{options} #{input_part} #{input} > #{output}"
     begin
