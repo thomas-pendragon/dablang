@@ -55,21 +55,10 @@ def execute(input, output)
   end
 end
 
-def extract_source(input, output, text, extra_file = nil)
+def extract_source(input, output, text) # , extra_file = nil)
   describe_action(input, output, 'extract source') do
     File.open(output, 'wb') do |file|
-      stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
-      stdlib_glob = stdlib_path + '/*.dab'
       file << text
-      file << "\n"
-      Dir.glob(stdlib_glob).each do |fn|
-        file << File.read(fn)
-        file << "\n"
-      end
-      if extra_file
-        file << File.read("./test/shared/#{extra_file}.dab")
-        file << "\n"
-      end
     end
   end
 end
@@ -93,9 +82,17 @@ def run_test(settings)
 
   FileUtils.rm(out) if File.exist?(out)
 
-  extract_source(input, dab, data[:code], data[:included_file])
+  extract_source(input, dab, data[:code]) # , data[:included_file])
+
+  stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
+  stdlib_glob = stdlib_path + '/*.dab'
+  stdlib_files = Dir.glob(stdlib_glob)
   begin
-    compile_to_asm(dab, asm)
+    extra = data[:included_file]
+    if extra
+      extra = "./test/shared/#{extra}.dab"
+    end
+    compile_to_asm(([dab, extra] + stdlib_files).compact, asm)
   rescue SystemCommandError => e
     if data[:expected_status] == :compile_error
       compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)

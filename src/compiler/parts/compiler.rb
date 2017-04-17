@@ -8,7 +8,7 @@ class DabCompiler
     context.read_program
   rescue DabEndOfStreamError
     ret = DabNodeUnit.new
-    source = SourceString.new('', '', 0, 0, 0)
+    source = SourceString.new('', @stream.filename, 0, 0, 0)
     ret.add_error(DabUnexpectedEOFError.new(source))
     ret
   end

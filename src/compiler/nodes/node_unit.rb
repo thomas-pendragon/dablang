@@ -2,6 +2,8 @@ require_relative 'node.rb'
 
 class DabNodeUnit < DabNode
   attr_reader :constants
+  attr_reader :functions
+  attr_reader :classes
 
   def initialize
     super()
@@ -90,5 +92,20 @@ class DabNodeUnit < DabNode
 
   def formatted_source(options)
     _items.flatten(1).map { |item| item.formatted_source(options) }.join("\n")
+  end
+
+  def merge!(another_program)
+    another_program.functions.each do |fun|
+      @functions.insert(fun)
+    end
+    another_program.constants.each do |constant|
+      @constants.insert(constant)
+    end
+    another_program.classes.each do |klass|
+      @classes.insert(klass)
+    end
+    another_program.functions.clear
+    another_program.constants.clear
+    another_program.classes.clear
   end
 end

@@ -33,7 +33,7 @@ def base_read_test_file(fname)
 end
 
 def describe_action(input, output, action)
-  info = " * #{action}: #{input.blue.bold} -> #{output.blue.bold}..."
+  info = " * #{action}: #{input.to_s.blue.bold} -> #{output.blue.bold}..."
   puts info.white
   yield
   puts "#{info.white} #{'[OK]'.green}"
@@ -41,7 +41,12 @@ end
 
 def run_ruby_part(input, output, action, tool, options = '', input_as_arg = false)
   describe_action(input, output, action) do
-    input = input.to_s.shellescape
+    if input.is_a? Array
+      raise 'must input as arg' unless input_as_arg
+      input = input.map(&:to_s).map(&:shellescape).join(' ')
+    else
+      input = input.to_s.shellescape
+    end
     output = output.to_s.shellescape
     options = options.presence
     options = options.to_s if options

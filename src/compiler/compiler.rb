@@ -2,16 +2,27 @@ require_relative '_requires.rb'
 $debug = $settings[:debug]
 $with_cov = $settings[:with_cov]
 
-file = STDIN
-filename = '<input>'
-if $settings[:input]
-  file = File.open($settings[:input], 'rb')
-  filename = $settings[:input]
-end
+inputs = $settings[:inputs] || [:stdin]
 
-stream = DabProgramStream.new(file.read, true, filename)
-compiler = DabCompiler.new(stream)
-program = compiler.program
+streams = {}
+program = nil
+inputs.each do |input|
+  file = STDIN
+  filename = '<input>'
+  if input != :stdin
+    file = File.open(input, 'rb')
+    filename = input
+  end
+  stream = DabProgramStream.new(file.read, true, filename)
+  compiler = DabCompiler.new(stream)
+  streams[filename] = stream
+  new_program = compiler.program
+  if program
+    program.merge!(new_program)
+  else
+    program = new_program
+  end
+end
 
 if $debug || $settings[:dump] == 'raw'
   program.dump
@@ -74,7 +85,7 @@ end
 
 if program.has_errors?
   program.errors.each do |e|
-    STDERR.puts e.annotated_source(stream)
+    STDERR.puts e.annotated_source(streams[e.source.source_file])
     STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line, e.error_code, e.message)
   end
   exit(1)

@@ -250,4 +250,8 @@ class DabNode
       child.register_filename(output)
     end
   end
+
+  def clear
+    @children.clear
+  end
 end

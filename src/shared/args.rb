@@ -12,6 +12,8 @@ while args.count > 0
       $settings[flag] = true
     else
       $settings[:input] = arg
+      $settings[:inputs] ||= []
+      $settings[:inputs] << arg
     end
   else
     $settings[flag] = arg
