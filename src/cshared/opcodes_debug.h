@@ -33,4 +33,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_COV, "COV", {ARG_UINT16, ARG_UINT16}},
     {OP_DUP, "DUP", {}},
     {OP_JMP_IF, "JMP_IF", {ARG_UINT16}},
+    {OP_POP, "POP", {ARG_UINT16}},
 };

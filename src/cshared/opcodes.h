@@ -34,4 +34,5 @@ enum
     OP_COV             = 0x1D,
     OP_DUP             = 0x1E,
     OP_JMP_IF          = 0x1F,
+    OP_POP             = 0x20,
 };

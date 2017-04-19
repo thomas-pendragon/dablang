@@ -426,6 +426,13 @@ bool DabVM::execute_single(Stream &input)
         stack.push_value(stack[-1]);
         break;
     }
+    case OP_POP:
+    {
+        auto n = input.read_uint16();
+        for (size_t i = 0; i < n; i++)
+            stack.pop_value();
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
