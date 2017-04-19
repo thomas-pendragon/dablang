@@ -41,6 +41,7 @@
 - exceptions
 - keyword arguments
 - functions with blocks
+- namespaces
 
 ## Standard library ##
 
