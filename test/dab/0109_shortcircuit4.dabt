@@ -1,0 +1,27 @@
+## CODE
+
+func fun1()
+{
+  puts("fun1");
+  return false;
+}
+
+func fun2()
+{
+  puts("fun2");
+  return true;
+}
+
+func main()
+{
+  puts(fun1() && fun2());
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+fun1
+false

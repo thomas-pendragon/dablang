@@ -91,4 +91,19 @@ void DabVM::define_defaults()
         };
         functions["||"] = fun;
     }
+
+    {
+        DabFunction fun;
+        fun.name    = "&&";
+        fun.regular = false;
+        fun.extra   = [this](size_t n_args, size_t n_ret) {
+            // dump();
+            assert(n_args == 2);
+            assert(n_ret == 1);
+            auto arg1 = stack.pop_value();
+            auto arg0 = stack.pop_value();
+            stack.push_value(arg0.truthy() ? arg1 : arg0);
+        };
+        functions["&&"] = fun;
+    }
 }
