@@ -31,4 +31,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_STACK_RESERVE, "STACK_RESERVE", {ARG_UINT16}},
     {OP_COV_FILE, "COV_FILE", {ARG_UINT16, ARG_VLC}},
     {OP_COV, "COV", {ARG_UINT16, ARG_UINT16}},
+    {OP_DUP, "DUP", {}},
 };

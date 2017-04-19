@@ -29,6 +29,7 @@ OPCODES = {
   0x1B => {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
   0x1C => {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
   0x1D => {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
+  0x1E => {name: 'DUP'}, # push(1)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
