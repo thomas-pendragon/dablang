@@ -24,7 +24,6 @@
 ## Language ##
 
 - Rings support
-- || && should short-circuit
 - void calls
 - type: hash
 - type: set

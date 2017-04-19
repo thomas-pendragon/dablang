@@ -21,11 +21,21 @@ class DabNodeOperator < DabNode
   end
 
   def compile(output)
+    tmp_label = '_tmp_label_0'
+
     left.compile(output)
-    right.compile(output)
-    output.push(identifier)
-    output.comment("op #{identifier.extra_value}")
-    output.print('CALL', 2, 1)
+    if identifier.extra_value.to_s == '||'
+      output.print('DUP')
+      output.print('JMP_IF', tmp_label)
+      output.print('POP', 1)
+      right.compile(output)
+      output.label(tmp_label)
+    else
+      right.compile(output)
+      output.push(identifier)
+      output.comment("op #{identifier.extra_value}")
+      output.print('CALL', 2, 1)
+    end
   end
 
   def formatted_source(options)
