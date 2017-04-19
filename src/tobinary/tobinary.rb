@@ -160,7 +160,7 @@ class Parser
       errap line
       label = instr[:label]
       next if line[0] == '' || line[0].nil?
-      if line[0] == 'LOAD_FUNCTION' || line[0] == 'JMP' || line[0] == 'JMP_IFN'
+      if line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
         @jump_corrections << [pos, line[1].to_s]
         line[1] = 0
       end

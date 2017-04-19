@@ -33,4 +33,5 @@ enum
     OP_COV_FILE        = 0x1C,
     OP_COV             = 0x1D,
     OP_DUP             = 0x1E,
+    OP_JMP_IF          = 0x1F,
 };

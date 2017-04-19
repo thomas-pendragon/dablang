@@ -30,6 +30,7 @@ OPCODES = {
   0x1C => {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
   0x1D => {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
   0x1E => {name: 'DUP'}, # push(1)
+  0x1F => {name: 'JMP_IF', arg: :uint16}, # pop(1), add +arg to PC if value from stack is true
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

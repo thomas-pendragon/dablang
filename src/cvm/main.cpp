@@ -295,11 +295,12 @@ bool DabVM::execute_single(Stream &input)
         instructions.seek(ip() + mod);
         break;
     }
+    case OP_JMP_IF:
     case OP_JMP_IFN:
     {
         auto mod   = input.read_uint16() - 3;
         auto value = stack.pop_value();
-        if (!value.truthy())
+        if (value.truthy() == (opcode == OP_JMP_IF))
         {
             instructions.seek(ip() + mod);
         }
