@@ -21,16 +21,16 @@ class DabNodeOperator < DabNode
   end
 
   def compile(output)
-    tmp_label = '_tmp_label_0'
+    label = root.reserve_label
 
     left.compile(output)
     op_id = identifier.extra_value.to_s
     if op_id == '||' || op_id == '&&'
       output.print('DUP')
-      output.print(op_id == '||' ? 'JMP_IF' : 'JMP_IFN', tmp_label)
+      output.print(op_id == '||' ? 'JMP_IF' : 'JMP_IFN', label)
       output.print('POP', 1)
       right.compile(output)
-      output.label(tmp_label)
+      output.label(label)
     else
       right.compile(output)
       output.push(identifier)
