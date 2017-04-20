@@ -1,0 +1,52 @@
+## CODE
+
+func abc(a, b, c)
+{
+  print("a = ");
+  puts(a);
+  print("b = ");
+  puts(b);
+  print("c = ");
+  puts(c);
+  puts("");
+}
+
+func ffalse()
+{
+  return false;
+}
+
+func ftrue()
+{
+  return true;
+}
+
+func main()
+{  
+  abc("a", ffalse() || "Q", 2);
+  abc("a", ftrue() || "W", 2);
+  abc("a", ffalse() && "E", 2);
+  abc("a", ftrue() && "R", 2);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+a = a
+b = Q
+c = 2
+
+a = a
+b = true
+c = 2
+
+a = a
+b = false
+c = 2
+
+a = a
+b = R
+c = 2
