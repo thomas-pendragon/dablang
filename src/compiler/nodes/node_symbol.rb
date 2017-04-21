@@ -6,6 +6,7 @@ class DabNodeSymbol < DabNodeLiteral
     raise "empty symbol (#{symbol})" if symbol.to_s.empty?
     super()
     @symbol = symbol
+    add_source_parts(symbol)
   end
 
   def extra_dump

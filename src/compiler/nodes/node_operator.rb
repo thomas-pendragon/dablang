@@ -3,7 +3,7 @@ require_relative 'node.rb'
 class DabNodeOperator < DabNode
   def initialize(left, right, method)
     super()
-    insert(method.to_sym)
+    insert(method)
     insert(left)
     insert(right)
   end
@@ -53,18 +53,18 @@ class DabNodeOperator < DabNode
     lv = left.constant_value
     rv = right.constant_value
     numeric = (lv.is_a? Numeric) && (rv.is_a? Numeric)
-    if id == :'||'
+    if id == '||'
       replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? right : left)
       return true
     end
-    if id == :'&&'
+    if id == '&&'
       replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? left : right)
       return true
     end
-    if numeric && %i(+ - * / %).include?(id)
+    if numeric && %w(+ - * / %).include?(id)
       replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
       return true
-    elsif %i(== !=).include?(id)
+    elsif %w(== !=).include?(id)
       replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
       return true
     else
