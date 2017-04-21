@@ -119,7 +119,7 @@ class OutputStream
   end
 
   def fix_jumps(labels, jumps)
-    errap ['jumps:', jumps, 'labels:', labels]
+    # errap ['jumps:', jumps, 'labels:', labels]
     jumps.each do |jump|
       jump_pos = jump[0]
       jump_label = jump[1]
