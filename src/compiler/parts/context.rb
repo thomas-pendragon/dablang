@@ -155,8 +155,8 @@ class DabContext < DabBaseContext
   def read_identifier_fname
     on_subcontext do |subcontext|
       next unless ident = subcontext.read_identifier
-      if subcontext.read_operator('=')
-        ident += '='
+      if op = subcontext.read_operator('=')
+        ident += op
       end
       ident
     end
