@@ -11,6 +11,15 @@ class SourceString < String
     @source_cstart = cstart
     @source_cend = cend
   end
+
+  def +(other)
+    params = [@source_file, @source_line, @source_cstart, @source_cend]
+    if other.is_a? SourceString
+      params[2] = [params[2], other.source_cstart].min
+      params[3] = [params[3], other.source_cend].max
+    end
+    SourceString.new(super, *params)
+  end
 end
 
 class DabEndOfStreamError < RuntimeError
