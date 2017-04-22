@@ -30,6 +30,16 @@ struct AsmStream : public BaseAsmStream
         info += output;
     }
 
+    void read_int16(std::string &info)
+    {
+        auto value = _read<int16_t>();
+        char output[32];
+        sprintf(output, "%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     void read_uint16(std::string &info)
     {
         auto value = _read<uint16_t>();
@@ -101,6 +111,9 @@ int main(int argc, char **argv)
             {
             case ARG_UINT8:
                 stream.read_uint8(info);
+                break;
+            case ARG_INT16:
+                stream.read_int16(info);
                 break;
             case ARG_UINT16:
                 stream.read_uint16(info);

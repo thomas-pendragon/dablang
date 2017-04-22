@@ -9,8 +9,8 @@ OPCODES = {
   0x07 => {name: 'PUSH_ARG', arg: :uint16}, # argument index, push(1)
   0x08 => {name: 'CONSTANT_NUMBER', arg: :uint64}, # number
   0x09 => {name: 'RETURN', arg: :uint16}, # pop(n)
-  0x0A => {name: 'JMP', arg: :uint16}, # add +arg to PC
-  0x0B => {name: 'JMP_IFN', arg: :uint16}, # pop(1), add +arg to PC if value from stack is false
+  0x0A => {name: 'JMP', arg: :int16}, # add +arg to PC
+  0x0B => {name: 'JMP_IFN', arg: :int16}, # pop(1), add +arg to PC if value from stack is false
   0x0C => {name: 'NOP'}, #
   0x0D => {name: 'PUSH_NIL'}, # push(1)
   0x0E => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
@@ -30,7 +30,7 @@ OPCODES = {
   0x1C => {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
   0x1D => {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
   0x1E => {name: 'DUP'}, # push(1)
-  0x1F => {name: 'JMP_IF', arg: :uint16}, # pop(1), add +arg to PC if value from stack is true
+  0x1F => {name: 'JMP_IF', arg: :int16}, # pop(1), add +arg to PC if value from stack is true
   0x20 => {name: 'POP', arg: :uint16}, # pop(n)
 }.freeze
 

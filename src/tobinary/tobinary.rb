@@ -77,6 +77,10 @@ class OutputStream
     _push_fixnum(value, 'S')
   end
 
+  def _push_int16(value)
+    _push_fixnum(value, 's')
+  end
+
   def _push_uint64(value)
     _push_fixnum(value, 'Q<')
   end
@@ -113,8 +117,8 @@ class OutputStream
     @rewrite_pos = pos
   end
 
-  def _rewrite_uint16(value)
-    data = [value].pack('S')
+  def _rewrite_int16(value)
+    data = [value].pack('s')
     @code = @code[0...@rewrite_pos] + data + @code[@rewrite_pos + 2..-1]
   end
 
@@ -126,8 +130,7 @@ class OutputStream
 
       _rewind(jump_pos + 1) # opcode is 1 byte
       diff = labels[jump_label] - jump_pos
-      raise 'diff must be >0' unless diff > 0
-      _rewrite_uint16(diff)
+      _rewrite_int16(diff)
     end
   end
 end

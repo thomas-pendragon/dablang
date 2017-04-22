@@ -79,7 +79,6 @@
 - use Bundler, or at least a sane place to load deps (currently in `debug_output.rb`)
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
-- negative offsets for JMP
 - autogenerate kernel C enums
 - property getters/instance calls as instructions
 - specs for locating line/column for parsed nodes

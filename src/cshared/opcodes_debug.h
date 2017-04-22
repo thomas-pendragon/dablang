@@ -11,8 +11,8 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_PUSH_ARG, "PUSH_ARG", {ARG_UINT16}},
     {OP_CONSTANT_NUMBER, "CONSTANT_NUMBER", {ARG_UINT64}},
     {OP_RETURN, "RETURN", {ARG_UINT16}},
-    {OP_JMP, "JMP", {ARG_UINT16}},
-    {OP_JMP_IFN, "JMP_IFN", {ARG_UINT16}},
+    {OP_JMP, "JMP", {ARG_INT16}},
+    {OP_JMP_IFN, "JMP_IFN", {ARG_INT16}},
     {OP_NOP, "NOP", {}},
     {OP_PUSH_NIL, "PUSH_NIL", {}},
     {OP_KERNELCALL, "KERNELCALL", {ARG_UINT8}},
@@ -32,6 +32,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_COV_FILE, "COV_FILE", {ARG_UINT16, ARG_VLC}},
     {OP_COV, "COV", {ARG_UINT16, ARG_UINT16}},
     {OP_DUP, "DUP", {}},
-    {OP_JMP_IF, "JMP_IF", {ARG_UINT16}},
+    {OP_JMP_IF, "JMP_IF", {ARG_INT16}},
     {OP_POP, "POP", {ARG_UINT16}},
 };

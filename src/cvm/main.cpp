@@ -289,7 +289,7 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_JMP:
     {
-        auto mod = input.read_uint16() - 3;
+        auto mod = input.read_int16() - 3;
         fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
                 (void *)(ip() + mod));
         instructions.seek(ip() + mod);
@@ -298,7 +298,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_JMP_IF:
     case OP_JMP_IFN:
     {
-        auto mod   = input.read_uint16() - 3;
+        auto mod   = input.read_int16() - 3;
         auto value = stack.pop_value();
         if (value.truthy() == (opcode == OP_JMP_IF))
         {

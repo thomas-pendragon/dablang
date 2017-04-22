@@ -5,6 +5,11 @@ uint8_t Stream::read_uint8()
     return _read<uint8_t>();
 }
 
+int16_t Stream::read_int16()
+{
+    return _read<int16_t>();
+}
+
 uint16_t Stream::read_uint16()
 {
     return _read<uint16_t>();

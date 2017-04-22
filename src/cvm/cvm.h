@@ -36,6 +36,7 @@ struct Buffer
 struct Stream
 {
     uint8_t  read_uint8();
+    int16_t  read_int16();
     uint16_t read_uint16();
     uint64_t read_uint64();
 
