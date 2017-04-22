@@ -24,12 +24,16 @@ inputs.each do |input|
   end
 end
 
-if $debug || $settings[:dump] == 'raw'
-  program.dump
+def debug_check!(program, type)
+  if $debug || $settings[:dump] == type
+    program.dump
+  end
+  if $settings[:dump] == type
+    exit(0)
+  end
 end
-if $settings[:dump] == 'raw'
-  exit(0)
-end
+
+debug_check!(program, 'raw')
 
 pp1 = [
   DabPPConvertArgToLocalvar,
@@ -50,12 +54,7 @@ pp1.each do |klass|
   program.dump if $debug
 end
 
-if $debug || $settings[:dump] == 'middle'
-  program.dump
-end
-if $settings[:dump] == 'middle'
-  exit(0)
-end
+debug_check!(program, 'middle')
 
 postprocess = [
   DabPPFixLiterals,
@@ -76,12 +75,7 @@ end
 
 STDERR.puts "\n--\n\n" if $debug
 
-if $debug || $settings[:dump] == 'post'
-  program.dump
-end
-if $settings[:dump] == 'post'
-  exit(0)
-end
+debug_check!(program, 'post')
 
 if program.has_errors?
   program.errors.each do |e|
