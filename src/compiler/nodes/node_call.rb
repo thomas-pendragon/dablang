@@ -22,14 +22,11 @@ class DabNodeCall < DabNode
 
   def lower!
     if real_identifier == 'puts'
-      block = DabNodeCodeBlock.new
       pcall = DabNodeCall.new('print', args)
       args = DabNode.new
       args.insert(DabNodeLiteralString.new("\n"))
       endlcall = DabNodeCall.new('print', args)
-      block.insert(pcall)
-      block.insert(endlcall)
-      replace_with!(block)
+      replace_with!([pcall, endlcall])
       return true
     end
     super
