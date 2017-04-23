@@ -260,4 +260,12 @@ class DabNode
   def clear
     @children.clear
   end
+
+  def blockify!
+    children.any?(&:blockify!)
+  end
+
+  def blockish?
+    false
+  end
 end

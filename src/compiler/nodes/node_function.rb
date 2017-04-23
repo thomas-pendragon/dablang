@@ -7,9 +7,9 @@ class DabNodeFunction < DabNode
   def initialize(identifier, body, arglist)
     super()
     @identifier = identifier
+    insert(arglist || DabNode.new, 'arglist')
+    insert(DabNode.new, 'blocks')
     insert(body, 'body')
-    arglist ||= DabNode.new
-    insert(arglist, 'arglist')
   end
 
   def parent_class
@@ -31,10 +31,14 @@ class DabNodeFunction < DabNode
   end
 
   def body
-    children[0]
+    children[2]
   end
 
   def arglist
+    children[0]
+  end
+
+  def blocks
     children[1]
   end
 
@@ -50,7 +54,9 @@ class DabNodeFunction < DabNode
   def compile_body(output)
     output.label(@flabel)
     output.print('STACK_RESERVE', n_local_vars)
-    body.compile(output)
+    blocks.each do |block|
+      block.compile(output)
+    end
   end
 
   def add_constant(literal)
@@ -79,11 +85,32 @@ class DabNodeFunction < DabNode
     DabNodeCodeBlock.new(label)
   end
 
+  def new_codeblock_ex
+    label = root.reserve_label
+    ret = DabNodeCodeBlockEx.new(label)
+    blocks.insert(ret)
+    ret
+  end
+
+  def blockify!
+    if body
+      body.blockify!
+      children.pop
+      true
+    else
+      super
+    end
+  end
+
   def remove_localvar_index(index)
     visit_all([DabNodeSetLocalVar, DabNodeLocalVar]) do |node|
       if node.index > index
         node.index -= 1
       end
     end
+  end
+
+  def real_body
+    blocks[0]
   end
 end

@@ -2,14 +2,13 @@ require_relative 'node.rb'
 
 class DabNodeJump < DabNode
   attr_reader :target
-  def initialize(target, condition = nil)
+  def initialize(target)
     super()
     @target = target
-    insert(condition) if condition
   end
 
   def extra_dump
-    "->#{target} #{condition ? 'if not' : ''}"
+    "->#{target.label}"
   end
 
   def condition
@@ -17,11 +16,6 @@ class DabNodeJump < DabNode
   end
 
   def compile(output)
-    if condition
-      condition.compile(output)
-      output.print('JMP_IFN', target)
-    else
-      output.print('JMP', target)
-    end
+    output.print('JMP', target.label)
   end
 end

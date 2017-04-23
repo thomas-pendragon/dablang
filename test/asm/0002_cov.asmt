@@ -17,12 +17,12 @@ func main()
 /* 1            */               CONSTANT_STRING "Test"
  
 /*              */               COV 1, 1
-/*              */               LOAD_FUNCTION L0, main, -1
+/*              */               LOAD_FUNCTION L1, main, -1
  
 /*              */               BREAK_LOAD 
  
-/*              */ L0          : STACK_RESERVE 0
-/* Test         */               PUSH_CONSTANT 1
+/*              */ L1          : STACK_RESERVE 0
+/* Test         */ L0          : PUSH_CONSTANT 1
 /*              */               COV 1, 3
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 

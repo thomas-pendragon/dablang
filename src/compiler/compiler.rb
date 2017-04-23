@@ -35,6 +35,9 @@ end
 
 debug_check!(program, 'raw')
 
+DabPPBlockify.new.run(program)
+debug_check!(program, 'blockify')
+
 pp1 = [
   DabPPConvertArgToLocalvar,
   DabPPAddMissingReturns,
