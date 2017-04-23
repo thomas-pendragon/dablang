@@ -20,6 +20,10 @@ class SourceString < String
     end
     SourceString.new(super, *params)
   end
+
+  def source_inspect
+    "#{self} (#{source_file}:#{source_line} [#{source_cstart}..#{source_cend}])"
+  end
 end
 
 class DabEndOfStreamError < RuntimeError
