@@ -167,15 +167,21 @@ class DabNode
   end
 
   def source_parts
-    @self_source_parts + @children.flat_map(&:source_parts)
+    ret = @self_source_parts + @children.flat_map(&:source_parts)
+    ret = ret.select { |item| item.is_a? SourceString }
+    ret
+  end
+
+  def first_source_part
+    source_parts.first
   end
 
   def source_file
-    source_parts.first&.source_file
+    first_source_part&.source_file
   end
 
   def source_line
-    source_parts.first&.source_line
+    first_source_part&.source_line
   end
 
   def source_cstart
