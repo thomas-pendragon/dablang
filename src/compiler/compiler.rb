@@ -48,6 +48,7 @@ end
 
 pp0 = [
   DabPPBlockify,
+  DabPPBlockReorder,
 ]
 
 run_postprocess!(program, pp0)

@@ -18,4 +18,8 @@ class DabNodeJump < DabNodeBaseJump
   def compile(output)
     output.print('JMP', target.label)
   end
+
+  def replace_target!(from, to)
+    @target = to if @target == from
+  end
 end

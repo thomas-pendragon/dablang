@@ -24,4 +24,9 @@ class DabNodeConditionalJump < DabNodeBaseJump
     output.print('JMP_IF', if_true.label)
     output.print('JMP', if_false.label)
   end
+
+  def replace_target!(from, to)
+    @if_true = to if @if_true == from
+    @if_false = to if @if_false == from
+  end
 end

@@ -268,4 +268,8 @@ class DabNode
   def blockish?
     false
   end
+
+  def block_reorder!
+    children.any?(&:block_reorder!)
+  end
 end

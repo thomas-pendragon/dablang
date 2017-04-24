@@ -56,17 +56,15 @@ func foo(a, b)
 /* var 0 b      */ L3          : PUSH_VAR 0
 /*              */               JMP_IF L8
 /*              */               JMP L9
-/*              */ L4          : JMP L1
 /* a  b         */ L5          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */               JMP L4
+/*              */               JMP L1
 /* a  b         */ L6          : PUSH_CONSTANT 2
 /*              */               KERNELCALL 0
-/*              */               JMP L4
-/*              */ L7          : JMP L1
+/*              */               JMP L1
 /* a  b         */ L8          : PUSH_CONSTANT 3
 /*              */               KERNELCALL 0
-/*              */               JMP L7
+/*              */               JMP L1
 /* a  b         */ L9          : PUSH_CONSTANT 4
 /*              */               KERNELCALL 0
-/*              */               JMP L7
+/*              */               JMP L1

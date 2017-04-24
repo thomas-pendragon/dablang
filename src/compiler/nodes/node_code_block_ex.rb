@@ -28,6 +28,23 @@ class DabNodeCodeBlockEx < DabNode
     false
   end
 
+  def block_reorder!
+    return true if flatten_jump!
+    super
+  end
+
+  def flatten_jump!
+    return false unless children.count == 1
+    child = children[0]
+    return false unless child.is_a? DabNodeJump
+
+    function.visit_all(DabNodeBaseJump) do |jump|
+      jump.replace_target!(self, child.target)
+    end
+    remove!
+    true
+  end
+
   def compile(output)
     output.label(label)
     @children.each do |child|
