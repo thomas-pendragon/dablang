@@ -272,4 +272,12 @@ class DabNode
   def block_reorder!
     children.any?(&:block_reorder!)
   end
+
+  def map(&block)
+    @children.map(&block)
+  end
+
+  def flat_map(&block)
+    @children.flat_map(&block)
+  end
 end
