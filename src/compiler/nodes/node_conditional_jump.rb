@@ -1,6 +1,6 @@
-require_relative 'node.rb'
+require_relative 'node_base_jump.rb'
 
-class DabNodeConditionalJump < DabNode
+class DabNodeConditionalJump < DabNodeBaseJump
   attr_reader :target
   attr_reader :if_true, :if_false
 

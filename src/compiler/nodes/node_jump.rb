@@ -1,6 +1,6 @@
-require_relative 'node.rb'
+require_relative 'node_base_jump.rb'
 
-class DabNodeJump < DabNode
+class DabNodeJump < DabNodeBaseJump
   attr_reader :target
   def initialize(target)
     super()
