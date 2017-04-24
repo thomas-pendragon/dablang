@@ -1,6 +1,8 @@
 require_relative '_requires.rb'
 $debug = $settings[:debug]
 $with_cov = $settings[:with_cov]
+$opt = true
+$opt = false if $settings[:no_opt]
 
 inputs = $settings[:inputs] || [:stdin]
 
@@ -41,14 +43,14 @@ debug_check!(program, 'blockify')
 pp1 = [
   DabPPConvertArgToLocalvar,
   DabPPAddMissingReturns,
-  DabPPOptimize,
+  ($opt ? DabPPOptimize : nil),
   DabPPLower,
   DabPPFixLocalvars,
   DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
   DabPPCheckCallArgsTypes,
   DabPPCheckCallArgsCount,
-]
+].compact
 
 pp1.each do |klass|
   next if program.has_errors?
