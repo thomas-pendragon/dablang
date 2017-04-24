@@ -29,4 +29,8 @@ class DabNodeConditionalJump < DabNodeBaseJump
     @if_true = to if @if_true == from
     @if_false = to if @if_false == from
   end
+
+  def targets
+    [@if_true, @if_false]
+  end
 end

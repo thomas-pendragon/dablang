@@ -45,6 +45,14 @@ class DabNodeCodeBlockEx < DabNode
     true
   end
 
+  def all_jump_labels
+    ret = []
+    visit_all(DabNodeBaseJump) do |jump|
+      ret |= jump.targets
+    end
+    ret.map(&:label)
+  end
+
   def compile(output)
     output.label(label)
     @children.each do |child|

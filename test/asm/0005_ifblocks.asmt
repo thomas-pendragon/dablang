@@ -48,8 +48,6 @@ func foo(a, b)
 /*              */               PUSH_ARG 0
 /*              */               JMP_IF L2
 /*              */               JMP L3
-/*              */ L1          : PUSH_NIL 
-/*              */               RETURN 1
 /* var 0 b      */ L2          : PUSH_VAR 0
 /*              */               JMP_IF L5
 /*              */               JMP L6
@@ -68,3 +66,5 @@ func foo(a, b)
 /* a  b         */ L9          : PUSH_CONSTANT 4
 /*              */               KERNELCALL 0
 /*              */               JMP L1
+/*              */ L1          : PUSH_NIL 
+/*              */               RETURN 1

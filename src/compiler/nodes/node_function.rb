@@ -113,4 +113,19 @@ class DabNodeFunction < DabNode
   def real_body
     blocks[0]
   end
+
+  def block_reorder!
+    order = [blocks[0].label]
+    jump_labels = blocks.flat_map(&:all_jump_labels)
+    jump_labels = jump_labels.reverse.uniq.reverse
+    order += jump_labels
+    my_order = blocks.map(&:label)
+    if order != my_order
+      blocks.sort_by! do |child|
+        order.index(child.label)
+      end
+      return true
+    end
+    super
+  end
 end

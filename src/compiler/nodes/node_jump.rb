@@ -22,4 +22,8 @@ class DabNodeJump < DabNodeBaseJump
   def replace_target!(from, to)
     @target = to if @target == from
   end
+
+  def targets
+    [@target]
+  end
 end
