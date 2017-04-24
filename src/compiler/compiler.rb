@@ -37,7 +37,21 @@ end
 
 debug_check!(program, 'raw')
 
-DabPPBlockify.new.run(program)
+def run_postprocess!(program, list)
+  list.each do |klass|
+    next if program.has_errors?
+    STDERR.puts "Will run postprocess <#{klass}>" if $debug
+    klass.new.run(program)
+    program.dump if $debug
+  end
+end
+
+pp0 = [
+  DabPPBlockify,
+]
+
+run_postprocess!(program, pp0)
+
 debug_check!(program, 'blockify')
 
 pp1 = [
@@ -52,12 +66,7 @@ pp1 = [
   DabPPCheckCallArgsCount,
 ].compact
 
-pp1.each do |klass|
-  next if program.has_errors?
-  STDERR.puts "Will run postprocess <#{klass}>" if $debug
-  klass.new.run(program)
-  program.dump if $debug
-end
+run_postprocess!(program, pp1)
 
 debug_check!(program, 'middle')
 
@@ -70,12 +79,7 @@ postprocess = [
 ]
 
 2.times do
-  postprocess.each do |klass|
-    next if program.has_errors?
-    STDERR.puts "Will run postprocess <#{klass}>" if $debug
-    klass.new.run(program)
-    program.dump if $debug
-  end
+  run_postprocess!(program, postprocess)
 end
 
 STDERR.puts "\n--\n\n" if $debug
