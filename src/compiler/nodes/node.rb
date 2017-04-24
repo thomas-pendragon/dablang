@@ -280,4 +280,8 @@ class DabNode
   def flat_map(&block)
     @children.flat_map(&block)
   end
+
+  def sort_by!(&block)
+    @children.sort_by!(&block)
+  end
 end
