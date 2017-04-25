@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  if (true)
+  {
+    print("o");  
+  };
+  print("-");
+  if (true)
+  {
+    print("k");
+  }
+  print("!");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+o-k!

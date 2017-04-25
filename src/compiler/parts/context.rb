@@ -172,7 +172,7 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction
-    read_if || read_return || read_define_var || read_call || read_complex_setter
+    read_return || read_define_var || read_call || read_complex_setter
   end
 
   def read_complex_setter
@@ -331,13 +331,31 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('{')
       ret = DabNodeCodeBlock.new
       while true
-        instr = subcontext.read_instruction
-        break unless instr
-        raise 'expected ;' unless subcontext.read_operator(';')
+        while subcontext.read_separator
+        end
+        break unless instr = subcontext.read_instruction_line
+        while subcontext.read_separator
+        end
         ret.insert(instr)
       end
       next unless subcontext.read_operator('}')
       ret
+    end
+  end
+
+  def read_instruction_line
+    read_if || read_instruction_with_separator
+  end
+
+  def read_separator
+    read_operator(';')
+  end
+
+  def read_instruction_with_separator
+    on_subcontext do |subcontext|
+      next unless instr = subcontext.read_instruction
+      raise 'expected ;' unless subcontext.read_separator
+      instr
     end
   end
 

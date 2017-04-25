@@ -3,7 +3,6 @@
 - allow semicolon after class/function
 - alternative syntax (end instead of {})
 - optional semicolons
-- not require semicolons after if
 - keep comments (for formatter)
 
 ## Compiler
