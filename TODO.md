@@ -1,6 +1,5 @@
 ## Parser ##
 
-- allow semicolon after class/function
 - alternative syntax (end instead of {})
 - optional semicolons
 - keep comments (for formatter)

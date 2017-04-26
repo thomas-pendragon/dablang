@@ -24,6 +24,9 @@ class DabContext < DabBaseContext
   def read_program
     ret = DabNodeUnit.new
     until @stream.eof?
+      while on_subcontext(&:read_separator)
+      end
+
       if f = on_subcontext(&:read_function)
         ret.add_function(f)
       elsif c = on_subcontext(&:read_define_class)
@@ -31,6 +34,10 @@ class DabContext < DabBaseContext
       else
         raise 'unknown token'
       end
+
+      while on_subcontext(&:read_separator)
+      end
+
       @stream.skip_whitespace
     end
     ret
