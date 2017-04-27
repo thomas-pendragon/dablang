@@ -4,9 +4,10 @@ class DabNodeClassDefinition < DabNode
   attr_reader :identifier
   attr_reader :number
 
-  def initialize(identifier, functions)
+  def initialize(identifier, parent, functions)
     super()
     @identifier = identifier
+    @parent_class = parent
     @functions = DabNode.new
     functions.each do |fun|
       @functions.insert(fun)
@@ -23,7 +24,8 @@ class DabNodeClassDefinition < DabNode
   end
 
   def compile(output)
-    output.printex(self, 'DEFINE_CLASS', identifier, number)
+    parent_number = @parent_class ? root.class_number(@parent_class) : 0
+    output.printex(self, 'DEFINE_CLASS', identifier, number, parent_number)
     @functions.each do |fun|
       fun.compile(output)
     end

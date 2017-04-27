@@ -25,7 +25,7 @@ OPCODES = {
   0x17 => {name: 'PUSH_FALSE'}, # push(1)
   0x18 => {name: 'BREAK_LOAD'}, # stop loading the code
   0x19 => {name: 'LOAD_FUNCTION', args: %i(uint16 vlc uint16)}, # [address, name, classIndex]
-  0x1A => {name: 'DEFINE_CLASS', args: %i(vlc uint16)}, # n = name, n2 = base class index
+  0x1A => {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
   0x1B => {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
   0x1C => {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
   0x1D => {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline

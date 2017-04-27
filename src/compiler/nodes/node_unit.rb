@@ -48,6 +48,10 @@ class DabNodeUnit < DabNode
     @class_numbers[klass.identifier] = number
   end
 
+  def class_index(name)
+    @class_numbers[name] || raise("unknown class #{name}")
+  end
+
   def _items
     [@constants.children, @classes.children, @functions.children]
   end

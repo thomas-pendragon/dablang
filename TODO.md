@@ -31,10 +31,9 @@
     - typed arrays
 - nullables and non-null force
 - constructors/destructors
-- subclassing
-    - function override
-        - final functions
-- function overloads
+- subclassing: final functions
+- subclassing: final classes
+- subclassing: check if inheriting from the same class on duplicates
 - default arguments
 - exceptions
 - keyword arguments

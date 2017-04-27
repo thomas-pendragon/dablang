@@ -340,9 +340,10 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_DEFINE_CLASS:
     {
-        auto name  = input.read_vlc_string();
-        auto index = input.read_uint16();
-        add_class(name, index);
+        auto name         = input.read_vlc_string();
+        auto index        = input.read_uint16();
+        auto parent_index = input.read_uint16();
+        add_class(name, index, parent_index);
         break;
     }
     case OP_PUSH_CLASS:
@@ -469,15 +470,18 @@ void DabVM::push_class(int index)
     stack.push(classes[index]);
 }
 
-void DabVM::add_class(const std::string &name, int index)
+void DabVM::add_class(const std::string &name, int index, int parent_index)
 {
     if (!classes.count(index))
     {
+        auto &parent = classes[parent_index];
+        fprintf(stderr, "VM: add class <%s> (parent = <%s>).\n", name.c_str(), parent.name.c_str());
         DabClass klass;
-        klass.name     = name;
-        klass.index    = index;
-        klass.builtin  = false;
-        classes[index] = klass;
+        klass.name             = name;
+        klass.index            = index;
+        klass.builtin          = false;
+        klass.superclass_index = parent_index;
+        classes[index]         = klass;
     }
 }
 

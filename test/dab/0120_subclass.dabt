@@ -1,0 +1,34 @@
+## CODE
+
+class Foo
+{
+  func a()
+  {
+    return "Foo" + self.b();
+  }
+  func b()
+  {
+    return "B";
+  }
+}
+
+class Bar : Foo
+{
+  func a()
+  {
+    return "Bar" + self.b();
+  }
+}
+
+func main()
+{
+  print(Bar.new.a);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+BarB

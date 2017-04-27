@@ -398,7 +398,7 @@ struct DabVM
 
     void push_class(int index);
 
-    void add_class(const std::string &name, int index);
+    void add_class(const std::string &name, int index, int parent_index);
 
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);

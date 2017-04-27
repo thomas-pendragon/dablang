@@ -109,6 +109,9 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless keyword = subcontext.read_keyword('class')
       next unless ident = subcontext.read_identifier
+      if op = subcontext.read_operator(':')
+        next unless parent = subcontext.read_identifier
+      end
       next unless subcontext.read_operator('{')
 
       functions = []
@@ -125,8 +128,8 @@ class DabContext < DabBaseContext
 
       next unless subcontext.read_operator('}')
       subcontext.add_class(ident)
-      ret = DabNodeClassDefinition.new(ident, functions)
-      ret.add_source_parts(keyword, ident)
+      ret = DabNodeClassDefinition.new(ident, parent, functions)
+      ret.add_source_parts(keyword, ident, op, parent)
       ret
     end
   end
