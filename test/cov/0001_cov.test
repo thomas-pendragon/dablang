@@ -69,6 +69,6 @@ func main()
               29: 
     1 hit     30: func main()
               31: {
-    1 hit     32:   print(MyObject.new.b);
-    1 hit     33:   print(MyObject.new.a(true));
+    3 hits    32:   print(MyObject.new.b);
+    2 hits    33:   print(MyObject.new.a(true));
               34: }

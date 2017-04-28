@@ -32,7 +32,7 @@ end
 
 stage_jobs = {
   'Build' => [''],
-  'Test' => %w(spec vm_spec format_spec disasm_spec asm_spec dumpcov_spec),
+  'Test' => %w(spec vm_spec format_spec disasm_spec asm_spec dumpcov_spec cov_spec),
 }
 
 compilers.each do |compiler, env|
