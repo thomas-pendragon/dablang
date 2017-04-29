@@ -58,6 +58,8 @@ void DabVM_debug::print_stack()
 
 void DabVM::execute_debug(Stream &input)
 {
+    auto err_stream = stdout;
+
     DabVM_debug debug(*this);
     while (!input.eof())
     {
@@ -70,14 +72,15 @@ void DabVM::execute_debug(Stream &input)
 
         if (cmd == "help")
         {
-            fprintf(stderr, "Help:\n");
-            fprintf(stderr, "help - print this\n");
-            fprintf(stderr, "[s]tep - run single instruction\n");
-            fprintf(stderr, "[r]egisters - show registers\n");
-            fprintf(stderr, "classes - print classes\n");
-            fprintf(stderr, "functions - print functions\n");
-            fprintf(stderr, "constants - dump constants\n");
-            fprintf(stderr, "stack - dump stack\n");
+            fprintf(err_stream, "Help:\n");
+            fprintf(err_stream, "help - print this\n");
+            fprintf(err_stream, "[s]tep - run single instruction\n");
+            fprintf(err_stream, "[r]egisters - show registers\n");
+            fprintf(err_stream, "classes - print classes\n");
+            fprintf(err_stream, "functions - print functions\n");
+            fprintf(err_stream, "constants - dump constants\n");
+            fprintf(err_stream, "stack - dump stack\n");
+            fprintf(err_stream, "quit - quit\n");
         }
         else if (cmd == "step" || cmd == "s")
         {
