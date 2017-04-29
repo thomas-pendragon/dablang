@@ -103,6 +103,10 @@ void DabVM::execute_debug(Stream &input)
         {
             debug.print_stack();
         }
+        else if (cmd == "quit")
+        {
+            exit(0);
+        }
         else
         {
             fprintf(stderr, "Unknown command, type <help> to get available commands.\n");
