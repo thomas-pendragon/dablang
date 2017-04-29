@@ -84,6 +84,7 @@ setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm')
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
+setup_tests('debug', 'test', 'frontend_debug', [cvm])
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
@@ -102,7 +103,7 @@ end
 
 task reverse: :dab_spec_reverse
 
-task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec] do
+task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec] do
 end
 
 task :clean do

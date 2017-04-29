@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+}
+
+## INPUT
+
+help
+quit
+
+## EXPECT STDOUT
+
+Help:
+help - print this
+[s]tep - run single instruction
+[r]egisters - show registers
+classes - print classes
+functions - print functions
+constants - dump constants
+stack - dump stack
+quit - quit
+

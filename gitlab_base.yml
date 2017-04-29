@@ -64,6 +64,11 @@ stages:
   script:
     - bundle exec rake cov_spec
 
+.test_base_debug_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake debug_spec
+
 FormatSpec:
   stage: prebuild
   tags:
