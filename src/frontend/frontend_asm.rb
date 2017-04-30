@@ -14,7 +14,7 @@ def extract_format_source(input, output)
 end
 
 def compile(input, output, options)
-  run_ruby_part(input, output, 'compile', 'compiler', options)
+  run_ruby_part(input, output, 'compile', 'compiler', options, true)
 end
 
 def run_test(settings)

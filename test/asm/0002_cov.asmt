@@ -11,7 +11,7 @@ func main()
 
 ## EXPECT
 
-/*              */               COV_FILE 1, "<input>"
+/*              */               COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
 /* 0            */               CONSTANT_SYMBOL print
 /* 1            */               CONSTANT_STRING "Test"
