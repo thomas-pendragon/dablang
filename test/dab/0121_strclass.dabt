@@ -1,0 +1,19 @@
+## CODE
+
+func foo(a)
+{
+  print(a.class);
+}
+
+func main()
+{
+  foo("str");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+LiteralString

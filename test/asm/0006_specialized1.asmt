@@ -1,0 +1,42 @@
+## CODE
+
+func foo(a)
+{
+  print(a.class);
+}
+
+func bar()
+{
+  foo("str");
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* 0            */               CONSTANT_SYMBOL print
+/* 1            */               CONSTANT_SYMBOL class
+/* 2            */               CONSTANT_SYMBOL foo
+/* 3            */               CONSTANT_STRING "str"
+ 
+/*              */               LOAD_FUNCTION L2, foo, -1
+/*              */               LOAD_FUNCTION L3, bar, -1
+ 
+/*              */               BREAK_LOAD 
+ 
+/*              */ L2          : STACK_RESERVE 0
+/*              */ L0          : PUSH_ARG 0
+/* class        */               PUSH_CONSTANT 1
+/* .class       */               INSTCALL 0, 1
+/*              */               KERNELCALL 0
+/*              */               PUSH_NIL 
+/*              */               RETURN 1
+ 
+/*              */ L3          : STACK_RESERVE 0
+/* str          */ L1          : PUSH_CONSTANT 3
+/* foo          */               PUSH_CONSTANT 2
+/* foo          */               CALL 1, 1
+/*              */               PUSH_NIL 
+/*              */               RETURN 1

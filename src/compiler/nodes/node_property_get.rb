@@ -32,7 +32,9 @@ class DabNodePropertyGet < DabNode
 
   def simplify_constant
     if real_identifier == 'class'
-      DabNodeLiteralString.new(value.my_type.type_string)
+      if value.my_type.concrete?
+        DabNodeLiteralString.new(value.my_type.type_string)
+      end
     end
   end
 

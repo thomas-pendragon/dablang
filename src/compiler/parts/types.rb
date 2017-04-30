@@ -8,6 +8,10 @@ class DabType
   def can_assign_from?(_other_type)
     false
   end
+
+  def concrete?
+    false
+  end
 end
 
 class DabTypeAny < DabType
@@ -37,6 +41,10 @@ class DabTypeLiteralString < DabTypeString
 
   def can_assign_from?(other_type)
     other_type.is_a? DabTypeLiteralString
+  end
+
+  def concrete?
+    true
   end
 end
 
