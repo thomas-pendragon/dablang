@@ -39,6 +39,8 @@
 - keyword arguments
 - functions with blocks
 - namespaces
+- raw pointers, byte operations
+- FFI
 
 ## Standard library ##
 
