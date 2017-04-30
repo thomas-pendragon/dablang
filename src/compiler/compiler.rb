@@ -1,5 +1,6 @@
 require_relative '_requires.rb'
 $debug = $settings[:debug]
+errap $settings if $debug
 $with_cov = $settings[:with_cov]
 $opt = true
 $opt = false if $settings[:no_opt]

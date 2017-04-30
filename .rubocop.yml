@@ -150,3 +150,6 @@ Style/RescueModifier:
 
 Style/GlobalVars:
   Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false

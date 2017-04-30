@@ -10,6 +10,7 @@ while args.count > 0
     if arg.start_with? '--'
       flag = arg[2..-1].tr('-', '_').to_sym
       $settings[flag] = true
+      flag = nil if %i(debug opt no_opt).include?(flag)
     else
       $settings[:input] = arg
       $settings[:inputs] ||= []
