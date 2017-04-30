@@ -24,7 +24,9 @@ class DabNode
   end
 
   def dump(level = 0)
-    tt = sprintf('(%s)', self.my_type.type_string).white
+    tt = self.my_type.type_string
+    tt = "#{tt}!".bold if self.my_type.concrete?
+    tt = sprintf('(%s)', tt).white
     src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
     flags = ''
     exdump = extra_dump.to_s
