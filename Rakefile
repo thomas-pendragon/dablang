@@ -70,7 +70,7 @@ def setup_tests(directory, extension, frontend_type, extras = [])
     output_output_file = input_test_file.gsub('test/' + directory + '/', 'tmp/test_' + directory + '_').gsub('.' + extension, '.out')
     outputs << output_output_file
     file output_output_file => $sources + [input_test_file] + $shared_spec_code + extras do
-      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix test_#{directory}_ --test_output_dir ./tmp/")
+      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=test_#{directory}_ --test_output_dir=./tmp/")
     end
   end
   task "#{directory}_spec".to_sym => outputs

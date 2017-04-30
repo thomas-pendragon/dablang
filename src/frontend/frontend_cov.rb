@@ -5,7 +5,7 @@ def read_test_file(fname)
 end
 
 def calculate_coverage(input, output)
-  run_ruby_part(input, output, 'calculate coverage', 'cov', '--format plaintext', true)
+  run_ruby_part(input, output, 'calculate coverage', 'cov', '--format=plaintext', true)
 end
 
 def extract_format_source(input, output)
