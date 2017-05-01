@@ -9,6 +9,17 @@ class DabNode
     @self_source_parts = []
   end
 
+  def dup
+    ret = super
+    ret.clear
+    ret.parent = nil
+    ret.parent_info = self.parent_info
+    self.children.each do |child|
+      ret.insert(child.dup)
+    end
+    ret
+  end
+
   def insert(child, parent_info = nil)
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
