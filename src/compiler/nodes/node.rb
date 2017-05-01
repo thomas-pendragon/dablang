@@ -260,7 +260,7 @@ class DabNode
   end
 
   def clear
-    @children.clear
+    @children = []
   end
 
   def blockify!
