@@ -10,7 +10,7 @@ class DabNode
   end
 
   def insert(child, parent_info = nil)
-    child.parent_info = parent_info if child.respond_to? :parent_info=
+    child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
   end
 
