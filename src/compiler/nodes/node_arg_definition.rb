@@ -3,7 +3,7 @@ require_relative 'node.rb'
 class DabNodeArgDefinition < DabNode
   attr_accessor :index
   attr_reader :identifier
-  attr_reader :my_type
+  attr_accessor :my_type
 
   def initialize(index, identifier, type)
     super()

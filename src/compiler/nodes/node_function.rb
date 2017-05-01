@@ -2,6 +2,7 @@ require_relative 'node.rb'
 
 class DabNodeFunction < DabNode
   attr_reader :identifier
+  attr_writer :identifier
   attr_accessor :arglist_converted
 
   def initialize(identifier, body, arglist)
@@ -10,6 +11,7 @@ class DabNodeFunction < DabNode
     insert(arglist || DabNode.new, 'arglist')
     insert(DabNode.new, 'blocks')
     insert(body, 'body')
+    @concrete = false
   end
 
   def parent_class
@@ -127,5 +129,18 @@ class DabNodeFunction < DabNode
       return true
     end
     super
+  end
+
+  def concreteify(types)
+    return self if @concrete
+    # TODO: check if already concreteified
+    new_name = "__#{identifier}_#{types.map(&:type_string).join('_')}"
+    ret = dup
+    ret.identifier = new_name
+    ret.arglist.each_with_index do |argdef, index|
+      argdef.my_type = types[index]
+    end
+    root.add_function(ret)
+    new_name
   end
 end

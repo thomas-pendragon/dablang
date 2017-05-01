@@ -32,6 +32,26 @@ class DabNodeCall < DabNode
     super
   end
 
+  def preoptimize!
+    if all_args_concrete?
+      concreteify_call!
+    else
+      super
+    end
+  end
+
+  def all_args_concrete?
+    (args.count > 0) && (args.all? { |arg| arg.my_type.concrete? })
+  end
+
+  def concreteify_call!
+    return false if target_function == true
+    fun = target_function.concreteify(args.map(&:my_type))
+    call = DabNodeHardcall.new(fun, args.map(&:dup))
+    replace_with!(call)
+    true
+  end
+
   def compile(output)
     args.each { |arg| arg.compile(output) }
     if real_identifier == 'print'
