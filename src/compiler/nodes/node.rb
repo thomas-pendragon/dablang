@@ -1,6 +1,6 @@
 class DabNode
-  attr_reader :parent, :children
-  attr_writer :parent
+  attr_reader :children
+  attr_accessor :parent
   attr_accessor :parent_info
 
   def initialize
