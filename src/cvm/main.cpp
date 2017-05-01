@@ -260,6 +260,7 @@ bool DabVM::execute_single(Stream &input)
         stack.push(constants[index]);
         break;
     }
+    case OP_HARDCALL:
     case OP_CALL:
     {
         auto name   = stack.pop_symbol();

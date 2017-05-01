@@ -32,6 +32,7 @@ OPCODES = {
   0x1E => {name: 'DUP'}, # push(1)
   0x1F => {name: 'JMP_IF', arg: :int16}, # pop(1), add +arg to PC if value from stack is true
   0x20 => {name: 'POP', arg: :uint16}, # pop(n)
+  0x21 => {name: 'HARDCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 1), push(n2)
 }.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h

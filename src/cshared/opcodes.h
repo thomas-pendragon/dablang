@@ -35,4 +35,5 @@ enum
     OP_DUP             = 0x1E,
     OP_JMP_IF          = 0x1F,
     OP_POP             = 0x20,
+    OP_HARDCALL        = 0x21,
 };
