@@ -33,4 +33,14 @@ class DabNodeConditionalJump < DabNodeBaseJump
   def targets
     [@if_true, @if_false]
   end
+
+  def optimize!
+    if condition.constant?
+      test = condition.constant_value
+      replace_with!(DabNodeJump.new(test ? if_true : if_false))
+      true
+    else
+      super
+    end
+  end
 end
