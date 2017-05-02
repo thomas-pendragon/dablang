@@ -33,13 +33,18 @@ class DabNodeCodeBlockEx < DabNode
     super
   end
 
-  def flatten_jump!
+  def jump_block?
     return false unless children.count == 1
     child = children[0]
     return false unless child.is_a? DabNodeJump
+    child.target
+  end
+
+  def flatten_jump!
+    return false unless child_target = jump_block?
 
     function.visit_all(DabNodeBaseJump) do |jump|
-      jump.replace_target!(self, child.target)
+      jump.replace_target!(self, child_target)
     end
     remove!
     true
