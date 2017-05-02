@@ -25,4 +25,12 @@ class DabNodeClass < DabNode
   def formatted_source(_options)
     extra_dump
   end
+
+  def constant?
+    true
+  end
+
+  def constant_value
+    DabType.parse(identifier)
+  end
 end

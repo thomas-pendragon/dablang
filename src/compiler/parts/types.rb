@@ -12,6 +12,10 @@ class DabType
   def concrete?
     false
   end
+
+  def belongs?(_value)
+    false
+  end
 end
 
 class DabTypeAny < DabType
@@ -31,6 +35,10 @@ class DabTypeString < DabType
 
   def can_assign_from?(other_type)
     other_type.is_a? DabTypeString
+  end
+
+  def belongs?(value)
+    value.is_a? String
   end
 end
 
