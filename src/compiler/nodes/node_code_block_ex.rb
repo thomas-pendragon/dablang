@@ -50,6 +50,12 @@ class DabNodeCodeBlockEx < DabNode
     true
   end
 
+  def ends_with_jump?
+    ret = children.last
+    return false unless ret.is_a? DabNodeJump
+    ret
+  end
+
   def all_jump_labels
     ret = []
     visit_all(DabNodeBaseJump) do |jump|
