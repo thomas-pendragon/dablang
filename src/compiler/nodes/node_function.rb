@@ -143,4 +143,18 @@ class DabNodeFunction < DabNode
     root.add_function(ret)
     new_name
   end
+
+  def optimize!
+    return true if optimize_first_block!
+    super
+  end
+
+  def optimize_first_block!
+    return false unless first_target = blocks[0].jump_block?
+    if first_target == blocks[1]
+      blocks[0].remove!
+      return true
+    end
+    false
+  end
 end
