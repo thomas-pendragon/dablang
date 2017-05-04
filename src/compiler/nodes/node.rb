@@ -301,4 +301,8 @@ class DabNode
   def sort_by!(&block)
     @children.sort_by!(&block)
   end
+
+  def to_a
+    children
+  end
 end
