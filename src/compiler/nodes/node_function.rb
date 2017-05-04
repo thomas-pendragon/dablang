@@ -36,6 +36,10 @@ class DabNodeFunction < DabNode
     children[2]
   end
 
+  def argcount
+    arglist.count
+  end
+
   def arglist
     children[0]
   end
