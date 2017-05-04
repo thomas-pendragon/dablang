@@ -41,7 +41,9 @@ class DabNodeCall < DabNode
   end
 
   def all_args_concrete?
-    (args.count > 0) && (args.all? { |arg| arg.my_type.concrete? })
+    return false if target_function == true
+    # TODO: WIP, run check first
+    (args.count > 0) && (target_function.arglist.to_a.all? { |arg| arg.my_type.is_a? DabTypeAny }) && (target_function.argcount == args.count) && (args.all? { |arg| arg.my_type.concrete? })
   end
 
   def concreteify_call!
