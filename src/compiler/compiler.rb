@@ -73,6 +73,15 @@ pp11 = [
 
 run_postprocess!(program, pp11)
 debug_check!(program, 'middle1')
+
+while true
+  ret = program.run_processors!
+  break unless ret
+  break if program.has_errors?
+end
+
+debug_check!(program, 'processors')
+
 pp12 = [
   DabPPFixLocalvars,
   DabPPCheckFunctions,
