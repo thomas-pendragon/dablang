@@ -6,7 +6,6 @@
 
 ## Compiler
 
-- test: var<String> a; a = 15 should error
 - test: self outside of class method should error
 - assign label strings only when printing asm (to have L01, L02, L03 etc. sequence)
 - assign named labels to functions

@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+  var<String> a;
+  a = 15;
+}
+
+## RUN
+
+main
+
+## EXPECT COMPILE ERROR
+
+error E0002: Cannot assign <LiteralFixnum> to a variable of type <String>.
