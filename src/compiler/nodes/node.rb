@@ -3,6 +3,29 @@ class DabNode
   attr_accessor :parent
   attr_accessor :parent_info
 
+  class << self
+    def checkers
+      ret = @checkers
+      ret ||= []
+      if self.superclass.is_a? DabNode
+        ret |= self.superclass.checkers
+      end
+      ret
+    end
+
+    def checks_with(klass)
+      @checkers ||= []
+      @checkers << klass
+    end
+  end
+
+  def run_processors!
+    self.class.checkers.each do |klass|
+      return true if klass.new.run(self)
+    end
+    @children.any?(&:run_processors!)
+  end
+
   def initialize
     @children = []
     @self_errors = []
