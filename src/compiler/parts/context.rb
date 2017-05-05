@@ -303,13 +303,7 @@ class DabContext < DabBaseContext
 
       subcontext.add_local_var(id)
       ret = DabNodeDefineLocalVar.new(id, value, type)
-      ret.add_source_part(keyw)
-      ret.add_source_part(lbrace)
-      ret.add_source_part(type)
-      ret.add_source_part(rbrace)
-      ret.add_source_part(id)
-      ret.add_source_part(eq)
-      ret.add_source_part(value)
+      ret.add_source_parts(keyw, lbrace, type, rbrace, id, eq, value)
       ret
     end
   end
