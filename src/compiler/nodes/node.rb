@@ -4,19 +4,24 @@ class DabNode
   attr_accessor :parent_info
 
   class << self
-    def checkers
-      ret = @checkers
-      ret ||= []
-      if self.superclass.is_a? DabNode
-        ret |= self.superclass.checkers
+    define_method_chain = proc do |method_name, collection_name|
+      define_method(collection_name) do
+        ret = instance_variable_get("@#{collection_name}") || []
+        if self.superclass.is_a? DabNode
+          ret |= self.superclass.send(collection_name)
+        end
+        ret
       end
-      ret
+
+      define_method(method_name) do |klass|
+        name = "@#{collection_name}"
+        collection = instance_variable_get(name) || []
+        collection << klass
+        instance_variable_set(name, collection)
+      end
     end
 
-    def checks_with(klass)
-      @checkers ||= []
-      @checkers << klass
-    end
+    define_method_chain.call(:checks_with, :checkers)
   end
 
   def run_processors!
