@@ -64,11 +64,16 @@ run_postprocess!(program, pp01)
 
 debug_check!(program, 'premiddle')
 
-pp1 = [
+pp11 = [
   DabPPConvertArgToLocalvar,
   DabPPAddMissingReturns,
   ($opt ? DabPPOptimize : nil),
   DabPPLower,
+].compact
+
+run_postprocess!(program, pp11)
+debug_check!(program, 'middle1')
+pp12 = [
   DabPPFixLocalvars,
   DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
@@ -76,9 +81,8 @@ pp1 = [
   DabPPCheckCallArgsCount,
 ].compact
 
-run_postprocess!(program, pp1)
-
-debug_check!(program, 'middle')
+run_postprocess!(program, pp12)
+debug_check!(program, 'middle2')
 
 postprocess = [
   DabPPFixLiterals,
