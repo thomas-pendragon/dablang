@@ -24,11 +24,22 @@ class DabNode
     define_method_chain.call(:checks_with, :checkers)
   end
 
-  def run_processors!
-    self.class.checkers.each do |klass|
-      return true if klass.new.run(self)
+  def run_processors!(type = nil)
+    list = self.class.checkers
+    if type
+      list = self.class.send(type)
     end
-    @children.any?(&:run_processors!)
+    list.each do |item|
+      return true if case item
+                     when Class
+                       item.new.run(self)
+                     when Symbol
+                       self.send(item)
+                     else
+                       raise "unknown callback #{callback.class}"
+                     end
+    end
+    @children.any? { |item| item.run_processors!(type) }
   end
 
   def initialize
