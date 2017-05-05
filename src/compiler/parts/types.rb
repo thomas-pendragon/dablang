@@ -34,7 +34,7 @@ class DabTypeString < DabType
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a? DabTypeString
+    other_type.is_a?(DabTypeString) || other_type.is_a?(DabTypeNil)
   end
 
   def belongs?(value)

@@ -297,8 +297,9 @@ class DabContext < DabBaseContext
         next unless rbrace = subcontext.read_operator('>')
       end
       next unless id = subcontext.read_identifier
-      next unless eq = subcontext.read_operator('=')
-      next unless value = subcontext.read_value
+      if eq = subcontext.read_operator('=')
+        next unless value = subcontext.read_value
+      end
 
       subcontext.add_local_var(id)
       ret = DabNodeDefineLocalVar.new(id, value, type)

@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+  var<String> a; # TODO: should be var<String?>
+  a = "test string";
+  print(a);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+test string

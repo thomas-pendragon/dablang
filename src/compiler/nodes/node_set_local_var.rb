@@ -9,7 +9,7 @@ class DabNodeSetLocalVar < DabNode
   def initialize(identifier, value, type = nil, arg_var = false)
     super()
     @identifier = identifier
-    insert(value)
+    insert(value || DabNodeLiteralNil.new)
     type ||= DabNodeType.new(nil)
     type = type.dab_type if type.is_a? DabNodeType
     @my_type = type
