@@ -113,6 +113,16 @@ class DabNode
     ''
   end
 
+  def all_nodes(klass)
+    klass = [klass] unless klass.is_a? Array
+    ret = []
+    ret << self if klass.any? { |item| self.is_a? item }
+    children_nodes.each do |node|
+      ret |= node.all_nodes(klass)
+    end
+    ret
+  end
+
   def visit_all(klass, options = {}, &block)
     klass = [klass] unless klass.is_a? Array
     if klass.any? { |item| self.is_a? item }
