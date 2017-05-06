@@ -22,6 +22,7 @@ class DabNode
     end
 
     define_method_chain.call(:checks_with, :checkers)
+    define_method_chain.call(:after_init, :init_callbacks)
   end
 
   def run_processors!(type = nil)

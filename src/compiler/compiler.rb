@@ -38,6 +38,10 @@ end
 
 debug_check!(program, 'raw')
 
+program.run_processors!(:init_callbacks)
+
+debug_check!(program, 'rawinit')
+
 def run_postprocess!(program, list)
   list.each do |klass|
     next if program.has_errors?
