@@ -87,7 +87,6 @@ end
 debug_check!(program, 'processors')
 
 pp12 = [
-  DabPPCheckFunctions,
   DabPPCheckSetvarTypes,
   DabPPCheckCallArgsTypes,
   DabPPCheckCallArgsCount,

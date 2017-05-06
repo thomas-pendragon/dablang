@@ -1,7 +1,10 @@
 require_relative 'node.rb'
 require_relative '../../shared/opcodes.rb'
+require_relative '../processors/check_function_existence.rb'
 
 class DabNodeCall < DabNode
+  checks_with CheckFunctionExistence
+
   def initialize(identifier, args)
     super()
     insert(identifier)
