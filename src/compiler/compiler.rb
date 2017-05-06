@@ -79,7 +79,7 @@ run_postprocess!(program, pp11)
 debug_check!(program, 'middle1')
 
 while true
-  ret = program.run_processors!
+  ret = program.run_check_callbacks!
   break unless ret
   break if program.has_errors?
 end

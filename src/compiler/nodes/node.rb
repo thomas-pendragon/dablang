@@ -25,20 +25,35 @@ class DabNode
     define_method_chain.call(:after_init, :init_callbacks)
   end
 
-  def run_processors!(type = nil)
-    list = self.class.checkers
-    if type
-      list = self.class.send(type)
+  def self.run_callback(item, callback)
+    case callback
+    when Class
+      callback.new.run(item)
+    when Symbol
+      item.send(callback)
+    else
+      raise "unknown callback #{callback.class}"
     end
+  end
+
+  def run_check_callbacks!
+    list = self.class.checkers
+    ret = false
     list.each do |item|
-      return true if case item
-                     when Class
-                       item.new.run(self)
-                     when Symbol
-                       self.send(item)
-                     else
-                       raise "unknown callback #{callback.class}"
-                     end
+      test = self.class.run_callback(self, item)
+      ret ||= test
+    end
+    @children.each do |child|
+      test = child.run_check_callbacks!
+      ret ||= test
+    end
+    ret
+  end
+
+  def run_processors!(type)
+    list = self.class.send(type)
+    list.each do |item|
+      return true if self.class.run_callback(self, item)
     end
     @children.any? { |item| item.run_processors!(type) }
   end
