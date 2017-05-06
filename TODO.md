@@ -13,6 +13,10 @@
 - don't concreteify function if argument count mismatch
 - skip not referenced labels
 
+## Formatter
+
+- `var<String> foo` should keep type information
+
 ## New tools ##
 
 - IDE
