@@ -1,7 +1,9 @@
 require_relative 'node.rb'
+require_relative '../concerns/localvar_definition_concern.rb'
 
 class DabNodeLocalVar < DabNode
-  attr_accessor :index
+  include LocalvarDefinitionConcern
+
   attr_accessor :identifier
 
   def initialize(identifier)
@@ -18,18 +20,9 @@ class DabNodeLocalVar < DabNode
   end
 
   def compile(output)
-    raise 'no index' unless @index
+    raise 'no index' unless index
     output.comment("var #{index} #{identifier}")
     output.print('PUSH_VAR', index)
-  end
-
-  def var_definition
-    function.visit_all(DabNodeDefineLocalVar) do |define_var|
-      if define_var.real_identifier == self.real_identifier
-        return define_var
-      end
-    end
-    nil
   end
 
   def formatted_source(_options)

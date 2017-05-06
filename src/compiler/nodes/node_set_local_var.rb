@@ -1,8 +1,10 @@
 require_relative 'node.rb'
 require_relative '../processors/check_assign_type.rb'
+require_relative '../concerns/localvar_definition_concern.rb'
 
 class DabNodeSetLocalVar < DabNode
-  attr_accessor :index
+  include LocalvarDefinitionConcern
+
   attr_reader :identifier
   attr_reader :my_type
   attr_accessor :arg_var
@@ -31,18 +33,8 @@ class DabNodeSetLocalVar < DabNode
     identifier
   end
 
-  def localvar_definition
-    definition = nil
-    function.visit_all(DabNodeDefineLocalVar) do |node|
-      next unless node.identifier == self.identifier
-      definition = node
-      break
-    end
-    definition
-  end
-
   def compile(output)
-    raise 'no index' unless @index
+    raise 'no index' unless index
     value.compile(output)
     output.comment("var #{index} #{identifier}")
     output.printex(self, 'SET_VAR', index)

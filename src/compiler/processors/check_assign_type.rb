@@ -1,7 +1,7 @@
 class CheckAssignType
   def run(node)
     setter = node
-    definition = node.localvar_definition
+    definition = node.var_definition
     return if setter == definition
     var_type = definition.my_type
     value_type = setter.value.my_type

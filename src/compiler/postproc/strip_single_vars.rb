@@ -8,7 +8,6 @@ class DabPPStripSingleVars
           var = uses.first
           var.replace_with!(define_var.value)
           define_var.remove!
-          function.remove_localvar_index(define_var.index)
         end
       end
     end

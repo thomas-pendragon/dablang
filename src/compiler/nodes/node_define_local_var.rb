@@ -16,4 +16,12 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
   def formatted_source(options)
     'var ' + super
   end
+
+  def var_definition
+    self
+  end
+
+  def index
+    function.localvar_index(self)
+  end
 end

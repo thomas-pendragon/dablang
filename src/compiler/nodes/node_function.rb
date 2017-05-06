@@ -108,12 +108,8 @@ class DabNodeFunction < DabNode
     end
   end
 
-  def remove_localvar_index(index)
-    visit_all([DabNodeSetLocalVar, DabNodeLocalVar]) do |node|
-      if node.index > index
-        node.index -= 1
-      end
-    end
+  def localvar_index(var)
+    all_nodes(DabNodeDefineLocalVar).index(var)
   end
 
   def real_body
