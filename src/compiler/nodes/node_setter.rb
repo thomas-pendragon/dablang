@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/lower_setter.rb'
 
 class DabNodeSetter < DabNode
+  lowers_with LowerSetter
+
   def initialize(reference, value)
     super()
     insert(reference)
@@ -13,34 +16,6 @@ class DabNodeSetter < DabNode
 
   def value
     children[1]
-  end
-
-  def lower!
-    if reference.is_a? DabNodeReferenceIndex
-      base = reference.base.compiled
-      index = reference.index
-      setcall = DabNodeInstanceCall.new(base, :[]=, [index, value])
-      replace_with!(setcall)
-      true
-    elsif reference.is_a? DabNodeReferenceMember
-      base = reference.base.compiled
-      name = reference.name
-      setcall = DabNodeInstanceCall.new(base, "#{name}=".to_sym, [value])
-      replace_with!(setcall)
-      true
-    elsif reference.is_a? DabNodeReferenceInstVar
-      base = reference.compiled
-      setcall = DabNodeSetInstVar.new(base.identifier, value)
-      replace_with!(setcall)
-      true
-    elsif reference.is_a? DabNodeReferenceLocalVar
-      setcall = DabNodeSetLocalVar.new(reference.name, value)
-      replace_with!(setcall)
-      true
-    else
-      raise "unknown reference #{reference}"
-    end
-    false
   end
 
   def formatted_source(options)
