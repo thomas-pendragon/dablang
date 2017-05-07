@@ -27,11 +27,12 @@ def read_test_file(fname)
     expected_compile_error: compile_error,
     expected_runtime_error: runtime_error,
     included_file: included_file,
+    options: base[:options],
   }
 end
 
-def compile_to_asm(input, output)
-  run_ruby_part(input, output, 'compile to DabASM', 'compiler', nil, true)
+def compile_to_asm(input, output, options)
+  run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)
 end
 
 def assemble(input, output)
@@ -92,7 +93,7 @@ def run_test(settings)
     if extra
       extra = "./test/shared/#{extra}.dab"
     end
-    compile_to_asm(([dab, extra] + stdlib_files).compact, asm)
+    compile_to_asm(([dab, extra] + stdlib_files).compact, asm, data[:options])
   rescue SystemCommandError => e
     if data[:expected_status] == :compile_error
       compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
