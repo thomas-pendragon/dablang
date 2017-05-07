@@ -51,6 +51,11 @@ DabClass &DabValue::get_class(DabVM &vm) const
     return vm.get_class(class_index());
 }
 
+bool DabValue::is_a(DabVM &vm, const DabClass &klass) const
+{
+    return get_class(vm).is_subclass_of(vm, klass);
+}
+
 void DabValue::print(DabVM &vm, FILE *out, bool debug) const
 {
     switch (data.type)

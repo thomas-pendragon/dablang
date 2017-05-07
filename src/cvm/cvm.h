@@ -196,6 +196,8 @@ struct DabValue
 
     void set_data(const DabValueData &other_data);
 
+    bool is_a(DabVM &vm, const DabClass &klass) const;
+
     DabValue()
     {
     }
