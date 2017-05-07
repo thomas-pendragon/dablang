@@ -79,9 +79,9 @@ run_postprocess!(program, pp11)
 debug_check!(program, 'middle1')
 
 while true
-  ret = program.run_check_callbacks!
-  break unless ret
+  break if program.run_check_callbacks!
   break if program.has_errors?
+  break unless program.run_processors!([:lower_callbacks, $opt ? :optimize_callbacks : nil].compact)
 end
 
 debug_check!(program, 'processors')

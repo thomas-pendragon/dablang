@@ -23,6 +23,8 @@ class DabNode
 
     define_method_chain.call(:checks_with, :checkers)
     define_method_chain.call(:after_init, :init_callbacks)
+    define_method_chain.call(:lowers_with, :lower_callbacks)
+    define_method_chain.call(:optimizes_with, :optimize_callbacks)
   end
 
   def self.run_callback(item, callback)
@@ -51,7 +53,8 @@ class DabNode
   end
 
   def run_processors!(type)
-    list = self.class.send(type)
+    type = [type] unless type.is_a? Array
+    list = type.flat_map { |subtype| self.class.send(subtype) }
     list.each do |item|
       return true if self.class.run_callback(self, item)
     end
