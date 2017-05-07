@@ -1,0 +1,5 @@
+func puts(string)
+{
+  print(string);
+  print("\n");
+}

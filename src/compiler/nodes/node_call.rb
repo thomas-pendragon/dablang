@@ -27,18 +27,6 @@ class DabNodeCall < DabNode
     children[1..-1]
   end
 
-  def lower!
-    if real_identifier == 'puts'
-      pcall = DabNodeCall.new('print', args)
-      args = DabNode.new
-      args.insert(DabNodeLiteralString.new("\n"))
-      endlcall = DabNodeCall.new('print', args)
-      replace_with!([pcall, endlcall])
-      return true
-    end
-    super
-  end
-
   def preoptimize!
     if all_args_concrete?
       concreteify_call!
