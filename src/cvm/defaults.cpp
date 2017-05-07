@@ -79,6 +79,20 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
+        fun.name    = "is";
+        fun.regular = false;
+        fun.extra   = [this](size_t n_args, size_t n_ret) {
+            assert(n_args == 2);
+            assert(n_ret == 1);
+            auto arg1 = stack.pop_value();
+            auto arg0 = stack.pop_value();
+            stack.push_value(arg0.is_a(*this, arg1.get_class(*this)));
+        };
+        functions["is"] = fun;
+    }
+
+    {
+        DabFunction fun;
         fun.name    = "||";
         fun.regular = false;
         fun.extra   = [this](size_t n_args, size_t n_ret) {
