@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/lower_if.rb'
 
 class DabNodeIf < DabNode
+  lowers_with LowerIf
+
   def initialize(condition, if_true, if_false)
     super()
     insert(condition, 'condition')
@@ -27,28 +30,6 @@ class DabNodeIf < DabNode
       return true
     end
     false
-  end
-
-  def lower!
-    if_block = self.function.new_named_codeblock
-    true_block = self.function.new_named_codeblock
-    false_block = self.function.new_named_codeblock
-    continue_block = self.function.new_named_codeblock
-
-    true_block.insert(if_true)
-    false_block.insert(if_false) if if_false
-
-    jmp_false = DabNodeJump.new(if_false ? false_block.label : continue_block.label, condition)
-    jmp_continue = DabNodeJump.new(continue_block.label)
-
-    true_block.insert(jmp_continue)
-
-    if_block.insert(jmp_false)
-    if_block.insert(true_block)
-    if_block.insert(false_block) if if_false
-    if_block.insert(continue_block)
-
-    replace_with!(if_block)
   end
 
   def formatted_source(options)

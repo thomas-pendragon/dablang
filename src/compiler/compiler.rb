@@ -72,7 +72,6 @@ pp11 = [
   DabPPConvertArgToLocalvar,
   DabPPAddMissingReturns,
   ($opt ? DabPPOptimize : nil),
-  DabPPLower,
 ].compact
 
 run_postprocess!(program, pp11)

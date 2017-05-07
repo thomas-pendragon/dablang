@@ -303,10 +303,6 @@ class DabNode
     false
   end
 
-  def lower!
-    children.any?(&:lower!)
-  end
-
   def optimize!
     children.any?(&:optimize!)
   end
