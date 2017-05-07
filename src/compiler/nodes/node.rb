@@ -7,7 +7,7 @@ class DabNode
     define_method_chain = proc do |method_name, collection_name|
       define_method(collection_name) do
         ret = instance_variable_get("@#{collection_name}") || []
-        if self.superclass.is_a? DabNode
+        if self.superclass < DabNode
           ret |= self.superclass.send(collection_name)
         end
         ret
