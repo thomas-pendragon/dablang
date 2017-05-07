@@ -2,10 +2,12 @@ require_relative 'node.rb'
 require_relative '../../shared/opcodes.rb'
 require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/check_call_args_types.rb'
+require_relative '../processors/check_call_args_count.rb'
 
 class DabNodeCall < DabNode
   checks_with CheckFunctionExistence
   checks_with CheckCallArgsTypes
+  checks_with CheckCallArgsCount
 
   def initialize(identifier, args)
     super()

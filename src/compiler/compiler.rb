@@ -86,13 +86,6 @@ end
 
 debug_check!(program, 'processors')
 
-pp12 = [
-  DabPPCheckCallArgsCount,
-].compact
-
-run_postprocess!(program, pp12)
-debug_check!(program, 'middle2')
-
 postprocess = [
   DabPPFixLiterals,
   DabPPReuseConstants,
