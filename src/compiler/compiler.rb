@@ -38,7 +38,7 @@ end
 
 debug_check!(program, 'raw')
 
-program.run_processors!(:init_callbacks)
+program.run_all_processors!(:init_callbacks)
 
 debug_check!(program, 'rawinit')
 
