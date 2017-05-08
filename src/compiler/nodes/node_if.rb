@@ -2,7 +2,7 @@ require_relative 'node.rb'
 require_relative '../processors/lower_if.rb'
 
 class DabNodeIf < DabNode
-  lowers_with LowerIf
+  lower_with LowerIf
 
   def initialize(condition, if_true, if_false)
     super()

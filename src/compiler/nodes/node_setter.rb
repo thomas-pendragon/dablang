@@ -2,7 +2,7 @@ require_relative 'node.rb'
 require_relative '../processors/lower_setter.rb'
 
 class DabNodeSetter < DabNode
-  lowers_with LowerSetter
+  lower_with LowerSetter
 
   def initialize(reference, value)
     super()

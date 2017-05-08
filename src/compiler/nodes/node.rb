@@ -21,10 +21,10 @@ class DabNode
       end
     end
 
-    define_method_chain.call(:checks_with, :checkers)
+    define_method_chain.call(:check_with, :checkers)
     define_method_chain.call(:after_init, :init_callbacks)
-    define_method_chain.call(:lowers_with, :lower_callbacks)
-    define_method_chain.call(:optimizes_with, :optimize_callbacks)
+    define_method_chain.call(:lower_with, :lower_callbacks)
+    define_method_chain.call(:optimize_with, :optimize_callbacks)
   end
 
   def self.run_callback(item, callback)

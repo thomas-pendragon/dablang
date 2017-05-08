@@ -9,7 +9,7 @@ class DabNodeSetLocalVar < DabNode
   attr_reader :my_type
   attr_accessor :arg_var
 
-  checks_with CheckAssignType
+  check_with CheckAssignType
 
   def initialize(identifier, value, type = nil, arg_var = false)
     super()
