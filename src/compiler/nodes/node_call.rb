@@ -3,11 +3,13 @@ require_relative '../../shared/opcodes.rb'
 require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_call_args_count.rb'
+require_relative '../processors/concreteify_call.rb'
 
 class DabNodeCall < DabNode
   check_with CheckFunctionExistence
   check_with CheckCallArgsTypes
   check_with CheckCallArgsCount
+  optimize_with ConcreteifyCall
 
   def initialize(identifier, args)
     super()
@@ -25,28 +27,6 @@ class DabNodeCall < DabNode
 
   def args
     children[1..-1]
-  end
-
-  def preoptimize!
-    if all_args_concrete?
-      concreteify_call!
-    else
-      super
-    end
-  end
-
-  def all_args_concrete?
-    return false if target_function == true
-    # TODO: WIP, run check first
-    (args.count > 0) && (target_function.arglist.to_a.all? { |arg| arg.my_type.is_a? DabTypeAny }) && (target_function.argcount == args.count) && (args.all? { |arg| arg.my_type.concrete? })
-  end
-
-  def concreteify_call!
-    return false if target_function == true
-    fun = target_function.concreteify(args.map(&:my_type))
-    call = DabNodeHardcall.new(fun, args.map(&:dup))
-    replace_with!(call)
-    true
   end
 
   def compile(output)

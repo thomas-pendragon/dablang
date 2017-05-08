@@ -9,6 +9,12 @@ class DabNodeCodeBlockEx < DabNode
     @label = label
   end
 
+  def dup
+    ret = super
+    @label = root.reserve_label
+    ret
+  end
+
   def extra_dump
     "!.#{label}"
   end
