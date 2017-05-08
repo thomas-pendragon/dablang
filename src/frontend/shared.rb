@@ -6,6 +6,7 @@ require 'pathname'
 require 'rake'
 require 'shellwords'
 require 'fileutils'
+require 'diffy'
 
 class DabCompareError < RuntimeError
 end
@@ -76,6 +77,8 @@ def compare_output(info, actual, expected, soft_match = false)
     puts actual
     puts 'Expected:'.bold
     puts expected
+    puts 'Diff:'.bold
+    puts Diffy::Diff.new(expected, actual).to_s(:color)
     puts "#{info}... ERROR!".red.bold
     raise DabCompareError.new('test error')
   end
