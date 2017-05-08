@@ -61,7 +61,6 @@ run_postprocess!(program, pp0)
 debug_check!(program, 'blockify')
 
 pp11 = [
-  DabPPConvertArgToLocalvar,
   DabPPAddMissingReturns,
   ($opt ? DabPPOptimize : nil),
 ].compact

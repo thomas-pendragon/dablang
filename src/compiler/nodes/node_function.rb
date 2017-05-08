@@ -1,9 +1,11 @@
 require_relative 'node.rb'
+require_relative '../processors/convert_arg_to_localvar.rb'
 
 class DabNodeFunction < DabNode
   attr_reader :identifier
   attr_writer :identifier
-  attr_accessor :arglist_converted
+
+  after_init ConvertArgToLocalvar
 
   def initialize(identifier, body, arglist)
     super()
