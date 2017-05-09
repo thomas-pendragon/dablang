@@ -15,6 +15,7 @@ class DabNodeUnit < DabNode
     insert(@classes, 'classes')
     @class_numbers = STANDARD_CLASSES_REV.dup
     @labels = 0
+    @constant_table = {}
   end
 
   def class_number(id)
@@ -28,12 +29,18 @@ class DabNodeUnit < DabNode
   end
 
   def add_constant(literal)
+    const = @constant_table[literal.extra_value] || _create_constant(literal)
+    ret = DabNodeConstantReference.new(const.index)
+    ret.clone_source_parts_from(literal)
+    ret
+  end
+
+  def _create_constant(literal)
     index = @constants.count
     const = DabNodeConstant.new(literal, index)
     @constants.insert(const)
-    ret = DabNodeConstantReference.new(index)
-    ret.clone_source_parts_from(literal)
-    ret
+    @constant_table[literal.extra_value] = const
+    const
   end
 
   def add_function(function)
@@ -108,8 +115,21 @@ class DabNodeUnit < DabNode
     another_program.classes.each do |klass|
       @classes.insert(klass)
     end
-    another_program.functions.clear
-    another_program.constants.clear
-    another_program.classes.clear
+    another_program.clear!
+    rebuild_constant_table!
+  end
+
+  def rebuild_constant_table!
+    @constant_table = {}
+    @constants.each do |constant|
+      @constant_table[constant.extra_value] = constant
+    end
+  end
+
+  def clear!
+    self.functions.clear
+    self.constants.clear
+    self.classes.clear
+    @constant_table = {}
   end
 end
