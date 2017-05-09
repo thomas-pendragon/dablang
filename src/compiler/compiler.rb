@@ -77,9 +77,6 @@ end
 debug_check!(program, 'processors')
 
 postprocess = [
-  DabPPFixLiterals,
-  DabPPReuseConstants,
-  DabPPCompactConstants,
   DabPPStripSingleVars,
 ]
 

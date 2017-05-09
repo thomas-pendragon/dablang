@@ -67,10 +67,6 @@ class DabNodeFunction < DabNode
     end
   end
 
-  def add_constant(literal)
-    self.root.add_constant(literal)
-  end
-
   def n_local_vars
     count = 0
     visit_all(DabNodeDefineLocalVar) do
