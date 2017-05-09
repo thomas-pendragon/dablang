@@ -12,24 +12,28 @@ class DabNodeConstant < DabNode
     "$#{index}"
   end
 
+  def value
+    @children[0]
+  end
+
   def compile(output)
     output.comment(index.to_s)
-    @children[0].compile_constant(output)
+    value.compile_constant(output)
   end
 
   def extra_value
-    @children[0].extra_value
+    value.extra_value
   end
 
   def real_value
-    @children[0].real_value
+    value.real_value
   end
 
   def my_type
-    @children[0].my_type
+    value.my_type
   end
 
   def constant?
-    @children[0].constant?
+    value.constant?
   end
 end
