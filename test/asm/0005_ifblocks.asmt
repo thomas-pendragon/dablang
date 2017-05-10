@@ -41,16 +41,14 @@ func foo(a, b)
  
 /*              */               BREAK_LOAD 
  
-/*              */ L10         : STACK_RESERVE 1
-/*              */ L0          : PUSH_ARG 1
-/* var 0 b      */               SET_VAR 0
-/*              */               PUSH_ARG 0
+/*              */ L10         : STACK_RESERVE 0
+/*              */ L0          : PUSH_ARG 0
 /*              */               JMP_IF L2
 /*              */               JMP L3
-/* var 0 b      */ L2          : PUSH_VAR 0
+/*              */ L2          : PUSH_ARG 1
 /*              */               JMP_IF L5
 /*              */               JMP L6
-/* var 0 b      */ L3          : PUSH_VAR 0
+/*              */ L3          : PUSH_ARG 1
 /*              */               JMP_IF L8
 /*              */               JMP L9
 /* a  b         */ L5          : PUSH_CONSTANT 3

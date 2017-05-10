@@ -25,8 +25,10 @@ func bar()
  
 /*              */               BREAK_LOAD 
  
-/*              */ L2          : STACK_RESERVE 0
+/*              */ L2          : STACK_RESERVE 1
 /*              */ L0          : PUSH_ARG 0
+/* var 0 a      */               SET_VAR 0
+/* var 0 a      */               PUSH_VAR 0
 /* class        */               PUSH_CONSTANT 1
 /* .class       */               INSTCALL 0, 1
 /*              */               KERNELCALL 0

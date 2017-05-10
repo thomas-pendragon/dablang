@@ -39,10 +39,8 @@ func bar()
  
 /*              */               BREAK_LOAD 
  
-/*              */ L16         : STACK_RESERVE 1
+/*              */ L16         : STACK_RESERVE 0
 /*              */ L11         : PUSH_ARG 0
-/* var 0 a      */               SET_VAR 0
-/* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -50,7 +48,7 @@ func bar()
 /*              */               JMP L13
 /* got string   */ L12         : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/* var 0 a      */ L13         : PUSH_VAR 0
+/*              */ L13         : PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -71,10 +69,8 @@ func bar()
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
-/*              */ L18         : STACK_RESERVE 1
+/*              */ L18         : STACK_RESERVE 0
 /*              */ L0          : PUSH_ARG 0
-/* var 0 a      */               SET_VAR 0
-/* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -82,7 +78,7 @@ func bar()
 /*              */               JMP L13
 /* got string   */ L2          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/* var 0 a      */ L1          : PUSH_VAR 0
+/*              */ L1          : PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -93,10 +89,8 @@ func bar()
 /*              */ L3          : PUSH_NIL 
 /*              */               RETURN 1
  
-/*              */ L19         : STACK_RESERVE 1
+/*              */ L19         : STACK_RESERVE 0
 /*              */ L6          : PUSH_ARG 0
-/* var 0 a      */               SET_VAR 0
-/* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -104,7 +98,7 @@ func bar()
 /*              */               JMP L13
 /* got string   */ L7          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/* var 0 a      */ L8          : PUSH_VAR 0
+/*              */ L8          : PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
@@ -114,3 +108,4 @@ func bar()
 /*              */               KERNELCALL 0
 /*              */ L10         : PUSH_NIL 
 /*              */               RETURN 1
+

@@ -76,18 +76,6 @@ while true
   break
 end
 
-debug_check!(program, 'processors')
-
-postprocess = [
-  DabPPStripSingleVars,
-]
-
-2.times do
-  run_postprocess!(program, postprocess)
-end
-
-STDERR.puts "\n--\n\n" if $debug
-
 debug_check!(program, 'post')
 
 if program.has_errors?

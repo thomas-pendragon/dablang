@@ -1,6 +1,7 @@
 require_relative 'node.rb'
 require_relative '../processors/check_assign_type.rb'
 require_relative '../concerns/localvar_definition_concern.rb'
+require_relative '../processors/strip_readonly_argvars.rb'
 
 class DabNodeSetLocalVar < DabNode
   include LocalvarDefinitionConcern
@@ -10,6 +11,7 @@ class DabNodeSetLocalVar < DabNode
   attr_accessor :arg_var
 
   check_with CheckAssignType
+  optimize_with StripReadonlyArgvars
 
   def initialize(identifier, value, type = nil, arg_var = false)
     super()
@@ -42,5 +44,13 @@ class DabNodeSetLocalVar < DabNode
 
   def formatted_source(options)
     real_identifier + ' = ' + value.formatted_source(options) + ';'
+  end
+
+  def all_setters
+    function.all_nodes(DabNodeSetLocalVar).select { |node| node.identifier == self.identifier }
+  end
+
+  def all_getters
+    function.all_nodes(DabNodeLocalVar).select { |node| node.identifier == self.identifier }
   end
 end
