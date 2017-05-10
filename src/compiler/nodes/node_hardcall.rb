@@ -1,7 +1,7 @@
-require_relative 'node.rb'
+require_relative 'node_basecall.rb'
 require_relative '../../shared/opcodes.rb'
 
-class DabNodeHardcall < DabNode
+class DabNodeHardcall < DabNodeBasecall
   def initialize(identifier, args)
     super()
     insert(identifier)
