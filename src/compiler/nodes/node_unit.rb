@@ -30,14 +30,13 @@ class DabNodeUnit < DabNode
 
   def add_constant(literal)
     const = @constant_table[literal.extra_value] || _create_constant(literal)
-    ret = DabNodeConstantReference.new(const.index)
+    ret = DabNodeConstantReference.new(const)
     ret.clone_source_parts_from(literal)
     ret
   end
 
   def _create_constant(literal)
-    index = @constants.count
-    const = DabNodeConstant.new(literal, index)
+    const = DabNodeConstant.new(literal)
     @constants.insert(const)
     @constant_table[literal.extra_value] = const
     const
@@ -57,6 +56,10 @@ class DabNodeUnit < DabNode
 
   def class_index(name)
     @class_numbers[name] || raise("unknown class #{name}")
+  end
+
+  def constant_index(node)
+    all_nodes(DabNodeConstant).index(node)
   end
 
   def _items

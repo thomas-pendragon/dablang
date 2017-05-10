@@ -1,20 +1,19 @@
 require_relative 'node.rb'
 
 class DabNodeConstantReference < DabNode
-  attr_accessor :index
-  def initialize(index)
+  attr_reader :target
+
+  def initialize(target)
     super()
-    @index = index
+    @target = target
+  end
+
+  def index
+    target.index
   end
 
   def extra_dump
     "$$#{index} [#{target.extra_value}]"
-  end
-
-  def target
-    raise 'no func' unless function
-    raise 'no index' unless index
-    function.constants[index]
   end
 
   def extra_value

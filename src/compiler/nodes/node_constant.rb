@@ -1,15 +1,17 @@
 require_relative 'node.rb'
 
 class DabNodeConstant < DabNode
-  attr_accessor :index
-  def initialize(value, index)
+  def initialize(value)
     super()
     insert(value)
-    @index = index
   end
 
   def extra_dump
     "$#{index}"
+  end
+
+  def index
+    root.constant_index(self)
   end
 
   def value
