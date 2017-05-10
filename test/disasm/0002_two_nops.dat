@@ -1,0 +1,8 @@
+## CODE
+
+0C 0C
+
+## EXPECT
+
+       0: NOP 
+       1: NOP

@@ -16,7 +16,7 @@
 
 struct AsmStream : public BaseAsmStream
 {
-    AsmStream(size_t position) : BaseAsmStream(position)
+    AsmStream(size_t &position) : BaseAsmStream(position)
     {
     }
 
