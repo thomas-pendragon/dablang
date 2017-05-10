@@ -11,6 +11,8 @@
 - assign named labels to functions
 - don't concreteify function if argument count mismatch
 - skip not referenced labels
+- fix jump targets when duplicating nodes (important)
+- fix asm/specialized2 spec
 
 ## Formatter
 
