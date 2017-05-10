@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/strip_unused_constant.rb'
 
 class DabNodeConstant < DabNode
+  optimize_with StripUnusedConstant
+
   def initialize(value)
     super()
     insert(value)
@@ -37,5 +40,9 @@ class DabNodeConstant < DabNode
 
   def constant?
     value.constant?
+  end
+
+  def references
+    root.all_nodes(DabNodeConstantReference).select { |node| node.target == self }
   end
 end
