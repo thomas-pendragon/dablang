@@ -1,0 +1,24 @@
+## CODE
+
+func foo(a)
+{
+  print(a);
+}
+
+## OPTIONS
+
+--opt
+
+## EXPECT
+
+/* 0            */               CONSTANT_SYMBOL print
+ 
+/*              */               LOAD_FUNCTION L1, foo, -1
+ 
+/*              */               BREAK_LOAD 
+ 
+/*              */ L1          : STACK_RESERVE 0
+/*              */ L0          : PUSH_ARG 0
+/*              */               KERNELCALL 0
+/*              */               PUSH_NIL 
+/*              */               RETURN 1
