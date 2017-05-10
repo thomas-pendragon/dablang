@@ -36,6 +36,7 @@ int DabValue::class_index() const
         return this->data.object->object->klass;
         break;
     default:
+        fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
         assert(false);
         break;
     }
