@@ -14,7 +14,6 @@ func main()
 /*              */               COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
 /* 0            */               CONSTANT_STRING "Test"
-/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               COV 1, 1
 /*              */               LOAD_FUNCTION L1, main, -1

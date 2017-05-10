@@ -11,8 +11,6 @@ func foo(a)
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
- 
 /*              */               LOAD_FUNCTION L1, foo, -1
  
 /*              */               BREAK_LOAD 

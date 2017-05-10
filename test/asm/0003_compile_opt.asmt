@@ -12,7 +12,6 @@ func foo()
 ## EXPECT
 
 /* 0            */               CONSTANT_NUMBER 3
-/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L1, foo, -1
  

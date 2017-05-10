@@ -19,7 +19,6 @@ func bar()
 /* 0            */               CONSTANT_STRING "str"
 /* 1            */               CONSTANT_SYMBOL class
 /* 2            */               CONSTANT_SYMBOL foo
-/* 3            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L2, foo, -1
 /*              */               LOAD_FUNCTION L3, bar, -1

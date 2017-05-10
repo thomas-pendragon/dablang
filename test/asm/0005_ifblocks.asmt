@@ -36,7 +36,6 @@ func foo(a, b)
 /* 1            */               CONSTANT_STRING "!a && b"
 /* 2            */               CONSTANT_STRING "a && !b"
 /* 3            */               CONSTANT_STRING "a && b"
-/* 4            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L10, foo, -1
  

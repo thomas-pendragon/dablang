@@ -15,7 +15,6 @@ func main()
 ## EXPECT
 
 /* 0            */               CONSTANT_STRING "ok"
-/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L3, main, -1
  

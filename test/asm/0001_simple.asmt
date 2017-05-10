@@ -8,7 +8,6 @@ func main()
 ## EXPECT
 
 /* 0            */               CONSTANT_STRING "Test"
-/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L1, main, -1
  

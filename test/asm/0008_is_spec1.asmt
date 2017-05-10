@@ -30,7 +30,6 @@ func bar()
 /* 3            */               CONSTANT_NUMBER 12
 /* 4            */               CONSTANT_SYMBOL foo
 /* 5            */               CONSTANT_SYMBOL is
-/* 6            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L6, foo, -1
 /*              */               LOAD_FUNCTION L7, bar, -1

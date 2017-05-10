@@ -14,7 +14,6 @@ func foo()
 /* 0            */               CONSTANT_SYMBOL "+"
 /* 1            */               CONSTANT_NUMBER 1
 /* 2            */               CONSTANT_NUMBER 2
-/* 3            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L1, foo, -1
  

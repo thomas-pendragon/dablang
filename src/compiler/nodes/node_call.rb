@@ -4,11 +4,13 @@ require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_call_args_count.rb'
 require_relative '../processors/concreteify_call.rb'
+require_relative '../processors/convert_call_to_syscall.rb'
 
 class DabNodeCall < DabNodeBasecall
   check_with CheckFunctionExistence
   check_with CheckCallArgsTypes
   check_with CheckCallArgsCount
+  lower_with ConvertCallToSyscall
   optimize_with ConcreteifyCall
 
   def initialize(identifier, args)
@@ -31,15 +33,9 @@ class DabNodeCall < DabNodeBasecall
 
   def compile(output)
     args.each { |arg| arg.compile(output) }
-    if real_identifier == 'print'
-      output.printex(self, 'KERNELCALL', KERNELCODES_REV['PRINT'])
-    elsif real_identifier == 'exit'
-      output.printex(self, 'KERNELCALL', KERNELCODES_REV['EXIT'])
-    else
-      output.push(identifier)
-      output.comment(real_identifier)
-      output.printex(self, 'CALL', args.count.to_s, '1')
-    end
+    output.push(identifier)
+    output.comment(real_identifier)
+    output.printex(self, 'CALL', args.count.to_s, '1')
   end
 
   def target_function

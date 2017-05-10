@@ -31,7 +31,6 @@ func bar()
 /* 4            */               CONSTANT_SYMBOL __foo_LiteralFixnum
 /* 5            */               CONSTANT_SYMBOL __foo_LiteralString
 /* 6            */               CONSTANT_SYMBOL is
-/* 7            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L16, foo, -1
 /*              */               LOAD_FUNCTION L17, bar, -1
