@@ -81,7 +81,6 @@ postprocess = [
   DabPPReuseConstants,
   DabPPCompactConstants,
   DabPPStripSingleVars,
-  DabPPSimplifyConstantProperties,
 ]
 
 2.times do
