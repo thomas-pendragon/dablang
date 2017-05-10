@@ -7,15 +7,15 @@ func main()
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_STRING "Test"
+/* 0            */               CONSTANT_STRING "Test"
+/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L1, main, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */ L1          : STACK_RESERVE 0
-/* Test         */ L0          : PUSH_CONSTANT 1
+/* Test         */ L0          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1

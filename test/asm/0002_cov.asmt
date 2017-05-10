@@ -13,8 +13,8 @@ func main()
 
 /*              */               COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_STRING "Test"
+/* 0            */               CONSTANT_STRING "Test"
+/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               COV 1, 1
 /*              */               LOAD_FUNCTION L1, main, -1
@@ -22,7 +22,7 @@ func main()
 /*              */               BREAK_LOAD 
  
 /*              */ L1          : STACK_RESERVE 0
-/* Test         */ L0          : PUSH_CONSTANT 1
+/* Test         */ L0          : PUSH_CONSTANT 0
 /*              */               COV 1, 3
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 

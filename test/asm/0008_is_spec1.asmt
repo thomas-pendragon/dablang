@@ -24,13 +24,13 @@ func bar()
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL is
-/* 1            */               CONSTANT_SYMBOL print
-/* 2            */               CONSTANT_STRING "got string"
-/* 3            */               CONSTANT_STRING "got fixnum"
+/* 0            */               CONSTANT_STRING "got fixnum"
+/* 1            */               CONSTANT_STRING "got string"
+/* 2            */               CONSTANT_STRING "str"
+/* 3            */               CONSTANT_NUMBER 12
 /* 4            */               CONSTANT_SYMBOL foo
-/* 5            */               CONSTANT_STRING "str"
-/* 6            */               CONSTANT_NUMBER 12
+/* 5            */               CONSTANT_SYMBOL is
+/* 6            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L6, foo, -1
 /*              */               LOAD_FUNCTION L7, bar, -1
@@ -42,30 +42,30 @@ func bar()
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
-/* is           */               PUSH_CONSTANT 0
+/* is           */               PUSH_CONSTANT 5
 /* op is        */               CALL 2, 1
 /*              */               JMP_IF L2
 /*              */               JMP L1
-/* got string   */ L2          : PUSH_CONSTANT 2
+/* got string   */ L2          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
 /*              */               JMP L1
 /* var 0 a      */ L1          : PUSH_VAR 0
 /* Fixnum       */               PUSH_CLASS 3
-/* is           */               PUSH_CONSTANT 0
+/* is           */               PUSH_CONSTANT 5
 /* op is        */               CALL 2, 1
 /*              */               JMP_IF L4
 /*              */               JMP L3
-/* got fixnum   */ L4          : PUSH_CONSTANT 3
+/* got fixnum   */ L4          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               JMP L3
 /*              */ L3          : PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */ L7          : STACK_RESERVE 0
-/* str          */ L5          : PUSH_CONSTANT 5
+/* str          */ L5          : PUSH_CONSTANT 2
 /* foo          */               PUSH_CONSTANT 4
 /* foo          */               CALL 1, 1
-/* 12           */               PUSH_CONSTANT 6
+/* 12           */               PUSH_CONSTANT 3
 /* foo          */               PUSH_CONSTANT 4
 /* foo          */               CALL 1, 1
 /*              */               PUSH_NIL 

@@ -14,15 +14,15 @@ func main()
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_STRING "ok"
+/* 0            */               CONSTANT_STRING "ok"
+/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L3, main, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */ L3          : STACK_RESERVE 0
-/* ok           */ L2          : PUSH_CONSTANT 1
+/* ok           */ L2          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L1          : PUSH_NIL 
 /*              */               RETURN 1

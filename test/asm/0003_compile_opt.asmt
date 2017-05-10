@@ -11,15 +11,15 @@ func foo()
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_NUMBER 3
+/* 0            */               CONSTANT_NUMBER 3
+/* 1            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L1, foo, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */ L1          : STACK_RESERVE 0
-/* 3            */ L0          : PUSH_CONSTANT 1
+/* 3            */ L0          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1

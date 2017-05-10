@@ -16,10 +16,10 @@ func bar()
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_SYMBOL class
-/* 2            */               CONSTANT_SYMBOL __foo_LiteralString
-/* 3            */               CONSTANT_STRING "str"
+/* 0            */               CONSTANT_STRING "str"
+/* 1            */               CONSTANT_SYMBOL __foo_LiteralString
+/* 2            */               CONSTANT_SYMBOL class
+/* 3            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L3, foo, -1
 /*              */               LOAD_FUNCTION L4, bar, -1
@@ -29,22 +29,22 @@ func bar()
  
 /*              */ L3          : STACK_RESERVE 0
 /*              */ L2          : PUSH_ARG 0
-/* class        */               PUSH_CONSTANT 1
+/* class        */               PUSH_CONSTANT 2
 /* .class       */               INSTCALL 0, 1
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */ L4          : STACK_RESERVE 0
-/* str          */ L1          : PUSH_CONSTANT 3
-/* __foo_Litera */               PUSH_CONSTANT 2
+/* str          */ L1          : PUSH_CONSTANT 0
+/* __foo_Litera */               PUSH_CONSTANT 1
 /* __foo_Litera */               HARDCALL 1, 1
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */ L5          : STACK_RESERVE 0
 /*              */ L0          : PUSH_ARG 0
-/* class        */               PUSH_CONSTANT 1
+/* class        */               PUSH_CONSTANT 2
 /* .class       */               INSTCALL 0, 1
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 

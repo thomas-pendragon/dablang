@@ -38,6 +38,9 @@ class DabNodeUnit < DabNode
   def _create_constant(literal)
     const = DabNodeConstant.new(literal)
     @constants.insert(const)
+    @constants.sort_by! do |node|
+      node.class.to_s + node.extra_value.to_s
+    end
     @constant_table[literal.extra_value] = const
     const
   end

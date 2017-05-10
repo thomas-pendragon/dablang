@@ -32,11 +32,11 @@ func foo(a, b)
 
 ## EXPECT
 
-/* 0            */               CONSTANT_SYMBOL print
-/* 1            */               CONSTANT_STRING "a && b"
+/* 0            */               CONSTANT_STRING "!a && !b"
+/* 1            */               CONSTANT_STRING "!a && b"
 /* 2            */               CONSTANT_STRING "a && !b"
-/* 3            */               CONSTANT_STRING "!a && b"
-/* 4            */               CONSTANT_STRING "!a && !b"
+/* 3            */               CONSTANT_STRING "a && b"
+/* 4            */               CONSTANT_SYMBOL print
  
 /*              */               LOAD_FUNCTION L10, foo, -1
  
@@ -54,16 +54,16 @@ func foo(a, b)
 /* var 0 b      */ L3          : PUSH_VAR 0
 /*              */               JMP_IF L8
 /*              */               JMP L9
-/* a  b         */ L5          : PUSH_CONSTANT 1
+/* a  b         */ L5          : PUSH_CONSTANT 3
 /*              */               KERNELCALL 0
 /*              */               JMP L1
 /* a  b         */ L6          : PUSH_CONSTANT 2
 /*              */               KERNELCALL 0
 /*              */               JMP L1
-/* a  b         */ L8          : PUSH_CONSTANT 3
+/* a  b         */ L8          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
 /*              */               JMP L1
-/* a  b         */ L9          : PUSH_CONSTANT 4
+/* a  b         */ L9          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L1          : PUSH_NIL 
 /*              */               RETURN 1
