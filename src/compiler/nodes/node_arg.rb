@@ -2,16 +2,18 @@ require_relative 'node.rb'
 
 class DabNodeArg < DabNode
   attr_reader :index
-  attr_reader :my_type
 
-  def initialize(index, type)
+  def initialize(index)
     super()
     @index = index
-    @my_type = type
   end
 
   def extra_dump
     "$#{@index}"
+  end
+
+  def my_type
+    function.arg_type(@index)
   end
 
   def compile(output)

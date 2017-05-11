@@ -111,6 +111,10 @@ class DabNodeFunction < DabNode
     all_nodes(DabNodeDefineLocalVar).index(var)
   end
 
+  def arg_type(index)
+    arglist[index].my_type
+  end
+
   def real_body
     blocks[0]
   end
