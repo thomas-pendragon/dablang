@@ -15,4 +15,12 @@ class DabNodeReferenceLocalVar < DabNodeReference
   def formatted_source(_options)
     @name
   end
+
+  def extra_dump
+    @name
+  end
+
+  def identifier
+    @name
+  end
 end
