@@ -66,6 +66,20 @@ class DabTypeFixnum < DabType
   end
 end
 
+class DabTypeClass < DabType
+  def type_string
+    'Class'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeClass
+  end
+
+  def concrete?
+    true
+  end
+end
+
 class DabTypeLiteralFixnum < DabTypeFixnum
   def type_string
     'LiteralFixnum'
