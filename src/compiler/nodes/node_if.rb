@@ -1,7 +1,9 @@
 require_relative 'node.rb'
 require_relative '../processors/lower_if.rb'
+require_relative '../processors/optimize_constant_if.rb'
 
 class DabNodeIf < DabNode
+  optimize_with OptimizeConstantIf
   lower_with LowerIf
 
   def initialize(condition, if_true, if_false)
@@ -21,15 +23,6 @@ class DabNodeIf < DabNode
 
   def if_false
     children[2]
-  end
-
-  def optimize!
-    if condition.constant?
-      test = condition.constant_value
-      replace_with!(test ? if_true : if_false)
-      return true
-    end
-    false
   end
 
   def formatted_source(options)
