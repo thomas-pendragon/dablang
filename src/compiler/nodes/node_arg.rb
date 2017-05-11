@@ -19,8 +19,4 @@ class DabNodeArg < DabNode
   def compile(output)
     output.print('PUSH_ARG', @index)
   end
-
-  def constant?
-    true
-  end
 end

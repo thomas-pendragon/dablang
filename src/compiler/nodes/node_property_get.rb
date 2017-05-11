@@ -1,8 +1,8 @@
 require_relative 'node.rb'
-require_relative '../processors/simplify_constant_property.rb'
+require_relative '../processors/simplify_class_property.rb'
 
 class DabNodePropertyGet < DabNode
-  optimize_with SimplifyConstantProperty
+  optimize_with SimplifyClassProperty
 
   def initialize(value, identifier)
     super()
@@ -31,15 +31,6 @@ class DabNodePropertyGet < DabNode
 
   def constant?
     value.constant?
-  end
-
-  def simplify_constant
-    if real_identifier == 'class'
-      if value.my_type.concrete?
-        return DabNodeLiteralString.new(value.my_type.type_string)
-      end
-    end
-    nil
   end
 
   def formatted_source(options)
