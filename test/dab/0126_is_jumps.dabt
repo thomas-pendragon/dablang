@@ -1,0 +1,28 @@
+## CODE
+
+func foo(a)
+{
+  if (a is String)
+  {
+    puts("got string");
+  }
+  if (a is Fixnum)
+  {
+    puts("got fixnum");
+  }
+}
+
+func main()
+{
+  foo("str");
+  foo(12);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+got string
+got fixnum

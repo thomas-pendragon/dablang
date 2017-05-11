@@ -26,4 +26,9 @@ class DabNodeJump < DabNodeBaseJump
   def targets
     [@target]
   end
+
+  def fixup_dup_replacements!(dictionary)
+    super
+    @target = dictionary[@target] || @target
+  end
 end

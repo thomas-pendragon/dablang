@@ -2,6 +2,7 @@ class DabNode
   attr_reader :children
   attr_accessor :parent
   attr_accessor :parent_info
+  attr_accessor :dup_replacements
 
   class << self
     define_method_chain = proc do |method_name, collection_name|
@@ -67,20 +68,29 @@ class DabNode
   end
 
   def initialize
+    @dup_replacements = {}
     @children = []
     @self_errors = []
     @self_source_parts = []
   end
 
-  def dup
-    ret = super
+  def dup(level = 0)
+    ret = super()
+    ret.dup_replacements.clear
+    ret.dup_replacements[self] = ret
     ret.clear
     ret.parent = nil
     ret.parent_info = self.parent_info
     self.children.each do |child|
-      ret.insert(child.dup)
+      ret.insert(child.dup(level + 1))
+      ret.dup_replacements.merge!(child.dup_replacements)
     end
+    ret.fixup_dup_replacements!(dup_replacements) if level == 0
     ret
+  end
+
+  def fixup_dup_replacements!(dictionary)
+    self.children.each { |child| child.fixup_dup_replacements!(dictionary) }
   end
 
   def insert(child, parent_info = nil)
@@ -97,7 +107,7 @@ class DabNode
     child
   end
 
-  def dump(level = 0)
+  def dump(show_ids = false, level = 0)
     tt = self.my_type.type_string
     tt = "#{tt}!".bold if self.my_type.concrete?
     tt = sprintf('(%s)', tt).white
@@ -108,6 +118,9 @@ class DabNode
     pinfo = ''
     if parent_info
       pinfo = "#{parent_info}: ".bold
+    end
+    if show_ids
+      pinfo = self.object_id.to_s.bold.blue + ': ' + pinfo
     end
     text = sprintf('%s - %s%s%s%s %s %s', '  ' * level, pinfo, self.class.name, exdump, flags, tt, src.white)
     text = text.green if constant?
@@ -126,7 +139,7 @@ class DabNode
         if child.parent != self
           raise "child #{child} is broken, parent is '#{child.parent}', should be '#{self}'"
         end
-        child.dump(level + 1)
+        child.dump(show_ids, level + 1)
       else
         err('%s ~ %s', '  ' * (level + 1), child.to_s)
       end

@@ -73,10 +73,10 @@ func bar()
  
 /*              */               /* f: __foo_LiteralString */ 
 /*              */ L18         : STACK_RESERVE 0
-/*              */ L0          : JMP L12
+/*              */ L0          : NOP 
 /* got string   */ L2          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */ L1          : JMP L15
+/*              */ L1          : JMP L3
 /* got fixnum   */ L4          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L3          : PUSH_NIL 
@@ -84,10 +84,10 @@ func bar()
  
 /*              */               /* f: __foo_LiteralFixnum */ 
 /*              */ L19         : STACK_RESERVE 0
-/*              */ L6          : JMP L13
+/*              */ L6          : JMP L8
 /* got string   */ L7          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */ L8          : JMP L14
+/*              */ L8          : NOP 
 /* got fixnum   */ L9          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L10         : PUSH_NIL 

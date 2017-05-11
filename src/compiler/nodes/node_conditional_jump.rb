@@ -36,4 +36,10 @@ class DabNodeConditionalJump < DabNodeBaseJump
   def targets
     [@if_true, @if_false]
   end
+
+  def fixup_dup_replacements!(dictionary)
+    super
+    @if_true = dictionary[@if_true] || @if_true
+    @if_false = dictionary[@if_false] || @if_false
+  end
 end

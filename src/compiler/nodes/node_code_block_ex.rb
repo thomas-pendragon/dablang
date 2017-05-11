@@ -9,7 +9,7 @@ class DabNodeCodeBlockEx < DabNode
     @label = label
   end
 
-  def dup
+  def dup(level)
     ret = super
     @label = root.reserve_label
     ret
@@ -74,6 +74,9 @@ class DabNodeCodeBlockEx < DabNode
     output.label(label)
     @children.each do |child|
       child.compile(output)
+    end
+    if @children.count == 0
+      output.print('NOP')
     end
   end
 end
