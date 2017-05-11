@@ -62,7 +62,6 @@ debug_check!(program, 'blockify')
 
 pp11 = [
   DabPPAddMissingReturns,
-  ($opt ? DabPPOptimize : nil),
 ].compact
 
 run_postprocess!(program, pp11)

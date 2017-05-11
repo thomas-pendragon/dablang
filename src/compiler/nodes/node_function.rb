@@ -1,6 +1,7 @@
 require_relative 'node.rb'
 require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_block_jump.rb'
+require_relative '../processors/optimize_first_block.rb'
 
 class DabNodeFunction < DabNode
   attr_reader :identifier
@@ -8,6 +9,7 @@ class DabNodeFunction < DabNode
 
   after_init ConvertArgToLocalvar
   optimize_with OptimizeBlockJump
+  optimize_with OptimizeFirstBlock
 
   def initialize(identifier, body, arglist)
     super()
@@ -147,19 +149,5 @@ class DabNodeFunction < DabNode
     end
     root.add_function(ret)
     new_name
-  end
-
-  def optimize!
-    return true if optimize_first_block!
-    super
-  end
-
-  def optimize_first_block!
-    return false unless first_target = blocks[0].jump_block?
-    if first_target == blocks[1]
-      blocks[0].remove!
-      return true
-    end
-    false
   end
 end

@@ -321,10 +321,6 @@ class DabNode
     false
   end
 
-  def optimize!
-    children.any?(&:optimize!)
-  end
-
   def formatted_source(_options)
     raise "unknown source for #{self.class.name}"
   end
