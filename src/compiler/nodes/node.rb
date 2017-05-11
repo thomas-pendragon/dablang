@@ -334,7 +334,7 @@ class DabNode
   end
 
   def empty?
-    false
+    @children.count == 0
   end
 
   def constant_value

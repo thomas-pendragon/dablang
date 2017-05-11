@@ -22,7 +22,6 @@ func main()
  
 /*              */               /* f: main */ 
 /*              */ L3          : STACK_RESERVE 0
-/*              */ L0          : NOP 
 /* ok           */ L2          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L1          : PUSH_NIL 

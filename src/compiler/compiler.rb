@@ -68,6 +68,12 @@ run_postprocess!(program, pp11)
 debug_check!(program, 'middle1')
 
 while true
+  if $debug
+    program.dump
+    err ''
+    err '--~'.yellow * 50
+    err ''
+  end
   break if program.run_check_callbacks!
   break if program.has_errors?
   next if program.run_processors!([$opt ? :optimize_callbacks : nil].compact)

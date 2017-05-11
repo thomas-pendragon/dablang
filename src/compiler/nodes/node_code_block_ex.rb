@@ -1,8 +1,11 @@
 require_relative 'node.rb'
+require_relative '../processors/check_empty_block.rb'
 
 class DabNodeCodeBlockEx < DabNode
   attr_reader :label
   attr_accessor :successor
+
+  check_with CheckEmptyBlock
 
   def initialize(label)
     super()
