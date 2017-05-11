@@ -17,6 +17,7 @@ func foo()
  
 /*              */               BREAK_LOAD 
  
+/*              */               /* f: foo */ 
 /*              */ L1          : STACK_RESERVE 0
 /* 3            */ L0          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0

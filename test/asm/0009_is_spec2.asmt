@@ -20,6 +20,7 @@ func main()
  
 /*              */               BREAK_LOAD 
  
+/*              */               /* f: main */ 
 /*              */ L3          : STACK_RESERVE 0
 /* ok           */ L2          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0

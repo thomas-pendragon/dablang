@@ -41,6 +41,7 @@ func foo(a, b)
  
 /*              */               BREAK_LOAD 
  
+/*              */               /* f: foo */ 
 /*              */ L10         : STACK_RESERVE 0
 /*              */ L0          : PUSH_ARG 0
 /*              */               JMP_IF L2

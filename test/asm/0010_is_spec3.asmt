@@ -39,6 +39,7 @@ func bar()
  
 /*              */               BREAK_LOAD 
  
+/*              */               /* f: foo */ 
 /*              */ L16         : STACK_RESERVE 0
 /*              */ L11         : PUSH_ARG 0
 /* String       */               PUSH_CLASS 1
@@ -59,6 +60,7 @@ func bar()
 /*              */ L15         : PUSH_NIL 
 /*              */               RETURN 1
  
+/*              */               /* f: bar */ 
 /*              */ L17         : STACK_RESERVE 0
 /* str          */ L5          : PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
@@ -69,6 +71,7 @@ func bar()
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
+/*              */               /* f: __foo_LiteralString */ 
 /*              */ L18         : STACK_RESERVE 0
 /*              */ L0          : PUSH_ARG 0
 /* String       */               PUSH_CLASS 1
@@ -89,6 +92,7 @@ func bar()
 /*              */ L3          : PUSH_NIL 
 /*              */               RETURN 1
  
+/*              */               /* f: __foo_LiteralFixnum */ 
 /*              */ L19         : STACK_RESERVE 0
 /*              */ L6          : PUSH_ARG 0
 /* String       */               PUSH_CLASS 1

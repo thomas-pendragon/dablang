@@ -60,6 +60,7 @@ class DabNodeFunction < DabNode
   end
 
   def compile_body(output)
+    output.print("/* f: #{identifier} */")
     output.label(@flabel)
     output.print('STACK_RESERVE', n_local_vars)
     blocks.each do |block|

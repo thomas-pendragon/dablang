@@ -36,6 +36,7 @@ func bar()
  
 /*              */               BREAK_LOAD 
  
+/*              */               /* f: foo */ 
 /*              */ L6          : STACK_RESERVE 1
 /*              */ L0          : PUSH_ARG 0
 /* var 0 a      */               SET_VAR 0
@@ -60,6 +61,7 @@ func bar()
 /*              */ L3          : PUSH_NIL 
 /*              */               RETURN 1
  
+/*              */               /* f: bar */ 
 /*              */ L7          : STACK_RESERVE 0
 /* str          */ L5          : PUSH_CONSTANT 2
 /* foo          */               PUSH_CONSTANT 4
