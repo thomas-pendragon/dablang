@@ -1,8 +1,10 @@
 require_relative 'node.rb'
 require_relative '../processors/fold_constant.rb'
+require_relative '../processors/fold_is_test.rb'
 
 class DabNodeOperator < DabNode
   optimize_with FoldConstant
+  optimize_with FoldIsTest
 
   def initialize(left, right, method)
     super()

@@ -3,17 +3,12 @@ class FoldConstant
     left = node.left
     right = node.right
     identifier = node.identifier
-    return false unless left.constant? && right.constant?
+    return unless left.constant? && right.constant?
     id = identifier.extra_value
     lv = left.constant_value
     rv = right.constant_value
     numeric = (lv.is_a? Numeric) && (rv.is_a? Numeric)
-    if id == 'is'
-      raise "is: rhs must be class, got #{rv.class}" unless rv.is_a? DabType
-      value = rv.belongs?(lv)
-      node.replace_with!(DabNodeLiteralBoolean.new(value))
-      return true
-    end
+    return if id == 'is'
     if id == '||'
       node.replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? right : left)
       return true

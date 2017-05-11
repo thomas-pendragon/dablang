@@ -2,6 +2,7 @@ class DabType
   def self.parse(typename)
     return DabTypeAny.new if typename.nil?
     return DabTypeString.new if typename == 'String'
+    return DabTypeFixnum.new if typename == 'Fixnum'
     raise "Unknown type #{typename}"
   end
 

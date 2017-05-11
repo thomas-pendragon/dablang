@@ -73,20 +73,10 @@ func bar()
  
 /*              */               /* f: __foo_LiteralString */ 
 /*              */ L18         : STACK_RESERVE 0
-/*              */ L0          : PUSH_ARG 0
-/* String       */               PUSH_CLASS 1
-/* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
-/*              */               JMP_IF L12
-/*              */               JMP L13
+/*              */ L0          : JMP L12
 /* got string   */ L2          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */ L1          : PUSH_ARG 0
-/* Fixnum       */               PUSH_CLASS 3
-/* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
-/*              */               JMP_IF L14
-/*              */               JMP L15
+/*              */ L1          : JMP L15
 /* got fixnum   */ L4          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L3          : PUSH_NIL 
@@ -94,22 +84,11 @@ func bar()
  
 /*              */               /* f: __foo_LiteralFixnum */ 
 /*              */ L19         : STACK_RESERVE 0
-/*              */ L6          : PUSH_ARG 0
-/* String       */               PUSH_CLASS 1
-/* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
-/*              */               JMP_IF L12
-/*              */               JMP L13
+/*              */ L6          : JMP L13
 /* got string   */ L7          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */ L8          : PUSH_ARG 0
-/* Fixnum       */               PUSH_CLASS 3
-/* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
-/*              */               JMP_IF L14
-/*              */               JMP L15
+/*              */ L8          : JMP L14
 /* got fixnum   */ L9          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */ L10         : PUSH_NIL 
 /*              */               RETURN 1
-
