@@ -281,7 +281,9 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       if @classes.include? id
-        DabNodeClass.new(id)
+        ret = DabNodeClass.new(id)
+        ret.add_source_parts(id)
+        ret
       else
         false
       end
