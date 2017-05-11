@@ -71,8 +71,8 @@ debug_check!(program, 'middle1')
 while true
   break if program.run_check_callbacks!
   break if program.has_errors?
-  next if program.run_processors!([:lower_callbacks])
   next if program.run_processors!([$opt ? :optimize_callbacks : nil].compact)
+  next if program.run_processors!([:lower_callbacks])
   break
 end
 
