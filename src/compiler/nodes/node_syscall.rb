@@ -7,6 +7,10 @@ class DabNodeSyscall < DabNodeBasecall
     args&.each { |arg| insert(arg) }
   end
 
+  def extra_dump
+    sprintf('#%x %s', @call, identifier)
+  end
+
   def identifier
     KERNELCODES[@call]
   end
