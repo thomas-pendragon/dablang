@@ -1,19 +1,6 @@
 require_relative 'node.rb'
 
 class DabNodeCodeBlock < DabNode
-  attr_reader :label
-
-  def initialize(label = nil)
-    super()
-    @label = label
-  end
-
-  def extra_dump
-    ret = []
-    ret << ".#{label}" if label
-    ret.join(' ')
-  end
-
   def compile(_output)
     raise 'not compileable'
   end
