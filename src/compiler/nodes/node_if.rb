@@ -1,10 +1,8 @@
 require_relative 'node.rb'
-require_relative '../processors/lower_if.rb'
 require_relative '../processors/optimize_constant_if.rb'
 
 class DabNodeIf < DabNode
   optimize_with OptimizeConstantIf
-  lower_with LowerIf
 
   def initialize(condition, if_true, if_false)
     super()
