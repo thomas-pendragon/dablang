@@ -89,7 +89,9 @@ class DabNodeFunction < DabNode
       fargs << arg.formatted_source(options)
     end
     fargs = fargs.join(', ')
-    "func #{@identifier}(#{fargs})\n{\n" + _indent(body.formatted_source(options)) + "}\n"
+    ret = "func #{@identifier}(#{fargs})\n{\n" + _indent(body.formatted_source(options)) + "}\n"
+    ret = "inline #{ret}" if inline
+    ret
   end
 
   def new_named_codeblock
