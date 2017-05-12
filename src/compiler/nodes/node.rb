@@ -108,7 +108,11 @@ class DabNode
     child
   end
 
-  def dump(show_ids = false, level = 0)
+  def inspect
+    to_s
+  end
+
+  def to_s(show_ids = true)
     tt = self.my_type.type_string
     tt = "#{tt}!".bold if self.my_type.concrete?
     tt = sprintf('(%s)', tt).white
@@ -123,8 +127,11 @@ class DabNode
     if show_ids
       pinfo = self.object_id.to_s.bold.blue + ': ' + pinfo
     end
-    text = sprintf('%s%s%s%s %s %s', pinfo, self.class.name, exdump, flags, tt, src.white)
-    text = sprintf('%s - %s', '  ' * level, text)
+    sprintf('%s%s%s%s %s %s', pinfo, self.class.name, exdump, flags, tt, src.white)
+  end
+
+  def dump(show_ids = false, level = 0)
+    text = sprintf('%s - %s', '  ' * level, to_s(show_ids))
     text = text.green if constant?
     if has_errors?
       text = if @self_errors.count > 0
