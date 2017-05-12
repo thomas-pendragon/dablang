@@ -4,6 +4,7 @@ errap $settings if $debug
 $with_cov = $settings[:with_cov]
 $opt = true
 $opt = false if $settings[:no_opt]
+$strip = !!$settings[:strip]
 $entry = $settings[:entry]
 
 inputs = $settings[:inputs] || [:stdin]
@@ -79,6 +80,7 @@ while true
   break if program.has_errors?
   next if program.run_processors!([$opt ? :optimize_callbacks : nil].compact)
   next if program.run_processors!([:lower_callbacks])
+  next if program.run_processors!([$strip ? :strip_callbacks : nil].compact)
   break
 end
 

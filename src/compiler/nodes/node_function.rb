@@ -1,13 +1,14 @@
 require_relative 'node.rb'
 require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_first_block.rb'
+require_relative '../processors/strip_unused_function.rb'
 
 class DabNodeFunction < DabNode
-  attr_reader :identifier
-  attr_writer :identifier
+  attr_accessor :identifier
 
   after_init ConvertArgToLocalvar
   optimize_with OptimizeFirstBlock
+  strip_with StripUnusedFunction
 
   def initialize(identifier, body, arglist)
     super()
@@ -151,5 +152,9 @@ class DabNodeFunction < DabNode
 
   def block_index(block)
     blocks.children.index(block)
+  end
+
+  def users
+    root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
   end
 end
