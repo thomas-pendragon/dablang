@@ -12,6 +12,8 @@ func foo(a)
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /*              */               LOAD_FUNCTION FUNC1, foo, -1
  
 /*              */               BREAK_LOAD 

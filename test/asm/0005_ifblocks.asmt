@@ -32,6 +32,8 @@ func foo(a, b)
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /* 0            */               CONSTANT_STRING "!a && !b"
 /* 1            */               CONSTANT_STRING "!a && b"
 /* 2            */               CONSTANT_STRING "a && !b"

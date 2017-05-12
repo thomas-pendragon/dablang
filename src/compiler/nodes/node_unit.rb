@@ -64,6 +64,10 @@ class DabNodeUnit < DabNode
   end
 
   def compile(output)
+    output.comment('Dab dev')
+    output.print('')
+    output.separate
+
     if $with_cov
       register_filename(output)
       output.separate

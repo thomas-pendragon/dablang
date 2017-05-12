@@ -24,6 +24,8 @@ func bar()
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /* 0            */               CONSTANT_STRING "got fixnum"
 /* 1            */               CONSTANT_STRING "got string"
 /* 2            */               CONSTANT_STRING "str"

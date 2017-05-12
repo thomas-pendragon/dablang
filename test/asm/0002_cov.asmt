@@ -11,6 +11,8 @@ func main()
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /*              */               COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
 /* 0            */               CONSTANT_STRING "Test"

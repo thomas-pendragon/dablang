@@ -16,6 +16,8 @@ func bar()
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /* 0            */               CONSTANT_STRING "str"
 /* 1            */               CONSTANT_SYMBOL class
 /* 2            */               CONSTANT_SYMBOL foo

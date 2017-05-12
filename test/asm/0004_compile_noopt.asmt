@@ -11,6 +11,8 @@ func foo()
 
 ## EXPECT
 
+/* Dab dev      */                
+ 
 /* 0            */               CONSTANT_SYMBOL "+"
 /* 1            */               CONSTANT_NUMBER 1
 /* 2            */               CONSTANT_NUMBER 2
