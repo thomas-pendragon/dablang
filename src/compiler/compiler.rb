@@ -4,6 +4,7 @@ errap $settings if $debug
 $with_cov = $settings[:with_cov]
 $opt = true
 $opt = false if $settings[:no_opt]
+$entry = $settings[:entry]
 
 inputs = $settings[:inputs] || [:stdin]
 
