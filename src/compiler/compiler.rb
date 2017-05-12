@@ -62,13 +62,6 @@ run_postprocess!(program, pp0)
 
 debug_check!(program, 'blockify')
 
-pp11 = [
-  DabPPAddMissingReturns,
-].compact
-
-run_postprocess!(program, pp11)
-debug_check!(program, 'middle1')
-
 while true
   if $debug
     program.dump

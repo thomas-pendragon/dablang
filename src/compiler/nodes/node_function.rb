@@ -2,12 +2,14 @@ require_relative 'node.rb'
 require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_first_block.rb'
 require_relative '../processors/strip_unused_function.rb'
+require_relative '../processors/add_missing_return.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
   attr_reader :inline
 
   after_init ConvertArgToLocalvar
+  after_init AddMissingReturn
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
