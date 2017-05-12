@@ -22,13 +22,12 @@ func bar()
                                  CONSTANT_SYMBOL class
                                  CONSTANT_SYMBOL foo
  
-                                 LOAD_FUNCTION FUNC1, foo, -1
-                                 LOAD_FUNCTION FUNC2, bar, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fbar, bar, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: foo */ 
-                   FUNC1:
+                   Ffoo:
                                  STACK_RESERVE 1
                    L1:
                                  PUSH_ARG 0
@@ -40,8 +39,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 1
  
-                                 /* f: bar */ 
-                   FUNC2:
+                   Fbar:
                                  STACK_RESERVE 0
                    L2:
 /* str          */               PUSH_CONSTANT 0

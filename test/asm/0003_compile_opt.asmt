@@ -15,12 +15,11 @@ func foo()
  
                                  CONSTANT_NUMBER 3
  
-                                 LOAD_FUNCTION FUNC1, foo, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: foo */ 
-                   FUNC1:
+                   Ffoo:
                                  STACK_RESERVE 0
                    L1:
 /* 3            */               PUSH_CONSTANT 0

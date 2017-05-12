@@ -14,12 +14,11 @@ func foo(a)
 
 /* Dab dev      */                
  
-                                 LOAD_FUNCTION FUNC1, foo, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: foo */ 
-                   FUNC1:
+                   Ffoo:
                                  STACK_RESERVE 0
                    L1:
                                  PUSH_ARG 0

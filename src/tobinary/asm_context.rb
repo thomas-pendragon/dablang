@@ -32,7 +32,7 @@ class DabAsmContext < DabBaseContext
 
   def read_identifier_fname
     on_subcontext do |subcontext|
-      next unless ident = subcontext.read_identifier
+      next unless ident = subcontext.read_identifier(:extended)
       if subcontext.read_operator('=')
         ident += '='
       end
@@ -42,7 +42,7 @@ class DabAsmContext < DabBaseContext
 
   def read_label
     on_subcontext do |subcontext|
-      next unless identifier = subcontext.read_identifier
+      next unless identifier = subcontext.read_identifier(:extended)
       next unless subcontext.read_operator(':')
       identifier
     end

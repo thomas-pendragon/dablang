@@ -23,14 +23,13 @@ func bar()
                                  CONSTANT_SYMBOL __foo_LiteralString
                                  CONSTANT_SYMBOL class
  
-                                 LOAD_FUNCTION FUNC1, foo, -1
-                                 LOAD_FUNCTION FUNC2, bar, -1
-                                 LOAD_FUNCTION FUNC3, __foo_LiteralString, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fbar, bar, -1
+                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: foo */ 
-                   FUNC1:
+                   Ffoo:
                                  STACK_RESERVE 0
                    L1:
                                  PUSH_ARG 0
@@ -40,8 +39,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 1
  
-                                 /* f: bar */ 
-                   FUNC2:
+                   Fbar:
                                  STACK_RESERVE 0
                    L2:
 /* str          */               PUSH_CONSTANT 1
@@ -50,8 +48,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 1
  
-                                 /* f: __foo_LiteralString */ 
-                   FUNC3:
+                   F__foo_LiteralString:
                                  STACK_RESERVE 0
                    L3:
 /* LiteralStri  */               PUSH_CONSTANT 0

@@ -18,12 +18,11 @@ func main()
                                  CONSTANT_STRING "Test"
  
                                  COV 1, 1
-                                 LOAD_FUNCTION FUNC1, main, -1
+                                 LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: main */ 
-                   FUNC1:
+                   Fmain:
                                  STACK_RESERVE 0
                    L1:
 /* Test         */               PUSH_CONSTANT 0

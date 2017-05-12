@@ -121,13 +121,13 @@ class DabParser
     SourceString.new(string, filename, @lines[start_pos], start_pos, @position)
   end
 
-  def read_identifier
+  def read_identifier(options = nil)
     skip_whitespace
     start_pos = @position
     debug('identifier ?')
     ret = ''
-    return nil unless current_char_identifier_start?
-    while current_char_identifier?
+    return nil unless current_char_identifier_start?(0, options)
+    while current_char_identifier?(options)
       ret += current_char
       advance!
     end
@@ -324,12 +324,16 @@ class DabParser
     current_char_whitespace? || current_char == '<' || current_char == '>' || current_char == '(' || current_char == ')'
   end
 
-  def current_char_identifier_start?(n = 0)
+  def current_char_identifier_start?(n = 0, _options = nil)
     current_char(n) =~ /[a-zA-Z_]/
   end
 
-  def current_char_identifier?
-    current_char_identifier_start? || current_char_digit?
+  def current_char_identifier?(options = nil)
+    current_char_identifier_start? || current_char_digit? || (options == :extended && current_char_identifier_extended?)
+  end
+
+  def current_char_identifier_extended?
+    current_char == '%'
   end
 
   def current_char(offset = 0)

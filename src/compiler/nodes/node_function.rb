@@ -61,14 +61,16 @@ class DabNodeFunction < DabNode
     self.root.constants
   end
 
+  def funclabel
+    'F' + identifier.gsub('=', '%EQ')
+  end
+
   def compile(output)
-    @funclabel = output.next_label('FUNC')
-    output.printex(self, 'LOAD_FUNCTION', @funclabel, identifier, parent_class_index)
+    output.printex(self, 'LOAD_FUNCTION', funclabel, identifier, parent_class_index)
   end
 
   def compile_body(output)
-    output.print("/* f: #{identifier} */")
-    output.label(@funclabel)
+    output.label(funclabel)
     output.print('STACK_RESERVE', n_local_vars)
     blocks.each do |block|
       block.compile(output)

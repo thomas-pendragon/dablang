@@ -34,14 +34,13 @@ func bar()
                                  CONSTANT_SYMBOL __foo_LiteralFixnum
                                  CONSTANT_SYMBOL __foo_LiteralString
  
-                                 LOAD_FUNCTION FUNC1, bar, -1
-                                 LOAD_FUNCTION FUNC2, __foo_LiteralString, -1
-                                 LOAD_FUNCTION FUNC3, __foo_LiteralFixnum, -1
+                                 LOAD_FUNCTION Fbar, bar, -1
+                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
+                                 LOAD_FUNCTION F__foo_LiteralFixnum, __foo_LiteralFixnum, -1
  
                                  BREAK_LOAD 
  
-                                 /* f: bar */ 
-                   FUNC1:
+                   Fbar:
                                  STACK_RESERVE 0
                    L1:
 /* str          */               PUSH_CONSTANT 2
@@ -53,8 +52,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 1
  
-                                 /* f: __foo_LiteralString */ 
-                   FUNC2:
+                   F__foo_LiteralString:
                                  STACK_RESERVE 0
                    L2:
 /* got string   */               PUSH_CONSTANT 1
@@ -62,8 +60,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 1
  
-                                 /* f: __foo_LiteralFixnum */ 
-                   FUNC3:
+                   F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
                    L3:
 /* got fixnum   */               PUSH_CONSTANT 0
