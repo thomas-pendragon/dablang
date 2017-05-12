@@ -1,8 +1,8 @@
 require_relative 'node_basecall.rb'
 require_relative '../../shared/opcodes.rb'
-require_relative '../processors/check_function_existence.rb'
-require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_call_args_count.rb'
+require_relative '../processors/check_call_args_types.rb'
+require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/concreteify_call.rb'
 require_relative '../processors/convert_call_to_syscall.rb'
 
