@@ -123,7 +123,8 @@ class DabNode
     if show_ids
       pinfo = self.object_id.to_s.bold.blue + ': ' + pinfo
     end
-    text = sprintf('%s - %s%s%s%s %s %s', '  ' * level, pinfo, self.class.name, exdump, flags, tt, src.white)
+    text = sprintf('%s%s%s%s %s %s', pinfo, self.class.name, exdump, flags, tt, src.white)
+    text = sprintf('%s - %s', '  ' * level, text)
     text = text.green if constant?
     if has_errors?
       text = if @self_errors.count > 0
