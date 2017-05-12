@@ -33,7 +33,6 @@ class DabNodeIf < DabNode
       ret += _indent(if_false.formatted_source(options))
       ret += '}'
     end
-    ret += ';'
     ret
   end
 

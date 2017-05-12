@@ -1,0 +1,19 @@
+## INPUT
+
+func foo()
+{
+  if("foo" is String)
+  {
+  print("ok");
+  }
+}
+
+## OUTPUT
+
+func foo()
+{
+  if ("foo" is String)
+  {
+    print("ok");
+  }
+}
