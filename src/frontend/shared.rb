@@ -7,6 +7,7 @@ require 'rake'
 require 'shellwords'
 require 'fileutils'
 require 'diffy'
+require 'clipboard'
 
 class DabCompareError < RuntimeError
 end
@@ -75,6 +76,7 @@ def compare_output(info, actual, expected, soft_match = false)
   else
     puts 'Received:'.bold
     puts actual
+    Clipboard.copy(actual)
     puts 'Expected:'.bold
     puts expected
     puts 'Diff:'.bold
