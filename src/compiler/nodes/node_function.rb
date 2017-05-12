@@ -122,10 +122,6 @@ class DabNodeFunction < DabNode
     arglist[index].my_type
   end
 
-  def real_body
-    blocks[0]
-  end
-
   def block_reorder!
     order = [blocks[0].label]
     jump_labels = blocks.flat_map(&:all_jump_labels)
