@@ -86,4 +86,8 @@ class DabNodeCodeBlockEx < DabNode
   def block_index
     function.block_index(self)
   end
+
+  def next_block
+    function.blocks[block_index + 1]
+  end
 end
