@@ -6,7 +6,6 @@ require_relative '../processors/optimize_block_jump_next.rb'
 
 class DabNodeCodeBlockEx < DabNode
   attr_reader :label
-  attr_accessor :successor
 
   check_with CheckEmptyBlock
   optimize_with OptimizeBlockJump
