@@ -145,6 +145,7 @@ class DabContext < DabBaseContext
 
   def read_function
     on_subcontext do |subcontext|
+      inline = subcontext.read_keyword('inline')
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
       next unless op1 = subcontext.read_operator('(')
@@ -156,8 +157,8 @@ class DabContext < DabBaseContext
       end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      ret = DabNodeFunction.new(ident, code, arglist)
-      ret.add_source_parts(keyw, ident, op1, op2)
+      ret = DabNodeFunction.new(ident, code, arglist, inline)
+      ret.add_source_parts(inline, keyw, ident, op1, op2)
       ret
     end
   end

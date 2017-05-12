@@ -5,18 +5,20 @@ require_relative '../processors/strip_unused_function.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
+  attr_reader :inline
 
   after_init ConvertArgToLocalvar
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
-  def initialize(identifier, body, arglist)
+  def initialize(identifier, body, arglist, inline)
     super()
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
     insert(DabNode.new, 'blocks')
     insert(body, 'body')
     @concrete = false
+    @inline = inline
   end
 
   def parent_class
