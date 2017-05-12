@@ -1,11 +1,17 @@
 require_relative 'node.rb'
 require_relative '../processors/check_empty_block.rb'
+require_relative '../processors/remove_unreachable_block.rb'
+require_relative '../processors/optimize_block_jump.rb'
+require_relative '../processors/optimize_block_jump_next.rb'
 
 class DabNodeCodeBlockEx < DabNode
   attr_reader :label
   attr_accessor :successor
 
   check_with CheckEmptyBlock
+  optimize_with OptimizeBlockJump
+  optimize_with OptimizeBlockJumpNext
+  optimize_with RemoveUnreachableBlock
 
   def initialize(label)
     super()
@@ -89,5 +95,23 @@ class DabNodeCodeBlockEx < DabNode
 
   def next_block
     function.blocks[block_index + 1]
+  end
+
+  def sources
+    ret = function.all_nodes(DabNodeBaseJump).select { |jump| jump.targets.include?(self) }
+    ret += [function] if block_index == 0
+    ret
+  end
+
+  def unreachable?
+    sources.empty?
+  end
+
+  def merge_with!(another_block)
+    another_block.children.each do |child|
+      insert(child)
+    end
+    another_block.clear
+    another_block.remove!
   end
 end

@@ -1,6 +1,5 @@
 require_relative 'node.rb'
 require_relative '../processors/convert_arg_to_localvar.rb'
-require_relative '../processors/optimize_block_jump.rb'
 require_relative '../processors/optimize_first_block.rb'
 
 class DabNodeFunction < DabNode
@@ -8,7 +7,6 @@ class DabNodeFunction < DabNode
   attr_writer :identifier
 
   after_init ConvertArgToLocalvar
-  optimize_with OptimizeBlockJump
   optimize_with OptimizeFirstBlock
 
   def initialize(identifier, body, arglist)

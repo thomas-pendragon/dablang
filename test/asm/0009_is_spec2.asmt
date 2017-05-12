@@ -24,5 +24,5 @@ func main()
 /*              */ L3          : STACK_RESERVE 0
 /* ok           */ L2          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
-/*              */ L1          : PUSH_NIL 
+/*              */               PUSH_NIL 
 /*              */               RETURN 1
