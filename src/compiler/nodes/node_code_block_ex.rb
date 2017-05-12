@@ -82,4 +82,8 @@ class DabNodeCodeBlockEx < DabNode
       output.print('NOP')
     end
   end
+
+  def block_index
+    function.block_index(self)
+  end
 end

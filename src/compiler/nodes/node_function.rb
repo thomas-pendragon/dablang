@@ -150,4 +150,8 @@ class DabNodeFunction < DabNode
     root.add_function(ret)
     new_name
   end
+
+  def block_index(block)
+    blocks.children.index(block)
+  end
 end
