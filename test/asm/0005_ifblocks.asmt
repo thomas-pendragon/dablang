@@ -39,41 +39,41 @@ func foo(a, b)
 /* 2            */               CONSTANT_STRING "a && !b"
 /* 3            */               CONSTANT_STRING "a && b"
  
-/*              */               LOAD_FUNCTION FUNC1, foo, -1
+                                 LOAD_FUNCTION FUNC1, foo, -1
  
-/*              */               BREAK_LOAD 
+                                 BREAK_LOAD 
  
-/*              */               /* f: foo */ 
+                                 /* f: foo */ 
                    FUNC1:
-/*              */               STACK_RESERVE 0
+                                 STACK_RESERVE 0
                    L1:
-/*              */               PUSH_ARG 0
-/*              */               JMP_IF L2
-/*              */               JMP L3
+                                 PUSH_ARG 0
+                                 JMP_IF L2
+                                 JMP L3
                    L2:
-/*              */               PUSH_ARG 1
-/*              */               JMP_IF L4
-/*              */               JMP L5
+                                 PUSH_ARG 1
+                                 JMP_IF L4
+                                 JMP L5
                    L3:
-/*              */               PUSH_ARG 1
-/*              */               JMP_IF L6
-/*              */               JMP L7
+                                 PUSH_ARG 1
+                                 JMP_IF L6
+                                 JMP L7
                    L4:
 /* a  b         */               PUSH_CONSTANT 3
-/*              */               KERNELCALL 0
-/*              */               JMP L8
+                                 KERNELCALL 0
+                                 JMP L8
                    L5:
 /* a  b         */               PUSH_CONSTANT 2
-/*              */               KERNELCALL 0
-/*              */               JMP L8
+                                 KERNELCALL 0
+                                 JMP L8
                    L6:
 /* a  b         */               PUSH_CONSTANT 1
-/*              */               KERNELCALL 0
-/*              */               JMP L8
+                                 KERNELCALL 0
+                                 JMP L8
                    L7:
 /* a  b         */               PUSH_CONSTANT 0
-/*              */               KERNELCALL 0
-/*              */               JMP L8
+                                 KERNELCALL 0
+                                 JMP L8
                    L8:
-/*              */               PUSH_NIL 
-/*              */               RETURN 1
+                                 PUSH_NIL 
+                                 RETURN 1

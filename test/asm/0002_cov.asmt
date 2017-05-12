@@ -13,21 +13,21 @@ func main()
 
 /* Dab dev      */                
  
-/*              */               COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
+                                 COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
 /* 0            */               CONSTANT_STRING "Test"
  
-/*              */               COV 1, 1
-/*              */               LOAD_FUNCTION FUNC1, main, -1
+                                 COV 1, 1
+                                 LOAD_FUNCTION FUNC1, main, -1
  
-/*              */               BREAK_LOAD 
+                                 BREAK_LOAD 
  
-/*              */               /* f: main */ 
+                                 /* f: main */ 
                    FUNC1:
-/*              */               STACK_RESERVE 0
+                                 STACK_RESERVE 0
                    L1:
 /* Test         */               PUSH_CONSTANT 0
-/*              */               COV 1, 3
-/*              */               KERNELCALL 0
-/*              */               PUSH_NIL 
-/*              */               RETURN 1
+                                 COV 1, 3
+                                 KERNELCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1

@@ -11,15 +11,15 @@ func main()
  
 /* 0            */               CONSTANT_STRING "Test"
  
-/*              */               LOAD_FUNCTION FUNC1, main, -1
+                                 LOAD_FUNCTION FUNC1, main, -1
  
-/*              */               BREAK_LOAD 
+                                 BREAK_LOAD 
  
-/*              */               /* f: main */ 
+                                 /* f: main */ 
                    FUNC1:
-/*              */               STACK_RESERVE 0
+                                 STACK_RESERVE 0
                    L1:
 /* Test         */               PUSH_CONSTANT 0
-/*              */               KERNELCALL 0
-/*              */               PUSH_NIL 
-/*              */               RETURN 1
+                                 KERNELCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1

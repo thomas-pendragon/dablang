@@ -14,17 +14,17 @@ func foo(a)
 
 /* Dab dev      */                
  
-/*              */               LOAD_FUNCTION FUNC1, foo, -1
+                                 LOAD_FUNCTION FUNC1, foo, -1
  
-/*              */               BREAK_LOAD 
+                                 BREAK_LOAD 
  
-/*              */               /* f: foo */ 
+                                 /* f: foo */ 
                    FUNC1:
-/*              */               STACK_RESERVE 0
+                                 STACK_RESERVE 0
                    L1:
-/*              */               PUSH_ARG 0
-/*              */               KERNELCALL 0
-/*              */               PUSH_ARG 0
-/*              */               KERNELCALL 0
-/*              */               PUSH_NIL 
-/*              */               RETURN 1
+                                 PUSH_ARG 0
+                                 KERNELCALL 0
+                                 PUSH_ARG 0
+                                 KERNELCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1
