@@ -16,7 +16,7 @@ class DabNodeJump < DabNodeBaseJump
   end
 
   def compile(output)
-    output.print('JMP', target.label)
+    output.print('JMP', target.compile_label(output))
   end
 
   def replace_target!(from, to)

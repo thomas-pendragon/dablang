@@ -26,7 +26,7 @@ class DabNodeOperator < DabNode
   end
 
   def compile(output)
-    label = root.reserve_label
+    label = output.next_label
 
     left.compile(output)
     op_id = identifier.extra_value.to_s

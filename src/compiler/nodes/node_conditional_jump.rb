@@ -24,8 +24,8 @@ class DabNodeConditionalJump < DabNodeBaseJump
 
   def compile(output)
     condition.compile(output)
-    output.print('JMP_IF', if_true.label)
-    output.print('JMP', if_false.label)
+    output.print('JMP_IF', if_true.compile_label(output))
+    output.print('JMP', if_false.compile_label(output))
   end
 
   def replace_target!(from, to)

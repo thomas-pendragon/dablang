@@ -7,10 +7,7 @@
 ## Compiler
 
 - test: self outside of class method should error
-- assign label strings only when printing asm (to have L01, L02, L03 etc. sequence)
-- assign named labels to functions
 - don't concreteify function if argument count mismatch
-- skip not referenced labels
 
 ## Formatter
 

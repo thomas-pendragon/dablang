@@ -22,12 +22,6 @@ class DabNodeUnit < DabNode
     @class_numbers[id]
   end
 
-  def reserve_label
-    ret = @labels
-    @labels += 1
-    "L#{ret}"
-  end
-
   def add_constant(literal)
     const = @constant_table[literal.extra_value] || _create_constant(literal)
     ret = DabNodeConstantReference.new(const)

@@ -5,26 +5,13 @@ require_relative '../processors/optimize_block_jump.rb'
 require_relative '../processors/optimize_block_jump_next.rb'
 
 class DabNodeCodeBlockEx < DabNode
-  attr_reader :label
-
   check_with CheckEmptyBlock
   optimize_with OptimizeBlockJump
   optimize_with OptimizeBlockJumpNext
   optimize_with RemoveUnreachableBlock
 
-  def initialize(label)
-    super()
-    @label = label
-  end
-
-  def dup(level)
-    ret = super
-    @label = root.reserve_label
-    ret
-  end
-
   def extra_dump
-    "!.#{label}"
+    "!.#{block_index}"
   end
 
   def blockify!
@@ -75,11 +62,15 @@ class DabNodeCodeBlockEx < DabNode
     visit_all(DabNodeBaseJump) do |jump|
       ret |= jump.targets
     end
-    ret.map(&:label)
+    ret.map(&:block_index)
+  end
+
+  def compile_label(output = nil)
+    @compile_label ||= output.next_label
   end
 
   def compile(output)
-    output.label(label)
+    output.label(compile_label(output))
     @children.each do |child|
       child.compile(output)
     end

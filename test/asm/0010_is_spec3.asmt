@@ -32,39 +32,39 @@ func bar()
 /* 5            */               CONSTANT_SYMBOL __foo_LiteralString
 /* 6            */               CONSTANT_SYMBOL is
  
-/*              */               LOAD_FUNCTION L16, foo, -1
-/*              */               LOAD_FUNCTION L17, bar, -1
-/*              */               LOAD_FUNCTION L18, __foo_LiteralString, -1
-/*              */               LOAD_FUNCTION L19, __foo_LiteralFixnum, -1
+/*              */               LOAD_FUNCTION FUNC1, foo, -1
+/*              */               LOAD_FUNCTION FUNC2, bar, -1
+/*              */               LOAD_FUNCTION FUNC3, __foo_LiteralString, -1
+/*              */               LOAD_FUNCTION FUNC4, __foo_LiteralFixnum, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ L16         : STACK_RESERVE 0
-/*              */ L11         : PUSH_ARG 0
+/*              */ FUNC1       : STACK_RESERVE 0
+/*              */ L1          : PUSH_ARG 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
-/*              */               JMP_IF L12
-/*              */               JMP L13
-/* got string   */ L12         : PUSH_CONSTANT 1
+/*              */               JMP_IF L3
+/*              */               JMP L4
+/* got string   */ L3          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
-/*              */               JMP L13
-/*              */ L13         : PUSH_ARG 0
+/*              */               JMP L4
+/*              */ L4          : PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
-/*              */               JMP_IF L14
-/*              */               JMP L15
-/* got fixnum   */ L14         : PUSH_CONSTANT 0
+/*              */               JMP_IF L6
+/*              */               JMP L7
+/* got fixnum   */ L6          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
-/*              */               JMP L15
-/*              */ L15         : PUSH_NIL 
+/*              */               JMP L7
+/*              */ L7          : PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */               /* f: bar */ 
-/*              */ L17         : STACK_RESERVE 0
-/* str          */ L5          : PUSH_CONSTANT 2
+/*              */ FUNC2       : STACK_RESERVE 0
+/* str          */ L8          : PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
 /* __foo_Litera */               HARDCALL 1, 1
 /* 12           */               PUSH_CONSTANT 3
@@ -74,15 +74,15 @@ func bar()
 /*              */               RETURN 1
  
 /*              */               /* f: __foo_LiteralString */ 
-/*              */ L18         : STACK_RESERVE 0
-/* got string   */ L2          : PUSH_CONSTANT 1
+/*              */ FUNC3       : STACK_RESERVE 0
+/* got string   */ L9          : PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */               /* f: __foo_LiteralFixnum */ 
-/*              */ L19         : STACK_RESERVE 0
-/* got fixnum   */ L9          : PUSH_CONSTANT 0
+/*              */ FUNC4       : STACK_RESERVE 0
+/* got fixnum   */ L10         : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1

@@ -15,13 +15,13 @@ func foo()
 /* 1            */               CONSTANT_NUMBER 1
 /* 2            */               CONSTANT_NUMBER 2
  
-/*              */               LOAD_FUNCTION L1, foo, -1
+/*              */               LOAD_FUNCTION FUNC1, foo, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ L1          : STACK_RESERVE 0
-/* 1            */ L0          : PUSH_CONSTANT 1
+/*              */ FUNC1       : STACK_RESERVE 0
+/* 1            */ L1          : PUSH_CONSTANT 1
 /* 2            */               PUSH_CONSTANT 2
 /*              */               PUSH_CONSTANT 0
 /* op           */               CALL 2, 1

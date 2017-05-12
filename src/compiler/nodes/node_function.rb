@@ -62,13 +62,13 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
-    @flabel = root.reserve_label
-    output.printex(self, 'LOAD_FUNCTION', @flabel, identifier, parent_class_index)
+    @funclabel = output.next_label('FUNC')
+    output.printex(self, 'LOAD_FUNCTION', @funclabel, identifier, parent_class_index)
   end
 
   def compile_body(output)
     output.print("/* f: #{identifier} */")
-    output.label(@flabel)
+    output.label(@funclabel)
     output.print('STACK_RESERVE', n_local_vars)
     blocks.each do |block|
       block.compile(output)
@@ -95,13 +95,11 @@ class DabNodeFunction < DabNode
   end
 
   def new_named_codeblock
-    label = root.reserve_label
-    DabNodeCodeBlock.new(label)
+    DabNodeCodeBlock.new
   end
 
   def new_codeblock_ex
-    label = root.reserve_label
-    ret = DabNodeCodeBlockEx.new(label)
+    ret = DabNodeCodeBlockEx.new
     blocks.insert(ret)
     ret
   end
@@ -125,14 +123,14 @@ class DabNodeFunction < DabNode
   end
 
   def block_reorder!
-    order = [blocks[0].label]
+    order = [blocks[0].block_index]
     jump_labels = blocks.flat_map(&:all_jump_labels)
     jump_labels = jump_labels.reverse.uniq.reverse
     order += jump_labels
-    my_order = blocks.map(&:label)
+    my_order = blocks.map(&:block_index)
     if order != my_order
       blocks.sort_by! do |child|
-        order.index(child.label)
+        order.index(child.block_index)
       end
       return true
     end

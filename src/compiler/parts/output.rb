@@ -1,6 +1,13 @@
 class DabOutput
   def initialize
     @filenames = {}
+    @labelcount = {}
+  end
+
+  def next_label(kind = 'L')
+    @labelcount[kind] ||= 0
+    @labelcount[kind] += 1
+    sprintf('%s%d', kind, @labelcount[kind])
   end
 
   def start_function

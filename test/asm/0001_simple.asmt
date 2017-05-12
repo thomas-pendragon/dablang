@@ -9,13 +9,13 @@ func main()
 
 /* 0            */               CONSTANT_STRING "Test"
  
-/*              */               LOAD_FUNCTION L1, main, -1
+/*              */               LOAD_FUNCTION FUNC1, main, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: main */ 
-/*              */ L1          : STACK_RESERVE 0
-/* Test         */ L0          : PUSH_CONSTANT 0
+/*              */ FUNC1       : STACK_RESERVE 0
+/* Test         */ L1          : PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1

@@ -12,13 +12,13 @@ func foo(a)
 
 ## EXPECT
 
-/*              */               LOAD_FUNCTION L1, foo, -1
+/*              */               LOAD_FUNCTION FUNC1, foo, -1
  
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ L1          : STACK_RESERVE 0
-/*              */ L0          : PUSH_ARG 0
+/*              */ FUNC1       : STACK_RESERVE 0
+/*              */ L1          : PUSH_ARG 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_ARG 0
 /*              */               KERNELCALL 0
