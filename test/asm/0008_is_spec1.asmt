@@ -37,8 +37,10 @@ func bar()
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ FUNC1       : STACK_RESERVE 1
-/*              */ L1          : PUSH_ARG 0
+                   FUNC1:
+/*              */               STACK_RESERVE 1
+                   L1:
+/*              */               PUSH_ARG 0
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
@@ -46,24 +48,30 @@ func bar()
 /* op is        */               CALL 2, 1
 /*              */               JMP_IF L3
 /*              */               JMP L4
-/* got string   */ L3          : PUSH_CONSTANT 1
+                   L3:
+/* got string   */               PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
 /*              */               JMP L4
-/* var 0 a      */ L4          : PUSH_VAR 0
+                   L4:
+/* var 0 a      */               PUSH_VAR 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 5
 /* op is        */               CALL 2, 1
 /*              */               JMP_IF L6
 /*              */               JMP L7
-/* got fixnum   */ L6          : PUSH_CONSTANT 0
+                   L6:
+/* got fixnum   */               PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               JMP L7
-/*              */ L7          : PUSH_NIL 
+                   L7:
+/*              */               PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */               /* f: bar */ 
-/*              */ FUNC2       : STACK_RESERVE 0
-/* str          */ L8          : PUSH_CONSTANT 2
+                   FUNC2:
+/*              */               STACK_RESERVE 0
+                   L8:
+/* str          */               PUSH_CONSTANT 2
 /* foo          */               PUSH_CONSTANT 4
 /* foo          */               CALL 1, 1
 /* 12           */               PUSH_CONSTANT 3

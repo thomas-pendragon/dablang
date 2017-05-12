@@ -47,14 +47,13 @@ class DabOutput
   def print(*args)
     return _print("\n") if args.count == 0 || args[0].nil?
 
+    if @label
+      _print(sprintf("%s%s:\n", ' ' * 19, @label))
+    end
+
     _print sprintf('/* %-12s */ ', @comment.to_s[0...12].gsub(/[^a-zA-Z0-9 \-\._]/, ''))
 
-    t = if @label
-          sprintf('%-12s: ', @label.to_s[0...12])
-        else
-          ' ' * 14
-        end
-    _print t
+    _print ' ' * 14
 
     t = args[0] + ' ' + args[1..-1].map { |item| _printable(item) }.join(', ')
 

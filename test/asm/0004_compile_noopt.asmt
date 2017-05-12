@@ -20,8 +20,10 @@ func foo()
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ FUNC1       : STACK_RESERVE 0
-/* 1            */ L1          : PUSH_CONSTANT 1
+                   FUNC1:
+/*              */               STACK_RESERVE 0
+                   L1:
+/* 1            */               PUSH_CONSTANT 1
 /* 2            */               PUSH_CONSTANT 2
 /*              */               PUSH_CONSTANT 0
 /* op           */               CALL 2, 1

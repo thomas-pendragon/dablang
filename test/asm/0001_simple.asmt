@@ -14,8 +14,10 @@ func main()
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: main */ 
-/*              */ FUNC1       : STACK_RESERVE 0
-/* Test         */ L1          : PUSH_CONSTANT 0
+                   FUNC1:
+/*              */               STACK_RESERVE 0
+                   L1:
+/* Test         */               PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1

@@ -18,6 +18,7 @@ class DabAsmContext < DabBaseContext
   def read_instruction
     on_subcontext do |subcontext|
       label = subcontext.read_label
+      subcontext.read_newline
       next unless op = subcontext.read_identifier
       arglist = subcontext.read_arglist
       next unless subcontext.read_newline

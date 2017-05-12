@@ -42,27 +42,36 @@ func foo(a, b)
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ FUNC1       : STACK_RESERVE 0
-/*              */ L1          : PUSH_ARG 0
+                   FUNC1:
+/*              */               STACK_RESERVE 0
+                   L1:
+/*              */               PUSH_ARG 0
 /*              */               JMP_IF L2
 /*              */               JMP L3
-/*              */ L2          : PUSH_ARG 1
+                   L2:
+/*              */               PUSH_ARG 1
 /*              */               JMP_IF L4
 /*              */               JMP L5
-/*              */ L3          : PUSH_ARG 1
+                   L3:
+/*              */               PUSH_ARG 1
 /*              */               JMP_IF L6
 /*              */               JMP L7
-/* a  b         */ L4          : PUSH_CONSTANT 3
+                   L4:
+/* a  b         */               PUSH_CONSTANT 3
 /*              */               KERNELCALL 0
 /*              */               JMP L8
-/* a  b         */ L5          : PUSH_CONSTANT 2
+                   L5:
+/* a  b         */               PUSH_CONSTANT 2
 /*              */               KERNELCALL 0
 /*              */               JMP L8
-/* a  b         */ L6          : PUSH_CONSTANT 1
+                   L6:
+/* a  b         */               PUSH_CONSTANT 1
 /*              */               KERNELCALL 0
 /*              */               JMP L8
-/* a  b         */ L7          : PUSH_CONSTANT 0
+                   L7:
+/* a  b         */               PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               JMP L8
-/*              */ L8          : PUSH_NIL 
+                   L8:
+/*              */               PUSH_NIL 
 /*              */               RETURN 1

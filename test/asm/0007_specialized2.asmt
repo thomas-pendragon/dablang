@@ -28,8 +28,10 @@ func bar()
 /*              */               BREAK_LOAD 
  
 /*              */               /* f: foo */ 
-/*              */ FUNC1       : STACK_RESERVE 0
-/*              */ L1          : PUSH_ARG 0
+                   FUNC1:
+/*              */               STACK_RESERVE 0
+                   L1:
+/*              */               PUSH_ARG 0
 /* class        */               PUSH_CONSTANT 3
 /* .class       */               INSTCALL 0, 1
 /*              */               KERNELCALL 0
@@ -37,16 +39,20 @@ func bar()
 /*              */               RETURN 1
  
 /*              */               /* f: bar */ 
-/*              */ FUNC2       : STACK_RESERVE 0
-/* str          */ L2          : PUSH_CONSTANT 1
+                   FUNC2:
+/*              */               STACK_RESERVE 0
+                   L2:
+/* str          */               PUSH_CONSTANT 1
 /* __foo_Litera */               PUSH_CONSTANT 2
 /* __foo_Litera */               HARDCALL 1, 1
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
  
 /*              */               /* f: __foo_LiteralString */ 
-/*              */ FUNC3       : STACK_RESERVE 0
-/* LiteralStri  */ L3          : PUSH_CONSTANT 0
+                   FUNC3:
+/*              */               STACK_RESERVE 0
+                   L3:
+/* LiteralStri  */               PUSH_CONSTANT 0
 /*              */               KERNELCALL 0
 /*              */               PUSH_NIL 
 /*              */               RETURN 1
