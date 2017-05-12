@@ -15,7 +15,7 @@ func main()
  
                                  COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
  
-/* 0            */               CONSTANT_STRING "Test"
+                                 CONSTANT_STRING "Test"
  
                                  COV 1, 1
                                  LOAD_FUNCTION FUNC1, main, -1

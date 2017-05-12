@@ -22,7 +22,6 @@ class DabNodeConstant < DabNode
   end
 
   def compile(output)
-    output.comment(index.to_s)
     value.compile_constant(output)
   end
 

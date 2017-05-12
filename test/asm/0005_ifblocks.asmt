@@ -34,10 +34,10 @@ func foo(a, b)
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_STRING "!a && !b"
-/* 1            */               CONSTANT_STRING "!a && b"
-/* 2            */               CONSTANT_STRING "a && !b"
-/* 3            */               CONSTANT_STRING "a && b"
+                                 CONSTANT_STRING "!a && !b"
+                                 CONSTANT_STRING "!a && b"
+                                 CONSTANT_STRING "a && !b"
+                                 CONSTANT_STRING "a && b"
  
                                  LOAD_FUNCTION FUNC1, foo, -1
  

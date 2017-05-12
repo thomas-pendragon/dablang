@@ -18,9 +18,9 @@ func bar()
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_STRING "str"
-/* 1            */               CONSTANT_SYMBOL class
-/* 2            */               CONSTANT_SYMBOL foo
+                                 CONSTANT_STRING "str"
+                                 CONSTANT_SYMBOL class
+                                 CONSTANT_SYMBOL foo
  
                                  LOAD_FUNCTION FUNC1, foo, -1
                                  LOAD_FUNCTION FUNC2, bar, -1

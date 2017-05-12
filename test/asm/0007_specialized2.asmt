@@ -18,10 +18,10 @@ func bar()
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_STRING "LiteralString"
-/* 1            */               CONSTANT_STRING "str"
-/* 2            */               CONSTANT_SYMBOL __foo_LiteralString
-/* 3            */               CONSTANT_SYMBOL class
+                                 CONSTANT_STRING "LiteralString"
+                                 CONSTANT_STRING "str"
+                                 CONSTANT_SYMBOL __foo_LiteralString
+                                 CONSTANT_SYMBOL class
  
                                  LOAD_FUNCTION FUNC1, foo, -1
                                  LOAD_FUNCTION FUNC2, bar, -1

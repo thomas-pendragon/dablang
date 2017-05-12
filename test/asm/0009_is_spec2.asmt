@@ -16,7 +16,7 @@ func main()
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_STRING "ok"
+                                 CONSTANT_STRING "ok"
  
                                  LOAD_FUNCTION FUNC1, main, -1
  

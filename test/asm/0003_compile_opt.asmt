@@ -13,7 +13,7 @@ func foo()
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_NUMBER 3
+                                 CONSTANT_NUMBER 3
  
                                  LOAD_FUNCTION FUNC1, foo, -1
  

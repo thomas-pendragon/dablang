@@ -26,13 +26,13 @@ func bar()
 
 /* Dab dev      */                
  
-/* 0            */               CONSTANT_STRING "got fixnum"
-/* 1            */               CONSTANT_STRING "got string"
-/* 2            */               CONSTANT_STRING "str"
-/* 3            */               CONSTANT_NUMBER 12
-/* 4            */               CONSTANT_SYMBOL __foo_LiteralFixnum
-/* 5            */               CONSTANT_SYMBOL __foo_LiteralString
-/* 6            */               CONSTANT_SYMBOL is
+                                 CONSTANT_STRING "got fixnum"
+                                 CONSTANT_STRING "got string"
+                                 CONSTANT_STRING "str"
+                                 CONSTANT_NUMBER 12
+                                 CONSTANT_SYMBOL __foo_LiteralFixnum
+                                 CONSTANT_SYMBOL __foo_LiteralString
+                                 CONSTANT_SYMBOL is
  
                                  LOAD_FUNCTION FUNC1, foo, -1
                                  LOAD_FUNCTION FUNC2, bar, -1
