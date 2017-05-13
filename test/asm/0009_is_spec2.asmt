@@ -24,7 +24,6 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                   L1:
 /* ok           */               PUSH_CONSTANT 0
                                  KERNELCALL 0
                                  PUSH_NIL 

@@ -45,34 +45,33 @@ func foo(a, b)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
                                  PUSH_ARG 0
-                                 JMP_IF L2
-                                 JMP L3
+                                 JMP_IF L1
+                                 JMP L2
+                   L1:
+                                 PUSH_ARG 1
+                                 JMP_IF L3
+                                 JMP L4
                    L2:
                                  PUSH_ARG 1
-                                 JMP_IF L4
-                                 JMP L5
+                                 JMP_IF L5
+                                 JMP L6
                    L3:
-                                 PUSH_ARG 1
-                                 JMP_IF L6
-                                 JMP L7
-                   L4:
 /* a  b         */               PUSH_CONSTANT 3
                                  KERNELCALL 0
-                                 JMP L8
-                   L5:
+                                 JMP L7
+                   L4:
 /* a  b         */               PUSH_CONSTANT 2
                                  KERNELCALL 0
-                                 JMP L8
-                   L6:
+                                 JMP L7
+                   L5:
 /* a  b         */               PUSH_CONSTANT 1
                                  KERNELCALL 0
-                                 JMP L8
-                   L7:
+                                 JMP L7
+                   L6:
 /* a  b         */               PUSH_CONSTANT 0
                                  KERNELCALL 0
-                                 JMP L8
-                   L8:
+                                 JMP L7
+                   L7:
                                  PUSH_NIL 
                                  RETURN 1

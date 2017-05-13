@@ -29,7 +29,6 @@ func bar()
  
                    Ffoo:
                                  STACK_RESERVE 1
-                   L1:
                                  PUSH_ARG 0
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
@@ -41,7 +40,6 @@ func bar()
  
                    Fbar:
                                  STACK_RESERVE 0
-                   L2:
 /* str          */               PUSH_CONSTANT 0
 /* foo          */               PUSH_CONSTANT 2
 /* foo          */               CALL 1, 1

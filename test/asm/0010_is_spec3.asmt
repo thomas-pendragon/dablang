@@ -43,35 +43,33 @@ func bar()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
                                  PUSH_ARG 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
-                                 JMP_IF L3
-                                 JMP L4
-                   L3:
+                                 JMP_IF L2
+                                 JMP L3
+                   L2:
 /* got string   */               PUSH_CONSTANT 1
                                  KERNELCALL 0
-                                 JMP L4
-                   L4:
+                                 JMP L3
+                   L3:
                                  PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
 /* op is        */               CALL 2, 1
-                                 JMP_IF L6
-                                 JMP L7
-                   L6:
+                                 JMP_IF L5
+                                 JMP L6
+                   L5:
 /* got fixnum   */               PUSH_CONSTANT 0
                                  KERNELCALL 0
-                                 JMP L7
-                   L7:
+                                 JMP L6
+                   L6:
                                  PUSH_NIL 
                                  RETURN 1
  
                    Fbar:
                                  STACK_RESERVE 0
-                   L8:
 /* str          */               PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
 /* __foo_Litera */               HARDCALL 1, 1
@@ -83,7 +81,6 @@ func bar()
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
-                   L9:
 /* got string   */               PUSH_CONSTANT 1
                                  KERNELCALL 0
                                  PUSH_NIL 
@@ -91,7 +88,6 @@ func bar()
  
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
-                   L10:
 /* got fixnum   */               PUSH_CONSTANT 0
                                  KERNELCALL 0
                                  PUSH_NIL 

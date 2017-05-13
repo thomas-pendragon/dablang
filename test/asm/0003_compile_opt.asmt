@@ -21,7 +21,6 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
 /* 3            */               PUSH_CONSTANT 0
                                  KERNELCALL 0
                                  PUSH_NIL 

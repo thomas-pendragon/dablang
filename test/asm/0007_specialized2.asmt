@@ -31,7 +31,6 @@ func bar()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
                                  PUSH_ARG 0
 /* class        */               PUSH_CONSTANT 3
 /* .class       */               INSTCALL 0, 1
@@ -41,7 +40,6 @@ func bar()
  
                    Fbar:
                                  STACK_RESERVE 0
-                   L2:
 /* str          */               PUSH_CONSTANT 1
 /* __foo_Litera */               PUSH_CONSTANT 2
 /* __foo_Litera */               HARDCALL 1, 1
@@ -50,7 +48,6 @@ func bar()
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
-                   L3:
 /* LiteralStri  */               PUSH_CONSTANT 0
                                  KERNELCALL 0
                                  PUSH_NIL 

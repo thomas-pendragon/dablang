@@ -70,7 +70,9 @@ class DabNodeCodeBlockEx < DabNode
   end
 
   def compile(output)
-    output.label(compile_label(output))
+    unless block_index == 0 && sources.count == 1
+      output.label(compile_label(output))
+    end
     @children.each do |child|
       child.compile(output)
     end

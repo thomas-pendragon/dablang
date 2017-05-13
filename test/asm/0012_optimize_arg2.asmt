@@ -20,7 +20,6 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
                                  PUSH_ARG 0
                                  KERNELCALL 0
                                  PUSH_ARG 0

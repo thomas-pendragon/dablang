@@ -23,7 +23,6 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                   L1:
 /* 1            */               PUSH_CONSTANT 1
 /* 2            */               PUSH_CONSTANT 2
 /*              */               PUSH_CONSTANT 0
