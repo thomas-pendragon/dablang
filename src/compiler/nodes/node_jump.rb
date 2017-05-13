@@ -8,7 +8,7 @@ class DabNodeJump < DabNodeBaseJump
   end
 
   def extra_dump
-    "->#{target.label}"
+    "->#{target.block_index}"
   end
 
   def condition

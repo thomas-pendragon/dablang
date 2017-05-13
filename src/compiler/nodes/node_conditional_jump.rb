@@ -15,7 +15,7 @@ class DabNodeConditionalJump < DabNodeBaseJump
   end
 
   def extra_dump
-    "-> true: #{if_true.label} | false: #{if_false.label}"
+    "-> true: #{if_true.block_index} | false: #{if_false.block_index}"
   end
 
   def condition
