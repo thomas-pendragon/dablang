@@ -153,3 +153,12 @@ Style/GlobalVars:
 
 Metrics/BlockNesting:
   Enabled: false
+
+Lint/UnifiedInteger:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false

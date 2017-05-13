@@ -64,7 +64,7 @@ if format == 'plaintext' || format == 'text'
       hits = data[index] || 0
       str = if included && hits > 0
               str = sprintf('%5d hit%s ', hits, hits > 1 ? 's' : ' ') + str
-              str = str.covformat(format, %i(green bold))
+              str.covformat(format, %i(green bold))
             elsif included
               str = '     miss  ' + str
               str.covformat(format, %i(red bold))

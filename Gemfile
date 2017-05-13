@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'awesome_print'
-gem 'rake'
-gem 'rubocop'
+gem 'clipboard'
 gem 'colorize'
-gem 'rspec'
+gem 'diffy'
 gem 'pry'
 gem 'pry-byebug'
-gem 'diffy'
-gem 'clipboard'
+gem 'rake'
+gem 'rspec'
+gem 'rubocop'
