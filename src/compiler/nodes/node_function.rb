@@ -96,10 +96,6 @@ class DabNodeFunction < DabNode
     ret
   end
 
-  def new_named_codeblock
-    DabNodeCodeBlock.new
-  end
-
   def new_codeblock_ex
     ret = DabNodeCodeBlockEx.new
     blocks.insert(ret)
