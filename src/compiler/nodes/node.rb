@@ -221,7 +221,7 @@ class DabNode
 
   def function
     return self if self.is_a? DabNodeFunction
-    parent.function
+    parent&.function
   end
 
   def extra_value

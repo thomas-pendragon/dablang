@@ -89,10 +89,8 @@ class DabContext < DabBaseContext
 
   def read_arglist
     list = _read_simple_list(:read_argument)
-    if list
-      list.each_with_index do |item, index|
-        item.index = index
-      end
+    list&.each_with_index do |item, index|
+      item.index = index
     end
     list
   end

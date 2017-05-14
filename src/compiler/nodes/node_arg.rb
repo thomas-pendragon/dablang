@@ -13,7 +13,7 @@ class DabNodeArg < DabNode
   end
 
   def my_type
-    function.arg_type(@index)
+    function&.arg_type(@index) || DabTypeAny.new
   end
 
   def compile(output)

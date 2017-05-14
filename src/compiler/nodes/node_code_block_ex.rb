@@ -82,7 +82,7 @@ class DabNodeCodeBlockEx < DabNode
   end
 
   def block_index
-    function.block_index(self)
+    function&.block_index(self)
   end
 
   def next_block
