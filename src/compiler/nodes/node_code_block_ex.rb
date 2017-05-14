@@ -95,6 +95,10 @@ class DabNodeCodeBlockEx < DabNode
     ret
   end
 
+  def embedded?
+    !parent.parent.is_a?(DabNodeFunction)
+  end
+
   def unreachable?
     sources.empty?
   end
