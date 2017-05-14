@@ -1,37 +1,34 @@
-require_relative 'node.rb'
+require_relative 'node_code_block.rb'
 require_relative '../processors/check_empty_block.rb'
 require_relative '../processors/remove_unreachable_block.rb'
 require_relative '../processors/optimize_block_jump.rb'
 require_relative '../processors/optimize_block_jump_next.rb'
+require_relative '../processors/flatten_code_block.rb'
 
-class DabNodeCodeBlockEx < DabNode
+class DabNodeCodeBlockEx < DabNodeCodeBlock
   check_with CheckEmptyBlock
-  optimize_with OptimizeBlockJump
-  optimize_with OptimizeBlockJumpNext
+  lower_with OptimizeBlockJump
+  lower_with OptimizeBlockJumpNext
   optimize_with RemoveUnreachableBlock
+  flatten_with FlattenCodeBlock
+
+  def splice(node)
+    index = children.index(node)
+    rest_block = DabNodeCodeBlockEx.new
+    children[(index + 1)..-1].each do |sub_rest|
+      rest_block.insert(sub_rest)
+    end
+    children.pop(rest_block.children.count + 1)
+    spliced = yield(rest_block)
+    first_block = spliced[0]
+    insert(DabNodeJump.new(first_block))
+    blocks = [self, spliced, rest_block].flatten
+    blocks.each { |block| block.parent_info = nil }
+    replace_with!(blocks)
+  end
 
   def extra_dump
     "!.#{block_index}"
-  end
-
-  def blockify!
-    children.each_with_index do |item, index|
-      next unless item.blockish?
-      rest_block = function.new_codeblock_ex
-      children[(index + 1)..-1].each do |sub_rest|
-        rest_block.insert(sub_rest)
-      end
-      children.pop(rest_block.children.count + 1)
-
-      insert(item.unblockify!(rest_block))
-      return true
-    end
-    false
-  end
-
-  def block_reorder!
-    return true if flatten_jump!
-    super
   end
 
   def jump_block?
@@ -39,16 +36,6 @@ class DabNodeCodeBlockEx < DabNode
     child = children[0]
     return false unless child.is_a? DabNodeJump
     child.target
-  end
-
-  def flatten_jump!
-    return false unless child_target = jump_block?
-
-    function.visit_all(DabNodeBaseJump) do |jump|
-      jump.replace_target!(self, child_target)
-    end
-    remove!
-    true
   end
 
   def ends_with_jump?

@@ -3,6 +3,7 @@ require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_first_block.rb'
 require_relative '../processors/strip_unused_function.rb'
 require_relative '../processors/add_missing_return.rb'
+require_relative '../processors/block_reorder.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
@@ -10,6 +11,7 @@ class DabNodeFunction < DabNode
 
   after_init ConvertArgToLocalvar
   after_init AddMissingReturn
+  lower_with BlockReorder
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
@@ -18,7 +20,7 @@ class DabNodeFunction < DabNode
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
     insert(DabNode.new, 'blocks')
-    insert(body, 'body')
+    blocks.insert(body)
     @concrete = false
     @inline = inline
   end
@@ -39,10 +41,6 @@ class DabNodeFunction < DabNode
 
   def extra_dump
     identifier
-  end
-
-  def body
-    children[2]
   end
 
   def argcount
@@ -91,25 +89,13 @@ class DabNodeFunction < DabNode
       fargs << arg.formatted_source(options)
     end
     fargs = fargs.join(', ')
-    ret = "func #{@identifier}(#{fargs})\n{\n" + _indent(body.formatted_source(options)) + "}\n"
+    ret = "func #{@identifier}(#{fargs})\n{\n"
+    blocks.each do |block|
+      ret += _indent(block.formatted_source(options))
+    end
+    ret += "}\n"
     ret = "inline #{ret}" if inline
     ret
-  end
-
-  def new_codeblock_ex
-    ret = DabNodeCodeBlockEx.new
-    blocks.insert(ret)
-    ret
-  end
-
-  def blockify!
-    if body
-      body.blockify!
-      children.pop
-      true
-    else
-      super
-    end
   end
 
   def localvar_index(var)
@@ -118,21 +104,6 @@ class DabNodeFunction < DabNode
 
   def arg_type(index)
     arglist[index].my_type
-  end
-
-  def block_reorder!
-    order = [blocks[0].block_index]
-    jump_labels = blocks.flat_map(&:all_jump_labels)
-    jump_labels = jump_labels.reverse.uniq.reverse
-    order += jump_labels
-    my_order = blocks.map(&:block_index)
-    if order != my_order
-      blocks.sort_by! do |child|
-        order.index(child.block_index)
-      end
-      return true
-    end
-    super
   end
 
   def concreteify(types)

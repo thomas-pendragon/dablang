@@ -1,8 +1,10 @@
 require_relative 'node.rb'
 require_relative '../processors/optimize_constant_if.rb'
+require_relative '../processors/flatten_if.rb'
 
 class DabNodeIf < DabNode
   optimize_with OptimizeConstantIf
+  flatten_with FlattenIf
 
   def initialize(condition, if_true, if_false)
     super()
@@ -34,21 +36,5 @@ class DabNodeIf < DabNode
       ret += '}'
     end
     ret
-  end
-
-  def blockish?
-    true
-  end
-
-  def unblockify!(continue_block)
-    if_true.insert(DabNodeJump.new(continue_block))
-    jump_true = if_true.convert_block!
-    if if_false
-      if_false.insert(DabNodeJump.new(continue_block))
-      jump_false = if_false.convert_block!
-    else
-      jump_false = continue_block
-    end
-    DabNodeConditionalJump.new(condition, jump_true, jump_false)
   end
 end

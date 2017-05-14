@@ -44,24 +44,6 @@ program.run_all_processors!(:init_callbacks)
 
 debug_check!(program, 'rawinit')
 
-def run_postprocess!(program, list)
-  list.each do |klass|
-    next if program.has_errors?
-    STDERR.puts "Will run postprocess <#{klass}>" if $debug
-    klass.new.run(program)
-    program.dump if $debug
-  end
-end
-
-pp0 = [
-  DabPPBlockify,
-  DabPPBlockReorder,
-]
-
-run_postprocess!(program, pp0)
-
-debug_check!(program, 'blockify')
-
 while true
   if $debug
     program.dump

@@ -1,5 +1,6 @@
 class CheckEmptyBlock
   def run(node)
+    return if node.embedded?
     if node.empty?
       node.function.dump
       err '--~' * 50

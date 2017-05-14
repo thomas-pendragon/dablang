@@ -365,18 +365,6 @@ class DabNode
     @children = []
   end
 
-  def blockify!
-    children.any?(&:blockify!)
-  end
-
-  def blockish?
-    false
-  end
-
-  def block_reorder!
-    children.any?(&:block_reorder!)
-  end
-
   def map(&block)
     @children.map(&block)
   end
