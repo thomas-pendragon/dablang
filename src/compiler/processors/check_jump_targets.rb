@@ -1,6 +1,6 @@
 class CheckJumpTargets
   def run(node)
-    all_targets = node.function.all_nodes(DabNodeCodeBlockEx)
+    all_targets = node.function.all_nodes(DabNodeCodeBlock)
     node.targets.each do |target|
       next if all_targets.include?(target)
       node.function.dump
