@@ -48,7 +48,10 @@ class DabNode
     type = [type] unless type.is_a? Array
     list = type.flat_map { |subtype| self.class.send(subtype) }
     list.each do |item|
-      return true if self.class.run_callback(self, item)
+      if self.class.run_callback(self, item)
+        err "Run: #{self.class} #{item}".yellow.bold if $debug
+        return true
+      end
     end
     @children.any? { |item| item.run_processors!(type) }
   end
