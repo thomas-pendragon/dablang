@@ -4,6 +4,7 @@ before_script:
 - gem install bundler
 - bundle install --path=/cache/bundler
 stages:
+- format
 - prebuild
 - build
 - test
@@ -38,33 +39,29 @@ stages:
 ".test_base_disasm_spec":
   stage: test
   tags: *1
-  script: &9
-  - bundle exec rake disasm_spec
-".test_base_asm_spec":
-  stage: test
-  tags: *1
-  script: &10
-  - bundle exec rake asm_spec
-".test_base_format_spec":
-  stage: test
-  tags: *1
   script: &8
-  - bundle exec rake format_spec
+  - bundle exec rake disasm_spec
 ".test_base_dumpcov_spec":
   stage: test
   tags: *1
-  script: &11
+  script: &9
   - bundle exec rake dumpcov_spec
 ".test_base_cov_spec":
   stage: test
   tags: *1
-  script: &12
+  script: &10
   - bundle exec rake cov_spec
 ".test_base_debug_spec":
   stage: test
   tags: *1
-  script: &13
+  script: &11
   - bundle exec rake debug_spec
+AsmSpec:
+  stage: prebuild
+  tags:
+  - ruby
+  script:
+  - bundle exec rake asm_spec
 FormatSpec:
   stage: prebuild
   tags:
@@ -78,19 +75,19 @@ RSpec:
   script:
   - bundle exec rspec
 Rubocop:
-  stage: prebuild
+  stage: format
   tags:
   - ruby
   script:
   - bundle exec rubocop
 ClangFormat:
-  stage: prebuild
+  stage: format
   tags:
   - ruby
   script:
   - bundle exec rake format:cpp_check
 SortCheck:
-  stage: prebuild
+  stage: format
   tags:
   - ruby
   script:
@@ -99,7 +96,7 @@ SortCheck:
   variables: &5
     CXX: g++-4.7
 ".env_clang_3_5":
-  variables: &14
+  variables: &12
     CXX: clang++-3.5
 Build g++-4.7:
   stage: build
@@ -121,45 +118,31 @@ Test g++-4.7 vm_spec:
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 format_spec:
+Test g++-4.7 disasm_spec:
   stage: test
   tags: *1
   script: *8
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 disasm_spec:
+Test g++-4.7 dumpcov_spec:
   stage: test
   tags: *1
   script: *9
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 asm_spec:
+Test g++-4.7 cov_spec:
   stage: test
   tags: *1
   script: *10
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 dumpcov_spec:
-  stage: test
-  tags: *1
-  script: *11
-  variables: *5
-  dependencies:
-  - Build g++-4.7
-Test g++-4.7 cov_spec:
-  stage: test
-  tags: *1
-  script: *12
-  variables: *5
-  dependencies:
-  - Build g++-4.7
 Test g++-4.7 debug_spec:
   stage: test
   tags: *1
-  script: *13
+  script: *11
   variables: *5
   dependencies:
   - Build g++-4.7
@@ -168,60 +151,46 @@ Build clang++-3.5:
   tags: *2
   script: *3
   artifacts: *4
-  variables: *14
+  variables: *12
 Test clang++-3.5 spec:
   stage: test
   tags: *1
   script: *6
-  variables: *14
+  variables: *12
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 vm_spec:
   stage: test
   tags: *1
   script: *7
-  variables: *14
-  dependencies:
-  - Build clang++-3.5
-Test clang++-3.5 format_spec:
-  stage: test
-  tags: *1
-  script: *8
-  variables: *14
+  variables: *12
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 disasm_spec:
   stage: test
   tags: *1
-  script: *9
-  variables: *14
-  dependencies:
-  - Build clang++-3.5
-Test clang++-3.5 asm_spec:
-  stage: test
-  tags: *1
-  script: *10
-  variables: *14
+  script: *8
+  variables: *12
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 dumpcov_spec:
   stage: test
   tags: *1
-  script: *11
-  variables: *14
+  script: *9
+  variables: *12
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 cov_spec:
   stage: test
   tags: *1
-  script: *12
-  variables: *14
+  script: *10
+  variables: *12
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 debug_spec:
   stage: test
   tags: *1
-  script: *13
-  variables: *14
+  script: *11
+  variables: *12
   dependencies:
   - Build clang++-3.5

@@ -79,7 +79,7 @@ end
 
 setup_tests('dab', 'dabt', 'frontend', [cvm])
 setup_tests('format', 'dabft', 'frontend_format')
-setup_tests('vm', 'vmt', 'frontend_vm')
+setup_tests('vm', 'vmt', 'frontend_vm', [cvm])
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm')
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])

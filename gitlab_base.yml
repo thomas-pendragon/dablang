@@ -5,6 +5,7 @@ before_script:
   - bundle install --path=/cache/bundler
 
 stages:
+  - format
   - prebuild
   - build
   - test
@@ -44,16 +45,6 @@ stages:
   script:
     - bundle exec rake disasm_spec
 
-.test_base_asm_spec:
-  <<: *test_base
-  script:
-    - bundle exec rake asm_spec
-
-.test_base_format_spec:
-  <<: *test_base
-  script:
-    - bundle exec rake format_spec
-
 .test_base_dumpcov_spec:
   <<: *test_base
   script:
@@ -68,6 +59,13 @@ stages:
   <<: *test_base
   script:
     - bundle exec rake debug_spec
+
+AsmSpec:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake asm_spec 
 
 FormatSpec:
   stage: prebuild
@@ -84,21 +82,21 @@ RSpec:
     - bundle exec rspec
 
 Rubocop:
-  stage: prebuild
+  stage: format
   tags:
     - ruby
   script:
     - bundle exec rubocop
 
 ClangFormat:
-  stage: prebuild
+  stage: format
   tags:
     - ruby
   script:
     - bundle exec rake format:cpp_check
 
 SortCheck:
-  stage: prebuild
+  stage: format
   tags:
     - ruby
   script:
