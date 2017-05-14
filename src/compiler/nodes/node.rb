@@ -27,6 +27,7 @@ class DabNode
     define_method_chain.call(:lower_with, :lower_callbacks)
     define_method_chain.call(:optimize_with, :optimize_callbacks)
     define_method_chain.call(:strip_with, :strip_callbacks)
+    define_method_chain.call(:flatten_with, :flatten_callbacks)
   end
 
   def self.run_callback(item, callback)

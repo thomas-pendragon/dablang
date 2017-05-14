@@ -74,6 +74,7 @@ while true
   next if program.run_processors!([$opt ? :optimize_callbacks : nil].compact)
   next if program.run_processors!([:lower_callbacks])
   next if program.run_processors!([$strip ? :strip_callbacks : nil].compact)
+  next if program.run_processors!([:flatten_callbacks])
   break
 end
 
