@@ -89,7 +89,7 @@ class DabNodeCodeBlock < DabNode
   end
 
   def embedded?
-    !parent.parent.is_a?(DabNodeFunction)
+    !parent.is_a?(DabNodeBlockNode)
   end
 
   def unreachable?

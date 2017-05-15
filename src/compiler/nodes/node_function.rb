@@ -19,7 +19,7 @@ class DabNodeFunction < DabNode
     super()
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
-    insert(DabNode.new, 'blocks')
+    insert(DabNodeBlockNode.new, 'blocks')
     blocks.insert(body)
     @concrete = false
     @inline = inline
