@@ -10,6 +10,6 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
   end
 
   def index
-    function.localvar_index(self)
+    function&.localvar_index(self)
   end
 end

@@ -81,6 +81,7 @@ class DabNodeCodeBlock < DabNode
   end
 
   def next_block
+    return nil unless block_index
     function.blocks[block_index + 1]
   end
 
