@@ -126,4 +126,8 @@ class DabNodeFunction < DabNode
   def users
     root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
   end
+
+  def flat?
+    all_nodes(DabNodeCodeBlock).none?(&:embedded?)
+  end
 end

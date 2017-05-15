@@ -1,5 +1,6 @@
 class BlockReorder
   def run(function)
+    return unless function.flat?
     blocks = function.blocks
     order = [blocks[0].block_index]
     jump_labels = blocks.flat_map(&:all_jump_labels)
