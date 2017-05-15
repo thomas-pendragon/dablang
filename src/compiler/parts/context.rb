@@ -181,7 +181,7 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction
-    read_return || read_define_var || read_call || read_complex_setter
+    read_return || read_define_var || read_call || read_complex_setter || read_value
   end
 
   def read_complex_setter
