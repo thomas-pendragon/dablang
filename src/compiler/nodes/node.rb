@@ -50,7 +50,7 @@ class DabNode
     list = type.flat_map { |subtype| self.class.send(subtype) }
     list.each do |item|
       if self.class.run_callback(self, item)
-        err "Run: #{self.class} #{item}".yellow.bold if $debug
+        err "Run: #{self.class} #{item}\n".yellow.bold if $debug
         return true
       end
     end
