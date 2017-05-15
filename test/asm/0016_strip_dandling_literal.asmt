@@ -1,0 +1,26 @@
+## CODE
+
+func foo()
+{
+  12;
+  return 41;
+}
+
+## OPTIONS
+
+--opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_NUMBER 41
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+/* 41           */               PUSH_CONSTANT 0
+                                 RETURN 1
