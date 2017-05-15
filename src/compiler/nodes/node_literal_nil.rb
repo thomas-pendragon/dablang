@@ -1,12 +1,8 @@
-require_relative 'node.rb'
+require_relative 'node_literal.rb'
 
-class DabNodeLiteralNil < DabNode
+class DabNodeLiteralNil < DabNodeLiteral
   def compile(output)
     output.print('PUSH_NIL')
-  end
-
-  def constant?
-    true
   end
 
   def my_type
