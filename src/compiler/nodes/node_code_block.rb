@@ -34,7 +34,9 @@ class DabNodeCodeBlock < DabNode
   end
 
   def extra_dump
-    "!.#{block_index}"
+    ret = "!.#{block_index}"
+    ret += ' [emb]' if embedded?
+    ret
   end
 
   def jump_block?

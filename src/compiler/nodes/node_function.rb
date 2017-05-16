@@ -40,7 +40,9 @@ class DabNodeFunction < DabNode
   end
 
   def extra_dump
-    identifier
+    ret = identifier
+    ret += ' [flat]' if flat?
+    ret
   end
 
   def argcount
