@@ -4,12 +4,14 @@ require_relative '../processors/remove_unreachable_block.rb'
 require_relative '../processors/optimize_block_jump.rb'
 require_relative '../processors/optimize_block_jump_next.rb'
 require_relative '../processors/flatten_code_block.rb'
+require_relative '../processors/strip_extra_return.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
   lower_with OptimizeBlockJump
   lower_with OptimizeBlockJumpNext
   optimize_with RemoveUnreachableBlock
+  optimize_with StripExtraReturn
   flatten_with FlattenCodeBlock
 
   def formatted_source(options)
@@ -105,5 +107,13 @@ class DabNodeCodeBlock < DabNode
     end
     another_block.clear
     another_block.remove!
+  end
+
+  def returns?
+    all_nodes(DabNodeReturn).count > 0
+  end
+
+  def multiple_returns?
+    all_nodes(DabNodeReturn).count > 1
   end
 end
