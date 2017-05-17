@@ -35,6 +35,10 @@ stage_jobs = {
   'Test' => %w(spec vm_spec disasm_spec dumpcov_spec cov_spec debug_spec),
 }
 
+split = {
+  'spec' => 6,
+}
+
 compilers.each do |compiler, env|
   %w(Build Test).each do |stage|
     stage_jobs[stage].each do |job|
@@ -46,7 +50,18 @@ compilers.each do |compiler, env|
       if stage == 'Test'
         task['dependencies'] = ["Build #{compiler}"]
       end
-      data[task_name] = task
+      task_split = split[job] || 1
+      if task_split > 1
+        task_split.times do |index|
+          sub_task = task.dup
+          sub_task['variables'] = (sub_task['variables'] || {}).dup
+          sub_task['variables']['CI_PARALLEL_INDEX'] = index.to_s
+          sub_task['variables']['CI_PARALLEL_TOTAL'] = task_split.to_s
+          data[task_name + " #{index} #{task_split}"] = sub_task
+        end
+      else
+        data[task_name] = task
+      end
     end
   end
 end

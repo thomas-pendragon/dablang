@@ -63,8 +63,19 @@ file cdumpcov => csources + [makefile] do
   end
 end
 
+def ci_parallel(inputs)
+  ci_index = ENV['CI_PARALLEL_INDEX']&.to_i
+  ci_total = ENV['CI_PARALLEL_TOTAL']&.to_i
+  return inputs unless ci_index && ci_total
+  per_instance = (inputs.count.to_f / ci_total.to_f).ceil.to_i
+  istart = ci_index * per_instance
+  iend = (ci_index + 1) * per_instance
+  inputs[istart...iend] || []
+end
+
 def setup_tests(directory, extension, frontend_type, extras = [])
   inputs = Dir.glob('test/' + directory + '/*.' + extension).sort.reverse
+  inputs = ci_parallel(inputs)
   outputs = []
   inputs.each do |input_test_file|
     output_output_file = input_test_file.gsub('test/' + directory + '/', 'tmp/test_' + directory + '_').gsub('.' + extension, '.out')

@@ -34,27 +34,27 @@ stages:
 ".test_base_vm_spec":
   stage: test
   tags: *1
-  script: &7
+  script: &8
   - bundle exec rake vm_spec
 ".test_base_disasm_spec":
   stage: test
   tags: *1
-  script: &8
+  script: &9
   - bundle exec rake disasm_spec
 ".test_base_dumpcov_spec":
   stage: test
   tags: *1
-  script: &9
+  script: &10
   - bundle exec rake dumpcov_spec
 ".test_base_cov_spec":
   stage: test
   tags: *1
-  script: &10
+  script: &11
   - bundle exec rake cov_spec
 ".test_base_debug_spec":
   stage: test
   tags: *1
-  script: &11
+  script: &12
   - bundle exec rake debug_spec
 AsmSpec:
   stage: prebuild
@@ -96,7 +96,7 @@ SortCheck:
   variables: &5
     CXX: g++-4.7
 ".env_clang_3_5":
-  variables: &12
+  variables: &13
     CXX: clang++-3.5
 Build g++-4.7:
   stage: build
@@ -104,45 +104,93 @@ Build g++-4.7:
   script: *3
   artifacts: *4
   variables: *5
-Test g++-4.7 spec:
+Test g++-4.7 spec 0 6:
   stage: test
   tags: *1
   script: *6
-  variables: *5
-  dependencies:
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '0'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: &7
   - Build g++-4.7
-Test g++-4.7 vm_spec:
+Test g++-4.7 spec 1 6:
   stage: test
   tags: *1
-  script: *7
-  variables: *5
-  dependencies:
-  - Build g++-4.7
-Test g++-4.7 disasm_spec:
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '1'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *7
+Test g++-4.7 spec 2 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '2'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *7
+Test g++-4.7 spec 3 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '3'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *7
+Test g++-4.7 spec 4 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '4'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *7
+Test g++-4.7 spec 5 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '5'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *7
+Test g++-4.7 vm_spec:
   stage: test
   tags: *1
   script: *8
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 dumpcov_spec:
+Test g++-4.7 disasm_spec:
   stage: test
   tags: *1
   script: *9
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 cov_spec:
+Test g++-4.7 dumpcov_spec:
   stage: test
   tags: *1
   script: *10
   variables: *5
   dependencies:
   - Build g++-4.7
-Test g++-4.7 debug_spec:
+Test g++-4.7 cov_spec:
   stage: test
   tags: *1
   script: *11
+  variables: *5
+  dependencies:
+  - Build g++-4.7
+Test g++-4.7 debug_spec:
+  stage: test
+  tags: *1
+  script: *12
   variables: *5
   dependencies:
   - Build g++-4.7
@@ -151,46 +199,94 @@ Build clang++-3.5:
   tags: *2
   script: *3
   artifacts: *4
-  variables: *12
-Test clang++-3.5 spec:
+  variables: *13
+Test clang++-3.5 spec 0 6:
   stage: test
   tags: *1
   script: *6
-  variables: *12
-  dependencies:
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '0'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: &14
   - Build clang++-3.5
+Test clang++-3.5 spec 1 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '1'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *14
+Test clang++-3.5 spec 2 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '2'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *14
+Test clang++-3.5 spec 3 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '3'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *14
+Test clang++-3.5 spec 4 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '4'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *14
+Test clang++-3.5 spec 5 6:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '5'
+    CI_PARALLEL_TOTAL: '6'
+  dependencies: *14
 Test clang++-3.5 vm_spec:
   stage: test
   tags: *1
-  script: *7
-  variables: *12
+  script: *8
+  variables: *13
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 disasm_spec:
   stage: test
   tags: *1
-  script: *8
-  variables: *12
+  script: *9
+  variables: *13
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 dumpcov_spec:
   stage: test
   tags: *1
-  script: *9
-  variables: *12
+  script: *10
+  variables: *13
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 cov_spec:
   stage: test
   tags: *1
-  script: *10
-  variables: *12
+  script: *11
+  variables: *13
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 debug_spec:
   stage: test
   tags: *1
-  script: *11
-  variables: *12
+  script: *12
+  variables: *13
   dependencies:
   - Build clang++-3.5
