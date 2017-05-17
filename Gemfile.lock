@@ -9,6 +9,7 @@ GEM
     colorize (0.8.1)
     diff-lcs (1.2.5)
     diffy (3.2.0)
+    json (2.0.2)
     method_source (0.8.2)
     parser (2.4.0.0)
       ast (~> 2.2)
@@ -54,6 +55,7 @@ DEPENDENCIES
   clipboard
   colorize
   diffy
+  json
   pry
   pry-byebug
   rake

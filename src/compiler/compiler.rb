@@ -1,3 +1,4 @@
+require_relative '../../setup.rb'
 require_relative '_requires.rb'
 $debug = $settings[:debug]
 errap $settings if $debug

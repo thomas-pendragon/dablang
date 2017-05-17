@@ -1,3 +1,4 @@
+require_relative '../../setup.rb'
 require_relative '../compiler/_requires.rb'
 
 stream = DabProgramStream.new(STDIN.read)

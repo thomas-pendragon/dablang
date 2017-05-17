@@ -1,18 +1,11 @@
+require_relative '../../setup.rb'
 require_relative '../shared/system.rb'
 require_relative '../shared/presence.rb'
 require_relative '../shared/debug_output.rb'
-require 'colorize'
-require 'pathname'
-require 'rake'
-require 'shellwords'
-require 'fileutils'
-require 'diffy'
-require 'clipboard'
+require_relative '../shared/args.rb'
 
 class DabCompareError < RuntimeError
 end
-
-require_relative '../shared/args.rb'
 
 raise 'no input' unless $settings[:input]
 

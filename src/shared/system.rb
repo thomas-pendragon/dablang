@@ -1,6 +1,3 @@
-require 'colorize'
-require 'tempfile'
-
 class SystemCommandError < RuntimeError
   attr_accessor :stderr
   def initialize(message, stderr)

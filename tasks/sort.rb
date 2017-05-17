@@ -1,3 +1,4 @@
+require_relative '../setup.rb'
 require_relative '../src/shared/system.rb'
 
 FILES = ['./src/compiler/_requires.rb'].freeze

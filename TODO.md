@@ -78,7 +78,6 @@
 
 ## Misc ##
 
-- use Bundler, or at least a sane place to load deps (currently in `debug_output.rb`)
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
 - autogenerate kernel C enums

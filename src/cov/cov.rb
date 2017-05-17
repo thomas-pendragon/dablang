@@ -1,3 +1,4 @@
+require_relative '../../setup.rb'
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/args.rb'
 require_relative '../shared/system.rb'

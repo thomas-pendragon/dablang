@@ -1,6 +1,5 @@
+require_relative 'setup.rb'
 require_relative 'src/shared/system.rb'
-require 'colorize'
-require 'yaml'
 
 $sources = Dir.glob('src/**/*.rb')
 

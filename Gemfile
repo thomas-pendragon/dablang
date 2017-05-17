@@ -6,8 +6,9 @@ gem 'awesome_print'
 gem 'clipboard'
 gem 'colorize'
 gem 'diffy'
+gem 'json'
 gem 'pry'
 gem 'pry-byebug'
 gem 'rake'
-gem 'rspec'
-gem 'rubocop'
+gem 'rspec', require: false
+gem 'rubocop', require: false
