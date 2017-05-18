@@ -12,4 +12,8 @@ class DabNodeLiteralNil < DabNodeLiteral
   def constant_value
     nil
   end
+
+  def formatted_source(_)
+    'nil'
+  end
 end

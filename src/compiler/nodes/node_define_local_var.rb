@@ -2,7 +2,12 @@ require_relative 'node_set_local_var.rb'
 
 class DabNodeDefineLocalVar < DabNodeSetLocalVar
   def formatted_source(options)
-    'var ' + super
+    var = 'var '
+    if value.is_a? DabNodeLiteralNil
+      "#{var}#{real_identifier};"
+    else
+      "#{var}#{super}"
+    end
   end
 
   def var_definition

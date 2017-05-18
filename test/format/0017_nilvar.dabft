@@ -1,0 +1,16 @@
+## INPUT
+
+func foo() {
+var foo;
+foo = "123";
+foo = nil;
+}
+
+## OUTPUT
+
+func foo()
+{
+  var foo;
+  foo = "123";
+  foo = nil;
+}
