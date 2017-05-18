@@ -1,0 +1,14 @@
+## INPUT
+
+func foo() {
+var<String> foo;
+foo = "123";
+}
+
+## OUTPUT
+
+func foo()
+{
+  var<String> foo;
+  foo = "123";
+}

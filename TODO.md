@@ -11,7 +11,6 @@
 
 ## Formatter
 
-- `var<String> foo` should keep type information
 
 ## New tools ##
 
