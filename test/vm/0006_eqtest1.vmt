@@ -1,0 +1,18 @@
+## CODE
+
+PUSH_STRING "foo"
+PUSH_STRING "foo"
+PUSH_SYMBOL "=="
+CALL 2, 1
+
+## COMMENT
+
+Two identical strings should be equal.
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+BOOL true

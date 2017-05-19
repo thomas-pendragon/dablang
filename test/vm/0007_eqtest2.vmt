@@ -1,0 +1,18 @@
+## CODE
+
+PUSH_STRING "foo"
+PUSH_STRING "bar"
+PUSH_SYMBOL "=="
+CALL 2, 1
+
+## COMMENT
+
+Two different strings should not be equal.
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+BOOL false
