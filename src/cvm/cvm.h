@@ -167,10 +167,10 @@ struct DabValueData
 {
     int type = TYPE_INVALID;
 
-    int64_t         fixnum;
+    int64_t         fixnum = 0;
     std::string     string;
-    bool            boolean;
-    DabObjectProxy *object = nullptr;
+    bool            boolean = false;
+    DabObjectProxy *object  = nullptr;
 
     bool is_constant = false;
 };
