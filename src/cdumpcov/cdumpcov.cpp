@@ -33,6 +33,11 @@ struct AsmStream : public BaseAsmStream
         return _read<uint64_t>();
     }
 
+    int16_t read_int16()
+    {
+        return _read<int16_t>();
+    }
+
     std::string read_vlc()
     {
         size_t length = _read<uint8_t>();
@@ -114,6 +119,9 @@ void parse_asm(bool raw, std::function<void(Op)> func)
                 break;
             case ARG_UINT64:
                 op.data.push_back(stream.read_uint64());
+                break;
+            case ARG_INT16:
+                op.data.push_back(stream.read_int16());
                 break;
             case ARG_VLC:
                 op.data.push_back(stream.read_vlc());
