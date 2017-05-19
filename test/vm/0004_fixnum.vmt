@@ -1,0 +1,15 @@
+## CODE
+
+PUSH_NUMBER 123
+
+## COMMENT
+
+Last stack element should be literal fixnum 123.
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+FIXN 123
