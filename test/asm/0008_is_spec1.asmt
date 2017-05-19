@@ -71,9 +71,9 @@ func bar()
                                  STACK_RESERVE 0
 /* str          */               PUSH_CONSTANT 2
 /* foo          */               PUSH_CONSTANT 4
-/* foo          */               CALL 1, 1
+                                 CALL 1, 1
 /* 12           */               PUSH_CONSTANT 3
 /* foo          */               PUSH_CONSTANT 4
-/* foo          */               CALL 1, 1
+                                 CALL 1, 1
                                  PUSH_NIL 
                                  RETURN 1

@@ -28,7 +28,6 @@ class DabNodeInstanceCall < DabNode
     args.each { |arg| arg.compile(output) }
     value.compile(output)
     output.push(identifier)
-    output.comment(".#{real_identifier}")
     output.print('INSTCALL', args.count, 1)
   end
 

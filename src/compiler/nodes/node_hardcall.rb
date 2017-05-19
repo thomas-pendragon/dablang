@@ -23,7 +23,6 @@ class DabNodeHardcall < DabNodeBasecall
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.push(identifier)
-    output.comment(real_identifier)
     output.printex(self, 'HARDCALL', args.count.to_s, '1')
   end
 
