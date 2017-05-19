@@ -1,0 +1,49 @@
+## CODE
+
+func foo(a)
+{
+  print(a.class);
+}
+
+func main()
+{
+  foo("hello");
+}
+
+## OPTIONS
+
+--opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 PUSH_SYMBOL class
+                                 INSTCALL 0, 1
+                                 SYSCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 PUSH_STRING "hello"
+                                 PUSH_SYMBOL __foo_LiteralString
+                                 HARDCALL 1, 1
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   F__foo_LiteralString:
+                                 STACK_RESERVE 0
+                                 PUSH_STRING "LiteralString"
+                                 SYSCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1

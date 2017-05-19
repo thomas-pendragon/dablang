@@ -15,17 +15,21 @@ So for example
 ```
 func foo(a)
 {
-    print(a.class_name);
+  print(a.class);
 }
 ```
 
 initially we compile method
 
 ```
-`foo_[Object?]`:
-   - $a := GET_ARG0 [Object?]
-   - $b := VIRT_CALL :class_name, $a
-   - VIRT_CALL :print, $b
+Ffoo:
+  STACK_RESERVE 0
+  PUSH_ARG 0
+  PUSH_SYMBOL class
+  INSTCALL 0, 1
+  SYSCALL 0
+  PUSH_NIL 
+  RETURN 1
 ```
 
 However if we call this method in other function:
@@ -33,15 +37,17 @@ However if we call this method in other function:
 ```
 func main()
 {
-    foo("hello");
+  foo("hello");
 }
 ```
 
 we recompile `foo` to
 
 ```
-`foo_[LiteralString!]`:
-   - <$a optimized away>
-   - $b := "LiteralString" <because .class_name is pure>
-   - STATIC_CALL :print_[LiteralString!], $b <which can be optimized to kernel print>
+F__foo_LiteralString:
+  STACK_RESERVE 0
+  PUSH_STRING "LiteralString"
+  SYSCALL 0
+  PUSH_NIL 
+  RETURN 1
 ```
