@@ -1,3 +1,22 @@
+# VARIABLE LENGTH CODING
+
+# 0-254 - direct
+# 255 -> +8 bytes of length
+
+# [250] [250 bytes]
+
+# [255] [64bits: length = 1000] [1000 bytes]
+
+# VM FORMAT
+
+# all binary numbers are little endian
+
+# "DAB"
+# 8 bytes: compiler version
+# 8 bytes: vm version
+# 8 bytes: code length
+# 8 bytes: code crc32
+
 OPCODES = {
   0x00 => {name: 'START_FUNCTION', args: %i(vlc uint16 uint16 uint16)}, # function name, class index (or -1), number of local variables, body length
   0x01 => {name: 'CONSTANT_SYMBOL', arg: :vlc}, # symbol
