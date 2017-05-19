@@ -83,9 +83,7 @@ class DabOutput
   end
 
   def push(node)
-    raise 'wat' unless node.is_a? DabNodeConstantReference
-    comment(node.extra_value)
-    print('PUSH_CONSTANT', node.index)
+    node.compile(self)
   end
 
   def function(name, class_index, n_local_vars)

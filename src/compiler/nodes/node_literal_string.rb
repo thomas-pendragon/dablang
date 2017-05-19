@@ -15,10 +15,6 @@ class DabNodeLiteralString < DabNodeLiteral
     output.print('CONSTANT_STRING', extra_dump)
   end
 
-  def compile(output)
-    compile_constant(output)
-  end
-
   def extra_value
     extra_dump
   end
@@ -33,5 +29,9 @@ class DabNodeLiteralString < DabNodeLiteral
 
   def constant_value
     @string
+  end
+
+  def compile(output)
+    output.print('PUSH_STRING', extra_value)
   end
 end

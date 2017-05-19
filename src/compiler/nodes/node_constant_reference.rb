@@ -28,7 +28,8 @@ class DabNodeConstantReference < DabNode
   end
 
   def compile(output)
-    output.push(self)
+    output.comment(self.extra_value)
+    output.print('PUSH_CONSTANT', self.index)
   end
 
   def my_type

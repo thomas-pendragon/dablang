@@ -26,4 +26,8 @@ class DabNodeSymbol < DabNodeLiteral
   def my_type
     DabTypeSymbol.new
   end
+
+  def compile(output)
+    output.print('PUSH_SYMBOL', @symbol)
+  end
 end
