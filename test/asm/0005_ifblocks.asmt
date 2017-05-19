@@ -58,19 +58,19 @@ func foo(a, b)
                                  JMP L6
                    L3:
 /* a  b         */               PUSH_CONSTANT 3
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L7
                    L4:
 /* a  b         */               PUSH_CONSTANT 2
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L7
                    L5:
 /* a  b         */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L7
                    L6:
 /* a  b         */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L7
                    L7:
                                  PUSH_NIL 

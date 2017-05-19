@@ -50,7 +50,7 @@ func bar()
                                  JMP L3
                    L2:
 /* got string   */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L3
                    L3:
 /* var 0 a      */               PUSH_VAR 0
@@ -61,7 +61,7 @@ func bar()
                                  JMP L6
                    L5:
 /* got fixnum   */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L6
                    L6:
                                  PUSH_NIL 

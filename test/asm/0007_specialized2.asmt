@@ -34,7 +34,7 @@ func bar()
                                  PUSH_ARG 0
 /* class        */               PUSH_CONSTANT 3
 /* .class       */               INSTCALL 0, 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -49,6 +49,6 @@ func bar()
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
 /* LiteralStri  */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1

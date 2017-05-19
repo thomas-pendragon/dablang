@@ -51,7 +51,7 @@ func bar()
                                  JMP L3
                    L2:
 /* got string   */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L3
                    L3:
                                  PUSH_ARG 0
@@ -62,7 +62,7 @@ func bar()
                                  JMP L6
                    L5:
 /* got fixnum   */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L6
                    L6:
                                  PUSH_NIL 
@@ -82,13 +82,13 @@ func bar()
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
 /* got string   */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1
  
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
 /* got fixnum   */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1

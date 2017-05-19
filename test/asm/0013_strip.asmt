@@ -54,13 +54,13 @@ func bar()
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
 /* got string   */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1
  
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
 /* got fixnum   */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1

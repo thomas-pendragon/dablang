@@ -15,7 +15,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_JMP_IFN, "JMP_IFN", {ARG_INT16}},
     {OP_NOP, "NOP", {}},
     {OP_PUSH_NIL, "PUSH_NIL", {}},
-    {OP_KERNELCALL, "KERNELCALL", {ARG_UINT8}},
+    {OP_SYSCALL, "SYSCALL", {ARG_UINT8}},
     {OP_PUSH_STRING, "PUSH_STRING", {ARG_VLC}},
     {OP_PUSH_CLASS, "PUSH_CLASS", {ARG_UINT16}},
     {OP_INSTCALL, "INSTCALL", {ARG_UINT16, ARG_UINT16}},

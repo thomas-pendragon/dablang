@@ -25,7 +25,7 @@ class DabNodeSyscall < DabNodeBasecall
 
   def compile(output)
     args.each { |arg| arg.compile(output) }
-    output.printex(self, 'KERNELCALL', @call)
+    output.printex(self, 'SYSCALL', @call)
   end
 
   def target_function

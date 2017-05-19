@@ -34,20 +34,20 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* a            */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_TRUE 
                                  JMP_IF L1
                                  JMP L2
                    L1:
 /* b            */               PUSH_CONSTANT 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L3
                    L2:
 /* c            */               PUSH_CONSTANT 2
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  JMP L3
                    L3:
 /* d            */               PUSH_CONSTANT 3
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1

@@ -82,7 +82,6 @@
 - autogenerate kernel C enums
 - property getters/instance calls as instructions
 - specs for locating line/column for parsed nodes
-- rename KERNELCALL to SYSCALL
 - offset-based instance variables
 - typed instance variables
 - weak instance variables

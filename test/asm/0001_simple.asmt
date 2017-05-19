@@ -18,6 +18,6 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* Test         */               PUSH_CONSTANT 0
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1

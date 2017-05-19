@@ -16,7 +16,7 @@ enum
     OP_JMP_IFN         = 0x0B,
     OP_NOP             = 0x0C,
     OP_PUSH_NIL        = 0x0D,
-    OP_KERNELCALL      = 0x0E,
+    OP_SYSCALL         = 0x0E,
     OP_PUSH_STRING     = 0x0F,
     OP_PUSH_CLASS      = 0x10,
     OP_INSTCALL        = 0x11,

@@ -27,6 +27,6 @@ func foo()
 /* 2            */               PUSH_CONSTANT 2
 /*              */               PUSH_CONSTANT 0
 /* op           */               CALL 2, 1
-                                 KERNELCALL 0
+                                 SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1
