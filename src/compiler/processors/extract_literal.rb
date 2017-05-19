@@ -1,5 +1,6 @@
 class ExtractLiteral
   def run(literal)
+    return if $no_constants
     return if literal.is_a? DabNodeLiteralNil
 
     parent = literal.parent
