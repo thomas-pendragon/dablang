@@ -52,7 +52,11 @@
             auto arg1 = stack.pop_value();                                                         \
             auto arg0 = stack.pop_value();                                                         \
             bool test = false;                                                                     \
-            if (arg0.data.type == TYPE_FIXNUM)                                                     \
+            if (arg0.data.type != arg1.data.type)                                                  \
+            {                                                                                      \
+                test = true op false;                                                              \
+            }                                                                                      \
+            else if (arg0.data.type == TYPE_FIXNUM)                                                \
             {                                                                                      \
                 test = arg0.data.fixnum op arg1.data.fixnum;                                       \
             }                                                                                      \
