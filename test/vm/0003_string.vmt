@@ -1,0 +1,15 @@
+## CODE
+
+PUSH_STRING "foo"
+
+## COMMENT
+
+Last stack element should be literal string "foo".
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+STRI "foo"

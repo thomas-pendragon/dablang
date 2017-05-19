@@ -33,7 +33,7 @@ OPCODES = {
   0x0C => {name: 'NOP'}, #
   0x0D => {name: 'PUSH_NIL'}, # push(1)
   0x0E => {name: 'KERNELCALL', arg: :uint8}, # depends on the call
-  0x0F => {name: 'START_CLASS', args: %i(vlc uint16)}, # DEPRECATED
+  0x0F => {name: 'PUSH_STRING', arg: :vlc}, # push(1)
   0x10 => {name: 'PUSH_CLASS', arg: :uint16}, # push(1)
   0x11 => {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
   0x12 => {name: 'PUSH_SELF'}, # push(1)

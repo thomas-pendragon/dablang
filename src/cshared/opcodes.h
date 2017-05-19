@@ -17,7 +17,7 @@ enum
     OP_NOP             = 0x0C,
     OP_PUSH_NIL        = 0x0D,
     OP_KERNELCALL      = 0x0E,
-    OP_START_CLASS     = 0x0F,
+    OP_PUSH_STRING     = 0x0F,
     OP_PUSH_CLASS      = 0x10,
     OP_INSTCALL        = 0x11,
     OP_PUSH_SELF       = 0x12,
