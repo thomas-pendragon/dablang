@@ -1,0 +1,15 @@
+## CODE
+
+PUSH_SYMBOL "=="
+
+## COMMENT
+
+Last stack element should be literal symbol :==
+
+## TESTCASE
+
+$stack[-1]
+
+## EXPECT
+
+SYMB :==

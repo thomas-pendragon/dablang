@@ -14,6 +14,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_PUSH_ARG, "PUSH_ARG", {ARG_UINT16}},
     {OP_PUSH_VAR, "PUSH_VAR", {ARG_UINT16}},
     {OP_PUSH_INSTVAR, "PUSH_INSTVAR", {ARG_VLC}},
+    {OP_PUSH_SYMBOL, "PUSH_SYMBOL", {ARG_VLC}},
     {OP_POP, "POP", {ARG_UINT16}},
     {OP_DUP, "DUP", {}},
     {OP_CONSTANT_SYMBOL, "CONSTANT_SYMBOL", {ARG_VLC}},

@@ -33,6 +33,7 @@ OPCODES_ARRAY = [
   {name: 'PUSH_ARG', arg: :uint16}, # argument index, push(1)
   {name: 'PUSH_VAR', arg: :uint16}, # local variable index, push(1)
   {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
+  {name: 'PUSH_SYMBOL', arg: :vlc}, # push(1)
   # STACK
   {name: 'POP', arg: :uint16}, # pop(n)
   {name: 'DUP'}, # push(1)
