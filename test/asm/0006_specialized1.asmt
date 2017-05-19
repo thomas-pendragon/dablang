@@ -33,7 +33,7 @@ func bar()
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
 /* class        */               PUSH_CONSTANT 1
-/* .class       */               INSTCALL 0, 1
+                                 INSTCALL 0, 1
                                  SYSCALL 0
                                  PUSH_NIL 
                                  RETURN 1
