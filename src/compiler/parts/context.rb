@@ -495,8 +495,12 @@ class DabContext < DabBaseContext
     _read_list_or_single(:read_add_value, ['||', '&&'], DabNodeOperator)
   end
 
+  def read_cmp_value
+    _read_list_or_single(:read_or_value, ['<=', '>=', '<', '>'], DabNodeOperator)
+  end
+
   def read_eq_value
-    _read_list_or_single(:read_or_value, ['==', '!='], DabNodeOperator)
+    _read_list_or_single(:read_cmp_value, ['==', '!='], DabNodeOperator)
   end
 
   def read_value

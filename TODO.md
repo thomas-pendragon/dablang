@@ -24,6 +24,7 @@
 
 ## Language ##
 
+- comparing `"abc" > 123`
 - Rings support
 - void calls
 - type: hash

@@ -1,0 +1,28 @@
+## CODE
+
+func main()
+{
+  puts(12 > 10);
+  puts(10 > 12);
+  puts("foo" > "abc");
+  puts("abc" > "foo");
+  puts(123 > 123);
+  puts(123 >= 123);
+}
+
+## RUN
+
+main
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT OK
+
+true
+false
+true
+false
+false
+true
