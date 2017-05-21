@@ -28,7 +28,7 @@ class DabNodeInstanceCall < DabNode
     args.each { |arg| arg.compile(output) }
     value.compile(output)
     output.push(identifier)
-    output.print('INSTCALL', args.count, 1)
+    output.printex(self, 'INSTCALL', args.count, 1)
   end
 
   def constant?
