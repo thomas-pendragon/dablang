@@ -3,6 +3,7 @@ require_relative '../processors/simplify_class_property.rb'
 
 class DabNodePropertyGet < DabNode
   optimize_with SimplifyClassProperty
+  lower_with :convert_to_call
 
   def initialize(value, identifier)
     super()
@@ -22,10 +23,10 @@ class DabNodePropertyGet < DabNode
     identifier.extra_value
   end
 
-  def compile(output)
-    value.compile(output)
-    output.push(identifier)
-    output.printex(self, 'INSTCALL', 0, 1)
+  def convert_to_call
+    call = DabNodeInstanceCall.new(value, identifier, [])
+    replace_with!(call)
+    true
   end
 
   def constant?
