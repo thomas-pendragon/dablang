@@ -345,7 +345,7 @@ class DabContext < DabBaseContext
   end
 
   def read_codeblock
-    on_subcontext do |subcontext|
+    on_subcontext(merge_local_vars: false) do |subcontext|
       next unless subcontext.read_operator('{')
       ret = DabNodeCodeBlock.new
       while true
@@ -526,9 +526,9 @@ class DabContext < DabBaseContext
     ret
   end
 
-  def merge!(other_context)
+  def merge!(other_context, merge_local_vars)
     super(other_context)
-    @local_vars = other_context.local_vars
+    @local_vars = other_context.local_vars if merge_local_vars
     @functions = other_context.functions
     @classes = other_context.classes
   end

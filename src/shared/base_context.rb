@@ -46,15 +46,15 @@ class DabBaseContext
     ret
   end
 
-  def merge!(other_context)
+  def merge!(other_context, _ = nil)
     @stream.merge!(other_context.stream)
   end
 
-  def on_subcontext
+  def on_subcontext(merge_local_vars: true)
     subcontext = self.clone
     ret = yield(subcontext)
     if ret
-      merge!(subcontext)
+      merge!(subcontext, merge_local_vars)
     end
     ret
   end
