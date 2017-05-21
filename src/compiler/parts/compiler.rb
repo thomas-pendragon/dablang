@@ -5,11 +5,16 @@ class DabCompiler
 
   def program
     context = DabContext.new(@stream)
-    context.read_program
+    return context.read_program
+  rescue UnknownTokenException
+    ret = DabNodeUnit.new
+    source = SourceString.new('', @stream.filename, 0, 0, 0)
+    ret.add_error(DabUnknownTokenError.new(source))
+    return ret
   rescue DabEndOfStreamError
     ret = DabNodeUnit.new
     source = SourceString.new('', @stream.filename, 0, 0, 0)
     ret.add_error(DabUnexpectedEOFError.new(source))
-    ret
+    return ret
   end
 end

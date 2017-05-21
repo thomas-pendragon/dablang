@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+  bar = 123;
+}
+
+## RUN
+
+main
+
+## EXPECT COMPILE ERROR
+
+./tmp/test_dab_0130_missing_var.dab:0: error E0006: Unknown token.

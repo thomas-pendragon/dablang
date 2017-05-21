@@ -1,5 +1,13 @@
 require_relative '../../shared/base_context.rb'
 
+class UnknownTokenException < RuntimeError
+  attr_reader :pos
+  def initialize(text, pos)
+    super(text)
+    @pos = pos
+  end
+end
+
 class DabContext < DabBaseContext
   attr_accessor :local_vars
   attr_accessor :functions
@@ -21,6 +29,10 @@ class DabContext < DabBaseContext
     @classes << id
   end
 
+  def raise_unknown_token!
+    raise UnknownTokenException.new('Unknown token', @stream.position)
+  end
+
   def read_program
     ret = DabNodeUnit.new
     until @stream.eof?
@@ -32,7 +44,7 @@ class DabContext < DabBaseContext
       elsif c = on_subcontext(&:read_define_class)
         ret.add_class(c)
       else
-        raise 'unknown token'
+        raise_unknown_token!
       end
 
       while on_subcontext(&:read_separator)

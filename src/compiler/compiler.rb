@@ -24,6 +24,10 @@ inputs.each do |input|
   compiler = DabCompiler.new(stream)
   streams[filename] = stream
   new_program = compiler.program
+  if new_program.has_errors?
+    program = new_program
+    break
+  end
   if program
     program.merge!(new_program)
   else

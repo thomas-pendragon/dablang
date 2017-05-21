@@ -67,3 +67,13 @@ class DabCompileCallArgCountError < DabCompilerError
     5
   end
 end
+
+class DabUnknownTokenError < DabCompilerError
+  def initialize(source)
+    super('Unknown token.', source)
+  end
+
+  def error_code
+    6
+  end
+end
