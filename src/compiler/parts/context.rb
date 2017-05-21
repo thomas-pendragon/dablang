@@ -350,7 +350,7 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction_line
-    read_if || read_instruction_with_separator
+    read_if || read_instruction_with_separator || read_codeblock
   end
 
   def read_separator
