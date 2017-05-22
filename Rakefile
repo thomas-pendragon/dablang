@@ -95,6 +95,7 @@ setup_tests('asm', 'asmt', 'frontend_asm')
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 setup_tests('debug', 'test', 'frontend_debug', [cvm])
+setup_tests('decompile', 'test', 'frontend_decompile')
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'

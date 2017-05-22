@@ -1,0 +1,14 @@
+## INPUT
+
+       0: LOAD_FUNCTION 11, simplefun, 65535
+      10: BREAK_LOAD 
+      11: STACK_RESERVE 0
+      14: PUSH_NUMBER 123
+      23: RETURN 1
+
+## OUTPUT
+
+func simplefun()
+{
+  return 123;
+}
