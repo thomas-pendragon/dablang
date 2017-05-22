@@ -2,7 +2,7 @@ require_relative '../../setup.rb'
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/opcodes.rb'
 require_relative '../shared/parser.rb'
-require_relative './asm_context.rb'
+require_relative '../shared/asm_context.rb'
 require_relative '../shared/args.rb'
 
 $debug = $settings[:debug]
