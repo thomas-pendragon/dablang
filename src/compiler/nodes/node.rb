@@ -380,4 +380,8 @@ class DabNode
   def to_a
     children
   end
+
+  def <<(*args)
+    insert(*args)
+  end
 end
