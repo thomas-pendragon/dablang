@@ -127,7 +127,7 @@ int main(int argc, char **argv)
             }
         }
         info = data.name + " " + info;
-        printf("%8lX: %s\n", pos, info.c_str());
+        printf("%8ld: %s\n", pos, info.c_str());
     }
 
     return 0;
