@@ -17,10 +17,16 @@ class DabNodeSymbol < DabNodeLiteral
     symbol
   end
 
+  def escaped_symbol
+    if symbol =~ /^[a-z_]+$/i
+      symbol
+    else
+      "\"#{symbol}\""
+    end
+  end
+
   def compile_constant(output)
-    val = symbol
-    val = "\"#{symbol}\"" unless symbol =~ /^[a-z_]+$/i
-    output.print('CONSTANT_SYMBOL', val)
+    output.print('CONSTANT_SYMBOL', escaped_symbol)
   end
 
   def my_type
@@ -28,6 +34,6 @@ class DabNodeSymbol < DabNodeLiteral
   end
 
   def compile(output)
-    output.print('PUSH_SYMBOL', @symbol)
+    output.print('PUSH_SYMBOL', escaped_symbol)
   end
 end
