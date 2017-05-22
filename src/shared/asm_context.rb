@@ -1,6 +1,19 @@
 require_relative '../shared/base_context.rb'
 
 class DabAsmContext < DabBaseContext
+  attr_accessor :numeric_labels
+
+  def initialize(stream, numeric_labels: false)
+    super(stream)
+    @numeric_labels = numeric_labels
+  end
+
+  def clone
+    ret = super
+    ret.numeric_labels = self.numeric_labels
+    ret
+  end
+
   def read_program
     ret = []
     until @stream.eof?
@@ -41,8 +54,18 @@ class DabAsmContext < DabBaseContext
   end
 
   def read_label
+    return read_numeric_label if @numeric_labels
+
     on_subcontext do |subcontext|
       next unless identifier = subcontext.read_identifier(:extended)
+      next unless subcontext.read_operator(':')
+      identifier
+    end
+  end
+
+  def read_numeric_label
+    on_subcontext do |subcontext|
+      next unless identifier = subcontext.read_fixnum
       next unless subcontext.read_operator(':')
       identifier
     end
