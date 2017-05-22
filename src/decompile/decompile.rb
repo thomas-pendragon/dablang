@@ -40,6 +40,17 @@ class DecompiledFunction
       @stack << DabNodeLiteralNumber.new(args[0])
     when 'RETURN'
       @body << DabNodeReturn.new(@stack.pop)
+    when 'PUSH_SYMBOL'
+      @stack << args[0]
+    when 'CALL'
+      nargs = args[0]
+      id = @stack.pop
+      arglist = @stack.pop(nargs)
+      @stack << if %w{+}.include?(id)
+                  DabNodeOperator.new(arglist[0], arglist[1], id)
+                else
+                  DabNodeCall.new(id, arglist)
+                end
     else
       errap line
       raise 'unknown op'
