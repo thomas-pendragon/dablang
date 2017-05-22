@@ -1,0 +1,24 @@
+## CODE
+
+func fun0()
+{
+  return 123;
+}
+
+## OPTIONS
+
+--opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ffun0, fun0, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffun0:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 123
+                                 RETURN 1
+

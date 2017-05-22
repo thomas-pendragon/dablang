@@ -16,7 +16,7 @@ class DabNodeLiteralNumber < DabNodeLiteral
   end
 
   def compile(output)
-    compile_constant(output)
+    output.print('PUSH_NUMBER', extra_dump)
   end
 
   def extra_value
