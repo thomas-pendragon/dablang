@@ -7,7 +7,6 @@
 ## Compiler
 
 - test: self outside of class method should error
-- don't concreteify function if argument count mismatch
 
 ## Formatter
 
