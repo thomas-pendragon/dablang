@@ -384,4 +384,10 @@ class DabNode
   def <<(*args)
     insert(*args)
   end
+
+  def scope_path
+    return '' unless parent
+    return '' if self.is_a? DabNodeFunction
+    parent.scope_path + '_' + parent.node_index(self).to_s
+  end
 end
