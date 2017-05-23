@@ -1,6 +1,9 @@
 require_relative 'node_set_local_var.rb'
+require_relative '../processors/check_multiple_definitions.rb'
 
 class DabNodeDefineLocalVar < DabNodeSetLocalVar
+  check_with CheckMultipleDefinitions
+
   def formatted_source(options)
     var = 'var '
     type = @my_type.type_string

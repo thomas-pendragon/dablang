@@ -77,3 +77,13 @@ class DabUnknownTokenError < DabCompilerError
     6
   end
 end
+
+class DabCompileMultipleDefinitionsError < DabCompilerError
+  def initialize(id, source)
+    super("Multiple definitions of <#{id}>.", source)
+  end
+
+  def error_code
+    7
+  end
+end
