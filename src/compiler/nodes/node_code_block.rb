@@ -1,4 +1,4 @@
-require_relative 'node_code_block.rb'
+require_relative 'node.rb'
 require_relative '../processors/check_empty_block.rb'
 require_relative '../processors/remove_unreachable_block.rb'
 require_relative '../processors/optimize_block_jump.rb'
