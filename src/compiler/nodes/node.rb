@@ -389,6 +389,7 @@ class DabNode
 
   def <<(*args)
     insert(*args)
+    self
   end
 
   def scoped_self_all_nodes(klass, _node)
