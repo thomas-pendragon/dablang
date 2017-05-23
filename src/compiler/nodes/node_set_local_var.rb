@@ -6,9 +6,10 @@ require_relative '../processors/strip_readonly_argvars.rb'
 class DabNodeSetLocalVar < DabNode
   include LocalvarDefinitionConcern
 
-  attr_reader :identifier
+  attr_accessor :identifier
   attr_reader :my_type
   attr_accessor :arg_var
+  attr_reader :original_identifier
 
   check_with CheckAssignType
   optimize_with StripReadonlyArgvars
@@ -21,6 +22,7 @@ class DabNodeSetLocalVar < DabNode
     type = type.dab_type if type.is_a? DabNodeType
     @my_type = type
     @arg_var = arg_var
+    @original_identifier = identifier
   end
 
   def extra_dump
@@ -38,12 +40,12 @@ class DabNodeSetLocalVar < DabNode
   def compile(output)
     raise 'no index' unless index
     value.compile(output)
-    output.comment("var #{index} #{identifier}")
+    output.comment("var #{index} #{original_identifier}")
     output.printex(self, 'SET_VAR', index)
   end
 
   def formatted_source(options)
-    real_identifier + ' = ' + value.formatted_source(options) + ';'
+    original_identifier + ' = ' + value.formatted_source(options) + ';'
   end
 
   def all_setters

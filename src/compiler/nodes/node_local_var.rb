@@ -5,10 +5,12 @@ class DabNodeLocalVar < DabNode
   include LocalvarDefinitionConcern
 
   attr_accessor :identifier
+  attr_reader :original_identifier
 
   def initialize(identifier)
     super()
     @identifier = identifier
+    @original_identifier = identifier
   end
 
   def extra_dump
@@ -21,11 +23,11 @@ class DabNodeLocalVar < DabNode
 
   def compile(output)
     raise 'no index' unless index
-    output.comment("var #{index} #{identifier}")
+    output.comment("var #{index} #{original_identifier}")
     output.print('PUSH_VAR', index)
   end
 
   def formatted_source(_options)
-    real_identifier
+    original_identifier
   end
 end
