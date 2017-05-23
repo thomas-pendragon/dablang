@@ -391,6 +391,20 @@ class DabNode
     insert(*args)
   end
 
+  def scoped_self_all_nodes(klass, _node)
+    self_all_nodes(klass)
+  end
+
+  def scoped_all_nodes(klass)
+    node = self
+    ret = []
+    while node
+      ret |= node.scoped_self_all_nodes(klass, self)
+      node = node.parent
+    end
+    ret
+  end
+
   def node_index(node)
     @children.index(node)
   end

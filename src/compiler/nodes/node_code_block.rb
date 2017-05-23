@@ -116,4 +116,14 @@ class DabNodeCodeBlock < DabNode
   def multiple_returns?
     all_nodes(DabNodeReturn).count > 1
   end
+
+  def scoped_self_all_nodes(klass, node)
+    ret = super
+    if @children.include?(node)
+      @children.each_with_index do |child, _index|
+        ret |= child.all_nodes(klass)
+      end
+    end
+    ret
+  end
 end
