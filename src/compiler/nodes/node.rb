@@ -163,10 +163,16 @@ class DabNode
     ''
   end
 
-  def all_nodes(klass)
+  def self_all_nodes(klass)
     klass = [klass] unless klass.is_a? Array
     ret = []
     ret << self if klass.any? { |item| self.is_a? item }
+    ret
+  end
+
+  def all_nodes(klass)
+    klass = [klass] unless klass.is_a? Array
+    ret = self_all_nodes(klass)
     children_nodes.each do |node|
       ret |= node.all_nodes(klass)
     end
