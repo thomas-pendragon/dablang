@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  {
+    var bar = 123;
+    puts(bar);
+  }
+  {
+    var bar = 456;
+    puts(bar);
+  }
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+123
+456

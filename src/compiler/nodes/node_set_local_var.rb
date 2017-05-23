@@ -49,11 +49,15 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def all_setters
-    function.all_nodes(DabNodeSetLocalVar).select { |node| node.identifier == self.identifier }
+    scoped_all_nodes(DabNodeSetLocalVar).select { |node| node.identifier == self.identifier }
   end
 
   def all_getters
-    function.all_nodes(DabNodeLocalVar).select { |node| node.identifier == self.identifier }
+    scoped_all_nodes(DabNodeLocalVar).select { |node| node.identifier == self.identifier }
+  end
+
+  def all_users
+    all_setters | all_getters | unresolved_references
   end
 
   def unresolved_references

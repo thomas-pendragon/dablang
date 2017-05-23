@@ -23,4 +23,8 @@ class DabNodeReferenceLocalVar < DabNodeReference
   def identifier
     @name
   end
+
+  def identifier=(value)
+    @name = value
+  end
 end
