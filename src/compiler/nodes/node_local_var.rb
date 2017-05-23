@@ -12,7 +12,7 @@ class DabNodeLocalVar < DabNode
   end
 
   def extra_dump
-    @identifier
+    "<#{real_identifier}> [#{index}]"
   end
 
   def real_identifier
