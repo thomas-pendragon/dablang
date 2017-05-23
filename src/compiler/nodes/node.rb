@@ -385,6 +385,10 @@ class DabNode
     insert(*args)
   end
 
+  def node_index(node)
+    @children.index(node)
+  end
+
   def scope_path
     return '' unless parent
     return '' if self.is_a? DabNodeFunction
