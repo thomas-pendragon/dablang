@@ -415,4 +415,20 @@ class DabNode
     return '' if self.is_a? DabNodeFunction
     parent.scope_path + '_' + parent.node_index(self).to_s
   end
+
+  def all_ordered_nodes
+    all_nodes(Object)
+  end
+
+  def previous_nodes(klass)
+    return [] unless parent
+    self_index = parent.node_index(self)
+    ret = []
+    parent.children.each_with_index do |node, index|
+      ret += node.all_ordered_nodes if index < self_index
+    end
+    ret = parent.previous_nodes(klass) + [parent] + ret
+    ret = ret.select { |node| node.is_a? klass }
+    ret
+  end
 end
