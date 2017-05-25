@@ -159,6 +159,10 @@ namespace :format do
   task :sort_check do
     psystem('ruby ./tasks/sort.rb --check')
   end
+
+  task :sortfiles_check do
+    psystem('ruby ./tasks/sortfiles.rb')
+  end
 end
 
 task format: ['format:sort', 'format:ruby', 'format:cpp']

@@ -64,7 +64,6 @@
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
-- test if test/xxx/* files are in sequential order
 
 ## CI ##
 
