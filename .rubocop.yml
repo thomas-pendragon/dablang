@@ -162,3 +162,6 @@ Style/PercentLiteralDelimiters:
 
 Style/SafeNavigation:
   Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
