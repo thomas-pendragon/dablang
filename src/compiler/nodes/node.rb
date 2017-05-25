@@ -420,14 +420,20 @@ class DabNode
     all_nodes(Object)
   end
 
+  def function_parent
+    return nil if parent.is_a? DabNodeFunction
+    return nil if parent.is_a? DabNodeBlockNode
+    parent
+  end
+
   def previous_nodes(klass)
-    return [] unless parent
-    self_index = parent.node_index(self)
+    return [] unless function_parent
+    self_index = function_parent.node_index(self)
     ret = []
-    parent.children.each_with_index do |node, index|
+    function_parent.children.each_with_index do |node, index|
       ret += node.all_ordered_nodes if index < self_index
     end
-    ret = parent.previous_nodes(klass) + [parent] + ret
+    ret = function_parent.previous_nodes(klass) + [function_parent] + ret
     ret = ret.select { |node| node.is_a? klass }
     ret
   end
