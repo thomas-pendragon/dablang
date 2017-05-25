@@ -60,6 +60,13 @@ stages:
   script:
     - bundle exec rake debug_spec
 
+SortFilesCheck:
+  stage: format
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:sortfiles_check
+
 AsmSpec:
   stage: prebuild
   tags:
