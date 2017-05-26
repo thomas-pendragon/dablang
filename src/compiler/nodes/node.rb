@@ -443,7 +443,8 @@ class DabNode
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.children.each_with_index do |node, index|
-      ret += node.all_ordered_nodes if index > self_index
+      test = index > self_index
+      ret += node.all_ordered_nodes if test
     end
     ret += function_parent.following_nodes(klass)
     ret = ret.select { |node| node.is_a? klass }
