@@ -438,8 +438,9 @@ class DabNode
     ret
   end
 
-  def following_nodes(klass)
+  def following_nodes(klasses)
     return [] unless function_parent
+    klasses = [klasses] unless klasses.is_a? Array
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.children.each_with_index do |node, index|
@@ -447,8 +448,8 @@ class DabNode
       test ||= yield(node) if block_given?
       ret += node.all_ordered_nodes if test
     end
-    ret += function_parent.following_nodes(klass)
-    ret = ret.select { |node| node.is_a? klass }
+    ret += function_parent.following_nodes(klasses)
+    ret = ret.select { |node| klasses.any? { |klass| node.is_a? klass } }
     ret
   end
 end
