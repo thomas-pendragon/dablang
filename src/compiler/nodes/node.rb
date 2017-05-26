@@ -7,7 +7,7 @@ class DabNode
   class << self
     define_method_chain = proc do |method_name, collection_name|
       define_method(collection_name) do
-        ret = instance_variable_get("@#{collection_name}") || []
+        ret = safe_instance_variable_get("@#{collection_name}") || []
         if self.superclass < DabNode
           ret |= self.superclass.send(collection_name)
         end
@@ -16,7 +16,7 @@ class DabNode
 
       define_method(method_name) do |klass|
         name = "@#{collection_name}"
-        collection = instance_variable_get(name) || []
+        collection = safe_instance_variable_get(name) || []
         collection << klass
         instance_variable_set(name, collection)
       end
