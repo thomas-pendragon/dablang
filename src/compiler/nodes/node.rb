@@ -444,6 +444,7 @@ class DabNode
     ret = []
     function_parent.children.each_with_index do |node, index|
       test = index > self_index
+      test ||= yield(node) if block_given?
       ret += node.all_ordered_nodes if test
     end
     ret += function_parent.following_nodes(klass)
