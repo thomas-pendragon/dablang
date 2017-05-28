@@ -448,7 +448,7 @@ class DabNode
     ret
   end
 
-  def following_nodes(klasses, &block)
+  def following_nodes(klasses, unscoped: false, &block)
     return [] unless function_parent
     self_index = function_parent.node_index(self)
     ret = []
@@ -457,7 +457,7 @@ class DabNode
       break if block_given? && node.is_any_of?(klasses) && yield(node)
       ret += node.all_ordered_nodes if test
     end
-    ret += function_parent.following_nodes(klasses, &block)
+    ret += function_parent.following_nodes(klasses, &block) if unscoped
     ret = ret.select { |node| node.is_any_of?(klasses) }
     ret
   end

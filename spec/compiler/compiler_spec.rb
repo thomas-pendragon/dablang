@@ -67,6 +67,10 @@ describe DabNode do
   end
 
   it 'list following nodes 1' do
-    expect(@l2.following_nodes(DabNode).map(&:symbol)).to eq %i[l3 right r1 r2 r3 subr3]
+    expect(@l2.following_nodes(DabNode).map(&:symbol)).to eq %i[l3]
+  end
+
+  it 'list following nodes 1 unscoped' do
+    expect(@l2.following_nodes(DabNode, unscoped: true).map(&:symbol)).to eq %i[l3 right r1 r2 r3 subr3]
   end
 end
