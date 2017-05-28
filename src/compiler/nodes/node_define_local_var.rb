@@ -1,9 +1,7 @@
 require_relative 'node_set_local_var.rb'
-require_relative '../processors/check_multiple_definitions.rb'
 require_relative '../processors/add_localvar_postfix.rb'
 
 class DabNodeDefineLocalVar < DabNodeSetLocalVar
-  check_with CheckMultipleDefinitions
   after_init AddLocalvarPostfix
 
   def formatted_source(options)
