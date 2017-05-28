@@ -398,24 +398,6 @@ class DabNode
     self
   end
 
-  def scoped_self_all_nodes(klass, _node)
-    self_all_nodes(klass)
-  end
-
-  def scoped_sibling_nodes(_klass, _node, _flag = nil)
-    []
-  end
-
-  def scoped_all_nodes(klass)
-    node = self
-    ret = scoped_sibling_nodes(klass, self)
-    while node
-      ret |= node.scoped_self_all_nodes(klass, self)
-      node = node.parent
-    end
-    ret
-  end
-
   def node_index(node)
     @children.index(node)
   end
