@@ -134,7 +134,7 @@ class DabNode
     sprintf('%s%s%s%s %s %s', pinfo, self.class.name, exdump, flags, tt, src.white)
   end
 
-  def dump(show_ids = false, level = 0)
+  def dump(show_ids = false, level = 0, background_colors = {})
     text = sprintf('%s - %s', '  ' * level, to_s(show_ids))
     text = text.green if constant?
     if has_errors?
@@ -144,6 +144,12 @@ class DabNode
                text.light_red
              end
     end
+    background_colors.each do |color_key, array|
+      if array.include?(self)
+        text = text.colorize(background: color_key)
+        break
+      end
+    end
     err(text)
     @children.each do |child|
       if child.nil?
@@ -152,7 +158,7 @@ class DabNode
         if child.parent != self
           raise "child #{child} is broken, parent is '#{child.parent}', should be '#{self}'"
         end
-        child.dump(show_ids, level + 1)
+        child.dump(show_ids, level + 1, background_colors)
       else
         err('%s ~ %s', '  ' * (level + 1), child.to_s)
       end
