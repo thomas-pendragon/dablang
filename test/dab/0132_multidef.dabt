@@ -10,9 +10,4 @@ func main()
 
 main
 
-## EXPECT COMPILE ERROR
-
-   3:   var bar = 1;
-./tmp/test_dab_0132_multidef.dab:3: error E0007: Multiple definitions of <bar>.
-   4:   var bar = 2;
-./tmp/test_dab_0132_multidef.dab:4: error E0007: Multiple definitions of <bar>.
+## EXPECT OK

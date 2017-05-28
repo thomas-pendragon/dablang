@@ -1,0 +1,30 @@
+## CODE
+
+func main()
+{
+  var a = "foo";
+  puts(a);            # foo
+  {
+    puts(a);          # foo
+    var a = 12; 
+    puts(a);          # 12
+    a = 123;
+    puts(a);          # 123
+  } 
+  puts(a);            # foo
+  a = "xx";
+  puts(a);            # xx
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+foo
+foo
+12
+123
+foo
+xx

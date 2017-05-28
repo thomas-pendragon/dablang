@@ -1,0 +1,35 @@
+## CODE
+
+func main()
+{
+  var bar = "foo";
+  puts(bar);
+  {
+    var bar = 123;
+    puts(bar);
+    bar = 1230;
+    puts(bar);
+  }
+  puts(bar);  
+  {
+    var bar = 456;
+    puts(bar);
+    bar = 4560;
+    puts(bar);
+  }
+  puts(bar);  
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+foo
+123
+1230
+foo
+456
+4560
+foo

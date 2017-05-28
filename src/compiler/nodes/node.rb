@@ -426,8 +426,15 @@ class DabNode
     parent.scope_path + '_' + parent.node_index(self).to_s
   end
 
-  def all_ordered_nodes
-    all_nodes(Object)
+  # TODO: handle nested code blocks
+  def all_ordered_nodes(klasses)
+    ret = []
+    all_nodes(Object).each do |node|
+      break if block_given? && node.is_any_of?(klasses) && yield(node)
+      ret << node
+    end
+    ret = ret.select { |node| node.is_any_of?(klasses) }
+    ret
   end
 
   def function_parent
@@ -441,7 +448,7 @@ class DabNode
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.children.each_with_index do |node, index|
-      ret += node.all_ordered_nodes if index < self_index
+      ret += node.all_ordered_nodes(klass) if index < self_index
     end
     ret = function_parent.previous_nodes(klass) + [function_parent] + ret
     ret = ret.select { |node| node.is_a? klass }
@@ -453,9 +460,9 @@ class DabNode
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.children.each_with_index do |node, index|
-      test = index > self_index
+      next unless index > self_index
       break if block_given? && node.is_any_of?(klasses) && yield(node)
-      ret += node.all_ordered_nodes if test
+      ret += node.all_ordered_nodes(klasses, &block)
     end
     ret += function_parent.following_nodes(klasses, &block) if unscoped
     ret = ret.select { |node| node.is_any_of?(klasses) }

@@ -117,11 +117,14 @@ class DabNodeCodeBlock < DabNode
     all_nodes(DabNodeReturn).count > 1
   end
 
-  def scoped_self_all_nodes(klass, node)
-    ret = super
+  def scoped_sibling_nodes(klass, node, flag = nil)
+    ret = []
+    test_index = self.node_index(node)
     if @children.include?(node)
-      @children.each_with_index do |child, _index|
-        ret |= child.all_nodes(klass)
+      @children.each_with_index do |child, index|
+        test = true
+        test = index < test_index if flag == :previous
+        ret |= child.all_nodes(klass) if test
       end
     end
     ret
