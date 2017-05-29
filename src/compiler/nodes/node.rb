@@ -103,6 +103,11 @@ class DabNode
     @children << claim(child)
   end
 
+  def pre_insert(child, parent_info = nil)
+    child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
+    @children.unshift(claim(child))
+  end
+
   def claim(child)
     unless child.is_a? DabNode
       child = DabNodeSymbol.new(child)
@@ -246,10 +251,6 @@ class DabNode
 
   def real_value
     self
-  end
-
-  def pre_insert(node)
-    @children.unshift(claim(node))
   end
 
   def remove_child(node)
