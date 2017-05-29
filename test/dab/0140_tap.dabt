@@ -1,0 +1,26 @@
+## CODE
+
+func tap()
+{
+  puts("pre");
+  yield;
+  puts("post");
+}
+
+func main()
+{
+  tap() {
+    puts("foo");
+    return nil;
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+pre
+foo
+post
