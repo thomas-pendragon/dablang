@@ -2,9 +2,8 @@ require_relative 'node_basecall.rb'
 
 class DabNodeSyscall < DabNodeBasecall
   def initialize(call, args)
-    super()
+    super(args)
     @call = call
-    args&.each { |arg| insert(arg) }
   end
 
   def extra_dump

@@ -3,9 +3,8 @@ require_relative '../../shared/opcodes.rb'
 
 class DabNodeHardcall < DabNodeBasecall
   def initialize(identifier, args)
-    super()
-    insert(identifier)
-    args&.each { |arg| insert(arg) }
+    super(args)
+    pre_insert(identifier)
   end
 
   def identifier
