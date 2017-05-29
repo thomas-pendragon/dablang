@@ -39,4 +39,5 @@ enum
     OP_DEFINE_CLASS    = 0x22,
     OP_BREAK_LOAD      = 0x23,
     OP_YIELD           = 0x24,
+    OP_CALL_BLOCK      = 0x25,
 };
