@@ -9,4 +9,8 @@ class DabNodeBasecall < DabNode
   def args
     children
   end
+
+  def _formatted_arguments(options)
+    args.map { |item| item.formatted_source(options) }.join(', ')
+  end
 end
