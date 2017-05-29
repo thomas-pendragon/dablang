@@ -38,6 +38,10 @@ class DecompiledFunction
     case line[:op]
     when 'PUSH_NUMBER'
       @stack << DabNodeLiteralNumber.new(args[0])
+    when 'PUSH_STRING'
+      @stack << DabNodeLiteralString.new(args[0])
+    when 'PUSH_NIL'
+      @stack << DabNodeLiteralNil.new
     when 'RETURN'
       @body << DabNodeReturn.new(@stack.pop)
     when 'PUSH_SYMBOL'
@@ -51,6 +55,10 @@ class DecompiledFunction
                 else
                   DabNodeCall.new(id, arglist)
                 end
+    when 'YIELD'
+      nargs = args[0]
+      arglist = @stack.pop(nargs)
+      @body << DabNodeYield.new(arglist)
     else
       errap line
       raise 'unknown op'
@@ -60,6 +68,7 @@ class DecompiledFunction
   def run!(output)
     process(@data.shift) until @data.empty?
     options = {}
+    @fun.dump
     output << @fun.formatted_source(options)
   end
 end
