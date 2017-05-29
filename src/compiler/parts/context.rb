@@ -194,9 +194,16 @@ class DabContext < DabBaseContext
 
   def read_yield
     on_subcontext do |subcontext|
-      next unless subcontext.read_operator('yield')
+      next unless yieldkw = subcontext.read_operator('yield')
 
-      DabNodeYield.new
+      if lparen = subcontext.read_operator('(')
+        next unless arglist = subcontext.read_optional_valuelist
+        next unless rparen = subcontext.read_operator(')')
+      end
+
+      ret = DabNodeYield.new(arglist)
+      ret.add_source_parts(yieldkw, lparen, rparen)
+      ret
     end
   end
 

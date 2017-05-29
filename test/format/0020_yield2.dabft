@@ -1,0 +1,16 @@
+## INPUT
+
+func foo() {
+yield;
+yield();
+yield(1,"foo");
+}
+
+## OUTPUT
+
+func foo()
+{
+  yield;
+  yield;
+  yield(1, "foo");
+}
