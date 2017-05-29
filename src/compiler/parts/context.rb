@@ -8,13 +8,21 @@ class UnknownTokenException < RuntimeError
   end
 end
 
+class SelfOutsideException < RuntimeError
+  attr_reader :node
+  def initialize(node)
+    super()
+    @node = node
+  end
+end
+
 class DabContext < DabBaseContext
   attr_accessor :local_vars
   attr_accessor :functions
   attr_accessor :classes
 
-  def initialize(stream)
-    super(stream)
+  def initialize(stream, context)
+    super(stream, context)
     @local_vars = []
     @classes = %w(String Fixnum Array Object)
   end
@@ -31,6 +39,10 @@ class DabContext < DabBaseContext
 
   def raise_unknown_token!
     raise UnknownTokenException.new('Unknown token', @stream.position)
+  end
+
+  def raise_self_outside!(node)
+    raise SelfOutsideException.new(node)
   end
 
   def read_program
@@ -116,7 +128,7 @@ class DabContext < DabBaseContext
   end
 
   def read_define_class
-    on_subcontext do |subcontext|
+    on_subcontext(new_context: :instance) do |subcontext|
       next unless keyword = subcontext.read_keyword('class')
       next unless ident = subcontext.read_identifier
       if op = subcontext.read_operator(':')
@@ -443,6 +455,9 @@ class DabContext < DabBaseContext
   def read_self
     on_subcontext do |subcontext|
       next unless keyword = subcontext.read_operator('self')
+
+      raise_self_outside!(keyword) if self.context != :instance
+
       ret = DabNodeSelf.new
       ret.add_source_part(keyword)
       ret
@@ -548,8 +563,8 @@ class DabContext < DabBaseContext
     _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
   end
 
-  def clone
-    ret = super
+  def clone(new_context)
+    ret = super(new_context)
     ret.local_vars = @local_vars.clone
     ret.classes = @classes.clone
     ret

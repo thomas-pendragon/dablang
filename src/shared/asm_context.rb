@@ -3,12 +3,12 @@ require_relative '../shared/base_context.rb'
 class DabAsmContext < DabBaseContext
   attr_accessor :numeric_labels
 
-  def initialize(stream, numeric_labels: false)
-    super(stream)
+  def initialize(stream, context = nil, numeric_labels: false)
+    super(stream, context)
     @numeric_labels = numeric_labels
   end
 
-  def clone
+  def clone(new_context = nil)
     ret = super
     ret.numeric_labels = self.numeric_labels
     ret

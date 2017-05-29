@@ -1,0 +1,15 @@
+## CODE
+
+func main()
+{
+  self.foo();
+}
+
+## RUN
+
+main
+
+## EXPECT COMPILE ERROR
+
+   3:   self.foo();
+./tmp/test_dab_0141_self_outside.dab:3: error E0008: self outside instance context.

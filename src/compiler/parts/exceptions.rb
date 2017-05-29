@@ -87,3 +87,13 @@ class DabCompileMultipleDefinitionsError < DabCompilerError
     7
   end
 end
+
+class DabCompileSelfOutsideInstanceContextError < DabCompilerError
+  def initialize(source)
+    super('self outside instance context.', source)
+  end
+
+  def error_code
+    8
+  end
+end

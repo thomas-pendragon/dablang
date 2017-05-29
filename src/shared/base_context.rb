@@ -1,7 +1,10 @@
 class DabBaseContext
   attr_reader :stream
-  def initialize(stream)
+  attr_reader :context
+
+  def initialize(stream, context = nil)
     @stream = stream
+    @context = context
   end
 
   def read_identifier(*args)
@@ -40,9 +43,9 @@ class DabBaseContext
     @stream.read_classvar(*args)
   end
 
-  def clone
+  def clone(new_context = nil)
     substream = @stream.clone
-    ret = self.class.new(substream)
+    ret = self.class.new(substream, new_context)
     ret
   end
 
@@ -50,8 +53,8 @@ class DabBaseContext
     @stream.merge!(other_context.stream)
   end
 
-  def on_subcontext(merge_local_vars: true)
-    subcontext = self.clone
+  def on_subcontext(new_context: nil, merge_local_vars: true)
+    subcontext = self.clone(new_context || context)
     ret = yield(subcontext)
     if ret
       merge!(subcontext, merge_local_vars)

@@ -6,7 +6,6 @@
 
 ## Compiler
 
-- test: self outside of class method should error
 
 ## Formatter
 
