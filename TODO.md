@@ -23,6 +23,9 @@
 
 ## Language ##
 
+- block support for C functions
+- blocks with arguments
+- retrieving block return value
 - comparing `"abc" > 123`
 - Rings support
 - void calls
@@ -40,7 +43,6 @@
 - default arguments
 - exceptions
 - keyword arguments
-- functions with blocks
 - namespaces
 - raw pointers, byte operations
 - FFI
