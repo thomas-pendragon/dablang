@@ -13,9 +13,10 @@ class DabNodeCall < DabNodeBasecall
   lower_with ConvertCallToSyscall
   optimize_with ConcreteifyCall
 
-  def initialize(identifier, args)
+  def initialize(identifier, args, block)
     super(args)
-    pre_insert(identifier)
+    pre_insert(block || DabNodeLiteralNil.new, 'block')
+    pre_insert(DabNodeSymbol.new(identifier), 'identifier')
   end
 
   def identifier
@@ -27,7 +28,7 @@ class DabNodeCall < DabNodeBasecall
   end
 
   def args
-    children[1..-1]
+    children[2..-1]
   end
 
   def compile(output)

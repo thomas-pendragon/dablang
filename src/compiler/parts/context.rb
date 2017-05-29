@@ -355,12 +355,21 @@ class DabContext < DabBaseContext
       next unless op1 = subcontext.read_operator('(')
       valuelist = subcontext.read_optional_valuelist
       next unless op2 = subcontext.read_operator(')')
-      ret = DabNodeCall.new(id, valuelist)
+      block = subcontext.read_block
+
+      ret = DabNodeCall.new(id, valuelist, block)
       ret.add_source_part(id)
       ret.add_source_part(op1)
       ret.add_source_part(valuelist)
       ret.add_source_part(op2)
       ret
+    end
+  end
+
+  def read_block
+    on_subcontext do |subcontext|
+      next unless block = subcontext.read_codeblock
+      DabNodeCallBlock.new(block)
     end
   end
 
