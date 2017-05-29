@@ -5,4 +5,8 @@ class DabNodeBasecall < DabNode
     super()
     arglist&.each { |arg| insert(arg) }
   end
+
+  def args
+    children
+  end
 end

@@ -18,10 +18,6 @@ class DabNodeSyscall < DabNodeBasecall
     identifier
   end
 
-  def args
-    children
-  end
-
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.printex(self, 'SYSCALL', @call)
