@@ -192,8 +192,21 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_yield
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('yield')
+
+      DabNodeYield.new
+    end
+  end
+
   def read_instruction
-    read_return || read_define_var || read_call || read_complex_setter || read_value
+    read_yield ||
+      read_return ||
+      read_define_var ||
+      read_call ||
+      read_complex_setter ||
+      read_value
   end
 
   def read_complex_setter
