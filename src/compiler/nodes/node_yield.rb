@@ -6,6 +6,6 @@ class DabNodeYield < DabNode
   end
 
   def formatted_source(_options)
-    'yield'
+    'yield;'
   end
 end
