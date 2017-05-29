@@ -1,0 +1,30 @@
+## CODE
+
+func yield1()
+{
+  yield;
+  yield();
+  yield(12, "foo");
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fyield1, yield1, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fyield1:
+                                 STACK_RESERVE 0
+                                 YIELD 0
+                                 YIELD 0
+                                 PUSH_NUMBER 12
+                                 PUSH_STRING "foo"
+                                 YIELD 2
+                                 PUSH_NIL 
+                                 RETURN 1
