@@ -5,6 +5,7 @@ require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/concreteify_call.rb'
 require_relative '../processors/convert_call_to_syscall.rb'
+require_relative '../processors/extract_call_block.rb'
 
 class DabNodeCall < DabNodeBasecall
   check_with CheckFunctionExistence
@@ -12,6 +13,7 @@ class DabNodeCall < DabNodeBasecall
   check_with CheckCallArgsCount
   lower_with ConvertCallToSyscall
   optimize_with ConcreteifyCall
+  lower_with ExtractCallBlock
 
   def initialize(identifier, args, block)
     super(args)
@@ -21,6 +23,14 @@ class DabNodeCall < DabNodeBasecall
 
   def identifier
     children[0]
+  end
+
+  def block
+    children[1]
+  end
+
+  def has_block?
+    !block.is_a?(DabNodeLiteralNil)
   end
 
   def real_identifier
@@ -34,7 +44,10 @@ class DabNodeCall < DabNodeBasecall
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.push(identifier)
-    output.printex(self, 'CALL', args.count.to_s, '1')
+    if has_block?
+      output.push(block.identifier)
+    end
+    output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s, '1')
   end
 
   def target_function
