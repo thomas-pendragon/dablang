@@ -37,4 +37,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_STACK_RESERVE, "STACK_RESERVE", {ARG_UINT16}},
     {OP_DEFINE_CLASS, "DEFINE_CLASS", {ARG_VLC, ARG_UINT16, ARG_UINT16}},
     {OP_BREAK_LOAD, "BREAK_LOAD", {}},
+    {OP_YIELD, "YIELD", {ARG_UINT16}},
 };

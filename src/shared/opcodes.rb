@@ -63,6 +63,8 @@ OPCODES_ARRAY = [
   {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
   {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
   {name: 'BREAK_LOAD'}, # stop loading the code
+  # NEW
+  {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
