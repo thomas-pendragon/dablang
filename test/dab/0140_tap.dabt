@@ -9,7 +9,7 @@ func tap()
 
 func main()
 {
-  tap() {
+  tap() ^{
     puts("foo");
     return nil;
   };

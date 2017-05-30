@@ -6,7 +6,7 @@ func tap()
 
 func tap2()
 {
-  tap() {
+  tap() ^{
     print("foo");
     return nil;
   };
