@@ -290,7 +290,7 @@ class DabNode
   end
 
   def add_source_parts(*parts)
-    parts.each do |part|
+    parts.compact.each do |part|
       @self_source_parts << part
     end
   end
