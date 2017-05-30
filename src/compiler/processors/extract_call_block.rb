@@ -15,7 +15,9 @@ class ExtractCallBlock
       end
     end
 
-    fun = DabNodeFunction.new(name, block.children[0], nil, false)
+    fun = DabNodeFunction.new(name, block.body, block.arglist, false)
+
+    fun.init!
 
     node.root.add_function(fun)
     node.children[1].replace_with!(DabNodeBlockReference.new(fun))

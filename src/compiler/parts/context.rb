@@ -381,9 +381,18 @@ class DabContext < DabBaseContext
   def read_block
     on_subcontext do |subcontext|
       next unless op = subcontext.read_operator('^')
+      if lparen = subcontext.read_operator('(')
+        if arglist = subcontext.read_arglist
+          arglist.each do |arg|
+            symbol = arg.identifier
+            subcontext.add_local_var(symbol)
+          end
+        end
+        next unless rparen = subcontext.read_operator(')')
+      end
       next unless block = subcontext.read_codeblock
-      ret = DabNodeCallBlock.new(block)
-      ret.add_source_parts(op)
+      ret = DabNodeCallBlock.new(block, arglist)
+      ret.add_source_parts(op, lparen, rparen)
       ret
     end
   end
