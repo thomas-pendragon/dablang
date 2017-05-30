@@ -380,9 +380,11 @@ class DabContext < DabBaseContext
 
   def read_block
     on_subcontext do |subcontext|
-      next unless subcontext.read_operator('^')
+      next unless op = subcontext.read_operator('^')
       next unless block = subcontext.read_codeblock
-      DabNodeCallBlock.new(block)
+      ret = DabNodeCallBlock.new(block)
+      ret.add_source_parts(op)
+      ret
     end
   end
 
