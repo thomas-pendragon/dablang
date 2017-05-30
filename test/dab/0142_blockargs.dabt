@@ -1,0 +1,28 @@
+## CODE
+
+func tap()
+{
+  puts("pre");
+  yield("bar", 12);
+  puts("post");
+}
+
+func main()
+{
+  tap() ^(str, num) {
+    print(str);
+    print(" = ");
+    puts(num + 5);
+    return nil;
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+pre
+bar = 17
+post

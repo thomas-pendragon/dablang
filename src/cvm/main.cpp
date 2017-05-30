@@ -309,7 +309,6 @@ bool DabVM::execute_single(Stream &input)
     case OP_YIELD:
     {
         auto n_args = input.read_uint16();
-        assert(n_args == 0);
 
         auto self = get_self();
         auto addr = get_block_addr();
