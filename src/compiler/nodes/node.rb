@@ -45,6 +45,10 @@ class DabNode
     run_all_processors!(:check_callbacks)
   end
 
+  def init!
+    run_all_processors!(:init_callbacks)
+  end
+
   def run_processors!(type)
     type = [type] unless type.is_a? Array
     list = type.flat_map { |subtype| self.class.send(subtype) }
