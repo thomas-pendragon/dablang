@@ -7,7 +7,8 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {                       \
+            assert(blockaddr == 0);                                                                \
             /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
@@ -28,7 +29,8 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {                       \
+            assert(blockaddr == 0);                                                                \
             /* dump();*/                                                                           \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
@@ -45,7 +47,8 @@
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
-        fun.extra   = [this](size_t n_args, size_t n_ret) {                                        \
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {                       \
+            assert(blockaddr == 0);                                                                \
             /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
@@ -89,7 +92,8 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name    = "is";
         fun.regular = false;
-        fun.extra   = [this](size_t n_args, size_t n_ret) {
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
+            assert(blockaddr == 0);
             assert(n_args == 2);
             assert(n_ret == 1);
             auto arg1 = stack.pop_value();
@@ -103,7 +107,8 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name    = "||";
         fun.regular = false;
-        fun.extra   = [this](size_t n_args, size_t n_ret) {
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
+            assert(blockaddr == 0);
             // dump();
             assert(n_args == 2);
             assert(n_ret == 1);
@@ -118,7 +123,8 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name    = "&&";
         fun.regular = false;
-        fun.extra   = [this](size_t n_args, size_t n_ret) {
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
+            assert(blockaddr == 0);
             // dump();
             assert(n_args == 2);
             assert(n_ret == 1);

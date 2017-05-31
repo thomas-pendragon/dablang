@@ -233,7 +233,7 @@ void DabVM::call_function(const DabValue &self, const DabFunction &fun, int n_ar
     else
     {
         const auto n_ret = 1;
-        fun.extra(n_args, n_ret);
+        fun.extra(n_args, n_ret, nullptr);
     }
 }
 

@@ -17,7 +17,8 @@ void DabVM::define_default_classes()
     auto &vm = *this;
 
     auto &object_class = define_builtin_class("Object", CLASS_OBJECT);
-    object_class.add_static_function("new", [this](size_t n_args, size_t n_ret) {
+    object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg = stack.pop_value();
@@ -28,7 +29,8 @@ void DabVM::define_default_classes()
                                      [this](DabValue self) { return self.get_class(*this); });
     object_class.add_simple_function(
         vm, "to_s", [this](DabValue self) { return "#" + self.get_class(*this).name; });
-    object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret) {
+    object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg = stack.pop_value();
@@ -43,7 +45,8 @@ void DabVM::define_default_classes()
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         return arg0;
     });
-    string_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
+    string_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 2);
         assert(n_ret == 1);
         auto arg0 = stack.pop_value();
@@ -54,7 +57,8 @@ void DabVM::define_default_classes()
         auto  n = arg1.data.fixnum;
         stack.push(s.substr(n, 1));
     });
-    string_class.add_static_function("new", [this](size_t n_args, size_t n_ret) {
+    string_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2);
         assert(n_ret == 1);
         auto     klass = stack.pop_value();
@@ -73,7 +77,8 @@ void DabVM::define_default_classes()
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
     auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
-    fixnum_class.add_static_function("new", [this](size_t n_args, size_t n_ret) {
+    fixnum_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2);
         assert(n_ret == 1);
         auto     klass = stack.pop_value();
@@ -109,7 +114,8 @@ void DabVM::define_default_classes()
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
     });
-    array_class.add_function("insert", [this](size_t n_args, size_t n_ret) {
+    array_class.add_function("insert", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 2);
         assert(n_ret == 1);
         auto self = stack.pop_value();
@@ -119,7 +125,8 @@ void DabVM::define_default_classes()
         a.push_back(arg);
         return nullptr;
     });
-    array_class.add_function("[]", [this](size_t n_args, size_t n_ret) {
+    array_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 2);
         assert(n_ret == 1);
         auto arg0 = stack.pop_value();
@@ -135,7 +142,8 @@ void DabVM::define_default_classes()
         else
             stack.push_value(a[n]);
     });
-    array_class.add_function("[]=", [this](size_t n_args, size_t n_ret) {
+    array_class.add_function("[]=", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 3);
         assert(n_ret == 1);
         auto arg0 = stack.pop_value();
@@ -158,7 +166,8 @@ void DabVM::define_default_classes()
             stack.push_value(nullptr);
         }
     });
-    array_class.add_function("last", [this](size_t n_args, size_t n_ret) {
+    array_class.add_function("last", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg0 = stack.pop_value();

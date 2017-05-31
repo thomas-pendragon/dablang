@@ -83,7 +83,7 @@ struct Stream
 
 struct DabValue;
 
-typedef std::function<void(size_t, size_t)> dab_function_t;
+typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
 struct DabFunction
