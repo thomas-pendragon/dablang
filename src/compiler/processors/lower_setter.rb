@@ -5,13 +5,13 @@ class LowerSetter
     if reference.is_a? DabNodeReferenceIndex
       base = reference.base.compiled
       index = reference.index
-      setcall = DabNodeInstanceCall.new(base, :[]=, [index, value])
+      setcall = DabNodeInstanceCall.new(base, :[]=, [index, value], nil)
       node.replace_with!(setcall)
       true
     elsif reference.is_a? DabNodeReferenceMember
       base = reference.base.compiled
       name = reference.name
-      setcall = DabNodeInstanceCall.new(base, "#{name}=".to_sym, [value])
+      setcall = DabNodeInstanceCall.new(base, "#{name}=".to_sym, [value], nil)
       node.replace_with!(setcall)
       true
     elsif reference.is_a? DabNodeReferenceInstVar

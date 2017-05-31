@@ -20,7 +20,7 @@ class ExtractCallBlock
     fun.init!
 
     node.root.add_function(fun)
-    node.children[1].replace_with!(DabNodeBlockReference.new(fun))
+    node.block.replace_with!(DabNodeBlockReference.new(fun))
 
     true
   end

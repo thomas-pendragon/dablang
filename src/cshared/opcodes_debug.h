@@ -39,4 +39,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_BREAK_LOAD, "BREAK_LOAD", {}},
     {OP_YIELD, "YIELD", {ARG_UINT16}},
     {OP_CALL_BLOCK, "CALL_BLOCK", {ARG_UINT16, ARG_UINT16}},
+    {OP_INSTCALL_BLOCK, "INSTCALL_BLOCK", {ARG_UINT16, ARG_UINT16}},
 };

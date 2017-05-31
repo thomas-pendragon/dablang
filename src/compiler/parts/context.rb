@@ -531,7 +531,8 @@ class DabContext < DabBaseContext
         next unless arglist
         rparen = subcontext.read_operator(')')
         next unless rparen
-        next DabNodeInstanceCall.new(base_value, prop_name, arglist)
+        block = subcontext.read_block
+        next DabNodeInstanceCall.new(base_value, prop_name, arglist, block)
       else
         next DabNodePropertyGet.new(base_value, prop_name)
       end
@@ -543,7 +544,7 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('[')
       next unless value = subcontext.read_value
       next unless subcontext.read_operator(']')
-      next DabNodeInstanceCall.new(base_value, :[], [value])
+      next DabNodeInstanceCall.new(base_value, :[], [value], nil)
     end
   end
 

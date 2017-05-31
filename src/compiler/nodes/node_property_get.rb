@@ -24,7 +24,7 @@ class DabNodePropertyGet < DabNode
   end
 
   def convert_to_call
-    call = DabNodeInstanceCall.new(value, identifier, [])
+    call = DabNodeInstanceCall.new(value, identifier, [], nil)
     replace_with!(call)
     true
   end

@@ -1,0 +1,41 @@
+## CODE
+
+func tap(a)
+{
+    a.fun() ^(arg){
+        print(arg);
+    };
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ftap, tap, -1
+                                 LOAD_FUNCTION Ftap__block1, tap__block1, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ftap:
+                                 STACK_RESERVE 1
+                                 PUSH_ARG 0
+/* var 0 a      */               SET_VAR 0
+/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SYMBOL fun
+                                 PUSH_SYMBOL "tap__block1"
+                                 INSTCALL_BLOCK 0, 1
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   Ftap__block1:
+                                 STACK_RESERVE 1
+                                 PUSH_ARG 0
+/* var 0 arg    */               SET_VAR 0
+/* var 0 arg    */               PUSH_VAR 0
+                                 SYSCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1

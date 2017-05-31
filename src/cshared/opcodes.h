@@ -40,4 +40,5 @@ enum
     OP_BREAK_LOAD      = 0x23,
     OP_YIELD           = 0x24,
     OP_CALL_BLOCK      = 0x25,
+    OP_INSTCALL_BLOCK  = 0x26,
 };
