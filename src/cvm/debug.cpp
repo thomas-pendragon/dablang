@@ -1,18 +1,5 @@
 #include "cvm.h"
 
-struct DabVM_debug
-{
-    DabVM &vm;
-    DabVM_debug(DabVM &vm) : vm(vm)
-    {
-    }
-    void print_registers();
-    void print_classes();
-    void print_functions();
-    void print_constants();
-    void print_stack();
-};
-
 void DabVM_debug::print_registers()
 {
     fprintf(stderr, "IP = %p (%d) Frame = %d\n", (void *)vm.ip(), (int)vm.ip(),

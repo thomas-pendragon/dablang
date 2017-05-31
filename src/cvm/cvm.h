@@ -433,3 +433,16 @@ struct DabVM
 
     void extract(const std::string &name);
 };
+
+struct DabVM_debug
+{
+    DabVM &vm;
+    DabVM_debug(DabVM &vm) : vm(vm)
+    {
+    }
+    void print_registers();
+    void print_classes();
+    void print_functions();
+    void print_constants();
+    void print_stack();
+};
