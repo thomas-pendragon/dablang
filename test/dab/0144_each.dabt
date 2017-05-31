@@ -1,0 +1,25 @@
+## CODE
+
+func main()
+{
+  var ar = @[1, "foo", true];
+  ar.each() ^(arg) {
+    //print("arg:");
+    print(arg);
+    //print("[");
+    //print(arg.class);
+    //print("]");
+    print("\n");
+    return nil;
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+1
+foo
+true

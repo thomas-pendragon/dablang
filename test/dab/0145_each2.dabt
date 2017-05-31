@@ -1,0 +1,24 @@
+## CODE
+
+func main()
+{
+  var ar = @[1, "foo", true];
+  ar.each() ^(arg) {
+    print("arg: ");
+    print(arg);
+    print(" [");
+    print(arg.class);
+    puts("]");
+    return nil;
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+arg: 1 [LiteralFixnum]
+arg: foo [LiteralString]
+arg: true [Boolean]

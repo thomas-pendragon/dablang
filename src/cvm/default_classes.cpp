@@ -191,6 +191,17 @@ void DabVM::define_default_classes()
         }
         return ret;
     });
+    array_class.add_function("each", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto  self = stack.pop_value();
+        auto &a    = self.array();
+        for (size_t i = 0; i < a.size(); i++)
+        {
+            this->yield(blockaddr, {a[i]});
+        }
+        stack.push_value(nullptr);
+    });
     array_class.add_simple_function(vm, "to_s", [this](DabValue self) {
         instcall(self, "join", 0, 1);
         auto inner = stack.pop_value();
