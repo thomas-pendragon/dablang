@@ -6,6 +6,7 @@
 
 ## Compiler
 
+- blocks should add implicit `return nil`
 
 ## Formatter
 
@@ -69,6 +70,7 @@
 ## CI ##
 
 - prebuild/pretest tasks in gitlab.yml (early fail)
+- test formatting in /stdlib
 
 ## Coverage ##
 
