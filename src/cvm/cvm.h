@@ -432,6 +432,8 @@ struct DabVM
     void push_array(size_t n);
 
     void extract(const std::string &name);
+
+    void yield(void *block_addr, const std::vector<DabValue> arguments);
 };
 
 struct DabVM_debug

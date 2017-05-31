@@ -214,13 +214,20 @@ void DabVM::call(const std::string &name, int n_args, const std::string &block_n
 void DabVM::call_function_block(const DabValue &self, const DabFunction &fun, int n_args,
                                 const DabFunction &blockfun)
 {
-    assert(fun.regular);
     assert(blockfun.regular);
 
     fprintf(stderr, "VM: call <%s> with block and %d arguments.\n", fun.name.c_str(), n_args);
 
-    push_new_frame(self, n_args, blockfun.address);
-    instructions.seek(fun.address);
+    if (fun.regular)
+    {
+        push_new_frame(self, n_args, blockfun.address);
+        instructions.seek(fun.address);
+    }
+    else
+    {
+        const auto n_ret = 1;
+        fun.extra(n_args, n_ret, (void *)blockfun.address);
+    }
 }
 
 void DabVM::call_function(const DabValue &self, const DabFunction &fun, int n_args)
@@ -789,4 +796,29 @@ int main(int argc, char **argv)
         vm.coverage.dump(stdout);
     }
     return ret_value;
+}
+
+void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
+{
+    auto n_args = arguments.size();
+
+    auto self = get_self();
+
+    fprintf(stderr, "vm: vm yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
+
+    auto stack_pos = stack.size() + 1; // RET 1
+
+    for (auto &arg : arguments)
+    {
+        stack.push(arg);
+    }
+
+    push_new_frame(self, n_args, 0);
+    instructions.seek((size_t)block_addr);
+
+    // temporary hack
+    while (stack.size() != stack_pos)
+    {
+        execute_single(instructions);
+    }
 }
