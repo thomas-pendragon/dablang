@@ -412,6 +412,16 @@ bool DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets);
         break;
     }
+    case OP_INSTCALL_BLOCK:
+    {
+        auto block_name = stack.pop_symbol();
+        auto name       = stack.pop_symbol();
+        auto recv       = stack.pop_value();
+        auto n_args     = input.read_uint16();
+        auto n_rets     = input.read_uint16();
+        instcall(recv, name, n_args, n_rets, block_name);
+        break;
+    }
     case OP_PUSH_SELF:
     {
         stack.push(get_self());
@@ -556,14 +566,23 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
     }
 }
 
-void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets)
+void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
+                     const std::string &block_name)
 {
     assert(n_rets == 1);
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
     stack.push_value(recv);
     auto &fun = klass.get_function(*this, recv, name);
-    call_function(recv, fun, 1 + n_args);
+
+    if (block_name != "")
+    {
+        call_function_block(recv, fun, 1 + n_args, functions[block_name]);
+    }
+    else
+    {
+        call_function(recv, fun, 1 + n_args);
+    }
 }
 
 void DabVM::kernelcall(int call)

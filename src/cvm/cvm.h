@@ -421,7 +421,8 @@ struct DabVM
 
     void add_function(size_t address, const std::string &name, uint16_t class_index);
 
-    void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets);
+    void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
+                  const std::string &block_name = "");
 
     DabClass &define_builtin_class(const std::string &name, size_t class_index,
                                    size_t superclass_index = CLASS_OBJECT);

@@ -1,0 +1,32 @@
+## CODE
+
+class Foo
+{
+  func fun(a)
+  {
+    yield(a, 12);
+  }
+}
+
+func main()
+{
+  var o = Foo.new;
+  o.fun("test") ^(arg1, arg2)
+  {
+    puts("arg1");
+    puts(arg1);
+    puts("arg2");
+    puts(arg2);
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+arg1
+test
+arg2
+12
