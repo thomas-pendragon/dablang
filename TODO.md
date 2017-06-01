@@ -6,7 +6,6 @@
 
 ## Compiler
 
-- blocks should add implicit `return nil`
 
 ## Formatter
 

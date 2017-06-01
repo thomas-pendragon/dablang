@@ -1,0 +1,52 @@
+## CODE
+
+func tap()
+{
+    tap() ^(){
+        print("ok");
+    };
+
+    tap() ^(){
+        print("ok");
+        return nil;
+    };
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ftap, tap, -1
+                                 LOAD_FUNCTION Ftap__block1, tap__block1, -1
+                                 LOAD_FUNCTION Ftap__block2, tap__block2, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ftap:
+                                 STACK_RESERVE 0
+                                 PUSH_SYMBOL tap
+                                 PUSH_SYMBOL "tap__block1"
+                                 CALL_BLOCK 0, 1
+                                 PUSH_SYMBOL tap
+                                 PUSH_SYMBOL "tap__block2"
+                                 CALL_BLOCK 0, 1
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   Ftap__block1:
+                                 STACK_RESERVE 0
+                                 PUSH_STRING "ok"
+                                 SYSCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   Ftap__block2:
+                                 STACK_RESERVE 0
+                                 PUSH_STRING "ok"
+                                 SYSCALL 0
+                                 PUSH_NIL 
+                                 RETURN 1
