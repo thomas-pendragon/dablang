@@ -24,7 +24,6 @@
 ## Language ##
 
 - block support for C functions
-- blocks with arguments
 - retrieving block return value
 - comparing `"abc" > 123`
 - Rings support
