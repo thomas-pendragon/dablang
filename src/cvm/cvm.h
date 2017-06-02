@@ -234,6 +234,8 @@ struct DabValue
     std::vector<DabValue> &array() const;
 
     DabValue create_instance() const;
+
+    size_t use_count() const;
 };
 
 struct DabBaseObject

@@ -258,3 +258,15 @@ void DabObjectProxy::release()
         delete this;
     }
 }
+
+size_t DabValue::use_count() const
+{
+    if (data.object)
+    {
+        return data.object->count_strong;
+    }
+    else
+    {
+        return 65535;
+    }
+}

@@ -4,8 +4,9 @@
 
 enum
 {
-    KERNEL_PRINT = 0x00,
-    KERNEL_EXIT  = 0x01,
+    KERNEL_PRINT    = 0x00,
+    KERNEL_EXIT     = 0x01,
+    KERNEL_USECOUNT = 0x02,
 };
 
 DabVM::DabVM()
@@ -605,6 +606,12 @@ void DabVM::kernelcall(int call)
     {
         auto value = stack.pop_value();
         exit(value.data.fixnum);
+        break;
+    }
+    case KERNEL_USECOUNT:
+    {
+        auto value = stack.pop_value();
+        stack.push_value(uint64_t(value.use_count()));
         break;
     }
     default:
