@@ -278,7 +278,7 @@ class DabNode
   end
 
   def has_function?(id)
-    return true if id == 'print' || id == 'exit'
+    return true if id == 'print' || id == 'exit' || id == '__usecount'
     self.visit_all(DabNodeFunction) do |function|
       return function if function.identifier == id
     end

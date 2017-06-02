@@ -1,0 +1,25 @@
+## CODE
+
+func foo()
+{
+    __usecount("abc");
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_STRING "abc"
+                                 SYSCALL 2
+                                 PUSH_NIL 
+                                 RETURN 1
