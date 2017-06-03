@@ -1,0 +1,26 @@
+## CODE
+
+class Foo
+{
+  destruct()
+  {
+  }
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION F__destruct, __destruct, 256
+ 
+                                 BREAK_LOAD 
+ 
+                   F__destruct:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 1
