@@ -190,9 +190,8 @@ DabValue DabValue::get_instvar(const std::string &name)
     return ret;
 }
 
-void DabValue::set_instvar(DabVM &vm, const std::string &name, const DabValue &value)
+void DabValue::set_instvar(const std::string &name, const DabValue &value)
 {
-    (void)vm;
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
