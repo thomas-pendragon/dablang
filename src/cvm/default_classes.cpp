@@ -29,6 +29,7 @@ void DabVM::define_default_classes()
                                      [this](DabValue self) { return self.get_class(*this); });
     object_class.add_simple_function(
         vm, "to_s", [this](DabValue self) { return "#" + self.get_class(*this).name; });
+    object_class.add_simple_function(vm, "__destruct", [this](DabValue) { return nullptr; });
     object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1);
