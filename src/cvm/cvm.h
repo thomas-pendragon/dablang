@@ -161,6 +161,7 @@ struct DabObjectProxy
 
     void retain();
     void release();
+    void destroy();
 };
 
 struct DabValueData

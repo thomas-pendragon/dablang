@@ -253,10 +253,15 @@ void DabObjectProxy::release()
     fprintf(stderr, "VM: proxy %p (strong %d): - released\n", this, (int)this->count_strong);
     if (count_strong == 0)
     {
-        fprintf(stderr, "VM: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
-        delete object;
-        delete this;
+        destroy();
     }
+}
+
+void DabObjectProxy::destroy()
+{
+    fprintf(stderr, "VM: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
+    delete object;
+    delete this;
 }
 
 size_t DabValue::use_count() const
