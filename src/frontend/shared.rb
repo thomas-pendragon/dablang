@@ -73,7 +73,7 @@ def compare_output(info, actual, expected, soft_match = false)
     puts 'Expected:'.bold
     puts expected
     puts 'Diff:'.bold
-    puts Diffy::Diff.new(expected, actual).to_s(:color)
+    puts Diffy::Diff.new(expected + "\n", actual + "\n").to_s(:color)
     puts "#{info}... ERROR!".red.bold
     raise DabCompareError.new('test error')
   end
