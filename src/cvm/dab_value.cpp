@@ -2,9 +2,10 @@
 
 void DabValue::dump(DabVM &vm, FILE *file) const
 {
+    (void)vm;
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
     fprintf(file, "%s ", types[data.type]);
-    print(vm, file, true);
+    print(file, true);
 }
 
 int DabValue::class_index() const
@@ -57,7 +58,7 @@ bool DabValue::is_a(DabVM &vm, const DabClass &klass) const
     return get_class(vm).is_subclass_of(vm, klass);
 }
 
-void DabValue::print(DabVM &vm, FILE *out, bool debug) const
+void DabValue::print(FILE *out, bool debug) const
 {
     switch (data.type)
     {
@@ -77,10 +78,10 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
         fprintf(out, "nil");
         break;
     case TYPE_CLASS:
-        fprintf(out, "%s", class_name(vm).c_str());
+        fprintf(out, "%s", class_name(*$VM).c_str());
         break;
     case TYPE_OBJECT:
-        fprintf(out, "#%s", class_name(vm).c_str());
+        fprintf(out, "#%s", class_name(*$VM).c_str());
         break;
     case TYPE_ARRAY:
     {
@@ -90,7 +91,7 @@ void DabValue::print(DabVM &vm, FILE *out, bool debug) const
         {
             if (i)
                 fprintf(out, ", ");
-            item.print(vm, out, debug);
+            item.print(out, debug);
             i++;
         }
         fprintf(out, "]");
@@ -186,19 +187,20 @@ DabValue DabValue::get_instvar(DabVM &vm, const std::string &name)
     auto ret = _get_instvar(vm, name);
     fprintf(stderr, "VM: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
-    ret.print(vm, stderr);
+    ret.print(stderr);
     fprintf(stderr, "\n");
     return ret;
 }
 
 void DabValue::set_instvar(DabVM &vm, const std::string &name, const DabValue &value)
 {
+    (void)vm;
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
     fprintf(stderr, "VM: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
-    value.print(vm, stderr);
+    value.print(stderr);
     fprintf(stderr, "\n");
 
     if (!this->data.object->object)

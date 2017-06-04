@@ -36,11 +36,11 @@ void DabVM::kernel_print()
     arg = stack.pop_value();
 
     fprintf(stderr, "[ ");
-    arg.print(*this, stderr);
+    arg.print(stderr);
     fprintf(stderr, " ]\n");
     if (!coverage_testing)
     {
-        arg.print(*this, stdout);
+        arg.print(stdout);
     }
     stack.push_nil();
 }

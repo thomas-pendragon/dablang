@@ -186,7 +186,7 @@ struct DabValue
     std::string class_name(DabVM &vm) const;
     DabClass &get_class(DabVM &vm) const;
 
-    void print(DabVM &vm, FILE *out, bool debug = false) const;
+    void print(FILE *out, bool debug = false) const;
 
     bool truthy() const;
 
