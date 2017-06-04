@@ -141,7 +141,7 @@ struct DabClass
     void add_function(const std::string &name, dab_function_t body);
     void add_static_function(const std::string &name, dab_function_t body);
 
-    void add_simple_function(DabVM &vm, const std::string &name, dab_simple_function_t body);
+    void add_simple_function(const std::string &name, dab_simple_function_t body);
 
     bool is_subclass_of(const DabClass &klass) const;
 

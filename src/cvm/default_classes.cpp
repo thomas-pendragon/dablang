@@ -14,8 +14,6 @@ DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_inde
 
 void DabVM::define_default_classes()
 {
-    auto &vm = *this;
-
     auto &object_class = define_builtin_class("Object", CLASS_OBJECT);
     object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
@@ -25,11 +23,10 @@ void DabVM::define_default_classes()
         assert(arg.data.type == TYPE_CLASS);
         stack.push_value(arg.create_instance());
     });
-    object_class.add_simple_function(vm, "class",
-                                     [this](DabValue self) { return self.get_class(); });
-    object_class.add_simple_function(vm, "to_s",
+    object_class.add_simple_function("class", [this](DabValue self) { return self.get_class(); });
+    object_class.add_simple_function("to_s",
                                      [this](DabValue self) { return "#" + self.class_name(); });
-    object_class.add_simple_function(vm, "__destruct", [this](DabValue) { return nullptr; });
+    object_class.add_simple_function("__destruct", [this](DabValue) { return nullptr; });
     object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1);
@@ -39,7 +36,7 @@ void DabVM::define_default_classes()
     });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
-    string_class.add_simple_function(vm, "upcase", [](DabValue self) {
+    string_class.add_simple_function("upcase", [](DabValue self) {
         auto arg0 = self;
         assert(arg0.data.type == TYPE_STRING);
         auto &s = arg0.data.string;
@@ -73,7 +70,7 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
-    string_class.add_simple_function(vm, "to_s", [](DabValue self) { return self; });
+    string_class.add_simple_function("to_s", [](DabValue self) { return self; });
 
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
@@ -94,7 +91,7 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
-    fixnum_class.add_simple_function(vm, "to_s", [](DabValue self) {
+    fixnum_class.add_simple_function("to_s", [](DabValue self) {
         char ret[32];
         sprintf(ret, "%zd", self.data.fixnum);
         return std::string(ret);
@@ -103,15 +100,14 @@ void DabVM::define_default_classes()
     define_builtin_class("LiteralFixnum", CLASS_LITERALFIXNUM, CLASS_FIXNUM);
 
     auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
-    boolean_class.add_simple_function(vm, "to_s", [](DabValue self) {
-        return std::string(self.data.boolean ? "true" : "false");
-    });
+    boolean_class.add_simple_function(
+        "to_s", [](DabValue self) { return std::string(self.data.boolean ? "true" : "false"); });
 
     auto &nil_class = define_builtin_class("NilClass", CLASS_NILCLASS);
-    nil_class.add_simple_function(vm, "to_s", [](DabValue) { return std::string("nil"); });
+    nil_class.add_simple_function("to_s", [](DabValue) { return std::string("nil"); });
 
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
-    array_class.add_simple_function(vm, "count", [](DabValue self) {
+    array_class.add_simple_function("count", [](DabValue self) {
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
     });
@@ -179,7 +175,7 @@ void DabVM::define_default_classes()
         else
             stack.push_value(a[a.size() - 1]);
     });
-    array_class.add_simple_function(vm, "join", [this](DabValue self) {
+    array_class.add_simple_function("join", [this](DabValue self) {
         std::string ret;
         auto &      a = self.array();
         for (size_t i = 0; i < a.size(); i++)
@@ -203,7 +199,7 @@ void DabVM::define_default_classes()
         }
         stack.push_value(nullptr);
     });
-    array_class.add_simple_function(vm, "to_s", [this](DabValue self) {
+    array_class.add_simple_function("to_s", [this](DabValue self) {
         instcall(self, "join", 0, 1);
         auto inner = stack.pop_value();
         return std::string("[" + inner.data.string + "]");
