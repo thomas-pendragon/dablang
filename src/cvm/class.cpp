@@ -5,15 +5,15 @@ const DabFunction &DabClass::get_function(DabVM &vm, const DabValue &klass,
 {
     if (klass.data.type == TYPE_CLASS)
     {
-        return get_static_function(vm, klass, name);
+        return get_static_function(klass, name);
     }
     return _get_function(false, vm, klass, name);
 }
 
-const DabFunction &DabClass::get_static_function(DabVM &vm, const DabValue &klass,
+const DabFunction &DabClass::get_static_function(const DabValue &   klass,
                                                  const std::string &name) const
 {
-    return _get_function(true, vm, klass, name);
+    return _get_function(true, *$VM, klass, name);
 }
 
 const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabValue &klass,
