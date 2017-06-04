@@ -44,17 +44,17 @@ int DabValue::class_index() const
 
 std::string DabValue::class_name() const
 {
-    return get_class(*$VM).name;
+    return get_class().name;
 }
 
-DabClass &DabValue::get_class(DabVM &vm) const
+DabClass &DabValue::get_class() const
 {
-    return vm.get_class(class_index());
+    return $VM->get_class(class_index());
 }
 
 bool DabValue::is_a(DabVM &vm, const DabClass &klass) const
 {
-    return get_class(vm).is_subclass_of(vm, klass);
+    return get_class().is_subclass_of(vm, klass);
 }
 
 void DabValue::print(FILE *out, bool debug) const
