@@ -590,7 +590,7 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
     stack.push_value(recv);
-    auto &fun = klass.get_function(*this, recv, name);
+    auto &fun = klass.get_function(recv, name);
 
     if (block_name != "")
     {

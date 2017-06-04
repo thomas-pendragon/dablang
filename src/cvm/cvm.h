@@ -134,8 +134,7 @@ struct DabClass
     std::map<std::string, DabFunction> static_functions;
     int superclass_index = CLASS_OBJECT;
 
-    const DabFunction &get_function(DabVM &vm, const DabValue &klass,
-                                    const std::string &name) const;
+    const DabFunction &get_function(const DabValue &klass, const std::string &name) const;
 
     const DabFunction &get_static_function(const DabValue &klass, const std::string &name) const;
 
