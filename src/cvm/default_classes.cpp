@@ -35,7 +35,7 @@ void DabVM::define_default_classes()
         assert(n_args == 1);
         assert(n_ret == 1);
         auto arg = stack.pop_value();
-        stack.push_value(arg.get_class(*this).name);
+        stack.push_value(arg.class_name());
     });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
