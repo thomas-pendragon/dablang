@@ -6,16 +6,16 @@ const DabFunction &DabClass::get_function(const DabValue &klass, const std::stri
     {
         return get_static_function(klass, name);
     }
-    return _get_function(false, *$VM, klass, name);
+    return _get_function(false, klass, name);
 }
 
 const DabFunction &DabClass::get_static_function(const DabValue &   klass,
                                                  const std::string &name) const
 {
-    return _get_function(true, *$VM, klass, name);
+    return _get_function(true, klass, name);
 }
 
-const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabValue &klass,
+const DabFunction &DabClass::_get_function(bool _static, const DabValue &klass,
                                            const std::string &name) const
 {
     auto &collection = _static ? static_functions : functions;
@@ -29,8 +29,8 @@ const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabVal
         }
         else
         {
-            auto &superclass = vm.get_class(superclass_index);
-            return superclass._get_function(_static, vm, klass, name);
+            auto &superclass = $VM->get_class(superclass_index);
+            return superclass._get_function(_static, klass, name);
         }
     }
     return collection.at(name);

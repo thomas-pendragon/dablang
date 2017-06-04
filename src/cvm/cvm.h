@@ -146,7 +146,7 @@ struct DabClass
     bool is_subclass_of(DabVM &vm, const DabClass &klass) const;
 
   private:
-    const DabFunction &_get_function(bool _static, DabVM &vm, const DabValue &klass,
+    const DabFunction &_get_function(bool _static, const DabValue &klass,
                                      const std::string &name) const;
 };
 
