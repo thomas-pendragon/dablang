@@ -54,7 +54,8 @@ DabClass &DabValue::get_class() const
 
 bool DabValue::is_a(DabVM &vm, const DabClass &klass) const
 {
-    return get_class().is_subclass_of(vm, klass);
+    (void)vm;
+    return get_class().is_subclass_of(klass);
 }
 
 void DabValue::print(FILE *out, bool debug) const

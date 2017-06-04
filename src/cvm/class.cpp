@@ -66,7 +66,7 @@ void DabClass::add_simple_function(DabVM &vm, const std::string &name, dab_simpl
     });
 }
 
-bool DabClass::is_subclass_of(DabVM &vm, const DabClass &klass) const
+bool DabClass::is_subclass_of(const DabClass &klass) const
 {
     if (index == klass.index)
         return true;
@@ -74,6 +74,6 @@ bool DabClass::is_subclass_of(DabVM &vm, const DabClass &klass) const
     if (index == superclass_index)
         return false;
 
-    auto super = vm.get_class(superclass_index);
-    return super.is_subclass_of(vm, klass);
+    auto super = $VM->get_class(superclass_index);
+    return super.is_subclass_of(klass);
 }
