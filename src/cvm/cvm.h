@@ -189,7 +189,7 @@ struct DabValue
     bool truthy() const;
 
     DabValue _get_instvar(const std::string &name);
-    DabValue get_instvar(DabVM &vm, const std::string &name);
+    DabValue get_instvar(const std::string &name);
 
     void set_instvar(DabVM &vm, const std::string &name, const DabValue &value);
 

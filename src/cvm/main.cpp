@@ -555,7 +555,7 @@ void DabVM::push_array(size_t n)
 
 void DabVM::get_instvar(const std::string &name)
 {
-    stack.push_value(get_self().get_instvar(*this, name));
+    stack.push_value(get_self().get_instvar(name));
 }
 
 void DabVM::set_instvar(const std::string &name, const DabValue &value)

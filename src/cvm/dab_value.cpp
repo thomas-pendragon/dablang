@@ -180,9 +180,8 @@ DabValue DabValue::_get_instvar(const std::string &name)
     return instvars[name];
 }
 
-DabValue DabValue::get_instvar(DabVM &vm, const std::string &name)
+DabValue DabValue::get_instvar(const std::string &name)
 {
-    (void)vm;
     auto ret = _get_instvar(name);
     fprintf(stderr, "VM: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
