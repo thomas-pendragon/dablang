@@ -160,8 +160,8 @@ struct DabObjectProxy
     size_t         count_strong;
 
     void retain();
-    void release();
-    void destroy();
+    void release(DabValue *value);
+    void destroy(DabValue *value);
 };
 
 struct DabValueData
