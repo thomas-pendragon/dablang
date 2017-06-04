@@ -183,7 +183,7 @@ struct DabValue
     void dump(FILE *file = stderr) const;
 
     int         class_index() const;
-    std::string class_name(DabVM &vm) const;
+    std::string class_name() const;
     DabClass &get_class(DabVM &vm) const;
 
     void print(FILE *out, bool debug = false) const;

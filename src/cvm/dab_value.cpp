@@ -42,9 +42,9 @@ int DabValue::class_index() const
     }
 }
 
-std::string DabValue::class_name(DabVM &vm) const
+std::string DabValue::class_name() const
 {
-    return get_class(vm).name;
+    return get_class(*$VM).name;
 }
 
 DabClass &DabValue::get_class(DabVM &vm) const
@@ -77,10 +77,10 @@ void DabValue::print(FILE *out, bool debug) const
         fprintf(out, "nil");
         break;
     case TYPE_CLASS:
-        fprintf(out, "%s", class_name(*$VM).c_str());
+        fprintf(out, "%s", class_name().c_str());
         break;
     case TYPE_OBJECT:
-        fprintf(out, "#%s", class_name(*$VM).c_str());
+        fprintf(out, "#%s", class_name().c_str());
         break;
     case TYPE_ARRAY:
     {

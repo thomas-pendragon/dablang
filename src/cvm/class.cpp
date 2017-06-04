@@ -25,7 +25,7 @@ const DabFunction &DabClass::_get_function(bool _static, DabVM &vm, const DabVal
         if (index == superclass_index)
         {
             fprintf(stderr, "VM error: Unknown %sfunction <%s> in <%s>.\n",
-                    _static ? "static " : "", name.c_str(), klass.class_name(vm).c_str());
+                    _static ? "static " : "", name.c_str(), klass.class_name().c_str());
             exit(1);
         }
         else
