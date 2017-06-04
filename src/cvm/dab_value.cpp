@@ -160,9 +160,8 @@ DabValue DabValue::create_instance() const
     return ret;
 }
 
-DabValue DabValue::_get_instvar(DabVM &vm, const std::string &name)
+DabValue DabValue::_get_instvar(const std::string &name)
 {
-    (void)vm;
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
@@ -183,7 +182,8 @@ DabValue DabValue::_get_instvar(DabVM &vm, const std::string &name)
 
 DabValue DabValue::get_instvar(DabVM &vm, const std::string &name)
 {
-    auto ret = _get_instvar(vm, name);
+    (void)vm;
+    auto ret = _get_instvar(name);
     fprintf(stderr, "VM: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
     ret.print(stderr);
