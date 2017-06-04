@@ -2,6 +2,8 @@
 
 #include "../cshared/opcodes.h"
 
+DabVM *$VM = nullptr;
+
 enum
 {
     KERNEL_PRINT    = 0x00,
@@ -11,7 +13,14 @@ enum
 
 DabVM::DabVM()
 {
+    assert(!$VM);
+    $VM = this;
     define_defaults();
+}
+
+DabVM::~DabVM()
+{
+    $VM = nullptr;
 }
 
 void DabVM::kernel_print()

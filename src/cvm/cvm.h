@@ -362,6 +362,9 @@ struct DabVM
     void define_defaults();
 
     DabVM();
+    DabVM(const DabVM &) = delete;
+    DabVM &operator=(const DabVM &) = delete;
+    ~DabVM();
 
     void kernel_print();
 
@@ -451,3 +454,9 @@ struct DabVM_debug
     void print_constants();
     void print_stack();
 };
+
+#if defined(__GNUC__) && !defined(__clang__)
+#define $VM __GLOBAL_VM
+#endif
+
+extern DabVM *$VM;
