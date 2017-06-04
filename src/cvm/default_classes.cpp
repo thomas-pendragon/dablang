@@ -23,15 +23,15 @@ void DabVM::define_default_classes()
         assert(arg.data.type == TYPE_CLASS);
         stack.push_value(arg.create_instance());
     });
-    object_class.add_simple_function("class", [this](DabValue self) { return self.get_class(); });
-    object_class.add_simple_function("to_s",
-                                     [this](DabValue self) { return "#" + self.class_name(); });
-    object_class.add_simple_function("__destruct", [this](DabValue) { return nullptr; });
-    object_class.add_static_function("to_s", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+    object_class.add_simple_function("class", [](DabValue self) { return self.get_class(); });
+    object_class.add_simple_function("to_s", [](DabValue self) { return "#" + self.class_name(); });
+    object_class.add_simple_function("__destruct", [](DabValue) { return nullptr; });
+    object_class.add_static_function("to_s", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1);
         assert(n_ret == 1);
-        auto arg = stack.pop_value();
+        auto &stack = $VM->stack;
+        auto  arg   = stack.pop_value();
         stack.push_value(arg.class_name());
     });
 
@@ -43,22 +43,24 @@ void DabVM::define_default_classes()
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         return arg0;
     });
-    string_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+    string_class.add_function("[]", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 2);
         assert(n_ret == 1);
-        auto arg0 = stack.pop_value();
-        auto arg1 = stack.pop_value();
+        auto &stack = $VM->stack;
+        auto  arg0  = stack.pop_value();
+        auto  arg1  = stack.pop_value();
         assert(arg0.data.type == TYPE_STRING);
         assert(arg1.data.type == TYPE_FIXNUM);
         auto &s = arg0.data.string;
         auto  n = arg1.data.fixnum;
         stack.push(s.substr(n, 1));
     });
-    string_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+    string_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2);
         assert(n_ret == 1);
+        auto &   stack = $VM->stack;
         auto     klass = stack.pop_value();
         DabValue ret_value;
         ret_value.data.type = TYPE_STRING;
@@ -75,10 +77,11 @@ void DabVM::define_default_classes()
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
     auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
-    fixnum_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+    fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2);
         assert(n_ret == 1);
+        auto &   stack = $VM->stack;
         auto     klass = stack.pop_value();
         DabValue ret_value;
         ret_value.data.type   = TYPE_FIXNUM;
