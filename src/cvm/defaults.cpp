@@ -98,7 +98,7 @@ void DabVM::define_defaults()
             assert(n_ret == 1);
             auto arg1 = stack.pop_value();
             auto arg0 = stack.pop_value();
-            stack.push_value(arg0.is_a(*this, arg1.get_class()));
+            stack.push_value(arg0.is_a(arg1.get_class()));
         };
         functions["is"] = fun;
     }
