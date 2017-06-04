@@ -99,7 +99,7 @@ void DabVM::_dump(const char *name, const std::vector<DabValue> &data)
     for (size_t i = 0; i < data.size(); i++)
     {
         fprintf(stderr, "[%4zu] ", i);
-        data[i].dump(*this);
+        data[i].dump();
         fprintf(stderr, "\n");
     }
 }
@@ -685,7 +685,7 @@ void DabVM::extract(const std::string &name)
             fprintf(stderr, "VM: empty stack.\n");
             exit(1);
         }
-        stack[stack.size() - 1].dump(*this, stdout);
+        stack[stack.size() - 1].dump(stdout);
     }
     else
     {

@@ -1,8 +1,7 @@
 #include "cvm.h"
 
-void DabValue::dump(DabVM &vm, FILE *file) const
+void DabValue::dump(FILE *file) const
 {
-    (void)vm;
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
