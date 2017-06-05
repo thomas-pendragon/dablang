@@ -193,7 +193,7 @@ class DabContext < DabBaseContext
       next unless op1 = subcontext.read_operator('(')
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      ret = DabNodeFunction.new('__destruct', code, [], false)
+      ret = DabNodeFunction.new('__destruct', code, nil, false)
       ret.add_source_parts(keyw, op1, op2)
       ret
     end
