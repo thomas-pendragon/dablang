@@ -14,11 +14,11 @@ void DabVM_debug::print_classes()
                 it.second.superclass_index);
         for (const auto &fin : it.second.static_functions)
         {
-            fprintf(stderr, "   ::%s\n", fin.first.c_str());
+            fprintf(stderr, "   ::%s [%s]\n", fin.first.c_str(), fin.second.regular ? "Dab" : "C");
         }
         for (const auto &fin : it.second.functions)
         {
-            fprintf(stderr, "    .%s\n", fin.first.c_str());
+            fprintf(stderr, "    .%s [%s]\n", fin.first.c_str(), fin.second.regular ? "Dab" : "C");
         }
     }
 }
@@ -28,7 +28,7 @@ void DabVM_debug::print_functions()
     for (auto it : vm.functions)
     {
         auto &fun = it.second;
-        fprintf(stderr, " - %s: %s at %p\n", fun.name.c_str(), fun.regular ? "regular" : "extra",
+        fprintf(stderr, " - %s: %s at %p\n", fun.name.c_str(), fun.regular ? "Dab" : "C",
                 (void *)fun.address);
     }
 }
