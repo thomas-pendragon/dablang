@@ -13,13 +13,22 @@ enum
 
 DabVM::DabVM()
 {
+    fprintf(stderr, "vm: creating VM\n");
     assert(!$VM);
     $VM = this;
     define_defaults();
+    fprintf(stderr, "vm: VM created!\n");
 }
 
 DabVM::~DabVM()
 {
+    fprintf(stderr, "vm: VM destroyed!\n");
+    shutdown = true;
+}
+
+DabVMReset::~DabVMReset()
+{
+    fprintf(stderr, "vm: reset $VM pointer\n");
     $VM = nullptr;
 }
 

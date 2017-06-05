@@ -335,10 +335,17 @@ struct Coverage
     std::map<uint64_t, std::map<uint64_t, uint64_t>> lines;
 };
 
+struct DabVMReset
+{
+    ~DabVMReset();
+};
+
 struct DabVM
 {
-    Coverage coverage;
-    bool     coverage_testing;
+    bool       shutdown = false;
+    DabVMReset reset;
+    Coverage   coverage;
+    bool       coverage_testing;
 
     Stream instructions;
     std::map<std::string, DabFunction> functions;
