@@ -242,12 +242,16 @@ DabValue::~DabValue()
 
 void DabObjectProxy::retain()
 {
+    if (this->destroying)
+        return;
     count_strong += 1;
     fprintf(stderr, "VM: proxy %p (strong %d): + retained\n", this, (int)this->count_strong);
 }
 
 void DabObjectProxy::release(DabValue *value)
 {
+    if (this->destroying)
+        return;
     count_strong -= 1;
     fprintf(stderr, "VM: proxy %p (strong %d): - released\n", this, (int)this->count_strong);
     if (count_strong == 0)
@@ -259,6 +263,7 @@ void DabObjectProxy::release(DabValue *value)
 void DabObjectProxy::destroy(DabValue *value)
 {
     (void)value;
+    this->destroying = true;
     fprintf(stderr, "VM: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
     delete object;
     delete this;

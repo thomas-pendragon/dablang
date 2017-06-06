@@ -156,6 +156,7 @@ struct DabObjectProxy
 {
     DabBaseObject *object;
     size_t         count_strong;
+    bool           destroying = false;
 
     void retain();
     void release(DabValue *value);
