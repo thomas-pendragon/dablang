@@ -2,10 +2,20 @@
 
 #include <vector>
 
+struct StdinReader
+{
+    size_t read(void *buffer, size_t size)
+    {
+        return fread(buffer, 1, size, stdin);
+    }
+};
+
+template <typename TReader = StdinReader>
 struct BaseAsmStream
 {
     std::vector<unsigned char> data;
     size_t &                   _position;
+    TReader                    _reader;
 
     BaseAsmStream(size_t &position) : _position(position)
     {
@@ -21,7 +31,7 @@ struct BaseAsmStream
         auto old_size = data.size();
         data.resize(old_size + size);
         auto buffer    = &data[old_size];
-        auto real_size = fread(buffer, 1, size, stdin);
+        auto real_size = _reader.read(buffer, size);
         if (!real_size)
             return nullptr;
         _position += size;

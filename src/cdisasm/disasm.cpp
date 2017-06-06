@@ -14,7 +14,7 @@
 
 #define countof(x) (sizeof(x) / sizeof(x[0]))
 
-struct AsmStream : public BaseAsmStream
+struct AsmStream : public BaseAsmStream<>
 {
     AsmStream(size_t &position) : BaseAsmStream(position)
     {
