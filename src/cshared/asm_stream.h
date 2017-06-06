@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 struct StdinReader
 {
     size_t read(void *buffer, size_t size)

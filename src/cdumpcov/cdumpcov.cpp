@@ -1,16 +1,8 @@
-#include <stdio.h>
-#include <vector>
-#include <assert.h>
-#include <functional>
-#include <map>
-#include <set>
-
+#include "../cshared/shared.h"
 #include "../cshared/opcodes.h"
 #include "../cshared/opcodes_format.h"
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/asm_stream.h"
-
-#define countof(x) (sizeof(x) / sizeof(x[0]))
 
 struct AsmStream : public BaseAsmStream<>
 {
