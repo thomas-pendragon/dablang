@@ -1,0 +1,21 @@
+## CODE
+
+func a()
+{
+  print(yield);
+}
+
+func main()
+{
+  a() ^ {
+    return 15;
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+15

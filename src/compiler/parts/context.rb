@@ -587,7 +587,7 @@ class DabContext < DabBaseContext
   end
 
   def read_value
-    _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
+    read_yield || _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
   end
 
   def clone(new_context)

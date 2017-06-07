@@ -23,7 +23,6 @@
 ## Language ##
 
 - block support for C functions
-- retrieving block return value
 - comparing `"abc" > 123`
 - Rings support
 - void calls
