@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+  puts(@["foo", 12, true, "bar"].last);
+  puts(@[].last);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+bar
+nil

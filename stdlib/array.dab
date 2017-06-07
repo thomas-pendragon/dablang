@@ -4,4 +4,16 @@ class Array
   {
     return self[0];
   }
+
+  func last()
+  {
+    if (self.count == 0)
+    {
+      return nil;
+    }
+    else
+    {
+      return self[self.count - 1];
+    }
+  }
 }
