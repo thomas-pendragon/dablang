@@ -6,9 +6,12 @@
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/asm_stream.h"
 
-struct AsmStream : public BaseAsmStream<>
+template <typename TReader = StdinReader>
+struct AsmStream
 {
-    AsmStream(size_t &position) : BaseAsmStream(position)
+    TReader reader;
+
+    AsmStream(size_t &position) : reader(position)
     {
     }
 
@@ -68,7 +71,18 @@ struct AsmStream : public BaseAsmStream<>
 
     unsigned char operator[](size_t index) const
     {
-        return data[index];
+        return reader[index];
+    }
+
+    void *read(size_t size = 1)
+    {
+        return reader.read(size);
+    }
+
+    template <typename T>
+    T _read()
+    {
+        return *(T *)read(sizeof(T));
     }
 };
 
@@ -79,8 +93,8 @@ struct DisasmProcessor
         size_t position = 0;
         while (!feof(stdin))
         {
-            auto      pos = position;
-            AsmStream stream(position);
+            auto        pos = position;
+            AsmStream<> stream(position);
             if (!stream.read())
             {
                 break;

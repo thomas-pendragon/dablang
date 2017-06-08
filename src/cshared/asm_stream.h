@@ -1,21 +1,11 @@
 #pragma once
 
-struct StdinReader
-{
-    size_t read(void *buffer, size_t size)
-    {
-        return fread(buffer, 1, size, stdin);
-    }
-};
-
-template <typename TReader = StdinReader>
-struct BaseAsmStream
+struct BaseReader
 {
     std::vector<unsigned char> data;
     size_t &                   _position;
-    TReader                    _reader;
 
-    BaseAsmStream(size_t &position) : _position(position)
+    BaseReader(size_t &position) : _position(position)
     {
     }
 
@@ -29,16 +19,29 @@ struct BaseAsmStream
         auto old_size = data.size();
         data.resize(old_size + size);
         auto buffer    = &data[old_size];
-        auto real_size = _reader.read(buffer, size);
+        auto real_size = raw_read(buffer, size);
         if (!real_size)
             return nullptr;
         _position += size;
         return buffer;
     }
 
-    template <typename T>
-    T _read()
+    unsigned char operator[](size_t index) const
     {
-        return *(T *)read(sizeof(T));
+        return data[index];
+    }
+
+    virtual size_t raw_read(void *buffer, size_t size) = 0;
+};
+
+struct StdinReader : public BaseReader
+{
+    StdinReader(size_t &position) : BaseReader(position)
+    {
+    }
+
+    virtual size_t raw_read(void *buffer, size_t size) override
+    {
+        return fread(buffer, 1, size, stdin);
     }
 };
