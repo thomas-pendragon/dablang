@@ -1,15 +1,14 @@
-require_relative 'node.rb'
+require_relative 'node_basecall.rb'
 require_relative '../processors/extract_call_block.rb'
 
-class DabNodeInstanceCall < DabNode
+class DabNodeInstanceCall < DabNodeBasecall
   lower_with ExtractCallBlock
 
   def initialize(value, identifier, arglist, block)
-    super()
-    insert(value)
-    insert(block || DabNodeLiteralNil.new, 'block')
-    insert(identifier)
-    arglist.each { |arg| insert(arg) }
+    super(arglist)
+    pre_insert(identifier)
+    pre_insert(block || DabNodeLiteralNil.new, 'block')
+    pre_insert(value)
   end
 
   def value
@@ -51,6 +50,6 @@ class DabNodeInstanceCall < DabNode
   end
 
   def formatted_source(options)
-    value.formatted_source(options) + ".#{real_identifier}(" + ')'
+    value.formatted_source(options) + ".#{real_identifier}(" + _formatted_arguments(options) + ')'
   end
 end
