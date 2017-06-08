@@ -108,13 +108,13 @@ struct DisasmProcessor
 
     void go(std::function<void(size_t, std::string)> yield)
     {
+        AsmStream<TReader> stream(reader);
         while (!feof(stdin))
         {
             try
             {
-                auto               pos = reader.position();
-                AsmStream<TReader> stream(reader);
-                unsigned char      opcode = stream.read_uint8();
+                auto          pos    = reader.position();
+                unsigned char opcode = stream.read_uint8();
                 assert(opcode < countof(g_opcodes));
                 const auto &data = g_opcodes[opcode];
                 std::string info;
