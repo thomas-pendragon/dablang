@@ -152,6 +152,20 @@ namespace :format do
     end
   end
 
+  task stdlib: $sources do
+    files = Dir.glob('./stdlib/**/*.dab')
+    files.each do |file|
+      psystem("ruby src/format/format.rb < #{file} > #{file}.format; mv #{file}.format #{file}")
+    end
+  end
+
+  task stdlib_check: $sources do
+    files = Dir.glob('./stdlib/**/*.dab')
+    files.each do |file|
+      psystem("ruby src/format/format.rb < #{file} | diff #{file} -")
+    end
+  end
+
   task :sort do
     psystem('ruby ./tasks/sort.rb')
   end

@@ -4,7 +4,7 @@ class Array
   {
     return self[0];
   }
-
+  
   func last()
   {
     if (self.count == 0)

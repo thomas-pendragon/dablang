@@ -67,7 +67,6 @@
 ## CI ##
 
 - prebuild/pretest tasks in gitlab.yml (early fail)
-- test formatting in /stdlib
 
 ## Coverage ##
 

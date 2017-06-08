@@ -60,6 +60,13 @@ stages:
   script:
     - bundle exec rake debug_spec
 
+StdlibFormatCheck:
+  stage: format
+  tags:
+    - ruby
+  script:
+    - bundle exec rake format:stdlib_check
+
 SortFilesCheck:
   stage: format
   tags:
