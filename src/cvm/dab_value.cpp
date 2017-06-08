@@ -62,7 +62,7 @@ void DabValue::print(FILE *out, bool debug) const
     switch (data.type)
     {
     case TYPE_FIXNUM:
-        fprintf(out, "%zd", data.fixnum);
+        fprintf(out, "%" PRId64, data.fixnum);
         break;
     case TYPE_STRING:
         fprintf(out, debug ? "\"%s\"" : "%s", data.string.c_str());

@@ -96,7 +96,7 @@ void DabVM::define_default_classes()
     });
     fixnum_class.add_simple_function("to_s", [](DabValue self) {
         char ret[32];
-        sprintf(ret, "%zd", self.data.fixnum);
+        sprintf(ret, "%" PRId64, self.data.fixnum);
         return std::string(ret);
     });
 
