@@ -6,13 +6,22 @@
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/asm_stream.h"
 
+struct EOFError
+{
+};
+
 template <typename TReader = StdinReader>
 struct AsmStream
 {
     TReader reader;
 
-    AsmStream(size_t &position) : reader(position)
+    AsmStream(TReader reader) : reader(reader)
     {
+    }
+
+    uint8_t read_uint8()
+    {
+        return _read<uint8_t>();
     }
 
     void read_uint8(std::string &info)
@@ -82,51 +91,61 @@ struct AsmStream
     template <typename T>
     T _read()
     {
-        return *(T *)read(sizeof(T));
+        auto ptr = (T *)read(sizeof(T));
+        if (!ptr)
+            throw EOFError();
+        return *ptr;
     }
 };
 
 template <typename TReader = StdinReader>
 struct DisasmProcessor
 {
+    TReader reader;
+    DisasmProcessor(TReader reader) : reader(reader)
+    {
+    }
+
     void go(std::function<void(size_t, std::string)> yield)
     {
-        size_t position = 0;
         while (!feof(stdin))
         {
-            auto               pos = position;
-            AsmStream<TReader> stream(position);
-            if (!stream.read())
+            try
+            {
+                auto               pos = reader.position();
+                AsmStream<TReader> stream(reader);
+                unsigned char      opcode = stream.read_uint8();
+                assert(opcode < countof(g_opcodes));
+                const auto &data = g_opcodes[opcode];
+                std::string info;
+                for (const auto &arg : data.args)
+                {
+                    switch (arg)
+                    {
+                    case ARG_UINT8:
+                        stream.read_uint8(info);
+                        break;
+                    case ARG_INT16:
+                        stream.read_int16(info);
+                        break;
+                    case ARG_UINT16:
+                        stream.read_uint16(info);
+                        break;
+                    case ARG_UINT64:
+                        stream.read_uint64(info);
+                        break;
+                    case ARG_VLC:
+                        stream.read_vlc(info);
+                        break;
+                    }
+                }
+                info = data.name + " " + info;
+                yield(pos, info);
+            }
+            catch (EOFError)
             {
                 break;
             }
-            unsigned char opcode = stream[0];
-            assert(opcode < countof(g_opcodes));
-            const auto &data = g_opcodes[opcode];
-            std::string info;
-            for (const auto &arg : data.args)
-            {
-                switch (arg)
-                {
-                case ARG_UINT8:
-                    stream.read_uint8(info);
-                    break;
-                case ARG_INT16:
-                    stream.read_int16(info);
-                    break;
-                case ARG_UINT16:
-                    stream.read_uint16(info);
-                    break;
-                case ARG_UINT64:
-                    stream.read_uint64(info);
-                    break;
-                case ARG_VLC:
-                    stream.read_vlc(info);
-                    break;
-                }
-            }
-            info = data.name + " " + info;
-            yield(pos, info);
         }
     }
 };

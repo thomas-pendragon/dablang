@@ -13,7 +13,9 @@ int main(int argc, char **argv)
         fread(header, 1, header_size, stdin);
     }
 
-    DisasmProcessor<StdinReader> processor;
+    size_t                       position = 0;
+    StdinReader                  reader(position);
+    DisasmProcessor<StdinReader> processor(reader);
 
     processor.go([](size_t pos, std::string info) { printf("%8ld: %s\n", pos, info.c_str()); });
 
