@@ -1,0 +1,17 @@
+## INPUT
+
+class Foo {
+func foo() {
+puts(self);
+}
+}
+
+## OUTPUT
+
+class Foo
+{
+  func foo()
+  {
+    puts(self);
+  }
+}
