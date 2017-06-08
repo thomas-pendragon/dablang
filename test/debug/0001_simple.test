@@ -19,5 +19,6 @@ classes - print classes
 functions - print functions
 constants - dump constants
 stack - dump stack
+code - show current code
 quit - quit
 

@@ -1,4 +1,5 @@
 #include "cvm.h"
+#include "../cshared/disasm.h"
 
 void DabVM_debug::print_registers()
 {
@@ -43,6 +44,70 @@ void DabVM_debug::print_stack()
     vm._dump("stack", vm.stack._data);
 }
 
+void DabVM_debug::print_code()
+{
+    prepare_disasm();
+
+    auto err_stream = stdout;
+
+    auto ip = vm.ip();
+
+    fprintf(err_stream, "IP = %d\n", (int)ip);
+
+    auto it = find_if(disasm.begin(), disasm.end(),
+                      [ip](const std::pair<size_t, std::string> &obj) { return obj.first == ip; });
+
+    if (it == disasm.end())
+        return;
+
+    auto index = std::distance(disasm.begin(), it);
+
+    for (int i = index - 2; i <= index + 2; i++)
+    {
+        if (i < 0 || i >= (int)disasm.size())
+            continue;
+
+        const auto &line = disasm[i];
+        fprintf(err_stream, "%c %8ld: %s\n", line.first == ip ? '>' : ' ', line.first,
+                line.second.c_str());
+    }
+}
+
+struct InstructionsReader : public BaseReader
+{
+    DabVM &vm;
+    InstructionsReader(DabVM &vm, size_t &position) : BaseReader(position), vm(vm)
+    {
+    }
+
+    virtual size_t raw_read(void *buffer, size_t size) override
+    {
+        auto data       = vm.instructions.raw_base_data();
+        auto length     = vm.instructions.raw_base_length();
+        auto offset     = position();
+        auto max_length = std::min(size, length - offset);
+
+        memcpy(buffer, data + offset, max_length);
+
+        return max_length;
+    }
+};
+
+void DabVM_debug::prepare_disasm()
+{
+    if (has_disasm)
+        return;
+
+    has_disasm = true;
+
+    size_t                              position = 0;
+    InstructionsReader                  reader(vm, position);
+    DisasmProcessor<InstructionsReader> processor(reader);
+
+    processor.go(
+        [this](size_t pos, std::string info) { disasm.push_back(std::make_pair(pos, info)); });
+}
+
 void DabVM::execute_debug(Stream &input)
 {
     auto err_stream = stdout;
@@ -67,6 +132,7 @@ void DabVM::execute_debug(Stream &input)
             fprintf(err_stream, "functions - print functions\n");
             fprintf(err_stream, "constants - dump constants\n");
             fprintf(err_stream, "stack - dump stack\n");
+            fprintf(err_stream, "code - show current code\n");
             fprintf(err_stream, "quit - quit\n");
         }
         else if (cmd == "step" || cmd == "s")
@@ -92,6 +158,10 @@ void DabVM::execute_debug(Stream &input)
         else if (cmd == "stack")
         {
             debug.print_stack();
+        }
+        else if (cmd == "code")
+        {
+            debug.print_code();
         }
         else if (cmd == "quit")
         {

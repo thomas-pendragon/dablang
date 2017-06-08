@@ -55,6 +55,8 @@
 
 - breakpoints
 - use exceptions
+- debug: disasm should respect function boundary
+- debug: should disasm single function at a time
 
 ## Assembler ##
 

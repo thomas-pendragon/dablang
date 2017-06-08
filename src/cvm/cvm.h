@@ -47,6 +47,15 @@ struct Stream
 
     size_t remaining() const;
 
+    const byte *raw_base_data() const
+    {
+        return buffer.data;
+    }
+    size_t raw_base_length() const
+    {
+        return buffer.length;
+    }
+
   private:
     Buffer buffer;
     size_t _position = 0;
@@ -441,6 +450,13 @@ struct DabVM_debug
     void print_functions();
     void print_constants();
     void print_stack();
+    void print_code();
+
+  private:
+    typedef std::vector<std::pair<size_t, std::string>> disasm_map_t;
+    disasm_map_t disasm;
+    bool         has_disasm = false;
+    void         prepare_disasm();
 };
 
 #if defined(__GNUC__) && !defined(__clang__)
