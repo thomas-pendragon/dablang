@@ -355,6 +355,10 @@ class DabNode
     raise "unknown source for #{self.class.name}"
   end
 
+  def formatted_skip_semicolon?
+    false
+  end
+
   def _indent(text)
     text.lines.map { |line| "  #{line}" }.join
   end

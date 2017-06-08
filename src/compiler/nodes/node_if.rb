@@ -37,4 +37,8 @@ class DabNodeIf < DabNode
     end
     ret
   end
+
+  def formatted_skip_semicolon?
+    true
+  end
 end

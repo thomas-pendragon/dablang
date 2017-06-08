@@ -45,7 +45,7 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def formatted_source(options)
-    original_identifier + ' = ' + value.formatted_source(options) + ';'
+    original_identifier + ' = ' + value.formatted_source(options)
   end
 
   def all_setters

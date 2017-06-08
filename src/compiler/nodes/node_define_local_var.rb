@@ -11,7 +11,7 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
       var = "var<#{type}> "
     end
     if value.is_a? DabNodeLiteralNil
-      "#{var}#{real_identifier};"
+      "#{var}#{real_identifier}"
     else
       "#{var}#{super}"
     end

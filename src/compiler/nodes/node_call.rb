@@ -55,6 +55,6 @@ class DabNodeCall < DabNodeBasecall
   end
 
   def formatted_source(options)
-    real_identifier + '(' + _formatted_arguments(options) + ')' + ';'
+    real_identifier + '(' + _formatted_arguments(options) + ')'
   end
 end

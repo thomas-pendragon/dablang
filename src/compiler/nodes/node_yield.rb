@@ -12,6 +12,6 @@ class DabNodeYield < DabNodeBasecall
               else
                 ''
               end
-    'yield' + argstxt + ';'
+    'yield' + argstxt
   end
 end
