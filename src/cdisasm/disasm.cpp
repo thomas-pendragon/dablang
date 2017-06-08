@@ -13,7 +13,7 @@ int main(int argc, char **argv)
         fread(header, 1, header_size, stdin);
     }
 
-    DisasmProcessor processor;
+    DisasmProcessor<StdinReader> processor;
 
     processor.go([](size_t pos, std::string info) { printf("%8ld: %s\n", pos, info.c_str()); });
 

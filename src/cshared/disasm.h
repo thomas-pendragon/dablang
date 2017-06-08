@@ -86,6 +86,7 @@ struct AsmStream
     }
 };
 
+template <typename TReader = StdinReader>
 struct DisasmProcessor
 {
     void go(std::function<void(size_t, std::string)> yield)
@@ -93,8 +94,8 @@ struct DisasmProcessor
         size_t position = 0;
         while (!feof(stdin))
         {
-            auto        pos = position;
-            AsmStream<> stream(position);
+            auto               pos = position;
+            AsmStream<TReader> stream(position);
             if (!stream.read())
             {
                 break;
