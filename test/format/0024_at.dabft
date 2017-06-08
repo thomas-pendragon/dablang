@@ -1,0 +1,12 @@
+## INPUT
+
+func foo(a) {
+puts(a[12]);
+}
+
+## OUTPUT
+
+func foo(a)
+{
+  puts(a[12]);
+}
