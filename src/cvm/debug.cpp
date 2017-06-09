@@ -133,6 +133,8 @@ void DabVM::execute_debug(Stream &input)
             fprintf(err_stream, "constants - dump constants\n");
             fprintf(err_stream, "stack - dump stack\n");
             fprintf(err_stream, "code - show current code\n");
+            fprintf(err_stream, "run - run remaining instructions\n");
+            fprintf(err_stream, "break [ip] - break at defined IP\n");
             fprintf(err_stream, "quit - quit\n");
         }
         else if (cmd == "step" || cmd == "s")
@@ -166,6 +168,18 @@ void DabVM::execute_debug(Stream &input)
         else if (cmd == "quit")
         {
             exit(0);
+        }
+        else if (cmd == "run")
+        {
+            execute(input);
+        }
+        else if (cmd.substr(0, 6) == "break ")
+        {
+            int ip  = 0;
+            int ret = sscanf(cmd.c_str(), "break %d", &ip);
+            assert(ret == 1);
+            fprintf(stdout, "debug: break at %d.\n", ip);
+            breakpoints.insert(ip);
         }
         else
         {

@@ -20,5 +20,7 @@ functions - print functions
 constants - dump constants
 stack - dump stack
 code - show current code
+run - run remaining instructions
+break [ip] - break at defined IP
 quit - quit
 

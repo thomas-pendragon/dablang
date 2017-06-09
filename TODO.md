@@ -53,7 +53,7 @@
 
 ## VM ##
 
-- breakpoints
+- code-based breakpoints (`__break()`)
 - use exceptions
 - debug: disasm should respect function boundary
 - debug: should disasm single function at a time

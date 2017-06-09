@@ -271,6 +271,10 @@ void DabVM::execute(Stream &input)
         {
             break;
         }
+        if (breakpoints.count(ip()))
+        {
+            return;
+        }
     }
 }
 

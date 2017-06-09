@@ -346,6 +346,8 @@ struct DabVM
     std::vector<DabValue> constants;
     std::map<int, DabClass> classes;
 
+    std::set<size_t> breakpoints;
+
     DabClass &get_class(int index)
     {
         if (!classes.count(index))
