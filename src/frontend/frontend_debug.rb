@@ -58,29 +58,18 @@ def run_test(settings)
 
   FileUtils.rm(out) if File.exist?(out)
 
-  extract_source(input, dab, data[:code])
   extract_source(input, inp, data[:input])
+  if data[:code].present?
+    extract_source(input, dab, data[:code])
 
-  stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
-  stdlib_glob = stdlib_path + '/*.dab'
-  stdlib_files = Dir.glob(stdlib_glob)
-  begin
-    extra = data[:included_file]
-    if extra
-      extra = "./test/shared/#{extra}.dab"
-    end
-    compile_to_asm(([dab, extra] + stdlib_files).compact, asm)
-  rescue SystemCommandError => e
-    if data[:expected_status] == :compile_error
-      compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
-      File.open(out, 'wb') { |f| f << '1' }
-      return
-    else
-      raise e
-    end
-  end
-  if data[:expected_status] == :compile_error
-    raise "Expected compiler error in #{input}"
+    stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
+    stdlib_glob = stdlib_path + '/*.dab'
+    stdlib_files = Dir.glob(stdlib_glob)
+    compile_to_asm(([dab] + stdlib_files).compact, asm)
+  elsif data[:asm_code].present?
+    extract_source(input, asm, data[:asm_code])
+  else
+    raise 'no code'
   end
   assemble(asm, bin)
 
