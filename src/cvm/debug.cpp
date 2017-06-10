@@ -44,7 +44,7 @@ void DabVM_debug::print_stack()
     vm._dump("stack", vm.stack._data);
 }
 
-void DabVM_debug::print_code()
+void DabVM_debug::print_code(bool current_only)
 {
     prepare_disasm();
 
@@ -62,7 +62,10 @@ void DabVM_debug::print_code()
 
     auto index = std::distance(disasm.begin(), it);
 
-    for (int i = index - 2; i <= index + 2; i++)
+    int start = current_only ? (index - 2) : 0;
+    int end   = current_only ? (index + 3) : disasm.size();
+
+    for (int i = start; i < end; i++)
     {
         if (i < 0 || i >= (int)disasm.size())
             continue;
@@ -133,6 +136,7 @@ void DabVM::execute_debug(Stream &input)
             fprintf(err_stream, "constants - dump constants\n");
             fprintf(err_stream, "stack - dump stack\n");
             fprintf(err_stream, "code - show current code\n");
+            fprintf(err_stream, "allcode - show all code\n");
             fprintf(err_stream, "run - run remaining instructions\n");
             fprintf(err_stream, "break [ip] - break at defined IP\n");
             fprintf(err_stream, "quit - quit\n");
@@ -163,7 +167,11 @@ void DabVM::execute_debug(Stream &input)
         }
         else if (cmd == "code")
         {
-            debug.print_code();
+            debug.print_code(true);
+        }
+        else if (cmd == "allcode")
+        {
+            debug.print_code(false);
         }
         else if (cmd == "quit")
         {

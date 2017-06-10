@@ -452,7 +452,7 @@ struct DabVM_debug
     void print_functions();
     void print_constants();
     void print_stack();
-    void print_code();
+    void print_code(bool current_only);
 
   private:
     typedef std::vector<std::pair<size_t, std::string>> disasm_map_t;
