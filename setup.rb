@@ -17,4 +17,20 @@ class Object
     list = [list] unless list.is_a? Array
     list.any? { |item| self.is_a?(item) }
   end
+
+  def present?
+    true
+  end
+end
+
+class NilClass
+  def present?
+    false
+  end
+end
+
+class String
+  def present?
+    strip != ''
+  end
 end
