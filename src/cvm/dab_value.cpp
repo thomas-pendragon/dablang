@@ -102,6 +102,10 @@ void DabValue::print(FILE *out, bool debug) const
         fprintf(out, "?");
         break;
     }
+    if (debug && data.object)
+    {
+        fprintf(out, " [%d strong]", (int)data.object->count_strong);
+    }
 }
 
 std::vector<DabValue> &DabValue::array() const
