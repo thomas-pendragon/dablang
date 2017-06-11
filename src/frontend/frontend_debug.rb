@@ -4,8 +4,8 @@ def read_test_file(fname)
   base_read_test_file(fname)
 end
 
-def compile_to_asm(input, output)
-  run_ruby_part(input, output, 'compile to DabASM', 'compiler', nil, true)
+def compile_to_asm(input, output, options)
+  run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)
 end
 
 def assemble(input, output)
@@ -44,6 +44,8 @@ def run_test(settings)
 
   data = read_test_file(input)
 
+  options = data[:options] || ''
+
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
   FileUtils.mkdir_p(test_output_dir)
@@ -65,7 +67,7 @@ def run_test(settings)
     stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
     stdlib_glob = stdlib_path + '/*.dab'
     stdlib_files = Dir.glob(stdlib_glob)
-    compile_to_asm(([dab] + stdlib_files).compact, asm)
+    compile_to_asm(([dab] + stdlib_files).compact, asm, options)
   elsif data[:asm_code].present?
     extract_source(input, asm, data[:asm_code])
   else
