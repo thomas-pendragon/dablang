@@ -2,7 +2,9 @@
 
 void DabValue::dump(FILE *file) const
 {
-    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE"};
+    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ",
+                                  "SYMB", "CLAS", "OBJE", "ARRY"};
+    assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
 }
