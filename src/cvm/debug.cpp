@@ -36,12 +36,14 @@ void DabVM_debug::print_functions()
 
 void DabVM_debug::print_constants()
 {
-    vm._dump("constants", vm.constants);
+    vm._dump("constants", vm.constants, stdout);
 }
 
 void DabVM_debug::print_stack()
 {
-    vm._dump("stack", vm.stack._data);
+    auto err_stream = stdout;
+    fprintf(err_stream, "Stack:\n");
+    vm._dump("stack", vm.stack._data, err_stream);
 }
 
 void DabVM_debug::print_code(bool current_only)

@@ -102,14 +102,14 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
     }
 }
 
-void DabVM::_dump(const char *name, const std::vector<DabValue> &data)
+void DabVM::_dump(const char *name, const std::vector<DabValue> &data, FILE *output)
 {
-    fprintf(stderr, "Dump of %s:\n", name);
+    fprintf(output, "Dump of %s:\n", name);
     for (size_t i = 0; i < data.size(); i++)
     {
-        fprintf(stderr, "[%4zu] ", i);
-        data[i].dump();
-        fprintf(stderr, "\n");
+        fprintf(output, "[%4zu] ", i);
+        data[i].dump(output);
+        fprintf(output, "\n");
     }
 }
 

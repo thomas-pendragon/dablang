@@ -373,7 +373,7 @@ struct DabVM
 
     void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr);
 
-    void _dump(const char *name, const std::vector<DabValue> &data);
+    void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
     size_t ip() const;
 
