@@ -18,4 +18,8 @@ class DabNodeReturn < DabNode
   def formatted_source(options)
     'return ' + value.formatted_source(options)
   end
+
+  def returns_value?
+    false
+  end
 end

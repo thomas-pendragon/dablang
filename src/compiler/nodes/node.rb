@@ -459,4 +459,8 @@ class DabNode
     ret = ret.select { |node| node.is_any_of?(klasses) }
     ret
   end
+
+  def returns_value?
+    true
+  end
 end

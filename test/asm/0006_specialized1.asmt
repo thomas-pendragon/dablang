@@ -35,6 +35,7 @@ func bar()
 /* class        */               PUSH_CONSTANT 1
                                  INSTCALL 0, 1
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -43,5 +44,7 @@ func bar()
 /* str          */               PUSH_CONSTANT 0
 /* foo          */               PUSH_CONSTANT 2
                                  CALL 1, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
+

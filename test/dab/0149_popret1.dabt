@@ -1,0 +1,16 @@
+## CODE
+
+func main()
+{
+  var a = @[];
+  a.insert(123);
+  puts(a);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[123]

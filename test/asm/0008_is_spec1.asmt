@@ -51,6 +51,7 @@ func bar()
                    L2:
 /* got string   */               PUSH_CONSTANT 1
                                  SYSCALL 0
+                                 POP 1
                                  JMP L3
                    L3:
 /* var 0 a      */               PUSH_VAR 0
@@ -62,6 +63,7 @@ func bar()
                    L5:
 /* got fixnum   */               PUSH_CONSTANT 0
                                  SYSCALL 0
+                                 POP 1
                                  JMP L6
                    L6:
                                  PUSH_NIL 
@@ -72,8 +74,10 @@ func bar()
 /* str          */               PUSH_CONSTANT 2
 /* foo          */               PUSH_CONSTANT 4
                                  CALL 1, 1
+                                 POP 1
 /* 12           */               PUSH_CONSTANT 3
 /* foo          */               PUSH_CONSTANT 4
                                  CALL 1, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

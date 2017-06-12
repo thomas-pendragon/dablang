@@ -31,9 +31,11 @@ func tap()
                                  PUSH_SYMBOL tap
                                  PUSH_SYMBOL "tap__block1"
                                  CALL_BLOCK 0, 1
+                                 POP 1
                                  PUSH_SYMBOL tap
                                  PUSH_SYMBOL "tap__block2"
                                  CALL_BLOCK 0, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -41,6 +43,7 @@ func tap()
                                  STACK_RESERVE 0
                                  PUSH_STRING "ok"
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -48,5 +51,6 @@ func tap()
                                  STACK_RESERVE 0
                                  PUSH_STRING "ok"
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

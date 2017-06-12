@@ -63,4 +63,8 @@ class DabNodeSetLocalVar < DabNode
   def unresolved_references
     all_users.select { |node| node.is_a? DabNodeReferenceLocalVar }
   end
+
+  def returns_value?
+    false
+  end
 end

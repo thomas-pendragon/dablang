@@ -30,6 +30,7 @@ func main()
                                  PUSH_SYMBOL class
                                  INSTCALL 0, 1
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -38,6 +39,7 @@ func main()
                                  PUSH_STRING "hello"
                                  PUSH_SYMBOL __foo_LiteralString
                                  HARDCALL 1, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -45,5 +47,6 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_STRING "LiteralString"
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

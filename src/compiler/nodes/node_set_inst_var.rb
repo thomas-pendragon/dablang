@@ -25,4 +25,8 @@ class DabNodeSetInstVar < DabNode
   def formatted_source(options)
     identifier + ' = ' + value.formatted_source(options)
   end
+
+  def returns_value?
+    false
+  end
 end

@@ -28,6 +28,7 @@ func tap(a)
                                  PUSH_SYMBOL fun
                                  PUSH_SYMBOL "tap__block1"
                                  INSTCALL_BLOCK 0, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -37,5 +38,6 @@ func tap(a)
 /* var 0 arg    */               SET_VAR 0
 /* var 0 arg    */               PUSH_VAR 0
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

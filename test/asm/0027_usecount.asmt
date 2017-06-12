@@ -21,5 +21,6 @@ func foo()
                                  STACK_RESERVE 0
                                  PUSH_STRING "abc"
                                  SYSCALL 2
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

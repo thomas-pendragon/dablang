@@ -1,14 +1,17 @@
 ## CODE
 
-func foo(a)
+func foo()
 {
-  print(a);
-  print(a);
+  print("foo");
 }
+
+## COMMENT
+
+Instructions should pop return value if not used.
 
 ## OPTIONS
 
---opt
+--no-opt --no-constants
 
 ## EXPECT
 
@@ -20,10 +23,7 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_ARG 0
-                                 SYSCALL 0
-                                 POP 1
-                                 PUSH_ARG 0
+                                 PUSH_STRING "foo"
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

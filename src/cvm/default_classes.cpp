@@ -123,7 +123,7 @@ void DabVM::define_default_classes()
         assert(self.data.type == TYPE_ARRAY);
         auto &a = self.array();
         a.push_back(arg);
-        return nullptr;
+        stack.push_value(nullptr);
     });
     array_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);

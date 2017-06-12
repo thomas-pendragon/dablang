@@ -20,5 +20,6 @@ func yield1()
                    Fyield1:
                                  STACK_RESERVE 0
                                  YIELD 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

@@ -16,7 +16,7 @@ quit
 ## EXPECT STDOUT
 
 IP = 101
-        90: LOAD_FUNCTION 29, puts, 65535
+        90: LOAD_FUNCTION 32, puts, 65535
        100: BREAK_LOAD 
 >      101: STACK_RESERVE 1
        104: PUSH_CONSTANT 4

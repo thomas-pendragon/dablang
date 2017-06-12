@@ -22,9 +22,12 @@ func yield1()
                    Fyield1:
                                  STACK_RESERVE 0
                                  YIELD 0
+                                 POP 1
                                  YIELD 0
+                                 POP 1
                                  PUSH_NUMBER 12
                                  PUSH_STRING "foo"
                                  YIELD 2
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

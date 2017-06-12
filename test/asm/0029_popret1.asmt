@@ -1,0 +1,58 @@
+## CODE
+
+func puts(a){}
+
+func main()
+{
+  var a = @[12];
+  puts(a);
+  a.insert(123);
+  a.insert("foo");
+  puts(a);
+}
+
+## OPTIONS
+
+--no-opt --no-constants
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fputs, puts, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fputs:
+                                 STACK_RESERVE 1
+                                 PUSH_ARG 0
+/* var 0 a      */               SET_VAR 0
+                                 PUSH_NIL 
+                                 RETURN 1
+ 
+                   Fmain:
+                                 STACK_RESERVE 1
+                                 PUSH_NUMBER 12
+                                 PUSH_ARRAY 1
+/* var 0 a      */               SET_VAR 0
+/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SYMBOL puts
+                                 CALL 1, 1
+                                 POP 1
+                                 PUSH_NUMBER 123
+/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SYMBOL insert
+                                 INSTCALL 1, 1
+                                 POP 1
+                                 PUSH_STRING "foo"
+/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SYMBOL insert
+                                 INSTCALL 1, 1
+                                 POP 1
+/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SYMBOL puts
+                                 CALL 1, 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 1

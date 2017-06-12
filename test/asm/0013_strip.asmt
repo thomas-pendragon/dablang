@@ -23,7 +23,6 @@ func bar()
 --opt --strip --entry=bar
 
 ## EXPECT
-
  
 /* Dab dev      */                
  
@@ -45,9 +44,11 @@ func bar()
 /* str          */               PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
                                  HARDCALL 1, 1
+                                 POP 1
 /* 12           */               PUSH_CONSTANT 3
 /* __foo_Litera */               PUSH_CONSTANT 4
                                  HARDCALL 1, 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -55,6 +56,7 @@ func bar()
                                  STACK_RESERVE 0
 /* got string   */               PUSH_CONSTANT 1
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1
  
@@ -62,5 +64,6 @@ func bar()
                                  STACK_RESERVE 0
 /* got fixnum   */               PUSH_CONSTANT 0
                                  SYSCALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN 1

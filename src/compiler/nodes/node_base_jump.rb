@@ -11,4 +11,8 @@ class DabNodeBaseJump < DabNode
   def targets
     raise 'must implement'
   end
+
+  def returns_value?
+    false
+  end
 end

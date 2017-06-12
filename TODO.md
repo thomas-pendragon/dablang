@@ -25,7 +25,7 @@
 - block support for C functions
 - comparing `"abc" > 123`
 - Rings support
-- void calls
+- extra opcodes for void calls
 - type: hash
 - type: set
 - type: range

@@ -72,6 +72,7 @@ class DabNodeCodeBlock < DabNode
     end
     @children.each do |child|
       child.compile(output)
+      output.print('POP', 1) if child.returns_value?
     end
     if @children.count == 0
       output.print('NOP')
