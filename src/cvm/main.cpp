@@ -56,16 +56,13 @@ void DabVM::kernel_print()
 
 bool DabVM::pop_frame(bool regular)
 {
+    fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
+
     int    frame_loc = frame_position;
     int    n_args    = number_of_args();
     size_t prev_pos  = prev_frame_position();
     auto   retval    = get_retval();
     auto   prev_ip   = get_prev_ip();
-
-    if (prev_pos == (size_t)-1)
-    {
-        return false;
-    }
 
     stack.resize(frame_loc - 2 - n_args);
 
@@ -76,6 +73,12 @@ bool DabVM::pop_frame(bool regular)
         stack.push(retval);
         fprintf(stderr, "VM: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         instructions.seek(prev_ip);
+    }
+
+    if (prev_pos == (size_t)-1)
+    {
+        fprintf(stderr, "vm: pop last frame prev_ip = %zu\n", prev_ip);
+        return false;
     }
 
     return true;
