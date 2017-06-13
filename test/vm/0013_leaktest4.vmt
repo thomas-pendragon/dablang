@@ -1,0 +1,21 @@
+## CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 0
+PUSH_NIL
+RETURN 1
+
+## RUNOPTIONS
+
+--noraw
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: no leaks

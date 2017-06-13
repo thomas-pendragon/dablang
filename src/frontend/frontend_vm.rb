@@ -18,12 +18,14 @@ def assemble(input, output)
   run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
 end
 
-def extract_vm_part(input, output, part)
+def extract_vm_part(input, output, part, runoptions)
   describe_action(input, output, 'VM') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
     part = part.to_s.shellescape
-    cmd = "timeout 10 ./bin/cvm --raw --output=#{part} < #{input} > #{output}"
+    flags = '--raw'
+    flags = '' if runoptions['--noraw']
+    cmd = "timeout 10 ./bin/cvm #{flags} --output=#{part} < #{input} > #{output}"
     psystem_noecho cmd
   end
 end
@@ -34,6 +36,8 @@ def run_test(settings)
   test_prefix = settings[:test_output_prefix] || ''
 
   data = read_test_file(input)
+
+  runoptions = data[:runoptions] || ''
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
@@ -55,7 +59,7 @@ def run_test(settings)
     output = $1
     part = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext(".part#{index}")).to_s
     index += 1
-    extract_vm_part(bin, part, output)
+    extract_vm_part(bin, part, output, runoptions)
     File.open(part).read.strip
   end
 
