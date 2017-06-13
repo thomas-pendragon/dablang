@@ -1,0 +1,11 @@
+## CODE
+
+NOP
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: no leaks

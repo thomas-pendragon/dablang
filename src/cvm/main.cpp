@@ -687,6 +687,8 @@ void DabVM::add_function(size_t address, const std::string &name, uint16_t class
 
 void DabVM::extract(const std::string &name)
 {
+    FILE *output = stdout;
+
     if (name == "rip")
     {
         printf("%zu", ip());
@@ -698,7 +700,38 @@ void DabVM::extract(const std::string &name)
             fprintf(stderr, "VM: empty stack.\n");
             exit(1);
         }
-        stack[stack.size() - 1].dump(stdout);
+        stack[stack.size() - 1].dump(output);
+    }
+    else if (name == "leaktest")
+    {
+        bool error = false;
+        if (stack.size() > 0)
+        {
+            fprintf(output, "leaktest: %zu items on stack\n", stack.size());
+            error = true;
+        }
+        if (DabMemoryCounter<COUNTER_OBJECT>::counter() > 0)
+        {
+            fprintf(output, "leaktest: %zu allocated objects remaining\n",
+                    DabMemoryCounter<COUNTER_OBJECT>::counter());
+            error = true;
+        }
+        if (DabMemoryCounter<COUNTER_PROXY>::counter() > 0)
+        {
+            fprintf(output, "leaktest: %zu allocated proxies remaining\n",
+                    DabMemoryCounter<COUNTER_PROXY>::counter());
+            error = true;
+        }
+        if (DabMemoryCounter<COUNTER_VALUE>::counter() > 0)
+        {
+            fprintf(output, "leaktest: %zu allocated values remaining\n",
+                    DabMemoryCounter<COUNTER_VALUE>::counter());
+            error = true;
+        }
+        if (!error)
+        {
+            fprintf(output, "leaktest: no leaks\n");
+        }
     }
     else
     {

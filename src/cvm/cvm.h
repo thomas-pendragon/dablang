@@ -141,10 +141,43 @@ struct DabClass
                                      const std::string &name) const;
 };
 
+enum
+{
+    COUNTER_OBJECT = 1,
+    COUNTER_PROXY  = 2,
+    COUNTER_VALUE  = 3,
+};
+
+template <int type>
+struct DabMemoryCounter
+{
+    DabMemoryCounter()
+    {
+        _counter()++;
+    }
+    ~DabMemoryCounter()
+    {
+        _counter()--;
+    }
+    static size_t counter()
+    {
+        return _counter();
+    }
+
+  private:
+    static size_t &_counter()
+    {
+        static size_t counter = 0;
+        return counter;
+    }
+};
+
 struct DabBaseObject;
 
 struct DabObjectProxy
 {
+    DabMemoryCounter<COUNTER_PROXY> _counter;
+
     DabBaseObject *object;
     size_t         count_strong;
     bool           destroying = false;
@@ -168,7 +201,8 @@ struct DabValueData
 
 struct DabValue
 {
-    DabValueData data;
+    DabMemoryCounter<COUNTER_VALUE> _counter;
+    DabValueData                    data;
 
     void dump(FILE *file = stderr) const;
 
@@ -231,7 +265,8 @@ struct DabValue
 
 struct DabBaseObject
 {
-    uint64_t klass;
+    DabMemoryCounter<COUNTER_OBJECT> _counter;
+    uint64_t                         klass;
     virtual ~DabBaseObject()
     {
     }
