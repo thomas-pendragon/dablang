@@ -1,0 +1,69 @@
+## ASM CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD 
+
+Fmain:
+  STACK_RESERVE 0
+  PUSH_NIL 
+  RETURN 1
+
+## INPUT
+
+allcode
+ip
+stack
+step
+ip
+stack
+step
+ip
+stack
+step
+ip
+ip
+ip
+stack
+quit
+
+## EXPECT STDOUT
+
+IP = 11
+         0: LOAD_FUNCTION 11, main, 65535
+        10: BREAK_LOAD 
+>       11: STACK_RESERVE 0
+        14: PUSH_NIL 
+        15: RETURN 1
+IP = 11
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] INVA ?
+IP = 14
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] INVA ?
+IP = 15
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] INVA ?
+[   6] NIL  nil
+IP = 0
+IP = 0
+IP = 0
+Stack:
+Dump of stack:

@@ -167,6 +167,10 @@ void DabVM::execute_debug(Stream &input)
         {
             debug.print_stack();
         }
+        else if (cmd == "ip")
+        {
+            fprintf(stdout, "IP = %zu\n", ip());
+        }
         else if (cmd == "code")
         {
             debug.print_code(true);
