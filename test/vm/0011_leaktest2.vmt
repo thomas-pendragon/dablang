@@ -9,4 +9,5 @@ $leaktest
 ## EXPECT
 
 leaktest: 1 items on stack
+   0: STRI "foo"
 leaktest: 1 allocated values remaining

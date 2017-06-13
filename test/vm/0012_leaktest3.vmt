@@ -12,6 +12,7 @@ $leaktest
 ## EXPECT
 
 leaktest: 1 items on stack
+   0: ARRY [1, 2, 3] [1 strong]
 leaktest: 1 allocated objects remaining
 leaktest: 1 allocated proxies remaining
 leaktest: 4 allocated values remaining

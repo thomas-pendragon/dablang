@@ -714,6 +714,12 @@ void DabVM::extract(const std::string &name)
         if (stack.size() > 0)
         {
             fprintf(output, "leaktest: %zu items on stack\n", stack.size());
+            for (size_t i = 0; i < stack.size(); i++)
+            {
+                fprintf(output, "%4zu: ", i);
+                stack[i].dump(output);
+                fprintf(output, "\n");
+            }
             error = true;
         }
         if (DabMemoryCounter<COUNTER_OBJECT>::counter() > 0)
