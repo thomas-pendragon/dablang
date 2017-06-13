@@ -70,7 +70,10 @@ bool DabVM::pop_frame(bool regular)
 
     if (regular)
     {
-        stack.push(retval);
+        if (prev_pos != (size_t)-1)
+        {
+            stack.push(retval);
+        }
         fprintf(stderr, "VM: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         instructions.seek(prev_ip);
     }
