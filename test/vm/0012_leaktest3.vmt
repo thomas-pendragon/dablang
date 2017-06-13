@@ -1,0 +1,17 @@
+## CODE
+
+PUSH_NUMBER 1
+PUSH_NUMBER 2
+PUSH_NUMBER 3
+PUSH_ARRAY 3
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: 1 items on stack
+leaktest: 1 allocated objects remaining
+leaktest: 1 allocated proxies remaining
+leaktest: 4 allocated values remaining

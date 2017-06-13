@@ -1,0 +1,12 @@
+## CODE
+
+PUSH_STRING "foo"
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: 1 items on stack
+leaktest: 1 allocated values remaining
