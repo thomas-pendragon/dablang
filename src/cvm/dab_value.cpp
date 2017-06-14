@@ -219,12 +219,9 @@ void DabValue::set_instvar(const std::string &name, const DabValue &value)
 void DabValue::set_data(const DabValueData &other_data)
 {
     data = other_data;
-    if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
+    if ($VM->autorelease)
     {
-        if ($VM->autorelease)
-        {
-            data.object->retain();
-        }
+        retain();
     }
 }
 
@@ -255,6 +252,14 @@ void DabValue::release()
         this->data.object = nullptr;
     }
     this->data.type = TYPE_NIL;
+}
+
+void DabValue::retain()
+{
+    if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
+    {
+        data.object->retain();
+    }
 }
 
 //
