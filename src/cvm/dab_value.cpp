@@ -238,7 +238,8 @@ DabValue &DabValue::operator=(const DabValue &other)
 
 DabValue::~DabValue()
 {
-    if (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
+    auto autorelease = $VM->autorelease;
+    if (autorelease && (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY))
     {
         this->data.object->release(this);
     }

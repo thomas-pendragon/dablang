@@ -1,0 +1,32 @@
+## CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 0
+PUSH_ARRAY 0
+POP 1
+PUSH_NIL
+RETURN 1
+
+## COMMENT
+
+It should not automatically release the array.
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: 1 allocated objects remaining
+leaktest: 1 allocated proxies remaining

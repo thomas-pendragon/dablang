@@ -754,12 +754,14 @@ void DabVM::extract(const std::string &name)
 
 struct DabRunOptions
 {
-    FILE *      input      = stdin;
-    bool        close_file = false;
-    bool        autorun    = true;
-    bool        extract    = false;
-    bool        raw        = false;
-    bool        cov        = false;
+    FILE *input       = stdin;
+    bool  close_file  = false;
+    bool  autorun     = true;
+    bool  extract     = false;
+    bool  raw         = false;
+    bool  cov         = false;
+    bool  autorelease = true;
+
     std::string extract_part;
 
     void parse(const std::vector<std::string> &args);
@@ -833,6 +835,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->cov = true;
     }
+
+    if (flags["--noautorelease"])
+    {
+        this->autorelease = false;
+    }
 }
 
 int main(int argc, char **argv)
@@ -856,7 +863,8 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
-    auto  ret_value = vm.run(input, options.autorun, options.raw, options.cov);
+    vm.autorelease = options.autorelease;
+    auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
     if (options.extract)
     {
         vm.extract(options.extract_part);
