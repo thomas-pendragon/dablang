@@ -221,7 +221,10 @@ void DabValue::set_data(const DabValueData &other_data)
     data = other_data;
     if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
-        data.object->retain();
+        if ($VM->autorelease)
+        {
+            data.object->retain();
+        }
     }
 }
 
@@ -238,11 +241,20 @@ DabValue &DabValue::operator=(const DabValue &other)
 
 DabValue::~DabValue()
 {
-    auto autorelease = $VM->autorelease;
-    if (autorelease && (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY))
+    if ($VM->autorelease)
+    {
+        release();
+    }
+}
+
+void DabValue::release()
+{
+    if (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
         this->data.object->release(this);
+        this->data.object = nullptr;
     }
+    this->data.type = TYPE_NIL;
 }
 
 //

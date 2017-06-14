@@ -261,6 +261,7 @@ struct DabValue
     DabValue create_instance() const;
 
     size_t use_count() const;
+    void   release();
 };
 
 struct DabBaseObject

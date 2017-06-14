@@ -551,6 +551,12 @@ bool DabVM::execute_single(Stream &input)
         stack.push(ds);
         break;
     }
+    case OP_RELEASE_VAR:
+    {
+        auto index = input.read_uint16();
+        get_var(index).release();
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);

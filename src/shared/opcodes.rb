@@ -67,6 +67,7 @@ OPCODES_ARRAY = [
   {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
   {name: 'CALL_BLOCK', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
   {name: 'INSTCALL_BLOCK', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 3), push(n2)
+  {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
