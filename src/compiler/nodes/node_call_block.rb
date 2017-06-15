@@ -14,4 +14,17 @@ class DabNodeCallBlock < DabNode
   def arglist
     children[1]
   end
+
+  def formatted_source(options)
+    ret = ' ^'
+    if arglist&.count
+      ret += '('
+      ret += arglist.map { |arg| arg.formatted_source(options) }.join(', ')
+      ret += ')'
+    end
+    ret += ' {'
+    ret += "\n"
+    ret += _indent(body.formatted_source(options))
+    ret + '}'
+  end
 end

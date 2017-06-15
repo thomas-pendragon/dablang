@@ -54,7 +54,12 @@ class DabNodeCall < DabNodeBasecall
     root.has_function?(real_identifier)
   end
 
+  def formatted_block(options)
+    return '' unless has_block?
+    block.formatted_source(options)
+  end
+
   def formatted_source(options)
-    real_identifier + '(' + _formatted_arguments(options) + ')'
+    real_identifier + '(' + _formatted_arguments(options) + ')' + formatted_block(options)
   end
 end

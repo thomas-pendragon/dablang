@@ -1,0 +1,27 @@
+## INPUT
+
+func tap()
+{
+}
+
+func tap2()
+{
+  tap() ^(a,b) {
+    print(a + b);
+    return nil;
+  };
+}
+
+## OUTPUT
+
+func tap()
+{
+}
+
+func tap2()
+{
+  tap() ^(a, b) {
+    print(a + b);
+    return nil;
+  };
+}
