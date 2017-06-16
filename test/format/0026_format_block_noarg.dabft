@@ -1,0 +1,25 @@
+## INPUT
+
+func tap()
+{
+}
+
+func tap2()
+{
+  tap() ^ {
+    return 12;
+  };
+}
+
+## OUTPUT
+
+func tap()
+{
+}
+
+func tap2()
+{
+  tap() ^ {
+    return 12;
+  };
+}
