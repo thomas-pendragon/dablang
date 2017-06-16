@@ -41,7 +41,7 @@ def run_test(settings)
     compare_output(info, actual_body, test_body)
     File.open(out, 'wb') { |f| f << '1' }
   rescue DabCompareError
-    FileUtils.rm(out)
+    FileUtils.rm(out) if File.exist?(out)
     raise
   end
 end
