@@ -1,0 +1,35 @@
+## CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 1
+PUSH_ARRAY 0
+SET_VAR 0
+PUSH_NUMBER 42
+SET_VAR 0
+RELEASE_VAR 0
+PUSH_NIL
+RETURN 1
+
+## COMMENT
+
+If var is overriden without releasing its value first, it can leak.
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: 1 allocated objects remaining
+leaktest: 1 allocated proxies remaining

@@ -1,0 +1,31 @@
+## CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 1
+PUSH_ARRAY 0
+SET_VAR 0
+PUSH_NUMBER 42
+RELEASE_VAR 0
+SET_VAR 0
+RELEASE_VAR 0
+PUSH_NIL
+RETURN 1
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: no leaks
