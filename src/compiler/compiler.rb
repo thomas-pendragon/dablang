@@ -8,6 +8,7 @@ $opt = false if $settings[:no_opt]
 $strip = !!$settings[:strip]
 $entry = $settings[:entry]
 $no_constants = $settings[:no_constants]
+$no_autorelease = $settings[:no_autorelease]
 
 inputs = $settings[:inputs] || [:stdin]
 
