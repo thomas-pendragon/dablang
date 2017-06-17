@@ -463,4 +463,18 @@ class DabNode
   def returns_value?
     true
   end
+
+  def _insert_before(node, before_node)
+    if parent.is_a?(DabNodeCodeBlock)
+      index = parent.children.index(before_node)
+      raise 'no index' unless index
+      parent.children.insert(index, parent.claim(node))
+    else
+      parent._insert_before(node, parent)
+    end
+  end
+
+  def prepend_instruction(node)
+    _insert_before(node, self)
+  end
 end
