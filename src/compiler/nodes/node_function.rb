@@ -23,6 +23,13 @@ class DabNodeFunction < DabNode
     blocks.insert(body)
     @concrete = false
     @inline = inline
+    @autovars = 0
+  end
+
+  def autovar_name
+    ret = "%autovar#{@autovars}"
+    @autovars += 1
+    ret
   end
 
   def parent_class
