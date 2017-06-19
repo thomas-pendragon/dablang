@@ -24,4 +24,4 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* 12           */               PUSH_CONSTANT 0
-                                 RETURN 1
+                                 RETURN 

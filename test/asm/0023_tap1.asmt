@@ -29,7 +29,7 @@ func tap2()
                    Ftap:
                                  STACK_RESERVE 0
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Ftap2:
                                  STACK_RESERVE 0
@@ -38,7 +38,7 @@ func tap2()
                                  CALL_BLOCK 0, 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Ftap2__block1:
                                  STACK_RESERVE 0
@@ -46,4 +46,4 @@ func tap2()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

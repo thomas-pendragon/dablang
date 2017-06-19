@@ -29,7 +29,7 @@ Ffoo:
   INSTCALL 0, 1
   SYSCALL 0
   PUSH_NIL 
-  RETURN 1
+  RETURN 
 ```
 
 However if we call this method in other function:
@@ -49,5 +49,5 @@ F__foo_LiteralString:
   PUSH_STRING "LiteralString"
   SYSCALL 0
   PUSH_NIL 
-  RETURN 1
+  RETURN 
 ```

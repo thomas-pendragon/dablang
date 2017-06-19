@@ -29,7 +29,7 @@ func main()
                                  PUSH_ARG 0
 /* var 0 a      */               SET_VAR 0
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Fmain:
                                  STACK_RESERVE 1
@@ -55,4 +55,4 @@ func main()
                                  CALL 1, 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

@@ -4,7 +4,7 @@
       10: BREAK_LOAD 
       11: STACK_RESERVE 0
       14: PUSH_NUMBER 123
-      23: RETURN 1
+      23: RETURN 
 
 ## OUTPUT
 

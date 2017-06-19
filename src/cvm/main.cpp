@@ -363,7 +363,7 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_RETURN:
     {
-        auto nrets = input.read_uint16();
+        auto nrets = 1;
         assert(nrets == 1);
         auto &retval = get_retval();
         retval       = stack.pop_value();

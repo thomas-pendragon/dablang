@@ -50,7 +50,7 @@ OPCODES_ARRAY = [
   {name: 'JMP', arg: :int16}, # add +arg to PC
   {name: 'JMP_IF', arg: :int16}, # pop(1), add +arg to PC if value from stack is true
   {name: 'JMP_IFN', arg: :int16}, # pop(1), add +arg to PC if value from stack is false
-  {name: 'RETURN', arg: :uint16}, # pop(n)
+  {name: 'RETURN'}, # pop(1)
   # VARIABLES
   {name: 'SET_VAR', arg: :uint16}, # local variable index, pop(1)
   {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)

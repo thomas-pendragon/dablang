@@ -30,7 +30,7 @@ func tap(a)
                                  INSTCALL_BLOCK 0, 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Ftap__block1:
                                  STACK_RESERVE 1
@@ -40,4 +40,4 @@ func tap(a)
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

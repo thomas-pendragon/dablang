@@ -10,7 +10,7 @@ Fmain:
   PUSH_STRING "bar\n"
   SYSCALL 0
   PUSH_NIL 
-  RETURN 1
+  RETURN 
 
 ## INPUT
 
@@ -29,4 +29,4 @@ IP = 28
 
 >       28: SYSCALL 0
         30: PUSH_NIL 
-        31: RETURN 1
+        31: RETURN 

@@ -7,7 +7,7 @@
       26: PUSH_NUMBER 23
       35: PUSH_SYMBOL "+"
       38: CALL 2, 1
-      43: RETURN 1
+      43: RETURN 
 
 ## OUTPUT
 

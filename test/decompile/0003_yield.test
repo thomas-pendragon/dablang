@@ -12,7 +12,7 @@
       48: PUSH_STRING foo
       53: YIELD 2
       56: PUSH_NIL 
-      57: RETURN 1
+      57: RETURN 
 
 
 ## OUTPUT

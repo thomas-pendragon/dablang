@@ -21,4 +21,4 @@ func main()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

@@ -37,7 +37,7 @@ func bar()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Fbar:
                                  STACK_RESERVE 0
@@ -46,7 +46,7 @@ func bar()
                                  HARDCALL 1, 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
@@ -54,4 +54,4 @@ func bar()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

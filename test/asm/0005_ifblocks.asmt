@@ -78,4 +78,4 @@ func foo(a, b)
                                  JMP L7
                    L7:
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 

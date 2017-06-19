@@ -37,7 +37,7 @@ func bar()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
  
                    Fbar:
                                  STACK_RESERVE 0
@@ -46,5 +46,5 @@ func bar()
                                  CALL 1, 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 1
+                                 RETURN 
 

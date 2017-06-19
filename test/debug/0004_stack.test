@@ -6,7 +6,7 @@ BREAK_LOAD
 Fmain:
   STACK_RESERVE 0
   PUSH_NIL 
-  RETURN 1
+  RETURN 
 
 ## INPUT
 
@@ -33,7 +33,7 @@ IP = 11
         10: BREAK_LOAD 
 >       11: STACK_RESERVE 0
         14: PUSH_NIL 
-        15: RETURN 1
+        15: RETURN 
 IP = 11
 Stack:
 Dump of stack:
