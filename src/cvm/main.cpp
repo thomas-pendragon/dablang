@@ -64,6 +64,15 @@ bool DabVM::pop_frame(bool regular)
     auto   retval    = get_retval();
     auto   prev_ip   = get_prev_ip();
 
+    if (regular)
+    {
+        fprintf(stderr, "VM: release %d local vars\n", (int)get_varcount());
+        for (size_t i = 0; i < get_varcount(); i++)
+        {
+            get_var(i).release();
+        }
+    }
+
     stack.resize(frame_loc - 2 - n_args);
 
     frame_position = prev_pos;
@@ -168,9 +177,15 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
     return 0;
 }
 
+size_t DabVM::get_varcount()
+{
+    auto index = frame_position + 4;
+    return stack[index].data.fixnum;
+}
+
 DabValue &DabVM::get_var(int var_index)
 {
-    auto index = frame_position + 4 + var_index;
+    auto index = frame_position + 5 + var_index;
     return stack[index];
 }
 
@@ -499,6 +514,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_STACK_RESERVE:
     {
         auto n = input.read_uint16();
+        stack.push((uint64_t)n);
         for (auto i = 0; i < n; i++)
         {
             stack.push(nullptr);

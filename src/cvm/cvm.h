@@ -419,6 +419,7 @@ struct DabVM
 
     DabValue &get_arg(int arg_index);
 
+    size_t    get_varcount();
     DabValue &get_var(int var_index);
 
     DabValue &get_retval();
