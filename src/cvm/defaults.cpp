@@ -12,10 +12,15 @@
             /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
-            auto     arg1 = stack.pop_value();                                                     \
-            auto     arg0 = stack.pop_value();                                                     \
-            uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
-            auto str      = arg0.data.string op arg1.data.string;                                  \
+            auto arg1 = stack.pop_value();                                                         \
+            auto arg0 = stack.pop_value();                                                         \
+            if (arg0.data.type == TYPE_ARRAY && arg1.data.type == TYPE_ARRAY)                      \
+            {                                                                                      \
+                stack.push(merge_arrays(arg0, arg1));                                              \
+                return;                                                                            \
+            }                                                                                      \
+            uint64_t num = arg0.data.fixnum op arg1.data.fixnum;                                   \
+            auto str     = arg0.data.string op arg1.data.string;                                   \
             if (arg0.data.type == TYPE_FIXNUM)                                                     \
                 stack.push(num);                                                                   \
             else                                                                                   \
@@ -71,6 +76,28 @@
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
+
+DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
+{
+    auto &   a0          = arg0.array();
+    auto &   a1          = arg1.array();
+    DabValue array_class = classes[CLASS_ARRAY];
+    DabValue value       = array_class.create_instance();
+    auto &   array       = value.array();
+    array.resize(a0.size() + a1.size());
+    fprintf(stderr, "vm: merge %d and %d items into new %d-sized array\n", (int)a0.size(),
+            (int)a1.size(), (int)array.size());
+    size_t i = 0;
+    for (auto &item : a0)
+    {
+        array[i++] = item;
+    }
+    for (auto &item : a1)
+    {
+        array[i++] = item;
+    }
+    return value;
+}
 
 void DabVM::define_defaults()
 {

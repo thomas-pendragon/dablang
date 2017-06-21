@@ -478,6 +478,8 @@ struct DabVM
     void extract(const std::string &name);
 
     void yield(void *block_addr, const std::vector<DabValue> arguments);
+
+    DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
 };
 
 struct DabVM_debug
