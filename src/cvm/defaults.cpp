@@ -39,10 +39,17 @@
             /* dump();*/                                                                           \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
-            auto     arg1 = stack.pop_value();                                                     \
-            auto     arg0 = stack.pop_value();                                                     \
-            uint64_t num  = arg0.data.fixnum op arg1.data.fixnum;                                  \
-            stack.push(num);                                                                       \
+            auto arg1 = stack.pop_value();                                                         \
+            auto arg0 = stack.pop_value();                                                         \
+            if (arg0.data.type == TYPE_FIXNUM && arg1.data.type == TYPE_FIXNUM)                    \
+            {                                                                                      \
+                uint64_t num = arg0.data.fixnum op arg1.data.fixnum;                               \
+                stack.push(num);                                                                   \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                assert(false && "unknown types for operator " STR(op));                            \
+            }                                                                                      \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
