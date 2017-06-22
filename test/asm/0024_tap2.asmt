@@ -39,7 +39,7 @@ func tap2()
                                  STACK_RESERVE 0
 /* tap          */               PUSH_CONSTANT 1
 /* tap2__block1 */               PUSH_CONSTANT 2
-                                 CALL_BLOCK 0, 1
+                                 CALL_BLOCK 0
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 
@@ -49,7 +49,7 @@ func tap2()
                                  PUSH_ARG 0
                                  PUSH_ARG 1
 /*              */               PUSH_CONSTANT 0
-/* op           */               CALL 2, 1
+/* op           */               CALL 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

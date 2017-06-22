@@ -42,9 +42,9 @@ OPCODES_ARRAY = [
   {name: 'CONSTANT_STRING', arg: :vlc}, # string
   {name: 'CONSTANT_NUMBER', arg: :uint64}, # number
   # CALL
-  {name: 'CALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 1), push(n2)
-  {name: 'INSTCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
-  {name: 'HARDCALL', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 1), push(n2)
+  {name: 'CALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
+  {name: 'INSTCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
+  {name: 'HARDCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
   {name: 'SYSCALL', arg: :uint8}, # depends on the call
   # FLOW
   {name: 'JMP', arg: :int16}, # add +arg to PC
@@ -65,8 +65,8 @@ OPCODES_ARRAY = [
   {name: 'BREAK_LOAD'}, # stop loading the code
   # NEW
   {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
-  {name: 'CALL_BLOCK', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 2), push(n2)
-  {name: 'INSTCALL_BLOCK', args: %i(uint16 uint16)}, # n = number of arguments, n2 = number of retvals, pop(n + 3), push(n2)
+  {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
+  {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
   {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
 ].freeze
 

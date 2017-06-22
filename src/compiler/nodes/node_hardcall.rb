@@ -22,7 +22,7 @@ class DabNodeHardcall < DabNodeBasecall
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.push(identifier)
-    output.printex(self, 'HARDCALL', args.count.to_s, '1')
+    output.printex(self, 'HARDCALL', args.count.to_s)
   end
 
   def target_function

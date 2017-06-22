@@ -38,21 +38,21 @@ func main()
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
                                  PUSH_SYMBOL puts
-                                 CALL 1, 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NUMBER 123
 /* var 0 a      */               PUSH_VAR 0
                                  PUSH_SYMBOL insert
-                                 INSTCALL 1, 1
+                                 INSTCALL 1
                                  POP 1
                                  PUSH_STRING "foo"
 /* var 0 a      */               PUSH_VAR 0
                                  PUSH_SYMBOL insert
-                                 INSTCALL 1, 1
+                                 INSTCALL 1
                                  POP 1
 /* var 0 a      */               PUSH_VAR 0
                                  PUSH_SYMBOL puts
-                                 CALL 1, 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 

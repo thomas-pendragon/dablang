@@ -46,7 +46,7 @@ func bar()
                                  PUSH_ARG 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
+/* op is        */               CALL 2
                                  JMP_IF L2
                                  JMP L3
                    L2:
@@ -58,7 +58,7 @@ func bar()
                                  PUSH_ARG 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 6
-/* op is        */               CALL 2, 1
+/* op is        */               CALL 2
                                  JMP_IF L5
                                  JMP L6
                    L5:
@@ -74,11 +74,11 @@ func bar()
                                  STACK_RESERVE 0
 /* str          */               PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
-                                 HARDCALL 1, 1
+                                 HARDCALL 1
                                  POP 1
 /* 12           */               PUSH_CONSTANT 3
 /* __foo_Litera */               PUSH_CONSTANT 4
-                                 HARDCALL 1, 1
+                                 HARDCALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 

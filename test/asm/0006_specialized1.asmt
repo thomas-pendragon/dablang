@@ -33,7 +33,7 @@ func bar()
 /* var 0 a      */               SET_VAR 0
 /* var 0 a      */               PUSH_VAR 0
 /* class        */               PUSH_CONSTANT 1
-                                 INSTCALL 0, 1
+                                 INSTCALL 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -43,7 +43,7 @@ func bar()
                                  STACK_RESERVE 0
 /* str          */               PUSH_CONSTANT 0
 /* foo          */               PUSH_CONSTANT 2
-                                 CALL 1, 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 

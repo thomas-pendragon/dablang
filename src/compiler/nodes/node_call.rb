@@ -47,7 +47,7 @@ class DabNodeCall < DabNodeBasecall
     if has_block?
       output.push(block.identifier)
     end
-    output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s, '1')
+    output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s)
   end
 
   def target_function

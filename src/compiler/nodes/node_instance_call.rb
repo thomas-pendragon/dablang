@@ -42,7 +42,7 @@ class DabNodeInstanceCall < DabNodeBasecall
     if has_block?
       output.push(block.identifier)
     end
-    output.printex(self, has_block? ? 'INSTCALL_BLOCK' : 'INSTCALL', args.count, 1)
+    output.printex(self, has_block? ? 'INSTCALL_BLOCK' : 'INSTCALL', args.count)
   end
 
   def constant?

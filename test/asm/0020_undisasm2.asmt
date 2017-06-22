@@ -22,5 +22,5 @@ func addfunc()
                                  PUSH_NUMBER 12
                                  PUSH_NUMBER 23
                                  PUSH_SYMBOL "+"
-/* op           */               CALL 2, 1
+/* op           */               CALL 2
                                  RETURN 

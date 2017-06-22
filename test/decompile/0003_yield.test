@@ -8,7 +8,7 @@
       22: PUSH_NUMBER 12
       31: PUSH_NUMBER 23
       40: PUSH_SYMBOL "+"
-      43: CALL 2, 1
+      43: CALL 2
       48: PUSH_STRING foo
       53: YIELD 2
       56: PUSH_NIL 

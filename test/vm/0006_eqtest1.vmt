@@ -3,7 +3,7 @@
 PUSH_STRING "foo"
 PUSH_STRING "foo"
 PUSH_SYMBOL "=="
-CALL 2, 1
+CALL 2
 
 ## COMMENT
 

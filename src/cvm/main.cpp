@@ -342,8 +342,6 @@ bool DabVM::execute_single(Stream &input)
     {
         auto name   = stack.pop_symbol();
         auto n_args = input.read_uint16();
-        auto n_rets = input.read_uint16();
-        assert(n_rets == 1);
         call(name, n_args, "");
         break;
     }
@@ -352,7 +350,7 @@ bool DabVM::execute_single(Stream &input)
         auto block_name = stack.pop_symbol();
         auto name       = stack.pop_symbol();
         auto n_args     = input.read_uint16();
-        auto n_rets     = input.read_uint16();
+        auto n_rets     = 1;
         assert(n_rets == 1);
         call(name, n_args, block_name);
         break;
@@ -459,7 +457,7 @@ bool DabVM::execute_single(Stream &input)
         auto name   = stack.pop_symbol();
         auto recv   = stack.pop_value();
         auto n_args = input.read_uint16();
-        auto n_rets = input.read_uint16();
+        auto n_rets = 1;
         instcall(recv, name, n_args, n_rets);
         break;
     }
@@ -469,7 +467,7 @@ bool DabVM::execute_single(Stream &input)
         auto name       = stack.pop_symbol();
         auto recv       = stack.pop_value();
         auto n_args     = input.read_uint16();
-        auto n_rets     = input.read_uint16();
+        auto n_rets     = 1;
         instcall(recv, name, n_args, n_rets, block_name);
         break;
     }
