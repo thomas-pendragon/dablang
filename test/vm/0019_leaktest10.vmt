@@ -1,0 +1,35 @@
+## CODE
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 1
+PUSH_ARRAY 0
+PUSH_ARRAY 0
+PUSH_SYMBOL "+"
+CALL 2, 1
+SET_VAR 0
+PUSH_NIL
+RETURN 
+
+## COMMENT
+
+Three arrays are allocated and only one is released.
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: 2 allocated objects remaining
+leaktest: 2 allocated proxies remaining
