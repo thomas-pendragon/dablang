@@ -495,6 +495,16 @@ bool DabVM::execute_single(Stream &input)
         push_array(n);
         break;
     }
+    case OP_SETV_NEW_ARRAY:
+    {
+        auto n_var  = input.read_uint16();
+        auto n_args = input.read_uint16();
+        push_array(n_args);
+        auto  value = stack.pop_value();
+        auto &var   = get_var(n_var);
+        var         = value;
+        break;
+    }
     case OP_PUSH_TRUE:
     {
         stack.push(true);
