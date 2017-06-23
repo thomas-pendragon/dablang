@@ -403,6 +403,18 @@ struct DabVM
     DabVM &operator=(const DabVM &) = delete;
     ~DabVM();
 
+    std::string get_symbol(size_t index) const
+    {
+        assert(index < constants.size());
+        const auto &val = constants[index];
+        if (val.data.type != TYPE_SYMBOL)
+        {
+            fprintf(stderr, "VM error: value is not a symbol.\n");
+            exit(1);
+        }
+        return val.data.string;
+    }
+
     void kernel_print();
 
     bool pop_frame(bool regular);

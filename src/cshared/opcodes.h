@@ -43,4 +43,5 @@ enum
     OP_INSTCALL_BLOCK  = 0x26,
     OP_RELEASE_VAR     = 0x27,
     OP_SETV_NEW_ARRAY  = 0x28,
+    OP_SETV_CALL       = 0x29,
 };

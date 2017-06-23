@@ -337,6 +337,18 @@ bool DabVM::execute_single(Stream &input)
         stack.push(constants[index]);
         break;
     }
+    case OP_SETV_CALL:
+    {
+        auto n_var  = input.read_uint16();
+        auto index  = input.read_uint16();
+        auto n_args = input.read_uint16();
+        auto name   = get_symbol(index);
+        call(name, n_args, "");
+        auto  value = stack.pop_value();
+        auto &var   = get_var(n_var);
+        var         = value;
+        break;
+    }
     case OP_HARDCALL:
     case OP_CALL:
     {
@@ -895,6 +907,7 @@ int main(int argc, char **argv)
     DabVM vm;
     vm.autorelease = options.autorelease;
     auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
+    vm.constants.resize(0);
     if (options.extract)
     {
         vm.extract(options.extract_part);

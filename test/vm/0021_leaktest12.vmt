@@ -1,0 +1,36 @@
+## CODE
+
+CONSTANT_SYMBOL "+"
+
+LOAD_FUNCTION Fmain, main, -1
+BREAK_LOAD
+
+Fmain:
+STACK_RESERVE 3
+SETV_NEW_ARRAY 0, 0
+SETV_NEW_ARRAY 1, 0
+PUSH_VAR 0
+PUSH_VAR 1
+SETV_CALL 2, 0, 2
+PUSH_NIL
+RETURN 
+
+## COMMENT
+
+Three arrays are allocated and all are released.
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: no leaks

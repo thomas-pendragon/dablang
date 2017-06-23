@@ -69,6 +69,7 @@ OPCODES_ARRAY = [
   {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
   {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
   {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
+  {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
