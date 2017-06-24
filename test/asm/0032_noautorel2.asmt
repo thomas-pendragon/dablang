@@ -1,0 +1,40 @@
+## CODE
+
+func foo()
+{
+  print(@[1, 2] + @[3]);
+}
+
+## COMMENT
+
+Instructions should pop return value if not used.
+
+## OPTIONS
+
+--no-opt --no-constants --no-autorelease
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 2
+                                 PUSH_NUMBER 1
+                                 PUSH_NUMBER 2
+                                 PUSH_ARRAY 2
+/* var 0 autov  */               SET_VAR 0
+                                 PUSH_NUMBER 3
+                                 PUSH_ARRAY 1
+/* var 1 autov  */               SET_VAR 1
+/* var 0 autov  */               PUSH_VAR 0
+/* var 1 autov  */               PUSH_VAR 1
+                                 PUSH_SYMBOL "+"
+/* op           */               CALL 2
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
