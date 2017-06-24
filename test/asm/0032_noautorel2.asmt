@@ -25,11 +25,9 @@ Instructions should pop return value if not used.
                                  STACK_RESERVE 2
                                  PUSH_NUMBER 1
                                  PUSH_NUMBER 2
-                                 PUSH_ARRAY 2
-/* var 0 autov  */               SET_VAR 0
+                                 SETV_NEW_ARRAY 0, 2
                                  PUSH_NUMBER 3
-                                 PUSH_ARRAY 1
-/* var 1 autov  */               SET_VAR 1
+                                 SETV_NEW_ARRAY 1, 1
 /* var 0 autov  */               PUSH_VAR 0
 /* var 1 autov  */               PUSH_VAR 1
                                  PUSH_SYMBOL "+"

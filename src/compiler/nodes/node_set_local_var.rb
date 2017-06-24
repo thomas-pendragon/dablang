@@ -2,6 +2,7 @@ require_relative 'node.rb'
 require_relative '../processors/check_assign_type.rb'
 require_relative '../concerns/localvar_definition_concern.rb'
 require_relative '../processors/strip_readonly_argvars.rb'
+require_relative '../processors/store_locally.rb'
 
 class DabNodeSetLocalVar < DabNode
   include LocalvarDefinitionConcern
@@ -39,6 +40,9 @@ class DabNodeSetLocalVar < DabNode
 
   def compile(output)
     raise 'no index' unless index
+    if value.is_a?(NodeStoredLocally)
+      return value.compile_local_set(output, index)
+    end
     value.compile(output)
     output.comment("var #{index} #{original_identifier}")
     output.printex(self, 'SET_VAR', index)

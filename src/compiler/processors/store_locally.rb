@@ -1,3 +1,6 @@
+module NodeStoredLocally
+end
+
 class StoreLocally
   def run(node)
     return unless $no_autorelease

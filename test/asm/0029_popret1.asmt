@@ -34,8 +34,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 1
                                  PUSH_NUMBER 12
-                                 PUSH_ARRAY 1
-/* var 0 a      */               SET_VAR 0
+                                 SETV_NEW_ARRAY 0, 1
 /* var 0 a      */               PUSH_VAR 0
                                  PUSH_SYMBOL puts
                                  CALL 1
