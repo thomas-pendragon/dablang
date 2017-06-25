@@ -1,0 +1,42 @@
+## CODE
+
+CONSTANT_STRING "test: allocated string\n"
+CONSTANT_SYMBOL new
+
+LOAD_FUNCTION Ffoo, main, -1
+
+BREAK_LOAD 
+
+Ffoo:
+STACK_RESERVE 1
+PUSH_CONSTANT 0
+SET_VAR 0
+PUSH_VAR 0
+PUSH_CLASS 1
+PUSH_CONSTANT 1
+INSTCALL 1
+SYSCALL 0
+POP 1
+PUSH_NIL 
+RETURN
+
+## RUNOPTIONS
+
+--noraw 
+
+## OPTIONS
+
+--noautorelease
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+test: allocated string
+leaktest: no leaks
+
+## COMMENT
+
+TODO: should not include "test: allocated string" in $leaktest

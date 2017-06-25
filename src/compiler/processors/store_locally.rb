@@ -5,6 +5,7 @@ class StoreLocally
   def run(node)
     return unless $no_autorelease
     return if node.parent.is_a?(DabNodeDefineLocalVar)
+    return if node.parent.is_a?(DabNodeConstant)
 
     name = node.function.autovar_name
 
