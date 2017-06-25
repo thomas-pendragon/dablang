@@ -1,0 +1,33 @@
+## CODE
+
+class Foo
+{
+  construct()
+  {
+    puts("construct");
+  }
+};
+
+class Bar
+{
+};
+
+func main()
+{
+  puts("will create new");
+  puts(Foo.new);
+  puts(Bar.new);
+  puts("after create new");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+will create new
+construct
+#Foo
+#Bar
+after create new

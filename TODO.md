@@ -33,7 +33,8 @@
 - class parameters (Foo<String>)
     - typed arrays
 - nullables and non-null force
-- constructors/destructors
+- constructors/destructors should call whole chain
+- constructors with parameters
 - subclassing: final functions
 - subclassing: final classes
 - subclassing: check if inheriting from the same class on duplicates

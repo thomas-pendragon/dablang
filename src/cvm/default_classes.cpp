@@ -21,10 +21,24 @@ void DabVM::define_default_classes()
         assert(n_ret == 1);
         auto arg = stack.pop_value();
         assert(arg.data.type == TYPE_CLASS);
-        stack.push_value(arg.create_instance());
+        auto instance = arg.create_instance();
+
+        auto stack_pos = stack.size() + 1;
+
+        instcall(instance, "__construct", 0, 1);
+
+        // temporary hack
+        while (stack.size() != stack_pos)
+        {
+            execute_single(instructions);
+        }
+
+        stack.pop_value();
+        stack.push_value(instance);
     });
     object_class.add_simple_function("class", [](DabValue self) { return self.get_class(); });
     object_class.add_simple_function("to_s", [](DabValue self) { return "#" + self.class_name(); });
+    object_class.add_simple_function("__construct", [](DabValue) { return nullptr; });
     object_class.add_simple_function("__destruct", [](DabValue) { return nullptr; });
     object_class.add_static_function("to_s", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);

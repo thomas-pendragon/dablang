@@ -141,6 +141,8 @@ class DabContext < DabBaseContext
       while true
         if func = subcontext.read_function
           functions << func
+        elsif ctr = subcontext.read_constructor
+          functions << ctr
         elsif dtr = subcontext.read_destructor
           functions << dtr
         elsif var = subcontext.read_class_var_definition
@@ -183,6 +185,18 @@ class DabContext < DabBaseContext
       next unless code = subcontext.read_codeblock
       ret = DabNodeFunction.new(ident, code, arglist, inline)
       ret.add_source_parts(inline, keyw, ident, op1, op2)
+      ret
+    end
+  end
+
+  def read_constructor
+    on_subcontext do |subcontext|
+      next unless keyw = subcontext.read_keyword('construct')
+      next unless op1 = subcontext.read_operator('(')
+      next unless op2 = subcontext.read_operator(')')
+      next unless code = subcontext.read_codeblock
+      ret = DabNodeFunction.new('__construct', code, nil, false)
+      ret.add_source_parts(keyw, op1, op2)
       ret
     end
   end
