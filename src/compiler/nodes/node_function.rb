@@ -98,7 +98,14 @@ class DabNodeFunction < DabNode
       fargs << arg.formatted_source(options)
     end
     fargs = fargs.join(', ')
-    ret = "func #{@identifier}(#{fargs})\n{\n"
+    ret = if identifier == '__construct'
+            'construct'
+          elsif identifier == '__destruct'
+            'destruct'
+          else
+            "func #{@identifier}"
+          end
+    ret += "(#{fargs})\n{\n"
     blocks.each do |block|
       ret += _indent(block.formatted_source(options))
     end

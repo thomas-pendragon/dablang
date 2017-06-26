@@ -1,0 +1,37 @@
+## INPUT
+
+class Foo
+{
+construct()
+{
+puts("ctr");
+}
+destruct()
+{
+puts("dtr");
+}
+func foo()
+{
+puts("foo");
+}
+};
+
+## OUTPUT
+
+class Foo
+{
+  construct()
+  {
+    puts("ctr");
+  }
+  
+  destruct()
+  {
+    puts("dtr");
+  }
+  
+  func foo()
+  {
+    puts("foo");
+  }
+}
