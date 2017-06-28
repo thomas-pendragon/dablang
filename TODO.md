@@ -22,7 +22,6 @@
 
 ## Language ##
 
-- block support for C functions
 - comparing `"abc" > 123`
 - Rings support
 - extra opcodes for void calls
