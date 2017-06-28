@@ -337,6 +337,14 @@ bool DabVM::execute_single(Stream &input)
         stack.push(constants[index]);
         break;
     }
+    case OP_SETV_CONSTANT:
+    {
+        auto  n_var = input.read_uint16();
+        auto  index = input.read_uint16();
+        auto &var   = get_var(n_var);
+        var         = constants[index];
+        break;
+    }
     case OP_SETV_CALL:
     {
         auto n_var  = input.read_uint16();
