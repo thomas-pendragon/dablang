@@ -13,4 +13,9 @@ class DabNodeBasecall < DabNode
   def _formatted_arguments(options)
     args.map { |item| item.formatted_source(options) }.join(', ')
   end
+
+  def formatted_block(options)
+    return '' unless has_block?
+    block.formatted_source(options)
+  end
 end

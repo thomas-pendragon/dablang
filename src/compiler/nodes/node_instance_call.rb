@@ -52,10 +52,11 @@ class DabNodeInstanceCall < DabNodeBasecall
   def formatted_source(options)
     val = value.formatted_source(options)
     args = _formatted_arguments(options)
-    if real_identifier == :[]
-      "#{val}[#{args}]"
-    else
-      "#{val}.#{real_identifier}(#{args})"
-    end
+    ret = if real_identifier == :[]
+            "#{val}[#{args}]"
+          else
+            "#{val}.#{real_identifier}(#{args})"
+          end
+    ret + formatted_block(options)
   end
 end

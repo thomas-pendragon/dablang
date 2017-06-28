@@ -1,0 +1,17 @@
+## INPUT
+
+func foo(a) {
+a.foo(12, "foo") ^
+{
+  puts("xx");
+};
+}
+
+## OUTPUT
+
+func foo(a)
+{
+  a.foo(12, "foo") ^ {
+    puts("xx");
+  };
+}
