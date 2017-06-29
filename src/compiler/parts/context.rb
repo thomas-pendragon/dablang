@@ -519,7 +519,11 @@ class DabContext < DabBaseContext
   end
 
   def read_literal_value
-    read_extended_literal || read_literal_string || read_literal_number || read_literal_boolean || read_literal_nil
+    read_extended_literal ||
+      read_literal_string ||
+      read_literal_number ||
+      read_literal_boolean ||
+      read_literal_nil
   end
 
   def read_instvar
