@@ -39,6 +39,7 @@
 - subclassing: check if inheriting from the same class on duplicates
 - default arguments
 - exceptions
+  - yield without block should throw
 - keyword arguments
 - namespaces
 - raw pointers, byte operations
