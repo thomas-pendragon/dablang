@@ -232,6 +232,15 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_has_block
+    on_subcontext do |subcontext|
+      next unless kw = subcontext.read_operator('has_block?')
+      ret = DabNodeHasBlock.new
+      ret.add_source_parts(kw)
+      ret
+    end
+  end
+
   def read_yield
     on_subcontext do |subcontext|
       next unless yieldkw = subcontext.read_operator('yield')
@@ -605,7 +614,9 @@ class DabContext < DabBaseContext
   end
 
   def read_value
-    read_yield || _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
+    read_has_block ||
+      read_yield ||
+      _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
   end
 
   def clone(new_context)
