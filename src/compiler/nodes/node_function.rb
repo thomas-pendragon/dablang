@@ -124,8 +124,8 @@ class DabNodeFunction < DabNode
 
   def concreteify(types)
     return self if @concrete
-    # TODO: check if already concreteified
     new_name = "__#{identifier}_#{types.map(&:type_string).join('_')}"
+    return new_name if root.has_function?(new_name)
     ret = dup
     ret.identifier = new_name
     ret.arglist.each_with_index do |argdef, index|
