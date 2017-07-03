@@ -15,7 +15,7 @@ class ConcreteifyCall
 
   def concreteify_call!(node)
     fun = node.target_function.concreteify(node.args.map(&:my_type))
-    call = DabNodeHardcall.new(fun, node.args.map(&:dup))
+    call = DabNodeHardcall.new(fun, node.args.map(&:dup), node.block)
     node.replace_with!(call)
   end
 end

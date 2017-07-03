@@ -1,0 +1,32 @@
+## CODE
+
+func foo(a)
+{
+  print("foo ");
+  print(a);
+  if (has_block?)
+  {
+    print(" with block ");
+    print(yield);
+  }
+  puts("");
+}
+
+func main()
+{
+  foo(0);
+  foo(1);
+  foo(5) ^ { return 33; };
+}
+
+## OPTIONS
+
+## RUN
+
+main
+
+## EXPECT OK
+
+foo 0
+foo 1
+foo 5 with block 33

@@ -366,6 +366,7 @@ bool DabVM::execute_single(Stream &input)
         call(name, n_args, "");
         break;
     }
+    case OP_HARDCALL_BLOCK:
     case OP_CALL_BLOCK:
     {
         auto block_name = stack.pop_symbol();

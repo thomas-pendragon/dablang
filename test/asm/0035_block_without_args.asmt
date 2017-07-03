@@ -1,0 +1,48 @@
+## CODE
+
+func foo()
+{
+  print(has_block?);
+}
+
+func main()
+{
+  foo() ^ {  };
+}
+
+## OPTIONS
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL foo
+                                 CONSTANT_SYMBOL "main__block1"
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION Fmain__block1, main__block1, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_HAS_BLOCK 
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* foo          */               PUSH_CONSTANT 0
+/* main__block1 */               PUSH_CONSTANT 1
+                                 CALL_BLOCK 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain__block1:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN

@@ -1,0 +1,21 @@
+## CODE
+
+func foo()
+{
+  print(has_block?);
+}
+
+func main()
+{
+  foo() ^ {  };
+}
+
+## OPTIONS
+
+## RUN
+
+main
+
+## EXPECT OK
+
+true
