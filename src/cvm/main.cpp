@@ -389,6 +389,13 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
+    case OP_PUSH_HAS_BLOCK:
+    {
+        auto addr = get_block_addr();
+        fprintf(stderr, "vm: has block? (%p)\n", (void *)addr);
+        stack.push(addr != 0);
+        break;
+    }
     case OP_PUSH_NIL:
     {
         stack.push_nil();
