@@ -72,6 +72,7 @@ OPCODES_ARRAY = [
   {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
   {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
   {name: 'PUSH_HAS_BLOCK'}, # push(1)
+  {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
