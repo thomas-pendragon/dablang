@@ -29,10 +29,6 @@ class DabNodeCall < DabNodeBasecall
     children[1]
   end
 
-  def has_block?
-    !block.is_a?(DabNodeLiteralNil)
-  end
-
   def real_identifier
     identifier.extra_value
   end

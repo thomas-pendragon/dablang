@@ -10,6 +10,14 @@ class DabNodeBasecall < DabNode
     children
   end
 
+  def block
+    nil
+  end
+
+  def has_block?
+    block && !block.is_a?(DabNodeLiteralNil)
+  end
+
   def _formatted_arguments(options)
     args.map { |item| item.formatted_source(options) }.join(', ')
   end
