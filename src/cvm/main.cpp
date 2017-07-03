@@ -235,7 +235,8 @@ void DabVM::push_constant(const DabValue &value)
 
 void DabVM::call(const std::string &name, int n_args, const std::string &block_name)
 {
-    fprintf(stderr, "VM: call <%s> with %d arguments.\n", name.c_str(), n_args);
+    fprintf(stderr, "VM: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
+            block_name.c_str());
     if (!functions.count(name))
     {
         fprintf(stderr, "VM error: Unknown function <%s>.\n", name.c_str());
