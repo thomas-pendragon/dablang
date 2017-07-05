@@ -73,6 +73,7 @@ OPCODES_ARRAY = [
   {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
   {name: 'PUSH_HAS_BLOCK'}, # push(1)
   {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
+  {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
@@ -96,6 +97,7 @@ STANDARD_CLASSES = %w(
   Boolean
   NilClass
   Array
+  Uint8
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

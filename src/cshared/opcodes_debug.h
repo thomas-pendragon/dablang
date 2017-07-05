@@ -46,4 +46,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_SETV_CONSTANT, "SETV_CONSTANT", {ARG_UINT16, ARG_UINT16}},
     {OP_PUSH_HAS_BLOCK, "PUSH_HAS_BLOCK", {}},
     {OP_HARDCALL_BLOCK, "HARDCALL_BLOCK", {ARG_UINT16}},
+    {OP_CAST, "CAST", {ARG_UINT16}},
 };
