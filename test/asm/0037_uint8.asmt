@@ -1,0 +1,28 @@
+## CODE
+
+func main()
+{
+  var<Uint8> a = 150;
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_NUMBER 150
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 1
+/* 150          */               PUSH_CONSTANT 0
+                                 CAST 8
+/* var 0 a      */               SET_VAR 0
+                                 PUSH_NIL 
+                                 RETURN

@@ -3,6 +3,7 @@ require_relative '../processors/check_assign_type.rb'
 require_relative '../concerns/localvar_definition_concern.rb'
 require_relative '../processors/strip_readonly_argvars.rb'
 require_relative '../processors/store_locally.rb'
+require_relative '../processors/convert_set_value.rb'
 
 class DabNodeSetLocalVar < DabNode
   include LocalvarDefinitionConcern
@@ -14,6 +15,7 @@ class DabNodeSetLocalVar < DabNode
 
   check_with CheckAssignType
   optimize_with StripReadonlyArgvars
+  lower_with ConvertSetValue
 
   def initialize(identifier, value, type = nil, arg_var = false)
     super()
