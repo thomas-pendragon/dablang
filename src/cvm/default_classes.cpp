@@ -116,6 +116,8 @@ void DabVM::define_default_classes()
 
     define_builtin_class("LiteralFixnum", CLASS_LITERALFIXNUM, CLASS_FIXNUM);
 
+    define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
+
     auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
     boolean_class.add_simple_function(
         "to_s", [](DabValue self) { return std::string(self.data.boolean ? "true" : "false"); });

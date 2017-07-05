@@ -97,6 +97,7 @@ enum
     TYPE_CLASS,
     TYPE_OBJECT,
     TYPE_ARRAY,
+    TYPE_UINT8,
 };
 
 enum
@@ -109,6 +110,7 @@ enum
     CLASS_BOOLEAN       = 5,
     CLASS_NILCLASS      = 6,
     CLASS_ARRAY         = 7,
+    CLASS_UINT8         = 8,
 
     CLASS_INT_SYMBOL = 0xFE,
 };
@@ -461,6 +463,8 @@ struct DabVM
     bool execute_single(Stream &input);
 
     void push_class(int index);
+
+    DabValue cast(const DabValue &value, int klass_index);
 
     void add_class(const std::string &name, int index, int parent_index);
 

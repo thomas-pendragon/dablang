@@ -610,6 +610,13 @@ bool DabVM::execute_single(Stream &input)
         get_var(index).release();
         break;
     }
+    case OP_CAST:
+    {
+        auto klass_index = input.read_uint16();
+        auto value       = stack.pop_value();
+        stack.push_value(cast(value, klass_index));
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);
@@ -644,6 +651,21 @@ void DabVM::set_instvar(const std::string &name, const DabValue &value)
 void DabVM::push_class(int index)
 {
     stack.push(classes[index]);
+}
+
+DabValue DabVM::cast(const DabValue &value, int klass_index)
+{
+    if (value.class_index() == CLASS_LITERALFIXNUM && klass_index == CLASS_UINT8)
+    {
+        auto copy      = value;
+        copy.data.type = TYPE_UINT8;
+        return copy;
+    }
+    else
+    {
+        fprintf(stderr, "VM: cannot cast %d to %d.\n", (int)value.class_index(), (int)klass_index);
+        exit(1);
+    }
 }
 
 void DabVM::add_class(const std::string &name, int index, int parent_index)
