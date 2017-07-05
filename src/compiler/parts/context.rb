@@ -24,7 +24,7 @@ class DabContext < DabBaseContext
   def initialize(stream, context)
     super(stream, context)
     @local_vars = []
-    @classes = %w(String Fixnum Array Object)
+    @classes = %w(String Fixnum Array Object Uint8)
   end
 
   def add_local_var(id)
