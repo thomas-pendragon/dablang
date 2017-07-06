@@ -34,6 +34,11 @@ OPCODES_ARRAY = [
   {name: 'PUSH_VAR', arg: :uint16}, # local variable index, push(1)
   {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
   {name: 'PUSH_SYMBOL', arg: :vlc}, # push(1)
+  {name: 'PUSH_HAS_BLOCK'}, # push(1)
+  # SETV
+  {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
+  {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
+  {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
   # STACK
   {name: 'POP', arg: :uint16}, # pop(n)
   {name: 'DUP'}, # push(1)
@@ -43,16 +48,22 @@ OPCODES_ARRAY = [
   {name: 'CONSTANT_NUMBER', arg: :uint64}, # number
   # CALL
   {name: 'CALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
+  {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
   {name: 'INSTCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
+  {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
   {name: 'HARDCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
+  {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
   {name: 'SYSCALL', arg: :uint8}, # depends on the call
+  {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
   # FLOW
   {name: 'JMP', arg: :int16}, # add +arg to PC
   {name: 'JMP_IF', arg: :int16}, # pop(1), add +arg to PC if value from stack is true
   {name: 'JMP_IFN', arg: :int16}, # pop(1), add +arg to PC if value from stack is false
   {name: 'RETURN'}, # pop(1)
+  {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
   # VARIABLES
   {name: 'SET_VAR', arg: :uint16}, # local variable index, pop(1)
+  {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
   {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)
   # COVERAGE
   {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
@@ -64,16 +75,6 @@ OPCODES_ARRAY = [
   {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
   {name: 'BREAK_LOAD'}, # stop loading the code
   # NEW
-  {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
-  {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-  {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
-  {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
-  {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
-  {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
-  {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
-  {name: 'PUSH_HAS_BLOCK'}, # push(1)
-  {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-  {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
