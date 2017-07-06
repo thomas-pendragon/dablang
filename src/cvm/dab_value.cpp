@@ -67,8 +67,10 @@ void DabValue::print(FILE *out, bool debug) const
     switch (data.type)
     {
     case TYPE_FIXNUM:
-    case TYPE_UINT8:
         fprintf(out, "%" PRId64, data.fixnum);
+        break;
+    case TYPE_UINT8:
+        fprintf(out, "%d", data.num_uint8);
         break;
     case TYPE_STRING:
         fprintf(out, debug ? "\"%s\"" : "%s", data.string.c_str());
@@ -124,8 +126,9 @@ bool DabValue::truthy() const
     switch (data.type)
     {
     case TYPE_FIXNUM:
-    case TYPE_UINT8:
         return data.fixnum;
+    case TYPE_UINT8:
+        return data.num_uint8;
     case TYPE_STRING:
         return data.string.length();
         break;

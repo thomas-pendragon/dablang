@@ -17,6 +17,15 @@
     {                                                                                              \
         stack.push((uint64_t)(arg0.data.fixnum op arg1.data.fixnum));                              \
         return;                                                                                    \
+    }                                                                                              \
+    if (arg0.data.type == TYPE_UINT8)                                                              \
+    {                                                                                              \
+        uint8_t num_value = arg0.data.num_uint8 op arg1.data.num_uint8;                            \
+                                                                                                   \
+        DabValue value(CLASS_UINT8, num_value);                                                    \
+                                                                                                   \
+        stack.push_value(value);                                                                   \
+        return;                                                                                    \
     }
 
 #define DAB_DEFINE_OP_STR(op)                                                                      \

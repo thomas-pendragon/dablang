@@ -193,7 +193,8 @@ struct DabValueData
 {
     int type = TYPE_INVALID;
 
-    int64_t         fixnum = 0;
+    int64_t         fixnum    = 0;
+    uint8_t         num_uint8 = 0;
     std::string     string;
     bool            boolean = false;
     DabObjectProxy *object  = nullptr;
@@ -251,6 +252,12 @@ struct DabValue
     {
         data.type    = TYPE_BOOLEAN;
         data.boolean = value;
+    }
+    DabValue(size_t class_index, uint8_t value)
+    {
+        assert(class_index == CLASS_UINT8);
+        data.type      = TYPE_UINT8;
+        data.num_uint8 = value;
     }
 
     DabValue(const DabValue &other);

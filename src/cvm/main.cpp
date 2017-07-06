@@ -657,8 +657,9 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
 {
     if (value.class_index() == CLASS_LITERALFIXNUM && klass_index == CLASS_UINT8)
     {
-        auto copy      = value;
-        copy.data.type = TYPE_UINT8;
+        auto copy           = value;
+        copy.data.type      = TYPE_UINT8;
+        copy.data.num_uint8 = (uint8_t)value.data.fixnum;
         return copy;
     }
     else

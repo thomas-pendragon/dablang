@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  var a = 200;
+  var<Uint8> b = 200;
+  puts(a);
+  puts(a + a);
+  puts(b);
+  puts(b + b);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+200
+400
+200
+144
