@@ -43,7 +43,9 @@
 - keyword arguments
 - namespaces
 - raw pointers, byte operations
-- FFI
+- reflection
+  - function annotations
+    - FFI
 - syntax for functions with required block
 
 ## Standard library ##
