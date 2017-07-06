@@ -2,29 +2,41 @@
 
 #define STR2(s) #s
 #define STR(s) STR2(s)
+
+#define DAB_DEFINE_BASE_OP(op)                                                                     \
+    assert(blockaddr == 0);                                                                        \
+    assert(n_args == 2);                                                                           \
+    assert(n_ret == 1);                                                                            \
+    auto arg1 = stack.pop_value();                                                                 \
+    auto arg0 = stack.pop_value();                                                                 \
+    if (arg0.data.type != arg1.data.type)                                                          \
+    {                                                                                              \
+        assert(false && "mismtached types for operator " STR(op));                                 \
+    }                                                                                              \
+    if (arg0.data.type == TYPE_FIXNUM)                                                             \
+    {                                                                                              \
+        stack.push((uint64_t)(arg0.data.fixnum op arg1.data.fixnum));                              \
+        return;                                                                                    \
+    }
+
 #define DAB_DEFINE_OP_STR(op)                                                                      \
     {                                                                                              \
         DabFunction fun;                                                                           \
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
         fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {                       \
-            assert(blockaddr == 0);                                                                \
-            /*dump();*/                                                                            \
-            assert(n_args == 2);                                                                   \
-            assert(n_ret == 1);                                                                    \
-            auto arg1 = stack.pop_value();                                                         \
-            auto arg0 = stack.pop_value();                                                         \
+            DAB_DEFINE_BASE_OP(op);                                                                \
             if (arg0.data.type == TYPE_ARRAY && arg1.data.type == TYPE_ARRAY)                      \
             {                                                                                      \
                 stack.push(merge_arrays(arg0, arg1));                                              \
                 return;                                                                            \
             }                                                                                      \
-            uint64_t num = arg0.data.fixnum op arg1.data.fixnum;                                   \
-            auto str     = arg0.data.string op arg1.data.string;                                   \
-            if (arg0.data.type == TYPE_FIXNUM)                                                     \
-                stack.push(num);                                                                   \
-            else                                                                                   \
-                stack.push(str);                                                                   \
+            else if (arg0.data.type == TYPE_STRING)                                                \
+            {                                                                                      \
+                stack.push(arg0.data.string op arg1.data.string);                                  \
+                return;                                                                            \
+            }                                                                                      \
+            assert(false && "unknown types for operator " STR(op));                                \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
@@ -35,21 +47,8 @@
         fun.name    = STR(op);                                                                     \
         fun.regular = false;                                                                       \
         fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {                       \
-            assert(blockaddr == 0);                                                                \
-            /* dump();*/                                                                           \
-            assert(n_args == 2);                                                                   \
-            assert(n_ret == 1);                                                                    \
-            auto arg1 = stack.pop_value();                                                         \
-            auto arg0 = stack.pop_value();                                                         \
-            if (arg0.data.type == TYPE_FIXNUM && arg1.data.type == TYPE_FIXNUM)                    \
-            {                                                                                      \
-                uint64_t num = arg0.data.fixnum op arg1.data.fixnum;                               \
-                stack.push(num);                                                                   \
-            }                                                                                      \
-            else                                                                                   \
-            {                                                                                      \
-                assert(false && "unknown types for operator " STR(op));                            \
-            }                                                                                      \
+            DAB_DEFINE_BASE_OP(op);                                                                \
+            assert(false && "unknown types for operator " STR(op));                                \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \
     }
