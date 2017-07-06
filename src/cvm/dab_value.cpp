@@ -134,13 +134,10 @@ bool DabValue::truthy() const
         break;
     case TYPE_BOOLEAN:
         return data.boolean;
-        break;
     case TYPE_NIL:
         return false;
-        break;
     default:
         return true;
-        break;
     }
 }
 
