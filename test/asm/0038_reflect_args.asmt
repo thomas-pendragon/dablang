@@ -15,13 +15,13 @@ func foo(a, b<Uint8>)
  
                                  CONSTANT_SYMBOL foo
  
+                                 LOAD_FUNCTION Ffoo, foo, -1
                                  PUSH_SYMBOL a
                                  PUSH_CLASS 0
                                  PUSH_SYMBOL b
                                  PUSH_CLASS 8
                                  PUSH_CLASS 0
                                  DESCRIBE_FUNCTION foo, 2
-                                 LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  

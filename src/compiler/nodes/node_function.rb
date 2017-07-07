@@ -73,7 +73,9 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
+    output.printex(self, 'LOAD_FUNCTION', funclabel, identifier, parent_class_index)
     if $feature_reflection
+      return unless parent_class_index == -1 # TODO
       arglist.each do |arg|
         symbol = DabNodeSymbol.new(arg.identifier)
         symbol.compile(output)
@@ -82,7 +84,6 @@ class DabNodeFunction < DabNode
       compile_function_description(output, DabTypeObject.new)
       output.printex(self, 'DESCRIBE_FUNCTION', identifier, arglist.count)
     end
-    output.printex(self, 'LOAD_FUNCTION', funclabel, identifier, parent_class_index)
   end
 
   def compile_function_description(output, type)
