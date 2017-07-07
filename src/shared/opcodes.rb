@@ -77,6 +77,7 @@ OPCODES_ARRAY = [
   # NEW
   {name: 'REFLECT', args: %i{uint16}}, # pop symbol, arg0 = reflection type, pop(1), push(1)
   {name: 'SETV_ARG', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = arg index, pop(0), push(0)
+  {name: 'DESCRIBE_FUNCTION', args: %i{vlc uint16}}, # arg0 = name, arg1 = number of arguments, pop(arg1*2 + 1) (argument types + return type)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
