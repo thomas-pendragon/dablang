@@ -48,4 +48,5 @@ enum
     OP_STACK_RESERVE   = 0x2B,
     OP_DEFINE_CLASS    = 0x2C,
     OP_BREAK_LOAD      = 0x2D,
+    OP_REFLECT         = 0x2E,
 };

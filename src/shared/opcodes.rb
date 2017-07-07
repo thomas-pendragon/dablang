@@ -75,6 +75,7 @@ OPCODES_ARRAY = [
   {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
   {name: 'BREAK_LOAD'}, # stop loading the code
   # NEW
+  {name: 'REFLECT', args: %i{uint16}}, # pop symbol, arg0 = reflection type, pop(1), push(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
