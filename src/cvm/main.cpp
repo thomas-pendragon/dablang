@@ -300,6 +300,39 @@ void DabVM::execute(Stream &input)
     }
 }
 
+void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
+{
+    switch (reflection_type)
+    {
+    case REFLECT_METHOD_ARGUMENTS:
+        reflect_method_arguments(symbol);
+        break;
+    default:
+        fprintf(stderr, "vm: unknown reflection %d\n", (int)reflection_type);
+        exit(1);
+        break;
+    }
+}
+
+void DabVM::reflect_method_arguments(const DabValue &symbol)
+{
+    const auto &function   = functions[symbol.data.string];
+    const auto &reflection = function.reflection;
+
+    auto n = reflection.arg_names.size();
+
+    DabValue array_class = classes[CLASS_ARRAY];
+    DabValue value       = array_class.create_instance();
+    auto &   array       = value.array();
+    array.resize(n);
+    for (size_t i = 0; i < n; i++)
+    {
+        auto index = reflection.arg_klasses[i];
+        array[i]   = DabValue(classes[index]);
+    }
+    stack.push_value(value);
+}
+
 bool DabVM::execute_single(Stream &input)
 {
     auto opcode = input.read_uint8();
@@ -334,6 +367,13 @@ bool DabVM::execute_single(Stream &input)
         auto   name        = input.read_vlc_string();
         auto   class_index = input.read_uint16();
         add_function(address + _ip, name, class_index);
+        break;
+    }
+    case OP_REFLECT:
+    {
+        size_t reflection_type = input.read_uint16();
+        auto   symbol          = stack.pop_symbol();
+        reflect(reflection_type, symbol);
         break;
     }
     case OP_CONSTANT_SYMBOL:

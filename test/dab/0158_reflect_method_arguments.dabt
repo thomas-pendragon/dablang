@@ -1,0 +1,22 @@
+## CODE
+
+func foo(a<String>, b<Uint8>)
+{
+}
+
+func main()
+{
+  print(reflect_method_arguments(foo));
+}
+
+## OPTIONS
+
+--no-opt --with-reflection
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+[String, Uint8]

@@ -124,6 +124,11 @@ enum
     CLASS_INT_SYMBOL = 0xFE,
 };
 
+enum
+{
+    REFLECT_METHOD_ARGUMENTS = 0,
+};
+
 struct DabVM;
 struct DabValue;
 
@@ -512,6 +517,9 @@ struct DabVM
     void yield(void *block_addr, const std::vector<DabValue> arguments);
 
     DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
+
+    void reflect(size_t reflection_type, const DabValue &symbol);
+    void reflect_method_arguments(const DabValue &symbol);
 };
 
 struct DabVM_debug
