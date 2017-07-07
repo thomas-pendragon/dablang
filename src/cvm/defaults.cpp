@@ -87,6 +87,12 @@
             {                                                                                      \
                 test = arg0.data.string op arg1.data.string;                                       \
             }                                                                                      \
+            else if (arg0.data.type == TYPE_CLASS)                                                 \
+            {                                                                                      \
+                test = arg0.data.fixnum op arg1.data.fixnum;                                       \
+                fprintf(stderr, "compare classes: %d %d %s -> %s\n", (int)arg0.data.fixnum,        \
+                        (int)arg1.data.fixnum, STR(op), test ? "yes" : "no");                      \
+            }                                                                                      \
             stack.push(test);                                                                      \
         };                                                                                         \
         functions[STR(op)] = fun;                                                                  \

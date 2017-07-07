@@ -1,0 +1,37 @@
+## CODE
+
+func foo(a)
+{
+  foo(String == String);
+  foo(Fixnum == Fixnum);
+  foo(String == Fixnum);
+}
+
+## OPTIONS
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL foo
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_TRUE 
+/* foo          */               PUSH_CONSTANT 0
+                                 CALL 1
+                                 POP 1
+                                 PUSH_TRUE 
+/* foo          */               PUSH_CONSTANT 0
+                                 CALL 1
+                                 POP 1
+                                 PUSH_FALSE 
+/* foo          */               PUSH_CONSTANT 0
+                                 CALL 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN

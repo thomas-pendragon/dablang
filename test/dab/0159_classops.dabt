@@ -1,0 +1,18 @@
+## CODE
+
+func main()
+{
+  puts(String == String);
+  puts(Fixnum == Fixnum);
+  puts(Fixnum == String);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+true
+true
+false

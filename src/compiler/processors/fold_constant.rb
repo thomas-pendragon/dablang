@@ -21,6 +21,10 @@ class FoldConstant
       node.replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
       return true
     elsif %w(== !=).include?(id)
+      if (lv.is_a? DabType) && (rv.is_a? DabType)
+        lv = lv.class
+        rv = rv.class
+      end
       node.replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
       return true
     else
