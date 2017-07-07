@@ -40,8 +40,7 @@ func bar()
  
                    Ffoo:
                                  STACK_RESERVE 1
-                                 PUSH_ARG 0
-/* var 0 a      */               SET_VAR 0
+                                 SETV_ARG 0, 0
 /* var 0 a      */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 5

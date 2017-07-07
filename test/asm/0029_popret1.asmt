@@ -26,8 +26,7 @@ func main()
  
                    Fputs:
                                  STACK_RESERVE 1
-                                 PUSH_ARG 0
-/* var 0 a      */               SET_VAR 0
+                                 SETV_ARG 0, 0
                                  PUSH_NIL 
                                  RETURN 
  

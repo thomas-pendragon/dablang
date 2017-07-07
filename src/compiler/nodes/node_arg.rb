@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/store_locally.rb'
 
 class DabNodeArg < DabNode
+  include NodeStoredLocally
+
   attr_reader :index
 
   def initialize(index)
@@ -18,5 +21,9 @@ class DabNodeArg < DabNode
 
   def compile(output)
     output.print('PUSH_ARG', @index)
+  end
+
+  def compile_local_set(output, index)
+    output.print('SETV_ARG', index, @index)
   end
 end
