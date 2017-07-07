@@ -7,7 +7,7 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
   def formatted_source(options)
     var = 'var '
     type = @my_type.type_string
-    if type != 'Any'
+    if type != 'Object'
       var = "var<#{type}> "
     end
     if value.is_a? DabNodeLiteralNil

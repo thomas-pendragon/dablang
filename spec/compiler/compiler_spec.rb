@@ -3,11 +3,11 @@ require 'spec_helper'
 require_relative '../../src/compiler/_requires.rb'
 
 describe DabNode do
-  # - DabNodeUnit (Any) ?:-1
-  #   - functions: DabNode (Any) ?:-1
-  #     - DabNodeFunction tree1 [flat] (Any) ?:-1
-  #       - arglist: DabNode (Any) ?:-1
-  #       - blocks: DabNodeBlockNode (Any) ?:-1
+  # - DabNodeUnit (Object) ?:-1
+  #   - functions: DabNode (Object) ?:-1
+  #     - DabNodeFunction tree1 [flat] (Object) ?:-1
+  #       - arglist: DabNode (Object) ?:-1
+  #       - blocks: DabNodeBlockNode (Object) ?:-1
   #         - DabNodeSymbol :top (Symbol) ?:-1
   #           - DabNodeSymbol :left (Symbol) ?:-1
   #             - DabNodeSymbol :l1 (Symbol) ?:-1
@@ -19,15 +19,15 @@ describe DabNode do
   #             - DabNodeSymbol :r2 (Symbol) ?:-1
   #             - DabNodeSymbol :r3 (Symbol) ?:-1
   #               - DabNodeSymbol :subr3 (Symbol) ?:-1
-  #     - DabNodeFunction tree2 [flat] (Any) ?:-1
-  #       - arglist: DabNode (Any) ?:-1
-  #       - blocks: DabNodeBlockNode (Any) ?:-1
+  #     - DabNodeFunction tree2 [flat] (Object) ?:-1
+  #       - arglist: DabNode (Object) ?:-1
+  #       - blocks: DabNodeBlockNode (Object) ?:-1
   #         - DabNodeSymbol :f2 (Symbol) ?:-1
   #           - DabNodeSymbol :f2_1 (Symbol) ?:-1
   #           - DabNodeSymbol :f2_2 (Symbol) ?:-1
   #           - DabNodeSymbol :f2_3 (Symbol) ?:-1
-  #   - constants: DabNode (Any) ?:-1
-  #   - classes: DabNode (Any) ?:-1
+  #   - constants: DabNode (Object) ?:-1
+  #   - classes: DabNode (Object) ?:-1
 
   before do
     @top = DabNodeSymbol.new(:top)

@@ -326,7 +326,7 @@ class DabNode
   end
 
   def my_type
-    DabTypeAny.new
+    DabTypeObject.new
   end
 
   def remove!

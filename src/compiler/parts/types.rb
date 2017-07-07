@@ -1,6 +1,6 @@
 class DabType
   def self.parse(typename)
-    return DabTypeAny.new if typename.nil?
+    return DabTypeObject.new if typename.nil?
     return DabTypeString.new if typename == 'String'
     return DabTypeFixnum.new if typename == 'Fixnum'
     return DabTypeLiteralFixnum.new if typename == 'LiteralFixnum'
@@ -25,9 +25,9 @@ class DabType
   end
 end
 
-class DabTypeAny < DabType
+class DabTypeObject < DabType
   def type_string
-    'Any'
+    'Object'
   end
 
   def can_assign_from?(_other_type)

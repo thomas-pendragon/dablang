@@ -8,7 +8,7 @@ class ConcreteifyCall
   def all_args_concrete?(node)
     return false if node.target_function == true
     return false if node.args.count == 0
-    return false unless node.target_function.arglist.to_a.all? { |arg| arg.my_type.is_a? DabTypeAny }
+    return false unless node.target_function.arglist.to_a.all? { |arg| arg.my_type.is_a? DabTypeObject }
     return false unless node.args.all? { |arg| arg.my_type.concrete? }
     true
   end
