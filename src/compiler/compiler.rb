@@ -9,6 +9,7 @@ $strip = !!$settings[:strip]
 $entry = $settings[:entry]
 $no_constants = $settings[:no_constants]
 $no_autorelease = $settings[:no_autorelease]
+$feature_reflection = $settings[:with_reflection]
 
 inputs = $settings[:inputs] || [:stdin]
 

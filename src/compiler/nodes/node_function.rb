@@ -73,7 +73,22 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
+    if $feature_reflection
+      arglist.each do |arg|
+        symbol = DabNodeSymbol.new(arg.identifier)
+        symbol.compile(output)
+        compile_function_description(output, arg.my_type)
+      end
+      compile_function_description(output, DabTypeObject.new)
+      output.printex(self, 'DESCRIBE_FUNCTION', identifier, arglist.count)
+    end
     output.printex(self, 'LOAD_FUNCTION', funclabel, identifier, parent_class_index)
+  end
+
+  def compile_function_description(output, type)
+    identifier = type.type_string
+    number = root.class_number(identifier)
+    output.print('PUSH_CLASS', number)
   end
 
   def compile_body(output)
