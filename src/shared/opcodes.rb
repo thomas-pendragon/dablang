@@ -105,3 +105,9 @@ STANDARD_CLASSES = %w(
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h
 
 USER_CLASSES_OFFSET = 0x100
+
+REFLECTION = {
+  0x00 => :method_arguments,
+}.freeze
+
+REFLECTION_REV = REFLECTION.map { |k, v| [v, k] }.to_h

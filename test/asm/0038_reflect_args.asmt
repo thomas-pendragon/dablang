@@ -1,0 +1,33 @@
+## CODE
+
+func foo(a, b)
+{
+  print(reflect_method_arguments(foo));
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL foo
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 2
+                                 PUSH_ARG 1
+/* var 0 b      */               SET_VAR 0
+                                 PUSH_ARG 0
+/* var 1 a      */               SET_VAR 1
+/* foo          */               PUSH_CONSTANT 0
+                                 REFLECT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN

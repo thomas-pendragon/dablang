@@ -256,6 +256,24 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_reflect_method_arguments
+    on_subcontext do |subcontext|
+      next unless kw = subcontext.read_operator('reflect_method_arguments')
+
+      next unless lparen = subcontext.read_operator('(')
+      next unless id = subcontext.read_identifier
+      next unless rparen = subcontext.read_operator(')')
+
+      ret = DabNodeReflect.new(:method_arguments, id)
+      ret.add_source_parts(kw, lparen, rparen)
+      ret
+    end
+  end
+
+  def read_reflect
+    read_reflect_method_arguments
+  end
+
   def read_instruction
     read_yield ||
       read_return ||
@@ -616,6 +634,7 @@ class DabContext < DabBaseContext
   def read_value
     read_has_block ||
       read_yield ||
+      read_reflect ||
       _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
   end
 
