@@ -461,6 +461,14 @@ bool DabVM::execute_single(Stream &input)
         stack.push(var);
         break;
     }
+    case OP_SETV_ARG:
+    {
+        auto  n_var = input.read_uint16();
+        auto  index = input.read_uint16();
+        auto &var   = get_var(n_var);
+        var         = get_arg(index);
+        break;
+    }
     case OP_SYSCALL:
     {
         auto call = input.read_uint8();
