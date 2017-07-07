@@ -305,6 +305,28 @@ bool DabVM::execute_single(Stream &input)
     auto opcode = input.read_uint8();
     switch (opcode)
     {
+    case OP_DESCRIBE_FUNCTION:
+    {
+        auto  name       = input.read_vlc_string();
+        auto  arg_count  = input.read_uint16();
+        auto &reflection = functions[name].reflection;
+        reflection.arg_names.resize(arg_count);
+        reflection.arg_klasses.resize(arg_count);
+        reflection.ret_klass = stack.pop_value().class_index();
+        fprintf(stderr, "vm: describe %s:\n", name.c_str());
+        fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
+        for (size_t i = 0; i < arg_count; i++)
+        {
+            auto klass                    = stack.pop_value().class_index();
+            auto name                     = stack.pop_symbol();
+            auto arg_i                    = arg_count - i - 1;
+            reflection.arg_klasses[arg_i] = klass;
+            reflection.arg_names[arg_i]   = name;
+            fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
+                    name.c_str());
+        }
+        break;
+    }
     case OP_LOAD_FUNCTION:
     {
         size_t _ip         = ip() - 1;
