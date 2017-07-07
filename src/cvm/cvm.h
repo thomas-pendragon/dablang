@@ -77,6 +77,13 @@ struct DabValue;
 typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
+struct DabFunctionReflection
+{
+    std::vector<std::string> arg_names;
+    std::vector<size_t>      arg_klasses;
+    size_t                   ret_klass;
+};
+
 struct DabFunction
 {
     bool           regular = true;
@@ -84,6 +91,8 @@ struct DabFunction
 
     size_t      address = -1;
     std::string name;
+
+    DabFunctionReflection reflection;
 };
 
 enum
