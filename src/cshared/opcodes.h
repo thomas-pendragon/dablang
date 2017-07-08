@@ -51,4 +51,5 @@ enum
     OP_REFLECT           = 0x2E,
     OP_SETV_ARG          = 0x2F,
     OP_DESCRIBE_FUNCTION = 0x30,
+    OP_PUSH_METHOD       = 0x31,
 };
