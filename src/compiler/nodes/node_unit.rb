@@ -82,6 +82,12 @@ class DabNodeUnit < DabNode
     @functions.children.each do |function|
       function.compile(output)
     end
+    if $feature_attributes
+      output.separate
+      @functions.children.each do |function|
+        function.compile_attributes(output)
+      end
+    end
     output.separate
     output.print('BREAK_LOAD')
     output.separate

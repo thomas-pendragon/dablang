@@ -169,8 +169,36 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_attribute_value
+    read_literal_string || read_literal_number
+  end
+
+  def read_attribute
+    on_subcontext do |subcontext|
+      next unless id = subcontext.read_identifier
+      if lparen = subcontext.read_operator('(')
+        next unless list = subcontext._read_simple_list(:read_attribute_value)
+        next unless rparen = subcontext.read_operator(')')
+      end
+      ret = DabNodeAttribute.new(id, list)
+      ret.add_source_parts(lparen, rparen)
+      ret
+    end
+  end
+
+  def read_attrlist
+    on_subcontext do |subcontext|
+      next unless lparen = subcontext.read_operator('[')
+      next unless list = subcontext._read_simple_list(:read_attribute)
+      next unless rparen = subcontext.read_operator(']')
+      list.add_source_parts(lparen, rparen)
+      list
+    end
+  end
+
   def read_function
     on_subcontext do |subcontext|
+      attrlist = subcontext.read_attrlist
       inline = subcontext.read_keyword('inline')
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
@@ -183,7 +211,7 @@ class DabContext < DabBaseContext
       end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      ret = DabNodeFunction.new(ident, code, arglist, inline)
+      ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist)
       ret.add_source_parts(inline, keyw, ident, op1, op2)
       ret
     end

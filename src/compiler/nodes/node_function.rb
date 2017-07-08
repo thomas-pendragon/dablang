@@ -15,11 +15,12 @@ class DabNodeFunction < DabNode
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
-  def initialize(identifier, body, arglist, inline)
+  def initialize(identifier, body, arglist, inline, attrlist = nil)
     super()
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
     insert(DabNodeBlockNode.new, 'blocks')
+    insert(attrlist) if attrlist
     blocks.insert(body)
     @concrete = false
     @inline = inline
@@ -64,12 +65,27 @@ class DabNodeFunction < DabNode
     children[1]
   end
 
+  def attrlist
+    children[2]
+  end
+
   def constants
     self.root.constants
   end
 
   def funclabel
     'F' + identifier.gsub('=', '%EQ')
+  end
+
+  def compile_attributes(output)
+    attrlist&.each do |attribute|
+      DabNodeMethodReference.new(identifier).compile(output)
+      attribute.arglist&.each do |arg|
+        arg.compile(output)
+      end
+      output.push(attribute.name)
+      output.print('CALL', attribute.arglist&.count&.to_s || '0')
+    end
   end
 
   def compile(output)

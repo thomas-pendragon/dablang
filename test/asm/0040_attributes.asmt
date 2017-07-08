@@ -1,0 +1,61 @@
+## CODE
+
+[sample_attribute, another_attribute(14, "foo")]
+func foo()
+{
+}
+
+func sample_attribute(method)
+{
+}
+
+func another_attribute(method, arg1, arg2)
+{
+}
+
+## OPTIONS
+
+--no-opt --with-attributes
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "foo"
+                                 CONSTANT_NUMBER 14
+                                 CONSTANT_SYMBOL another_attribute
+                                 CONSTANT_SYMBOL sample_attribute
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fsample_attribute, sample_attribute, -1
+                                 LOAD_FUNCTION Fanother_attribute, another_attribute, -1
+ 
+                                 PUSH_METHOD foo
+/* sample_attri */               PUSH_CONSTANT 3
+                                 CALL 0
+                                 PUSH_METHOD foo
+/* 14           */               PUSH_CONSTANT 1
+/* foo          */               PUSH_CONSTANT 0
+/* another_attr */               PUSH_CONSTANT 2
+                                 CALL 2
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fsample_attribute:
+                                 STACK_RESERVE 1
+                                 SETV_ARG 0, 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fanother_attribute:
+                                 STACK_RESERVE 3
+                                 SETV_ARG 0, 2
+                                 SETV_ARG 1, 1
+                                 SETV_ARG 2, 0
+                                 PUSH_NIL 
+                                 RETURN
