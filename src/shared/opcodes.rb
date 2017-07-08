@@ -110,6 +110,7 @@ USER_CLASSES_OFFSET = 0x100
 
 REFLECTION = {
   0x00 => :method_arguments,
+  0x01 => :method_argument_names,
 }.freeze
 
 REFLECTION_REV = REFLECTION.map { |k, v| [v, k] }.to_h

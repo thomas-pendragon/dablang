@@ -305,7 +305,8 @@ void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
     switch (reflection_type)
     {
     case REFLECT_METHOD_ARGUMENTS:
-        reflect_method_arguments(symbol);
+    case REFLECT_METHOD_ARGUMENT_NAMES:
+        reflect_method_arguments(reflection_type, symbol);
         break;
     default:
         fprintf(stderr, "vm: unknown reflection %d\n", (int)reflection_type);
@@ -314,7 +315,7 @@ void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
     }
 }
 
-void DabVM::reflect_method_arguments(const DabValue &symbol)
+void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &symbol)
 {
     const auto &function   = functions[symbol.data.string];
     const auto &reflection = function.reflection;
@@ -327,8 +328,17 @@ void DabVM::reflect_method_arguments(const DabValue &symbol)
     array.resize(n);
     for (size_t i = 0; i < n; i++)
     {
-        auto index = reflection.arg_klasses[i];
-        array[i]   = DabValue(classes[index]);
+        DabValue value;
+        if (reflection_type == REFLECT_METHOD_ARGUMENT_NAMES)
+        {
+            value = DabValue(reflection.arg_names[i]);
+        }
+        else
+        {
+            auto index = reflection.arg_klasses[i];
+            value      = DabValue(classes[index]);
+        }
+        array[i] = value;
     }
     stack.push_value(value);
 }

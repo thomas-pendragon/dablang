@@ -126,7 +126,8 @@ enum
 
 enum
 {
-    REFLECT_METHOD_ARGUMENTS = 0,
+    REFLECT_METHOD_ARGUMENTS      = 0,
+    REFLECT_METHOD_ARGUMENT_NAMES = 1,
 };
 
 struct DabVM;
@@ -519,7 +520,7 @@ struct DabVM
     DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
 
     void reflect(size_t reflection_type, const DabValue &symbol);
-    void reflect_method_arguments(const DabValue &symbol);
+    void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
 };
 
 struct DabVM_debug
