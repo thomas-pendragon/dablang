@@ -103,6 +103,7 @@ STANDARD_CLASSES = %w(
   NilClass
   Array
   Uint8
+  Method
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

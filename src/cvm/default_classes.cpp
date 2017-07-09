@@ -216,4 +216,7 @@ void DabVM::define_default_classes()
         auto inner = stack.pop_value();
         return std::string("[" + inner.data.string + "]");
     });
+
+    auto &method_class = define_builtin_class("Method", CLASS_METHOD);
+    (void)method_class;
 }

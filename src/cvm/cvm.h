@@ -107,6 +107,7 @@ enum
     TYPE_OBJECT,
     TYPE_ARRAY,
     TYPE_UINT8,
+    TYPE_METHOD,
 };
 
 enum
@@ -120,6 +121,7 @@ enum
     CLASS_NILCLASS      = 6,
     CLASS_ARRAY         = 7,
     CLASS_UINT8         = 8,
+    CLASS_METHOD        = 9,
 
     CLASS_INT_SYMBOL = 0xFE,
 };
