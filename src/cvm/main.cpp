@@ -861,6 +861,9 @@ void DabVM::extract(const std::string &name)
     {
         printf("%zu", ip());
     }
+    else if (name == "output")
+    {
+    }
     else if (name == "stack[-1]")
     {
         if (stack.size() == 0)

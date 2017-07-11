@@ -1,0 +1,12 @@
+## CODE
+
+PUSH_STRING "foobar"
+SYSCALL 0
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+foobar
