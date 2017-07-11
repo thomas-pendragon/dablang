@@ -1,0 +1,26 @@
+## CODE
+
+CONSTANT_STRING "test: allocated string\n"
+CONSTANT_SYMBOL new
+
+LOAD_FUNCTION Ffoo, main, -1
+
+BREAK_LOAD 
+
+Ffoo:
+STACK_RESERVE 0
+PUSH_METHOD foo
+SYSCALL 0
+RETURN
+
+## RUNOPTIONS
+
+--noraw 
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+@method(foo)

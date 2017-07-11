@@ -410,6 +410,12 @@ bool DabVM::execute_single(Stream &input)
         stack.push(constants[index]);
         break;
     }
+    case OP_PUSH_METHOD:
+    {
+        auto name = input.read_vlc_string();
+        push_method(name);
+        break;
+    }
     case OP_SETV_CONSTANT:
     {
         auto  n_var = input.read_uint16();
@@ -835,6 +841,14 @@ void DabVM::push_constant_fixnum(uint64_t value)
     val.data.fixnum      = value;
     val.data.is_constant = true;
     push_constant(val);
+}
+
+void DabVM::push_method(const std::string &name)
+{
+    DabValue val;
+    val.data.type   = TYPE_METHOD;
+    val.data.string = name;
+    stack.push_value(val);
 }
 
 void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)

@@ -218,5 +218,6 @@ void DabVM::define_default_classes()
     });
 
     auto &method_class = define_builtin_class("Method", CLASS_METHOD);
-    (void)method_class;
+    method_class.add_simple_function(
+        "to_s", [this](DabValue self) { return std::string("@method(" + self.data.string + ")"); });
 }
