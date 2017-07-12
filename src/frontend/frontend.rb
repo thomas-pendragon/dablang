@@ -28,6 +28,7 @@ def read_test_file(fname)
     expected_runtime_error: runtime_error,
     included_file: included_file,
     options: base[:options],
+    run_options: base[:run_options],
   }
 end
 
@@ -39,11 +40,12 @@ def assemble(input, output)
   run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
 end
 
-def execute(input, output)
+def execute(input, output, run_options)
   describe_action(input, output, 'VM') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cvm < #{input} > #{output}"
+    run_options = run_options.presence&.shellescape
+    cmd = "timeout 10 ./bin/cvm #{run_options} < #{input} > #{output}"
     begin
       psystem_noecho cmd
     rescue SystemCommandError => e
@@ -109,7 +111,7 @@ def run_test(settings)
   assemble(asm, bin)
 
   begin
-    execute(bin, vmo)
+    execute(bin, vmo, data[:run_options])
   rescue SystemCommandError => e
     if data[:expected_status] == :runtime_error
       compare_output('compare runtime output', e.stderr, data[:expected_runtime_error], true)
