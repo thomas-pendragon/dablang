@@ -77,14 +77,15 @@ class DabNodeFunction < DabNode
     'F' + identifier.gsub('=', '%EQ')
   end
 
-  def compile_attributes(output)
+  def create_attribute_init(body)
     attrlist&.each do |attribute|
-      DabNodeMethodReference.new(identifier).compile(output)
+      arglist = DabNode.new
+      arglist << DabNodeMethodReference.new(identifier)
       attribute.arglist&.each do |arg|
-        arg.compile(output)
+        arglist << arg.dup
       end
-      output.push(attribute.name)
-      output.print('CALL', attribute.arglist&.count&.to_s || '0')
+      call = DabNodeCall.new(attribute.real_identifier, arglist, nil)
+      body << call
     end
   end
 

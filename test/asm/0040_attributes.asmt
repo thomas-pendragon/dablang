@@ -29,15 +29,7 @@ func another_attribute(method, arg1, arg2)
                                  LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fsample_attribute, sample_attribute, -1
                                  LOAD_FUNCTION Fanother_attribute, another_attribute, -1
- 
-                                 PUSH_METHOD foo
-/* sample_attri */               PUSH_CONSTANT 3
-                                 CALL 0
-                                 PUSH_METHOD foo
-/* 14           */               PUSH_CONSTANT 1
-/* foo          */               PUSH_CONSTANT 0
-/* another_attr */               PUSH_CONSTANT 2
-                                 CALL 2
+                                 LOAD_FUNCTION F__init, __init, -1
  
                                  BREAK_LOAD 
  
@@ -57,5 +49,20 @@ func another_attribute(method, arg1, arg2)
                                  SETV_ARG 0, 2
                                  SETV_ARG 1, 1
                                  SETV_ARG 2, 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 PUSH_METHOD foo
+/* sample_attri */               PUSH_CONSTANT 3
+                                 CALL 1
+                                 POP 1
+                                 PUSH_METHOD foo
+/* 14           */               PUSH_CONSTANT 1
+/* foo          */               PUSH_CONSTANT 0
+/* another_attr */               PUSH_CONSTANT 2
+                                 CALL 3
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN

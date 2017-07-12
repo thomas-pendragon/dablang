@@ -1,9 +1,12 @@
 require_relative 'node.rb'
+require_relative '../processors/create_attributes.rb'
 
 class DabNodeUnit < DabNode
   attr_reader :constants
   attr_reader :functions
   attr_reader :classes
+
+  after_init CreateAttributes
 
   def initialize
     super()
@@ -81,12 +84,6 @@ class DabNodeUnit < DabNode
     end
     @functions.children.each do |function|
       function.compile(output)
-    end
-    if $feature_attributes
-      output.separate
-      @functions.children.each do |function|
-        function.compile_attributes(output)
-      end
     end
     output.separate
     output.print('BREAK_LOAD')
