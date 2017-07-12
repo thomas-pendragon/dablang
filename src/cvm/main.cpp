@@ -938,14 +938,15 @@ void DabVM::extract(const std::string &name)
 
 struct DabRunOptions
 {
-    FILE *input       = stdin;
-    bool  close_file  = false;
-    bool  autorun     = true;
-    bool  extract     = false;
-    bool  raw         = false;
-    bool  cov         = false;
-    bool  autorelease = true;
-    bool  verbose     = false;
+    FILE *input           = stdin;
+    bool  close_file      = false;
+    bool  autorun         = true;
+    bool  extract         = false;
+    bool  raw             = false;
+    bool  cov             = false;
+    bool  autorelease     = true;
+    bool  verbose         = false;
+    bool  with_attributes = false;
 
     std::string extract_part;
 
@@ -1004,6 +1005,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         }
         this->input      = file;
         this->close_file = true;
+    }
+
+    if (flags["--with-attributes"])
+    {
+        this->with_attributes = true;
     }
 
     if (flags["--verbose"])
