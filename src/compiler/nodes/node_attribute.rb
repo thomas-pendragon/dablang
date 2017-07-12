@@ -16,6 +16,6 @@ class DabNodeAttribute < DabNode
   end
 
   def real_identifier
-    identifier.extra_value
+    name.extra_value
   end
 end
