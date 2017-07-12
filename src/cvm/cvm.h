@@ -399,6 +399,7 @@ struct DabVM
 {
     bool       autorelease = true;
     bool       shutdown    = false;
+    bool       verbose     = false;
     DabVMReset reset;
     Coverage   coverage;
     bool       coverage_testing;

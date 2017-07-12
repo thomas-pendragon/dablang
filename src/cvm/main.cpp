@@ -345,7 +345,12 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
 
 bool DabVM::execute_single(Stream &input)
 {
+    auto pos    = input.position();
     auto opcode = input.read_uint8();
+    if (verbose)
+    {
+        fprintf(stderr, "@ %d: %d\n", (int)pos, (int)opcode);
+    }
     switch (opcode)
     {
     case OP_DESCRIBE_FUNCTION:
@@ -940,6 +945,7 @@ struct DabRunOptions
     bool  raw         = false;
     bool  cov         = false;
     bool  autorelease = true;
+    bool  verbose     = false;
 
     std::string extract_part;
 
@@ -1000,6 +1006,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->close_file = true;
     }
 
+    if (flags["--verbose"])
+    {
+        this->verbose = true;
+    }
+
     if (flags["--debug"])
     {
         this->autorun = false;
@@ -1042,6 +1053,7 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
+    vm.verbose     = options.verbose;
     vm.autorelease = options.autorelease;
     auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
