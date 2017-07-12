@@ -1,0 +1,45 @@
+## CODE
+
+[sample_attribute, another_attribute(14, "foo")]
+func foo()
+{
+}
+
+func sample_attribute(method)
+{
+  print("Sample: ");
+  puts(method);
+}
+
+func another_attribute(method, arg1, arg2)
+{
+  print("Another(");
+  print(arg1);
+  print(", ");
+  print(arg2);
+  print("): ");
+  puts(method);
+}
+
+func main()
+{
+  puts("main");
+}
+
+## OPTIONS
+
+--no-opt --with-attributes
+
+## RUN OPTIONS
+
+--with-attributes
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+Sample: @method(foo)
+Another(14, foo): @method(foo)
+main

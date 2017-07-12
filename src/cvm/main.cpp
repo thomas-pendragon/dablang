@@ -162,6 +162,13 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 
     if (!raw)
     {
+        if (with_attributes)
+        {
+            fprintf(stderr, "vm: initialize attributes\n");
+            instructions.rewind();
+            call("__init", 0, "");
+            execute(instructions);
+        }
         instructions.rewind();
         call("main", 0, "");
         if (autorun)
@@ -1059,9 +1066,10 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
-    vm.verbose     = options.verbose;
-    vm.autorelease = options.autorelease;
-    auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
+    vm.verbose         = options.verbose;
+    vm.autorelease     = options.autorelease;
+    vm.with_attributes = options.with_attributes;
+    auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
     if (options.extract)
     {
