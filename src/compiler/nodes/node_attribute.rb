@@ -18,4 +18,8 @@ class DabNodeAttribute < DabNode
   def real_identifier
     name.extra_value
   end
+
+  def formatted_source(_options)
+    real_identifier
+  end
 end

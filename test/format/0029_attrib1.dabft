@@ -1,0 +1,24 @@
+## INPUT
+
+
+[
+  sample_attribute
+  ]
+func foo(){
+}
+
+func
+sample_attribute(
+)
+{}
+
+## OUTPUT
+
+[sample_attribute]
+func foo()
+{
+}
+
+func sample_attribute()
+{
+}

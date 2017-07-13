@@ -144,6 +144,9 @@ class DabNodeFunction < DabNode
     end
     ret += "}\n"
     ret = "inline #{ret}" if inline
+    if attrlist && attrlist.count > 0
+      ret = '[' + attrlist.map { |attr| attr.formatted_source(options) }.join(', ') + "]\n#{ret}"
+    end
     ret
   end
 
