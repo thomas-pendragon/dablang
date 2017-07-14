@@ -107,6 +107,7 @@ enum
     TYPE_OBJECT,
     TYPE_ARRAY,
     TYPE_UINT8,
+    TYPE_INT32,
     TYPE_METHOD,
 };
 
@@ -121,7 +122,8 @@ enum
     CLASS_NILCLASS      = 6,
     CLASS_ARRAY         = 7,
     CLASS_UINT8         = 8,
-    CLASS_METHOD        = 9,
+    CLASS_INT32         = 9,
+    CLASS_METHOD        = 10,
 
     CLASS_INT_SYMBOL = 0xFE,
 };
@@ -212,6 +214,7 @@ struct DabValueData
 
     int64_t         fixnum    = 0;
     uint8_t         num_uint8 = 0;
+    int32_t         num_int32 = 0;
     std::string     string;
     bool            boolean = false;
     DabObjectProxy *object  = nullptr;
@@ -275,6 +278,12 @@ struct DabValue
         assert(class_index == CLASS_UINT8);
         data.type      = TYPE_UINT8;
         data.num_uint8 = value;
+    }
+    DabValue(size_t class_index, int32_t value)
+    {
+        assert(class_index == CLASS_INT32);
+        data.type      = TYPE_INT32;
+        data.num_int32 = value;
     }
 
     DabValue(const DabValue &other);

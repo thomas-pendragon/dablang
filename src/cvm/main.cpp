@@ -753,11 +753,21 @@ void DabVM::push_class(int index)
 
 DabValue DabVM::cast(const DabValue &value, int klass_index)
 {
-    if (value.class_index() == CLASS_LITERALFIXNUM && klass_index == CLASS_UINT8)
+    auto from = value.class_index();
+    auto to   = klass_index;
+
+    if (from == CLASS_LITERALFIXNUM && to == CLASS_UINT8)
     {
         auto copy           = value;
         copy.data.type      = TYPE_UINT8;
         copy.data.num_uint8 = (uint8_t)value.data.fixnum;
+        return copy;
+    }
+    else if (from == CLASS_LITERALFIXNUM && to == CLASS_INT32)
+    {
+        auto copy           = value;
+        copy.data.type      = TYPE_INT32;
+        copy.data.num_int32 = (int32_t)value.data.fixnum;
         return copy;
     }
     else

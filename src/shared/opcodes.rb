@@ -103,6 +103,7 @@ STANDARD_CLASSES = %w(
   NilClass
   Array
   Uint8
+  Int32
   Method
 ).freeze
 

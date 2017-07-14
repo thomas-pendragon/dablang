@@ -123,6 +123,13 @@ void DabVM::define_default_classes()
         return std::string(ret);
     });
 
+    auto &int32_class = define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
+    int32_class.add_simple_function("to_s", [](DabValue self) {
+        char ret[32];
+        sprintf(ret, "%d", self.data.num_int32);
+        return std::string(ret);
+    });
+
     auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
     boolean_class.add_simple_function(
         "to_s", [](DabValue self) { return std::string(self.data.boolean ? "true" : "false"); });
