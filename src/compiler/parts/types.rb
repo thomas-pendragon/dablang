@@ -70,7 +70,7 @@ class DabTypeFixnum < DabType
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a? DabTypeFixnum
+    other_type.is_a?(DabTypeFixnum) || other_type.is_a?(DabTypeObject)
   end
 end
 

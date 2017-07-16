@@ -98,3 +98,13 @@ class DabCompileSelfOutsideInstanceContextError < DabCompilerError
     8
   end
 end
+
+class DabCompileReturnTypeError < DabCompilerError
+  def initialize(type1, type2, source)
+    super("Cannot return <#{type1.type_string}> from a function of type <#{type2.type_string}>.", source)
+  end
+
+  def error_code
+    9
+  end
+end

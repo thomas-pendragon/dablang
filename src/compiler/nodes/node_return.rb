@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/check_return_type.rb'
 
 class DabNodeReturn < DabNode
+  check_with CheckReturnType
+
   def initialize(value)
     super()
     insert(value)

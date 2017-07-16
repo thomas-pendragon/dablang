@@ -1,0 +1,20 @@
+## CODE
+
+func foo<String>()
+{
+  return 12;
+}
+
+func main()
+{
+  puts(foo());
+}
+
+## RUN
+
+main 
+
+## EXPECT COMPILE ERROR
+
+   3:   return 12;
+./tmp/test_dab_0165_wrong_rettype.dab:3: error E0009: Cannot return <Object> from a function of type <String>.
