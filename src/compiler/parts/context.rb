@@ -202,6 +202,10 @@ class DabContext < DabBaseContext
       inline = subcontext.read_keyword('inline')
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
+      if lp = subcontext.read_operator('<')
+        next unless rettype = subcontext.read_type
+        next unless rp = subcontext.read_operator('>')
+      end
       next unless op1 = subcontext.read_operator('(')
       if arglist = subcontext.read_arglist
         arglist.each do |arg|
@@ -212,7 +216,7 @@ class DabContext < DabBaseContext
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
       ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist)
-      ret.add_source_parts(inline, keyw, ident, op1, op2)
+      ret.add_source_parts(inline, keyw, ident, op1, op2, lp, rettype, rp)
       ret
     end
   end

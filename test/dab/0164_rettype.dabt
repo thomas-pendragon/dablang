@@ -1,0 +1,19 @@
+## CODE
+
+func foo<Fixnum>()
+{
+  return 12;
+}
+
+func main()
+{
+  puts(foo());
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+12
