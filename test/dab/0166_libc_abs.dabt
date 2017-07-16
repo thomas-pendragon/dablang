@@ -1,0 +1,23 @@
+## CODE
+
+[__import_libc("abs")]
+func libc_abs<Int32>(number<Int32>) {}
+
+func main()
+{
+  puts(libc_abs(12));
+  puts(libc_abs(-14));
+}
+
+## OPTIONS
+
+--with-attributes --with-reflection
+
+## RUN OPTIONS
+
+--with-attributes
+
+## EXPECT OK
+
+12
+14

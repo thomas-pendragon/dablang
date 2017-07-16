@@ -1,7 +1,14 @@
 #include "cvm.h"
+#include <dlfcn.h>
 
 #define STR2(s) #s
 #define STR(s) STR2(s)
+
+#ifdef __linux__
+#define DAB_LIBC_NAME "libc.so.6" // LINUX
+#else
+#define DAB_LIBC_NAME "libc.dylib" // APPLE
+#endif
 
 #define DAB_DEFINE_BASE_OP(op)                                                                     \
     assert(blockaddr == 0);                                                                        \
@@ -120,6 +127,40 @@ DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
     return value;
 }
 
+dab_function_t import_external_function(void *symbol, const DabFunctionReflection &reflection,
+                                        Stack &stack)
+{
+    return [symbol, &reflection, &stack](size_t n_args, size_t n_ret, void *blockaddr) {
+        const auto &arg_klasses = reflection.arg_klasses;
+        const auto  ret_klass   = reflection.ret_klass;
+
+        assert(blockaddr == 0);
+        assert(n_args == arg_klasses.size());
+        assert(n_ret == 1);
+
+        assert(arg_klasses.size() == 1);
+        assert(arg_klasses[0] == CLASS_INT32);
+        assert(ret_klass == CLASS_INT32);
+
+        typedef int (*int_fun)(int);
+
+        auto int_symbol = (int_fun)symbol;
+
+        auto value = stack.pop_value();
+        if (value.class_index() == CLASS_LITERALFIXNUM)
+        {
+            value = $VM->cast(value, CLASS_INT32);
+        }
+        assert(value.class_index() == CLASS_INT32);
+
+        auto value_data = value.data.num_int32;
+
+        auto return_value = (*int_symbol)(value_data);
+
+        stack.push_value(DabValue(CLASS_INT32, return_value));
+    };
+}
+
 void DabVM::define_defaults()
 {
     define_default_classes();
@@ -135,6 +176,52 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP_BOOL(>);
     DAB_DEFINE_OP_BOOL(<=);
     DAB_DEFINE_OP_BOOL(<);
+
+    {
+        DabFunction fun;
+        fun.name    = "__import_libc";
+        fun.regular = false;
+        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
+            assert(blockaddr == 0);
+            assert(n_args == 2);
+            assert(n_ret == 1);
+
+            auto _libc_name = stack.pop_value();
+            assert(_libc_name.class_index() == CLASS_STRING ||
+                   _libc_name.class_index() == CLASS_LITERALSTRING);
+            auto libc_name = _libc_name.data.string;
+            auto method    = stack.pop_value();
+            assert(method.class_index() == CLASS_METHOD);
+            auto method_name = method.data.string;
+
+            fprintf(stderr, "vm: readjust '%s' to libc function '%s'\n", method_name.c_str(),
+                    libc_name.c_str());
+
+            auto handle = dlopen(DAB_LIBC_NAME, RTLD_LAZY);
+            if (!handle)
+            {
+                fprintf(stderr, "vm: dlopen error: %s", dlerror());
+                exit(1);
+            }
+            fprintf(stderr, "vm: dlopen handle: %p\n", handle);
+
+            auto symbol = dlsym(handle, libc_name.c_str());
+            if (!symbol)
+            {
+                fprintf(stderr, "vm: dlsym error: %s", dlerror());
+                exit(1);
+            }
+            fprintf(stderr, "vm: dlsym handle: %p\n", symbol);
+
+            auto &function   = functions[method_name];
+            function.regular = false;
+            function.address = -1;
+            function.extra   = import_external_function(symbol, function.reflection, this->stack);
+
+            stack.push_value(DabValue(nullptr));
+        };
+        functions["__import_libc"] = fun;
+    }
 
     {
         DabFunction fun;

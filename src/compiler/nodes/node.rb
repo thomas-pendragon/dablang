@@ -2,6 +2,7 @@ BUILTINS = %w[
   print
   exit
   __usecount
+  __import_libc
 ].freeze
 
 class DabNode
