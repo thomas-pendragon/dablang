@@ -53,4 +53,9 @@ class DabNodeCall < DabNodeBasecall
   def formatted_source(options)
     real_identifier + '(' + _formatted_arguments(options) + ')' + formatted_block(options)
   end
+
+  def my_type
+    return DabTypeObject.new if target_function == true || target_function == false
+    target_function.return_type
+  end
 end
