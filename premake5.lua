@@ -15,6 +15,8 @@ function dab_common_setup(name)
     files { "src/cshared/**.h", "src/cshared/**.cpp" }
     files { "src/"..name.."/**.h", "src/"..name.."/**.cpp" }
 
+    links { "dl" }
+
     filter "configurations:Debug"
       defines { "DEBUG" } 
       symbols "On"
