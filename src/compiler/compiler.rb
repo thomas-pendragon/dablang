@@ -74,7 +74,7 @@ debug_check!(program, 'post')
 if program.has_errors?
   program.errors.each do |e|
     STDERR.puts e.annotated_source(streams[e.source.source_file])
-    STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line, e.error_code, e.message)
+    STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line || -1, e.error_code, e.message)
   end
   exit(1)
 else
