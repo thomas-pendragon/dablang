@@ -115,6 +115,11 @@ enum
 
 enum
 {
+    CLASS_INT_SYMBOL = 0xFE,
+};
+
+enum
+{
     REFLECT_METHOD_ARGUMENTS      = 0,
     REFLECT_METHOD_ARGUMENT_NAMES = 1,
 };

@@ -13,7 +13,9 @@ cdumpcov = 'bin/cdumpcov'
 filelist = 'tmp/c_files.txt'
 
 cvm_opcodes = 'src/cshared/opcodes.h'
+cvm_classes = 'src/cshared/classes.h'
 opcode_task = 'tasks/opcodelist.rb'
+classes_task = 'tasks/classes.rb'
 
 cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
 opcode_debug_task = 'tasks/opcode_debuglist.rb'
@@ -21,7 +23,7 @@ opcode_debug_task = 'tasks/opcode_debuglist.rb'
 $shared_spec_code = Dir.glob('test/shared/*.dab')
 
 csources = Dir.glob('src/{cvm,cshared,cdisasm,cdumpcov}/**/*')
-csources += [cvm_opcodes, cvm_opcodes_debug]
+csources += [cvm_opcodes, cvm_classes, cvm_opcodes_debug]
 csources.sort!
 csources.uniq!
 
@@ -30,6 +32,10 @@ filelist_body_old = open(filelist).read.strip rescue nil
 if filelist_body_old != filelist_body_new
   puts "Warning! Updating #{filelist}.".bold.yellow
   File.open(filelist, 'wb') { |f| f << filelist_body_new }
+end
+
+file cvm_classes => ['src/shared/opcodes.rb', classes_task] do
+  psystem("ruby #{classes_task} > #{cvm_classes}")
 end
 
 file cvm_opcodes => ['src/shared/opcodes.rb', opcode_task] do
