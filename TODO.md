@@ -43,12 +43,8 @@
 - keyword arguments
 - namespaces
 - raw pointers, byte operations
-- reflection
-  - function annotations
-    - FFI
 - syntax for functions with required block
 - common syntax for vars and arguments: `func foo(a<String>); var a<String>;`
-- function return types
 
 ## Standard library ##
 
