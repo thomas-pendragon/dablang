@@ -103,7 +103,7 @@ class DabNodeFunction < DabNode
         symbol.compile(output)
         compile_function_description(output, arg.my_type)
       end
-      compile_function_description(output, DabTypeObject.new)
+      compile_function_description(output, return_type)
       output.printex(self, 'DESCRIBE_FUNCTION', identifier, arglist.count)
     end
   end
