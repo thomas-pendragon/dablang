@@ -10,7 +10,7 @@ class DabType
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeNil) || other_type.is_a?(DabTypeObject)
+    other_type.is_a?(self.class) || other_type.is_a?(DabTypeNil) || other_type.is_a?(DabTypeObject)
   end
 
   def requires_cast?(_other_type)
@@ -41,10 +41,6 @@ class DabTypeString < DabType
     'String'
   end
 
-  def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeString) || super
-  end
-
   def belongs?(value)
     value.is_a? String
   end
@@ -67,10 +63,6 @@ end
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'
-  end
-
-  def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeFixnum) || super
   end
 end
 
@@ -127,6 +119,10 @@ class DabTypeInt32 < DabTypeFixnum
 
   def requires_cast?(other_type)
     can_assign_from?(other_type) && !(other_type.is_a? DabTypeInt32)
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a?(DabTypeFixnum) || super
   end
 
   def concrete?
