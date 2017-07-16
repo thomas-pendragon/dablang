@@ -148,7 +148,7 @@ class DabTypeSymbol < DabType
   end
 end
 
-class DabTypeArray < DabTypeString
+class DabTypeArray < DabType
   def type_string
     'Array'
   end
