@@ -1,3 +1,9 @@
+BUILTINS = %w[
+  print
+  exit
+  __usecount
+].freeze
+
 class DabNode
   attr_reader :children
   attr_accessor :parent
@@ -278,7 +284,7 @@ class DabNode
   end
 
   def has_function?(id)
-    return true if id == 'print' || id == 'exit' || id == '__usecount'
+    return true if BUILTINS.include?(id)
     self.visit_all(DabNodeFunction) do |function|
       return function if function.identifier == id
     end
