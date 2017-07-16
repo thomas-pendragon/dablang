@@ -215,7 +215,7 @@ class DabContext < DabBaseContext
       end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist)
+      ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist, rettype)
       ret.add_source_parts(inline, keyw, ident, op1, op2, lp, rettype, rp)
       ret
     end

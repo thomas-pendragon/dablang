@@ -15,16 +15,21 @@ class DabNodeFunction < DabNode
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
-  def initialize(identifier, body, arglist, inline, attrlist = nil)
+  def initialize(identifier, body, arglist, inline, attrlist = nil, rettype = nil)
     super()
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
     insert(DabNodeBlockNode.new, 'blocks')
-    insert(attrlist) if attrlist
+    insert(attrlist || DabNode.new)
     blocks.insert(body)
     @concrete = false
     @inline = inline
     @autovars = 0
+    insert(rettype) if rettype
+  end
+
+  def return_type
+    children[3]&.dab_type || DabType.parse(nil)
   end
 
   def autovar_name
