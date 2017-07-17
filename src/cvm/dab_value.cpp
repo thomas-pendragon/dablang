@@ -2,8 +2,8 @@
 
 void DabValue::dump(FILE *file) const
 {
-    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS",
-                                  "OBJE", "ARRY", "UIN8", "UI32", "UI64", "IN32", "METH"};
+    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE",
+                                  "ARRY", "UIN8", "UI32", "UI64", "IN32", "METH", "PTR*"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -51,6 +51,9 @@ int DabValue::class_index() const
         break;
     case TYPE_METHOD:
         return CLASS_METHOD;
+        break;
+    case TYPE_INTPTR:
+        return CLASS_INTPTR;
         break;
     default:
         fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
@@ -111,6 +114,9 @@ void DabValue::print(FILE *out, bool debug) const
     case TYPE_OBJECT:
         fprintf(out, "#%s", class_name().c_str());
         break;
+    case TYPE_INTPTR:
+        fprintf(out, "%p", data.intptr);
+        break;
     case TYPE_ARRAY:
     {
         fprintf(out, "[");
@@ -161,6 +167,8 @@ bool DabValue::truthy() const
         break;
     case TYPE_BOOLEAN:
         return data.boolean;
+    case TYPE_INTPTR:
+        return data.intptr;
     case TYPE_NIL:
         return false;
     default:

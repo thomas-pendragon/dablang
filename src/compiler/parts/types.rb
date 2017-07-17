@@ -8,6 +8,7 @@ class DabType
     return DabTypeUint.new(32) if typename == 'Uint32'
     return DabTypeUint.new(64) if typename == 'Uint64'
     return DabTypeInt32.new if typename == 'Int32'
+    return DabTypeIntPtr.new if typename == 'IntPtr'
     raise "Unknown type #{typename}"
   end
 
@@ -89,6 +90,20 @@ class DabTypeLiteralFixnum < DabTypeFixnum
 
   def can_assign_from?(other_type)
     other_type.is_a?(DabTypeLiteralFixnum) || super
+  end
+
+  def concrete?
+    true
+  end
+end
+
+class DabTypeIntPtr < DabType
+  def type_string
+    'IntPtr'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a?(DabTypeIntPtr) || super
   end
 
   def concrete?

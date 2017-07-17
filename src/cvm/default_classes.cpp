@@ -116,6 +116,13 @@ void DabVM::define_default_classes()
 
     define_builtin_class("LiteralFixnum", CLASS_LITERALFIXNUM, CLASS_FIXNUM);
 
+    auto &intptr_class = define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
+    intptr_class.add_simple_function("to_s", [](DabValue self) {
+        char ret[32];
+        sprintf(ret, "%p", self.data.intptr);
+        return std::string(ret);
+    });
+
     auto &uint8_class = define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
     uint8_class.add_simple_function("to_s", [](DabValue self) {
         char ret[32];

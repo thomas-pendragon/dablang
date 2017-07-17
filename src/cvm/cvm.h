@@ -111,6 +111,7 @@ enum
     TYPE_UINT64,
     TYPE_INT32,
     TYPE_METHOD,
+    TYPE_INTPTR,
 };
 
 #include "../cshared/classes.h"
@@ -212,6 +213,7 @@ struct DabValueData
     std::string     string;
     bool            boolean = false;
     DabObjectProxy *object  = nullptr;
+    void *          intptr  = nullptr;
 
     bool is_constant = false;
 };
@@ -290,6 +292,12 @@ struct DabValue
         assert(class_index == CLASS_INT32);
         data.type      = TYPE_INT32;
         data.num_int32 = value;
+    }
+    DabValue(size_t class_index, void *value)
+    {
+        assert(class_index == CLASS_INTPTR);
+        data.type   = TYPE_INTPTR;
+        data.intptr = value;
     }
 
     DabValue(const DabValue &other);
