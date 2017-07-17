@@ -756,32 +756,34 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     auto from = value.class_index();
     auto to   = klass_index;
 
-    if (from == CLASS_LITERALFIXNUM && to == CLASS_UINT8)
+    if (from == to)
     {
-        auto copy           = value;
-        copy.data.type      = TYPE_UINT8;
-        copy.data.num_uint8 = (uint8_t)value.data.fixnum;
-        return copy;
+        return value;
     }
-    else if (from == CLASS_LITERALFIXNUM && to == CLASS_UINT32)
+
+    auto from_fixnum = from == CLASS_LITERALFIXNUM || from == CLASS_FIXNUM;
+
+    if (from_fixnum && to == CLASS_UINT8)
     {
-        auto copy            = value;
-        copy.data.type       = TYPE_UINT32;
-        copy.data.num_uint32 = (uint32_t)value.data.fixnum;
-        return copy;
+        return DabValue(to, (uint8_t)value.data.fixnum);
     }
-    else if (from == CLASS_LITERALFIXNUM && to == CLASS_UINT64)
+    else if (from_fixnum && to == CLASS_UINT32)
     {
-        auto copy            = value;
-        copy.data.type       = TYPE_UINT64;
-        copy.data.num_uint64 = (uint64_t)value.data.fixnum;
-        return copy;
+        return DabValue(to, (uint32_t)value.data.fixnum);
     }
-    else if (from == CLASS_LITERALFIXNUM && to == CLASS_INT32)
+    else if (from_fixnum && to == CLASS_UINT64)
     {
-        auto copy           = value;
-        copy.data.type      = TYPE_INT32;
-        copy.data.num_int32 = (int32_t)value.data.fixnum;
+        return DabValue(to, (uint64_t)value.data.fixnum);
+    }
+    else if (from_fixnum && to == CLASS_INT32)
+    {
+        return DabValue(to, (int32_t)value.data.fixnum);
+    }
+    else if (from == CLASS_NILCLASS && to == CLASS_INTPTR)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_INTPTR;
+        copy.data.intptr = nullptr;
         return copy;
     }
     else
