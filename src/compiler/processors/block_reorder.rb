@@ -4,7 +4,7 @@ class BlockReorder
     blocks = function.blocks
     order = [blocks[0].block_index]
     jump_labels = blocks.flat_map(&:all_jump_labels)
-    jump_labels = jump_labels.reverse.uniq.reverse
+    jump_labels = jump_labels.uniq
     order += jump_labels
     my_order = blocks.map(&:block_index)
     if order != my_order
@@ -13,5 +13,6 @@ class BlockReorder
       end
       return true
     end
+    false
   end
 end

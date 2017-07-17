@@ -1,0 +1,50 @@
+## CODE
+
+func main()
+{
+  var a = 5;
+  while (a > 0)
+  {
+    print(a);
+    a = a - 1;
+  }
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "-"
+                                 CONSTANT_NUMBER 0
+                                 CONSTANT_NUMBER 1
+                                 CONSTANT_NUMBER 5
+                                 CONSTANT_SYMBOL ">"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 1
+/* 5            */               SETV_CONSTANT 0, 3
+                                 JMP L1
+                   L1:
+/* var 0 a      */               PUSH_VAR 0
+/* 0            */               PUSH_CONSTANT 1
+/*              */               PUSH_CONSTANT 4
+/* op           */               CALL 2
+                                 JMP_IF L3
+                                 JMP L4
+                   L3:
+/* var 0 a      */               PUSH_VAR 0
+                                 SYSCALL 0
+                                 POP 1
+/* var 0 a      */               PUSH_VAR 0
+/* 1            */               PUSH_CONSTANT 2
+/* -            */               PUSH_CONSTANT 0
+/* op -         */               CALL 2
+/* var 0 a1     */               SET_VAR 0
+                                 JMP L1
+                   L4:
+                                 PUSH_NIL 
+                                 RETURN

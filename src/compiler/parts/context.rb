@@ -395,6 +395,18 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_while
+    on_subcontext do |subcontext|
+      next unless subcontext.read_keyword('while')
+      next unless subcontext.read_operator('(')
+      next unless condition = subcontext.read_value
+      next unless subcontext.read_operator(')')
+      next unless on_block = subcontext.read_codeblock
+
+      DabNodeWhile.new(condition, on_block)
+    end
+  end
+
   def read_if
     on_subcontext do |subcontext|
       next unless subcontext.read_keyword('if')
@@ -517,7 +529,10 @@ class DabContext < DabBaseContext
   end
 
   def read_instruction_line
-    read_if || read_instruction_with_separator || read_codeblock
+    read_while ||
+      read_if ||
+      read_instruction_with_separator ||
+      read_codeblock
   end
 
   def read_separator

@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  var a = 5;
+  while (a > 0)
+  {
+    puts(a);
+    a = a - 1;
+  }
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+5
+4
+3
+2
+1
