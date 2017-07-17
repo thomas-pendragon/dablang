@@ -3,7 +3,7 @@
 void DabValue::dump(FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS",
-                                  "OBJE", "ARRY", "UIN8", "UI64", "IN32", "METH"};
+                                  "OBJE", "ARRY", "UIN8", "UI32", "UI64", "IN32", "METH"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -39,6 +39,9 @@ int DabValue::class_index() const
         break;
     case TYPE_UINT8:
         return CLASS_UINT8;
+        break;
+    case TYPE_UINT32:
+        return CLASS_UINT32;
         break;
     case TYPE_UINT64:
         return CLASS_UINT64;
@@ -80,6 +83,9 @@ void DabValue::print(FILE *out, bool debug) const
         break;
     case TYPE_UINT8:
         fprintf(out, "%d", data.num_uint8);
+        break;
+    case TYPE_UINT32:
+        fprintf(out, "%d", data.num_uint32);
         break;
     case TYPE_UINT64:
         fprintf(out, "%" PRIu64, data.num_uint64);
@@ -144,6 +150,10 @@ bool DabValue::truthy() const
         return data.fixnum;
     case TYPE_UINT8:
         return data.num_uint8;
+    case TYPE_UINT32:
+        return data.num_uint32;
+    case TYPE_UINT64:
+        return data.num_uint64;
     case TYPE_INT32:
         return data.num_int32;
     case TYPE_STRING:
