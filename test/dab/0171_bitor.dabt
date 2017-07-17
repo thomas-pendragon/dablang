@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+  print(3 | 6); // 11 | 110 => 111 == 7
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+7

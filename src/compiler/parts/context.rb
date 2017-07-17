@@ -678,11 +678,15 @@ class DabContext < DabBaseContext
     _read_list_or_single(:read_cmp_value, ['==', '!='], DabNodeOperator)
   end
 
+  def read_bor_value
+    _read_list_or_single(:read_eq_value, ['|'], DabNodeOperator)
+  end
+
   def read_value
     read_has_block ||
       read_yield ||
       read_reflect ||
-      _read_list_or_single(:read_eq_value, ['is'], DabNodeOperator)
+      _read_list_or_single(:read_bor_value, ['is'], DabNodeOperator)
   end
 
   def clone(new_context)
