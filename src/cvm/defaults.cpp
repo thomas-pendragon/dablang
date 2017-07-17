@@ -138,9 +138,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
         assert(n_args == arg_klasses.size());
         assert(n_ret == 1);
 
-        assert(arg_klasses.size() == 1);
-
-        if (arg_klasses[0] == CLASS_INT32 && ret_klass == CLASS_INT32)
+        if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INT32 && ret_klass == CLASS_INT32)
         {
             typedef int (*int_fun)(int);
 
@@ -159,7 +157,48 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             stack.push_value(DabValue(CLASS_INT32, return_value));
         }
-        else if (arg_klasses[0] == CLASS_STRING && ret_klass == CLASS_UINT64)
+        else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_UINT32 &&
+                 ret_klass == CLASS_INT32)
+        {
+            typedef int (*int_fun)(uint32_t);
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto value = stack.pop_value();
+            if (value.class_index() == CLASS_LITERALFIXNUM)
+            {
+                value = $VM->cast(value, CLASS_UINT32);
+            }
+            assert(value.class_index() == CLASS_UINT32);
+
+            auto value_data = value.data.num_uint32;
+
+            auto return_value = (*int_symbol)(value_data);
+
+            stack.push_value(DabValue(CLASS_INT32, return_value));
+        }
+        else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_UINT32 &&
+                 ret_klass == CLASS_NILCLASS)
+        {
+            typedef void (*int_fun)(uint32_t);
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto value = stack.pop_value();
+            if (value.class_index() == CLASS_LITERALFIXNUM)
+            {
+                value = $VM->cast(value, CLASS_UINT32);
+            }
+            assert(value.class_index() == CLASS_UINT32);
+
+            auto value_data = value.data.num_uint32;
+
+            (*int_symbol)(value_data);
+
+            stack.push_value(DabValue(nullptr));
+        }
+        else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_STRING &&
+                 ret_klass == CLASS_UINT64)
         {
             typedef uint64_t (*int_fun)(const char *);
 
@@ -175,9 +214,41 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             stack.push_value(DabValue(CLASS_UINT64, return_value));
         }
+        else if (arg_klasses.size() == 6 && arg_klasses[0] == CLASS_STRING &&
+                 arg_klasses[1] == CLASS_INT32 && arg_klasses[2] == CLASS_INT32 &&
+                 arg_klasses[3] == CLASS_INT32 && arg_klasses[4] == CLASS_INT32 &&
+                 arg_klasses[5] == CLASS_UINT32 && ret_klass == CLASS_INTPTR)
+        {
+            typedef void *(*int_fun)(const char *, int, int, int, int, uint32_t);
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto value5 = $VM->cast(stack.pop_value(), CLASS_UINT32);
+            auto value4 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value3 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value2 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value1 = $VM->cast(stack.pop_value(), CLASS_INT32);
+
+            auto value = stack.pop_value();
+            assert(value.class_index() == CLASS_STRING ||
+                   value.class_index() == CLASS_LITERALSTRING);
+
+            auto value_data  = value.data.string.c_str();
+            auto value1_data = value.data.num_int32;
+            auto value2_data = value.data.num_int32;
+            auto value3_data = value.data.num_int32;
+            auto value4_data = value.data.num_int32;
+            auto value5_data = value.data.num_uint32;
+
+            auto return_value = (*int_symbol)(value_data, value1_data, value2_data, value3_data,
+                                              value4_data, value5_data);
+
+            stack.push_value(DabValue(CLASS_INTPTR, return_value));
+        }
         else
         {
-            assert(false && "unsupported signature");
+            fprintf(stderr, "vm: unsupported signature\n");
+            exit(1);
         }
     };
 }
@@ -198,11 +269,8 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP_BOOL(<=);
     DAB_DEFINE_OP_BOOL(<);
 
-    {
-        DabFunction fun;
-        fun.name    = "__import_libc";
-        fun.regular = false;
-        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
+    auto make_import_function = [this](const char *name) {
+        return [this, name](size_t n_args, size_t n_ret, void *blockaddr) {
             assert(blockaddr == 0);
             assert(n_args == 2);
             assert(n_ret == 1);
@@ -218,7 +286,7 @@ void DabVM::define_defaults()
             fprintf(stderr, "vm: readjust '%s' to libc function '%s'\n", method_name.c_str(),
                     libc_name.c_str());
 
-            auto handle = dlopen(DAB_LIBC_NAME, RTLD_LAZY);
+            auto handle = dlopen(name, RTLD_LAZY);
             if (!handle)
             {
                 fprintf(stderr, "vm: dlopen error: %s", dlerror());
@@ -241,7 +309,22 @@ void DabVM::define_defaults()
 
             stack.push_value(DabValue(nullptr));
         };
+    };
+
+    {
+        DabFunction fun;
+        fun.name                   = "__import_libc";
+        fun.regular                = false;
+        fun.extra                  = make_import_function(DAB_LIBC_NAME);
         functions["__import_libc"] = fun;
+    }
+
+    {
+        DabFunction fun;
+        fun.name                  = "__import_sdl";
+        fun.regular               = false;
+        fun.extra                 = make_import_function("/usr/local/lib/libSDL2.dylib");
+        functions["__import_sdl"] = fun;
     }
 
     {

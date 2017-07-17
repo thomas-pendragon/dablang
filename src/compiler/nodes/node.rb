@@ -3,6 +3,7 @@ BUILTINS = %w[
   exit
   __usecount
   __import_libc
+  __import_sdl
 ].freeze
 
 class DabNode

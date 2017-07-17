@@ -1,0 +1,40 @@
+// Snake game, initial experiments with using FFI to access SDL2 library
+
+// int SDL_Init(Uint32 flags)
+[__import_sdl("SDL_Init")]
+func SDL_Init<Int32>(flags<Uint32>) {}
+
+// extern DECLSPEC SDL_Window * SDLCALL SDL_CreateWindow(const char *title,
+//                                                      int x, int y, int w,
+//                                                      int h, Uint32 flags);
+[__import_sdl("SDL_CreateWindow")]
+func SDL_CreateWindow<IntPtr>(title<String>, x<Int32>, y<Int32>, w<Int32>, h<Int32>, flags<Uint32>) {}
+
+// void SDL_Delay(Uint32 ms)
+[__import_sdl("SDL_Delay")]
+func SDL_Delay<NilClass>(ms<Uint32>) {}
+
+func main()
+{
+  var SDL_INIT_VIDEO = 32;
+  var status = SDL_Init(SDL_INIT_VIDEO);
+  print("SDL_Init status: ");
+  puts(status);
+
+  var SDL_WINDOWPOS_UNDEFINED = 536805376;
+  var SCREEN_WIDTH = 640;
+  var SCREEN_HEIGHT = 480;
+  var SDL_WINDOW_SHOWN = 4;
+  var window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+  print("SDL_CreateWindow value: ");
+  puts(window);
+
+  SDL_Delay(1000);
+  puts("Wait1");
+
+  SDL_Delay(1000);
+  puts("Wait2");
+
+  SDL_Delay(1000);
+  puts("Wait3");
+}
