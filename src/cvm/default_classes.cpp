@@ -123,6 +123,13 @@ void DabVM::define_default_classes()
         return std::string(ret);
     });
 
+    auto &uint64_class = define_builtin_class("Uint64", CLASS_UINT64, CLASS_FIXNUM);
+    uint64_class.add_simple_function("to_s", [](DabValue self) {
+        char ret[32];
+        sprintf(ret, "%" PRIu64, self.data.num_uint64);
+        return std::string(ret);
+    });
+
     auto &int32_class = define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
     int32_class.add_simple_function("to_s", [](DabValue self) {
         char ret[32];

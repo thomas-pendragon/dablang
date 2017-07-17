@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+  var<Uint64> a = 150;
+  puts(a);
+  puts(a.class);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+150
+Uint64

@@ -5,6 +5,7 @@ class DabType
     return DabTypeFixnum.new if typename == 'Fixnum'
     return DabTypeLiteralFixnum.new if typename == 'LiteralFixnum'
     return DabTypeUint8.new if typename == 'Uint8'
+    return DabTypeUint64.new if typename == 'Uint64'
     return DabTypeInt32.new if typename == 'Int32'
     raise "Unknown type #{typename}"
   end
@@ -105,6 +106,24 @@ class DabTypeUint8 < DabTypeFixnum
 
   def requires_cast?(other_type)
     can_assign_from?(other_type) && !(other_type.is_a? DabTypeUint8)
+  end
+
+  def concrete?
+    true
+  end
+end
+
+class DabTypeUint64 < DabTypeFixnum
+  def type_string
+    'Uint64'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeFixnum
+  end
+
+  def requires_cast?(other_type)
+    can_assign_from?(other_type) && !(other_type.is_a? DabTypeUint64)
   end
 
   def concrete?

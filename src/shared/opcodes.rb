@@ -105,6 +105,7 @@ STANDARD_CLASSES = %w(
   Uint8
   Int32
   Method
+  Uint64
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

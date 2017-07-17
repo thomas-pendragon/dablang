@@ -13,4 +13,5 @@ enum
     CLASS_UINT8         = 8,
     CLASS_INT32         = 9,
     CLASS_METHOD        = 10,
+    CLASS_UINT64        = 11,
 };
