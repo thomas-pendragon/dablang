@@ -139,25 +139,46 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
         assert(n_ret == 1);
 
         assert(arg_klasses.size() == 1);
-        assert(arg_klasses[0] == CLASS_INT32);
-        assert(ret_klass == CLASS_INT32);
 
-        typedef int (*int_fun)(int);
-
-        auto int_symbol = (int_fun)symbol;
-
-        auto value = stack.pop_value();
-        if (value.class_index() == CLASS_LITERALFIXNUM)
+        if (arg_klasses[0] == CLASS_INT32 && ret_klass == CLASS_INT32)
         {
-            value = $VM->cast(value, CLASS_INT32);
+            typedef int (*int_fun)(int);
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto value = stack.pop_value();
+            if (value.class_index() == CLASS_LITERALFIXNUM)
+            {
+                value = $VM->cast(value, CLASS_INT32);
+            }
+            assert(value.class_index() == CLASS_INT32);
+
+            auto value_data = value.data.num_int32;
+
+            auto return_value = (*int_symbol)(value_data);
+
+            stack.push_value(DabValue(CLASS_INT32, return_value));
         }
-        assert(value.class_index() == CLASS_INT32);
+        else if (arg_klasses[0] == CLASS_STRING && ret_klass == CLASS_UINT64)
+        {
+            typedef uint64_t (*int_fun)(const char *);
 
-        auto value_data = value.data.num_int32;
+            auto int_symbol = (int_fun)symbol;
 
-        auto return_value = (*int_symbol)(value_data);
+            auto value = stack.pop_value();
+            assert(value.class_index() == CLASS_STRING ||
+                   value.class_index() == CLASS_LITERALSTRING);
 
-        stack.push_value(DabValue(CLASS_INT32, return_value));
+            auto value_data = value.data.string.c_str();
+
+            auto return_value = (*int_symbol)(value_data);
+
+            stack.push_value(DabValue(CLASS_UINT64, return_value));
+        }
+        else
+        {
+            assert(false && "unsupported signature");
+        }
     };
 }
 

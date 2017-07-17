@@ -1,0 +1,24 @@
+## CODE
+
+[__import_libc("strlen")]
+func libc_strlen<Uint64>(string<String>) {}
+
+func main()
+{
+  puts(libc_strlen("foobar"));
+  var q = "other string";
+  puts(libc_strlen(q));
+}
+
+## OPTIONS
+
+--with-attributes --with-reflection
+
+## RUN OPTIONS
+
+--with-attributes
+
+## EXPECT OK
+
+6
+12
