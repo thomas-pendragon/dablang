@@ -262,6 +262,7 @@ void DabVM::define_defaults()
     DAB_DEFINE_OP(*);
     DAB_DEFINE_OP(/);
     DAB_DEFINE_OP(%);
+    DAB_DEFINE_OP(|);
     DAB_DEFINE_OP_BOOL(==);
     DAB_DEFINE_OP_BOOL(!=);
     DAB_DEFINE_OP_BOOL(>=);
