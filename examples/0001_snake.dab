@@ -40,6 +40,14 @@ func SDL_RenderPresent<NilClass>(renderer<IntPtr>) {}
 [__import_sdl]
 func SDL_SetRenderDrawColor<Int32>(renderer<IntPtr>, r<Uint8>, g<Uint8>, b<Uint8>, a<Uint8>) {}
 
+// int SDL_RenderDrawLine(SDL_Renderer* renderer,
+//                        int           x1,
+//                        int           y1,
+//                        int           x2,
+//                        int           y2)
+[__import_sdl]
+func SDL_RenderDrawLine<Int32>(renderer<IntPtr>, x1<Int32>, y1<Int32>, x2<Int32>, y2<Int32>) {}
+
 func main()
 {
   var SDL_INIT_VIDEO = 32;
@@ -62,11 +70,11 @@ func main()
   print("SDL_CreateWindow: ");
   puts(window);
 
- /* var SDL_RENDERER_ACCELERATED = 2;
+  var SDL_RENDERER_ACCELERATED = 2;
   var SDL_RENDERER_PRESENTVSYNC = 4;
   var renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   print("SDL_CreateRenderer: ");
-  puts(renderer);*/
+  puts(renderer);
 
   var frame = 0;
   while (frame < 300)
@@ -74,10 +82,13 @@ func main()
     var<IntPtr> event = nil;
     var ret = SDL_PollEvent(event);
 
-    /* var SDL_ALPHA_OPAQUE=255;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);*/
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderDrawLine(renderer, frame + 10, 10, frame + 50, 150);
+
+    SDL_RenderPresent(renderer);
     SDL_Delay(16);
 
     frame = frame + 1;

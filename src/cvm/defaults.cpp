@@ -296,6 +296,32 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             stack.push_value(DabValue(CLASS_INT32, return_value));
         }
+        else if (arg_klasses.size() == 5 && arg_klasses[0] == CLASS_INTPTR &&
+                 arg_klasses[1] == CLASS_INT32 && arg_klasses[2] == CLASS_INT32 &&
+                 arg_klasses[3] == CLASS_INT32 && arg_klasses[4] == CLASS_INT32 &&
+                 ret_klass == CLASS_INT32)
+        {
+            typedef int (*int_fun)(void *, int, int, int, int);
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto value4 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value3 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value2 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value1 = $VM->cast(stack.pop_value(), CLASS_INT32);
+            auto value0 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+
+            auto value0_data = value0.data.intptr;
+            auto value1_data = value1.data.num_int32;
+            auto value2_data = value2.data.num_int32;
+            auto value3_data = value3.data.num_int32;
+            auto value4_data = value4.data.num_int32;
+
+            auto return_value =
+                (*int_symbol)(value0_data, value1_data, value2_data, value3_data, value4_data);
+
+            stack.push_value(DabValue(CLASS_INT32, return_value));
+        }
         else if (arg_klasses.size() == 6 && arg_klasses[0] == CLASS_STRING &&
                  arg_klasses[1] == CLASS_INT32 && arg_klasses[2] == CLASS_INT32 &&
                  arg_klasses[3] == CLASS_INT32 && arg_klasses[4] == CLASS_INT32 &&
