@@ -361,16 +361,25 @@ void DabVM::define_defaults()
     auto make_import_function = [this](const char *name) {
         return [this, name](size_t n_args, size_t n_ret, void *blockaddr) {
             assert(blockaddr == 0);
-            assert(n_args == 2);
+            assert(n_args == 2 || n_args == 1);
             assert(n_ret == 1);
 
-            auto _libc_name = stack.pop_value();
-            assert(_libc_name.class_index() == CLASS_STRING ||
-                   _libc_name.class_index() == CLASS_LITERALSTRING);
-            auto libc_name = _libc_name.data.string;
-            auto method    = stack.pop_value();
+            std::string libc_name;
+
+            if (n_args == 2)
+            {
+                auto _libc_name = stack.pop_value();
+                assert(_libc_name.class_index() == CLASS_STRING ||
+                       _libc_name.class_index() == CLASS_LITERALSTRING);
+                libc_name = _libc_name.data.string;
+            }
+            auto method = stack.pop_value();
             assert(method.class_index() == CLASS_METHOD);
             auto method_name = method.data.string;
+            if (n_args == 1)
+            {
+                libc_name = method_name;
+            }
 
             fprintf(stderr, "vm: readjust '%s' to libc function '%s'\n", method_name.c_str(),
                     libc_name.c_str());
