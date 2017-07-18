@@ -66,7 +66,7 @@ bool DabVM::pop_frame(bool regular)
 
     if (regular)
     {
-        fprintf(stderr, "VM: release %d local vars\n", (int)get_varcount());
+        fprintf(stderr, "vm: release %d local vars\n", (int)get_varcount());
         for (size_t i = 0; i < get_varcount(); i++)
         {
             get_var(i).release();
@@ -83,7 +83,7 @@ bool DabVM::pop_frame(bool regular)
         {
             stack.push(retval);
         }
-        fprintf(stderr, "VM: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
+        fprintf(stderr, "vm: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         instructions.seek(prev_ip);
     }
 
@@ -242,11 +242,11 @@ void DabVM::push_constant(const DabValue &value)
 
 void DabVM::call(const std::string &name, int n_args, const std::string &block_name)
 {
-    fprintf(stderr, "VM: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
+    fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
             block_name.c_str());
     if (!functions.count(name))
     {
-        fprintf(stderr, "VM error: Unknown function <%s>.\n", name.c_str());
+        fprintf(stderr, "vm error: Unknown function <%s>.\n", name.c_str());
         exit(1);
     }
     if (block_name != "")
@@ -264,7 +264,7 @@ void DabVM::call_function_block(const DabValue &self, const DabFunction &fun, in
 {
     assert(blockfun.regular);
 
-    fprintf(stderr, "VM: call <%s> with block and %d arguments.\n", fun.name.c_str(), n_args);
+    fprintf(stderr, "vm: call <%s> with block and %d arguments.\n", fun.name.c_str(), n_args);
 
     if (fun.regular)
     {
@@ -795,7 +795,7 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
     else
     {
-        fprintf(stderr, "VM: cannot cast %d to %d.\n", (int)value.class_index(), (int)klass_index);
+        fprintf(stderr, "vm: cannot cast %d to %d.\n", (int)value.class_index(), (int)klass_index);
         exit(1);
     }
 }
@@ -805,7 +805,7 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
     if (!classes.count(index))
     {
         auto &parent = classes[parent_index];
-        fprintf(stderr, "VM: add class <%s> (parent = <%s>).\n", name.c_str(), parent.name.c_str());
+        fprintf(stderr, "vm: add class <%s> (parent = <%s>).\n", name.c_str(), parent.name.c_str());
         DabClass klass;
         klass.name             = name;
         klass.index            = index;
@@ -898,7 +898,7 @@ void DabVM::push_method(const std::string &name)
 
 void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
 {
-    fprintf(stderr, "VM: add function <%s>.\n", name.c_str());
+    fprintf(stderr, "vm: add function <%s>.\n", name.c_str());
     DabFunction function;
     function.address = address;
     function.name    = name;
@@ -927,7 +927,7 @@ void DabVM::extract(const std::string &name)
     {
         if (stack.size() == 0)
         {
-            fprintf(stderr, "VM: empty stack.\n");
+            fprintf(stderr, "vm: empty stack.\n");
             exit(1);
         }
         stack[stack.size() - 1].dump(output);
@@ -971,7 +971,7 @@ void DabVM::extract(const std::string &name)
     }
     else
     {
-        fprintf(stderr, "VM: unknown extract option <%s>.\n", name.c_str());
+        fprintf(stderr, "vm: unknown extract option <%s>.\n", name.c_str());
         exit(1);
     }
 }
@@ -1024,7 +1024,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
 
     if (others.size() > 1)
     {
-        fprintf(stderr, "VM: too many file arguments.\n");
+        fprintf(stderr, "vm: too many file arguments.\n");
         exit(1);
     }
 
@@ -1040,7 +1040,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         auto file     = fopen(filename, "rb");
         if (!file)
         {
-            fprintf(stderr, "VM: cannot open file <%s> for reading!\n", filename);
+            fprintf(stderr, "vm: cannot open file <%s> for reading!\n", filename);
             exit(1);
         }
         this->input      = file;

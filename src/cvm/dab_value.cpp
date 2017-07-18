@@ -216,7 +216,7 @@ DabValue DabValue::create_instance() const
     ret.data.type   = type;
     ret.data.object = proxy;
 
-    fprintf(stderr, "VM: proxy %p (strong %d): ! created\n", proxy, (int)proxy->count_strong);
+    fprintf(stderr, "vm: proxy %p (strong %d): ! created\n", proxy, (int)proxy->count_strong);
 
     return ret;
 }
@@ -244,7 +244,7 @@ DabValue DabValue::_get_instvar(const std::string &name)
 DabValue DabValue::get_instvar(const std::string &name)
 {
     auto ret = _get_instvar(name);
-    fprintf(stderr, "VM: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
+    fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
     ret.print(stderr);
     fprintf(stderr, "\n");
@@ -256,7 +256,7 @@ void DabValue::set_instvar(const std::string &name, const DabValue &value)
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
-    fprintf(stderr, "VM: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
+    fprintf(stderr, "vm: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
             (int)this->data.object->count_strong, name.c_str());
     value.print(stderr);
     fprintf(stderr, "\n");
@@ -324,7 +324,7 @@ void DabObjectProxy::retain()
     if (this->destroying)
         return;
     count_strong += 1;
-    fprintf(stderr, "VM: proxy %p (strong %d): + retained\n", this, (int)this->count_strong);
+    fprintf(stderr, "vm: proxy %p (strong %d): + retained\n", this, (int)this->count_strong);
 }
 
 void DabObjectProxy::release(DabValue *value)
@@ -332,7 +332,7 @@ void DabObjectProxy::release(DabValue *value)
     if (this->destroying)
         return;
     count_strong -= 1;
-    fprintf(stderr, "VM: proxy %p (strong %d): - released\n", this, (int)this->count_strong);
+    fprintf(stderr, "vm: proxy %p (strong %d): - released\n", this, (int)this->count_strong);
     if (count_strong == 0)
     {
         destroy(value);
@@ -343,7 +343,7 @@ void DabObjectProxy::destroy(DabValue *value)
 {
     (void)value;
     this->destroying = true;
-    fprintf(stderr, "VM: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
+    fprintf(stderr, "vm: proxy %p (strong %d): X destroy\n", this, (int)this->count_strong);
     delete object;
     delete this;
 }
