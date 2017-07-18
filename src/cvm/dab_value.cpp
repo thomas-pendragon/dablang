@@ -3,7 +3,7 @@
 void DabValue::dump(FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS", "OBJE",
-                                  "ARRY", "UIN8", "UI32", "UI64", "IN32", "METH", "PTR*"};
+                                  "ARRY", "UIN8", "UI32", "UI64", "IN32", "METH", "PTR*", "BYT*"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -54,6 +54,9 @@ int DabValue::class_index() const
         break;
     case TYPE_INTPTR:
         return CLASS_INTPTR;
+        break;
+    case TYPE_BYTEBUFFER:
+        return CLASS_BYTEBUFFER;
         break;
     default:
         fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
@@ -148,6 +151,13 @@ std::vector<DabValue> &DabValue::array() const
     return obj->array;
 }
 
+std::vector<uint8_t> &DabValue::bytebuffer() const
+{
+    assert(data.type == TYPE_BYTEBUFFER);
+    auto *obj = (DabByteBuffer *)data.object->object;
+    return obj->bytebuffer;
+}
+
 bool DabValue::truthy() const
 {
     switch (data.type)
@@ -186,6 +196,11 @@ DabValue DabValue::create_instance() const
     {
         object = new DabArray;
         type   = TYPE_ARRAY;
+    }
+    else if (data.fixnum == CLASS_BYTEBUFFER)
+    {
+        object = new DabByteBuffer;
+        type   = TYPE_BYTEBUFFER;
     }
     else
     {

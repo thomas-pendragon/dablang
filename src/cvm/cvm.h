@@ -112,6 +112,7 @@ enum
     TYPE_INT32,
     TYPE_METHOD,
     TYPE_INTPTR,
+    TYPE_BYTEBUFFER,
 };
 
 #include "../cshared/classes.h"
@@ -306,6 +307,7 @@ struct DabValue
     ~DabValue();
 
     std::vector<DabValue> &array() const;
+    std::vector<uint8_t> & bytebuffer() const;
 
     DabValue create_instance() const;
 
@@ -331,6 +333,11 @@ struct DabObject : public DabBaseObject
 struct DabArray : public DabBaseObject
 {
     std::vector<DabValue> array;
+};
+
+struct DabByteBuffer : public DabBaseObject
+{
+    std::vector<uint8_t> bytebuffer;
 };
 
 struct Stack

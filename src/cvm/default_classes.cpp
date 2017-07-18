@@ -248,4 +248,74 @@ void DabVM::define_default_classes()
     auto &method_class = define_builtin_class("Method", CLASS_METHOD);
     method_class.add_simple_function(
         "to_s", [this](DabValue self) { return std::string("@method(" + self.data.string + ")"); });
+
+    auto &bytebuffer_class = define_builtin_class("ByteBuffer", CLASS_BYTEBUFFER);
+    bytebuffer_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        auto &stack = $VM->stack;
+        auto  klass = stack.pop_value();
+        assert(klass.data.type == TYPE_CLASS);
+
+        auto instance = klass.create_instance();
+
+        auto _size = $VM->cast(stack.pop_value(), CLASS_FIXNUM);
+        auto size  = _size.data.fixnum;
+        instance.bytebuffer().resize(size);
+        stack.push_value(instance);
+    });
+    bytebuffer_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        auto arg1 = stack.pop_value();
+        assert(arg0.data.type == TYPE_BYTEBUFFER);
+        assert(arg1.data.type == TYPE_FIXNUM);
+        auto &a = arg0.bytebuffer();
+        auto  n = arg1.data.fixnum;
+        if (n < 0)
+            n = a.size() + n;
+        if (n < 0 || n >= (int64_t)a.size())
+            stack.push_value(nullptr);
+        else
+            stack.push_value(DabValue(CLASS_UINT8, a[n]));
+    });
+    bytebuffer_class.add_function("[]=", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 3);
+        assert(n_ret == 1);
+        auto arg0 = stack.pop_value();
+        auto arg2 = stack.pop_value();
+        auto arg1 = stack.pop_value();
+        assert(arg0.data.type == TYPE_BYTEBUFFER);
+        assert(arg1.data.type == TYPE_FIXNUM);
+        auto &a = arg0.bytebuffer();
+        auto  n = arg1.data.fixnum;
+        if (n < 0)
+            n = a.size() + n;
+        if (n < 0 || n >= (int64_t)a.size())
+        {
+            stack.push_value(nullptr);
+        }
+        else
+        {
+            a[n] = $VM->cast(arg2, CLASS_UINT8).data.num_uint8;
+            stack.push_value(nullptr);
+        }
+    });
+    bytebuffer_class.add_simple_function("to_s", [this](DabValue self) {
+        std::string ret;
+        auto &      a = self.bytebuffer();
+        for (size_t i = 0; i < a.size(); i++)
+        {
+            if (i)
+                ret += ", ";
+            char string[32];
+            sprintf(string, "%d", (int)a[i]);
+            ret += string;
+        }
+        return "[" + ret + "]";
+    });
 }

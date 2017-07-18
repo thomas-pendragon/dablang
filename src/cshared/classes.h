@@ -16,4 +16,5 @@ enum
     CLASS_UINT64        = 11,
     CLASS_UINT32        = 12,
     CLASS_INTPTR        = 13,
+    CLASS_BYTEBUFFER    = 14,
 };

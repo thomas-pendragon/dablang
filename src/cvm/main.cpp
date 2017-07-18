@@ -767,6 +767,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     {
         return DabValue(to, (uint8_t)value.data.fixnum);
     }
+    else if (from == CLASS_LITERALFIXNUM && to == CLASS_FIXNUM)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_FIXNUM;
+        copy.data.fixnum = value.data.fixnum;
+        return copy;
+    }
     else if (from_fixnum && to == CLASS_UINT32)
     {
         return DabValue(to, (uint32_t)value.data.fixnum);
