@@ -12,7 +12,7 @@ def execute(input, run_options)
   describe_action(input, '-', 'VM') do
     input = input.to_s.shellescape
     run_options = run_options
-    cmd = "timeout 10 ./bin/cvm #{run_options} < #{input}"
+    cmd = "./bin/cvm #{run_options} < #{input}"
 
     if true
       psystem cmd

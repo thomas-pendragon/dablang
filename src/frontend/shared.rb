@@ -46,7 +46,7 @@ def run_ruby_part(input, output, action, tool, options = '', input_as_arg = fals
     options = options.presence
     options = options.to_s if options
     input_part = input_as_arg ? ' ' : '<'
-    cmd = "timeout 10 ruby src/#{tool}/#{tool}.rb #{options} #{input_part} #{input} > #{output}"
+    cmd = "timeout 30 ruby src/#{tool}/#{tool}.rb #{options} #{input_part} #{input} > #{output}"
     begin
       psystem_noecho cmd
     rescue SystemCommandError => e
