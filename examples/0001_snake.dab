@@ -77,10 +77,25 @@ func main()
   puts(renderer);
 
   var frame = 0;
-  while (frame < 300)
+
+  var eventBuffer = ByteBuffer.new(2048);
+
+  while (true)
   {
-    var<IntPtr> event = nil;
-    var ret = SDL_PollEvent(event);
+    var ret = SDL_PollEvent(eventBuffer);
+    var flag1 = eventBuffer[0];
+    var flag2 = eventBuffer[1];
+    var test1 = flag1 == 0;
+    var test2 = flag2 == 1;
+
+    if (ret == 1)
+    {
+      if (test1 && test2) // SDL_QUIT
+      {
+        puts("QUIT");
+        exit(0);
+      }
+    }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
