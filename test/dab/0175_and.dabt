@@ -1,0 +1,27 @@
+## CODE
+
+func main()
+{
+  var<Uint8> p0 = 0;
+  var<Uint8> p1 = 1;
+
+  var a = p0 == 0;
+  var b = p1 == 1;
+
+  if (a && b)
+  {
+    print("ok");
+  }
+}
+
+## OPTIONS
+
+--no-opt
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+ok

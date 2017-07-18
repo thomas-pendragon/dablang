@@ -1,0 +1,25 @@
+## CODE
+
+func main()
+{
+  var<Int32> a = 2;
+  var b = 5;
+  var c = 2;
+  
+  puts(a == b);
+  puts(a == c);
+
+  puts(b == a);
+  puts(c == a);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+false
+true
+false
+true

@@ -79,9 +79,20 @@
             /*dump();*/                                                                            \
             assert(n_args == 2);                                                                   \
             assert(n_ret == 1);                                                                    \
-            auto arg1 = stack.pop_value();                                                         \
-            auto arg0 = stack.pop_value();                                                         \
-            bool test = false;                                                                     \
+            auto arg1       = stack.pop_value();                                                   \
+            auto arg0       = stack.pop_value();                                                   \
+            bool test       = false;                                                               \
+            auto arg0_class = arg0.class_index();                                                  \
+            auto arg1_class = arg1.class_index();                                                  \
+            if (arg0_class == CLASS_UINT8 || arg0_class == CLASS_LITERALFIXNUM ||                  \
+                arg0_class == CLASS_FIXNUM || arg0_class == CLASS_INT32)                           \
+            {                                                                                      \
+                if (arg1_class != CLASS_STRING)                                                    \
+                {                                                                                  \
+                    arg1 = $VM->cast(arg1, arg0_class);                                            \
+                }                                                                                  \
+            }                                                                                      \
+                                                                                                   \
             if (arg0.data.type != arg1.data.type)                                                  \
             {                                                                                      \
                 test = true op false;                                                              \
@@ -89,6 +100,14 @@
             else if (arg0.data.type == TYPE_FIXNUM)                                                \
             {                                                                                      \
                 test = arg0.data.fixnum op arg1.data.fixnum;                                       \
+            }                                                                                      \
+            else if (arg0.data.type == TYPE_UINT8)                                                 \
+            {                                                                                      \
+                test = arg0.data.num_uint8 op arg1.data.num_uint8;                                 \
+            }                                                                                      \
+            else if (arg0.data.type == TYPE_INT32)                                                 \
+            {                                                                                      \
+                test = arg0.data.num_int32 op arg1.data.num_int32;                                 \
             }                                                                                      \
             else if (arg0.data.type == TYPE_STRING)                                                \
             {                                                                                      \
@@ -99,6 +118,10 @@
                 test = arg0.data.fixnum op arg1.data.fixnum;                                       \
                 fprintf(stderr, "compare classes: %d %d %s -> %s\n", (int)arg0.data.fixnum,        \
                         (int)arg1.data.fixnum, STR(op), test ? "yes" : "no");                      \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                fprintf(stderr, "vm: unknown type to compare\n");                                  \
             }                                                                                      \
             stack.push(test);                                                                      \
         };                                                                                         \

@@ -780,6 +780,7 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
 
     auto from_fixnum = from == CLASS_LITERALFIXNUM || from == CLASS_FIXNUM;
+    auto to_fixnum   = to == CLASS_LITERALFIXNUM || to == CLASS_FIXNUM;
 
     if (from_fixnum && to == CLASS_UINT8)
     {
@@ -790,6 +791,20 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         DabValue copy;
         copy.data.type   = TYPE_FIXNUM;
         copy.data.fixnum = value.data.fixnum;
+        return copy;
+    }
+    else if (from == CLASS_UINT8 && to_fixnum)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_FIXNUM;
+        copy.data.fixnum = value.data.num_uint8;
+        return copy;
+    }
+    else if (from == CLASS_INT32 && to_fixnum)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_FIXNUM;
+        copy.data.fixnum = value.data.num_int32;
         return copy;
     }
     else if (from_fixnum && to == CLASS_UINT32)
@@ -809,6 +824,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         DabValue copy;
         copy.data.type   = TYPE_INTPTR;
         copy.data.intptr = nullptr;
+        return copy;
+    }
+    else if (from == CLASS_BYTEBUFFER && to == CLASS_INTPTR)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_INTPTR;
+        copy.data.intptr = &value.bytebuffer()[0];
         return copy;
     }
     else
