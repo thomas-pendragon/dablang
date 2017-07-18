@@ -56,7 +56,10 @@ void DabVM::kernel_print()
 
 bool DabVM::pop_frame(bool regular)
 {
-    fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
+    if (verbose)
+    {
+        fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
+    }
 
     int    frame_loc = frame_position;
     int    n_args    = number_of_args();
@@ -66,7 +69,10 @@ bool DabVM::pop_frame(bool regular)
 
     if (regular)
     {
-        fprintf(stderr, "vm: release %d local vars\n", (int)get_varcount());
+        if (verbose)
+        {
+            fprintf(stderr, "vm: release %d local vars\n", (int)get_varcount());
+        }
         for (size_t i = 0; i < get_varcount(); i++)
         {
             get_var(i).release();
@@ -83,13 +89,19 @@ bool DabVM::pop_frame(bool regular)
         {
             stack.push(retval);
         }
-        fprintf(stderr, "vm: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
+        if (verbose)
+        {
+            fprintf(stderr, "vm: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
+        }
         instructions.seek(prev_ip);
     }
 
     if (prev_pos == (size_t)-1)
     {
-        fprintf(stderr, "vm: pop last frame prev_ip = %zu\n", prev_ip);
+        if (verbose)
+        {
+            fprintf(stderr, "vm: pop last frame prev_ip = %zu\n", prev_ip);
+        }
         return false;
     }
 
@@ -242,8 +254,11 @@ void DabVM::push_constant(const DabValue &value)
 
 void DabVM::call(const std::string &name, int n_args, const std::string &block_name)
 {
-    fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
-            block_name.c_str());
+    if (verbose)
+    {
+        fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
+                block_name.c_str());
+    }
     if (!functions.count(name))
     {
         fprintf(stderr, "vm error: Unknown function <%s>.\n", name.c_str());
@@ -509,8 +524,11 @@ bool DabVM::execute_single(Stream &input)
     case OP_JMP:
     {
         auto mod = input.read_int16() - 3;
-        fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
-                (void *)(ip() + mod));
+        if (verbose)
+        {
+            fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
+                    (void *)(ip() + mod));
+        }
         instructions.seek(ip() + mod);
         break;
     }

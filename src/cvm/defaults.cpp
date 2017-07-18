@@ -190,7 +190,10 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
             auto value_data = value.data.intptr;
 
             auto return_value = (*int_symbol)(value_data);
-            fprintf(stderr, "vm: ffi int(void*): (%p) -> %d\n", value_data, return_value);
+            if ($VM->verbose)
+            {
+                fprintf(stderr, "vm: ffi int(void*): (%p) -> %d\n", value_data, return_value);
+            }
 
             stack.push_value(DabValue(CLASS_INT32, return_value));
         }
@@ -207,7 +210,10 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
             auto value_data = value.data.intptr;
 
             (*int_symbol)(value_data);
-            fprintf(stderr, "vm: ffi void(void*): (%p)\n", value_data);
+            if ($VM->verbose)
+            {
+                fprintf(stderr, "vm: ffi void(void*): (%p)\n", value_data);
+            }
 
             stack.push_value(DabValue(nullptr));
         }
