@@ -79,10 +79,6 @@ class DabNodeUnit < DabNode
     all_nodes(DabNodeConstant).index(node)
   end
 
-  def _items
-    [@constants.children, @classes.children, @functions.children]
-  end
-
   def compile(output)
     output.comment('Dab dev')
     output.print('')
@@ -126,7 +122,13 @@ class DabNodeUnit < DabNode
   end
 
   def formatted_source(options)
-    _items.flatten(1).map { |item| item.formatted_source(options) }.join("\n")
+    ret = []
+    [@constants, @classes, @functions].each do |list|
+      list.each do |item|
+        ret << item.formatted_source(options)
+      end
+    end
+    ret.join("\n")
   end
 
   def merge!(another_program)

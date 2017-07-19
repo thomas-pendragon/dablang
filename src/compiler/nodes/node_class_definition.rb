@@ -37,7 +37,7 @@ class DabNodeClassDefinition < DabNode
 
   def formatted_source(options)
     ret = "class #{identifier}\n{\n"
-    functions = @functions.children.map { |fun| fun.formatted_source(options) }
+    functions = @functions.map { |fun| fun.formatted_source(options) }
     ret += _indent(functions.join("\n"))
     ret += "}\n"
     ret
