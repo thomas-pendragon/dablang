@@ -1,11 +1,3 @@
-BUILTINS = %w[
-  print
-  exit
-  __usecount
-  __import_libc
-  __import_sdl
-].freeze
-
 class DabNode
   attr_reader :children
   attr_accessor :parent
@@ -134,8 +126,8 @@ class DabNode
   end
 
   def to_s(show_ids = true)
-    tt = self.my_type.type_string
-    tt = "#{tt}!".bold if self.my_type.concrete?
+    tt = self.my_type&.type_string
+    tt = "#{tt}!".bold if self.my_type&.concrete?
     tt = sprintf('(%s)', tt).white
     src = sprintf('%s:%d', self.source_file || '?', self.source_line || -1)
     flags = ''
@@ -283,14 +275,6 @@ class DabNode
 
   def root
     @parent ? @parent.root : self
-  end
-
-  def has_function?(id)
-    return true if BUILTINS.include?(id)
-    self.visit_all(DabNodeFunction) do |function|
-      return function if function.identifier == id
-    end
-    false
   end
 
   def add_source_part(part)

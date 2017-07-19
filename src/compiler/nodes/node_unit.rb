@@ -1,6 +1,14 @@
 require_relative 'node.rb'
 require_relative '../processors/create_attributes.rb'
 
+BUILTINS = %w[
+  print
+  exit
+  __usecount
+  __import_libc
+  __import_sdl
+].freeze
+
 class DabNodeUnit < DabNode
   attr_reader :constants
   attr_reader :functions
@@ -19,6 +27,14 @@ class DabNodeUnit < DabNode
     @class_numbers = STANDARD_CLASSES_REV.dup
     @labels = 0
     @constant_table = {}
+    rebuild_available_functions!
+  end
+
+  def rebuild_available_functions!
+    @available_functions = BUILTINS.map { |value| [value, true] }.to_h
+    @functions.each do |function|
+      @available_functions[function.identifier] = function
+    end
   end
 
   def class_number(id)
@@ -44,6 +60,7 @@ class DabNodeUnit < DabNode
 
   def add_function(function)
     @functions.insert(function)
+    @available_functions[function.identifier] = function
   end
 
   def add_class(klass)
@@ -124,6 +141,7 @@ class DabNodeUnit < DabNode
     end
     another_program.clear!
     rebuild_constant_table!
+    rebuild_available_functions!
   end
 
   def rebuild_constant_table!
@@ -138,5 +156,9 @@ class DabNodeUnit < DabNode
     self.constants.clear
     self.classes.clear
     @constant_table = {}
+  end
+
+  def has_function?(id)
+    @available_functions[id]
   end
 end
