@@ -1,5 +1,5 @@
 class DabNode
-  attr_reader :children
+  # attr_reader :children
   attr_accessor :parent
   attr_accessor :parent_info
   attr_accessor :dup_replacements
