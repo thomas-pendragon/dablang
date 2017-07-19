@@ -12,7 +12,7 @@ class DabNodeJump < DabNodeBaseJump
   end
 
   def condition
-    children[0]
+    self[0]
   end
 
   def compile(output)

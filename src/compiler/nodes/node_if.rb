@@ -14,15 +14,15 @@ class DabNodeIf < DabNode
   end
 
   def condition
-    children[0]
+    self[0]
   end
 
   def if_true
-    children[1]
+    self[1]
   end
 
   def if_false
-    children[2]
+    self[2]
   end
 
   def formatted_source(options)

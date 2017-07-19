@@ -10,7 +10,7 @@ class DabNodeListNode < DabNode
   end
 
   def value
-    children[0]
+    self[0]
   end
 
   def extra_dump

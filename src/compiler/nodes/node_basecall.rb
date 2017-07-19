@@ -7,7 +7,7 @@ class DabNodeBasecall < DabNode
   end
 
   def args
-    children
+    self[0..-1]
   end
 
   def block

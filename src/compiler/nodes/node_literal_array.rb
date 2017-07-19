@@ -12,7 +12,7 @@ class DabNodeLiteralArray < DabNode
   end
 
   def valuelist
-    children[0]
+    self[0]
   end
 
   def _compile_items(output)

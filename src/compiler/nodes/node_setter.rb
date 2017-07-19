@@ -11,11 +11,11 @@ class DabNodeSetter < DabNode
   end
 
   def reference
-    children[0]
+    self[0]
   end
 
   def value
-    children[1]
+    self[1]
   end
 
   def formatted_source(options)

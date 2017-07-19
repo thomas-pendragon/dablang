@@ -14,15 +14,15 @@ class DabNodeOperator < DabNode
   end
 
   def identifier
-    children[0]
+    self[0]
   end
 
   def left
-    children[1]
+    self[1]
   end
 
   def right
-    children[2]
+    self[2]
   end
 
   def compile(output)

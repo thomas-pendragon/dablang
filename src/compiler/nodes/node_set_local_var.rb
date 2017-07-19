@@ -33,7 +33,7 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def value
-    children[0]
+    self[0]
   end
 
   def real_identifier

@@ -8,11 +8,11 @@ class DabNodeCallBlock < DabNode
   end
 
   def body
-    children[0]
+    self[0]
   end
 
   def arglist
-    children[1]
+    self[1]
   end
 
   def formatted_source(options)

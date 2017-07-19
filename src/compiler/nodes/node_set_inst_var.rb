@@ -14,7 +14,7 @@ class DabNodeSetInstVar < DabNode
   end
 
   def value
-    children[0]
+    self[0]
   end
 
   def compile(output)

@@ -8,11 +8,11 @@ class DabNodeReferenceIndex < DabNodeReference
   end
 
   def base
-    children[0]
+    self[0]
   end
 
   def index
-    children[1]
+    self[1]
   end
 
   def formatted_source(options)

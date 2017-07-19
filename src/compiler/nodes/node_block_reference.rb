@@ -8,6 +8,6 @@ class DabNodeBlockReference < DabNode
   end
 
   def identifier
-    children[0]
+    self[0]
   end
 end

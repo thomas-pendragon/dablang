@@ -8,7 +8,7 @@ class DabNodeReferenceMember < DabNodeReference
   end
 
   def base
-    children[0]
+    self[0]
   end
 
   def name

@@ -11,11 +11,11 @@ class DabNodeWhile < DabNode
   end
 
   def condition
-    children[0]
+    self[0]
   end
 
   def on_block
-    children[1]
+    self[1]
   end
 
   def formatted_source(options)

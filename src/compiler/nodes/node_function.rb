@@ -29,7 +29,7 @@ class DabNodeFunction < DabNode
   end
 
   def return_type
-    children[3]&.dab_type || DabType.parse(nil)
+    self[3]&.dab_type || DabType.parse(nil)
   end
 
   def autovar_name
@@ -63,15 +63,15 @@ class DabNodeFunction < DabNode
   end
 
   def arglist
-    children[0]
+    self[0]
   end
 
   def blocks
-    children[1]
+    self[1]
   end
 
   def attrlist
-    children[2]
+    self[2]
   end
 
   def constants

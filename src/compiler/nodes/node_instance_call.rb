@@ -12,11 +12,11 @@ class DabNodeInstanceCall < DabNodeBasecall
   end
 
   def value
-    @children[0]
+    self[0]
   end
 
   def block
-    @children[1]
+    self[1]
   end
 
   def has_block?
@@ -24,11 +24,11 @@ class DabNodeInstanceCall < DabNodeBasecall
   end
 
   def identifier
-    @children[2]
+    self[2]
   end
 
   def args
-    children[3..-1]
+    self[3..-1]
   end
 
   def real_identifier

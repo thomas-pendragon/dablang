@@ -8,11 +8,11 @@ class DabNodeAttribute < DabNode
   end
 
   def name
-    children[0]
+    self[0]
   end
 
   def arglist
-    children[1..-1]
+    self[1..-1]
   end
 
   def real_identifier

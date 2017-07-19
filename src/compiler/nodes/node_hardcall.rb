@@ -12,11 +12,11 @@ class DabNodeHardcall < DabNodeBasecall
   end
 
   def identifier
-    children[0]
+    self[0]
   end
 
   def block
-    children[1]
+    self[1]
   end
 
   def real_identifier
@@ -24,7 +24,7 @@ class DabNodeHardcall < DabNodeBasecall
   end
 
   def args
-    children[2..-1]
+    self[2..-1]
   end
 
   def compile(output)

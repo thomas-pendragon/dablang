@@ -8,7 +8,7 @@ class DabNodeCast < DabNode
   end
 
   def value
-    children[0]
+    self[0]
   end
 
   def target_type
