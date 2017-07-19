@@ -21,12 +21,12 @@ class DabNodeCodeBlock < DabNode
   end
 
   def splice(node)
-    index = children.index(node)
+    index = @children.index(node)
     rest_block = DabNodeCodeBlock.new
-    children[(index + 1)..-1].each do |sub_rest|
+    self[(index + 1)..-1].each do |sub_rest|
       rest_block.insert(sub_rest)
     end
-    children.pop(rest_block.children.count + 1)
+    @children.pop(rest_block.count + 1)
     spliced = yield(rest_block)
     first_block = spliced[0]
     insert(DabNodeJump.new(first_block))
@@ -42,14 +42,14 @@ class DabNodeCodeBlock < DabNode
   end
 
   def jump_block?
-    return false unless children.count == 1
-    child = children[0]
+    return false unless @children.count == 1
+    child = @children[0]
     return false unless child.is_a? DabNodeJump
     child.target
   end
 
   def ends_with_jump?
-    ret = children.last
+    ret = @children.last
     return false unless ret.is_a? DabNodeJump
     ret
   end
@@ -103,7 +103,7 @@ class DabNodeCodeBlock < DabNode
   end
 
   def merge_with!(another_block)
-    another_block.children.each do |child|
+    another_block.each do |child|
       insert(child)
     end
     another_block.clear

@@ -93,23 +93,23 @@ class DabNodeUnit < DabNode
       output.separate
     end
 
-    [@constants.children, @classes.children].each do |list|
+    [@constants, @classes].each do |list|
       list.each do |node|
         node.compile(output)
       end
       output.separate
     end
-    @functions.children.each do |function|
+    @functions.each do |function|
       function.compile(output)
     end
     output.separate
     output.print('BREAK_LOAD')
     output.separate
-    @functions.children.each do |function|
+    @functions.each do |function|
       function.compile_body(output)
       output.separate
     end
-    @classes.children.each do |klass|
+    @classes.each do |klass|
       klass.functions.each do |function|
         function.compile_body(output)
         output.separate

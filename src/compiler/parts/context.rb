@@ -77,7 +77,7 @@ class DabContext < DabBaseContext
     list = _read_list(item_method, separator, accept_extra_separator: accept_extra_separator)
     return nil unless list
     ret = DabNode.new
-    list.children.map(&:value).each { |item| ret.insert(item) }
+    list.map(&:value).each { |item| ret.insert(item) }
     ret
   end
 

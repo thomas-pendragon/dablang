@@ -90,7 +90,7 @@ class DabNode
     ret.clear
     ret.parent = nil
     ret.parent_info = self.parent_info
-    self.children.each do |child|
+    @children.each do |child|
       ret.insert(child.dup(level + 1))
       ret.dup_replacements.merge!(child.dup_replacements)
     end
@@ -99,7 +99,7 @@ class DabNode
   end
 
   def fixup_dup_replacements!(dictionary)
-    self.children.each { |child| child.fixup_dup_replacements!(dictionary) }
+    @children.each { |child| child.fixup_dup_replacements!(dictionary) }
   end
 
   def insert(child, parent_info = nil)
@@ -391,7 +391,7 @@ class DabNode
   end
 
   def to_a
-    children
+    self[0..-1]
   end
 
   def <<(*args)
@@ -400,6 +400,10 @@ class DabNode
   end
 
   def node_index(node)
+    @children.index(node)
+  end
+
+  def index(node)
     @children.index(node)
   end
 
@@ -442,7 +446,7 @@ class DabNode
     return [] unless function_parent
     self_index = function_parent.node_index(self)
     ret = []
-    function_parent.children.each_with_index do |node, index|
+    function_parent.each_with_index do |node, index|
       next unless index > self_index
       break if block_given? && node.is_any_of?(klasses) && yield(node)
       ret += node.all_ordered_nodes(klasses, &block)

@@ -1,7 +1,7 @@
 class OptimizeBlockJump
   def run(block)
     return unless block.block_index != 0
-    return unless block.children.count == 1
+    return unless block.count == 1
     return unless jump = block.ends_with_jump?
     target = jump.target
     block.function.visit_all(DabNodeBaseJump) do |jump2|

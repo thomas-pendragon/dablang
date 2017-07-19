@@ -177,7 +177,7 @@ class DabNodeFunction < DabNode
   end
 
   def block_index(block)
-    blocks.children.index(block)
+    blocks.index(block)
   end
 
   def users

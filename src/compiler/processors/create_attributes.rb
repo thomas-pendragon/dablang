@@ -4,7 +4,7 @@ class CreateAttributes
 
     body = DabNodeCodeBlock.new
 
-    node.functions.children.each do |function|
+    node.functions.each do |function|
       function.create_attribute_init(body)
     end
 
