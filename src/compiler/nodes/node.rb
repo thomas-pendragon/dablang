@@ -460,11 +460,15 @@ class DabNode
     true
   end
 
+  def insert_at(index, node)
+    @children.insert(index, claim(node))
+  end
+
   def _insert_before(node, before_node)
     if parent.is_a?(DabNodeCodeBlock)
-      index = parent.children.index(before_node)
+      index = parent.index(before_node)
       raise 'no index' unless index
-      parent.children.insert(index, parent.claim(node))
+      parent.insert_at(index, node)
     else
       parent._insert_before(node, parent)
     end
