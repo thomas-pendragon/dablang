@@ -187,14 +187,14 @@ class DabNode
   end
 
   def self_all_nodes(klass)
-    klass = [klass] unless klass.is_a? Array
+    klass = [klass] unless klass.nil? || klass.is_a?(Array)
     ret = []
-    ret << self if klass.any? { |item| self.is_a? item }
+    ret << self if klass.nil? || klass.any? { |item| self.is_a?(item) }
     ret
   end
 
-  def all_nodes(klass)
-    klass = [klass] unless klass.is_a? Array
+  def all_nodes(klass = nil)
+    klass = [klass] unless klass.nil? || klass.is_a?(Array)
     ret = self_all_nodes(klass)
     children_nodes.each do |node|
       ret |= node.all_nodes(klass)
@@ -428,7 +428,7 @@ class DabNode
   # TODO: handle nested code blocks
   def all_ordered_nodes(klasses)
     ret = []
-    all_nodes(Object).each do |node|
+    all_nodes.each do |node|
       break if block_given? && node.is_any_of?(klasses) && yield(node)
       ret << node
     end
