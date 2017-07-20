@@ -17,7 +17,6 @@ class DabNode
     @children = []
     @self_errors = []
     @self_source_parts = []
-    @children_cache = [self]
   end
 
   def dup(level = 0)
@@ -32,7 +31,7 @@ class DabNode
       ret.dup_replacements.merge!(child.dup_replacements)
     end
     ret.fixup_dup_replacements!(dup_replacements) if level == 0
-    ret.rebuild_children_cache!
+    ret.mark_children_cache_dirty!
     ret
   end
 
@@ -43,19 +42,24 @@ class DabNode
   def insert(child, parent_info = nil)
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
-    rebuild_children_cache!
+    mark_children_cache_dirty!
     @children
   end
 
   def pre_insert(child, parent_info = nil)
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children.unshift(claim(child))
-    rebuild_children_cache!
+    mark_children_cache_dirty!
   end
 
-  def rebuild_children_cache!
-    @children_cache = _children_tree.freeze
-    parent&.rebuild_children_cache!
+  def mark_children_cache_dirty!
+    @children_cache_new = nil
+    parent&.mark_children_cache_dirty!
+  end
+
+  def _get_children_cache
+    @children_cache_new = _children_tree.freeze
+    @children_cache_new
   end
 
   def _children_tree
@@ -71,6 +75,7 @@ class DabNode
       child = DabNodeSymbol.new(child)
     end
 
+    child.parent&.mark_children_cache_dirty!
     child.parent = self
     child
   end
@@ -79,18 +84,12 @@ class DabNode
     ''
   end
 
-  def self_all_nodes(klass)
-    klass = [klass] unless klass.nil? || klass.is_a?(Array)
-    ret = []
-    ret << self if klass.nil? || klass.any? { |item| self.is_a?(item) }
-    ret
-  end
-
   def all_nodes(klass = nil)
-    klass = [klass] unless klass.nil? || klass.is_a?(Array)
-    ret = self_all_nodes(klass)
-    children_nodes.each do |node|
-      ret |= node.all_nodes(klass)
+    ret = _get_children_cache
+    if klass
+      ret = ret.select do |child|
+        child.is_any_of?(klass)
+      end
     end
     ret
   end
@@ -145,6 +144,7 @@ class DabNode
 
   def remove_child(node)
     @children -= [node]
+    mark_children_cache_dirty!
   end
 
   def add_error(error)
@@ -219,7 +219,7 @@ class DabNode
       @children[index] = to
     end
     @children.flatten!
-    rebuild_children_cache!
+    mark_children_cache_dirty!
   end
 
   def replace_with!(other)
@@ -263,7 +263,7 @@ class DabNode
 
   def clear
     @children = []
-    rebuild_children_cache!
+    mark_children_cache_dirty!
   end
 
   def map(&block)
@@ -344,7 +344,7 @@ class DabNode
 
   def insert_at(index, node)
     @children.insert(index, claim(node))
-    rebuild_children_cache!
+    mark_children_cache_dirty!
   end
 
   def _insert_before(node, before_node)
