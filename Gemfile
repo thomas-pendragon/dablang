@@ -10,5 +10,6 @@ gem 'json'
 gem 'pry'
 gem 'pry-byebug'
 gem 'rake'
+gem 'random-word', require: false
 gem 'rspec', require: false
 gem 'rubocop', require: false

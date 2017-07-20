@@ -24,6 +24,7 @@ GEM
     rainbow (2.2.2)
       rake
     rake (11.3.0)
+    random-word (2.0.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -59,6 +60,7 @@ DEPENDENCIES
   pry
   pry-byebug
   rake
+  random-word
   rspec
   rubocop
 
