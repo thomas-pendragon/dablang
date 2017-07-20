@@ -78,7 +78,8 @@ def ci_parallel(inputs)
   inputs[istart...iend] || []
 end
 
-def setup_tests(directory, extension, frontend_type, extras = [])
+def setup_tests(directory, extension, frontend_type = nil, extras = [])
+  frontend_type ||= "frontend_#{directory}"
   inputs = Dir.glob('test/' + directory + '/*.' + extension).sort.reverse
   inputs = ci_parallel(inputs)
   outputs = []
@@ -102,6 +103,7 @@ setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 setup_tests('debug', 'test', 'frontend_debug', [cvm])
 setup_tests('decompile', 'test', 'frontend_decompile')
+setup_tests('compiler_performance', 'test')
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'

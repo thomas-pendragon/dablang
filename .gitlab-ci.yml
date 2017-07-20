@@ -86,6 +86,12 @@ RSpec:
   - ruby
   script:
   - bundle exec rspec
+CompilerPerformanceSpec:
+  stage: prebuild
+  tags:
+  - ruby
+  script:
+  - bundle exec rake compiler_performance_spec
 Rubocop:
   stage: format
   tags:
