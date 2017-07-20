@@ -360,12 +360,6 @@ class DabNode
     @children.index(node)
   end
 
-  def scope_path
-    return '' unless parent
-    return '' if self.is_a? DabNodeFunction
-    parent.scope_path + '_' + parent.node_index(self).to_s
-  end
-
   # TODO: handle nested code blocks
   def all_ordered_nodes(klasses)
     ret = []
