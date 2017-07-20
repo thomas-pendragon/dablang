@@ -87,6 +87,7 @@ class DabNode
     @children = []
     @self_errors = []
     @self_source_parts = []
+    @children_cache = [self]
   end
 
   def dup(level = 0)
@@ -101,6 +102,7 @@ class DabNode
       ret.dup_replacements.merge!(child.dup_replacements)
     end
     ret.fixup_dup_replacements!(dup_replacements) if level == 0
+    ret.rebuild_children_cache!
     ret
   end
 
@@ -111,11 +113,27 @@ class DabNode
   def insert(child, parent_info = nil)
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
+    rebuild_children_cache!
+    @children
   end
 
   def pre_insert(child, parent_info = nil)
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children.unshift(claim(child))
+    rebuild_children_cache!
+  end
+
+  def rebuild_children_cache!
+    @children_cache = _children_tree.freeze
+    parent&.rebuild_children_cache!
+  end
+
+  def _children_tree
+    ret = [self]
+    @children.each do |child|
+      ret |= child._children_tree
+    end
+    ret
   end
 
   def claim(child)
@@ -286,6 +304,7 @@ class DabNode
       @children[index] = to
     end
     @children.flatten!
+    rebuild_children_cache!
   end
 
   def replace_with!(other)
@@ -329,6 +348,7 @@ class DabNode
 
   def clear
     @children = []
+    rebuild_children_cache!
   end
 
   def map(&block)
@@ -409,6 +429,7 @@ class DabNode
 
   def insert_at(index, node)
     @children.insert(index, claim(node))
+    rebuild_children_cache!
   end
 
   def _insert_before(node, before_node)
