@@ -14,7 +14,7 @@ class Object
   end
 
   def is_any_of?(list)
-    list = [list] unless list.is_a? Array
+    return self.is_a?(list) if list.is_a?(Class)
     list.any? { |item| self.is_a?(item) }
   end
 
