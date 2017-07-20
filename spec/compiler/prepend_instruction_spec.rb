@@ -26,6 +26,6 @@ describe DabNode do
 
     list = [@nop1, @new_nop, @call1, @nop2]
 
-    expect(@inner_block.children).to eq list
+    expect(@inner_block.to_a).to eq list
   end
 end

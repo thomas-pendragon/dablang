@@ -434,7 +434,7 @@ class DabNode
     return [] unless function_parent
     self_index = function_parent.node_index(self)
     ret = []
-    function_parent.children.each_with_index do |node, index|
+    function_parent.each_with_index do |node, index|
       ret += node.all_ordered_nodes(klass) if index < self_index
     end
     ret = function_parent.previous_nodes(klass) + [function_parent] + ret
