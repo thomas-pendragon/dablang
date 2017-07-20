@@ -67,7 +67,7 @@ class DabNode
     @children.any? { |item| item.run_processors!(type) }
   end
 
-  def run_all_processors!(type)
+  def sub_run_all_processors!(type)
     type = [type] unless type.is_a? Array
     list = type.flat_map { |subtype| self.class.send(subtype) }
     ret = false
@@ -75,6 +75,11 @@ class DabNode
       test = self.class.run_callback(self, item)
       ret ||= test
     end
+    ret
+  end
+
+  def run_all_processors!(type)
+    ret = sub_run_all_processors!(type)
     @children.each do |child|
       test = child.run_all_processors!(type)
       ret ||= test
