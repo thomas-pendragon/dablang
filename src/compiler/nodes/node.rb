@@ -31,13 +31,15 @@ class DabNode
   end
 
   def self.run_callback(item, callback)
-    case callback
-    when Class
-      callback.new.run(item)
-    when Symbol
-      item.send(callback)
-    else
-      raise "unknown callback #{callback.class}"
+    dab_benchmark(callback) do
+      case callback
+      when Class
+        callback.new.run(item)
+      when Symbol
+        item.send(callback)
+      else
+        raise "unknown callback #{callback.class}"
+      end
     end
   end
 
