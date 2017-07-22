@@ -14,7 +14,6 @@
 
 - IDE
 - package management
-- game demo
 - web demo
 - separate debugging app
     - ncurses
@@ -22,16 +21,14 @@
 
 ## Language ##
 
+- structures (with C memory mapping)
 - comparing `"abc" > 123`
 - Rings support
 - extra opcodes for void calls
-- type: hash
-- type: set
-- type: range
-- type: regexp
 - class parameters (Foo<String>)
     - typed arrays
-- nullables and non-null force
+- nullables (`String?`) and checking if regular types (`String`) are not nil
+- final type checks (`String!`)
 - constructors/destructors should call whole chain
 - constructors with parameters
 - subclassing: final functions
@@ -42,12 +39,15 @@
   - yield without block should throw
 - keyword arguments
 - namespaces
-- raw pointers, byte operations
 - syntax for functions with required block
 - common syntax for vars and arguments: `func foo(a<String>); var a<String>;`
 
 ## Standard library ##
 
+- type: hash
+- type: set
+- type: range
+- type: regexp
 - Array.sort
 - Array.max
 - Array.min
@@ -61,8 +61,6 @@
 - debug: should disasm single function at a time
 
 ## Assembler ##
-
-- remove `NOP`s, merge labels
 
 ## Testing ##
 
