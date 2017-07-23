@@ -89,3 +89,4 @@
 		- weak arrays
 - native compilation
 - lexer: pass actual EOF mark to compiler (see 59)
+- new format for Dab binary with headers
