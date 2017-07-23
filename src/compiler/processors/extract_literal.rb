@@ -7,7 +7,7 @@ class ExtractLiteral
     if literal.parent.is_a? DabNodeConstant
       false
     else
-      replacement = literal.root.add_constant(literal)
+      replacement = literal.root.add_constant(literal.dup)
       parent.replace_child(literal, replacement)
       true
     end
