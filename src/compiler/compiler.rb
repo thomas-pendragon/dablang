@@ -75,13 +75,18 @@ dab_benchmark('compile') do
       end
       break if check_status
       break if program.has_errors?
-      optimize_status = dab_benchmark('optimize') do
-        program.run_processors!([$opt ? :optimize_callbacks : nil].compact)
+      next if $opt && dab_benchmark('optimize') do
+                program.run_processors!(:optimize_callbacks)
+              end
+      next if dab_benchmark('lower') do
+        program.run_processors!([:lower_callbacks])
       end
-      next if optimize_status
-      next if program.run_processors!([:lower_callbacks])
-      next if program.run_processors!([$strip ? :strip_callbacks : nil].compact)
-      next if program.run_processors!([:flatten_callbacks])
+      next if $strip && dab_benchmark('strip') do
+        program.run_processors!([:strip_callbacks].compact)
+      end
+      next if dab_benchmark('flatten') do
+        program.run_processors!([:flatten_callbacks])
+      end
       break
     end
   end
