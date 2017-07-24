@@ -15,7 +15,7 @@ class DabNodeFunction < DabNode
   optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
-  def initialize(identifier, body, arglist, inline, attrlist = nil, rettype = nil)
+  def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
     @identifier = identifier
     insert(arglist || DabNode.new, 'arglist')
