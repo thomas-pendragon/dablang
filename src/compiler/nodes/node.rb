@@ -104,21 +104,6 @@ class DabNode
     children_nodes.each { |node| node.visit_all(klass, &block) }
   end
 
-  def visit_all_and_replace(klass, &block)
-    @children = @children.map do |child|
-      value = if child.is_a? klass
-                yield(child)
-              elsif child.is_a? DabNode
-                child.visit_all_and_replace(klass, &block)
-                child
-              else
-                child
-              end
-      value.parent = self
-      value
-    end
-  end
-
   def children_nodes
     @children.select { |child| child.is_a? DabNode }
   end
