@@ -1,6 +1,6 @@
 module LocalvarDefinitionConcern
   def var_definition
-    @var_definition ||= var_definitions&.first
+    var_definitions&.first
   end
 
   def var_definitions
