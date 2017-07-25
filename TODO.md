@@ -41,6 +41,7 @@
 - namespaces
 - syntax for functions with required block
 - common syntax for vars and arguments: `func foo(a<String>); var a<String>;`
+- coroutines
 
 ## Standard library ##
 
