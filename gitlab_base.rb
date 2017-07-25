@@ -36,7 +36,8 @@ stage_jobs = {
 }
 
 split = {
-  'spec' => 6,
+  'spec' => 10,
+  'asm_spec' => 2,
 }
 
 compilers.each do |compiler, env|

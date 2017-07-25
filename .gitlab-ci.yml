@@ -116,60 +116,96 @@ Build g++-4.7:
   script: *3
   artifacts: *4
   variables: *5
-Test g++-4.7 spec 0 6:
+Test g++-4.7 spec 0 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '0'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: &7
   - Build g++-4.7
-Test g++-4.7 spec 1 6:
+Test g++-4.7 spec 1 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '1'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 2 6:
+Test g++-4.7 spec 2 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '2'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 3 6:
+Test g++-4.7 spec 3 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '3'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 4 6:
+Test g++-4.7 spec 4 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '4'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 5 6:
+Test g++-4.7 spec 5 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: g++-4.7
     CI_PARALLEL_INDEX: '5'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *7
+Test g++-4.7 spec 6 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '6'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *7
+Test g++-4.7 spec 7 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '7'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *7
+Test g++-4.7 spec 8 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '8'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *7
+Test g++-4.7 spec 9 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: g++-4.7
+    CI_PARALLEL_INDEX: '9'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *7
 Test g++-4.7 vm_spec:
   stage: test
@@ -212,60 +248,96 @@ Build clang++-3.5:
   script: *3
   artifacts: *4
   variables: *13
-Test clang++-3.5 spec 0 6:
+Test clang++-3.5 spec 0 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '0'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: &14
   - Build clang++-3.5
-Test clang++-3.5 spec 1 6:
+Test clang++-3.5 spec 1 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '1'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *14
-Test clang++-3.5 spec 2 6:
+Test clang++-3.5 spec 2 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '2'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *14
-Test clang++-3.5 spec 3 6:
+Test clang++-3.5 spec 3 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '3'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *14
-Test clang++-3.5 spec 4 6:
+Test clang++-3.5 spec 4 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '4'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *14
-Test clang++-3.5 spec 5 6:
+Test clang++-3.5 spec 5 10:
   stage: test
   tags: *1
   script: *6
   variables:
     CXX: clang++-3.5
     CI_PARALLEL_INDEX: '5'
-    CI_PARALLEL_TOTAL: '6'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *14
+Test clang++-3.5 spec 6 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '6'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *14
+Test clang++-3.5 spec 7 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '7'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *14
+Test clang++-3.5 spec 8 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '8'
+    CI_PARALLEL_TOTAL: '10'
+  dependencies: *14
+Test clang++-3.5 spec 9 10:
+  stage: test
+  tags: *1
+  script: *6
+  variables:
+    CXX: clang++-3.5
+    CI_PARALLEL_INDEX: '9'
+    CI_PARALLEL_TOTAL: '10'
   dependencies: *14
 Test clang++-3.5 vm_spec:
   stage: test
