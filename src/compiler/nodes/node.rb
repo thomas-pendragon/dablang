@@ -214,10 +214,12 @@ class DabNode
   def replace_child(from, to)
     to = [] if to.nil?
     to = [to] unless to.is_a? Array
-    to = to.map { |item| claim(item) }
-    if index = @children.index(from)
-      @children[index] = to
+    unless index = @children.index(from)
+      raise 'replace_child: source not found'
     end
+    from.remove!
+    to = to.map { |item| claim(item) }
+    @children.insert(index, to)
     @children.flatten!
     mark_children_cache_dirty!
   end
