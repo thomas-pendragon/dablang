@@ -1,0 +1,35 @@
+## CODE
+
+func foo(a)
+{
+  if (a)
+  {
+  }
+  if (a)
+  {
+  }
+}
+
+## OPTIONS
+
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 JMP_IF L1
+                                 JMP L1
+                   L1:
+                                 PUSH_ARG 0
+                                 JMP_IF L2
+                                 JMP L2
+                   L2:
+                                 PUSH_NIL 
+                                 RETURN
