@@ -6,7 +6,7 @@ class DabNode
   include DabNodeModuleProcessors
 
   # attr_reader :children
-  attr_accessor :parent
+  attr_reader :parent
   attr_accessor :parent_info
   attr_accessor :dup_replacements
 
@@ -24,7 +24,7 @@ class DabNode
     ret.dup_replacements.clear
     ret.dup_replacements[self] = ret
     ret.clear
-    ret.parent = nil
+    ret._set_parent(nil)
     ret.parent_info = self.parent_info
     @children.each do |child|
       ret.insert(child.dup(level + 1))
@@ -33,6 +33,10 @@ class DabNode
     ret.fixup_dup_replacements!(dup_replacements) if level == 0
     ret.mark_children_cache_dirty!
     ret
+  end
+
+  def _set_parent(parent)
+    @parent = parent
   end
 
   def fixup_dup_replacements!(dictionary)
@@ -75,8 +79,10 @@ class DabNode
       child = DabNodeSymbol.new(child)
     end
 
-    child.parent&.mark_children_cache_dirty!
-    child.parent = self
+    if child.parent
+      child.remove!
+    end
+    child._set_parent(self)
     child
   end
 
@@ -144,6 +150,7 @@ class DabNode
 
   def remove_child(node)
     @children -= [node]
+    node._set_parent(nil)
     mark_children_cache_dirty!
   end
 

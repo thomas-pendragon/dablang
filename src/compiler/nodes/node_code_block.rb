@@ -26,7 +26,7 @@ class DabNodeCodeBlock < DabNode
     self[(index + 1)..-1].each do |sub_rest|
       rest_block.insert(sub_rest)
     end
-    @children.pop(rest_block.count + 1)
+    @children.pop(1)
     spliced = yield(rest_block)
     first_block = spliced[0]
     insert(DabNodeJump.new(first_block))
