@@ -24,6 +24,7 @@
 - separate debugging app
     - ncurses
     - disassembler support
+- automated OpenGL import
 
 ## Language ##
 
