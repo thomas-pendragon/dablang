@@ -25,6 +25,7 @@
     - ncurses
     - disassembler support
 - automated OpenGL import
+- automated libc import
 
 ## Language ##
 
