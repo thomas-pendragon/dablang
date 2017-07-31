@@ -147,9 +147,9 @@ class DabNode
   end
 
   def remove_child(node)
+    mark_children_cache_dirty!
     @children -= [node]
     node._set_parent(nil)
-    mark_children_cache_dirty!
   end
 
   def add_error(error)
