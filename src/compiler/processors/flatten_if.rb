@@ -6,7 +6,7 @@ class FlattenIf
       if_true.insert(DabNodeJump.new(continue_block))
       if_false&.insert(DabNodeJump.new(continue_block))
       condition_block = DabNodeCodeBlock.new
-      ifjump = DabNodeConditionalJump.new(node.condition, if_true, if_false || continue_block)
+      ifjump = DabNodeConditionalJump.new(node.condition.dup, if_true, if_false || continue_block)
       condition_block.insert(ifjump)
       [condition_block, if_true, if_false].compact
     end
