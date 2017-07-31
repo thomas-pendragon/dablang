@@ -43,10 +43,9 @@ class DabNode
   end
 
   def insert(child, parent_info = nil)
+    mark_children_cache_dirty!
     child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
-    mark_children_cache_dirty!
-    @children
   end
 
   def pre_insert(child, parent_info = nil)
