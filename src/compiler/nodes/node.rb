@@ -217,6 +217,7 @@ class DabNode
   end
 
   def replace_child(from, to)
+    mark_children_cache_dirty!
     to = [] if to.nil?
     to = [to] unless to.is_a? Array
     unless index = @children.index(from)
