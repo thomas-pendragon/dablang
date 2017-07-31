@@ -20,18 +20,32 @@ class DabNodeCodeBlock < DabNode
     lines.join("\n") + "\n"
   end
 
-  def splice(node)
-    index = @children.index(node)
-    rest_block = DabNodeCodeBlock.new
-    self[(index + 1)..-1].each do |sub_rest|
-      rest_block.insert(sub_rest)
+  def splice(spliced_node)
+    spliced_index = index(spliced_node)
+
+    pre_block = DabNodeCodeBlock.new
+    post_block = DabNodeCodeBlock.new
+
+    each_with_index do |node, index|
+      node._set_parent(nil)
+      pre_block << node if index < spliced_index
+      post_block << node if index > spliced_index
     end
-    @children.pop(1)
-    spliced = yield(rest_block)
+    clear
+    spliced = yield(post_block)
+
+    spliced.each { |node| raise 'splice block must yield CodeBlock!' unless node.is_a?(DabNodeCodeBlock) }
+
     first_block = spliced[0]
-    insert(DabNodeJump.new(first_block))
-    blocks = [self, spliced, rest_block].flatten
+    pre_block.insert(DabNodeJump.new(first_block))
+
+    blocks = [pre_block, spliced, post_block].flatten
     blocks.each { |block| block.parent_info = nil }
+
+    function&.all_nodes(DabNodeBaseJump)&.each do |node|
+      node.replace_target!(self, pre_block)
+    end
+
     replace_with!(blocks)
   end
 
