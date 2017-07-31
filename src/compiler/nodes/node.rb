@@ -31,7 +31,6 @@ class DabNode
       ret.dup_replacements.merge!(child.dup_replacements)
     end
     ret.fixup_dup_replacements!(dup_replacements) if level == 0
-    ret.mark_children_cache_dirty!
     ret
   end
 
