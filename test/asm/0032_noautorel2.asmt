@@ -28,11 +28,12 @@ Instructions should pop return value if not used.
                                  SETV_NEW_ARRAY 0, 2
                                  PUSH_NUMBER 3
                                  SETV_NEW_ARRAY 1, 1
-/* var 0 autov  */               PUSH_VAR 0
-/* var 1 autov  */               PUSH_VAR 1
+/* var 0 %autov */               PUSH_VAR 0
+/* var 1 %autov */               PUSH_VAR 1
                                  PUSH_SYMBOL "+"
-/* op           */               CALL 2
+/* op +         */               CALL 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

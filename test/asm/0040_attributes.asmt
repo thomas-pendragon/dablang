@@ -60,9 +60,10 @@ func another_attribute(method, arg1, arg2)
                                  POP 1
                                  PUSH_METHOD foo
 /* 14           */               PUSH_CONSTANT 1
-/* foo          */               PUSH_CONSTANT 0
+/* "foo"        */               PUSH_CONSTANT 0
 /* another_attr */               PUSH_CONSTANT 2
                                  CALL 3
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

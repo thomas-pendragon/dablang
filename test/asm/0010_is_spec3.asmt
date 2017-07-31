@@ -50,7 +50,7 @@ func bar()
                                  JMP_IF L2
                                  JMP L3
                    L2:
-/* got string   */               PUSH_CONSTANT 1
+/* "got string" */               PUSH_CONSTANT 1
                                  SYSCALL 0
                                  POP 1
                                  JMP L3
@@ -62,7 +62,7 @@ func bar()
                                  JMP_IF L5
                                  JMP L6
                    L5:
-/* got fixnum   */               PUSH_CONSTANT 0
+/* "got fixnum" */               PUSH_CONSTANT 0
                                  SYSCALL 0
                                  POP 1
                                  JMP L6
@@ -72,7 +72,7 @@ func bar()
  
                    Fbar:
                                  STACK_RESERVE 0
-/* str          */               PUSH_CONSTANT 2
+/* "str"        */               PUSH_CONSTANT 2
 /* __foo_Litera */               PUSH_CONSTANT 5
                                  HARDCALL 1
                                  POP 1
@@ -85,7 +85,7 @@ func bar()
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
-/* got string   */               PUSH_CONSTANT 1
+/* "got string" */               PUSH_CONSTANT 1
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -93,8 +93,9 @@ func bar()
  
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
-/* got fixnum   */               PUSH_CONSTANT 0
+/* "got fixnum" */               PUSH_CONSTANT 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+

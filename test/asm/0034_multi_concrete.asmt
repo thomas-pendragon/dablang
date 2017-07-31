@@ -14,6 +14,8 @@ func foo()
 
 ## OPTIONS
 
+
+
 ## EXPECT
 
 /* Dab dev      */                
@@ -53,7 +55,7 @@ func foo()
 /* __spec_Liter */               PUSH_CONSTANT 4
                                  HARDCALL 1
                                  POP 1
-/* A            */               PUSH_CONSTANT 0
+/* "A"          */               PUSH_CONSTANT 0
 /* __spec_Liter */               PUSH_CONSTANT 5
                                  HARDCALL 1
                                  POP 1
@@ -62,7 +64,7 @@ func foo()
  
                    F__spec_LiteralFixnum:
                                  STACK_RESERVE 0
-/* LiteralFixn  */               PUSH_CONSTANT 1
+/* "LiteralFixn */               PUSH_CONSTANT 1
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -70,8 +72,9 @@ func foo()
  
                    F__spec_LiteralString:
                                  STACK_RESERVE 0
-/* LiteralStri  */               PUSH_CONSTANT 2
+/* "LiteralStri */               PUSH_CONSTANT 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

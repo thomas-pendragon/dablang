@@ -22,8 +22,8 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 1
-/* allocated s  */               SETV_CONSTANT 0, 0
-/* var 0 autov  */               PUSH_VAR 0
+/* "allocated s */               SETV_CONSTANT 0, 0
+/* var 0 %autov */               PUSH_VAR 0
 /* String       */               PUSH_CLASS 1
 /* new          */               PUSH_CONSTANT 1
                                  INSTCALL 1
@@ -31,3 +31,4 @@ func foo()
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

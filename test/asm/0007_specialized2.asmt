@@ -41,7 +41,7 @@ func bar()
  
                    Fbar:
                                  STACK_RESERVE 0
-/* str          */               PUSH_CONSTANT 1
+/* "str"        */               PUSH_CONSTANT 1
 /* __foo_Litera */               PUSH_CONSTANT 2
                                  HARDCALL 1
                                  POP 1
@@ -50,8 +50,9 @@ func bar()
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
-/* LiteralStri  */               PUSH_CONSTANT 0
+/* "LiteralStri */               PUSH_CONSTANT 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+

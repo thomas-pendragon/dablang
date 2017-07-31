@@ -25,9 +25,10 @@ func foo()
                                  STACK_RESERVE 0
 /* 1            */               PUSH_CONSTANT 1
 /* 2            */               PUSH_CONSTANT 2
-/*              */               PUSH_CONSTANT 0
-/* op           */               CALL 2
+/* +            */               PUSH_CONSTANT 0
+/* op +         */               CALL 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+

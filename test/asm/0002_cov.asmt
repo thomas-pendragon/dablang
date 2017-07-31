@@ -24,9 +24,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* Test         */               PUSH_CONSTANT 0
+/* "Test"       */               PUSH_CONSTANT 0
                                  COV 1, 3
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+
