@@ -76,7 +76,7 @@ class DabNodeUnit < DabNode
   end
 
   def constant_index(node)
-    all_nodes(DabNodeConstant).index(node)
+    @constants.index(node)
   end
 
   def compile(output)
