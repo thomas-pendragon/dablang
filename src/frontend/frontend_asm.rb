@@ -17,6 +17,18 @@ def compile(input, output, options)
   run_ruby_part(input, output, 'compile', 'compiler', options, true)
 end
 
+def write_new_testspec(filename, data)
+  File.open(filename, 'wb') do |file|
+    data.each do |key, value|
+      file << "## #{key.upcase}\n"
+      file << "\n"
+      file << value
+      file << "\n"
+      file << "\n"
+    end
+  end
+end
+
 def run_test(settings)
   input = settings[:input]
   test_output_dir = settings[:test_output_dir] || '.'
@@ -41,7 +53,14 @@ def run_test(settings)
   expected = data[:expect].strip
 
   actual = File.read(asm).strip
-  compare_output(info, actual, expected)
+  begin
+    compare_output(info, actual, expected)
+  rescue DabCompareError
+    raise unless $autofix
+    new_data = data.dup
+    new_data[:expect] = actual.strip
+    write_new_testspec(input, new_data)
+  end
 
   File.open(out, 'wb') { |f| f << '1' }
 end
