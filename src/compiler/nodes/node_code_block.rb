@@ -56,7 +56,7 @@ class DabNodeCodeBlock < DabNode
 
   def all_jump_labels
     ret = []
-    visit_all(DabNodeBaseJump) do |jump|
+    all_nodes(DabNodeBaseJump).each do |jump|
       ret |= jump.targets
     end
     ret.map(&:block_index)
