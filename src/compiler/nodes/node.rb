@@ -271,6 +271,7 @@ class DabNode
   end
 
   def sort_by!(&block)
+    mark_children_cache_dirty!
     @children.sort_by!(&block)
   end
 
