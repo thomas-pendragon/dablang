@@ -35,6 +35,7 @@ class DabNode
   end
 
   def _set_parent(parent)
+    @parent&.mark_children_cache_dirty!
     @parent = parent
   end
 
