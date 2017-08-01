@@ -98,15 +98,6 @@ class DabNode
     ret
   end
 
-  def visit_all(klass, options = {}, &block)
-    klass = [klass] unless klass.is_a? Array
-    if klass.any? { |item| self.is_a? item }
-      yield(self) unless options[:skip_self]
-    end
-
-    children_nodes.each { |node| node.visit_all(klass, &block) }
-  end
-
   def children_nodes
     @children.select { |child| child.is_a? DabNode }
   end
