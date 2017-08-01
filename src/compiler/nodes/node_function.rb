@@ -123,11 +123,7 @@ class DabNodeFunction < DabNode
   end
 
   def n_local_vars
-    count = 0
-    visit_all(DabNodeDefineLocalVar) do
-      count += 1
-    end
-    count
+    all_nodes(DabNodeDefineLocalVar).count
   end
 
   def formatted_source(options)
