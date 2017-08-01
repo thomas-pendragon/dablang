@@ -98,10 +98,6 @@ class DabNode
     ret
   end
 
-  def children_nodes
-    @children.select { |child| child.is_a? DabNode }
-  end
-
   def count
     @children.count
   end
