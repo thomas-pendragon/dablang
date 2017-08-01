@@ -4,7 +4,7 @@ class OptimizeBlockJump
     return unless block.count == 1
     return unless jump = block.ends_with_jump?
     target = jump.target
-    block.function.visit_all(DabNodeBaseJump) do |jump2|
+    block.function.all_nodes(DabNodeBaseJump).each do |jump2|
       jump2.replace_target!(block, target)
     end
     block.remove!
