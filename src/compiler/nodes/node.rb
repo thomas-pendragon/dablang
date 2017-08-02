@@ -61,12 +61,16 @@ class DabNode
   end
 
   def _get_children_cache
-    old_list = @children_cache_new
-    new_list = _children_tree
-    if old_list && (new_list != old_list)
-      raise 'mismatch'
+    if false # TODO: extra debug flag
+      old_list = @children_cache_new
+      new_list = _children_tree
+      if old_list && (new_list != old_list)
+        raise 'mismatch'
+      end
+      @children_cache_new ||= new_list
+    else
+      @children_cache_new ||= _children_tree
     end
-    @children_cache_new ||= new_list
     @children_cache_new
   end
 
