@@ -17,6 +17,7 @@ class DabNode
     @children = []
     @self_errors = []
     @self_source_parts = []
+    @children_cache_new_class = {}
   end
 
   def dup(level = 0)
@@ -57,6 +58,7 @@ class DabNode
 
   def mark_children_cache_dirty!
     @children_cache_new = nil
+    @children_cache_new_class = {}
     parent&.mark_children_cache_dirty!
   end
 
@@ -100,12 +102,10 @@ class DabNode
 
   def all_nodes(klass = nil)
     ret = _get_children_cache
-    if klass
-      ret = ret.select do |child|
-        child.is_any_of?(klass)
-      end
+    return ret unless klass
+    @children_cache_new_class[klass] ||= ret.select do |child|
+      child.is_any_of?(klass)
     end
-    ret
   end
 
   def count
