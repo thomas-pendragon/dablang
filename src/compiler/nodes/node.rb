@@ -77,7 +77,7 @@ class DabNode
   def _children_tree
     ret = [self]
     @children.each do |child|
-      ret |= child._children_tree
+      ret += child._children_tree
     end
     ret
   end
