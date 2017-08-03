@@ -53,15 +53,30 @@ module DabNodeModuleProcessors
   end
 
   def run_processors!(type)
-    type = [type] unless type.is_a? Array
-    list = type.flat_map { |subtype| self.class.send(subtype) }
+    all_nodes.each do |node|
+      return true if node._self_run_processors!(type)
+    end
+    false
+  end
+
+  def _self_run_processors!(type)
+    list = _processors(type)
     list.each do |item|
       if self.class.run_callback(self, item)
         err "Run: #{self.class} #{item}\n".yellow.bold if $debug
         return true
       end
     end
-    @children.any? { |item| item.run_processors!(type) }
+    false
+  end
+
+  def _processors(type)
+    @processors_cache ||= {}
+    unless @processors_cache[type]
+      list = self.class.send(type)
+      @processors_cache[type] = list
+    end
+    @processors_cache[type]
   end
 
   def sub_run_all_processors!(type)
