@@ -79,13 +79,13 @@ dab_benchmark('compile') do
                 program.run_processors!(:optimize_callbacks)
               end
       next if dab_benchmark('lower') do
-        program.run_processors!([:lower_callbacks])
+        program.run_processors!(:lower_callbacks)
       end
       next if $strip && dab_benchmark('strip') do
-        program.run_processors!([:strip_callbacks].compact)
+        program.run_processors!(:strip_callbacks)
       end
       next if dab_benchmark('flatten') do
-        program.run_processors!([:flatten_callbacks])
+        program.run_processors!(:flatten_callbacks)
       end
       break
     end
