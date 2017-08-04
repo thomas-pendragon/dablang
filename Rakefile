@@ -202,3 +202,7 @@ task :example, [:number] => [cvm] do |_t, args|
   input = Dir.glob(sprintf('examples/%04d*', number)).first
   psystem("ruby src/frontend/frontend_example.rb #{input}")
 end
+
+task :benchmark do
+  psystem("git-benchmark performance-base..HEAD 'ruby src/compiler/compiler.rb tmp/test_compiler_performance_0001_random.dab'")
+end
