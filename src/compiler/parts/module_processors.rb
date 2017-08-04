@@ -71,12 +71,9 @@ module DabNodeModuleProcessors
   end
 
   def _processors(type)
-    @processors_cache ||= {}
-    unless @processors_cache[type]
-      list = self.class.send(type)
-      @processors_cache[type] = list
-    end
-    @processors_cache[type]
+    $processors_cache ||= {}
+    $processors_cache[self.class] ||= {}
+    $processors_cache[self.class][type] ||= self.class.send(type)
   end
 
   def sub_run_all_processors!(type)
