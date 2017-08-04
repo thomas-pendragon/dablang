@@ -77,7 +77,7 @@ module DabNodeModuleProcessors
   end
 
   def sub_run_all_processors!(type)
-    list = self.class.send(type)
+    list = _processors(type)
     ret = false
     list.each do |item|
       test = self.class.run_callback(self, item)
