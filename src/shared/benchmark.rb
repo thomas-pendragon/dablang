@@ -15,6 +15,7 @@ def dab_benchmark(name)
       name: name,
       time: 0.0,
       children: {},
+      calls: 0,
     }
   end
 
@@ -27,6 +28,7 @@ def dab_benchmark(name)
   finish = Time.now
 
   data[:time] += finish - start
+  data[:calls] += 1
 
   $dab_benchmark_stack.pop
 
@@ -37,7 +39,8 @@ def _dab_benchmark_print(file, level, list, subtotal, total)
   list = list.values.sort_by { |item| -item[:time] }
   list.each do |item|
     len = 120 - level * 2
-    file.printf("%s%-#{len}s | %8.4fs |  %6.2f%% | %6.2f%%\n", ' ' * (level * 2), item[:name], item[:time], 100.0 * item[:time] / subtotal, 100.0 * item[:time] / total)
+    file.printf("%9d | %s%-#{len}s | %8.4fs |  %6.2f%% | %6.2f%%\n", item[:calls], ' ' * (level * 2),
+                item[:name], item[:time], 100.0 * item[:time] / subtotal, 100.0 * item[:time] / total)
     sublist = item[:children]
     _dab_benchmark_print(file, level + 1, sublist, item[:time], total)
   end
@@ -47,8 +50,8 @@ def dab_benchmark_print!
   return unless $dab_benchmark_enabled
 
   file = STDERR
-  file.printf("%-120s |   Time    | Relative |  Total\n", 'Name')
-  file.printf("%s-+-----------+----------+---------\n", '-' * 120)
+  file.printf("  Calls   | %-120s |   Time    | Relative |  Total\n", 'Name')
+  file.printf("----------+-%s-+-----------+----------+---------\n", '-' * 120)
   total = $dab_benchmark_data.map { |_, node| node[:time] }.reduce(&:+)
   _dab_benchmark_print(file, 0, $dab_benchmark_data, total, total)
 end
