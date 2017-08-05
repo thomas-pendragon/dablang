@@ -15,6 +15,7 @@
 - basic compiler performance improvements
 - compiler performance specs
 - runtime performance specs
+- optimize type lookup
 
 ## New tools ##
 
