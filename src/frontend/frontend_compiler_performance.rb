@@ -38,17 +38,25 @@ def run_test(settings)
   extract_format_source(input, dab)
 
   start = Time.now
+  options += ' --show-benchmark'
   compile(dab, asm, options)
   finish = Time.now
 
   clock_time = finish - start
+  output = File.read(asm)
+  unless output =~ /Total running time: (\d+\.\d+)s/
+    raise DabCompareError.new('no benchmark result')
+  end
+  benchmark_time = $1.to_f
+  printf("Clock time: %.2fs\n", clock_time)
+  printf("Bench time: %.2fs\n", benchmark_time)
 
   acceptable_time = data[:acceptable_time].to_f
 
-  if clock_time > acceptable_time
+  if benchmark_time > acceptable_time
     puts "#{info}... ERROR!".red.bold
     puts "Acceptable time was: #{acceptable_time}s".red
-    puts "Actual time was:     #{clock_time}s".red
+    puts "Actual time was:     #{benchmark_time}s".red
     raise DabCompareError.new('test error')
   end
 

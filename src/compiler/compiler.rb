@@ -3,6 +3,9 @@ require_relative '_requires.rb'
 require_relative '../shared/benchmark.rb'
 
 $dab_benchmark_enabled = $settings[:benchmark]
+$dab_benchmark_show_result = $settings[:show_benchmark]
+
+dab_benchmark_start_time = Time.now
 
 dab_benchmark('compile') do
   $debug = $settings[:debug]
@@ -106,3 +109,8 @@ dab_benchmark('compile') do
 end
 
 dab_benchmark_print!
+
+if $dab_benchmark_show_result
+  time = Time.now - dab_benchmark_start_time
+  printf("Total running time: %.2fs\n", time)
+end
