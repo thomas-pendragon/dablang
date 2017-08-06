@@ -57,10 +57,13 @@ class DabNode
   end
 
   def mark_children_cache_dirty!
+    invalidate_local_cache!
     @children_cache_new = nil
     @children_cache_new_class = {}
     parent&.mark_children_cache_dirty!
   end
+
+  def invalidate_local_cache!; end
 
   def _get_children_cache
     if false # TODO: extra debug flag
