@@ -25,8 +25,8 @@ class DabNode
     ret = super()
     ret.dup_replacements.clear
     ret.dup_replacements[self] = ret
-    ret.clear
-    ret._set_parent(nil)
+    ret.safe_clear
+    ret.__set_parent(nil)
     ret.parent_info = self.parent_info
     @children.each do |child|
       ret.insert(child.dup(level + 1))
@@ -36,7 +36,17 @@ class DabNode
     ret
   end
 
+  def on_added; end
+
+  def on_removed; end
+
   def _set_parent(parent)
+    on_removed if @parent
+    __set_parent(parent)
+    on_added if parent
+  end
+
+  def __set_parent(parent)
     @parent&.mark_children_cache_dirty!
     @parent = parent
   end
@@ -271,6 +281,13 @@ class DabNode
   end
 
   def clear
+    @children.each do |node|
+      node._set_parent(nil)
+    end
+    safe_clear
+  end
+
+  def safe_clear
     @children = []
     mark_children_cache_dirty!
   end

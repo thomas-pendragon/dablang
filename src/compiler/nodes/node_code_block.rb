@@ -31,7 +31,7 @@ class DabNodeCodeBlock < DabNode
       pre_block << node if index < spliced_index
       post_block << node if index > spliced_index
     end
-    clear
+    safe_clear
     spliced = yield(post_block)
 
     spliced.each { |node| raise 'splice block must yield CodeBlock!' unless node.is_a?(DabNodeCodeBlock) }
@@ -120,7 +120,7 @@ class DabNodeCodeBlock < DabNode
     another_block.each do |child|
       insert(child)
     end
-    another_block.clear
+    another_block.safe_clear
     another_block.remove!
   end
 
