@@ -7,6 +7,7 @@ class DabNodeConstant < DabNode
   def initialize(value)
     super()
     insert(value)
+    @references = []
   end
 
   def extra_dump
@@ -41,7 +42,15 @@ class DabNodeConstant < DabNode
     value.constant?
   end
 
+  def register_reference(reference)
+    @references << reference
+  end
+
+  def unregister_reference(reference)
+    @references.delete(reference)
+  end
+
   def references
-    root.all_nodes(DabNodeConstantReference).select { |node| node.target == self }
+    @references
   end
 end

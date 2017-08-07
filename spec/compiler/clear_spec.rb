@@ -32,14 +32,14 @@ describe DabNode do
     expect(node1.root).to eq(node1)
     expect(node2.root).to eq(node2)
     expect(node3.root).to eq(node1)
-    expect(node4.root).to eq(node2)
-    expect(node5.root).to eq(node2)
+    expect(node4.root).to eq(node4)
+    expect(node5.root).to eq(node5)
 
     expect(node1.parent).to eq(nil)
     expect(node2.parent).to eq(nil)
     expect(node3.parent).to eq(node1)
-    expect(node4.parent).to eq(node2)
-    expect(node5.parent).to eq(node2)
+    expect(node4.parent).to eq(nil)
+    expect(node5.parent).to eq(nil)
   end
 
   it 'sets parent on dup' do

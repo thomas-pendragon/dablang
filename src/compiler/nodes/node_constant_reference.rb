@@ -47,4 +47,14 @@ class DabNodeConstantReference < DabNode
   def constant?
     target.constant?
   end
+
+  def on_added
+    super
+    target.register_reference(self)
+  end
+
+  def on_removed
+    super
+    target.unregister_reference(self)
+  end
 end

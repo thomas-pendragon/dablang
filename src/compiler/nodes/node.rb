@@ -41,7 +41,10 @@ class DabNode
   def on_removed; end
 
   def _set_parent(parent)
-    on_removed if @parent
+    if @parent
+      on_removed
+      @parent.safe_remove_child(self)
+    end
     __set_parent(parent)
     on_added if parent
   end
@@ -103,9 +106,6 @@ class DabNode
       child = DabNodeSymbol.new(child)
     end
 
-    if child.parent
-      child.remove!
-    end
     child._set_parent(self)
     child
   end
@@ -161,10 +161,20 @@ class DabNode
     self
   end
 
-  def _remove_child(node)
+  def safe_remove_child(node)
     mark_children_cache_dirty!
     @children -= [node]
-    node._set_parent(nil)
+  end
+
+  def _remove_child(node)
+    safe_remove_child(node)
+    node.self_destruct!
+  end
+
+  def self_destruct!
+    _set_parent(nil)
+    @children.each(&:self_destruct!)
+    safe_clear
   end
 
   def add_error(error)
@@ -390,5 +400,10 @@ class DabNode
 
   def prepend_instruction(node)
     _insert_before(node, self)
+  end
+
+  def extract
+    _set_parent(nil)
+    self
   end
 end
