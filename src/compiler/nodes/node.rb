@@ -13,6 +13,7 @@ class DabNode
   define_processors!
 
   def initialize
+    @parent = nil
     @dup_replacements = {}
     @children = []
     @self_errors = []
