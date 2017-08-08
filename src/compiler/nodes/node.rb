@@ -157,7 +157,7 @@ class DabNode
     self
   end
 
-  def remove_child(node)
+  def _remove_child(node)
     mark_children_cache_dirty!
     @children -= [node]
     node._set_parent(nil)
@@ -224,7 +224,7 @@ class DabNode
   end
 
   def remove!
-    parent.remove_child(self)
+    parent._remove_child(self)
   end
 
   def replace_child(from, to)

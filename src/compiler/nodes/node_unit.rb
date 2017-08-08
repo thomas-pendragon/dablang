@@ -114,7 +114,7 @@ class DabNodeUnit < DabNode
   end
 
   def remove_constant_node(node)
-    @constants.remove_child(node)
+    node.remove!
   end
 
   def reorder_constants!
