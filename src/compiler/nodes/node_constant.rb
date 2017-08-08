@@ -10,7 +10,7 @@ class DabNodeConstant < DabNode
   end
 
   def extra_dump
-    "$#{index}"
+    "$#{index} (#{references.count} refs)"
   end
 
   def index
