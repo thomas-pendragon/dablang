@@ -1,0 +1,60 @@
+## CODE
+
+func foo(a)
+{
+  print(a is String);
+}
+
+func bar()
+{
+  foo("str");
+  foo(12);
+}
+
+## OPTIONS
+
+--opt --strip --entry=bar
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "str"
+                                 CONSTANT_NUMBER 12
+                                 CONSTANT_SYMBOL __foo_LiteralFixnum
+                                 CONSTANT_SYMBOL __foo_LiteralString
+ 
+                                 LOAD_FUNCTION Fbar, bar, -1
+                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
+                                 LOAD_FUNCTION F__foo_LiteralFixnum, __foo_LiteralFixnum, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fbar:
+                                 STACK_RESERVE 0
+/* "str"        */               PUSH_CONSTANT 0
+/* __foo_Litera */               PUSH_CONSTANT 3
+                                 HARDCALL 1
+                                 POP 1
+/* 12           */               PUSH_CONSTANT 1
+/* __foo_Litera */               PUSH_CONSTANT 2
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__foo_LiteralString:
+                                 STACK_RESERVE 0
+                                 PUSH_TRUE 
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__foo_LiteralFixnum:
+                                 STACK_RESERVE 0
+                                 PUSH_FALSE 
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
