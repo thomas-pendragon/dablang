@@ -1,0 +1,48 @@
+## CODE
+
+func foo(a)
+{
+  if (a is String)
+  {
+    print("got string");
+  }
+}
+
+func bar()
+{
+  foo("str");
+}
+
+## OPTIONS
+
+--opt --strip --entry=bar
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "got string"
+                                 CONSTANT_STRING "str"
+                                 CONSTANT_SYMBOL __foo_LiteralString
+ 
+                                 LOAD_FUNCTION Fbar, bar, -1
+                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fbar:
+                                 STACK_RESERVE 0
+/* "str"        */               PUSH_CONSTANT 1
+/* __foo_Litera */               PUSH_CONSTANT 2
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__foo_LiteralString:
+                                 STACK_RESERVE 0
+/* "got string" */               PUSH_CONSTANT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
