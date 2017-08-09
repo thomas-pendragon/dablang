@@ -110,6 +110,10 @@ class DabNode
     child
   end
 
+  def extra_debug_dump
+    "#{self.class}#{extra_dump}"
+  end
+
   def extra_dump
     ''
   end
