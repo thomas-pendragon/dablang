@@ -1,0 +1,31 @@
+## CODE
+
+func main()
+{
+  if (false)
+  {
+    print("ok");
+  }
+  else
+  {
+    print("real");
+  };
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "real"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "real"       */               PUSH_CONSTANT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
