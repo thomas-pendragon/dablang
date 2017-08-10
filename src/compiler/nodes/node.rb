@@ -9,6 +9,7 @@ class DabNode
   attr_reader :parent
   attr_accessor :parent_info
   attr_accessor :dup_replacements
+  attr_accessor :dirty
 
   define_processors!
 
@@ -19,6 +20,7 @@ class DabNode
     @self_errors = []
     @self_source_parts = []
     @children_cache_new_class = {}
+    @dirty = true
   end
 
   def dup(level = 0)
@@ -33,7 +35,16 @@ class DabNode
       ret.dup_replacements.merge!(child.dup_replacements)
     end
     ret.fixup_dup_replacements!(dup_replacements) if level == 0
+    ret.dirty = true
     ret
+  end
+
+  def mutate!
+    self.dirty = true
+  end
+
+  def dirty?
+    dirty
   end
 
   def on_added; end

@@ -73,10 +73,12 @@ dab_benchmark('compile') do
         err '--~'.yellow * 50
         err ''
       end
-      check_status = dab_benchmark('check') do
+      break if dab_benchmark('dirty_check') do
+        program.run_dirty_check_callbacks!
+      end
+      break if dab_benchmark('check') do
         program.run_check_callbacks!
       end
-      break if check_status
       break if program.has_errors?
       next if $opt && dab_benchmark('optimize') do
                 program.run_processors!(:optimize_callbacks)

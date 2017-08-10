@@ -23,6 +23,7 @@ module DabNodeModuleProcessors
       end
 
       define_method_chain.call(:check_with, :check_callbacks)
+      define_method_chain.call(:dirty_check_with, :dirty_check_callbacks)
       define_method_chain.call(:after_init, :init_callbacks)
       define_method_chain.call(:lower_with, :lower_callbacks)
       define_method_chain.call(:optimize_with, :optimize_callbacks)
@@ -42,6 +43,10 @@ module DabNodeModuleProcessors
         end
       end
     end
+  end
+
+  def run_dirty_check_callbacks!
+    run_all_processors!(:dirty_check_callbacks, true)
   end
 
   def run_check_callbacks!
@@ -86,10 +91,12 @@ module DabNodeModuleProcessors
     ret
   end
 
-  def run_all_processors!(type)
+  def run_all_processors!(type, dirty_only = false)
     ret = false
     all_nodes.each do |child|
+      next if dirty_only && !child.dirty?
       test = child.sub_run_all_processors!(type)
+      child.dirty = false if dirty_only && !test
       ret ||= test
     end
     ret
