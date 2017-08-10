@@ -46,10 +46,6 @@ class DabNodeCall < DabNodeBasecall
     output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s)
   end
 
-  def target_function
-    root.has_function?(real_identifier)
-  end
-
   def formatted_source(options)
     real_identifier + '(' + _formatted_arguments(options) + ')' + formatted_block(options)
   end

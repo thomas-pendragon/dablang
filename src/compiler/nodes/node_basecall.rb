@@ -26,4 +26,8 @@ class DabNodeBasecall < DabNode
     return '' unless has_block?
     block.formatted_source(options)
   end
+
+  def target_function
+    root.has_function?(real_identifier)
+  end
 end

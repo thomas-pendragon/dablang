@@ -35,8 +35,4 @@ class DabNodeHardcall < DabNodeBasecall
     end
     output.printex(self, has_block? ? 'HARDCALL_BLOCK' : 'HARDCALL', args.count.to_s)
   end
-
-  def target_function
-    root.has_function?(real_identifier)
-  end
 end
