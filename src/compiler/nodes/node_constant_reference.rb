@@ -1,13 +1,10 @@
 require_relative 'node.rb'
-require_relative '../processors/strip_unused_value.rb'
 require_relative '../processors/store_locally.rb'
 
 class DabNodeConstantReference < DabNode
   include NodeStoredLocally
 
   attr_reader :target
-
-  lower_with StripUnusedValue
 
   def initialize(target)
     super()

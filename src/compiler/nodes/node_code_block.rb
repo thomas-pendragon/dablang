@@ -5,11 +5,13 @@ require_relative '../processors/optimize_block_jump.rb'
 require_relative '../processors/optimize_block_jump_next.rb'
 require_relative '../processors/flatten_code_block.rb'
 require_relative '../processors/strip_extra_return.rb'
+require_relative '../processors/strip_unused_values.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
   lower_with OptimizeBlockJump
   lower_with OptimizeBlockJumpNext
+  lower_with StripUnusedValues
   optimize_with RemoveUnreachableBlock
   optimize_with StripExtraReturn
   flatten_with FlattenCodeBlock
