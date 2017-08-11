@@ -8,7 +8,7 @@ require_relative '../processors/convert_call_to_syscall.rb'
 require_relative '../processors/extract_call_block.rb'
 
 class DabNodeCall < DabNodeBasecall
-  check_with CheckFunctionExistence
+  dirty_check_with CheckFunctionExistence
   dirty_check_with CheckCallArgsTypes
   dirty_check_with CheckCallArgsCount
   lower_with ConvertCallToSyscall
