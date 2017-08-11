@@ -28,6 +28,11 @@ class DabNodeBasecall < DabNode
   end
 
   def target_function
-    root.has_function?(real_identifier)
+    @target_function_cache ||= root.has_function?(real_identifier)
+  end
+
+  def mutate!
+    super
+    @target_function_cache = nil
   end
 end
