@@ -1,7 +1,7 @@
-require_relative 'node_literal.rb'
+require_relative 'node_extractable_literal.rb'
 require_relative '../processors/store_locally.rb'
 
-class DabNodeLiteralString < DabNodeLiteral
+class DabNodeLiteralString < DabNodeExtractableLiteral
   lower_with StoreLocally
 
   attr_reader :string

@@ -1,6 +1,6 @@
-require_relative 'node_literal.rb'
+require_relative 'node_extractable_literal.rb'
 
-class DabNodeLiteralNumber < DabNodeLiteral
+class DabNodeLiteralNumber < DabNodeExtractableLiteral
   attr_reader :number
   def initialize(number)
     super()

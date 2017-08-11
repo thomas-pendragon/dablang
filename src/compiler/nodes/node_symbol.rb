@@ -1,6 +1,6 @@
-require_relative 'node_literal.rb'
+require_relative 'node_extractable_literal.rb'
 
-class DabNodeSymbol < DabNodeLiteral
+class DabNodeSymbol < DabNodeExtractableLiteral
   attr_reader :symbol
   def initialize(symbol)
     raise "empty symbol (#{symbol})" if symbol.to_s.empty?
