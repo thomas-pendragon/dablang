@@ -1,3 +1,13 @@
+PROCESSORS_HASH = {
+  check_with: :check_callbacks,
+  dirty_check_with: :dirty_check_callbacks,
+  after_init: :init_callbacks,
+  lower_with: :lower_callbacks,
+  optimize_with: :optimize_callbacks,
+  strip_with: :strip_callbacks,
+  flatten_with: :flatten_callbacks,
+}.freeze
+
 module DabNodeModuleProcessors
   def self.included(base)
     base.send :extend, ClassMethods
@@ -22,13 +32,9 @@ module DabNodeModuleProcessors
         end
       end
 
-      define_method_chain.call(:check_with, :check_callbacks)
-      define_method_chain.call(:dirty_check_with, :dirty_check_callbacks)
-      define_method_chain.call(:after_init, :init_callbacks)
-      define_method_chain.call(:lower_with, :lower_callbacks)
-      define_method_chain.call(:optimize_with, :optimize_callbacks)
-      define_method_chain.call(:strip_with, :strip_callbacks)
-      define_method_chain.call(:flatten_with, :flatten_callbacks)
+      PROCESSORS_HASH.each do |key, value|
+        define_method_chain.call(key, value)
+      end
     end
 
     def run_callback(item, callback)
@@ -55,6 +61,22 @@ module DabNodeModuleProcessors
 
   def init!
     run_all_processors!(:init_callbacks)
+  end
+
+  def run_optimize_processors!
+    run_processors!(:optimize_callbacks)
+  end
+
+  def run_lower_processors!
+    run_processors!(:lower_callbacks)
+  end
+
+  def run_strip_processors!
+    run_processors!(:strip_callbacks)
+  end
+
+  def run_flatten_processors!
+    run_processors!(:flatten_callbacks)
   end
 
   def run_processors!(type)

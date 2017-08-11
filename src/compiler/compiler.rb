@@ -81,16 +81,16 @@ dab_benchmark('compile') do
       end
       break if program.has_errors?
       next if $opt && dab_benchmark('optimize') do
-                program.run_processors!(:optimize_callbacks)
+                program.run_optimize_processors!
               end
       next if dab_benchmark('lower') do
-        program.run_processors!(:lower_callbacks)
+        program.run_lower_processors!
       end
       next if $strip && dab_benchmark('strip') do
-        program.run_processors!(:strip_callbacks)
+        program.run_strip_processors!
       end
       next if dab_benchmark('flatten') do
-        program.run_processors!(:flatten_callbacks)
+        program.run_flatten_processors!
       end
       break
     end
