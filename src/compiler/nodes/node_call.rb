@@ -10,7 +10,7 @@ require_relative '../processors/extract_call_block.rb'
 class DabNodeCall < DabNodeBasecall
   check_with CheckFunctionExistence
   dirty_check_with CheckCallArgsTypes
-  check_with CheckCallArgsCount
+  dirty_check_with CheckCallArgsCount
   lower_with ConvertCallToSyscall
   optimize_with ConcreteifyCall
   lower_with ExtractCallBlock
