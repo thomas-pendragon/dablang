@@ -11,9 +11,17 @@ PROCESSORS_HASH = {
 module DabNodeModuleProcessors
   def self.included(base)
     base.send :extend, ClassMethods
+
+    base.define_processors!
+    base.save_cached_processors!
   end
 
   module ClassMethods
+    def inherited(subclass)
+      super
+      subclass.save_cached_processors!
+    end
+
     def define_processors!
       define_method_chain = proc do |method_name, collection_name|
         define_singleton_method(collection_name) do
@@ -29,11 +37,20 @@ module DabNodeModuleProcessors
           collection = safe_instance_variable_get(name) || []
           collection << klass
           instance_variable_set(name, collection)
+          save_cached_processors!
         end
       end
 
       PROCESSORS_HASH.each do |key, value|
         define_method_chain.call(key, value)
+      end
+    end
+
+    def save_cached_processors!
+      $processors_cache ||= {}
+      $processors_cache[self] ||= {}
+      PROCESSORS_HASH.values.each do |type|
+        $processors_cache[self][type] = self.send(type)
       end
     end
 
@@ -98,9 +115,7 @@ module DabNodeModuleProcessors
   end
 
   def _processors(type)
-    $processors_cache ||= {}
-    $processors_cache[self.class] ||= {}
-    $processors_cache[self.class][type] ||= self.class.send(type)
+    $processors_cache[self.class][type]
   end
 
   def sub_run_all_processors!(type)

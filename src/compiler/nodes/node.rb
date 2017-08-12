@@ -11,8 +11,6 @@ class DabNode
   attr_accessor :dup_replacements
   attr_accessor :dirty
 
-  define_processors!
-
   def initialize
     @parent = nil
     @dup_replacements = {}
