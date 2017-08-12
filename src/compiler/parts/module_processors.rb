@@ -1,12 +1,20 @@
-PROCESSORS_HASH = {
-  check_with: :check_callbacks,
-  dirty_check_with: :dirty_check_callbacks,
-  after_init: :init_callbacks,
-  lower_with: :lower_callbacks,
-  optimize_with: :optimize_callbacks,
-  strip_with: :strip_callbacks,
-  flatten_with: :flatten_callbacks,
-}.freeze
+PROCESSOR_CHECK_INDEX = 0
+PROCESSOR_DIRTY_CHECK_INDEX = 1
+PROCESSOR_INIT_INDEX = 2
+PROCESSOR_LOWER_INDEX = 3
+PROCESSOR_OPTIMIZE_INDEX = 4
+PROCESSOR_STRIP_INDEX = 5
+PROCESSOR_FLATTEN_INDEX = 6
+
+PROCESSORS_HASH = [
+  [PROCESSOR_CHECK_INDEX, :check_with, :check_callbacks],
+  [PROCESSOR_DIRTY_CHECK_INDEX, :dirty_check_with, :dirty_check_callbacks],
+  [PROCESSOR_INIT_INDEX, :after_init, :init_callbacks],
+  [PROCESSOR_LOWER_INDEX, :lower_with, :lower_callbacks],
+  [PROCESSOR_OPTIMIZE_INDEX, :optimize_with, :optimize_callbacks],
+  [PROCESSOR_STRIP_INDEX, :strip_with, :strip_callbacks],
+  [PROCESSOR_FLATTEN_INDEX, :flatten_with, :flatten_callbacks],
+].freeze
 
 module DabNodeModuleProcessors
   def self.included(base)
@@ -41,16 +49,18 @@ module DabNodeModuleProcessors
         end
       end
 
-      PROCESSORS_HASH.each do |key, value|
+      PROCESSORS_HASH.each do |row|
+        _index, key, value = *row
         define_method_chain.call(key, value)
       end
     end
 
     def save_cached_processors!
       $processors_cache ||= {}
-      $processors_cache[self] ||= {}
-      PROCESSORS_HASH.values.each do |type|
-        $processors_cache[self][type] = self.send(type)
+      $processors_cache[self] ||= []
+      PROCESSORS_HASH.each do |row|
+        index, _, type = *row
+        $processors_cache[self][index] = self.send(type)
       end
     end
 
@@ -69,31 +79,31 @@ module DabNodeModuleProcessors
   end
 
   def run_dirty_check_callbacks!
-    run_all_processors!(:dirty_check_callbacks, true)
+    run_all_processors!(PROCESSOR_DIRTY_CHECK_INDEX, true)
   end
 
   def run_check_callbacks!
-    run_all_processors!(:check_callbacks)
+    run_all_processors!(PROCESSOR_CHECK_INDEX)
   end
 
   def init!
-    run_all_processors!(:init_callbacks)
+    run_all_processors!(PROCESSOR_INIT_INDEX)
   end
 
   def run_optimize_processors!
-    run_processors!(:optimize_callbacks)
+    run_processors!(PROCESSOR_OPTIMIZE_INDEX)
   end
 
   def run_lower_processors!
-    run_processors!(:lower_callbacks)
+    run_processors!(PROCESSOR_LOWER_INDEX)
   end
 
   def run_strip_processors!
-    run_processors!(:strip_callbacks)
+    run_processors!(PROCESSOR_STRIP_INDEX)
   end
 
   def run_flatten_processors!
-    run_processors!(:flatten_callbacks)
+    run_processors!(PROCESSOR_FLATTEN_INDEX)
   end
 
   def run_processors!(type)
