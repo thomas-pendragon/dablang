@@ -6,9 +6,11 @@ require_relative '../processors/optimize_block_jump_next.rb'
 require_relative '../processors/flatten_code_block.rb'
 require_relative '../processors/strip_extra_return.rb'
 require_relative '../processors/strip_unused_values.rb'
+require_relative '../processors/remove_empty_block.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
+  lower_with RemoveEmptyBlock
   lower_with OptimizeBlockJump
   lower_with OptimizeBlockJumpNext
   lower_with StripUnusedValues
@@ -105,9 +107,13 @@ class DabNodeCodeBlock < DabNode
   end
 
   def sources
-    ret = function.all_nodes(DabNodeBaseJump).select { |jump| jump.targets.include?(self) }
+    ret = internal_sources
     ret += [function] if block_index == 0
     ret
+  end
+
+  def internal_sources
+    function.all_nodes(DabNodeBaseJump).select { |jump| jump.targets.include?(self) }
   end
 
   def embedded?
@@ -116,6 +122,10 @@ class DabNodeCodeBlock < DabNode
 
   def unreachable?
     sources.empty?
+  end
+
+  def internally_unreachable?
+    internal_sources.empty?
   end
 
   def merge_with!(another_block)
