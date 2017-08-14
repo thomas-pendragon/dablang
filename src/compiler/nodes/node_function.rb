@@ -3,7 +3,6 @@ require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_first_block.rb'
 require_relative '../processors/strip_unused_function.rb'
 require_relative '../processors/add_missing_return.rb'
-require_relative '../processors/block_reorder.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
@@ -11,7 +10,6 @@ class DabNodeFunction < DabNode
 
   after_init ConvertArgToLocalvar
   after_init AddMissingReturn
-  # lower_with BlockReorder
   # optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
