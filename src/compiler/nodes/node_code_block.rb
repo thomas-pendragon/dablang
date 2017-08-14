@@ -1,10 +1,8 @@
 require_relative 'node.rb'
 require_relative '../processors/check_empty_block.rb'
-require_relative '../processors/remove_empty_block.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
-  lower_with RemoveEmptyBlock
 
   def formatted_source(options)
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
