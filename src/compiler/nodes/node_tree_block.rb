@@ -2,6 +2,8 @@ require_relative 'node.rb'
 require_relative '../processors/flatten_tree_block.rb'
 
 class DabNodeTreeBlock < DabNode
+  flatten_with FlattenTreeBlock
+
   def build_from_tree(current_block, blocks)
     each do |node|
       if node.is_a?(DabNodeTreeBlock)
