@@ -21,6 +21,10 @@ class DabNode
     @dirty = true
   end
 
+  def depth
+    parent ? parent.depth + 1 : 0
+  end
+
   def dup(level = 0)
     ret = super()
     ret.dup_replacements.clear
