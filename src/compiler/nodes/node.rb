@@ -25,6 +25,10 @@ class DabNode
     parent ? parent.depth + 1 : 0
   end
 
+  def simple_info
+    "#{'  ' * depth}#{self.class} [#{self.extra_dump}]"
+  end
+
   def dup(level = 0)
     ret = super()
     ret.dup_replacements.clear
