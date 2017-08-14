@@ -19,4 +19,10 @@ class DabNodeTreeBlock < DabNode
   def topmost?
     !parent.is_a?(DabNodeTreeBlock)
   end
+
+  def formatted_source(options)
+    lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
+    return '' unless lines.count > 0
+    lines.join("\n") + "\n"
+  end
 end
