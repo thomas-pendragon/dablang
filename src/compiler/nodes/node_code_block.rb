@@ -1,46 +1,15 @@
 require_relative 'node.rb'
 require_relative '../processors/check_empty_block.rb'
-require_relative '../processors/flatten_code_block.rb'
 require_relative '../processors/remove_empty_block.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
   lower_with RemoveEmptyBlock
-  flatten_with FlattenCodeBlock
 
   def formatted_source(options)
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
     return '' unless lines.count > 0
     lines.join("\n") + "\n"
-  end
-
-  def splice(spliced_node)
-    spliced_index = index(spliced_node)
-
-    pre_block = DabNodeCodeBlock.new
-    post_block = DabNodeCodeBlock.new
-
-    each_with_index do |node, index|
-      node._set_parent(nil)
-      pre_block << node if index < spliced_index
-      post_block << node if index > spliced_index
-    end
-    safe_clear
-    spliced = yield(post_block)
-
-    spliced.each { |node| raise 'splice block must yield CodeBlock!' unless node.is_a?(DabNodeCodeBlock) }
-
-    first_block = spliced[0]
-    pre_block.insert(DabNodeJump.new(first_block))
-
-    blocks = [pre_block, spliced, post_block].flatten
-    blocks.each { |block| block.parent_info = nil }
-
-    function&.all_nodes(DabNodeBaseJump)&.each do |node|
-      node.replace_target!(self, pre_block)
-    end
-
-    replace_with!(blocks)
   end
 
   def extra_dump
