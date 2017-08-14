@@ -24,8 +24,8 @@ describe AddLocalvarPostfix do
     # print8 |   puts(a);
     #        | }
 
-    @top_block = DabNodeCodeBlock.new
-    @inner_block = DabNodeCodeBlock.new
+    @top_block = DabNodeTreeBlock.new
+    @inner_block = DabNodeTreeBlock.new
 
     @literal1 = DabNodeLiteralString.new('foo')
     @literal2 = DabNodeLiteralNumber.new(12)
@@ -88,12 +88,12 @@ describe AddLocalvarPostfix do
   #     - DabNodeFunction fun1
   #       - arglist: DabNode
   #       - blocks: DabNodeBlockNode
-  #         - DabNodeCodeBlock !.0
+  #         - DabNodeTreeBlock !.0
   #           - DabNodeDefineLocalVar <a>
   #             - DabNodeLiteralString "foo"
   #           - DabNodeSyscall #0 PRINT
   #             - DabNodeLocalVar <a>
-  #           - DabNodeCodeBlock !.
+  #           - DabNodeTreeBlock !.
   #             - DabNodeSyscall #0 PRINT
   #               - DabNodeLocalVar <a>
   #             - DabNodeDefineLocalVar <a>

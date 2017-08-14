@@ -4,7 +4,7 @@ require_relative '../../src/compiler/_requires.rb'
 
 describe DabNode do
   it 'allows to replace child' do
-    body = DabNodeCodeBlock.new
+    body = DabNodeTreeBlock.new
     p1 = DabNodeSymbol.new(:p1)
     p2 = DabNodeSymbol.new(:p2)
     p3 = DabNodeSymbol.new(:p3)
@@ -14,7 +14,7 @@ describe DabNode do
   end
 
   it 'allows to replace child with array' do
-    body = DabNodeCodeBlock.new
+    body = DabNodeTreeBlock.new
     p1 = DabNodeSymbol.new(:p1)
     p2 = DabNodeSymbol.new(:p2)
     p3 = DabNodeSymbol.new(:p3)
@@ -26,7 +26,7 @@ describe DabNode do
   end
 
   it 'allows to replace child with array with the child itself' do
-    body = DabNodeCodeBlock.new
+    body = DabNodeTreeBlock.new
     p1 = DabNodeSymbol.new(:p1)
     p2 = DabNodeSymbol.new(:p2)
     p3 = DabNodeSymbol.new(:p3)

@@ -4,7 +4,7 @@ require_relative '../../src/compiler/_requires.rb'
 
 describe DabNodeConstant do
   it 'tracks references' do
-    parent = DabNodeCodeBlock.new
+    parent = DabNodeTreeBlock.new
     function = DabNodeFunction.new('test', parent, nil)
     unit = DabNodeUnit.new
     unit.add_function(function)
