@@ -1,4 +1,5 @@
 require_relative 'node.rb'
+require_relative '../processors/flatten_tree_block.rb'
 
 class DabNodeTreeBlock < DabNode
   def build_from_tree(current_block, blocks)

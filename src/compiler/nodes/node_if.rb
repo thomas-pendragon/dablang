@@ -1,8 +1,8 @@
-require_relative 'node.rb'
+require_relative 'node_tree_block.rb'
 require_relative '../processors/optimize_constant_if.rb'
 require_relative '../processors/flatten_if.rb'
 
-class DabNodeIf < DabNode
+class DabNodeIf < DabNodeTreeBlock
   optimize_with OptimizeConstantIf
   flatten_with FlattenIf
 
@@ -40,5 +40,37 @@ class DabNodeIf < DabNode
 
   def formatted_skip_semicolon?
     true
+  end
+
+  def build_from_tree(current_block, blocks)
+    condition_node = condition
+    true_node = if_true
+    false_node = if_false
+
+    condition_node.extract
+    true_node.extract
+    false_node.extract
+
+    true_block = DabNodeBasicBlock.new
+    false_block = DabNodeBasicBlock.new if false_node
+    after_block = DabNodeBasicBlock.new
+
+    negative_block = false_node ? false_block : after_block
+
+    jump = DabNodeConditionalJump.new(condition_node, true_block, negative_block)
+    current_block << jump
+
+    blocks << true_block
+    true_block = true_node.build_from_tree(true_block, blocks)
+    true_block << DabNodeJump.new(after_block)
+
+    if false_node
+      blocks << false_block
+      false_block = false_node.build_from_tree(false_block, blocks)
+      false_block << DabNodeJump.new(after_block)
+    end
+
+    blocks << after_block
+    after_block
   end
 end
