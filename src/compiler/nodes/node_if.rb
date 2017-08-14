@@ -49,7 +49,7 @@ class DabNodeIf < DabNodeTreeBlock
 
     condition_node.extract
     true_node.extract
-    false_node.extract
+    false_node&.extract
 
     true_block = DabNodeBasicBlock.new
     false_block = DabNodeBasicBlock.new if false_node
