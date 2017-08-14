@@ -27,7 +27,7 @@ class DecompiledFunction
     info = input[:info]
     @name = info[1]
     @data = input[:data]
-    @body = DabNodeCodeBlock.new
+    @body = DabNodeTreeBlock.new
     @fun = DabNodeFunction.new(@name, @body, DabNode.new, false)
     @stack = []
   end
