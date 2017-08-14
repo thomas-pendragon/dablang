@@ -353,6 +353,10 @@ class DabNode
     @children.index(node)
   end
 
+  def parent_index
+    parent&.index(self)
+  end
+
   # TODO: handle nested code blocks
   def all_ordered_nodes(klasses)
     ret = []
