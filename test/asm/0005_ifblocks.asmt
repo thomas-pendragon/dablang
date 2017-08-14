@@ -52,31 +52,30 @@ func foo(a, b)
                                  PUSH_ARG 1
                                  JMP_IF L3
                                  JMP L4
-                   L2:
-                                 PUSH_ARG 1
-                                 JMP_IF L5
-                                 JMP L6
                    L3:
 /* "a && b"     */               PUSH_CONSTANT 3
                                  SYSCALL 0
                                  POP 1
-                                 JMP L7
+                                 JMP L5
                    L4:
 /* "a && !b"    */               PUSH_CONSTANT 2
                                  SYSCALL 0
                                  POP 1
+                                 JMP L5
+                   L2:
+                                 PUSH_ARG 1
+                                 JMP_IF L6
                                  JMP L7
-                   L5:
+                   L6:
 /* "!a && b"    */               PUSH_CONSTANT 1
                                  SYSCALL 0
                                  POP 1
-                                 JMP L7
-                   L6:
+                                 JMP L5
+                   L7:
 /* "!a && !b"   */               PUSH_CONSTANT 0
                                  SYSCALL 0
                                  POP 1
-                                 JMP L7
-                   L7:
+                                 JMP L5
+                   L5:
                                  PUSH_NIL 
                                  RETURN
-

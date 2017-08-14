@@ -1,9 +1,6 @@
 require_relative 'node_tree_block.rb'
-require_relative '../processors/flatten_while.rb'
 
 class DabNodeWhile < DabNodeTreeBlock
-  flatten_with FlattenWhile
-
   def initialize(condition, on_block)
     super()
     insert(condition, 'condition')

@@ -1,21 +1,11 @@
 require_relative 'node.rb'
 require_relative '../processors/check_empty_block.rb'
-require_relative '../processors/remove_unreachable_block.rb'
-require_relative '../processors/optimize_block_jump.rb'
-require_relative '../processors/optimize_block_jump_next.rb'
 require_relative '../processors/flatten_code_block.rb'
-require_relative '../processors/strip_extra_return.rb'
-require_relative '../processors/strip_unused_values.rb'
 require_relative '../processors/remove_empty_block.rb'
 
 class DabNodeCodeBlock < DabNode
   check_with CheckEmptyBlock
   lower_with RemoveEmptyBlock
-  lower_with OptimizeBlockJump
-  lower_with OptimizeBlockJumpNext
-  lower_with StripUnusedValues
-  optimize_with RemoveUnreachableBlock
-  optimize_with StripExtraReturn
   flatten_with FlattenCodeBlock
 
   def formatted_source(options)

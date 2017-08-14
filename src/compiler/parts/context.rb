@@ -514,7 +514,7 @@ class DabContext < DabBaseContext
   def read_codeblock
     on_subcontext(merge_local_vars: false) do |subcontext|
       next unless subcontext.read_operator('{')
-      ret = DabNodeCodeBlock.new
+      ret = DabNodeTreeBlock.new
       while true
         while subcontext.read_separator
         end

@@ -11,8 +11,8 @@ class DabNodeFunction < DabNode
 
   after_init ConvertArgToLocalvar
   after_init AddMissingReturn
-  lower_with BlockReorder
-  optimize_with OptimizeFirstBlock
+  # lower_with BlockReorder
+  # optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
 
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)

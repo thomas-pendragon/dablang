@@ -1,10 +1,8 @@
 require_relative 'node_tree_block.rb'
 require_relative '../processors/optimize_constant_if.rb'
-require_relative '../processors/flatten_if.rb'
 
 class DabNodeIf < DabNodeTreeBlock
   optimize_with OptimizeConstantIf
-  flatten_with FlattenIf
 
   def initialize(condition, if_true, if_false)
     super()
