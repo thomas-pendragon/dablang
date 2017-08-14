@@ -4,8 +4,8 @@ require_relative '../../src/compiler/_requires.rb'
 
 describe DabNode do
   it 'prepends node at instruction level' do
-    @top_block = DabNodeCodeBlock.new
-    @inner_block = DabNodeCodeBlock.new
+    @top_block = DabNodeTreeBlock.new
+    @inner_block = DabNodeTreeBlock.new
 
     @literal1 = DabNodeLiteralString.new('foo')
     @args = DabNode.new
