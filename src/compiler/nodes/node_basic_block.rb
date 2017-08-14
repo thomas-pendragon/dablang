@@ -1,6 +1,17 @@
 require_relative 'node.rb'
+require_relative '../processors/strip_unused_values.rb'
+require_relative '../processors/strip_extra_return.rb'
+require_relative '../processors/optimize_block_jump_next.rb'
+require_relative '../processors/remove_unreachable_block.rb'
+require_relative '../processors/optimize_block_jump.rb'
 
 class DabNodeBasicBlock < DabNode
+  lower_with StripUnusedValues
+  lower_with OptimizeBlockJumpNext
+  lower_with OptimizeBlockJump
+  optimize_with StripExtraReturn
+  optimize_with RemoveUnreachableBlock
+
   def extra_dump
     block_index.to_s
   end
@@ -34,5 +45,37 @@ class DabNodeBasicBlock < DabNode
 
   def internal_sources
     function.all_nodes(DabNodeBaseJump).select { |jump| jump.targets.include?(self) }
+  end
+
+  def returns?
+    all_nodes(DabNodeReturn).count > 0
+  end
+
+  def multiple_returns?
+    all_nodes(DabNodeReturn).count > 1
+  end
+
+  def ends_with_jump?
+    ret = @children.last
+    return false unless ret.is_a? DabNodeJump
+    ret
+  end
+
+  def next_block
+    return nil unless block_index
+    parent[block_index + 1]
+  end
+
+  def merge_with!(another_block)
+    another_block.each do |child|
+      child._set_parent(nil)
+      insert(child)
+    end
+    another_block.safe_clear
+    another_block.remove!
+  end
+
+  def unreachable?
+    sources.empty?
   end
 end
