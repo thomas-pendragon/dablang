@@ -51,9 +51,7 @@ class DabNodeFunction < DabNode
   end
 
   def extra_dump
-    ret = identifier
-    ret += ' [flat]' if flat?
-    ret
+    identifier
   end
 
   def argcount
@@ -176,9 +174,5 @@ class DabNodeFunction < DabNode
 
   def users
     root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
-  end
-
-  def flat?
-    all_nodes(DabNodeCodeBlock).none?(&:embedded?)
   end
 end
