@@ -410,7 +410,7 @@ class DabNode
   end
 
   def _insert_before(node, before_node)
-    if parent.is_a?(DabNodeCodeBlock)
+    if parent.is_any_of?([DabNodeBasicBlock, DabNodeTreeBlock, DabNodeCodeBlock])
       index = parent.index(before_node)
       raise 'no index' unless index
       parent.insert_at(index, node)
@@ -426,5 +426,9 @@ class DabNode
   def extract
     _set_parent(nil)
     self
+  end
+
+  def has_function?(*_args)
+    false
   end
 end
