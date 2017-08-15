@@ -48,6 +48,26 @@ func SDL_SetRenderDrawColor<Int32>(renderer<IntPtr>, r<Uint8>, g<Uint8>, b<Uint8
 [__import_sdl]
 func SDL_RenderDrawLine<Int32>(renderer<IntPtr>, x1<Int32>, y1<Int32>, x2<Int32>, y2<Int32>) {}
 
+// Uint64 SDL_GetPerformanceCounter(void)
+[__import_sdl]
+func SDL_GetPerformanceCounter<Uint64>() {}
+
+// Uint64 SDL_GetPerformanceCounter(void)
+[__import_sdl]
+func SDL_GetPerformanceFrequency<Uint64>() {}
+
+func draw_square(renderer, size, x, y, alpha, apple)
+{
+ // x = x * size;
+ // y = y * size;
+
+  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+  SDL_RenderDrawLine(renderer, x + 2, y + 1, x + size - 4, y + 1);
+  SDL_RenderDrawLine(renderer, x + 2, y + size - 2, x + size - 4, y + size - 2);
+  SDL_RenderDrawLine(renderer, x + 1, y + 2, x + 1, y + size - 4);
+  SDL_RenderDrawLine(renderer, x + size - 2, y + 2, x + size - 2, y + size - 4);
+}
+
 func main()
 {
   var SDL_INIT_VIDEO = 32;
@@ -55,10 +75,14 @@ func main()
   print("SDL_Init: ");
   puts(status);
 
+  var size = 20;
+  var width = 40;
+  var height = 30;
+
   var SDL_WINDOWPOS_UNDEFINED = 536805376;
   var SDL_WINDOWPOS_CENTERED =  805240832;
-  var SCREEN_WIDTH = 640;
-  var SCREEN_HEIGHT = 480;
+  var SCREEN_WIDTH = size * width;
+  var SCREEN_HEIGHT = size * height;
   var SDL_WINDOW_SHOWN = 4;
   var SDL_WINDOW_OPENGL = 2;
   var window = SDL_CreateWindow("Example 0001: snake",
@@ -76,12 +100,18 @@ func main()
   print("SDL_CreateRenderer: ");
   puts(renderer);
 
-  var x = 0;
-  var y = 0;
+  var x = 10 * size;
+  var y = 5 * size;
   var dx = 1;
   var dy = 0;
+  var<Uint64> time = 0;
+  var<Uint64> step = 500;
 
   var eventBuffer = ByteBuffer.new(2048);
+
+  var<Uint64> mul_counter= 1000;
+  var last_counter = SDL_GetPerformanceCounter() * mul_counter;
+  var mod_counter = SDL_GetPerformanceFrequency();
 
   while (true)
   {
@@ -114,16 +144,25 @@ func main()
       }
     }
 
+    var current_counter = SDL_GetPerformanceCounter() * mul_counter;
+    var dt = current_counter - last_counter;
+    dt = dt / mod_counter;
+    last_counter = current_counter;
+    time = time + dt;
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    SDL_RenderDrawLine(renderer, x + 10, y + 10, x + 50, y + 150);
+    draw_square(renderer, size, x, y, 255, 0);
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);
 
-    x = x + dx;
-    y = y + dy;
+    if (time > step)
+    {
+      x = x + dx * size;
+      y = y + dy * size;
+      time = time - step;
+    }
   }
 }
