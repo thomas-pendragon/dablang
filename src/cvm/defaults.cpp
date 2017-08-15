@@ -143,6 +143,7 @@
                 fprintf(stderr, "\nR: ");                                                          \
                 arg1.dump(stderr);                                                                 \
                 fprintf(stderr, "\nvm: unknown type to compare (%s)\n", STR(op));                  \
+                exit(1);                                                                           \
             }                                                                                      \
             stack.push(test);                                                                      \
         };                                                                                         \
