@@ -118,6 +118,10 @@
             {                                                                                      \
                 test = arg0.data.num_int32 op arg1.data.num_int32;                                 \
             }                                                                                      \
+            else if (arg0.data.type == TYPE_UINT64)                                                \
+            {                                                                                      \
+                test = arg0.data.num_uint64 op arg1.data.num_uint64;                               \
+            }                                                                                      \
             else if (arg0.data.type == TYPE_STRING)                                                \
             {                                                                                      \
                 test = arg0.data.string op arg1.data.string;                                       \
