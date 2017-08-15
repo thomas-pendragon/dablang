@@ -180,6 +180,16 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             stack.push_value(DabValue(CLASS_INT32, return_value));
         }
+        else if (arg_klasses.size() == 0 && ret_klass == CLASS_UINT64)
+        {
+            typedef uint64_t (*int_fun)();
+
+            auto int_symbol = (int_fun)symbol;
+
+            auto return_value = (*int_symbol)();
+
+            stack.push_value(DabValue(CLASS_UINT64, return_value));
+        }
         else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_UINT32 &&
                  ret_klass == CLASS_INT32)
         {
