@@ -126,6 +126,10 @@
             {                                                                                      \
                 test = arg0.data.string op arg1.data.string;                                       \
             }                                                                                      \
+            else if (arg0.data.type == TYPE_BOOLEAN)                                               \
+            {                                                                                      \
+                test = arg0.data.boolean op arg1.data.boolean;                                     \
+            }                                                                                      \
             else if (arg0.data.type == TYPE_CLASS)                                                 \
             {                                                                                      \
                 test = arg0.data.fixnum op arg1.data.fixnum;                                       \
