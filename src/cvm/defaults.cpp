@@ -134,7 +134,11 @@
             }                                                                                      \
             else                                                                                   \
             {                                                                                      \
-                fprintf(stderr, "vm: unknown type to compare\n");                                  \
+                fprintf(stderr, "L: ");                                                            \
+                arg0.dump(stderr);                                                                 \
+                fprintf(stderr, "\nR: ");                                                          \
+                arg1.dump(stderr);                                                                 \
+                fprintf(stderr, "\nvm: unknown type to compare (%s)\n", STR(op));                  \
             }                                                                                      \
             stack.push(test);                                                                      \
         };                                                                                         \
