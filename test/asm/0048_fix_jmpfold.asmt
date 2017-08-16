@@ -1,0 +1,31 @@
+## CODE
+
+func assert_equal(value)
+{
+  if (value != 1)
+  {
+  };
+}
+
+## OPTIONS
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "!="
+                                 CONSTANT_NUMBER 1
+ 
+                                 LOAD_FUNCTION Fassert_equal, assert_equal, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fassert_equal:
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+/* 1            */               PUSH_CONSTANT 1
+/* !=           */               PUSH_CONSTANT 0
+/* op !=        */               CALL 2
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN

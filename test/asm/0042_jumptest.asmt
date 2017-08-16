@@ -25,11 +25,9 @@ func foo(a)
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_ARG 0
-                                 JMP_IF2 L1, L1
-                   L1:
+                                 POP 1
                                  PUSH_ARG 0
-                                 JMP_IF2 L2, L2
-                   L2:
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN
 
