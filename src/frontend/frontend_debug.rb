@@ -45,6 +45,7 @@ def run_test(settings)
   data = read_test_file(input)
 
   options = data[:options] || ''
+  frontend_options = data[:frontend_options] || ''
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
@@ -67,6 +68,9 @@ def run_test(settings)
     stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
     stdlib_glob = stdlib_path + '/*.dab'
     stdlib_files = Dir.glob(stdlib_glob)
+
+    stdlib_files = [] if frontend_options['--no-stdlib']
+
     compile_to_asm(([dab] + stdlib_files).compact, asm, options)
   elsif data[:asm_code].present?
     extract_source(input, asm, data[:asm_code])
