@@ -58,11 +58,10 @@ module DabNodeModuleProcessors
     end
 
     def save_cached_processors!
-      $processors_cache ||= {}
-      $processors_cache[self] ||= []
+      @processors_cache ||= []
       PROCESSORS_HASH.each do |row|
         index, _, type = *row
-        $processors_cache[self][index] = self.send(type)
+        @processors_cache[index] = self.send(type)
       end
     end
 
@@ -77,6 +76,10 @@ module DabNodeModuleProcessors
           raise "unknown callback #{callback.class}"
         end
       end
+    end
+
+    def processors_cache
+      @processors_cache
     end
   end
 
@@ -131,7 +134,7 @@ module DabNodeModuleProcessors
   end
 
   def _processors(type)
-    $processors_cache[self.class][type]
+    self.class.processors_cache[type]
   end
 
   def sub_run_all_processors!(type)
