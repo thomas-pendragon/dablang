@@ -543,6 +543,15 @@ bool DabVM::execute_single(Stream &input)
         }
         break;
     }
+    case OP_JMP_IF2:
+    {
+        auto mod_true  = input.read_int16() - 5;
+        auto mod_false = input.read_int16() - 5;
+        auto value     = stack.pop_value();
+        auto test      = value.truthy();
+        instructions.seek(ip() + (test ? mod_true : mod_false));
+        break;
+    }
     case OP_NOP:
     {
         break;

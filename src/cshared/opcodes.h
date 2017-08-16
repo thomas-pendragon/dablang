@@ -52,4 +52,5 @@ enum
     OP_SETV_ARG          = 0x2F,
     OP_DESCRIBE_FUNCTION = 0x30,
     OP_PUSH_METHOD       = 0x31,
+    OP_JMP_IF2           = 0x32,
 };

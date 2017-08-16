@@ -79,6 +79,7 @@ OPCODES_ARRAY = [
   {name: 'SETV_ARG', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = arg index, pop(0), push(0)
   {name: 'DESCRIBE_FUNCTION', args: %i{vlc uint16}}, # arg0 = name, arg1 = number of arguments, pop(arg1*2 + 1) (argument types + return type)
   {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
+  {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg1/2 to PC depending on stack value
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze

@@ -37,8 +37,7 @@ func foo()
                                  SYSCALL 0
                                  POP 1
                                  PUSH_TRUE 
-                                 JMP_IF L1
-                                 JMP L2
+                                 JMP_IF2 L1, L2
                    L1:
 /* "b"          */               PUSH_CONSTANT 1
                                  SYSCALL 0

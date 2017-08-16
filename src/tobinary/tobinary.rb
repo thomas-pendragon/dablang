@@ -123,13 +123,13 @@ class OutputStream
     @code = @code[0...@rewrite_pos] + data + @code[@rewrite_pos + 2..-1]
   end
 
-  def fix_jumps(labels, jumps)
+  def fix_jumps(labels, jumps, offset)
     # errap ['jumps:', jumps, 'labels:', labels]
     jumps.each do |jump|
       jump_pos = jump[0]
       jump_label = jump[1]
 
-      _rewind(jump_pos + 1) # opcode is 1 byte
+      _rewind(jump_pos + 1 + offset * 2) # opcode is 1 byte
       diff = labels[jump_label] - jump_pos
       _rewrite_int16(diff)
     end
@@ -157,6 +157,7 @@ class Parser
   def run!
     @label_positions = {}
     @jump_corrections = []
+    @jump_corrections2 = []
     @output_stream.begin(self)
     @input_stream.each do |instr|
       errap instr
@@ -164,7 +165,12 @@ class Parser
       errap line
       label = instr[:label]
       next if line[0] == '' || line[0].nil?
-      if line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
+      if line[0] == 'JMP_IF2'
+        @jump_corrections << [pos, line[1].to_s]
+        @jump_corrections2 << [pos, line[2].to_s]
+        line[1] = 0
+        line[2] = 0
+      elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
         @jump_corrections << [pos, line[1].to_s]
         line[1] = 0
       end
@@ -173,7 +179,8 @@ class Parser
       end
       @output_stream.write(line)
     end
-    @output_stream.fix_jumps(@label_positions, @jump_corrections)
+    @output_stream.fix_jumps(@label_positions, @jump_corrections, 0)
+    @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
     @output_stream.finalize
   end
 end

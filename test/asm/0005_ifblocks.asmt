@@ -46,12 +46,10 @@ func foo(a, b)
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_ARG 0
-                                 JMP_IF L1
-                                 JMP L2
+                                 JMP_IF2 L1, L2
                    L1:
                                  PUSH_ARG 1
-                                 JMP_IF L3
-                                 JMP L4
+                                 JMP_IF2 L3, L4
                    L3:
 /* "a && b"     */               PUSH_CONSTANT 3
                                  SYSCALL 0
@@ -64,8 +62,7 @@ func foo(a, b)
                                  JMP L5
                    L2:
                                  PUSH_ARG 1
-                                 JMP_IF L6
-                                 JMP L7
+                                 JMP_IF2 L6, L7
                    L6:
 /* "!a && b"    */               PUSH_CONSTANT 1
                                  SYSCALL 0
@@ -79,3 +76,4 @@ func foo(a, b)
                    L5:
                                  PUSH_NIL 
                                  RETURN
+
