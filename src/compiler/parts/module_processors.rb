@@ -5,6 +5,7 @@ PROCESSOR_LOWER_INDEX = 3
 PROCESSOR_OPTIMIZE_INDEX = 4
 PROCESSOR_STRIP_INDEX = 5
 PROCESSOR_FLATTEN_INDEX = 6
+PROCESSOR_SSA_INDEX = 7
 
 PROCESSORS_HASH = [
   [PROCESSOR_CHECK_INDEX, :check_with, :check_callbacks],
@@ -14,6 +15,7 @@ PROCESSORS_HASH = [
   [PROCESSOR_OPTIMIZE_INDEX, :optimize_with, :optimize_callbacks],
   [PROCESSOR_STRIP_INDEX, :strip_with, :strip_callbacks],
   [PROCESSOR_FLATTEN_INDEX, :flatten_with, :flatten_callbacks],
+  [PROCESSOR_SSA_INDEX, :ssa_with, :ssa_callbacks],
 ].freeze
 
 module DabNodeModuleProcessors
@@ -92,6 +94,10 @@ module DabNodeModuleProcessors
 
   def run_optimize_processors!
     run_processors!(PROCESSOR_OPTIMIZE_INDEX)
+  end
+
+  def run_ssa_processors!
+    run_processors!(PROCESSOR_SSA_INDEX)
   end
 
   def run_lower_processors!

@@ -19,6 +19,7 @@ dab_benchmark('compile') do
   $no_autorelease = $settings[:no_autorelease]
   $feature_reflection = $settings[:with_reflection]
   $feature_attributes = $settings[:with_attributes]
+  $with_ssa = $settings[:with_ssa]
 
   inputs = $settings[:inputs] || [:stdin]
 
@@ -80,6 +81,9 @@ dab_benchmark('compile') do
         program.run_check_callbacks!
       end
       break if program.has_errors?
+      next if $with_ssa && dab_benchmark('ssa') do
+                program.run_ssa_processors!
+              end
       next if $opt && dab_benchmark('optimize') do
                 program.run_optimize_processors!
               end
