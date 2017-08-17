@@ -1,0 +1,19 @@
+## CODE
+
+func main()
+{
+  var a = 1;
+  print(a);
+  a = 2;
+  print(a);
+}
+
+## OPTIONS
+
+--with-ssa
+
+## RUN OPTIONS
+
+## EXPECT OK
+
+12

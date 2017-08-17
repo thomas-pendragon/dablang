@@ -425,6 +425,8 @@ struct DabVMReset
     ~DabVMReset();
 };
 
+const int SSA_REGISTER_COUNT = 256;
+
 struct DabVM
 {
     bool       autorelease     = true;
@@ -443,6 +445,8 @@ struct DabVM
     std::map<int, DabClass> classes;
 
     std::set<size_t> breakpoints;
+
+    std::vector<DabValue> ssa_registers;
 
     DabClass &get_class(int index)
     {

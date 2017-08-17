@@ -508,6 +508,19 @@ bool DabVM::execute_single(Stream &input)
         stack.push_nil();
         break;
     }
+    case OP_PUSH_SSA:
+    {
+        auto index = input.read_int16();
+        stack.push(ssa_registers[index]);
+        break;
+    }
+    case OP_Q_SET_CONSTANT:
+    {
+        auto ssa_index           = input.read_int16();
+        auto constant_index      = input.read_int16();
+        ssa_registers[ssa_index] = constants[constant_index];
+        break;
+    }
     case OP_RETURN:
     {
         auto nrets = 1;
@@ -1151,8 +1164,10 @@ int main(int argc, char **argv)
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
-    auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
+    vm.ssa_registers.resize(SSA_REGISTER_COUNT);
+    auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
+    vm.ssa_registers.resize(0);
     if (options.extract)
     {
         vm.extract(options.extract_part);
