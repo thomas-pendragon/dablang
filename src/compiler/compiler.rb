@@ -90,6 +90,9 @@ dab_benchmark('compile') do
       next if $with_ssa && dab_benchmark('ssa') do
                 program.run_ssa_processors!
               end
+      next if $with_ssa && dab_benchmark('post-ssa') do
+                program.run_post_ssa_processors!
+              end
       next if $strip && dab_benchmark('strip') do
         program.run_strip_processors!
       end
