@@ -53,4 +53,6 @@ enum
     OP_DESCRIBE_FUNCTION = 0x30,
     OP_PUSH_METHOD       = 0x31,
     OP_JMP_IF2           = 0x32,
+    OP_Q_SET_CONSTANT    = 0x33,
+    OP_PUSH_SSA          = 0x34,
 };
