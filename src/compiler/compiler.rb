@@ -81,15 +81,15 @@ dab_benchmark('compile') do
         program.run_check_callbacks!
       end
       break if program.has_errors?
-      next if $with_ssa && dab_benchmark('ssa') do
-                program.run_ssa_processors!
-              end
       next if $opt && dab_benchmark('optimize') do
                 program.run_optimize_processors!
               end
       next if dab_benchmark('lower') do
         program.run_lower_processors!
       end
+      next if $with_ssa && dab_benchmark('ssa') do
+                program.run_ssa_processors!
+              end
       next if $strip && dab_benchmark('strip') do
         program.run_strip_processors!
       end
