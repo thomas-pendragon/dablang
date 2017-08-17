@@ -30,4 +30,14 @@ class DabNodeLocalVar < DabNode
   def formatted_source(_options)
     original_identifier
   end
+
+  def var_setters
+    previous_nodes(DabNodeSetLocalVar)&.select do |node|
+      node.identifier == self.identifier
+    end
+  end
+
+  def last_var_setter
+    var_setters.last
+  end
 end
