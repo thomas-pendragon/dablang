@@ -3,6 +3,7 @@ require_relative '../processors/convert_arg_to_localvar.rb'
 require_relative '../processors/optimize_first_block.rb'
 require_relative '../processors/strip_unused_function.rb'
 require_relative '../processors/add_missing_return.rb'
+require_relative '../processors/ssaify.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
@@ -12,6 +13,7 @@ class DabNodeFunction < DabNode
   after_init AddMissingReturn
   # optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
+  ssa_with SSAify
 
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
@@ -174,6 +176,10 @@ class DabNodeFunction < DabNode
 
   def users
     root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
+  end
+
+  def allocate_ssa
+    all_nodes(DabNodeSSASet).count
   end
 
   def variables
