@@ -119,7 +119,7 @@ class DabNodeFunction < DabNode
   end
 
   def n_local_vars
-    all_nodes(DabNodeDefineLocalVar).count
+    variables.count
   end
 
   def formatted_source(options)
@@ -148,7 +148,7 @@ class DabNodeFunction < DabNode
   end
 
   def localvar_index(var)
-    all_nodes(DabNodeDefineLocalVar).index(var)
+    variables.index(var)
   end
 
   def arg_type(index)
@@ -174,5 +174,9 @@ class DabNodeFunction < DabNode
 
   def users
     root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
+  end
+
+  def variables
+    all_nodes(DabNodeDefineLocalVar)
   end
 end
