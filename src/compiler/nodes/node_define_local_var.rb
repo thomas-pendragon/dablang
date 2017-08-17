@@ -25,13 +25,8 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
     function&.localvar_index(self)
   end
 
-  def invalidate_local_cache!
-    super
-    @cache_all_users = nil
-  end
-
   def all_users
-    @cache_all_users ||= _all_users
+    _all_users
   end
 
   def _all_users
