@@ -2,6 +2,7 @@ class CheckAssignType
   def run(node)
     setter = node
     definition = node.var_definition
+    return unless definition
     var_type = definition.my_type
     value_type = setter.value.my_type
     unless var_type.can_assign_from?(value_type)
