@@ -10,21 +10,19 @@ class DabNodeSetLocalVar < DabNode
 
   attr_accessor :identifier
   attr_reader :my_type
-  attr_accessor :arg_var
   attr_reader :original_identifier
 
   check_with CheckAssignType
   optimize_with StripReadonlyArgvars
   lower_with ConvertSetValue
 
-  def initialize(identifier, value, type = nil, arg_var = false)
+  def initialize(identifier, value, type = nil)
     super()
     @identifier = identifier
     insert(value || DabNodeLiteralNil.new)
     type ||= DabNodeType.new(nil)
     type = type.dab_type if type.is_a? DabNodeType
     @my_type = type
-    @arg_var = arg_var
     @original_identifier = identifier
   end
 
