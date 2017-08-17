@@ -4,6 +4,7 @@ require_relative '../processors/optimize_first_block.rb'
 require_relative '../processors/strip_unused_function.rb'
 require_relative '../processors/add_missing_return.rb'
 require_relative '../processors/ssaify.rb'
+require_relative '../processors/ssa_break_phi_nodes.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
@@ -14,6 +15,7 @@ class DabNodeFunction < DabNode
   # optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
   ssa_with SSAify
+  post_ssa_with SSABreakPhiNodes
 
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()

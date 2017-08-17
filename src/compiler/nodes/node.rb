@@ -432,4 +432,16 @@ class DabNode
   def has_function?(*_args)
     false
   end
+
+  def fixup_ssa(variable)
+    @children.each do |child|
+      child.fixup_ssa(variable)
+    end
+  end
+
+  def fixup_ssa_phi_nodes(setters_mapping)
+    @children.each do |child|
+      child.fixup_ssa_phi_nodes(setters_mapping)
+    end
+  end
 end

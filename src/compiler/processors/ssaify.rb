@@ -9,6 +9,8 @@ class SSAify
   end
 
   def ssaify_variable(function, variable)
+    function.blocks.fixup_ssa(variable)
+
     setters = variable.all_setters
     getters = variable.all_getters
 
@@ -16,6 +18,8 @@ class SSAify
     getters.each do |getter|
       last_setters[getter] = getter.last_var_setter
     end
+
+    setters_mapping = {}
 
     setters.each do |setter|
       reg = function.allocate_ssa
@@ -27,6 +31,9 @@ class SSAify
         getter.replace_with!(new_getter) if last_setter == setter
       end
       setter.replace_with!(new_setter)
+      setters_mapping[setter] = new_setter
     end
+
+    function.blocks.fixup_ssa_phi_nodes(setters_mapping)
   end
 end
