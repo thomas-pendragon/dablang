@@ -1,8 +1,11 @@
 require_relative 'node.rb'
+require_relative '../processors/ssa_prune_unused_setter.rb'
 
 class DabNodeSSASet < DabNode
   attr_accessor :output_register
   attr_accessor :output_varname
+
+  ssa_optimize_with SSAPruneUnusedSetter
 
   def initialize(value, output_register, output_varname = nil)
     super()

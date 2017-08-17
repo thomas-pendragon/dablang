@@ -1,16 +1,22 @@
 require_relative 'node.rb'
 
 class DabNodeSSAPhi < DabNode
-  attr_accessor :input_registers
   attr_accessor :input_varname
 
   def initialize(input_registers, input_varname = nil)
     super()
     @input_registers = input_registers
     @input_varname = input_varname
+    input_registers.each do |reg|
+      insert(DabNodeSSAGet.new(reg))
+    end
+  end
+
+  def input_registers
+    @children.map(&:input_register)
   end
 
   def extra_dump
-    "R{#{input_registers.join(', ')}} [#{input_varname}]"
+    "[#{input_varname}]"
   end
 end
