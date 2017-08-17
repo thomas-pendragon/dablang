@@ -90,7 +90,7 @@ dab_benchmark('compile') do
       next if $with_ssa && dab_benchmark('ssa') do
                 program.run_ssa_processors!
               end
-      next if $with_ssa && dab_benchmark('optimize-ssa') do
+      next if $with_ssa && $opt && dab_benchmark('optimize-ssa') do
                 program.run_optimize_ssa_processors!
               end
       next if $with_ssa && dab_benchmark('post-ssa') do
