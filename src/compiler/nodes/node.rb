@@ -416,6 +416,10 @@ class DabNode
     end
   end
 
+  def append_in_parent(node)
+    parent.insert_at(parent.index(self) + 1, node)
+  end
+
   def prepend_instruction(node)
     _insert_before(node, self)
   end
