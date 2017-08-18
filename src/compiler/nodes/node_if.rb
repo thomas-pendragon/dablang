@@ -72,15 +72,25 @@ class DabNodeIf < DabNodeTreeBlock
     after_block
   end
 
-  def fixup_ssa(variable)
-    super
-    setters = all_nodes(DabNodeSetLocalVar).select do |var|
-      var.identifier == variable.identifier
+  def fixup_ssa(variable, last_setter)
+    true_setter = if_true.fixup_ssa(variable, last_setter)
+    false_setter = if_false&.fixup_ssa(variable, last_setter)
+
+    if true_setter && false_setter && (true_setter != last_setter) && (false_setter != last_setter)
+      last_setter = nil
     end
-    if setters.count > 0
+
+    setters = [true_setter, false_setter, last_setter].compact.uniq
+
+    if setters.count == 1
+      return setters.first
+    elsif setters.count > 1
       phi = DabNodeSSAPhiBase.new(setters)
       phi_setter = DabNodeSetLocalVar.new(variable.identifier, phi)
       self.append_in_parent(phi_setter)
+      return phi_setter
+    else
+      return last_setter
     end
   end
 end

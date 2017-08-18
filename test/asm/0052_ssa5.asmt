@@ -1,0 +1,52 @@
+## CODE
+
+func foo() {}
+
+func main()
+{
+  var a = 1;
+  if (foo())
+  {
+    a = 2;
+  }
+  print(a);
+}
+
+## OPTIONS
+
+--with-ssa
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_NUMBER 1
+                                 CONSTANT_NUMBER 2
+                                 CONSTANT_SYMBOL foo
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 1            */               Q_SET_CONSTANT 0, 0
+/* foo          */               PUSH_CONSTANT 2
+                                 CALL 0
+                                 JMP_IF2 L1, L2
+                   L1:
+/* 2            */               Q_SET_CONSTANT 0, 1
+                                 JMP L2
+                   L2:
+                                 PUSH_SSA 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
+

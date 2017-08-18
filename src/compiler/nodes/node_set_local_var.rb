@@ -71,4 +71,12 @@ class DabNodeSetLocalVar < DabNode
   def returns_value?
     false
   end
+
+  def fixup_ssa(variable, last_setter)
+    if variable.identifier == self.identifier
+      self
+    else
+      last_setter
+    end
+  end
 end

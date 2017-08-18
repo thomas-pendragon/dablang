@@ -9,7 +9,7 @@ class SSAify
   end
 
   def ssaify_variable(function, variable)
-    function.blocks.fixup_ssa(variable)
+    function.blocks.fixup_ssa(variable, nil)
 
     setters = variable.all_setters
     getters = variable.all_getters

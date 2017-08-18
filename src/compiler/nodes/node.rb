@@ -433,10 +433,11 @@ class DabNode
     false
   end
 
-  def fixup_ssa(variable)
+  def fixup_ssa(variable, last_setter)
     @children.each do |child|
-      child.fixup_ssa(variable)
+      last_setter = child.fixup_ssa(variable, last_setter)
     end
+    last_setter
   end
 
   def fixup_ssa_phi_nodes(setters_mapping)

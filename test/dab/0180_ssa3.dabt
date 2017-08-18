@@ -1,0 +1,100 @@
+## CODE
+
+func q_true() { return true; }
+func q_false() { return false; }
+
+func test1()
+{
+  var a = 1;
+  if (q_true())
+  {
+    a = 2;
+  }
+  print(a);
+}
+
+func test2()
+{
+  var a = 3;
+  if (q_false())
+  {
+    a = 4;
+  }
+  print(a);
+}
+
+func test3()
+{
+  var a = 5;
+  if (q_true())
+  {
+    a = 6;
+  }
+  else
+  {
+    a = 7;
+  }
+  print(a);
+}
+
+func test4()
+{
+  var a = 8;
+  if (q_false())
+  {
+    a = 9;
+  }
+  else
+  {
+    a = 0;
+  }
+  print(a);
+}
+
+func test5()
+{
+  var a = "A";
+  if (q_false())
+  {
+    print(nil);
+  }
+  else
+  {
+    a = "B";
+  }
+  print(a);
+}
+
+func test6()
+{
+  var a = "C";
+  if (q_true())
+  {
+    a = "D";
+  }
+  else
+  {
+    print(nil);
+  }
+  print(a);
+}
+
+func main()
+{
+  test1();
+  test2();
+  test3();
+  test4();
+  test5();
+  test6();
+}
+
+## OPTIONS
+
+--with-ssa
+
+## RUN OPTIONS
+
+## EXPECT OK
+
+2360BD
