@@ -72,6 +72,8 @@
 
 ## Assembler ##
 
+- different labels for `func foo()` and `Array.foo`
+
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
