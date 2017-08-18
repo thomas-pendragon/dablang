@@ -1,0 +1,36 @@
+## CODE
+
+func main()
+{
+  var a = 1;
+  a = 2;
+  var b = a;
+  a = 7;
+  var c = 8;
+  c = b;
+  print(c);
+}
+
+## OPTIONS
+
+--with-ssa
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_NUMBER 2
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 2            */               Q_SET_CONSTANT 1, 0
+                                 PUSH_SSA 1
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
+
