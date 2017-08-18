@@ -55,4 +55,5 @@ enum
     OP_JMP_IF2           = 0x32,
     OP_Q_SET_CONSTANT    = 0x33,
     OP_PUSH_SSA          = 0x34,
+    OP_Q_SET_POP         = 0x35,
 };

@@ -82,6 +82,7 @@ OPCODES_ARRAY = [
   {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg1/2 to PC depending on stack value
   {name: 'Q_SET_CONSTANT', args: %i[int16 int16]}, # reg(arg0) <- constant(arg1)
   {name: 'PUSH_SSA', args: %i[int16]}, # stack <- reg(arg0); push(1)
+  {name: 'Q_SET_POP', args: %i[int16]}, # reg(arg0) <- stack; pop(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze

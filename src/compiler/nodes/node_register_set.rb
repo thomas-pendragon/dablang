@@ -20,8 +20,12 @@ class DabNodeRegisterSet < DabNode
   end
 
   def compile(output)
-    raise "unsupported value (#{value.class})" unless value.respond_to?(:compile_as_ssa)
-    value.compile_as_ssa(output, output_register)
+    if value.respond_to?(:compile_as_ssa)
+      value.compile_as_ssa(output, output_register)
+    else
+      value.compile(output)
+      output.print('Q_SET_POP', output_register)
+    end
   end
 
   def returns_value?

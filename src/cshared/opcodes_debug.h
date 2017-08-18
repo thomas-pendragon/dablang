@@ -54,4 +54,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_JMP_IF2, "JMP_IF2", {ARG_INT16, ARG_INT16}},
     {OP_Q_SET_CONSTANT, "Q_SET_CONSTANT", {ARG_INT16, ARG_INT16}},
     {OP_PUSH_SSA, "PUSH_SSA", {ARG_INT16}},
+    {OP_Q_SET_POP, "Q_SET_POP", {ARG_INT16}},
 };
