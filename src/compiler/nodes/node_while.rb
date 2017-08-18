@@ -52,4 +52,10 @@ class DabNodeWhile < DabNodeTreeBlock
     blocks << after_block
     after_block
   end
+
+  def fixup_ssa(variable, last_setter)
+    loop_setter = on_block.fixup_ssa(variable, last_setter)
+
+    _fixup_ssa_setters(variable, last_setter, [loop_setter])
+  end
 end
