@@ -20,9 +20,10 @@ func main()
                                  BREAK_LOAD 
  
                    Fmain:
-                                 STACK_RESERVE 1
+                                 STACK_RESERVE 0
 /* 150          */               PUSH_CONSTANT 0
                                  CAST 8
-/* var 0 a      */               SET_VAR 0
+                                 Q_SET_POP 0
                                  PUSH_NIL 
                                  RETURN
+

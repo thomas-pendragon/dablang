@@ -25,32 +25,35 @@ func main()
                                  BREAK_LOAD 
  
                    Fputs:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
                                  PUSH_NIL 
                                  RETURN 
  
                    Fmain:
-                                 STACK_RESERVE 1
+                                 STACK_RESERVE 0
                                  PUSH_NUMBER 12
-                                 SETV_NEW_ARRAY 0, 1
-/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_ARRAY 1
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1
                                  PUSH_NUMBER 123
-/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SSA 0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
                                  POP 1
                                  PUSH_STRING "foo"
-/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SSA 0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
                                  POP 1
-/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SSA 0
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+

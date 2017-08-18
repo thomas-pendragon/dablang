@@ -39,9 +39,10 @@ func bar()
                                  BREAK_LOAD 
  
                    Ffoo:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
-/* var 0 a      */               PUSH_VAR 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 5
 /* op is        */               CALL 2
@@ -52,7 +53,7 @@ func bar()
                                  POP 1
                                  JMP L3
                    L3:
-/* var 0 a      */               PUSH_VAR 0
+                                 PUSH_SSA 0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 5
 /* op is        */               CALL 2

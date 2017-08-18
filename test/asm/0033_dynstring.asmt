@@ -21,9 +21,9 @@ func foo()
                                  BREAK_LOAD 
  
                    Ffoo:
-                                 STACK_RESERVE 1
-/* "allocated s */               SETV_CONSTANT 0, 0
-/* var 0 %autov */               PUSH_VAR 0
+                                 STACK_RESERVE 0
+/* "allocated s */               Q_SET_CONSTANT 0, 0
+                                 PUSH_SSA 0
 /* String       */               PUSH_CLASS 1
 /* new          */               PUSH_CONSTANT 1
                                  INSTCALL 1

@@ -19,7 +19,8 @@ dab_benchmark('compile') do
   $no_autorelease = $settings[:no_autorelease]
   $feature_reflection = $settings[:with_reflection]
   $feature_attributes = $settings[:with_attributes]
-  $with_ssa = $settings[:with_ssa]
+  $with_ssa = true
+  $with_ssa = false if $settings[:no_ssa]
 
   inputs = $settings[:inputs] || [:stdin]
 

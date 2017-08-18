@@ -22,10 +22,10 @@ Instructions should pop return value if not used.
                                  BREAK_LOAD 
  
                    Ffoo:
-                                 STACK_RESERVE 1
+                                 STACK_RESERVE 0
                                  PUSH_STRING "foo"
-/* var 0 %autov */               SET_VAR 0
-/* var 0 %autov */               PUSH_VAR 0
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

@@ -62,7 +62,7 @@ func main()
               22: {
     1 hit     23:   func b()
               24:   {
-    2 hits    25:     var n = self.a(true);
+    1 hit     25:     var n = self.a(true);
     1 hit     26:     return "b" + n;
               27:   }
               28: }

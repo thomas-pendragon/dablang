@@ -28,9 +28,10 @@ func bar()
                                  BREAK_LOAD 
  
                    Ffoo:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
-/* var 0 a      */               PUSH_VAR 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
 /* class        */               PUSH_CONSTANT 1
                                  INSTCALL 0
                                  SYSCALL 0

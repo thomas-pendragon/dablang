@@ -39,16 +39,20 @@ func another_attribute(method, arg1, arg2)
                                  RETURN 
  
                    Fsample_attribute:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
                                  PUSH_NIL 
                                  RETURN 
  
                    Fanother_attribute:
-                                 STACK_RESERVE 3
-                                 SETV_ARG 0, 2
-                                 SETV_ARG 1, 1
-                                 SETV_ARG 2, 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 2
+                                 Q_SET_POP 0
+                                 PUSH_ARG 1
+                                 Q_SET_POP 1
+                                 PUSH_ARG 0
+                                 Q_SET_POP 2
                                  PUSH_NIL 
                                  RETURN 
  

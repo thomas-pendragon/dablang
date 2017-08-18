@@ -21,9 +21,10 @@ func tap(a)
                                  BREAK_LOAD 
  
                    Ftap:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
-/* var 0 a      */               PUSH_VAR 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
                                  PUSH_SYMBOL fun
                                  PUSH_SYMBOL "tap__block1"
                                  INSTCALL_BLOCK 0
@@ -32,10 +33,12 @@ func tap(a)
                                  RETURN 
  
                    Ftap__block1:
-                                 STACK_RESERVE 1
-                                 SETV_ARG 0, 0
-/* var 0 arg    */               PUSH_VAR 0
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 Q_SET_POP 0
+                                 PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+
