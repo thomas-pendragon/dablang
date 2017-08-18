@@ -29,9 +29,10 @@ func main()
                                  PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
-/* 2            */               Q_SET_CONSTANT 1, 1
-                                 PUSH_SSA 1
+/* 2            */               Q_SET_CONSTANT 0, 1
+                                 PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

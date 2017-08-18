@@ -1,25 +1,31 @@
 class SSABreakPhiNodes
   def run(function)
-    phis = function.all_nodes(DabNodeSSAPhi)
-    return if phis.count == 0
-    phis.each do |phi|
-      break_phi(function, phi)
+    all_setters = function.all_nodes(DabNodeSSASet)
+    return if all_setters.empty?
+
+    variables = {}
+
+    all_setters.each do |setter|
+      variables[setter.output_varname] ||= []
+      variables[setter.output_varname] << setter
     end
-    true
+
+    variables.each do |variable, setters|
+      break_regs(function, variable, setters)
+    end
+
+    function.all_nodes(DabNodeSSAPhi).each do |node|
+      node.parent.remove!
+    end
   end
 
-  def break_phi(function, phi)
-    setter = phi.parent
-    raise '?' unless setter.is_a?(DabNodeSSASet)
-
-    reg_setters = function.all_nodes(DabNodeSSASet).select do |node|
-      phi.input_registers.include?(node.output_register)
+  def break_regs(_function, variable, setters)
+    first_reg = setters.first.output_register
+    setters.each do |setter|
+      setter.rename(first_reg)
+      value = setter.value.extract
+      new_setter = DabNodeRegisterSet.new(value, first_reg, variable)
+      setter.replace_with!(new_setter)
     end
-
-    reg_setters.each do |reg_setter|
-      reg_setter.rename(setter.output_register)
-    end
-
-    setter.remove!
   end
 end
