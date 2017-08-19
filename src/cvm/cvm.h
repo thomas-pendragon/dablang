@@ -425,8 +425,6 @@ struct DabVMReset
     ~DabVMReset();
 };
 
-const int SSA_REGISTER_COUNT = 256;
-
 struct DabVM
 {
     bool       autorelease     = true;
@@ -561,6 +559,8 @@ struct DabVM
 
     void reflect(size_t reflection_type, const DabValue &symbol);
     void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
+
+    void set_ssa(size_t ssa_index, const DabValue &value);
 };
 
 struct DabVM_debug

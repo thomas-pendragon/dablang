@@ -322,6 +322,15 @@ void DabVM::execute(Stream &input)
     }
 }
 
+void DabVM::set_ssa(size_t ssa_index, const DabValue &value)
+{
+    if (ssa_registers.size() <= ssa_index)
+    {
+        ssa_registers.resize(ssa_index + 1);
+    }
+    ssa_registers[ssa_index] = value;
+}
+
 void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
 {
     switch (reflection_type)
@@ -516,16 +525,16 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_Q_SET_CONSTANT:
     {
-        auto ssa_index           = input.read_int16();
-        auto constant_index      = input.read_int16();
-        ssa_registers[ssa_index] = constants[constant_index];
+        auto ssa_index      = input.read_int16();
+        auto constant_index = input.read_int16();
+        set_ssa(ssa_index, constants[constant_index]);
         break;
     }
     case OP_Q_SET_POP:
     {
-        auto ssa_index           = input.read_int16();
-        auto value               = stack.pop_value();
-        ssa_registers[ssa_index] = value;
+        auto ssa_index = input.read_int16();
+        auto value     = stack.pop_value();
+        set_ssa(ssa_index, value);
         break;
     }
     case OP_RETURN:
@@ -1171,8 +1180,7 @@ int main(int argc, char **argv)
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
-    vm.ssa_registers.resize(SSA_REGISTER_COUNT);
-    auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
+    auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
     vm.ssa_registers.resize(0);
     if (options.extract)
