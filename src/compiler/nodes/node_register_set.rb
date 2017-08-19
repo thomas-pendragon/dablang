@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../concerns/register_setter_concern.rb'
 
 class DabNodeRegisterSet < DabNode
+  include RegisterSetterConcern
+
   attr_accessor :output_register
   attr_accessor :output_varname
 
@@ -25,16 +28,6 @@ class DabNodeRegisterSet < DabNode
     else
       value.compile(output)
       output.print('Q_SET_POP', output_register)
-    end
-  end
-
-  def returns_value?
-    false
-  end
-
-  def users
-    function.all_nodes(DabNodeSSAGet).select do |node|
-      node.input_register == self.output_register
     end
   end
 end

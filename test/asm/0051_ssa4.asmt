@@ -47,21 +47,21 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 2            */               Q_SET_CONSTANT 1, 1
+/* 2            */               Q_SET_CONSTANT 0, 1
 /* foo          */               PUSH_CONSTANT 3
                                  CALL 0
                                  JMP_IF2 L1, L2
                    L1:
-/* 8            */               Q_SET_CONSTANT 1, 2
+/* 8            */               Q_SET_CONSTANT 0, 2
                                  JMP L3
                    L2:
-/* 1            */               Q_SET_CONSTANT 1, 0
+/* 1            */               Q_SET_CONSTANT 0, 0
                                  JMP L3
                    L3:
-                                 PUSH_SSA 1
+                                 PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
-                                 PUSH_SSA 1
+                                 PUSH_SSA 0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
