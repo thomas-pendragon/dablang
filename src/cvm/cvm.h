@@ -444,7 +444,8 @@ struct DabVM
 
     std::set<size_t> breakpoints;
 
-    std::vector<DabValue> ssa_registers;
+    std::vector<DabValue>              ssa_registers;
+    std::vector<std::vector<DabValue>> ssa_register_stack;
 
     DabClass &get_class(int index)
     {

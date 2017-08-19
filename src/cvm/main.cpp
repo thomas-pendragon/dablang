@@ -96,6 +96,9 @@ bool DabVM::pop_frame(bool regular)
         instructions.seek(prev_ip);
     }
 
+    ssa_registers = ssa_register_stack.back();
+    ssa_register_stack.pop_back();
+
     if (prev_pos == (size_t)-1)
     {
         if (verbose)
@@ -127,6 +130,8 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
         val.data.type = TYPE_INVALID;
         stack.push_value(val);
     }
+    ssa_register_stack.push_back(ssa_registers);
+    ssa_registers.resize(0);
 }
 
 void DabVM::_dump(const char *name, const std::vector<DabValue> &data, FILE *output)
@@ -1183,6 +1188,7 @@ int main(int argc, char **argv)
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
     vm.ssa_registers.resize(0);
+    vm.ssa_register_stack.resize(0);
     if (options.extract)
     {
         vm.extract(options.extract_part);
