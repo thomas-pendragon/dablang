@@ -371,6 +371,15 @@ class DabNode
     parent
   end
 
+  def previous_nodes_in_tree(klass)
+    previous_nodes(klass) - all_parents
+  end
+
+  def all_parents
+    return [] unless parent
+    [parent] + parent.all_parents
+  end
+
   def previous_nodes(klass)
     return [] unless function_parent
     self_index = function_parent.node_index(self)

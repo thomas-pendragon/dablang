@@ -32,7 +32,7 @@ class DabNodeLocalVar < DabNode
   end
 
   def var_setters
-    previous_nodes(DabNodeSetLocalVar)&.select do |node|
+    previous_nodes_in_tree(DabNodeSetLocalVar)&.select do |node|
       node.identifier == self.identifier
     end
   end
