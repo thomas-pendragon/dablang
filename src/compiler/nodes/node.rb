@@ -425,6 +425,10 @@ class DabNode
     end
   end
 
+  def prepend_in_parent(node)
+    parent.insert_at(parent.index(self), node)
+  end
+
   def append_in_parent(node)
     parent.insert_at(parent.index(self) + 1, node)
   end
@@ -462,7 +466,8 @@ class DabNode
   end
 
   def fixup_ssa(variable, last_setter)
-    @children.each do |child|
+    list = @children.dup
+    list.each do |child|
       last_setter = child.fixup_ssa(variable, last_setter)
     end
     last_setter

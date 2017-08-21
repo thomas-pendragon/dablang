@@ -1,0 +1,23 @@
+## CODE
+
+func q_false() { return false; }
+
+func main()
+{
+  var a = 1;
+  while (q_false())
+  {
+    a = 2;
+  }
+  print(a);
+}
+
+## OPTIONS
+
+--with-ssa
+
+## RUN OPTIONS
+
+## EXPECT OK
+
+1

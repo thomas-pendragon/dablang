@@ -54,8 +54,20 @@ class DabNodeWhile < DabNodeTreeBlock
   end
 
   def fixup_ssa(variable, last_setter)
-    loop_setter = on_block.fixup_ssa(variable, last_setter)
+    temp_value = DabNode.new
+    interim_setter = DabNodeSetLocalVar.new(variable.identifier, temp_value)
+    loop_setter = on_block.fixup_ssa(variable, interim_setter)
 
-    _fixup_ssa_setters(variable, last_setter, [loop_setter])
+    new_value = DabNodeSSAPhiBase.new([loop_setter, last_setter].compact.uniq)
+    interim_setter.value.replace_with!(new_value)
+
+    self.prepend_in_parent(interim_setter)
+
+    extra_phi = DabNodeSSAPhiBase.new([last_setter, interim_setter, loop_setter].compact.uniq)
+    extra_setter = DabNodeSetLocalVar.new(variable.identifier, extra_phi)
+
+    self.append_in_parent(extra_setter)
+
+    extra_setter
   end
 end
