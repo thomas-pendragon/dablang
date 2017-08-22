@@ -542,6 +542,13 @@ bool DabVM::execute_single(Stream &input)
         set_ssa(ssa_index, value);
         break;
     }
+    case OP_Q_SET_NUMBER:
+    {
+        auto ssa_index = input.read_int16();
+        auto number    = input.read_uint64();
+        set_ssa(ssa_index, DabValue(number));
+        break;
+    }
     case OP_RETURN:
     {
         auto nrets = 1;

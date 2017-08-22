@@ -42,12 +42,10 @@ func main()
                                  CALL 0
                                  JMP_IF2 L1, L2
                    L1:
-                                 PUSH_NUMBER 2
-                                 Q_SET_POP 0
+/* 2            */               Q_SET_NUMBER 0, 2
                                  JMP L3
                    L2:
-                                 PUSH_NUMBER 3
-                                 Q_SET_POP 0
+/* 3            */               Q_SET_NUMBER 0, 3
                                  JMP L3
                    L3:
                                  PUSH_SSA 0

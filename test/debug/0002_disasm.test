@@ -16,14 +16,14 @@ quit
 ## EXPECT STDOUT
 
 IP = 74
-        63: LOAD_FUNCTION 36, puts, 65535
+        63: LOAD_FUNCTION 35, puts, 65535
         73: BREAK_LOAD 
 >       74: STACK_RESERVE 0
-        77: PUSH_NUMBER 12
-        86: Q_SET_POP 0
+        77: Q_SET_NUMBER 0, 12
+        88: PUSH_SSA 0
 IP = 77
         73: BREAK_LOAD 
         74: STACK_RESERVE 0
->       77: PUSH_NUMBER 12
-        86: Q_SET_POP 0
-        89: PUSH_SSA 0
+>       77: Q_SET_NUMBER 0, 12
+        88: PUSH_SSA 0
+        91: SYSCALL 0

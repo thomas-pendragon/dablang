@@ -23,8 +23,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 1
-                                 Q_SET_POP 0
+/* 1            */               Q_SET_NUMBER 0, 1
                                  PUSH_SSA 0
                                  PUSH_NUMBER 1
 /* +            */               PUSH_CONSTANT 0
