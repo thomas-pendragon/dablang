@@ -29,7 +29,6 @@ func bar()
                                  CONSTANT_STRING "got fixnum"
                                  CONSTANT_STRING "got string"
                                  CONSTANT_STRING "str"
-                                 CONSTANT_NUMBER 12
                                  CONSTANT_SYMBOL foo
                                  CONSTANT_SYMBOL is
  
@@ -44,7 +43,7 @@ func bar()
                                  Q_SET_POP 0
                                  PUSH_SSA 0
 /* String       */               PUSH_CLASS 1
-/* is           */               PUSH_CONSTANT 5
+/* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2
                                  JMP_IF2 L2, L3
                    L2:
@@ -55,7 +54,7 @@ func bar()
                    L3:
                                  PUSH_SSA 0
 /* Fixnum       */               PUSH_CLASS 3
-/* is           */               PUSH_CONSTANT 5
+/* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2
                                  JMP_IF2 L5, L6
                    L5:
@@ -70,11 +69,11 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               PUSH_CONSTANT 2
-/* foo          */               PUSH_CONSTANT 4
+/* foo          */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1
-/* 12           */               PUSH_CONSTANT 3
-/* foo          */               PUSH_CONSTANT 4
+                                 PUSH_NUMBER 12
+/* foo          */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1
                                  PUSH_NIL 

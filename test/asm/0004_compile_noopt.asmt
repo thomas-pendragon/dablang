@@ -14,8 +14,6 @@ func foo()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL "+"
-                                 CONSTANT_NUMBER 1
-                                 CONSTANT_NUMBER 2
  
                                  LOAD_FUNCTION Ffoo, foo, -1
  
@@ -23,8 +21,8 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 1            */               PUSH_CONSTANT 1
-/* 2            */               PUSH_CONSTANT 2
+                                 PUSH_NUMBER 1
+                                 PUSH_NUMBER 2
 /* +            */               PUSH_CONSTANT 0
 /* op +         */               CALL 2
                                  SYSCALL 0

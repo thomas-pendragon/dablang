@@ -20,8 +20,6 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_NUMBER 2
-                                 CONSTANT_NUMBER 5
                                  CONSTANT_SYMBOL foo
  
                                  LOAD_FUNCTION Ffoo, foo, -1
@@ -36,14 +34,16 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 5            */               Q_SET_CONSTANT 0, 1
+                                 PUSH_NUMBER 5
+                                 Q_SET_POP 0
                                  JMP L1
                    L1:
-/* foo          */               PUSH_CONSTANT 2
+/* foo          */               PUSH_CONSTANT 0
                                  CALL 0
                                  JMP_IF2 L2, L3
                    L2:
-/* 2            */               Q_SET_CONSTANT 0, 0
+                                 PUSH_NUMBER 2
+                                 Q_SET_POP 0
                                  JMP L1
                    L3:
                                  PUSH_SSA 0

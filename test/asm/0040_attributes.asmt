@@ -22,7 +22,6 @@ func another_attribute(method, arg1, arg2)
 /* Dab dev      */                
  
                                  CONSTANT_STRING "foo"
-                                 CONSTANT_NUMBER 14
                                  CONSTANT_SYMBOL another_attribute
                                  CONSTANT_SYMBOL sample_attribute
  
@@ -59,13 +58,13 @@ func another_attribute(method, arg1, arg2)
                    F__init:
                                  STACK_RESERVE 0
                                  PUSH_METHOD foo
-/* sample_attri */               PUSH_CONSTANT 3
+/* sample_attri */               PUSH_CONSTANT 2
                                  CALL 1
                                  POP 1
                                  PUSH_METHOD foo
-/* 14           */               PUSH_CONSTANT 1
+                                 PUSH_NUMBER 14
 /* "foo"        */               PUSH_CONSTANT 0
-/* another_attr */               PUSH_CONSTANT 2
+/* another_attr */               PUSH_CONSTANT 1
                                  CALL 3
                                  POP 1
                                  PUSH_NIL 

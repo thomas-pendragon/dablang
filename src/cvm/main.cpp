@@ -751,8 +751,10 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_PUSH_NUMBER:
     {
-        auto n = input.read_uint64();
-        stack.push(n);
+        auto     n             = input.read_uint64();
+        DabValue value         = n;
+        value.data.is_constant = true;
+        stack.push(value);
         break;
     }
     case OP_PUSH_SYMBOL:

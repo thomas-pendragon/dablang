@@ -16,7 +16,6 @@ func main()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL "+"
-                                 CONSTANT_NUMBER 1
  
                                  LOAD_FUNCTION Fmain, main, -1
  
@@ -24,9 +23,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 1            */               Q_SET_CONSTANT 0, 1
+                                 PUSH_NUMBER 1
+                                 Q_SET_POP 0
                                  PUSH_SSA 0
-/* 1            */               PUSH_CONSTANT 1
+                                 PUSH_NUMBER 1
 /* +            */               PUSH_CONSTANT 0
 /* op +         */               CALL 2
                                  Q_SET_POP 0

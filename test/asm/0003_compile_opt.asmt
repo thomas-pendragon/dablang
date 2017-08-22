@@ -13,16 +13,15 @@ func foo()
 
 /* Dab dev      */                
  
-                                 CONSTANT_NUMBER 3
- 
                                  LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 3            */               PUSH_CONSTANT 0
+                                 PUSH_NUMBER 3
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN
+

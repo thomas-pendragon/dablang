@@ -14,13 +14,12 @@ func foo()
 
 /* Dab dev      */                
  
-                                 CONSTANT_NUMBER 41
- 
                                  LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 41           */               PUSH_CONSTANT 0
-                                 RETURN 
+                                 PUSH_NUMBER 41
+                                 RETURN
+

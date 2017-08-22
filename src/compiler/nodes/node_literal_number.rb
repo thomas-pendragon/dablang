@@ -1,6 +1,6 @@
-require_relative 'node_extractable_literal.rb'
+require_relative 'node_literal.rb'
 
-class DabNodeLiteralNumber < DabNodeExtractableLiteral
+class DabNodeLiteralNumber < DabNodeLiteral
   attr_reader :number
   def initialize(number)
     super()
@@ -9,10 +9,6 @@ class DabNodeLiteralNumber < DabNodeExtractableLiteral
 
   def extra_dump
     number.to_s
-  end
-
-  def compile_constant(output)
-    output.print('CONSTANT_NUMBER', extra_dump)
   end
 
   def compile(output)

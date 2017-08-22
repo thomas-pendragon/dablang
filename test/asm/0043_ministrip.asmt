@@ -20,7 +20,6 @@ func bar()
 /* Dab dev      */                
  
                                  CONSTANT_STRING "str"
-                                 CONSTANT_NUMBER 12
                                  CONSTANT_SYMBOL __foo_LiteralFixnum
                                  CONSTANT_SYMBOL __foo_LiteralString
  
@@ -33,11 +32,11 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               PUSH_CONSTANT 0
-/* __foo_Litera */               PUSH_CONSTANT 3
+/* __foo_Litera */               PUSH_CONSTANT 2
                                  HARDCALL 1
                                  POP 1
-/* 12           */               PUSH_CONSTANT 1
-/* __foo_Litera */               PUSH_CONSTANT 2
+                                 PUSH_NUMBER 12
+/* __foo_Litera */               PUSH_CONSTANT 1
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 
@@ -58,3 +57,4 @@ func bar()
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
+

@@ -29,7 +29,6 @@ func bar()
                                  CONSTANT_STRING "got fixnum"
                                  CONSTANT_STRING "got string"
                                  CONSTANT_STRING "str"
-                                 CONSTANT_NUMBER 12
                                  CONSTANT_SYMBOL __foo_LiteralFixnum
                                  CONSTANT_SYMBOL __foo_LiteralString
  
@@ -42,11 +41,11 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               PUSH_CONSTANT 2
-/* __foo_Litera */               PUSH_CONSTANT 5
+/* __foo_Litera */               PUSH_CONSTANT 4
                                  HARDCALL 1
                                  POP 1
-/* 12           */               PUSH_CONSTANT 3
-/* __foo_Litera */               PUSH_CONSTANT 4
+                                 PUSH_NUMBER 12
+/* __foo_Litera */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 

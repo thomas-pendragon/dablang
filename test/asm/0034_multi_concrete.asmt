@@ -23,7 +23,6 @@ func foo()
                                  CONSTANT_STRING "A"
                                  CONSTANT_STRING "LiteralFixnum"
                                  CONSTANT_STRING "LiteralString"
-                                 CONSTANT_NUMBER 1
                                  CONSTANT_SYMBOL __spec_LiteralFixnum
                                  CONSTANT_SYMBOL __spec_LiteralString
                                  CONSTANT_SYMBOL class
@@ -38,7 +37,7 @@ func foo()
                    Fspec:
                                  STACK_RESERVE 0
                                  PUSH_ARG 0
-/* class        */               PUSH_CONSTANT 6
+/* class        */               PUSH_CONSTANT 5
                                  INSTCALL 0
                                  SYSCALL 0
                                  POP 1
@@ -47,16 +46,16 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 1            */               PUSH_CONSTANT 3
-/* __spec_Liter */               PUSH_CONSTANT 4
+                                 PUSH_NUMBER 1
+/* __spec_Liter */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
-/* 1            */               PUSH_CONSTANT 3
-/* __spec_Liter */               PUSH_CONSTANT 4
+                                 PUSH_NUMBER 1
+/* __spec_Liter */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
 /* "A"          */               PUSH_CONSTANT 0
-/* __spec_Liter */               PUSH_CONSTANT 5
+/* __spec_Liter */               PUSH_CONSTANT 4
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 

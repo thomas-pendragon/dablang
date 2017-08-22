@@ -13,15 +13,13 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_NUMBER 150
- 
                                  LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 150          */               PUSH_CONSTANT 0
+                                 PUSH_NUMBER 150
                                  CAST 8
                                  Q_SET_POP 0
                                  PUSH_NIL 

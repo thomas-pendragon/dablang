@@ -12,11 +12,12 @@ func main()
 
 ## OPTIONS
 
+
+
 ## EXPECT
 
 /* Dab dev      */                
  
-                                 CONSTANT_NUMBER 1
                                  CONSTANT_SYMBOL __foo_LiteralFixnum
                                  CONSTANT_SYMBOL "main__block1"
  
@@ -37,9 +38,9 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 1            */               PUSH_CONSTANT 0
-/* __foo_Litera */               PUSH_CONSTANT 1
-/* main__block1 */               PUSH_CONSTANT 2
+                                 PUSH_NUMBER 1
+/* __foo_Litera */               PUSH_CONSTANT 0
+/* main__block1 */               PUSH_CONSTANT 1
                                  HARDCALL_BLOCK 1
                                  POP 1
                                  PUSH_NIL 
@@ -57,3 +58,4 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_NIL 
                                  RETURN
+
