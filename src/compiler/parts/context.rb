@@ -640,6 +640,19 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_parentheses_value
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('(')
+      value = subcontext.read_value
+      next unless subcontext.read_operator(')')
+      value
+    end
+  end
+
+  def read_simple_value_group
+    read_parentheses_value || read_simple_value
+  end
+
   def read_dot_postfix(base_value)
     on_subcontext do |subcontext|
       dot = subcontext.read_operator('.')
@@ -674,7 +687,7 @@ class DabContext < DabBaseContext
   end
 
   def read_mul_value
-    _read_list_or_single(:read_simple_value, ['*', '/', '%'], DabNodeOperator)
+    _read_list_or_single(:read_simple_value_group, ['*', '/', '%'], DabNodeOperator)
   end
 
   def read_add_value
