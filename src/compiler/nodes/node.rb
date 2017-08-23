@@ -415,13 +415,13 @@ class DabNode
     mark_children_cache_dirty!
   end
 
-  def _insert_before(node, before_node)
+  def _insert_before(node)
     if parent.is_any_of?([DabNodeBasicBlock, DabNodeTreeBlock])
-      index = parent.index(before_node)
+      index = parent.index(self)
       raise 'no index' unless index
       parent.insert_at(index, node)
     else
-      parent._insert_before(node, parent)
+      parent._insert_before(node)
     end
   end
 
@@ -434,7 +434,7 @@ class DabNode
   end
 
   def prepend_instruction(node)
-    _insert_before(node, self)
+    _insert_before(node)
   end
 
   def extract
