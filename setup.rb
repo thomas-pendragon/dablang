@@ -18,6 +18,11 @@ class Object
     list.any? { |item| self.is_a?(item) }
   end
 
+  def is_kind_of_any?(list)
+    return self.class == list if list.is_a?(Class)
+    list.any? { |item| self.class == item }
+  end
+
   def present?
     true
   end

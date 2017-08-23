@@ -416,7 +416,7 @@ class DabNode
   end
 
   def _insert_before(node)
-    if parent.is_any_of?([DabNodeBasicBlock, DabNodeTreeBlock])
+    if parent.is_kind_of_any?([DabNodeBasicBlock, DabNodeTreeBlock])
       index = parent.index(self)
       raise 'no index' unless index
       parent.insert_at(index, node)

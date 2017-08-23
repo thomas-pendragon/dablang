@@ -5,7 +5,7 @@ class Uncomplexify
     arg_dup = complex_arg.dup
     setter = DabNodeDefineLocalVar.new(id, arg_dup)
     getter = DabNodeLocalVar.new(id)
-    node.prepend_in_parent(setter)
+    node.prepend_instruction(setter)
     complex_arg.replace_with!(getter)
     true
   end

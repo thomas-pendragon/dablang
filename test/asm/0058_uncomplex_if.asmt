@@ -1,0 +1,109 @@
+## CODE
+
+func foo(a)
+{
+  print(a);
+  if ((a * 2) == (a * 2))
+  {
+    print("yes");
+  }
+  print(a);
+}
+
+func main()
+{
+    foo(1);
+    foo(2);
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "yes"
+                                 CONSTANT_SYMBOL "*"
+                                 CONSTANT_SYMBOL "=="
+                                 CONSTANT_SYMBOL __foo_LiteralFixnum
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION F__foo_LiteralFixnum, __foo_LiteralFixnum, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_ARG 0
+                                 PUSH_NUMBER 2
+/* *            */               PUSH_CONSTANT 1
+/* op *         */               CALL 2
+                                 Q_SET_POP 0
+                                 PUSH_ARG 0
+                                 PUSH_NUMBER 2
+/* *            */               PUSH_CONSTANT 1
+/* op *         */               CALL 2
+                                 Q_SET_POP 1
+                                 PUSH_SSA 0
+                                 PUSH_SSA 1
+/* ==           */               PUSH_CONSTANT 2
+/* op ==        */               CALL 2
+                                 JMP_IF2 L4, L5
+                   L4:
+/* "yes"        */               PUSH_CONSTANT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 JMP L5
+                   L5:
+                                 PUSH_ARG 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 1
+/* __foo_Litera */               PUSH_CONSTANT 3
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NUMBER 2
+/* __foo_Litera */               PUSH_CONSTANT 3
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__foo_LiteralFixnum:
+                                 STACK_RESERVE 0
+                                 PUSH_ARG 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_ARG 0
+                                 PUSH_NUMBER 2
+/* *            */               PUSH_CONSTANT 1
+/* op *         */               CALL 2
+                                 Q_SET_POP 0
+                                 PUSH_ARG 0
+                                 PUSH_NUMBER 2
+/* *            */               PUSH_CONSTANT 1
+/* op *         */               CALL 2
+                                 Q_SET_POP 1
+                                 PUSH_SSA 0
+                                 PUSH_SSA 1
+/* ==           */               PUSH_CONSTANT 2
+/* op ==        */               CALL 2
+                                 JMP_IF2 L9, L10
+                   L9:
+/* "yes"        */               PUSH_CONSTANT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 JMP L10
+                   L10:
+                                 PUSH_ARG 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
