@@ -478,4 +478,8 @@ class DabNode
       child.fixup_ssa_phi_nodes(setters_mapping)
     end
   end
+
+  def complex?
+    false
+  end
 end

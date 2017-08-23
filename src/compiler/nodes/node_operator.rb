@@ -1,10 +1,12 @@
 require_relative 'node.rb'
 require_relative '../processors/fold_constant.rb'
 require_relative '../processors/fold_is_test.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeOperator < DabNode
   optimize_with FoldConstant
   optimize_with FoldIsTest
+  lower_with Uncomplexify
 
   def initialize(left, right, method)
     super()
@@ -23,6 +25,10 @@ class DabNodeOperator < DabNode
 
   def right
     self[2]
+  end
+
+  def uncomplexify_args
+    [left, right]
   end
 
   def compile(output)
@@ -46,5 +52,9 @@ class DabNodeOperator < DabNode
 
   def formatted_source(options)
     left.formatted_source(options) + " #{identifier.extra_value} " + right.formatted_source(options)
+  end
+
+  def complex?
+    true
   end
 end

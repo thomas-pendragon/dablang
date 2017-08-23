@@ -31,6 +31,7 @@ class DabNodeFunction < DabNode
     @inline = inline
     @autovars = 0
     insert(rettype) if rettype
+    @tempvars = 0
   end
 
   def return_type
@@ -189,5 +190,11 @@ class DabNodeFunction < DabNode
 
   def variables
     all_nodes(DabNodeDefineLocalVar)
+  end
+
+  def allocate_tempvar
+    n = @tempvars
+    @tempvars += 1
+    "$temp#{n}"
   end
 end
