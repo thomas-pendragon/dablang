@@ -32,6 +32,8 @@ func foo(a)
                                  PUSH_SSA 1
 /* +            */               PUSH_CONSTANT 1
 /* op +         */               CALL 2
+                                 Q_SET_POP 2
+                                 PUSH_SSA 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
