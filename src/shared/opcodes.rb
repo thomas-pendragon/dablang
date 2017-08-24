@@ -80,10 +80,10 @@ OPCODES_ARRAY = [
   {name: 'DESCRIBE_FUNCTION', args: %i{vlc uint16}}, # arg0 = name, arg1 = number of arguments, pop(arg1*2 + 1) (argument types + return type)
   {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
   {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg1/2 to PC depending on stack value
-  {name: 'Q_SET_CONSTANT', args: %i[int16 int16]}, # reg(arg0) <- constant(arg1)
-  {name: 'PUSH_SSA', args: %i[int16]}, # stack <- reg(arg0); push(1)
-  {name: 'Q_SET_POP', args: %i[int16]}, # reg(arg0) <- stack; pop(1)
-  {name: 'Q_SET_NUMBER', args: %i[int16 uint64]}, # reg(arg0) <- arg1
+  {name: 'Q_SET_CONSTANT', args: %i[reg int16]}, # reg(arg0) <- constant(arg1)
+  {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
+  {name: 'Q_SET_POP', args: %i[reg]}, # reg(arg0) <- stack; pop(1)
+  {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg(arg0) <- arg1
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze

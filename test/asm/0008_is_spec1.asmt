@@ -40,8 +40,8 @@ func bar()
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_ARG 0
-                                 Q_SET_POP 0
-                                 PUSH_SSA 0
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2
@@ -52,7 +52,7 @@ func bar()
                                  POP 1
                                  JMP L3
                    L3:
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2

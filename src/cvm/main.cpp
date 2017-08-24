@@ -524,29 +524,29 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_PUSH_SSA:
     {
-        auto index = input.read_int16();
-        stack.push(ssa_registers[index]);
+        auto reg_index = input.read_reg();
+        stack.push(ssa_registers[reg_index]);
         break;
     }
     case OP_Q_SET_CONSTANT:
     {
-        auto ssa_index      = input.read_int16();
+        auto reg_index      = input.read_reg();
         auto constant_index = input.read_int16();
-        set_ssa(ssa_index, constants[constant_index]);
+        set_ssa(reg_index, constants[constant_index]);
         break;
     }
     case OP_Q_SET_POP:
     {
-        auto ssa_index = input.read_int16();
+        auto reg_index = input.read_reg();
         auto value     = stack.pop_value();
-        set_ssa(ssa_index, value);
+        set_ssa(reg_index, value);
         break;
     }
     case OP_Q_SET_NUMBER:
     {
-        auto ssa_index = input.read_int16();
+        auto reg_index = input.read_reg();
         auto number    = input.read_uint64();
-        set_ssa(ssa_index, DabValue(number));
+        set_ssa(reg_index, DabValue(number));
         break;
     }
     case OP_RETURN:

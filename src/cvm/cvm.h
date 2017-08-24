@@ -21,6 +21,7 @@ struct Stream
     int16_t  read_int16();
     uint16_t read_uint16();
     uint64_t read_uint64();
+    int16_t  read_reg();
 
     std::string read_vlc_string();
 

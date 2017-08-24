@@ -39,7 +39,7 @@ class DabNodeConstantReference < DabNode
 
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
-    output.print('Q_SET_CONSTANT', output_register, self.index)
+    output.print('Q_SET_CONSTANT', "R#{output_register}", self.index)
   end
 
   def my_type

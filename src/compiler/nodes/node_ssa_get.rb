@@ -15,6 +15,6 @@ class DabNodeSSAGet < DabNode
   end
 
   def compile(output)
-    output.print('PUSH_SSA', input_register)
+    output.print('PUSH_SSA', "R#{input_register}")
   end
 end

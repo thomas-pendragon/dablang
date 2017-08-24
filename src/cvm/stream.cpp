@@ -10,6 +10,11 @@ int16_t Stream::read_int16()
     return _read<int16_t>();
 }
 
+int16_t Stream::read_reg()
+{
+    return read_int16();
+}
+
 uint16_t Stream::read_uint16()
 {
     return _read<uint16_t>();

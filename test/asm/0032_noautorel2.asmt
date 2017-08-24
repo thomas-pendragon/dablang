@@ -26,16 +26,16 @@ Instructions should pop return value if not used.
                                  PUSH_NUMBER 1
                                  PUSH_NUMBER 2
                                  PUSH_ARRAY 2
-                                 Q_SET_POP 0
+                                 Q_SET_POP R0
                                  PUSH_NUMBER 3
                                  PUSH_ARRAY 1
-                                 Q_SET_POP 1
-                                 PUSH_SSA 0
-                                 PUSH_SSA 1
+                                 Q_SET_POP R1
+                                 PUSH_SSA R0
+                                 PUSH_SSA R1
                                  PUSH_SYMBOL "+"
 /* op +         */               CALL 2
-                                 Q_SET_POP 2
-                                 PUSH_SSA 2
+                                 Q_SET_POP R2
+                                 PUSH_SSA R2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

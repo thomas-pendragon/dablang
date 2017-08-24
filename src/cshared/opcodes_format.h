@@ -10,6 +10,7 @@ enum
     ARG_UINT64,
     ARG_INT16,
     ARG_VLC,
+    ARG_REG,
 };
 
 struct DabOpcodeInfo

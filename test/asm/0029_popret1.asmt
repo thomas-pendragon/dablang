@@ -27,7 +27,7 @@ func main()
                    Fputs:
                                  STACK_RESERVE 0
                                  PUSH_ARG 0
-                                 Q_SET_POP 0
+                                 Q_SET_POP R0
                                  PUSH_NIL 
                                  RETURN 
  
@@ -35,22 +35,22 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 12
                                  PUSH_ARRAY 1
-                                 Q_SET_POP 0
-                                 PUSH_SSA 0
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1
                                  PUSH_NUMBER 123
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
                                  POP 1
                                  PUSH_STRING "foo"
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
                                  POP 1
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1

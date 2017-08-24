@@ -27,7 +27,7 @@ class DabNodeRegisterSet < DabNode
       value.compile_as_ssa(output, output_register)
     else
       value.compile(output)
-      output.print('Q_SET_POP', output_register)
+      output.print('Q_SET_POP', "R#{output_register}")
     end
   end
 end

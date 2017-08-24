@@ -19,11 +19,11 @@ IP = 74
         63: LOAD_FUNCTION 35, puts, 65535
         73: BREAK_LOAD 
 >       74: STACK_RESERVE 0
-        77: Q_SET_NUMBER 0, 12
-        88: PUSH_SSA 0
+        77: Q_SET_NUMBER R0, 12
+        88: PUSH_SSA R0
 IP = 77
         73: BREAK_LOAD 
         74: STACK_RESERVE 0
->       77: Q_SET_NUMBER 0, 12
-        88: PUSH_SSA 0
+>       77: Q_SET_NUMBER R0, 12
+        88: PUSH_SSA R0
         91: SYSCALL 0

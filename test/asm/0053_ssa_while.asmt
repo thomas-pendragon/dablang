@@ -29,29 +29,29 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 5            */               Q_SET_NUMBER 0, 5
-                                 PUSH_SSA 0
+/* 5            */               Q_SET_NUMBER R0, 5
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  JMP L1
                    L1:
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  PUSH_NUMBER 0
 /* >            */               PUSH_CONSTANT 1
 /* op >         */               CALL 2
                                  JMP_IF2 L3, L4
                    L3:
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  PUSH_NUMBER 1
 /* -            */               PUSH_CONSTANT 0
 /* op -         */               CALL 2
-                                 Q_SET_POP 0
+                                 Q_SET_POP R0
                                  JMP L1
                    L4:
-                                 PUSH_SSA 0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

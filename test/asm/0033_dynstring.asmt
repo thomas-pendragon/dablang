@@ -22,8 +22,8 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "allocated s */               Q_SET_CONSTANT 0, 0
-                                 PUSH_SSA 0
+/* "allocated s */               Q_SET_CONSTANT R0, 0
+                                 PUSH_SSA R0
 /* String       */               PUSH_CLASS 1
 /* new          */               PUSH_CONSTANT 1
                                  INSTCALL 1
