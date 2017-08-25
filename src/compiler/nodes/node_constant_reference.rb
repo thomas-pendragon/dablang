@@ -50,6 +50,10 @@ class DabNodeConstantReference < DabNode
     target.constant?
   end
 
+  def constant_value
+    target.constant_value
+  end
+
   def on_added
     super
     target.register_reference(self)

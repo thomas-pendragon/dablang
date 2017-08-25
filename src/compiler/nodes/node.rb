@@ -298,7 +298,7 @@ class DabNode
   end
 
   def constant_value
-    raise 'no constant value'
+    raise "no constant value for #{self.class}"
   end
 
   def register_filename(output)

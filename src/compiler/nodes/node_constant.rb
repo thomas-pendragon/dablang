@@ -42,6 +42,10 @@ class DabNodeConstant < DabNode
     value.constant?
   end
 
+  def constant_value
+    value.constant_value if constant?
+  end
+
   def register_reference(reference)
     @references << reference
   end
