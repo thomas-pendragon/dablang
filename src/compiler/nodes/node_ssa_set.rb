@@ -26,4 +26,8 @@ class DabNodeSSASet < DabNode
   def extra_dump
     "R#{output_register}= [#{output_varname}]"
   end
+
+  def constant_value?
+    value.constant?
+  end
 end

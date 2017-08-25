@@ -30,4 +30,8 @@ class DabNodeRegisterSet < DabNode
       output.print('Q_SET_POP', "R#{output_register}")
     end
   end
+
+  def constant_value?
+    value.constant?
+  end
 end

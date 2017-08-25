@@ -17,4 +17,23 @@ class DabNodeSSAGet < DabNode
   def compile(output)
     output.print('PUSH_SSA', "R#{input_register}")
   end
+
+  def setters
+    function.all_nodes([DabNodeSSASet, DabNodeRegisterSet]).select { |node| node.output_register == self.input_register }
+  end
+
+  def constant?
+    return false if setters.count > 1
+    setters.first.constant_value?
+  end
+
+  def constant_value
+    raise 'no constant value' unless constant?
+    setters.first.value.constant_value
+  end
+
+  def my_type
+    return DabTypeObject.new unless setters.count == 1
+    setters.first.value.my_type
+  end
 end
