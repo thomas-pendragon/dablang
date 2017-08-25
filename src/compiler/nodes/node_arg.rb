@@ -26,4 +26,9 @@ class DabNodeArg < DabNode
   def compile_local_set(output, index)
     output.print('SETV_ARG', index, @index)
   end
+
+  def compile_as_ssa(output, output_register)
+    output.comment(function&.arg_name(@index))
+    output.print('Q_SET_ARG', "R#{output_register}", @index)
+  end
 end

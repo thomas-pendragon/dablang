@@ -27,10 +27,8 @@ func foo(a, b<Uint8>)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_ARG 1
-                                 Q_SET_POP R0
-                                 PUSH_ARG 0
-                                 Q_SET_POP R1
+/* b            */               Q_SET_ARG R0, 1
+/* a            */               Q_SET_ARG R1, 0
 /* foo          */               PUSH_CONSTANT 0
                                  REFLECT 0
                                  SYSCALL 0

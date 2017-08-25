@@ -549,6 +549,14 @@ bool DabVM::execute_single(Stream &input)
         set_ssa(reg_index, DabValue(number));
         break;
     }
+    case OP_Q_SET_ARG:
+    {
+        auto reg_index = input.read_reg();
+        auto arg_index = input.read_uint16();
+        auto var       = get_arg(arg_index);
+        set_ssa(reg_index, var);
+        break;
+    }
     case OP_RETURN:
     {
         auto nrets = 1;

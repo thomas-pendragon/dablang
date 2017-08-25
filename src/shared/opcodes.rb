@@ -84,6 +84,7 @@ OPCODES_ARRAY = [
   {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
   {name: 'Q_SET_POP', args: %i[reg]}, # reg(arg0) <- stack; pop(1)
   {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg(arg0) <- arg1
+  {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze

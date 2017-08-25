@@ -57,4 +57,5 @@ enum
     OP_PUSH_SSA          = 0x34,
     OP_Q_SET_POP         = 0x35,
     OP_Q_SET_NUMBER      = 0x36,
+    OP_Q_SET_ARG         = 0x37,
 };

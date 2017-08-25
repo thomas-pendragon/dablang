@@ -163,6 +163,10 @@ class DabNodeFunction < DabNode
     arglist[index].my_type
   end
 
+  def arg_name(index)
+    arglist[index].identifier
+  end
+
   def concreteify(types)
     return self if @concrete
     new_name = "__#{identifier}_#{types.map(&:type_string).join('_')}"
