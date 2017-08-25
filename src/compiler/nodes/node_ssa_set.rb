@@ -24,7 +24,7 @@ class DabNodeSSASet < DabNode
   end
 
   def extra_dump
-    "R#{output_register}= [#{output_varname}]"
+    "R#{output_register}= [#{output_varname}] (#{users.count} users)"
   end
 
   def constant_value?

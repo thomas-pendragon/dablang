@@ -6,7 +6,6 @@ require_relative '../processors/add_missing_return.rb'
 require_relative '../processors/ssaify.rb'
 require_relative '../processors/ssa_break_phi_nodes.rb'
 require_relative '../processors/reorder_registers.rb'
-require_relative '../processors/reorder_registers.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier

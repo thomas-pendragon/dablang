@@ -22,7 +22,6 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 5            */               Q_SET_NUMBER R0, 5
-/* 0            */               Q_SET_NUMBER R1, 0
                                  PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1

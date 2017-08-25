@@ -1,8 +1,11 @@
 require_relative 'node.rb'
 require_relative '../concerns/register_setter_concern.rb'
+require_relative '../processors/ssa_prune_unused_setter.rb'
 
 class DabNodeRegisterSet < DabNode
   include RegisterSetterConcern
+
+  ssa_optimize_with SSAPruneUnusedSetter
 
   attr_accessor :output_register
   attr_accessor :output_varname
@@ -19,7 +22,7 @@ class DabNodeRegisterSet < DabNode
   end
 
   def extra_dump
-    "$R#{output_register}= [#{output_varname}]"
+    "$R#{output_register}= [#{output_varname}] (#{users.count} users)"
   end
 
   def compile(output)
