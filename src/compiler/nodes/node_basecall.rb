@@ -1,9 +1,6 @@
 require_relative 'node.rb'
-require_relative '../processors/uncomplexify.rb'
 
 class DabNodeBasecall < DabNode
-  lower_with Uncomplexify
-
   def initialize(arglist)
     super()
     arglist&.each { |arg| insert(arg) }
@@ -11,10 +8,6 @@ class DabNodeBasecall < DabNode
 
   def args
     self[0..-1]
-  end
-
-  def uncomplexify_args
-    args
   end
 
   def block
