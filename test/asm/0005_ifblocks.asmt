@@ -45,10 +45,12 @@ func foo(a, b)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_ARG 0
+/* b            */               Q_SET_ARG R0, 1
+/* a            */               Q_SET_ARG R1, 0
+                                 PUSH_SSA R1
                                  JMP_IF2 L1, L2
                    L1:
-                                 PUSH_ARG 1
+                                 PUSH_SSA R0
                                  JMP_IF2 L3, L4
                    L3:
 /* "a && b"     */               PUSH_CONSTANT 3
@@ -61,7 +63,7 @@ func foo(a, b)
                                  POP 1
                                  JMP L5
                    L2:
-                                 PUSH_ARG 1
+                                 PUSH_SSA R0
                                  JMP_IF2 L6, L7
                    L6:
 /* "!a && b"    */               PUSH_CONSTANT 1

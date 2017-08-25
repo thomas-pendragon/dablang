@@ -36,7 +36,8 @@ func foo()
  
                    Fspec:
                                  STACK_RESERVE 0
-                                 PUSH_ARG 0
+/* a            */               Q_SET_ARG R0, 0
+                                 PUSH_SSA R0
 /* class        */               PUSH_CONSTANT 5
                                  INSTCALL 0
                                  SYSCALL 0

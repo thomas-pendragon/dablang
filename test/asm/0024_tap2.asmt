@@ -46,8 +46,10 @@ func tap2()
  
                    Ftap2__block1:
                                  STACK_RESERVE 0
-                                 PUSH_ARG 0
-                                 PUSH_ARG 1
+/* b            */               Q_SET_ARG R0, 1
+/* a            */               Q_SET_ARG R1, 0
+                                 PUSH_SSA R1
+                                 PUSH_SSA R0
 /* +            */               PUSH_CONSTANT 0
 /* op +         */               CALL 2
                                  SYSCALL 0
