@@ -57,4 +57,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_SET_POP, "Q_SET_POP", {ARG_REG}},
     {OP_Q_SET_NUMBER, "Q_SET_NUMBER", {ARG_REG, ARG_UINT64}},
     {OP_Q_SET_ARG, "Q_SET_ARG", {ARG_REG, ARG_UINT16}},
+    {OP_Q_SET_CLASS, "Q_SET_CLASS", {ARG_REG, ARG_UINT16}},
 };

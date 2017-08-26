@@ -22,6 +22,12 @@ class DabNodeClass < DabNode
     output.print('PUSH_CLASS', number)
   end
 
+  def compile_as_ssa(output, output_register)
+    raise "no class for <#{@identifier}>" unless number
+    output.comment(@identifier)
+    output.print('Q_SET_CLASS', "R#{output_register}", number)
+  end
+
   def formatted_source(_options)
     extra_dump
   end

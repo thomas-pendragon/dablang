@@ -557,6 +557,14 @@ bool DabVM::execute_single(Stream &input)
         set_ssa(reg_index, var);
         break;
     }
+    case OP_Q_SET_CLASS:
+    {
+        auto reg_index   = input.read_reg();
+        auto klass_index = input.read_uint16();
+        auto klass       = classes[klass_index];
+        set_ssa(reg_index, klass);
+        break;
+    }
     case OP_RETURN:
     {
         auto nrets = 1;
