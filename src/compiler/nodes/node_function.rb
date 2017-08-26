@@ -6,6 +6,7 @@ require_relative '../processors/add_missing_return.rb'
 require_relative '../processors/ssaify.rb'
 require_relative '../processors/ssa_break_phi_nodes.rb'
 require_relative '../processors/reorder_registers.rb'
+require_relative '../processors/reorder_registers_incr.rb'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier
@@ -18,6 +19,7 @@ class DabNodeFunction < DabNode
   ssa_with SSAify
   post_ssa_with SSABreakPhiNodes
   post_ssa_with ReorderRegisters
+  post_ssa_with ReorderRegistersIncr
 
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
