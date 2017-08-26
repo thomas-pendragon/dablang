@@ -1,0 +1,25 @@
+## CODE
+
+func main()
+{
+  var a = String;
+  print(a);
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* String       */               PUSH_CLASS 1
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
