@@ -1,8 +1,6 @@
 require_relative 'node.rb'
-require_relative '../processors/simplify_class_property.rb'
 
 class DabNodePropertyGet < DabNode
-  optimize_with SimplifyClassProperty
   lower_with :convert_to_call
 
   def initialize(value, identifier)

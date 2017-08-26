@@ -1,8 +1,10 @@
 require_relative 'node_basecall.rb'
 require_relative '../processors/extract_call_block.rb'
+require_relative '../processors/simplify_class_property.rb'
 
 class DabNodeInstanceCall < DabNodeBasecall
   lower_with ExtractCallBlock
+  optimize_with SimplifyClassProperty
 
   def initialize(value, identifier, arglist, block)
     super(arglist)
