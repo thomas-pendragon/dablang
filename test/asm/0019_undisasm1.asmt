@@ -20,5 +20,4 @@ func fun0()
                    Ffun0:
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 123
-                                 RETURN 
-
+                                 RETURN

@@ -30,4 +30,4 @@ func yield1()
                                  YIELD 2
                                  POP 1
                                  PUSH_NIL 
-                                 RETURN 
+                                 RETURN

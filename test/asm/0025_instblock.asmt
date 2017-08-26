@@ -39,4 +39,3 @@ func tap(a)
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-

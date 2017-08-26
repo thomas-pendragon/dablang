@@ -22,4 +22,3 @@ func foo()
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 41
                                  RETURN
-

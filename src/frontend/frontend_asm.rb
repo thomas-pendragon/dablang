@@ -18,14 +18,17 @@ def compile(input, output, options)
 end
 
 def write_new_testspec(filename, data)
+  string = ''
+  data.each do |key, value|
+    string += "## #{key.upcase}\n"
+    string += "\n"
+    string += value
+    string += "\n"
+    string += "\n"
+  end
   File.open(filename, 'wb') do |file|
-    data.each do |key, value|
-      file << "## #{key.upcase}\n"
-      file << "\n"
-      file << value
-      file << "\n"
-      file << "\n"
-    end
+    file << string.strip
+    file << "\n"
   end
 end
 

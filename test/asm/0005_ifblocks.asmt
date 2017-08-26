@@ -78,4 +78,3 @@ func foo(a, b)
                    L5:
                                  PUSH_NIL 
                                  RETURN
-

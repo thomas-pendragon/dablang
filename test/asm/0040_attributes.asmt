@@ -65,4 +65,3 @@ func another_attribute(method, arg1, arg2)
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-

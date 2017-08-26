@@ -25,4 +25,3 @@ func foo(a)
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-

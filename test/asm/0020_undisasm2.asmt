@@ -24,4 +24,3 @@ func addfunc()
                                  PUSH_SYMBOL "+"
 /* op +         */               CALL 2
                                  RETURN
-

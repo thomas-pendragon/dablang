@@ -58,4 +58,3 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_NIL 
                                  RETURN
-

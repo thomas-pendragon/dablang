@@ -96,4 +96,3 @@ func bar()
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-

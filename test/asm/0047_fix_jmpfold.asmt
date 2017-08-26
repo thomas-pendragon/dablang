@@ -31,4 +31,3 @@ func assert_equal(value)
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-

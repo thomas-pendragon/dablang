@@ -24,4 +24,3 @@ func foo()
                                  POP 1
                                  PUSH_NIL 
                                  RETURN
-
