@@ -12,10 +12,9 @@
 
 ## Performance
 
-- basic compiler performance improvements
-- compiler performance specs
 - runtime performance specs
 - optimize type lookup
+- optimize SSA nodes
 
 ## New tools ##
 
@@ -81,6 +80,7 @@
 ## CI ##
 
 - prebuild/pretest tasks in gitlab.yml (early fail)
+- new step: precompile examples
 
 ## Coverage ##
 
