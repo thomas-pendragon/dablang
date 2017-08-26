@@ -154,6 +154,13 @@ module DabNodeModuleProcessors
     ret = false
     list.each do |item|
       test = self.class.run_callback(self, item)
+      if test && $debug
+        self.dump
+        err ''
+        err '--~'.yellow * 50
+        err ''
+        err "Run: #{self.class} #{item}\n".yellow.bold
+      end
       ret ||= test
     end
     ret
