@@ -479,7 +479,11 @@ class DabNode
     end
   end
 
-  def complex?
+  def register?
     false
+  end
+
+  def accepts?(_arg)
+    true
   end
 end

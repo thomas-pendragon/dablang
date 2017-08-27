@@ -3,19 +3,21 @@
 func main()
 {
   var a = 5;
-  while (a > 0)
+  while (a)
   {
-    print(a);
     a = a - 1;
   }
 }
+
+## OPTIONS
+
+
 
 ## EXPECT
 
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL "-"
-                                 CONSTANT_SYMBOL ">"
  
                                  LOAD_FUNCTION Fmain, main, -1
  
@@ -24,21 +26,14 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 5            */               Q_SET_NUMBER R0, 5
-/* 0            */               Q_SET_NUMBER R1, 0
                                  JMP L1
                    L1:
                                  PUSH_SSA R0
-                                 PUSH_SSA R1
-/* >            */               PUSH_CONSTANT 1
-/* op >         */               CALL 2
                                  JMP_IF2 L2, L3
                    L2:
+/* 1            */               Q_SET_NUMBER R1, 1
                                  PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
-/* 1            */               Q_SET_NUMBER R2, 1
-                                 PUSH_SSA R0
-                                 PUSH_SSA R2
+                                 PUSH_SSA R1
 /* -            */               PUSH_CONSTANT 0
 /* op -         */               CALL 2
                                  Q_SET_POP R0

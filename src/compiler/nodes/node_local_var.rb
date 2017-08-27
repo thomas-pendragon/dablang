@@ -40,4 +40,8 @@ class DabNodeLocalVar < DabNode
   def last_var_setter
     var_setters.last
   end
+
+  def register?
+    true
+  end
 end

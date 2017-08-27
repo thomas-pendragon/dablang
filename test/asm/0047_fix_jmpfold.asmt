@@ -24,8 +24,9 @@ func assert_equal(value)
                    Fassert_equal:
                                  STACK_RESERVE 0
 /* value        */               Q_SET_ARG R0, 0
+/* 1            */               Q_SET_NUMBER R1, 1
                                  PUSH_SSA R0
-                                 PUSH_NUMBER 1
+                                 PUSH_SSA R1
 /* !=           */               PUSH_CONSTANT 0
 /* op !=        */               CALL 2
                                  POP 1

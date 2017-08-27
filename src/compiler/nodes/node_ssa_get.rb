@@ -36,4 +36,8 @@ class DabNodeSSAGet < DabNode
     return DabTypeObject.new unless setters.count == 1
     setters.first.value.my_type
   end
+
+  def register?
+    true
+  end
 end

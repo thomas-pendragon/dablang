@@ -45,7 +45,7 @@ class DabNodeOperator < DabNode
     left.formatted_source(options) + " #{identifier.extra_value} " + right.formatted_source(options)
   end
 
-  def complex?
-    true
+  def accepts?(arg)
+    arg.register?
   end
 end
