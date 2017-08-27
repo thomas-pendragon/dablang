@@ -2,11 +2,13 @@ require_relative 'node.rb'
 require_relative '../processors/fold_constant.rb'
 require_relative '../processors/fold_is_test.rb'
 require_relative '../processors/uncomplexify.rb'
+require_relative '../processors/fix_shortcircuit.rb'
 
 class DabNodeOperator < DabNode
   optimize_with FoldConstant
   optimize_with FoldIsTest
   lower_with Uncomplexify
+  after_init FixShortcircuit
 
   def initialize(left, right, method)
     super()
@@ -32,22 +34,11 @@ class DabNodeOperator < DabNode
   end
 
   def compile(output)
-    label = output.next_label
-
     left.compile(output)
-    op_id = identifier.extra_value.to_s
-    if op_id == '||' || op_id == '&&'
-      output.print('DUP')
-      output.print(op_id == '||' ? 'JMP_IF' : 'JMP_IFN', label)
-      output.print('POP', 1)
-      right.compile(output)
-      output.label(label)
-    else
-      right.compile(output)
-      output.push(identifier)
-      output.comment("op #{identifier.extra_value}")
-      output.print('CALL', 2)
-    end
+    right.compile(output)
+    output.push(identifier)
+    output.comment("op #{identifier.extra_value}")
+    output.print('CALL', 2)
   end
 
   def formatted_source(options)

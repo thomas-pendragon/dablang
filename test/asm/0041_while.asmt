@@ -30,8 +30,8 @@ func main()
                                  PUSH_NUMBER 0
 /* >            */               PUSH_CONSTANT 1
 /* op >         */               CALL 2
-                                 JMP_IF2 L3, L4
-                   L3:
+                                 JMP_IF2 L2, L3
+                   L2:
                                  PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
@@ -41,6 +41,6 @@ func main()
 /* op -         */               CALL 2
                                  Q_SET_POP R0
                                  JMP L1
-                   L4:
+                   L3:
                                  PUSH_NIL 
                                  RETURN

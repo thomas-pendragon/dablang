@@ -44,24 +44,24 @@ func bar()
 /* String       */               PUSH_CLASS 1
 /* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2
-                                 JMP_IF2 L2, L3
-                   L2:
+                                 JMP_IF2 L1, L2
+                   L1:
 /* "got string" */               PUSH_CONSTANT 1
                                  SYSCALL 0
                                  POP 1
-                                 JMP L3
-                   L3:
+                                 JMP L2
+                   L2:
                                  PUSH_SSA R0
 /* Fixnum       */               PUSH_CLASS 3
 /* is           */               PUSH_CONSTANT 4
 /* op is        */               CALL 2
-                                 JMP_IF2 L5, L6
-                   L5:
+                                 JMP_IF2 L3, L4
+                   L3:
 /* "got fixnum" */               PUSH_CONSTANT 0
                                  SYSCALL 0
                                  POP 1
-                                 JMP L6
-                   L6:
+                                 JMP L4
+                   L4:
                                  PUSH_NIL 
                                  RETURN 
  

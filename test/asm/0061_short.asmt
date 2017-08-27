@@ -1,0 +1,93 @@
+## CODE
+
+func fun1()
+{
+  print("fun1");
+  return false;
+}
+
+func fun2()
+{
+  print("fun2");
+  return true;
+}
+
+func main_and()
+{
+  print(fun1() && fun2());
+}
+
+func main_or()
+{
+  print(fun1() || fun2());
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "fun1"
+                                 CONSTANT_STRING "fun2"
+                                 CONSTANT_SYMBOL "fun1"
+                                 CONSTANT_SYMBOL "fun2"
+ 
+                                 LOAD_FUNCTION Ffun1, fun1, -1
+                                 LOAD_FUNCTION Ffun2, fun2, -1
+                                 LOAD_FUNCTION Fmain_and, main_and, -1
+                                 LOAD_FUNCTION Fmain_or, main_or, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffun1:
+                                 STACK_RESERVE 0
+/* "fun1"       */               PUSH_CONSTANT 0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_FALSE 
+                                 RETURN 
+ 
+                   Ffun2:
+                                 STACK_RESERVE 0
+/* "fun2"       */               PUSH_CONSTANT 1
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_TRUE 
+                                 RETURN 
+ 
+                   Fmain_and:
+                                 STACK_RESERVE 0
+/* fun1         */               PUSH_CONSTANT 2
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
+                                 JMP_IF2 L1, L2
+                   L1:
+/* fun2         */               PUSH_CONSTANT 3
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 JMP L2
+                   L2:
+                                 PUSH_SSA R0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain_or:
+                                 STACK_RESERVE 0
+/* fun1         */               PUSH_CONSTANT 2
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
+                                 JMP_IF2 L3, L4
+                   L4:
+/* fun2         */               PUSH_CONSTANT 3
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 JMP L3
+                   L3:
+                                 PUSH_SSA R0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
