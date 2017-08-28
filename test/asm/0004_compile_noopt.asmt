@@ -26,7 +26,7 @@ func foo()
                                  PUSH_SSA R0
                                  PUSH_SSA R1
 /* +            */               PUSH_CONSTANT 0
-/* op +         */               CALL 2
+                                 CALL 2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

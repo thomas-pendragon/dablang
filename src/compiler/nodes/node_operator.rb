@@ -37,7 +37,6 @@ class DabNodeOperator < DabNode
     left.compile(output)
     right.compile(output)
     output.push(identifier)
-    output.comment("op #{identifier.extra_value}")
     output.print('CALL', 2)
   end
 

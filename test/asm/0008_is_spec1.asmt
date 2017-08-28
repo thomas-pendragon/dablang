@@ -44,7 +44,7 @@ func bar()
                                  PUSH_SSA R0
                                  PUSH_SSA R1
 /* is           */               PUSH_CONSTANT 4
-/* op is        */               CALL 2
+                                 CALL 2
                                  JMP_IF2 L1, L2
                    L1:
 /* "got string" */               PUSH_CONSTANT 1
@@ -56,7 +56,7 @@ func bar()
                                  PUSH_SSA R0
                                  PUSH_SSA R2
 /* is           */               PUSH_CONSTANT 4
-/* op is        */               CALL 2
+                                 CALL 2
                                  JMP_IF2 L3, L4
                    L3:
 /* "got fixnum" */               PUSH_CONSTANT 0

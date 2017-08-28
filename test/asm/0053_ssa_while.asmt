@@ -39,7 +39,7 @@ func main()
                                  PUSH_SSA R0
                                  PUSH_SSA R1
 /* >            */               PUSH_CONSTANT 1
-/* op >         */               CALL 2
+                                 CALL 2
                                  JMP_IF2 L2, L3
                    L2:
                                  PUSH_SSA R0
@@ -49,7 +49,7 @@ func main()
                                  PUSH_SSA R0
                                  PUSH_SSA R2
 /* -            */               PUSH_CONSTANT 0
-/* op -         */               CALL 2
+                                 CALL 2
                                  Q_SET_POP R0
                                  JMP L1
                    L3:

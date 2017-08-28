@@ -41,18 +41,18 @@ func main()
                                  PUSH_SSA R0
                                  PUSH_SSA R1
 /* *            */               PUSH_CONSTANT 1
-/* op *         */               CALL 2
+                                 CALL 2
                                  Q_SET_POP R2
 /* 2            */               Q_SET_NUMBER R3, 2
                                  PUSH_SSA R0
                                  PUSH_SSA R3
 /* *            */               PUSH_CONSTANT 1
-/* op *         */               CALL 2
+                                 CALL 2
                                  Q_SET_POP R4
                                  PUSH_SSA R2
                                  PUSH_SSA R4
 /* ==           */               PUSH_CONSTANT 2
-/* op ==        */               CALL 2
+                                 CALL 2
                                  JMP_IF2 L1, L2
                    L1:
 /* "yes"        */               PUSH_CONSTANT 0
@@ -89,18 +89,18 @@ func main()
                                  PUSH_SSA R0
                                  PUSH_SSA R1
 /* *            */               PUSH_CONSTANT 1
-/* op *         */               CALL 2
+                                 CALL 2
                                  Q_SET_POP R2
 /* 2            */               Q_SET_NUMBER R3, 2
                                  PUSH_SSA R0
                                  PUSH_SSA R3
 /* *            */               PUSH_CONSTANT 1
-/* op *         */               CALL 2
+                                 CALL 2
                                  Q_SET_POP R4
                                  PUSH_SSA R2
                                  PUSH_SSA R4
 /* ==           */               PUSH_CONSTANT 2
-/* op ==        */               CALL 2
+                                 CALL 2
                                  JMP_IF2 L3, L4
                    L3:
 /* "yes"        */               PUSH_CONSTANT 0
