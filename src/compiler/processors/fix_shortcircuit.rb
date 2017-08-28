@@ -11,10 +11,10 @@ class FixShortcircuit
     right.extract
 
     left_temp = operator.function.allocate_ssa
-    left_tempname = operator.function.allocate_tempvar
+    tempname = operator.function.allocate_tempvar
 
-    left_set = DabNodeSSASet.new(left, left_temp, left_tempname)
-    left_get = DabNodeSSAGet.new(left_temp, left_tempname)
+    left_set = DabNodeSSASet.new(left, left_temp, tempname)
+    left_get = DabNodeSSAGet.new(left_temp, tempname)
 
     is_and = id == '&&'
 
@@ -24,19 +24,17 @@ class FixShortcircuit
     body_block = is_and ? true_block : false_block
 
     right_temp = operator.function.allocate_ssa
-    right_tempname = operator.function.allocate_tempvar
 
-    right_set = DabNodeSSASet.new(right, right_temp, right_tempname)
+    right_set = DabNodeSSASet.new(right, right_temp, tempname)
 
     body_block << right_set
 
     phi = DabNodeSSAPhi.new([left_temp, right_temp])
 
     final_temp = operator.function.allocate_ssa
-    final_tempname = operator.function.allocate_tempvar
 
-    final_set = DabNodeSSASet.new(phi, final_temp, final_tempname)
-    final_get = DabNodeSSAGet.new(final_temp, final_tempname)
+    final_set = DabNodeSSASet.new(phi, final_temp, tempname)
+    final_get = DabNodeSSAGet.new(final_temp, tempname)
 
     node_if = DabNodeIf.new(left_get, true_block, false_block)
 

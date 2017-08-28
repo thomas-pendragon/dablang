@@ -33,6 +33,7 @@ class DabNodeFunction < DabNode
     @autovars = 0
     insert(rettype) if rettype
     @tempvars = 0
+    @ssa_count = 0
   end
 
   def return_type
@@ -190,7 +191,9 @@ class DabNodeFunction < DabNode
   end
 
   def allocate_ssa
-    all_nodes(DabNodeSSASet).count
+    ret = @ssa_count
+    @ssa_count += 1
+    ret
   end
 
   def variables
