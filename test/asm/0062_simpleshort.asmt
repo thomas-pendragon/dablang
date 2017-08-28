@@ -1,0 +1,52 @@
+## CODE
+
+func fun1() {}
+
+func fun2() {}
+
+func main_or()
+{
+  print(fun1() || fun2());
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "fun1"
+                                 CONSTANT_SYMBOL "fun2"
+ 
+                                 LOAD_FUNCTION Ffun1, fun1, -1
+                                 LOAD_FUNCTION Ffun2, fun2, -1
+                                 LOAD_FUNCTION Fmain_or, main_or, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffun1:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Ffun2:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain_or:
+                                 STACK_RESERVE 0
+/* fun1         */               PUSH_CONSTANT 0
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
+                                 JMP_IF2 L1, L2
+                   L2:
+/* fun2         */               PUSH_CONSTANT 1
+                                 CALL 0
+                                 Q_SET_POP R0
+                                 JMP L1
+                   L1:
+                                 PUSH_SSA R0
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
