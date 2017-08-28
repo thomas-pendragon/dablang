@@ -48,7 +48,7 @@ class DabNodeCall < DabNodeBasecall
     end
 
     args.each { |arg| arg.compile(output) }
-    output.comment(self.extra_value)
+    output.comment(self.real_identifier)
     symbol = identifier.index
     output.print('Q_SET_CALL_STACK', "R#{output_register}", "S#{symbol}", args.count)
   end

@@ -50,7 +50,7 @@ func tap2()
 /* a            */               Q_SET_ARG R1, 0
                                  PUSH_SSA R1
                                  PUSH_SSA R0
-                                 Q_SET_CALL_STACK R2, S0, 2
+/* +            */               Q_SET_CALL_STACK R2, S0, 2
                                  Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN
