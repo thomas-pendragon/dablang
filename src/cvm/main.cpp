@@ -284,31 +284,29 @@ void DabVM::call_function_block(const DabValue &self, const DabFunction &fun, in
 {
     assert(blockfun.regular);
 
-    fprintf(stderr, "vm: call <%s> with block and %d arguments.\n", fun.name.c_str(), n_args);
-
-    if (fun.regular)
-    {
-        push_new_frame(self, n_args, blockfun.address);
-        instructions.seek(fun.address);
-    }
-    else
-    {
-        const auto n_ret = 1;
-        fun.extra(n_args, n_ret, (void *)blockfun.address);
-    }
+    _call_function(self, fun, n_args, (void *)blockfun.address);
 }
 
 void DabVM::call_function(const DabValue &self, const DabFunction &fun, int n_args)
 {
+    _call_function(self, fun, n_args, nullptr);
+}
+
+void DabVM::_call_function(const DabValue &self, const DabFunction &fun, int n_args,
+                           void *blockaddress)
+{
+    fprintf(stderr, "vm: call <%s> %sand %d arguments.\n", fun.name.c_str(),
+            blockaddress ? "with block " : "", n_args);
+
     if (fun.regular)
     {
-        push_new_frame(self, n_args, 0);
+        push_new_frame(self, n_args, (uint64_t)blockaddress);
         instructions.seek(fun.address);
     }
     else
     {
         const auto n_ret = 1;
-        fun.extra(n_args, n_ret, nullptr);
+        fun.extra(n_args, n_ret, blockaddress);
     }
 }
 

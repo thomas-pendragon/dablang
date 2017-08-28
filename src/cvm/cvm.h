@@ -516,6 +516,9 @@ struct DabVM
     void call_function_block(const DabValue &self, const DabFunction &fun, int n_args,
                              const DabFunction &blockfun);
 
+    void _call_function(const DabValue &self, const DabFunction &fun, int n_args,
+                        void *blockaddress);
+
     void execute_debug(Stream &input);
 
     void execute(Stream &input);
