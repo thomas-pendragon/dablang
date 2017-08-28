@@ -1,0 +1,14 @@
+## CODE
+
+func fun1() {return false;}
+
+func fun2() {return true;}
+
+func main()
+{
+  print(fun1() || fun2());
+}
+
+## EXPECT OK
+
+true

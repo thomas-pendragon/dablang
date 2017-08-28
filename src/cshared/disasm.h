@@ -64,6 +64,16 @@ struct AsmStream
         info += output;
     }
 
+    void read_symbol(std::string &info)
+    {
+        auto value = _read<uint16_t>();
+        char output[32];
+        sprintf(output, "S%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     void read_uint64(std::string &info)
     {
         auto value = _read<uint64_t>();
@@ -149,6 +159,9 @@ struct DisasmProcessor
                         break;
                     case ARG_VLC:
                         stream.read_vlc(info);
+                        break;
+                    case ARG_SYMBOL:
+                        stream.read_symbol(info);
                         break;
                     }
                 }

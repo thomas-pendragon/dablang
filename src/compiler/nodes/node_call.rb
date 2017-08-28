@@ -37,6 +37,16 @@ class DabNodeCall < DabNodeBasecall
     self[2..-1]
   end
 
+  def compile_as_ssa(output, output_register)
+    raise 'no block support' if has_block?
+    raise 'symbol must be reference' unless identifier.is_a? DabNodeConstantReference
+
+    args.each { |arg| arg.compile(output) }
+    output.comment(self.extra_value)
+    symbol = identifier.index
+    output.print('Q_SET_CALL_STACK', "R#{output_register}", "S#{symbol}", args.count)
+  end
+
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.push(identifier)

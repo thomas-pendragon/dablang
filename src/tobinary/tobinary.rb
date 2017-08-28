@@ -52,6 +52,11 @@ class OutputStream
     _push_int16(val)
   end
 
+  def _push_symbol(arg)
+    val = arg.delete('S').to_i
+    _push_uint16(val)
+  end
+
   def write(line)
     code = OPCODES_REV[line[0]]
     raise "unknown token (#{line[0]})" unless code

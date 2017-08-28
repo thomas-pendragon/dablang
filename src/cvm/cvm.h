@@ -483,7 +483,7 @@ struct DabVM
 
     size_t stack_position() const;
 
-    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr);
+    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg);
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
@@ -505,18 +505,19 @@ struct DabVM
     size_t prev_frame_position();
 
     uint64_t get_block_addr();
+    int      get_out_reg();
 
     int number_of_args();
 
     void push_constant(const DabValue &value);
 
-    void call(const std::string &name, int n_args, const std::string &block_name);
+    void call(int out_reg, const std::string &name, int n_args, const std::string &block_name);
 
-    void call_function(const DabValue &self, const DabFunction &fun, int n_args);
-    void call_function_block(const DabValue &self, const DabFunction &fun, int n_args,
+    void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args);
+    void call_function_block(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                              const DabFunction &blockfun);
 
-    void _call_function(const DabValue &self, const DabFunction &fun, int n_args,
+    void _call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                         void *blockaddress);
 
     void execute_debug(Stream &input);

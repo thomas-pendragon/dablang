@@ -1,0 +1,83 @@
+## ASM CODE
+
+                                 CONSTANT_SYMBOL "fun1"
+ 
+                                 LOAD_FUNCTION Ffun1, fun1, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffun1:
+                                 STACK_RESERVE 0
+                                 PUSH_TRUE
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 Q_SET_CALL_STACK R7, S0, 0
+                                 PUSH_SSA R7
+                                 SYSCALL 0
+                                 RETURN
+
+## INPUT
+
+allcode
+break 31
+stack
+registers
+run
+code
+stack
+step
+quit
+
+## EXPECT STDOUT
+
+IP = 32
+         0: CONSTANT_SYMBOL fun1
+         6: LOAD_FUNCTION 21, fun1, 65535
+        16: LOAD_FUNCTION 16, main, 65535
+        26: BREAK_LOAD 
+        27: STACK_RESERVE 0
+        30: PUSH_TRUE 
+        31: RETURN 
+>       32: STACK_RESERVE 0
+        35: Q_SET_CALL_STACK R7, S0, 0
+        42: PUSH_SSA R7
+        45: SYSCALL 0
+        47: RETURN 
+debug: break at 31.
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+IP = 31
+        27: STACK_RESERVE 0
+        30: PUSH_TRUE 
+>       31: RETURN 
+        32: STACK_RESERVE 0
+        35: Q_SET_CALL_STACK R7, S0, 0
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+[   7] FIXN 0
+[   8] FIXN 42
+[   9] FIXN 2
+[  10] FIXN 0
+[  11] NIL  nil
+[  12] FIXN 0
+[  13] FIXN 7
+[  14] INVA ?
+[  15] FIXN 0
+[  16] BOOL true
