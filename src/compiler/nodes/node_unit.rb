@@ -58,6 +58,10 @@ class DabNodeUnit < DabNode
     const
   end
 
+  def will_remove_constant(constant)
+    @constant_table.delete(constant.extra_value)
+  end
+
   def add_function(function)
     @functions.insert(function)
     @available_functions[function.identifier] = function

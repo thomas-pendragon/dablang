@@ -10,6 +10,11 @@ class DabNodeConstant < DabNode
     @references = []
   end
 
+  def remove!
+    root.will_remove_constant(self)
+    super
+  end
+
   def extra_dump
     "$#{index} (#{references.count} refs)"
   end
