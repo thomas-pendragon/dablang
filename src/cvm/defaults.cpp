@@ -98,6 +98,9 @@
             {                                                                                      \
                 if (arg1_class != CLASS_STRING)                                                    \
                 {                                                                                  \
+                    if (arg0_class == CLASS_LITERALFIXNUM)                                         \
+                        arg0_class = CLASS_FIXNUM;                                                 \
+                                                                                                   \
                     arg1 = $VM->cast(arg1, arg0_class);                                            \
                 }                                                                                  \
             }                                                                                      \
