@@ -7,6 +7,22 @@ BUILTINS = %w[
   __usecount
   __import_libc
   __import_sdl
+  +
+  -
+  *
+  /
+  %
+  is
+  &&
+  ||
+  &
+  |
+  <
+  <=
+  ==
+  !=
+  >=
+  >
 ].freeze
 
 class DabNodeUnit < DabNode

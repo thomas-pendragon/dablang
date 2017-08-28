@@ -39,7 +39,13 @@ class DabNodeCall < DabNodeBasecall
 
   def compile_as_ssa(output, output_register)
     raise 'no block support' if has_block?
-    raise 'symbol must be reference' unless identifier.is_a? DabNodeConstantReference
+
+    unless identifier.is_a? DabNodeConstantReference
+      raise 'symbol must be reference' unless $no_constants
+      compile(output)
+      output.print('Q_SET_POP', "R#{output_register}")
+      return
+    end
 
     args.each { |arg| arg.compile(output) }
     output.comment(self.extra_value)
