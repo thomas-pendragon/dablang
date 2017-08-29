@@ -594,3 +594,5 @@ struct DabVM_debug
 #endif
 
 extern DabVM *$VM;
+
+void setup_handlers();

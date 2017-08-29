@@ -1220,6 +1220,8 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
 
 int main(int argc, char **argv)
 {
+    setup_handlers();
+
     DabRunOptions            options;
     std::vector<std::string> args;
     for (int i = 1; i < argc; i++)
