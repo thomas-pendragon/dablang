@@ -110,144 +110,144 @@ SortCheck:
   - ruby
   script:
   - bundle exec rake format:sort_check
-".env_g_4_7":
+".env_g_4_8":
   variables: &5
-    CXX: g++-4.7
+    CXX: g++-4.8
 ".env_clang_3_5":
   variables: &13
     CXX: clang++-3.5
-Build g++-4.7:
+Build g++-4.8:
   stage: build
   tags: *2
   script: *3
   artifacts: *4
   variables: *5
-Test g++-4.7 spec 0 10:
+Test g++-4.8 spec 0 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '0'
     CI_PARALLEL_TOTAL: '10'
   dependencies: &7
-  - Build g++-4.7
-Test g++-4.7 spec 1 10:
+  - Build g++-4.8
+Test g++-4.8 spec 1 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '1'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 2 10:
+Test g++-4.8 spec 2 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '2'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 3 10:
+Test g++-4.8 spec 3 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '3'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 4 10:
+Test g++-4.8 spec 4 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '4'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 5 10:
+Test g++-4.8 spec 5 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '5'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 6 10:
+Test g++-4.8 spec 6 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '6'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 7 10:
+Test g++-4.8 spec 7 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '7'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 8 10:
+Test g++-4.8 spec 8 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '8'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 spec 9 10:
+Test g++-4.8 spec 9 10:
   stage: test
   tags: *1
   script: *6
   variables:
-    CXX: g++-4.7
+    CXX: g++-4.8
     CI_PARALLEL_INDEX: '9'
     CI_PARALLEL_TOTAL: '10'
   dependencies: *7
-Test g++-4.7 vm_spec:
+Test g++-4.8 vm_spec:
   stage: test
   tags: *1
   script: *8
   variables: *5
   dependencies:
-  - Build g++-4.7
-Test g++-4.7 disasm_spec:
+  - Build g++-4.8
+Test g++-4.8 disasm_spec:
   stage: test
   tags: *1
   script: *9
   variables: *5
   dependencies:
-  - Build g++-4.7
-Test g++-4.7 dumpcov_spec:
+  - Build g++-4.8
+Test g++-4.8 dumpcov_spec:
   stage: test
   tags: *1
   script: *10
   variables: *5
   dependencies:
-  - Build g++-4.7
-Test g++-4.7 cov_spec:
+  - Build g++-4.8
+Test g++-4.8 cov_spec:
   stage: test
   tags: *1
   script: *11
   variables: *5
   dependencies:
-  - Build g++-4.7
-Test g++-4.7 debug_spec:
+  - Build g++-4.8
+Test g++-4.8 debug_spec:
   stage: test
   tags: *1
   script: *12
   variables: *5
   dependencies:
-  - Build g++-4.7
+  - Build g++-4.8
 Build clang++-3.5:
   stage: build
   tags: *2

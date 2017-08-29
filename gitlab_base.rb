@@ -5,8 +5,8 @@ base_path = 'gitlab_base.yml'
 data = YAML.load_file(base_path)
 
 compilers = [
-  'g++-4.7',
-  # 'g++-4.8',
+  # 'g++-4.7',
+  'g++-4.8',
   # 'g++-4.9',
   # 'g++-5',
   # 'g++-6',
