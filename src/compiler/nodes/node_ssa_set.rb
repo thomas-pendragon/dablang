@@ -30,4 +30,10 @@ class DabNodeSSASet < DabNode
   def constant_value?
     value.constant?
   end
+
+  def replace_with_register_set!
+    value_ = value.extract
+    new_node = DabNodeRegisterSet.new(value_, @output_register, @output_varname)
+    replace_with!(new_node)
+  end
 end
