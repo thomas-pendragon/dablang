@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/fold_constant_cast.rb'
 
 class DabNodeCast < DabNode
+  optimize_with FoldConstantCast
+
   def initialize(value, target_type)
     super()
     @target_type = target_type

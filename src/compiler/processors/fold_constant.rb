@@ -8,6 +8,7 @@ class FoldConstant
     lv = left.constant_value
     rv = right.constant_value
     numeric = (lv.is_a? Numeric) && (rv.is_a? Numeric)
+    typed_numeric = (lv.is_a? TypedNumber) && (rv.is_a? TypedNumber)
     return if id == 'is'
     if id == '||'
       node.replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? right : left)
@@ -29,6 +30,9 @@ class FoldConstant
         rv = rv.class
       end
       node.replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
+      return true
+    elsif typed_numeric && %w(+ - * / % |).include?(id)
+      node.replace_with! DabNodeTypedLiteralNumber.new(lv.send(id, rv), left.my_type)
       return true
     else
       raise "don't know how to fold #{lv.class} #{id} #{rv.class}"
