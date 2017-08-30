@@ -17,6 +17,8 @@ function dab_common_setup(name)
 
     links { "dl" }
 
+    linkoptions { "-rdynamic" }
+
     filter "configurations:Debug"
       defines { "DEBUG" } 
       symbols "On"
