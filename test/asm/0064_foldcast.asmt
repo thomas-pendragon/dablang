@@ -1,0 +1,31 @@
+## CODE
+
+func main()
+{
+  var<Uint8> b = 200;
+  print(b + b);
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "+"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 200
+                                 CAST 8
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
+                                 PUSH_SSA R0
+/* +            */               PUSH_CONSTANT 0
+                                 CALL 2
+                                 SYSCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN
