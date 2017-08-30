@@ -87,6 +87,7 @@ OPCODES_ARRAY = [
   {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
   {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)
   {name: 'Q_SET_CALL_STACK', args: %i[reg symbol uint16]}, # reg(arg0) <- call(symbol(arg1), stack), pop(arg2)
+  {name: 'PUSH_NUMBER_UINT8', arg: :uint8}, # push(1)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze

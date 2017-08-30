@@ -60,4 +60,5 @@ enum
     OP_Q_SET_ARG         = 0x37,
     OP_Q_SET_CLASS       = 0x38,
     OP_Q_SET_CALL_STACK  = 0x39,
+    OP_PUSH_NUMBER_UINT8 = 0x3A,
 };
