@@ -35,4 +35,9 @@ class DabNodeLiteralNumber < DabNodeLiteral
   def constant_value
     @number
   end
+
+  def cast_to(target_type)
+    value = TypedNumber.new(number, target_type.type_string)
+    DabNodeTypedLiteralNumber.new(value, target_type)
+  end
 end

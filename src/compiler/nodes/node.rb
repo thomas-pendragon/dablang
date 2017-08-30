@@ -486,4 +486,8 @@ class DabNode
   def accepts?(_arg)
     true
   end
+
+  def cast_to(target_type)
+    raise "cannot compile-time cast from #{my_type} to #{target_type}"
+  end
 end
