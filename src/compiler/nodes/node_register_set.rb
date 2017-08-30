@@ -37,4 +37,8 @@ class DabNodeRegisterSet < DabNode
   def constant_value?
     value.constant?
   end
+
+  def rename(from, to)
+    @output_register = to if @output_register == from
+  end
 end
