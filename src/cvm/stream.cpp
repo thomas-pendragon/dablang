@@ -25,6 +25,11 @@ uint16_t Stream::read_uint16()
     return _read<uint16_t>();
 }
 
+uint32_t Stream::read_uint32()
+{
+    return _read<uint32_t>();
+}
+
 uint64_t Stream::read_uint64()
 {
     return _read<uint64_t>();

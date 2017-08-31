@@ -96,6 +96,10 @@ class OutputStream
     _push_fixnum(value, 'l<')
   end
 
+  def _push_uint32(value)
+    _push_fixnum(value, 'L<')
+  end
+
   def _push_uint64(value)
     _push_fixnum(value, 'Q<')
   end
