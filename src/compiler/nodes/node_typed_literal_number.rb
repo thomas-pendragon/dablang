@@ -18,6 +18,8 @@ class DabNodeTypedLiteralNumber < DabNodeLiteral
       output.print('PUSH_NUMBER_UINT8', extra_value)
     when 'Int32'
       output.print('PUSH_NUMBER_INT32', extra_value)
+    when 'Uint32'
+      output.print('PUSH_NUMBER_UINT32', extra_value)
     else
       raise "cannot compile typed number [#{my_type.type_string}]"
     end

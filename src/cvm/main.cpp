@@ -828,6 +828,14 @@ bool DabVM::execute_single(Stream &input)
         stack.push(value);
         break;
     }
+    case OP_PUSH_NUMBER_UINT32:
+    {
+        auto     n = input.read_uint32();
+        DabValue value(CLASS_UINT32, n);
+        value.data.is_constant = true;
+        stack.push(value);
+        break;
+    }
     case OP_PUSH_SYMBOL:
     {
         auto     s = input.read_vlc_string();
