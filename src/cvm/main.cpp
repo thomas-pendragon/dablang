@@ -32,7 +32,7 @@ DabVMReset::~DabVMReset()
     $VM = nullptr;
 }
 
-void DabVM::kernel_print()
+void DabVM::kernel_print(int out_reg)
 {
     auto stack_pos = stack.size();
     auto arg       = stack.pop_value();
@@ -51,7 +51,15 @@ void DabVM::kernel_print()
     {
         arg.print(stdout);
     }
-    stack.push_nil();
+
+    if (out_reg == -1)
+    {
+        stack.push_nil();
+    }
+    else
+    {
+        set_ssa(out_reg, nullptr);
+    }
 }
 
 bool DabVM::pop_frame(bool regular)
@@ -678,7 +686,14 @@ bool DabVM::execute_single(Stream &input)
     case OP_SYSCALL:
     {
         auto call = input.read_uint8();
-        kernelcall(call);
+        kernelcall(-1, call);
+        break;
+    }
+    case OP_Q_SET_SYSCALL_STACK:
+    {
+        auto reg  = input.read_reg();
+        auto call = input.read_uint8();
+        kernelcall(reg, call);
         break;
     }
     case OP_DEFINE_CLASS:
@@ -1006,13 +1021,13 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     }
 }
 
-void DabVM::kernelcall(int call)
+void DabVM::kernelcall(int out_reg, int call)
 {
     switch (call)
     {
     case KERNEL_PRINT:
     {
-        kernel_print();
+        kernel_print(out_reg);
         break;
     }
     case KERNEL_EXIT:
@@ -1023,8 +1038,17 @@ void DabVM::kernelcall(int call)
     }
     case KERNEL_USECOUNT:
     {
-        auto value = stack.pop_value();
-        stack.push_value(uint64_t(value.use_count()));
+        auto value     = stack.pop_value();
+        auto dab_value = uint64_t(value.use_count());
+
+        if (out_reg == -1)
+        {
+            stack.push_value(dab_value);
+        }
+        else
+        {
+            set_ssa(out_reg, dab_value);
+        }
         break;
     }
     default:

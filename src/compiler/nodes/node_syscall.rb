@@ -23,6 +23,12 @@ class DabNodeSyscall < DabNodeBasecall
     output.printex(self, 'SYSCALL', @call)
   end
 
+  def compile_as_ssa(output, output_register)
+    args.each { |arg| arg.compile(output) }
+    output.comment(self.extra_value)
+    output.printex(self, 'Q_SET_SYSCALL_STACK', "R#{output_register}", @call)
+  end
+
   def target_function
     nil
   end

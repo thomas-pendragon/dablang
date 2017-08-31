@@ -479,7 +479,7 @@ struct DabVM
         return val.data.string;
     }
 
-    void kernel_print();
+    void kernel_print(int out_reg);
 
     bool pop_frame(bool regular);
 
@@ -537,7 +537,7 @@ struct DabVM
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 
-    void kernelcall(int call);
+    void kernelcall(int out_reg, int call);
 
     void push_constant_symbol(const std::string &name);
 
