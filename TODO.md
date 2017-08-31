@@ -10,6 +10,11 @@
 
 ## Formatter
 
+## Disasm
+
+- support for reglist
+- support for typed numbers
+
 ## Performance
 
 - runtime performance specs
