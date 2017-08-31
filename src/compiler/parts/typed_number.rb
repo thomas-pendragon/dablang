@@ -15,6 +15,17 @@ class TypedNumber
     TypedNumber.new(@value + other.value, @type)
   end
 
+  def ==(other)
+    case other
+    when Fixnum
+      value == other
+    when TypedNumber
+      value == other.value
+    else
+      raise "cannot compare TypedNumber with #{other.class}"
+    end
+  end
+
   def _fix! # TODO: signed support
     max = 2**@length
     @value %= max
