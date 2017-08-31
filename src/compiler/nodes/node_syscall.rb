@@ -1,6 +1,9 @@
 require_relative 'node_basecall.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeSyscall < DabNodeBasecall
+  lower_with Uncomplexify
+
   def initialize(call, args)
     super(args)
     @call = call
@@ -31,5 +34,13 @@ class DabNodeSyscall < DabNodeBasecall
 
   def target_function
     nil
+  end
+
+  def uncomplexify_args
+    args
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

@@ -42,6 +42,8 @@ func tap()
                    Ftap__block1:
                                  STACK_RESERVE 0
                                  PUSH_STRING "ok"
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -50,6 +52,8 @@ func tap()
                    Ftap__block2:
                                  STACK_RESERVE 0
                                  PUSH_STRING "ok"
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

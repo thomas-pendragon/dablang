@@ -31,6 +31,8 @@ func main()
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_HAS_BLOCK 
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -49,6 +51,8 @@ func main()
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
                                  PUSH_HAS_BLOCK 
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

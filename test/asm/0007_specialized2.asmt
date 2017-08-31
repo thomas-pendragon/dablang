@@ -35,6 +35,8 @@ func bar()
                                  PUSH_SSA R0
 /* class        */               PUSH_CONSTANT 3
                                  INSTCALL 0
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -51,7 +53,8 @@ func bar()
  
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
-/* "LiteralStri */               PUSH_CONSTANT 0
+/* "LiteralStri */               Q_SET_CONSTANT R0, 0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

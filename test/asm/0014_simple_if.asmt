@@ -33,23 +33,27 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "a"          */               PUSH_CONSTANT 0
+/* "a"          */               Q_SET_CONSTANT R0, 0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_TRUE 
                                  JMP_IF2 L1, L2
                    L1:
-/* "b"          */               PUSH_CONSTANT 1
+/* "b"          */               Q_SET_CONSTANT R1, 1
+                                 PUSH_SSA R1
                                  SYSCALL 0
                                  POP 1
                                  JMP L3
                    L2:
-/* "c"          */               PUSH_CONSTANT 2
+/* "c"          */               Q_SET_CONSTANT R2, 2
+                                 PUSH_SSA R2
                                  SYSCALL 0
                                  POP 1
                                  JMP L3
                    L3:
-/* "d"          */               PUSH_CONSTANT 3
+/* "d"          */               Q_SET_CONSTANT R3, 3
+                                 PUSH_SSA R3
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

@@ -31,6 +31,8 @@ func foo(a, b<Uint8>)
 /* a            */               Q_SET_ARG R1, 0
 /* foo          */               PUSH_CONSTANT 0
                                  REFLECT 0
+                                 Q_SET_POP R2
+                                 PUSH_SSA R2
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

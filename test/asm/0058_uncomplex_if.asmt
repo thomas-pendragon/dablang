@@ -55,7 +55,8 @@ func main()
                                  CALL 2
                                  JMP_IF2 L1, L2
                    L1:
-/* "yes"        */               PUSH_CONSTANT 0
+/* "yes"        */               Q_SET_CONSTANT R5, 0
+                                 PUSH_SSA R5
                                  SYSCALL 0
                                  POP 1
                                  JMP L2
@@ -103,7 +104,8 @@ func main()
                                  CALL 2
                                  JMP_IF2 L3, L4
                    L3:
-/* "yes"        */               PUSH_CONSTANT 0
+/* "yes"        */               Q_SET_CONSTANT R5, 0
+                                 PUSH_SSA R5
                                  SYSCALL 0
                                  POP 1
                                  JMP L4

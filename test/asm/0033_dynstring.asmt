@@ -27,6 +27,8 @@ func foo()
 /* String       */               PUSH_CLASS 1
 /* new          */               PUSH_CONSTANT 1
                                  INSTCALL 1
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

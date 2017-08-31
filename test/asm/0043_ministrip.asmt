@@ -45,6 +45,8 @@ func bar()
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
                                  PUSH_TRUE 
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 
@@ -53,6 +55,8 @@ func bar()
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
                                  PUSH_FALSE 
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_NIL 

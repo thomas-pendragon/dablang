@@ -40,7 +40,8 @@ func main_or()
  
                    Ffun1:
                                  STACK_RESERVE 0
-/* "fun1"       */               PUSH_CONSTANT 0
+/* "fun1"       */               Q_SET_CONSTANT R0, 0
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_FALSE 
@@ -48,7 +49,8 @@ func main_or()
  
                    Ffun2:
                                  STACK_RESERVE 0
-/* "fun2"       */               PUSH_CONSTANT 1
+/* "fun2"       */               Q_SET_CONSTANT R0, 1
+                                 PUSH_SSA R0
                                  SYSCALL 0
                                  POP 1
                                  PUSH_TRUE 
