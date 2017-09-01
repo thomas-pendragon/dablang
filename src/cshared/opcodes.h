@@ -66,4 +66,5 @@ enum
     OP_PUSH_NUMBER_UINT64  = 0x3D,
     OP_Q_SET_SYSCALL_STACK = 0x3E,
     OP_Q_SET_SYSCALL       = 0x3F,
+    OP_Q_VOID_SYSCALL      = 0x40,
 };

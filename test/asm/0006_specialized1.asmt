@@ -34,9 +34,7 @@ func bar()
 /* class        */               PUSH_CONSTANT 1
                                  INSTCALL 0
                                  Q_SET_POP R1
-                                 PUSH_SSA R1
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R1
                                  PUSH_NIL 
                                  RETURN 
  

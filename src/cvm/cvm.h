@@ -483,7 +483,8 @@ struct DabVM
         return val.data.string;
     }
 
-    void kernel_print(int out_reg, bool use_reglist, std::vector<dab_register_t> reglist);
+    void kernel_print(int out_reg, bool use_reglist, std::vector<dab_register_t> reglist,
+                      bool output_value);
 
     bool pop_frame(bool regular);
 
@@ -541,7 +542,8 @@ struct DabVM
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 
-    void kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist);
+    void kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist,
+                    bool output_value);
 
     void push_constant_symbol(const std::string &name);
 

@@ -33,9 +33,7 @@ func main()
                                  CALL 2
                                  JMP_IF2 L2, L3
                    L2:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
 /* 1            */               Q_SET_NUMBER R2, 1
                                  PUSH_SSA R0
                                  PUSH_SSA R2

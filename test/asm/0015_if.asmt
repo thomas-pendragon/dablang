@@ -35,27 +35,19 @@ func foo(a)
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
 /* "a"          */               Q_SET_CONSTANT R1, 0
-                                 PUSH_SSA R1
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R1
                                  PUSH_SSA R0
                                  JMP_IF2 L1, L2
                    L1:
 /* "b"          */               Q_SET_CONSTANT R2, 1
-                                 PUSH_SSA R2
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R2
                                  JMP L3
                    L2:
 /* "c"          */               Q_SET_CONSTANT R3, 2
-                                 PUSH_SSA R3
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R3
                                  JMP L3
                    L3:
 /* "d"          */               Q_SET_CONSTANT R4, 3
-                                 PUSH_SSA R4
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R4
                                  PUSH_NIL 
                                  RETURN

@@ -30,9 +30,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 5            */               Q_SET_NUMBER R0, 5
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
 /* 0            */               Q_SET_NUMBER R1, 0
                                  JMP L1
                    L1:
@@ -42,9 +40,7 @@ func main()
                                  CALL 2
                                  JMP_IF2 L2, L3
                    L2:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
 /* 1            */               Q_SET_NUMBER R2, 1
                                  PUSH_SSA R0
                                  PUSH_SSA R2
@@ -53,8 +49,6 @@ func main()
                                  Q_SET_POP R0
                                  JMP L1
                    L3:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

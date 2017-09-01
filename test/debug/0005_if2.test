@@ -32,16 +32,12 @@ IP = 11
         10: BREAK_LOAD 
 >       11: STACK_RESERVE 0
         14: PUSH_TRUE 
-        15: JMP_IF2 5, 27
+        15: JMP_IF2 5, 24
         20: Q_SET_NUMBER R0, 1
-        31: PUSH_SSA R0
-        34: SYSCALL 0
-        36: POP 1
-        39: JMP 25
-        42: Q_SET_NUMBER R1, 2
-        53: PUSH_SSA R1
-        56: SYSCALL 0
-        58: POP 1
-        61: JMP 3
-        64: PUSH_NIL 
-        65: RETURN
+        31: Q_VOID_SYSCALL 0, R0
+        36: JMP 22
+        39: Q_SET_NUMBER R1, 2
+        50: Q_VOID_SYSCALL 0, R1
+        55: JMP 3
+        58: PUSH_NIL 
+        59: RETURN

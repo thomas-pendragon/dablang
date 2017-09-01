@@ -35,8 +35,6 @@ Instructions should pop return value if not used.
                                  PUSH_SYMBOL "+"
                                  CALL 2
                                  Q_SET_POP R2
-                                 PUSH_SSA R2
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN

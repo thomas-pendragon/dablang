@@ -51,9 +51,7 @@ func bar()
                                  JMP_IF2 L1, L2
                    L1:
 /* "got string" */               Q_SET_CONSTANT R2, 1
-                                 PUSH_SSA R2
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R2
                                  JMP L2
                    L2:
 /* Fixnum       */               Q_SET_CLASS R3, 3
@@ -64,9 +62,7 @@ func bar()
                                  JMP_IF2 L3, L4
                    L3:
 /* "got fixnum" */               Q_SET_CONSTANT R4, 0
-                                 PUSH_SSA R4
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R4
                                  JMP L4
                    L4:
                                  PUSH_NIL 
@@ -88,17 +84,13 @@ func bar()
                    F__foo_LiteralString:
                                  STACK_RESERVE 0
 /* "got string" */               Q_SET_CONSTANT R0, 1
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
                    F__foo_LiteralFixnum:
                                  STACK_RESERVE 0
 /* "got fixnum" */               Q_SET_CONSTANT R0, 0
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

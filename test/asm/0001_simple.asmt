@@ -18,8 +18,6 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* "Test"       */               Q_SET_CONSTANT R0, 0
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

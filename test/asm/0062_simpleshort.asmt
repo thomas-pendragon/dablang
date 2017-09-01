@@ -41,8 +41,6 @@ func main_or()
                                  Q_SET_CALL_STACK R0, S1, 0
                                  JMP L1
                    L1:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

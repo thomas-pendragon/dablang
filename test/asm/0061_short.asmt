@@ -41,18 +41,14 @@ func main_or()
                    Ffun1:
                                  STACK_RESERVE 0
 /* "fun1"       */               Q_SET_CONSTANT R0, 0
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_FALSE 
                                  RETURN 
  
                    Ffun2:
                                  STACK_RESERVE 0
 /* "fun2"       */               Q_SET_CONSTANT R0, 1
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_TRUE 
                                  RETURN 
  
@@ -65,9 +61,7 @@ func main_or()
                                  Q_SET_CALL_STACK R0, S3, 0
                                  JMP L2
                    L2:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
@@ -80,8 +74,6 @@ func main_or()
                                  Q_SET_CALL_STACK R0, S3, 0
                                  JMP L3
                    L3:
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

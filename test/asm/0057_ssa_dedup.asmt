@@ -36,8 +36,6 @@ func foo(a)
 /* +            */               PUSH_CONSTANT 1
                                  CALL 2
                                  Q_SET_POP R5
-                                 PUSH_SSA R5
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R5
                                  PUSH_NIL 
                                  RETURN

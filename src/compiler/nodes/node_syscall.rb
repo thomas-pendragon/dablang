@@ -32,6 +32,12 @@ class DabNodeSyscall < DabNodeBasecall
     output.printex(self, 'Q_SET_SYSCALL', "R#{output_register}", @call, list)
   end
 
+  def compile_top_level(output)
+    output.comment(self.extra_value)
+    list = args.map(&:input_register).map { |arg| "R#{arg}" }
+    output.printex(self, 'Q_VOID_SYSCALL', @call, list)
+  end
+
   def target_function
     nil
   end

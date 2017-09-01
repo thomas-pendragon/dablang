@@ -41,9 +41,7 @@ func foo()
 /* class        */               PUSH_CONSTANT 5
                                  INSTCALL 0
                                  Q_SET_POP R1
-                                 PUSH_SSA R1
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R1
                                  PUSH_NIL 
                                  RETURN 
  
@@ -67,17 +65,13 @@ func foo()
                    F__spec_LiteralFixnum:
                                  STACK_RESERVE 0
 /* "LiteralFixn */               Q_SET_CONSTANT R0, 1
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
                    F__spec_LiteralString:
                                  STACK_RESERVE 0
 /* "LiteralStri */               Q_SET_CONSTANT R0, 2
-                                 PUSH_SSA R0
-                                 SYSCALL 0
-                                 POP 1
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN
