@@ -156,7 +156,14 @@ class DabNode
     end
   end
 
-  def compile(output); end
+  def compile_top_level(output)
+    compile(output)
+    output.print('POP', 1) if returns_value?
+  end
+
+  def compile(_output)
+    raise "cannot compile #{self.class}"
+  end
 
   def function
     return self if self.is_a? DabNodeFunction
