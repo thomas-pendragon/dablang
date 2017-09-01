@@ -44,6 +44,26 @@ struct AsmStream
         info += output;
     }
 
+    void read_int32(std::string &info)
+    {
+        auto value = _read<int32_t>();
+        char output[32];
+        sprintf(output, "%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
+    void read_uint32(std::string &info)
+    {
+        auto value = _read<uint32_t>();
+        char output[32];
+        sprintf(output, "%" PRIu32, value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     void read_reg(std::string &info)
     {
         auto value = _read<int16_t>();
@@ -150,6 +170,12 @@ struct DisasmProcessor
                         break;
                     case ARG_UINT16:
                         stream.read_uint16(info);
+                        break;
+                    case ARG_UINT32:
+                        stream.read_uint32(info);
+                        break;
+                    case ARG_INT32:
+                        stream.read_int32(info);
                         break;
                     case ARG_UINT64:
                         stream.read_uint64(info);
