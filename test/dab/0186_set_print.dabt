@@ -1,0 +1,11 @@
+## CODE
+
+func main()
+{
+    var a = __usecount("abc");
+    print(a);
+}
+
+## EXPECT OK
+
+65535

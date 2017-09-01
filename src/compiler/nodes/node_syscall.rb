@@ -27,9 +27,9 @@ class DabNodeSyscall < DabNodeBasecall
   end
 
   def compile_as_ssa(output, output_register)
-    args.each { |arg| arg.compile(output) }
     output.comment(self.extra_value)
-    output.printex(self, 'Q_SET_SYSCALL_STACK', "R#{output_register}", @call)
+    list = args.map(&:input_register).map { |arg| "R#{arg}" }
+    output.printex(self, 'Q_SET_SYSCALL', "R#{output_register}", @call, list)
   end
 
   def target_function

@@ -22,8 +22,7 @@ func foo()
                                  STACK_RESERVE 0
                                  PUSH_STRING "abc"
                                  Q_SET_POP R0
-                                 PUSH_SSA R0
-                                 Q_SET_SYSCALL_STACK R1, 2
+                                 Q_SET_SYSCALL R1, 2, R0
                                  PUSH_SSA R1
                                  SYSCALL 0
                                  POP 1

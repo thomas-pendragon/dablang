@@ -32,10 +32,20 @@ DabVMReset::~DabVMReset()
     $VM = nullptr;
 }
 
-void DabVM::kernel_print(int out_reg)
+void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register_t> reglist)
 {
-    auto stack_pos = stack.size();
-    auto arg       = stack.pop_value();
+    DabValue arg;
+    auto     stack_pos = stack.size();
+    if (!use_reglist)
+    {
+        arg = stack.pop_value();
+    }
+    else
+    {
+        assert(reglist.size() == 1);
+        arg = get_ssa(reglist[0]);
+    }
+
     instcall(arg, "to_s", 0, 1);
     // temporary hack
     while (stack.size() != stack_pos)
@@ -356,6 +366,15 @@ void DabVM::execute(Stream &input)
             return;
         }
     }
+}
+
+DabValue DabVM::get_ssa(size_t ssa_index)
+{
+    if (ssa_registers.size() <= ssa_index)
+    {
+        return nullptr;
+    }
+    return ssa_registers[ssa_index];
 }
 
 void DabVM::set_ssa(size_t ssa_index, const DabValue &value)
@@ -686,14 +705,22 @@ bool DabVM::execute_single(Stream &input)
     case OP_SYSCALL:
     {
         auto call = input.read_uint8();
-        kernelcall(-1, call);
+        kernelcall(-1, call, false, {});
         break;
     }
     case OP_Q_SET_SYSCALL_STACK:
     {
         auto reg  = input.read_reg();
         auto call = input.read_uint8();
-        kernelcall(reg, call);
+        kernelcall(reg, call, false, {});
+        break;
+    }
+    case OP_Q_SET_SYSCALL:
+    {
+        auto reg     = input.read_reg();
+        auto call    = input.read_uint8();
+        auto reglist = input.read_reglist();
+        kernelcall(reg, call, true, reglist);
         break;
     }
     case OP_DEFINE_CLASS:
@@ -1021,13 +1048,13 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     }
 }
 
-void DabVM::kernelcall(int out_reg, int call)
+void DabVM::kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist)
 {
     switch (call)
     {
     case KERNEL_PRINT:
     {
-        kernel_print(out_reg);
+        kernel_print(out_reg, use_reglist, reglist);
         break;
     }
     case KERNEL_EXIT:
@@ -1038,7 +1065,17 @@ void DabVM::kernelcall(int out_reg, int call)
     }
     case KERNEL_USECOUNT:
     {
-        auto value     = stack.pop_value();
+        DabValue value;
+        if (!use_reglist)
+        {
+            auto value = stack.pop_value();
+        }
+        else
+        {
+            assert(reglist.size() == 1);
+            value = get_ssa(reglist[0]);
+        }
+
         auto dab_value = uint64_t(value.use_count());
 
         if (out_reg == -1)

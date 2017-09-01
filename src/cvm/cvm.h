@@ -430,6 +430,8 @@ struct DabVMReset
     ~DabVMReset();
 };
 
+typedef int16_t dab_register_t;
+
 struct DabVM
 {
     bool       autorelease     = true;
@@ -481,7 +483,7 @@ struct DabVM
         return val.data.string;
     }
 
-    void kernel_print(int out_reg);
+    void kernel_print(int out_reg, bool use_reglist, std::vector<dab_register_t> reglist);
 
     bool pop_frame(bool regular);
 
@@ -539,7 +541,7 @@ struct DabVM
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 
-    void kernelcall(int out_reg, int call);
+    void kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist);
 
     void push_constant_symbol(const std::string &name);
 
@@ -570,6 +572,7 @@ struct DabVM
     void reflect(size_t reflection_type, const DabValue &symbol);
     void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
 
+    DabValue get_ssa(size_t ssa_index);
     void set_ssa(size_t ssa_index, const DabValue &value);
 };
 
