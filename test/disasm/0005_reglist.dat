@@ -1,0 +1,7 @@
+## CODE
+
+3F 09 00 10 03 05 00 07 00 08 00
+
+## EXPECT
+
+       0: Q_SET_SYSCALL R9, 16, R5, R7, R8

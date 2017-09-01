@@ -92,6 +92,7 @@ OPCODES_ARRAY = [
   {name: 'PUSH_NUMBER_UINT32', arg: :uint32}, # push(1)
   {name: 'PUSH_NUMBER_UINT64', arg: :uint64}, # push(1)
   {name: 'Q_SET_SYSCALL_STACK', args: %i[reg uint8]}, # reg(arg0) <- syscall(arg1, stack), pop(variable)
+  {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg(arg0) <- syscall(arg1, arg2...argn)
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
