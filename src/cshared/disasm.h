@@ -74,6 +74,15 @@ struct AsmStream
         info += output;
     }
 
+    void read_reglist(std::string &info)
+    {
+        int count = _read<int8_t>();
+        for (int i = 0; i < count; i++)
+        {
+            read_reg(info);
+        }
+    }
+
     void read_uint16(std::string &info)
     {
         auto value = _read<uint16_t>();
@@ -188,6 +197,9 @@ struct DisasmProcessor
                         break;
                     case ARG_SYMBOL:
                         stream.read_symbol(info);
+                        break;
+                    case ARG_REGLIST:
+                        stream.read_reglist(info);
                         break;
                     }
                 }

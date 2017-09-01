@@ -35,6 +35,17 @@ uint64_t Stream::read_uint64()
     return _read<uint64_t>();
 }
 
+std::vector<int16_t> Stream::read_reglist()
+{
+    auto                 count = read_uint8();
+    std::vector<int16_t> ret;
+    for (size_t i = 0; i < count; i++)
+    {
+        ret.push_back(read_reg());
+    }
+    return ret;
+}
+
 std::string Stream::read_vlc_string()
 {
     size_t len = read_uint8();

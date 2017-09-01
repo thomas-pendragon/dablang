@@ -25,6 +25,8 @@ struct Stream
     uint64_t read_uint64();
     int16_t  read_reg();
 
+    std::vector<int16_t> read_reglist();
+
     std::string read_vlc_string();
 
     Buffer read_vlc_buffer();

@@ -52,6 +52,13 @@ class OutputStream
     _push_int16(val)
   end
 
+  def _push_reglist(args)
+    _push_uint8(args.count)
+    args.each do |arg|
+      _push_reg(arg)
+    end
+  end
+
   def _push_symbol(arg)
     val = arg.delete('S').to_i
     _push_uint16(val)
@@ -68,10 +75,18 @@ class OutputStream
     arg_specifiers = [opcode[:arg]] unless arg_specifiers
     arg_specifiers.compact!
 
+    errap ['arg_specifiers', arg_specifiers]
+
     arg_specifiers.each_with_index do |kind, index|
-      arg = line[index + 1]
+      reglist = kind == :reglist
+      arg = if reglist
+              line[(index + 1)..-1]
+            else
+              line[index + 1]
+            end
       raise "line = #{line} - No arg#{index}" unless arg
       send("_push_#{kind}", arg)
+      break if reglist
     end
   end
 
