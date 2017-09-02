@@ -8,6 +8,13 @@
 
 - unified cache invalidation
 
+## Language/VM
+
+- register management (remove register stack)
+- limited number of registers
+- typed registers
+- explicit calls (IP/SP regs management)
+
 ## Formatter
 
 ## Disasm
