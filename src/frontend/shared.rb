@@ -59,6 +59,7 @@ def run_ruby_part(input, output, action, tool, options = '', input_as_arg = fals
 end
 
 def compare_output(info, actual, expected, soft_match = false)
+  expected ||= ''
   match = if soft_match
             actual.uncolorize.include? expected.uncolorize
           else
