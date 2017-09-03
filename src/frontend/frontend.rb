@@ -122,6 +122,11 @@ def run_test(settings)
     end
   end
 
+  if data[:expected_status] == :runtime_error
+    puts "#{info}: expected to fail, but succeeded instead".red.bold
+    raise DabCompareError.new
+  end
+
   test_body = data[:expected_body]
   actual_body = open(vmo).read.strip
   begin
