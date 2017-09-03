@@ -7,6 +7,19 @@ void DabVM_debug::print_registers()
             (int)vm.frame_position);
 }
 
+void DabVM_debug::print_ssa_registers()
+{
+    auto err_stream = stdout;
+    fprintf(err_stream, "Registers:\n");
+    size_t index = 0;
+    for (auto &reg : vm.ssa_registers)
+    {
+        fprintf(err_stream, "R%zu: ", index);
+        reg.dump(err_stream);
+        fprintf(err_stream, "\n");
+    }
+}
+
 void DabVM_debug::print_classes()
 {
     for (const auto &it : vm.classes)
@@ -194,6 +207,10 @@ void DabVM::execute_debug(Stream &input)
             assert(ret == 1);
             fprintf(stdout, "debug: break at %d.\n", ip);
             breakpoints.insert(ip);
+        }
+        else if (cmd == "ssaregs")
+        {
+            debug.print_ssa_registers();
         }
         else
         {
