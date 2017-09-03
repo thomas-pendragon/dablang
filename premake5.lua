@@ -29,6 +29,9 @@ function dab_common_setup(name)
     filter "action:xcode4"
       buildoptions "-stdlib=libc++"
       linkoptions "-stdlib=libc++"
+
+    filter "action:xcode4"
+      buildoptions "-std=c++11"
 end
 
 dab_common_setup("cvm")
