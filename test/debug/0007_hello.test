@@ -1,0 +1,119 @@
+## ASM CODE
+
+ 
+                                 CONSTANT_STRING "hello world"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "hello world */               Q_SET_CONSTANT R0, 0
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+
+## INPUT
+
+allcode
+break 27
+run
+code
+stack
+ssaregs
+step
+code
+stack
+ssaregs
+step
+code
+stack
+ssaregs
+step
+code
+stack
+ssaregs
+quit
+
+## EXPECT STDOUT
+
+IP = 24
+         0: CONSTANT_STRING hello world
+        13: LOAD_FUNCTION 11, main, 65535
+        23: BREAK_LOAD 
+>       24: STACK_RESERVE 0
+        27: Q_SET_CONSTANT R0, 0
+        32: Q_VOID_SYSCALL 0, R0
+        37: PUSH_NIL 
+        38: RETURN 
+debug: break at 27.
+IP = 27
+        23: BREAK_LOAD 
+        24: STACK_RESERVE 0
+>       27: Q_SET_CONSTANT R0, 0
+        32: Q_VOID_SYSCALL 0, R0
+        37: PUSH_NIL 
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+[   7] FIXN 0
+Registers:
+IP = 32
+        24: STACK_RESERVE 0
+        27: Q_SET_CONSTANT R0, 0
+>       32: Q_VOID_SYSCALL 0, R0
+        37: PUSH_NIL 
+        38: RETURN 
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+[   7] FIXN 0
+Registers:
+R0: STRI "hello world"
+hello worldIP = 37
+        27: Q_SET_CONSTANT R0, 0
+        32: Q_VOID_SYSCALL 0, R0
+>       37: PUSH_NIL 
+        38: RETURN 
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+[   7] FIXN 0
+Registers:
+R0: STRI "hello world"
+IP = 38
+        32: Q_VOID_SYSCALL 0, R0
+        37: PUSH_NIL 
+>       38: RETURN 
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] FIXN 4294967295
+[   6] INVA ?
+[   7] FIXN 0
+[   8] NIL  nil
+Registers:
+R0: STRI "hello world"
