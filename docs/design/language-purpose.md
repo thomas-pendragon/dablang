@@ -8,3 +8,4 @@ For many years I've believed that we need something like "smarter C" or "modern 
 
 So, the basic idea is that you can use Dab to create everything - from low-level, close to the metal code to high-level DSL-based applications. Optimize for productivity first, and for performance only if necessary.
 
+Last revised: 2017-05-19

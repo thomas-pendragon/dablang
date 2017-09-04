@@ -29,3 +29,5 @@ end
 When you work on your application code (`Ring4`), you have access to all standard library methods, your web framework of choice, and also all "dynamically" created methods. That means that the Dab compiler will be able to optimize `method_foo` calls, the IDE autocompletion will work, etc.
 
 Also, Rings are used as a caching mechanism, allowing for faster build times, because usually, you will be working only on the last Ring (application) code.
+
+Last revised: 2017-05-19

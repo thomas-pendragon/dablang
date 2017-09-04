@@ -13,3 +13,5 @@ Typed objects don't accept `nil` by default:
 - `String!` will accept only concrete objects of type `String`, but not subclasses
 
 If `MyClass` is a leaf (final) class, then `MyClass` is equal to `MyClass!`.
+
+Last revised: 2017-05-19
