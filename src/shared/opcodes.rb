@@ -25,27 +25,27 @@ OPCODES_ARRAY = [
   {name: 'PUSH_SELF'}, # push(1)
   {name: 'PUSH_TRUE'}, # push(1)
   {name: 'PUSH_FALSE'}, # push(1)
-  {name: 'PUSH_STRING', arg: :vlc}, # push(1)
-  {name: 'PUSH_NUMBER', arg: :uint64}, # push(1)
-  {name: 'PUSH_ARRAY', arg: :uint16}, # pop(arg), push(1)
-  {name: 'PUSH_CLASS', arg: :uint16}, # push(1)
-  {name: 'PUSH_CONSTANT', arg: :uint16}, # constant index, push(1)
-  {name: 'PUSH_ARG', arg: :uint16}, # argument index, push(1)
-  {name: 'PUSH_VAR', arg: :uint16}, # local variable index, push(1)
-  {name: 'PUSH_INSTVAR', arg: :vlc}, # push(1)
-  {name: 'PUSH_SYMBOL', arg: :vlc}, # push(1)
+  {name: 'PUSH_STRING', args: %i{vlc}}, # push(1)
+  {name: 'PUSH_NUMBER', args: %i{uint64}}, # push(1)
+  {name: 'PUSH_ARRAY', args: %i{uint16}}, # pop(arg), push(1)
+  {name: 'PUSH_CLASS', args: %i{uint16}}, # push(1)
+  {name: 'PUSH_CONSTANT', args: %i{uint16}}, # constant index, push(1)
+  {name: 'PUSH_ARG', args: %i{uint16}}, # argument index, push(1)
+  {name: 'PUSH_VAR', args: %i{uint16}}, # local variable index, push(1)
+  {name: 'PUSH_INSTVAR', args: %i{vlc}}, # push(1)
+  {name: 'PUSH_SYMBOL', args: %i{vlc}}, # push(1)
   {name: 'PUSH_HAS_BLOCK'}, # push(1)
   # SETV
   {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
   {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
   {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
   # STACK
-  {name: 'POP', arg: :uint16}, # pop(n)
+  {name: 'POP', args: %i{uint16}}, # pop(n)
   {name: 'DUP'}, # push(1)
   # CONSTANTS
-  {name: 'CONSTANT_SYMBOL', arg: :vlc}, # symbol
-  {name: 'CONSTANT_STRING', arg: :vlc}, # string
-  {name: 'CONSTANT_NUMBER', arg: :uint64}, # number
+  {name: 'CONSTANT_SYMBOL', args: %i{vlc}}, # symbol
+  {name: 'CONSTANT_STRING', args: %i{vlc}}, # string
+  {name: 'CONSTANT_NUMBER', args: %i{uint64}}, # number
   # CALL
   {name: 'CALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
   {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
@@ -53,18 +53,18 @@ OPCODES_ARRAY = [
   {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
   {name: 'HARDCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
   {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-  {name: 'SYSCALL', arg: :uint8}, # depends on the call
+  {name: 'SYSCALL', args: %i{uint8}}, # depends on the call
   {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
   # FLOW
-  {name: 'JMP', arg: :int16}, # add +arg to PC
-  {name: 'JMP_IF', arg: :int16}, # pop(1), add +arg to PC if value from stack is true
-  {name: 'JMP_IFN', arg: :int16}, # pop(1), add +arg to PC if value from stack is false
+  {name: 'JMP', args: %i{int16}}, # add +arg to PC
+  {name: 'JMP_IF', args: %i{int16}}, # pop(1), add +arg to PC if value from stack is true
+  {name: 'JMP_IFN', args: %i{int16}}, # pop(1), add +arg to PC if value from stack is false
   {name: 'RETURN'}, # pop(1)
-  {name: 'YIELD', arg: :uint16}, # n = number of args, pop(n)
+  {name: 'YIELD', args: %i{uint16}}, # n = number of args, pop(n)
   # VARIABLES
-  {name: 'SET_VAR', arg: :uint16}, # local variable index, pop(1)
+  {name: 'SET_VAR', args: %i{uint16}}, # local variable index, pop(1)
   {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
-  {name: 'SET_INSTVAR', arg: :vlc}, # pop(1)
+  {name: 'SET_INSTVAR', args: %i{vlc}}, # pop(1)
   # COVERAGE
   {name: 'COV_FILE', args: %i(uint16 vlc)}, # args: filehash, filename
   {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
@@ -87,10 +87,10 @@ OPCODES_ARRAY = [
   {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
   {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)
   {name: 'Q_SET_CALL_STACK', args: %i[reg symbol uint16]}, # reg(arg0) <- call(symbol(arg1), stack), pop(arg2)
-  {name: 'PUSH_NUMBER_UINT8', arg: :uint8}, # push(1)
-  {name: 'PUSH_NUMBER_INT32', arg: :int32}, # push(1)
-  {name: 'PUSH_NUMBER_UINT32', arg: :uint32}, # push(1)
-  {name: 'PUSH_NUMBER_UINT64', arg: :uint64}, # push(1)
+  {name: 'PUSH_NUMBER_UINT8', args: %i{uint8}}, # push(1)
+  {name: 'PUSH_NUMBER_INT32', args: %i{int32}}, # push(1)
+  {name: 'PUSH_NUMBER_UINT32', args: %i{uint32}}, # push(1)
+  {name: 'PUSH_NUMBER_UINT64', args: %i{uint64}}, # push(1)
   {name: 'Q_SET_SYSCALL_STACK', args: %i[reg uint8]}, # reg(arg0) <- syscall(arg1, stack), pop(variable)
   {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg(arg0) <- syscall(arg1, arg2...argn)
   {name: 'Q_VOID_SYSCALL', args: %i[uint8 reglist]}, # syscall(arg1, arg2...argn)

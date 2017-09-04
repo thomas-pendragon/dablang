@@ -71,9 +71,7 @@ class OutputStream
     _push_uint8(code[:opcode])
 
     opcode = code
-    arg_specifiers = opcode[:args]
-    arg_specifiers = [opcode[:arg]] unless arg_specifiers
-    arg_specifiers.compact!
+    arg_specifiers = opcode[:args] || []
 
     errap ['arg_specifiers', arg_specifiers]
 
