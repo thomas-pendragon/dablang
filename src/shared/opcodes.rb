@@ -27,6 +27,10 @@ OPCODES_ARRAY = [
   {name: 'PUSH_FALSE'}, # push(1)
   {name: 'PUSH_STRING', args: %i{vlc}}, # push(1)
   {name: 'PUSH_NUMBER', args: %i{uint64}}, # push(1)
+  {name: 'PUSH_NUMBER_UINT8', args: %i{uint8}}, # push(1)
+  {name: 'PUSH_NUMBER_INT32', args: %i{int32}}, # push(1)
+  {name: 'PUSH_NUMBER_UINT32', args: %i{uint32}}, # push(1)
+  {name: 'PUSH_NUMBER_UINT64', args: %i{uint64}}, # push(1)
   {name: 'PUSH_ARRAY', args: %i{uint16}}, # pop(arg), push(1)
   {name: 'PUSH_CLASS', args: %i{uint16}}, # push(1)
   {name: 'PUSH_CONSTANT', args: %i{uint16}}, # constant index, push(1)
@@ -35,10 +39,13 @@ OPCODES_ARRAY = [
   {name: 'PUSH_INSTVAR', args: %i{vlc}}, # push(1)
   {name: 'PUSH_SYMBOL', args: %i{vlc}}, # push(1)
   {name: 'PUSH_HAS_BLOCK'}, # push(1)
+  {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
+  {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
   # SETV
   {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
   {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
   {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
+  {name: 'SETV_ARG', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = arg index, pop(0), push(0)
   # STACK
   {name: 'POP', args: %i{uint16}}, # pop(n)
   {name: 'DUP'}, # push(1)
@@ -59,6 +66,7 @@ OPCODES_ARRAY = [
   {name: 'JMP', args: %i{int16}}, # add +arg to PC
   {name: 'JMP_IF', args: %i{int16}}, # pop(1), add +arg to PC if value from stack is true
   {name: 'JMP_IFN', args: %i{int16}}, # pop(1), add +arg to PC if value from stack is false
+  {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg1/2 to PC depending on stack value
   {name: 'RETURN'}, # pop(1)
   {name: 'YIELD', args: %i{uint16}}, # n = number of args, pop(n)
   # VARIABLES
@@ -74,26 +82,20 @@ OPCODES_ARRAY = [
   {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
   {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
   {name: 'BREAK_LOAD'}, # stop loading the code
-  # NEW
   {name: 'REFLECT', args: %i{uint16}}, # pop symbol, arg0 = reflection type, pop(1), push(1)
-  {name: 'SETV_ARG', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = arg index, pop(0), push(0)
   {name: 'DESCRIBE_FUNCTION', args: %i{vlc uint16}}, # arg0 = name, arg1 = number of arguments, pop(arg1*2 + 1) (argument types + return type)
-  {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
-  {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg1/2 to PC depending on stack value
+  # REGISTER-BASED OPCODES - SET
   {name: 'Q_SET_CONSTANT', args: %i[reg int16]}, # reg(arg0) <- constant(arg1)
-  {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
   {name: 'Q_SET_POP', args: %i[reg]}, # reg(arg0) <- stack; pop(1)
   {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg(arg0) <- arg1
   {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
   {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)
   {name: 'Q_SET_CALL_STACK', args: %i[reg symbol uint16]}, # reg(arg0) <- call(symbol(arg1), stack), pop(arg2)
-  {name: 'PUSH_NUMBER_UINT8', args: %i{uint8}}, # push(1)
-  {name: 'PUSH_NUMBER_INT32', args: %i{int32}}, # push(1)
-  {name: 'PUSH_NUMBER_UINT32', args: %i{uint32}}, # push(1)
-  {name: 'PUSH_NUMBER_UINT64', args: %i{uint64}}, # push(1)
   {name: 'Q_SET_SYSCALL_STACK', args: %i[reg uint8]}, # reg(arg0) <- syscall(arg1, stack), pop(variable)
   {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg(arg0) <- syscall(arg1, arg2...argn)
+  # REGISTER-BASED OPCODES - OTHER
   {name: 'Q_VOID_SYSCALL', args: %i[uint8 reglist]}, # syscall(arg1, arg2...argn)
+  # NEW
 ].freeze
 
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
