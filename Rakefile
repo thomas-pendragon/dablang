@@ -12,6 +12,8 @@ cdisasm = 'bin/cdisasm'
 cdumpcov = 'bin/cdumpcov'
 filelist = 'tmp/c_files.txt'
 
+opcodes = 'src/shared/opcodes.rb'
+
 cvm_opcodes = 'src/cshared/opcodes.h'
 cvm_classes = 'src/cshared/classes.h'
 opcode_task = 'tasks/opcodelist.rb'
@@ -19,6 +21,9 @@ classes_task = 'tasks/classes.rb'
 
 cvm_opcodes_debug = 'src/cshared/opcodes_debug.h'
 opcode_debug_task = 'tasks/opcode_debuglist.rb'
+
+opcode_docs_file = 'docs/vm/opcodes.md'
+opcode_docs_task = 'tasks/opcode_docs.rb'
 
 $shared_spec_code = Dir.glob('test/shared/*.dab')
 
@@ -34,15 +39,15 @@ if filelist_body_old != filelist_body_new
   File.open(filelist, 'wb') { |f| f << filelist_body_new }
 end
 
-file cvm_classes => ['src/shared/opcodes.rb', classes_task] do
+file cvm_classes => [opcodes, classes_task] do
   psystem("ruby #{classes_task} > #{cvm_classes}")
 end
 
-file cvm_opcodes => ['src/shared/opcodes.rb', opcode_task] do
+file cvm_opcodes => [opcodes, opcode_task] do
   psystem("ruby #{opcode_task} > #{cvm_opcodes}")
 end
 
-file cvm_opcodes_debug => ['src/shared/opcodes.rb', opcode_debug_task] do
+file cvm_opcodes_debug => [opcodes, opcode_debug_task] do
   psystem("ruby #{opcode_debug_task} > #{cvm_opcodes_debug}")
 end
 
@@ -122,7 +127,11 @@ end
 
 task reverse: :dab_spec_reverse
 
-task default: [gitlab, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec] do
+file opcode_docs_file => [opcodes, opcode_docs_task] do
+  psystem("ruby #{opcode_docs_task} > #{opcode_docs_file}")
+end
+
+task default: [gitlab, opcode_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec] do
 end
 
 task :clean do

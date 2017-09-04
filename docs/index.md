@@ -9,5 +9,6 @@ Dab is an experimental, highly optimised dynamic language, It is still a very ea
  - [Type system](/design/type-system.html)
  - [Concretify](/design/concretify.html)
  - [Rings](/design/rings.html)
+ - [VM opcodes](/vm/opcodes.html)
 
 License: [MIT](/license.md)
