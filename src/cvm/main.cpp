@@ -44,7 +44,7 @@ void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register
     else
     {
         assert(reglist.size() == 1);
-        arg = get_ssa(reglist[0]);
+        arg = register_get(reglist[0]);
         stack_pos += 1;
     }
 
@@ -73,7 +73,7 @@ void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register
     }
     else
     {
-        set_ssa(out_reg, nullptr);
+        register_set(out_reg, nullptr);
     }
 }
 
@@ -123,8 +123,8 @@ bool DabVM::pop_frame(bool regular)
         instructions.seek(prev_ip);
     }
 
-    ssa_registers = ssa_register_stack.back();
-    ssa_register_stack.pop_back();
+    _registers = _register_stack.back();
+    _register_stack.pop_back();
 
     if (out_reg != -1)
     {
@@ -132,7 +132,7 @@ bool DabVM::pop_frame(bool regular)
         {
             fprintf(stderr, "vm: set retval at %d\n", out_reg);
         }
-        set_ssa(out_reg, retval);
+        register_set(out_reg, retval);
     }
 
     if (prev_pos == (size_t)-1)
@@ -167,8 +167,8 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
         val.data.type = TYPE_INVALID;
         stack.push_value(val);
     }
-    ssa_register_stack.push_back(ssa_registers);
-    ssa_registers.resize(0);
+    _register_stack.push_back(_registers);
+    _registers.resize(0);
 }
 
 void DabVM::_dump(const char *name, const std::vector<DabValue> &data, FILE *output)
@@ -353,7 +353,7 @@ void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction 
         fun.extra(n_args, n_ret, blockaddress);
         if (out_reg != -1)
         {
-            set_ssa(out_reg, stack.pop_value());
+            register_set(out_reg, stack.pop_value());
         }
     }
 }
@@ -373,22 +373,22 @@ void DabVM::execute(Stream &input)
     }
 }
 
-DabValue DabVM::get_ssa(size_t ssa_index)
+DabValue DabVM::register_get(size_t reg_index)
 {
-    if (ssa_registers.size() <= ssa_index)
+    if (_registers.size() <= reg_index)
     {
         return nullptr;
     }
-    return ssa_registers[ssa_index];
+    return _registers[reg_index];
 }
 
-void DabVM::set_ssa(size_t ssa_index, const DabValue &value)
+void DabVM::register_set(size_t reg_index, const DabValue &value)
 {
-    if (ssa_registers.size() <= ssa_index)
+    if (_registers.size() <= reg_index)
     {
-        ssa_registers.resize(ssa_index + 1);
+        _registers.resize(reg_index + 1);
     }
-    ssa_registers[ssa_index] = value;
+    _registers[reg_index] = value;
 }
 
 void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
@@ -589,28 +589,28 @@ bool DabVM::execute_single(Stream &input)
     case OP_PUSH_SSA:
     {
         auto reg_index = input.read_reg();
-        stack.push(ssa_registers[reg_index]);
+        stack.push(register_get(reg_index));
         break;
     }
     case OP_Q_SET_CONSTANT:
     {
         auto reg_index      = input.read_reg();
         auto constant_index = input.read_int16();
-        set_ssa(reg_index, constants[constant_index]);
+        register_set(reg_index, constants[constant_index]);
         break;
     }
     case OP_Q_SET_POP:
     {
         auto reg_index = input.read_reg();
         auto value     = stack.pop_value();
-        set_ssa(reg_index, value);
+        register_set(reg_index, value);
         break;
     }
     case OP_Q_SET_NUMBER:
     {
         auto reg_index = input.read_reg();
         auto number    = input.read_uint64();
-        set_ssa(reg_index, DabValue(number));
+        register_set(reg_index, DabValue(number));
         break;
     }
     case OP_Q_SET_ARG:
@@ -618,7 +618,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto arg_index = input.read_uint16();
         auto var       = get_arg(arg_index);
-        set_ssa(reg_index, var);
+        register_set(reg_index, var);
         break;
     }
     case OP_Q_SET_CLASS:
@@ -626,7 +626,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index   = input.read_reg();
         auto klass_index = input.read_uint16();
         auto klass       = classes[klass_index];
-        set_ssa(reg_index, klass);
+        register_set(reg_index, klass);
         break;
     }
     case OP_RETURN:
@@ -1080,7 +1080,7 @@ void DabVM::kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_
         else
         {
             assert(reglist.size() == 1);
-            value = get_ssa(reglist[0]);
+            value = register_get(reglist[0]);
         }
         exit(value.data.fixnum);
         break;
@@ -1095,7 +1095,7 @@ void DabVM::kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_
         else
         {
             assert(reglist.size() == 1);
-            value = get_ssa(reglist[0]);
+            value = register_get(reglist[0]);
         }
 
         auto dab_value = uint64_t(value.use_count());
@@ -1109,7 +1109,7 @@ void DabVM::kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_
         }
         else
         {
-            set_ssa(out_reg, dab_value);
+            register_set(out_reg, dab_value);
         }
         break;
     }
@@ -1364,8 +1364,8 @@ int main(int argc, char **argv)
     vm.with_attributes = options.with_attributes;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
-    vm.ssa_registers.resize(0);
-    vm.ssa_register_stack.resize(0);
+    vm._registers.resize(0);
+    vm._register_stack.resize(0);
     if (options.extract)
     {
         vm.extract(options.extract_part);

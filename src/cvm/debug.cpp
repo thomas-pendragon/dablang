@@ -12,7 +12,7 @@ void DabVM_debug::print_ssa_registers()
     auto err_stream = stdout;
     fprintf(err_stream, "Registers:\n");
     size_t index = 0;
-    for (auto &reg : vm.ssa_registers)
+    for (const auto &reg : vm._registers)
     {
         fprintf(err_stream, "R%zu: ", index);
         reg.dump(err_stream);

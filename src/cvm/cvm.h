@@ -451,8 +451,8 @@ struct DabVM
 
     std::set<size_t> breakpoints;
 
-    std::vector<DabValue>              ssa_registers;
-    std::vector<std::vector<DabValue>> ssa_register_stack;
+    std::vector<DabValue>              _registers;
+    std::vector<std::vector<DabValue>> _register_stack;
 
     DabClass &get_class(int index)
     {
@@ -574,8 +574,8 @@ struct DabVM
     void reflect(size_t reflection_type, const DabValue &symbol);
     void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
 
-    DabValue get_ssa(size_t ssa_index);
-    void set_ssa(size_t ssa_index, const DabValue &value);
+    DabValue register_get(size_t reg_index);
+    void register_set(size_t reg_index, const DabValue &value);
 };
 
 struct DabVM_debug
