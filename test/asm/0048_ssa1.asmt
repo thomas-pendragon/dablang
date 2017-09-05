@@ -24,7 +24,7 @@ func main()
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
                                  Q_VOID_SYSCALL 0, R0
-/* 2            */               Q_SET_NUMBER R0, 2
-                                 Q_VOID_SYSCALL 0, R0
+/* 2            */               Q_SET_NUMBER R1, 2
+                                 Q_VOID_SYSCALL 0, R1
                                  PUSH_NIL 
                                  RETURN

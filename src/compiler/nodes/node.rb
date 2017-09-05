@@ -387,16 +387,24 @@ class DabNode
     [parent] + parent.all_parents
   end
 
-  def previous_nodes(klass)
+  def previous_nodes(klass, sender = self)
     return [] unless function_parent
     self_index = function_parent.node_index(self)
     ret = []
-    function_parent.each_with_index do |node, index|
+    function_parent.each_previous_scope_with_index(sender) do |node, index|
       ret += node.all_ordered_nodes(klass) if index < self_index
     end
-    ret = function_parent.previous_nodes(klass) + [function_parent] + ret
+    ret = function_parent.previous_nodes(klass, sender) + [function_parent] + ret
     ret = ret.select { |node| node.is_a? klass }
     ret
+  end
+
+  def each_previous_scope_with_index(_sender, &block)
+    each_with_index(&block)
+  end
+
+  def includes?(node)
+    all_nodes.include?(node)
   end
 
   def following_nodes(klasses, unscoped: false, &block)

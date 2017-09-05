@@ -36,4 +36,10 @@ class DabNodeSSASet < DabNode
     new_node = DabNodeRegisterSet.new(value_, @output_register, @output_varname)
     replace_with!(new_node)
   end
+
+  def used_in_phi_node?
+    !!function.all_nodes(DabNodeSSAPhi).detect do |node|
+      node.input_registers.include? output_register
+    end
+  end
 end

@@ -40,6 +40,19 @@ class DabNodeIf < DabNodeTreeBlock
     true
   end
 
+  def each_previous_scope_with_index(sender, &block)
+    list = [condition]
+    inside_true = if_true.includes?(sender)
+    inside_false = if_false&.includes?(sender)
+    unless inside_false
+      list << if_true
+    end
+    if if_false && !inside_true && !inside_false
+      list << if_false
+    end
+    list.each_with_index(&block)
+  end
+
   def build_from_tree(current_block, blocks)
     condition_node = condition
     true_node = if_true

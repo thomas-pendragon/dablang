@@ -1,30 +1,24 @@
 ## CODE
 
-func foo() { return true; }
+func foo() { }
 
 func main()
 {
-  var a = 1;
-  a = 2;
-  var b = a;
-  a = 7;
+  var a;
+  var b;
   if (foo())
   {
     a = 8;
+    b = -1;
   }
   else
   {
-    a = 1;
+    a = b;
+    b = a;
   }
   print(a);
-  var c = 8;
-  c = b;
-  print(c);
+  print(b);
 }
-
-## OPTIONS
-
---with-ssa
 
 ## EXPECT
 
@@ -39,23 +33,28 @@ func main()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_TRUE 
+                                 PUSH_NIL 
                                  RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 2            */               Q_SET_NUMBER R0, 2
+                                 PUSH_NIL 
+                                 Q_SET_POP R0
 /* foo          */               PUSH_CONSTANT 0
                                  CALL 0
                                  JMP_IF2 L1, L2
                    L1:
 /* 8            */               Q_SET_NUMBER R1, 8
+/* -1           */               Q_SET_NUMBER R2, -1
                                  JMP L3
                    L2:
-/* 1            */               Q_SET_NUMBER R1, 1
+                                 PUSH_SSA R0
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
+                                 Q_SET_POP R2
                                  JMP L3
                    L3:
                                  Q_VOID_SYSCALL 0, R1
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN

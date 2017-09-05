@@ -1,0 +1,31 @@
+## CODE
+
+func foo() { return false; }
+
+func main()
+{
+  var a = 2;
+  var b = 4;
+  if (foo())
+  {
+    a = 8;
+    b = -1;
+  }
+  else
+  {
+    a = b;
+    b = a;
+  }
+  print(a);
+  print(b);
+}
+
+## OPTIONS
+
+--with-ssa
+
+## RUN OPTIONS
+
+## EXPECT OK
+
+44
