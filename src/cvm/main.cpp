@@ -742,11 +742,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_STACK_RESERVE:
     {
         auto n = input.read_uint16();
-        stack.push((uint64_t)n);
-        for (auto i = 0; i < n; i++)
-        {
-            stack.push(nullptr);
-        }
+        assert(n == 0);
         break;
     }
     case OP_COV_FILE:

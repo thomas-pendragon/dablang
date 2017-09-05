@@ -54,7 +54,6 @@ Dump of stack:
 [   4] FIXN 0
 [   5] FIXN 4294967295
 [   6] INVA ?
-[   7] FIXN 0
 IP = 15
 Stack:
 Dump of stack:
@@ -65,8 +64,7 @@ Dump of stack:
 [   4] FIXN 0
 [   5] FIXN 4294967295
 [   6] INVA ?
-[   7] FIXN 0
-[   8] NIL  nil
+[   7] NIL  nil
 IP = 0
 IP = 0
 IP = 0
