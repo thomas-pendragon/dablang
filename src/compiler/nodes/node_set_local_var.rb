@@ -36,16 +36,6 @@ class DabNodeSetLocalVar < DabNode
     identifier
   end
 
-  def compile(output)
-    raise 'no index' unless index
-    if value.is_a?(NodeStoredLocally)
-      return value.compile_local_set(output, index)
-    end
-    value.compile(output)
-    output.comment("var #{index} #{original_identifier}")
-    output.printex(self, 'SET_VAR', index)
-  end
-
   def formatted_source(options)
     original_identifier + ' = ' + value.formatted_source(options)
   end

@@ -512,26 +512,6 @@ bool DabVM::execute_single(Stream &input)
         push_method(name);
         break;
     }
-    case OP_SETV_CONSTANT:
-    {
-        auto  n_var = input.read_uint16();
-        auto  index = input.read_uint16();
-        auto &var   = get_var(n_var);
-        var         = constants[index];
-        break;
-    }
-    case OP_SETV_CALL:
-    {
-        auto n_var  = input.read_uint16();
-        auto index  = input.read_uint16();
-        auto n_args = input.read_uint16();
-        auto name   = get_symbol(index);
-        call(-1, name, n_args, "");
-        auto  value = stack.pop_value();
-        auto &var   = get_var(n_var);
-        var         = value;
-        break;
-    }
     case OP_HARDCALL:
     case OP_CALL:
     {
@@ -677,34 +657,11 @@ bool DabVM::execute_single(Stream &input)
     {
         break;
     }
-    case OP_SET_VAR:
-    {
-        auto  index = input.read_uint16();
-        auto  value = stack.pop_value();
-        auto &var   = get_var(index);
-        var         = value;
-        break;
-    }
-    case OP_PUSH_VAR:
-    {
-        auto index = input.read_uint16();
-        auto var   = get_var(index);
-        stack.push(var);
-        break;
-    }
     case OP_PUSH_ARG:
     {
         auto index = input.read_uint16();
         auto var   = get_arg(index);
         stack.push(var);
-        break;
-    }
-    case OP_SETV_ARG:
-    {
-        auto  n_var = input.read_uint16();
-        auto  index = input.read_uint16();
-        auto &var   = get_var(n_var);
-        var         = get_arg(index);
         break;
     }
     case OP_SYSCALL:
@@ -790,16 +747,6 @@ bool DabVM::execute_single(Stream &input)
     {
         auto n = input.read_uint16();
         push_array(n);
-        break;
-    }
-    case OP_SETV_NEW_ARRAY:
-    {
-        auto n_var  = input.read_uint16();
-        auto n_args = input.read_uint16();
-        push_array(n_args);
-        auto  value = stack.pop_value();
-        auto &var   = get_var(n_var);
-        var         = value;
         break;
     }
     case OP_PUSH_TRUE:
@@ -906,10 +853,11 @@ bool DabVM::execute_single(Stream &input)
         stack.push(ds);
         break;
     }
-    case OP_RELEASE_VAR:
+    case OP_Q_RELEASE:
     {
-        auto index = input.read_uint16();
-        get_var(index).release();
+        auto reg   = input.read_reg();
+        auto value = register_get(reg);
+        value.release();
         break;
     }
     case OP_CAST:

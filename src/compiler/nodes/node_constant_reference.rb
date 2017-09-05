@@ -32,11 +32,6 @@ class DabNodeConstantReference < DabNode
     output.print('PUSH_CONSTANT', self.index)
   end
 
-  def compile_local_set(output, index)
-    output.comment(self.extra_value)
-    output.print('SETV_CONSTANT', index, self.index)
-  end
-
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
     output.print('Q_SET_CONSTANT', "R#{output_register}", self.index)

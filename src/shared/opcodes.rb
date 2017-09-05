@@ -43,22 +43,11 @@ OPCODES_ARRAY_BASE = [
       {name: 'PUSH_CLASS', args: %i{uint16}}, # push(1)
       {name: 'PUSH_CONSTANT', args: %i{uint16}}, # constant index, push(1)
       {name: 'PUSH_ARG', args: %i{uint16}}, # argument index, push(1)
-      {name: 'PUSH_VAR', args: %i{uint16}}, # local variable index, push(1)
       {name: 'PUSH_INSTVAR', args: %i{vlc}}, # push(1)
       {name: 'PUSH_SYMBOL', args: %i{vlc}}, # push(1)
       {name: 'PUSH_HAS_BLOCK'}, # push(1)
       {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
       {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
-    ],
-  },
-  {
-    group: 'SETV [deprecated]',
-    items:
-    [
-      {name: 'SETV_NEW_ARRAY', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = number of array items from stack, pop(arg1), push(0)
-      {name: 'SETV_CALL', args: %i{uint16 uint16 uint16}}, # arg0 = variable index, arg1 = symbol index, arg2 = number of args, pop(arg2), push(0)
-      {name: 'SETV_CONSTANT', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = constant index, pop(0), push(0)
-      {name: 'SETV_ARG', args: %i{uint16 uint16}}, # arg0 = variable index, arg1 = arg index, pop(0), push(0)
     ],
   },
   {
@@ -108,8 +97,6 @@ OPCODES_ARRAY_BASE = [
     group: 'VARIABLES',
     items:
     [
-      {name: 'SET_VAR', args: %i{uint16}}, # local variable index, pop(1)
-      {name: 'RELEASE_VAR', args: %i{uint16}}, # arg0 = local variable index
       {name: 'SET_INSTVAR', args: %i{vlc}}, # pop(1)
     ],
   },
@@ -153,6 +140,7 @@ OPCODES_ARRAY_BASE = [
     items:
     [
       {name: 'Q_VOID_SYSCALL', args: %i[uint8 reglist]}, # syscall(arg1, arg2...argn)
+      {name: 'Q_RELEASE', args: %i{reg}}, # release(reg(arg0))
     ],
   },
 ].freeze

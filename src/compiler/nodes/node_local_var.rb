@@ -21,12 +21,6 @@ class DabNodeLocalVar < DabNode
     identifier
   end
 
-  def compile(output)
-    raise 'no index' unless index
-    output.comment("var #{index} #{original_identifier}")
-    output.print('PUSH_VAR', index)
-  end
-
   def formatted_source(_options)
     original_identifier
   end

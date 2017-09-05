@@ -6,13 +6,10 @@ BREAK_LOAD
 Fmain:
 STACK_RESERVE 1
 PUSH_ARRAY 0
-SET_VAR 0
+Q_SET_POP R0
+Q_RELEASE R0
 PUSH_NIL
 RETURN 
-
-## COMMENT
-
-RETURN will release all local variables
 
 ## RUNOPTIONS
 

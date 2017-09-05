@@ -26,11 +26,6 @@ class DabNodeLiteralArray < DabNode
     output.print('PUSH_ARRAY', valuelist.count)
   end
 
-  def compile_local_set(output, index)
-    _compile_items(output)
-    output.print('SETV_NEW_ARRAY', index, valuelist.count)
-  end
-
   def my_type
     DabTypeArray.new
   end
