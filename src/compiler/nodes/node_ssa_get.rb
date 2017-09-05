@@ -18,6 +18,10 @@ class DabNodeSSAGet < DabNode
     output.print('PUSH_SSA', "R#{input_register}")
   end
 
+  def compile_as_ssa(output, output_register)
+    output.print('Q_SET_REG', "R#{output_register}", "R#{input_register}")
+  end
+
   def setters
     function.all_nodes([DabNodeSSASet, DabNodeRegisterSet]).select { |node| node.output_register == self.input_register }
   end

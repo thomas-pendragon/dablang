@@ -48,10 +48,8 @@ func main()
 /* -1           */               Q_SET_NUMBER R2, -1
                                  JMP L3
                    L2:
-                                 PUSH_SSA R0
-                                 Q_SET_POP R1
-                                 PUSH_SSA R1
-                                 Q_SET_POP R2
+                                 Q_SET_REG R1, R0
+                                 Q_SET_REG R2, R1
                                  JMP L3
                    L3:
                                  Q_VOID_SYSCALL 0, R1
