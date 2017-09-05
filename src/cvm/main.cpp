@@ -353,7 +353,7 @@ void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction 
         fun.extra(n_args, n_ret, blockaddress);
         if (out_reg != -1)
         {
-            ssa_registers[out_reg] = stack.pop_value();
+            set_ssa(out_reg, stack.pop_value());
         }
     }
 }
