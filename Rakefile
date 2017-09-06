@@ -83,20 +83,23 @@ def ci_parallel(inputs)
   inputs[istart...iend] || []
 end
 
-def setup_tests(directory, extension, frontend_type = nil, extras = [])
+def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil)
+  test_name ||= "#{directory}_spec"
   frontend_type ||= "frontend_#{directory}"
-  inputs = Dir.glob('test/' + directory + '/*.' + extension).sort.reverse
+  base_path = 'test/' + directory
+  path = base_path + '/*.' + extension
+  inputs = Dir.glob(path).sort.reverse
   inputs = ci_parallel(inputs)
   outputs = []
   inputs.each do |input_test_file|
-    output_output_file = input_test_file.gsub('test/' + directory + '/', 'tmp/test_' + directory + '_').gsub('.' + extension, '.out')
+    output_output_file = input_test_file.gsub(base_path + '/', 'tmp/test_' + test_name + '_').gsub('.' + extension, '.out')
     outputs << output_output_file
     file output_output_file => $sources + [input_test_file] + $shared_spec_code + extras do
       psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=test_#{directory}_ --test_output_dir=./tmp/")
     end
   end
-  task "#{directory}_spec".to_sym => outputs
-  task "#{directory}_spec_reverse".to_sym => outputs.reverse
+  task test_name.to_sym => outputs
+  task "#{test_name}_reverse".to_sym => outputs.reverse
 end
 
 setup_tests('dab', 'dabt', 'frontend', [cvm])
@@ -107,8 +110,9 @@ setup_tests('asm', 'asmt', 'frontend_asm')
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 setup_tests('debug', 'test', 'frontend_debug', [cvm])
-setup_tests('decompile', 'test', 'frontend_decompile')
-setup_tests('compiler_performance', 'test')
+setup_tests('decompile')
+setup_tests('compiler_performance')
+setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_spec')
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'

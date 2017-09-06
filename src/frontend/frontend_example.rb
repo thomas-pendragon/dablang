@@ -53,7 +53,7 @@ def run_test(settings)
 
   assemble(asm, bin)
 
-  execute(bin, run_options)
+  execute(bin, run_options) unless $dont_run_example
 end
 
 run_test($settings)
