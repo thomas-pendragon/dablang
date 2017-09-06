@@ -108,3 +108,13 @@ class DabCompileReturnTypeError < DabCompilerError
     9
   end
 end
+
+class DabCompileUnknownMemberFunctionError < DabCompilerError
+  def initialize(klass, function, source)
+    super("Unknown member function <#{klass}>::<#{function}>.", source)
+  end
+
+  def error_code
+    10
+  end
+end

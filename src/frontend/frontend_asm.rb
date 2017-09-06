@@ -51,7 +51,19 @@ def run_test(settings)
   FileUtils.rm(out) if File.exist?(out)
 
   extract_format_source(input, dab)
-  compile(dab, asm, options)
+  begin
+    compile(dab, asm, options)
+  rescue SystemCommandError => e
+    if data[:expect_compile_error].present?
+      compare_output('compare compiler output', e.stderr, data[:expect_compile_error], true)
+      File.open(out, 'wb') { |f| f << '1' }
+      return
+    else
+      raise e
+    end
+  end
+
+  raise 'expected compile error' if data[:expect_compile_error].present?
 
   expected = data[:expect].strip
 

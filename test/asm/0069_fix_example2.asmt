@@ -1,0 +1,12 @@
+## CODE
+
+func main()
+{
+  var a = nil;
+  print(a[0] == 0);
+}
+
+## EXPECT COMPILE ERROR
+
+   4:   print(a[0] == 0);
+./tmp/test_asm_0069_fix_example2.dab:4: error E0010: Unknown member function <NilClass>::<[]>.

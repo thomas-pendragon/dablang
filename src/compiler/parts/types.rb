@@ -28,6 +28,12 @@ class DabType
   def belongs?(_value)
     false
   end
+
+  def has_function?(identifier)
+    return true if identifier == 'class'
+    return true if identifier == 'to_s'
+    false
+  end
 end
 
 class DabTypeObject < DabType
@@ -47,6 +53,12 @@ class DabTypeString < DabType
 
   def belongs?(value)
     value.is_a? String
+  end
+
+  def has_function?(identifier)
+    return true if identifier == '[]'
+    return true if identifier == 'upcase'
+    super
   end
 end
 
@@ -81,6 +93,11 @@ class DabTypeClass < DabType
 
   def concrete?
     true
+  end
+
+  def has_function?(identifier)
+    return true if identifier == 'new'
+    super
   end
 end
 
@@ -179,5 +196,9 @@ class DabTypeNil < DabType
 
   def can_assign_from?(other_type)
     other_type.is_a? DabTypeNil
+  end
+
+  def concrete?
+    true
   end
 end
