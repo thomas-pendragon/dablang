@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  while (true)
+  {
+    var has_event = 1;
+  }
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 JMP L1
+                   L1:
+                                 JMP L1
