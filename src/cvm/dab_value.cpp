@@ -247,10 +247,13 @@ DabValue DabValue::_get_instvar(const std::string &name)
 DabValue DabValue::get_instvar(const std::string &name)
 {
     auto ret = _get_instvar(name);
-    fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
-            (int)this->data.object->count_strong, name.c_str());
-    ret.print(stderr);
-    fprintf(stderr, "\n");
+    if ($VM->verbose)
+    {
+        fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
+                (int)this->data.object->count_strong, name.c_str());
+        ret.print(stderr);
+        fprintf(stderr, "\n");
+    }
     return ret;
 }
 
