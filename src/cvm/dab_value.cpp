@@ -262,10 +262,13 @@ void DabValue::set_instvar(const std::string &name, const DabValue &value)
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
-    fprintf(stderr, "vm: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
-            (int)this->data.object->count_strong, name.c_str());
-    value.print(stderr);
-    fprintf(stderr, "\n");
+    if ($VM->verbose)
+    {
+        fprintf(stderr, "vm: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
+                (int)this->data.object->count_strong, name.c_str());
+        value.print(stderr);
+        fprintf(stderr, "\n");
+    }
 
     if (!this->data.object->object)
     {
