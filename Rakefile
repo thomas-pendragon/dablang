@@ -135,7 +135,8 @@ file opcode_docs_file => [opcodes, opcode_docs_task] do
   psystem("ruby #{opcode_docs_task} > #{opcode_docs_file}")
 end
 
-task default: [gitlab, opcode_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec] do
+task default: [gitlab, opcode_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
+               :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :build_examples_spec] do
 end
 
 task :clean do

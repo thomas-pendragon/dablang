@@ -102,6 +102,13 @@ CompilerPerformanceSpec:
   script:
     - bundle exec rake compiler_performance_spec
 
+BuildExamplesSpec:
+  stage: prebuild
+  tags:
+    - ruby
+  script:
+    - bundle exec rake build_examples_spec
+
 Rubocop:
   stage: format
   tags:
