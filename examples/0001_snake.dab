@@ -68,6 +68,28 @@ func draw_square(renderer, size, x, y, alpha, apple)
   SDL_RenderDrawLine(renderer, x + size - 2, y + 2, x + size - 2, y + size - 4);
 }
 
+class SnakePoint
+{
+  var @x;
+  var @y;
+  func x()
+  {
+    return @x;    
+  }
+  func y()
+  {
+    return @y;
+  }
+  func x=(value)
+  {
+    @x = value;    
+  }
+  func y=(value)
+  {
+    @y = value;
+  }
+}
+
 func main()
 {
   var SDL_INIT_VIDEO = 32;
@@ -100,8 +122,9 @@ func main()
   print("SDL_CreateRenderer: ");
   puts(renderer);
 
-  var x = 10 * size;
-  var y = 5 * size;
+  var start_point = SnakePoint.new;
+  start_point.x = 10 * size;
+  start_point.y = 5 * size;
   var dx = 1;
   var dy = 0;
   var<Uint64> time = 0;
@@ -153,15 +176,15 @@ func main()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    draw_square(renderer, size, x, y, 255, 0);
+    draw_square(renderer, size, start_point.x, start_point.y, 255, 0);
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);
 
     if (time > step)
     {
-      x = x + dx * size;
-      y = y + dy * size;
+      start_point.x = start_point.x + dx * size;
+      start_point.y = start_point.y + dy * size;
       time = time - step;
     }
   }
