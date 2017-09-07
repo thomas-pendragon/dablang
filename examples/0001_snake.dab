@@ -123,8 +123,8 @@ func main()
   puts(renderer);
 
   var start_point = SnakePoint.new;
-  start_point.x = 10 * size;
-  start_point.y = 5 * size;
+  start_point.x = 10;
+  start_point.y = 5;
   var dx = 1;
   var dy = 0;
   var<Uint64> time = 0;
@@ -176,15 +176,15 @@ func main()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    draw_square(renderer, size, start_point.x, start_point.y, 255, 0);
+    draw_square(renderer, size, start_point.x * size, start_point.y * size, 255, 0);
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);
 
     if (time > step)
     {
-      start_point.x = start_point.x + dx * size;
-      start_point.y = start_point.y + dy * size;
+      start_point.x = start_point.x + dx;
+      start_point.y = start_point.y + dy;
       time = time - step;
     }
   }
