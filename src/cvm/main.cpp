@@ -315,8 +315,11 @@ void DabVM::call_function(int out_reg, const DabValue &self, const DabFunction &
 void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                            void *blockaddress)
 {
-    fprintf(stderr, "vm: call <%s> %sand %d arguments -> %d.\n", fun.name.c_str(),
-            blockaddress ? "with block " : "", n_args, out_reg);
+    if (verbose)
+    {
+        fprintf(stderr, "vm: call <%s> %sand %d arguments -> %d.\n", fun.name.c_str(),
+                blockaddress ? "with block " : "", n_args, out_reg);
+    }
 
     if (fun.regular)
     {
