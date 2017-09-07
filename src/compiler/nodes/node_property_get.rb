@@ -27,10 +27,6 @@ class DabNodePropertyGet < DabNode
     true
   end
 
-  def constant?
-    value.constant?
-  end
-
   def formatted_source(options)
     value.formatted_source(options) + '.' + real_identifier
   end

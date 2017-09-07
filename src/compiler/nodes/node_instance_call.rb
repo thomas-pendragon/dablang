@@ -49,10 +49,6 @@ class DabNodeInstanceCall < DabNodeBasecall
     output.printex(self, has_block? ? 'INSTCALL_BLOCK' : 'INSTCALL', args.count)
   end
 
-  def constant?
-    value.constant?
-  end
-
   def formatted_source(options)
     val = value.formatted_source(options)
     args = _formatted_arguments(options)

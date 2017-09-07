@@ -1,0 +1,32 @@
+## CODE
+
+func main()
+{
+  print(String.new == "a");
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "a"
+                                 CONSTANT_SYMBOL "=="
+                                 CONSTANT_SYMBOL new
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* String       */               PUSH_CLASS 1
+/* new          */               PUSH_CONSTANT 2
+                                 INSTCALL 0
+                                 Q_SET_POP R0
+/* "a"          */               Q_SET_CONSTANT R1, 0
+                                 PUSH_SSA R0
+                                 PUSH_SSA R1
+/* ==           */               Q_SET_CALL_STACK R2, S1, 2
+                                 Q_VOID_SYSCALL 0, R2
+                                 PUSH_NIL 
+                                 RETURN
