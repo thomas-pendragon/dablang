@@ -222,12 +222,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             auto int_symbol = (int_fun)symbol;
 
-            auto value = stack.pop_value();
-            if (value.class_index() == CLASS_LITERALFIXNUM)
-            {
-                value = $VM->cast(value, CLASS_UINT32);
-            }
-            assert(value.class_index() == CLASS_UINT32);
+            auto value = $VM->cast(stack.pop_value(), CLASS_UINT32);
 
             auto value_data = value.data.num_uint32;
 
