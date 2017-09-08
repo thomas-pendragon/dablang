@@ -205,4 +205,13 @@ class DabNodeFunction < DabNode
     @tempvars += 1
     "$temp#{n}"
   end
+
+  def new_block_name
+    num = 1
+    while true
+      name = self.identifier + "__block#{num}"
+      return name unless self.root.has_function?(name)
+      num += 1
+    end
+  end
 end

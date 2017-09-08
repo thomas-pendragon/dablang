@@ -5,15 +5,7 @@ class ExtractCallBlock
 
     block = node.block
 
-    num = 1
-    while true
-      name = node.function.identifier + "__block#{num}"
-      if node.root.has_function?(name)
-        num += 1
-      else
-        break
-      end
-    end
+    name = node.function.new_block_name
 
     fun = DabNodeFunction.new(name, block.body, block.arglist, false)
 
