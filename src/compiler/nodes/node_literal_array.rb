@@ -8,22 +8,24 @@ class DabNodeLiteralArray < DabNode
 
   def initialize(valuelist)
     super()
-    insert(valuelist || DabNode.new)
+    valuelist&.each do |value|
+      insert(value)
+    end
   end
 
-  def valuelist
-    self[0]
+  def items
+    self[0..-1]
   end
 
   def _compile_items(output)
-    valuelist.each do |node|
+    items.each do |node|
       node.compile(output)
     end
   end
 
   def compile(output)
     _compile_items(output)
-    output.print('PUSH_ARRAY', valuelist.count)
+    output.print('PUSH_ARRAY', items.count)
   end
 
   def my_type
@@ -31,6 +33,6 @@ class DabNodeLiteralArray < DabNode
   end
 
   def formatted_source(options)
-    '@[' + valuelist.map { |item| item.formatted_source(options) }.join(', ') + ']'
+    '@[' + items.map { |item| item.formatted_source(options) }.join(', ') + ']'
   end
 end
