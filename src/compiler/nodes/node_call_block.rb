@@ -27,4 +27,12 @@ class DabNodeCallBlock < DabNode
     ret += _indent(body.formatted_source(options))
     ret + '}'
   end
+
+  def captured_variables
+    all_getters = all_nodes(DabNodeLocalVar)
+    all_getter_definitions = all_getters.map(&:var_definition).compact.uniq
+    all_defines = all_nodes(DabNodeDefineLocalVar)
+
+    all_getter_definitions - all_defines
+  end
 end
