@@ -3,8 +3,15 @@ require_relative 'node.rb'
 class DabNodeCallBlock < DabNode
   def initialize(body, arglist = nil)
     super()
-    insert(body, 'body')
-    insert(arglist, 'arglist') if arglist
+    insert(body)
+    insert(arglist) if arglist
+  end
+
+  def children_info
+    {
+      body => 'body',
+      arglist => 'arglist',
+    }
   end
 
   def body

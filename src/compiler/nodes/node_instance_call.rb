@@ -11,8 +11,16 @@ class DabNodeInstanceCall < DabNodeBasecall
   def initialize(value, identifier, arglist, block)
     super(arglist)
     pre_insert(identifier)
-    pre_insert(block || DabNodeLiteralNil.new, 'block')
+    pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(value)
+  end
+
+  def children_info
+    {
+      identifier => 'identifier',
+      block => 'block',
+      value => 'value',
+    }
   end
 
   def value

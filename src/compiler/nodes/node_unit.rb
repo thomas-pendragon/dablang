@@ -37,13 +37,21 @@ class DabNodeUnit < DabNode
     @functions = DabNode.new
     @constants = DabNode.new
     @classes = DabNode.new
-    insert(@functions, 'functions')
-    insert(@constants, 'constants')
-    insert(@classes, 'classes')
+    insert(@functions)
+    insert(@constants)
+    insert(@classes)
     @class_numbers = STANDARD_CLASSES_REV.dup
     @labels = 0
     @constant_table = {}
     rebuild_available_functions!
+  end
+
+  def children_info
+    {
+      @functions => 'functions',
+      @constants => 'constants',
+      @classes => 'classes',
+    }
   end
 
   def rebuild_available_functions!

@@ -12,6 +12,10 @@ module DabNodeModuleDump
     exdump = extra_dump.to_s
     exdump = ' ' + exdump.bold unless exdump.empty?
     pinfo = ''
+    if parent
+      children_info = parent.children_info
+      parent_info = children_info[self]
+    end
     if parent_info
       pinfo = "#{parent_info}: ".bold
     end

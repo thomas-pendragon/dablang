@@ -17,8 +17,15 @@ class DabNodeCall < DabNodeBasecall
 
   def initialize(identifier, args, block)
     super(args)
-    pre_insert(block || DabNodeLiteralNil.new, 'block')
-    pre_insert(DabNodeSymbol.new(identifier), 'identifier')
+    pre_insert(block || DabNodeLiteralNil.new)
+    pre_insert(DabNodeSymbol.new(identifier))
+  end
+
+  def children_info
+    {
+      identifier => 'identifier',
+      block => 'block',
+    }
   end
 
   def identifier

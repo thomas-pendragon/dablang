@@ -3,8 +3,15 @@ require_relative 'node_tree_block.rb'
 class DabNodeWhile < DabNodeTreeBlock
   def initialize(condition, on_block)
     super()
-    insert(condition, 'condition')
-    insert(on_block, 'true')
+    insert(condition)
+    insert(on_block)
+  end
+
+  def children_info
+    {
+      condition => 'condition',
+      on_block => 'on_block',
+    }
   end
 
   def condition

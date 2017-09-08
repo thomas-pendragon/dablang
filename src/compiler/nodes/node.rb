@@ -7,7 +7,6 @@ class DabNode
 
   # attr_reader :children
   attr_reader :parent
-  attr_accessor :parent_info
   attr_accessor :dup_replacements
   attr_accessor :dirty
 
@@ -29,13 +28,16 @@ class DabNode
     "#{'  ' * depth}#{self.class} [#{self.extra_dump}]"
   end
 
+  def children_info
+    {}
+  end
+
   def dup(level = 0)
     ret = super()
     ret.dup_replacements.clear
     ret.dup_replacements[self] = ret
     ret.safe_clear
     ret.__set_parent(nil)
-    ret.parent_info = self.parent_info
     @children.each do |child|
       ret.insert(child.dup(level + 1))
       ret.dup_replacements.merge!(child.dup_replacements)
@@ -75,15 +77,13 @@ class DabNode
     @children.each { |child| child.fixup_dup_replacements!(dictionary) }
   end
 
-  def insert(child, parent_info = nil)
+  def insert(child)
     mark_children_cache_dirty!
-    child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children << claim(child)
   end
 
-  def pre_insert(child, parent_info = nil)
+  def pre_insert(child)
     mark_children_cache_dirty!
-    child.parent_info = parent_info if parent_info && child.respond_to?(:parent_info=)
     @children.unshift(claim(child))
   end
 

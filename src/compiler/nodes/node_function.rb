@@ -24,9 +24,9 @@ class DabNodeFunction < DabNode
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
     @identifier = identifier
-    insert(arglist || DabNode.new, 'arglist')
-    insert(DabNodeBlockNode.new, 'blocks')
-    insert(attrlist || DabNode.new, 'attrlist')
+    insert(arglist || DabNode.new)
+    insert(DabNodeBlockNode.new)
+    insert(attrlist || DabNode.new)
     blocks.insert(body)
     @concrete = false
     @inline = inline
@@ -34,6 +34,14 @@ class DabNodeFunction < DabNode
     insert(rettype) if rettype
     @tempvars = 0
     @ssa_count = 0
+  end
+
+  def children_info
+    {
+      arglist => 'arglist',
+      blocks => 'blocks',
+      attrlist => 'attrlist',
+    }
   end
 
   def return_type
