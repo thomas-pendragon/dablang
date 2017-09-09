@@ -16,4 +16,15 @@ class Array
       return self[self.count - 1];
     }
   }
+  
+  func each()
+  {
+    var index = 0;
+    var count = self.count;
+    while (index != count)
+    {
+      yield(self[index]);
+      index = index + 1;
+    }
+  }
 }
