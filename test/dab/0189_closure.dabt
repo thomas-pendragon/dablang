@@ -1,0 +1,27 @@
+## CODE
+
+func test()
+{
+  yield(2);
+}
+
+func qux(a, b)
+{
+  print("a = ");
+  print(a);
+  print(", b = ");
+  print(b);
+}
+
+func main()
+{
+  var other = 1;
+  test() ^(bar)
+  {
+    qux(bar, other);
+  };
+}
+
+## EXPECT OK
+
+a = 2, b = 1

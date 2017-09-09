@@ -10,6 +10,7 @@ class DabNodeInstanceCall < DabNodeBasecall
 
   def initialize(value, identifier, arglist, block)
     super(arglist)
+    pre_insert(DabNodeLiteralNil.new)
     pre_insert(identifier)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(value)
@@ -20,6 +21,7 @@ class DabNodeInstanceCall < DabNodeBasecall
       identifier => 'identifier',
       block => 'block',
       value => 'value',
+      block_capture => 'block_capture',
     }
   end
 
@@ -39,8 +41,12 @@ class DabNodeInstanceCall < DabNodeBasecall
     self[2]
   end
 
+  def block_capture
+    self[3]
+  end
+
   def args
-    self[3..-1]
+    self[4..-1]
   end
 
   def real_identifier
@@ -53,6 +59,7 @@ class DabNodeInstanceCall < DabNodeBasecall
     output.push(identifier)
     if has_block?
       output.push(block.identifier)
+      block_capture.compile(output)
     end
     output.printex(self, has_block? ? 'INSTCALL_BLOCK' : 'INSTCALL', args.count)
   end

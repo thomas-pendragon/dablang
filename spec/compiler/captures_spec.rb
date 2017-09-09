@@ -28,4 +28,9 @@ describe DabNodeCallBlock do
   it 'captures outer variables in block' do
     expect(@block.captured_variables).to eq [@outer_var]
   end
+
+  # it 'adds captured variables as extra arguments' do
+  #  ExtractCallBlock.new.run(@call)
+  #  @root.dump
+  # end
 end

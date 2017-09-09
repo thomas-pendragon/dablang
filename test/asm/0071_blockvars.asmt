@@ -1,0 +1,71 @@
+## CODE
+
+func test()
+{
+  yield(1);
+}
+
+func qux(a, b) {}
+
+func main()
+{
+  var other = 1;
+  test() ^(bar)
+  {
+    qux(bar, other);
+  };
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "main__block1"
+                                 CONSTANT_SYMBOL qux
+                                 CONSTANT_SYMBOL test
+ 
+                                 LOAD_FUNCTION Ftest, test, -1
+                                 LOAD_FUNCTION Fqux, qux, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION Fmain__block1, main__block1, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ftest:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 1
+                                 YIELD 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fqux:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 1            */               Q_SET_NUMBER R0, 1
+                                 PUSH_SSA R0
+                                 PUSH_ARRAY 1
+                                 Q_SET_POP R1
+/* test         */               PUSH_CONSTANT 2
+/* main__block1 */               PUSH_CONSTANT 0
+                                 PUSH_SSA R1
+                                 CALL_BLOCK 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain__block1:
+                                 STACK_RESERVE 0
+/* bar          */               Q_SET_ARG R0, 0
+                                 Q_SET_CLOSURE R1, 0
+                                 PUSH_SSA R0
+                                 PUSH_SSA R1
+/* qux          */               PUSH_CONSTANT 1
+                                 CALL 2
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN

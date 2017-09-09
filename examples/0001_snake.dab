@@ -136,6 +136,8 @@ func main()
   var last_counter = SDL_GetPerformanceCounter() * mul_counter;
   var mod_counter = SDL_GetPerformanceFrequency();
 
+  var snake = @[start_point];
+
   while (true)
   {
     var has_event = SDL_PollEvent(eventBuffer);
@@ -176,7 +178,10 @@ func main()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    draw_square(renderer, size, start_point.x * size, start_point.y * size, 255, 0);
+    snake.each() ^(point)
+    {
+      draw_square(renderer, size, point.x * size, point.y * size, 255, 0);
+    };
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);

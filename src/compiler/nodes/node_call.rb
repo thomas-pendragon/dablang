@@ -17,6 +17,7 @@ class DabNodeCall < DabNodeBasecall
 
   def initialize(identifier, args, block)
     super(args)
+    pre_insert(DabNodeLiteralNil.new)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(DabNodeSymbol.new(identifier))
   end
@@ -25,6 +26,7 @@ class DabNodeCall < DabNodeBasecall
     {
       identifier => 'identifier',
       block => 'block',
+      block_capture => 'block_capture',
     }
   end
 
@@ -36,12 +38,16 @@ class DabNodeCall < DabNodeBasecall
     self[1]
   end
 
+  def block_capture
+    self[2]
+  end
+
   def real_identifier
     identifier.extra_value
   end
 
   def args
-    self[2..-1]
+    self[3..-1]
   end
 
   def compile_as_ssa(output, output_register)
@@ -65,6 +71,7 @@ class DabNodeCall < DabNodeBasecall
     output.push(identifier)
     if has_block?
       output.push(block.identifier)
+      block_capture.compile(output)
     end
     output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s)
   end

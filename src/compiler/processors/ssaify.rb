@@ -11,8 +11,8 @@ class SSAify
   def ssaify_variable(function, variable)
     function.blocks.fixup_ssa(variable, nil)
 
-    setters = variable.all_setters
-    getters = variable.all_getters
+    setters = variable.all_unscoped_setters
+    getters = variable.all_unscoped_getters
 
     last_setters = {}
     getters.each do |getter|

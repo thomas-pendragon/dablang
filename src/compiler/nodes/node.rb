@@ -32,6 +32,10 @@ class DabNode
     {}
   end
 
+  def last_node
+    @children.last
+  end
+
   def dup(level = 0)
     ret = super()
     ret.dup_replacements.clear
@@ -365,10 +369,10 @@ class DabNode
   def all_ordered_nodes(klasses)
     ret = []
     all_nodes.each do |node|
-      break if block_given? && node.is_any_of?(klasses) && yield(node)
+      break if block_given? && (!klasses || node.is_any_of?(klasses)) && yield(node)
       ret << node
     end
-    ret = ret.select { |node| node.is_any_of?(klasses) }
+    ret = ret.select { |node| node.is_any_of?(klasses) } if klasses
     ret
   end
 
@@ -413,11 +417,11 @@ class DabNode
     ret = []
     function_parent.each_with_index do |node, index|
       next unless index > self_index
-      break if block_given? && node.is_any_of?(klasses) && yield(node)
+      break if block_given? && (!klasses || node.is_any_of?(klasses)) && yield(node)
       ret += node.all_ordered_nodes(klasses, &block)
     end
-    ret += function_parent.following_nodes(klasses, &block) if unscoped
-    ret = ret.select { |node| node.is_any_of?(klasses) }
+    ret += function_parent.following_nodes(klasses, unscoped: unscoped, &block) if unscoped
+    ret = ret.select { |node| node.is_any_of?(klasses) } if klasses
     ret
   end
 

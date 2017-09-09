@@ -72,9 +72,9 @@ OPCODES_ARRAY_BASE = [
     items:
     [
       {name: 'CALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
-      {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
+      {name: 'CALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
       {name: 'INSTCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-      {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 3), push(1)
+      {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 4), push(1)
       {name: 'HARDCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
       {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
       {name: 'SYSCALL', args: %i{uint8}}, # depends on the call

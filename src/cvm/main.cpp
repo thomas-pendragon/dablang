@@ -140,7 +140,8 @@ size_t DabVM::stack_position() const
     return stack.size();
 }
 
-void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg)
+void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg,
+                           const DabValue &capture)
 {
     stack.push((uint64_t)ip());
     stack.push((uint64_t)frame_position); // push previous frame
@@ -148,6 +149,7 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
     stack.push((uint64_t)n_args); // number of arguments
     stack.push(self);
     stack.push(block_addr);
+    stack.push(capture);
     stack.push((uint64_t)(out_reg == -1 ? 0xFFFFFFFF : out_reg));
     {
         // push retvalue
@@ -208,11 +210,11 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
         {
             fprintf(stderr, "vm: initialize attributes\n");
             instructions.rewind();
-            call(-1, "__init", 0, "");
+            call(-1, "__init", 0, "", nullptr);
             execute(instructions);
         }
         instructions.rewind();
-        call(-1, "main", 0, "");
+        call(-1, "main", 0, "", nullptr);
         if (autorun)
         {
             execute(instructions);
@@ -234,7 +236,7 @@ DabValue &DabVM::get_arg(int arg_index)
 
 DabValue &DabVM::get_retval()
 {
-    auto index = frame_position + 4;
+    auto index = frame_position + 5;
     return stack[index];
 }
 
@@ -244,9 +246,15 @@ uint64_t DabVM::get_block_addr()
     return stack[index].data.fixnum;
 }
 
-int DabVM::get_out_reg()
+DabValue DabVM::get_block_capture()
 {
     auto index = frame_position + 3;
+    return stack[index];
+}
+
+int DabVM::get_out_reg()
+{
+    auto index = frame_position + 4;
     auto ret   = stack[index].data.fixnum;
     return (ret == 0xFFFFFFFF) ? -1 : ret;
 }
@@ -277,7 +285,8 @@ void DabVM::push_constant(const DabValue &value)
     constants.push_back(value);
 }
 
-void DabVM::call(int out_reg, const std::string &name, int n_args, const std::string &block_name)
+void DabVM::call(int out_reg, const std::string &name, int n_args, const std::string &block_name,
+                 const DabValue &capture)
 {
     if (verbose)
     {
@@ -291,7 +300,8 @@ void DabVM::call(int out_reg, const std::string &name, int n_args, const std::st
     }
     if (block_name != "")
     {
-        call_function_block(out_reg, nullptr, functions[name], n_args, functions[block_name]);
+        call_function_block(out_reg, nullptr, functions[name], n_args, functions[block_name],
+                            capture);
     }
     else
     {
@@ -300,20 +310,20 @@ void DabVM::call(int out_reg, const std::string &name, int n_args, const std::st
 }
 
 void DabVM::call_function_block(int out_reg, const DabValue &self, const DabFunction &fun,
-                                int n_args, const DabFunction &blockfun)
+                                int n_args, const DabFunction &blockfun, const DabValue &capture)
 {
     assert(blockfun.regular);
 
-    _call_function(out_reg, self, fun, n_args, (void *)blockfun.address);
+    _call_function(out_reg, self, fun, n_args, (void *)blockfun.address, capture);
 }
 
 void DabVM::call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args)
 {
-    _call_function(out_reg, self, fun, n_args, nullptr);
+    _call_function(out_reg, self, fun, n_args, nullptr, nullptr);
 }
 
 void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                           void *blockaddress)
+                           void *blockaddress, const DabValue &capture)
 {
     if (verbose)
     {
@@ -323,7 +333,7 @@ void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction 
 
     if (fun.regular)
     {
-        push_new_frame(self, n_args, (uint64_t)blockaddress, out_reg);
+        push_new_frame(self, n_args, (uint64_t)blockaddress, out_reg, capture);
         instructions.seek(fun.address);
     }
     else
@@ -496,7 +506,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto name   = stack.pop_symbol();
         auto n_args = input.read_uint16();
-        call(-1, name, n_args, "");
+        call(-1, name, n_args, "", nullptr);
         break;
     }
     case OP_Q_SET_CALL_STACK:
@@ -505,18 +515,19 @@ bool DabVM::execute_single(Stream &input)
         auto symbol  = input.read_uint16();
         auto name    = constants[symbol].data.string;
         auto n_args  = input.read_uint16();
-        call(out_reg, name, n_args, "");
+        call(out_reg, name, n_args, "", nullptr);
         break;
     }
     case OP_HARDCALL_BLOCK:
     case OP_CALL_BLOCK:
     {
+        auto capture    = stack.pop_value();
         auto block_name = stack.pop_symbol();
         auto name       = stack.pop_symbol();
         auto n_args     = input.read_uint16();
         auto n_rets     = 1;
         assert(n_rets == 1);
-        call(-1, name, n_args, block_name);
+        call(-1, name, n_args, block_name, capture);
         break;
     }
     case OP_YIELD:
@@ -527,8 +538,11 @@ bool DabVM::execute_single(Stream &input)
         auto addr = get_block_addr();
 
         fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
+        fprintf(stderr, "vm: capture data is ");
+        get_block_capture().dump(stderr);
+        fprintf(stderr, ".\n");
 
-        push_new_frame(self, n_args, 0, -1);
+        push_new_frame(self, n_args, 0, -1, get_block_capture());
         instructions.seek(addr);
 
         break;
@@ -549,6 +563,18 @@ bool DabVM::execute_single(Stream &input)
     {
         auto reg_index = input.read_reg();
         stack.push(register_get(reg_index));
+        break;
+    }
+    case OP_Q_SET_CLOSURE:
+    {
+        auto reg_index     = input.read_reg();
+        auto closure_index = input.read_uint16();
+        auto closure       = get_block_capture();
+        assert(closure.data.type == TYPE_ARRAY);
+        auto &array = closure.array();
+        fprintf(stderr, "vm: get captured var %d (of %lu).\n", closure_index, array.size());
+        auto value = array[closure_index];
+        register_set(reg_index, value);
         break;
     }
     case OP_Q_SET_CONSTANT:
@@ -703,12 +729,13 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_INSTCALL_BLOCK:
     {
+        auto capture    = stack.pop_value();
         auto block_name = stack.pop_symbol();
         auto name       = stack.pop_symbol();
         auto recv       = stack.pop_value();
         auto n_args     = input.read_uint16();
         auto n_rets     = 1;
-        instcall(recv, name, n_args, n_rets, block_name);
+        instcall(recv, name, n_args, n_rets, block_name, capture);
         break;
     }
     case OP_PUSH_SELF:
@@ -972,7 +999,7 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
-                     const std::string &block_name)
+                     const std::string &block_name, const DabValue &capture)
 {
     assert(n_rets == 1);
     auto  class_index = recv.class_index();
@@ -982,7 +1009,7 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 
     if (block_name != "")
     {
-        call_function_block(-1, recv, fun, 1 + n_args, functions[block_name]);
+        call_function_block(-1, recv, fun, 1 + n_args, functions[block_name], capture);
     }
     else
     {
@@ -1317,7 +1344,10 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
 
     auto self = get_self();
 
-    fprintf(stderr, "vm: vm yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
+    fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
+    fprintf(stderr, "vm: capture data is ");
+    get_block_capture().dump(stderr);
+    fprintf(stderr, ".\n");
 
     auto stack_pos = stack.size() + 1; // RET 1
 
@@ -1326,7 +1356,7 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
         stack.push(arg);
     }
 
-    push_new_frame(self, n_args, 0, -1);
+    push_new_frame(self, n_args, 0, -1, get_block_capture());
     instructions.seek((size_t)block_addr);
 
     // temporary hack

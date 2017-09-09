@@ -17,4 +17,83 @@ describe DabNode do
     expect(n_getter.last_var_setter).to eq(n_define)
     expect(n_getter2.last_var_setter).to eq(n_setter)
   end
+
+  it 'should follow nodes' do
+    tree = DabNodeSymbol.new(:t)
+    tree1 = DabNodeSymbol.new(:t1)
+    tree11 = DabNodeSymbol.new(:t11)
+    tree11a = DabNodeSymbol.new(:t11a)
+    tree111 = DabNodeSymbol.new(:t111)
+    tree2 = DabNodeSymbol.new(:t2)
+    tree22 = DabNodeSymbol.new(:t22)
+    tree222 = DabNodeSymbol.new(:t222)
+
+    tree << tree1 << tree2
+    tree1 << tree11 << tree11a
+    tree11 << tree111
+    tree2 << tree22
+    tree22 << tree222
+
+    symbol1 = DabNodeSymbol.new(:a)
+    symbol2 = DabNodeSymbol.new(:b)
+
+    tree111 << symbol1
+    tree222 << symbol2
+
+    expect(symbol1.following_nodes(DabNodeSymbol)).to eq []
+    expect(symbol1.following_nodes(DabNodeSymbol, unscoped: true)).to eq [tree11a, tree2, tree22, tree222, symbol2]
+  end
+
+  it 'ssaifies captured variable' do
+    arglist = DabNode.new
+    arglist << DabNodeArgDefinition.new(0, 'bar', nil)
+
+    tree = DabNodeTreeBlock.new
+
+    tree << DabNodeDefineLocalVar.new('bar', DabNodeArg.new(0))
+    closure_var_def = DabNodeDefineLocalVar.new('other#1', DabNodeClosureVar.new(0))
+    tree << (DabNodeTreeBlock.new << closure_var_def)
+    var1 = DabNodeLocalVar.new('bar')
+    var2 = DabNodeLocalVar.new('other#1')
+    call = DabNodeCall.new('qux', (DabNode.new << var1 << var2), nil)
+    tree << (DabNodeTreeBlock.new << call)
+    tree << DabNodeReturn.new(DabNodeLiteralNil.new)
+
+    root = DabNodeUnit.new
+    func = DabNodeFunction.new('test', tree, arglist, false)
+    root.add_function(func)
+
+    expect(closure_var_def.all_unscoped_users).to eq [closure_var_def, var2]
+
+    SSAify.new.run(func)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [test]',
+      '      DabNode []',
+      '        DabNodeArgDefinition [#0[bar]]',
+      '      DabNodeBlockNode []',
+      '        DabNodeTreeBlock []',
+      '          DabNodeSSASet [R0= [bar] (1 users)]',
+      '            DabNodeArg [$0]',
+      '          DabNodeTreeBlock []',
+      '            DabNodeSSASet [R1= [other#1] (1 users)]',
+      '              DabNodeClosureVar [&0]',
+      '          DabNodeTreeBlock []',
+      '            DabNodeCall []',
+      '              DabNodeSymbol [:qux]',
+      '              DabNodeLiteralNil []',
+      '              DabNodeLiteralNil []',
+      '              DabNodeSSAGet [R0 [bar]]',
+      '              DabNodeSSAGet [R1 [other#1]]',
+      '          DabNodeReturn []',
+      '            DabNodeLiteralNil []',
+      '      DabNode []',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+  end
 end

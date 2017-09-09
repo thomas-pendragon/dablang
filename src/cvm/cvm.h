@@ -490,7 +490,8 @@ struct DabVM
 
     size_t stack_position() const;
 
-    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg);
+    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg,
+                        const DabValue &capture);
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
@@ -509,20 +510,22 @@ struct DabVM
     size_t prev_frame_position();
 
     uint64_t get_block_addr();
+    DabValue get_block_capture();
     int      get_out_reg();
 
     int number_of_args();
 
     void push_constant(const DabValue &value);
 
-    void call(int out_reg, const std::string &name, int n_args, const std::string &block_name);
+    void call(int out_reg, const std::string &name, int n_args, const std::string &block_name,
+              const DabValue &capture);
 
     void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args);
     void call_function_block(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                             const DabFunction &blockfun);
+                             const DabFunction &blockfun, const DabValue &capture);
 
     void _call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                        void *blockaddress);
+                        void *blockaddress, const DabValue &capture);
 
     void execute_debug(Stream &input);
 
@@ -553,7 +556,7 @@ struct DabVM
     void add_function(size_t address, const std::string &name, uint16_t class_index);
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
-                  const std::string &block_name = "");
+                  const std::string &block_name = "", const DabValue &capture = nullptr);
 
     DabClass &define_builtin_class(const std::string &name, size_t class_index,
                                    size_t superclass_index = CLASS_OBJECT);

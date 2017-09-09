@@ -61,8 +61,9 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
 Registers:
 IP = 32
         24: STACK_RESERVE 0
@@ -77,8 +78,9 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
 Registers:
 R0: STRI "hello world"
 hello worldIP = 37
@@ -93,8 +95,9 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
 Registers:
 R0: STRI "hello world"
 IP = 38
@@ -108,8 +111,9 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
-[   7] NIL  nil
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
+[   8] NIL  nil
 Registers:
 R0: STRI "hello world"

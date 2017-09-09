@@ -54,8 +54,9 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
 IP = 31
         27: STACK_RESERVE 0
         30: PUSH_TRUE 
@@ -69,13 +70,15 @@ Dump of stack:
 [   2] FIXN 0
 [   3] NIL  nil
 [   4] FIXN 0
-[   5] FIXN 4294967295
-[   6] INVA ?
-[   7] FIXN 42
-[   8] FIXN 2
-[   9] FIXN 0
-[  10] NIL  nil
-[  11] FIXN 0
-[  12] FIXN 7
-[  13] INVA ?
-[  14] BOOL true
+[   5] NIL  nil
+[   6] FIXN 4294967295
+[   7] INVA ?
+[   8] FIXN 42
+[   9] FIXN 2
+[  10] FIXN 0
+[  11] NIL  nil
+[  12] FIXN 0
+[  13] NIL  nil
+[  14] FIXN 7
+[  15] INVA ?
+[  16] BOOL true

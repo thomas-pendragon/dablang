@@ -7,6 +7,7 @@ class DabNodeHardcall < DabNodeBasecall
 
   def initialize(identifier, args, block)
     super(args)
+    pre_insert(DabNodeLiteralNil.new)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(identifier)
   end
@@ -15,6 +16,7 @@ class DabNodeHardcall < DabNodeBasecall
     {
       identifier => 'identifier',
       block => 'block',
+      block_capture => 'block_capture',
     }
   end
 
@@ -26,12 +28,16 @@ class DabNodeHardcall < DabNodeBasecall
     self[1]
   end
 
+  def block_capture
+    self[2]
+  end
+
   def real_identifier
     identifier.extra_value
   end
 
   def args
-    self[2..-1]
+    self[3..-1]
   end
 
   def compile(output)
@@ -39,6 +45,7 @@ class DabNodeHardcall < DabNodeBasecall
     output.push(identifier)
     if has_block?
       output.push(block.identifier)
+      block_capture.compile(output)
     end
     output.printex(self, has_block? ? 'HARDCALL_BLOCK' : 'HARDCALL', args.count.to_s)
   end

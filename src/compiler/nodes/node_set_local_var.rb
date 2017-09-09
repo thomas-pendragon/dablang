@@ -48,6 +48,14 @@ class DabNodeSetLocalVar < DabNode
     all_users.select { |node| node.is_a? DabNodeLocalVar }
   end
 
+  def all_unscoped_setters
+    all_unscoped_users.select { |node| node.is_a? DabNodeSetLocalVar }
+  end
+
+  def all_unscoped_getters
+    all_unscoped_users.select { |node| node.is_a? DabNodeLocalVar }
+  end
+
   def all_users
     var_definition.all_users
   end

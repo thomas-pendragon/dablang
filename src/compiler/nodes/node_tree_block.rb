@@ -25,4 +25,13 @@ class DabNodeTreeBlock < DabNode
     return '' unless lines.count > 0
     lines.join("\n") + "\n"
   end
+
+  def last_node
+    ret = super
+    if ret.is_a? DabNodeTreeBlock
+      ret.last_node
+    else
+      ret
+    end
+  end
 end
