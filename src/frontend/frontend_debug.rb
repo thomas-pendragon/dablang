@@ -69,7 +69,7 @@ def run_test(settings)
     stdlib_glob = stdlib_path + '/*.dab'
     stdlib_files = Dir.glob(stdlib_glob)
 
-    stdlib_files = [] if frontend_options['--no-stdlib']
+    stdlib_files = [] unless frontend_options['--with-stdlib']
 
     compile_to_asm(([dab] + stdlib_files).compact, asm, options)
   elsif data[:asm_code].present?
