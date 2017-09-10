@@ -56,9 +56,12 @@ void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register
     }
     arg = stack.pop_value();
 
-    fprintf(stderr, "[ ");
-    arg.print(stderr);
-    fprintf(stderr, " ]\n");
+    if (verbose)
+    {
+        fprintf(stderr, "[ ");
+        arg.print(stderr);
+        fprintf(stderr, " ]\n");
+    }
     if (!coverage_testing)
     {
         arg.print(dab_output);
@@ -538,10 +541,13 @@ bool DabVM::execute_single(Stream &input)
         auto self = get_self();
         auto addr = get_block_addr();
 
-        fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
-        fprintf(stderr, "vm: capture data is ");
-        get_block_capture().dump(stderr);
-        fprintf(stderr, ".\n");
+        if (verbose)
+        {
+            fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
+            fprintf(stderr, "vm: capture data is ");
+            get_block_capture().dump(stderr);
+            fprintf(stderr, ".\n");
+        }
 
         push_new_frame(self, n_args, 0, -1, get_block_capture());
         instructions.seek(addr);
@@ -573,7 +579,10 @@ bool DabVM::execute_single(Stream &input)
         auto closure       = get_block_capture();
         assert(closure.data.type == TYPE_ARRAY);
         auto &array = closure.array();
-        fprintf(stderr, "vm: get captured var %d (of %lu).\n", closure_index, array.size());
+        if (verbose)
+        {
+            fprintf(stderr, "vm: get captured var %d (of %lu).\n", closure_index, array.size());
+        }
         auto value = array[closure_index];
         register_set(reg_index, value);
         break;
@@ -1024,10 +1033,14 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
 
     auto self = get_self();
 
-    fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
-    fprintf(stderr, "vm: capture data is ");
-    get_block_capture().dump(stderr);
-    fprintf(stderr, ".\n");
+    if (verbose)
+    {
+        fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr,
+                (int)n_args);
+        fprintf(stderr, "vm: capture data is ");
+        get_block_capture().dump(stderr);
+        fprintf(stderr, ".\n");
+    }
 
     auto stack_pos = stack.size() + 1; // RET 1
 

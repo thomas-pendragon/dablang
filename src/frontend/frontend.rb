@@ -115,7 +115,7 @@ def run_test(settings)
     execute(bin, vmo, data[:run_options])
   rescue SystemCommandError => e
     if data[:expected_status] == :runtime_error
-      compare_output('compare runtime output', e.stderr, data[:expected_runtime_error], true)
+      compare_output('compare runtime output', e.stdout, data[:expected_runtime_error], true)
       File.open(out, 'wb') { |f| f << '1' }
       return
     else
