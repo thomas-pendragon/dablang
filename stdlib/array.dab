@@ -27,4 +27,15 @@ class Array
       index = index + 1;
     }
   }
+  
+  func each_with_index()
+  {
+    var index = 0;
+    var count = self.count;
+    while (index != count)
+    {
+      yield(self[index], index);
+      index = index + 1;
+    }
+  }
 }

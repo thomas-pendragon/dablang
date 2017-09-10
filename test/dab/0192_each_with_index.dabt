@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  var ar = @[1, "foo", true];
+  ar.each_with_index() ^ (item, index)
+  {
+    print("#");
+    print(index);
+    print(": ");
+    puts(item);
+  };
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+#0: 1
+#1: foo
+#2: true
