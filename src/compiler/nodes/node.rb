@@ -166,6 +166,9 @@ class DabNode
   end
 
   def compile(_output)
+    err '!'.red * 80
+    root.dump
+    err '~'.red * 80
     raise "cannot compile #{self.class}"
   end
 
