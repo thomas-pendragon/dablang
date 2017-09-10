@@ -1017,6 +1017,34 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     }
 }
 
+void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
+{
+    auto n_args = arguments.size();
+
+    auto self = get_self();
+
+    fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
+    fprintf(stderr, "vm: capture data is ");
+    get_block_capture().dump(stderr);
+    fprintf(stderr, ".\n");
+
+    auto stack_pos = stack.size() + 1; // RET 1
+
+    for (auto &arg : arguments)
+    {
+        stack.push(arg);
+    }
+
+    push_new_frame(self, n_args, 0, -1, get_block_capture());
+    instructions.seek((size_t)block_addr);
+
+    // temporary hack
+    while (stack.size() != stack_pos)
+    {
+        execute_single(instructions);
+    }
+}
+
 void DabVM::kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist,
                        bool output_value)
 {
@@ -1336,32 +1364,4 @@ int main(int argc, char **argv)
         vm.coverage.dump(stdout);
     }
     return ret_value;
-}
-
-void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
-{
-    auto n_args = arguments.size();
-
-    auto self = get_self();
-
-    fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr, (int)n_args);
-    fprintf(stderr, "vm: capture data is ");
-    get_block_capture().dump(stderr);
-    fprintf(stderr, ".\n");
-
-    auto stack_pos = stack.size() + 1; // RET 1
-
-    for (auto &arg : arguments)
-    {
-        stack.push(arg);
-    }
-
-    push_new_frame(self, n_args, 0, -1, get_block_capture());
-    instructions.seek((size_t)block_addr);
-
-    // temporary hack
-    while (stack.size() != stack_pos)
-    {
-        execute_single(instructions);
-    }
 }
