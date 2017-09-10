@@ -188,9 +188,12 @@ func main()
 
     if (time > step)
     {
-      start_point.x = start_point.x + dx;
-      start_point.y = start_point.y + dy;
+      var new_point = SnakePoint.new;
+      var last_point = snake.last;
+      new_point.x = last_point.x + dx;
+      new_point.y = last_point.y + dy;
       time = time - step;
+      snake.insert(new_point);
     }
   }
 }
