@@ -61,7 +61,7 @@ void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register
     fprintf(stderr, " ]\n");
     if (!coverage_testing)
     {
-        arg.print(stdout);
+        arg.print(dab_output);
     }
 
     if (!output_value)
@@ -1157,7 +1157,7 @@ void DabVM::add_function(size_t address, const std::string &name, uint16_t class
 
 void DabVM::extract(const std::string &name)
 {
-    FILE *output = stdout;
+    FILE *output = dab_output;
 
     if (name == "rip")
     {
@@ -1231,6 +1231,9 @@ struct DabRunOptions
     bool  verbose         = false;
     bool  with_attributes = false;
 
+    FILE *output       = stdout;
+    bool  close_output = false;
+
     std::string extract_part;
 
     void parse(const std::vector<std::string> &args);
@@ -1275,6 +1278,12 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->extract      = true;
         this->extract_part = options["--output"];
+    }
+
+    if (options.count("--out"))
+    {
+        this->output       = fopen(options["--out"].c_str(), "wb");
+        this->close_output = true;
     }
 
     if (others.size() == 1)
@@ -1344,6 +1353,7 @@ int main(int argc, char **argv)
         input.append(buffer, bytes);
     }
     DabVM vm;
+    vm.dab_output      = options.output;
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
@@ -1358,6 +1368,10 @@ int main(int argc, char **argv)
     if (options.close_file)
     {
         fclose(stream);
+    }
+    if (options.close_output)
+    {
+        fclose(options.output);
     }
     if (options.cov)
     {

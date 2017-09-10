@@ -9,7 +9,7 @@ void DabVM_debug::print_registers()
 
 void DabVM_debug::print_ssa_registers()
 {
-    auto err_stream = stdout;
+    auto err_stream = $VM->dab_output;
     fprintf(err_stream, "Registers:\n");
     size_t index = 0;
     for (const auto &reg : vm._registers)
@@ -49,12 +49,12 @@ void DabVM_debug::print_functions()
 
 void DabVM_debug::print_constants()
 {
-    vm._dump("constants", vm.constants, stdout);
+    vm._dump("constants", vm.constants, $VM->dab_output);
 }
 
 void DabVM_debug::print_stack()
 {
-    auto err_stream = stdout;
+    auto err_stream = $VM->dab_output;
     fprintf(err_stream, "Stack:\n");
     vm._dump("stack", vm.stack._data, err_stream);
 }
@@ -63,7 +63,7 @@ void DabVM_debug::print_code(bool current_only)
 {
     prepare_disasm();
 
-    auto err_stream = stdout;
+    auto err_stream = $VM->dab_output;
 
     auto ip = vm.ip();
 
@@ -128,7 +128,7 @@ void DabVM_debug::prepare_disasm()
 
 void DabVM::execute_debug(Stream &input)
 {
-    auto err_stream = stdout;
+    auto err_stream = dab_output;
 
     DabVM_debug debug(*this);
     while (!input.eof())
@@ -182,7 +182,7 @@ void DabVM::execute_debug(Stream &input)
         }
         else if (cmd == "ip")
         {
-            fprintf(stdout, "IP = %zu\n", ip());
+            fprintf(err_stream, "IP = %zu\n", ip());
         }
         else if (cmd == "code")
         {
@@ -205,7 +205,7 @@ void DabVM::execute_debug(Stream &input)
             int ip  = 0;
             int ret = sscanf(cmd.c_str(), "break %d", &ip);
             assert(ret == 1);
-            fprintf(stdout, "debug: break at %d.\n", ip);
+            fprintf(err_stream, "debug: break at %d.\n", ip);
             breakpoints.insert(ip);
         }
         else if (cmd == "ssaregs")

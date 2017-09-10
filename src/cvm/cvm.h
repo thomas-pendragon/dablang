@@ -434,6 +434,8 @@ typedef int16_t dab_register_t;
 
 struct DabVM
 {
+    FILE *dab_output = nullptr;
+
     bool       autorelease     = true;
     bool       shutdown        = false;
     bool       verbose         = false;
