@@ -1,0 +1,33 @@
+## CODE
+
+func main()
+{
+  var ar = @[1, "foo", true];
+  puts(ar);
+  puts(ar.shift);
+  puts(ar);
+  puts(ar.shift);
+  puts(ar);
+  puts(ar.shift);
+  puts(ar);
+  puts(ar.shift);
+  puts(ar);
+  puts(ar.shift);
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[1, foo, true]
+1
+[foo, true]
+foo
+[true]
+true
+[]
+nil
+[]
+nil

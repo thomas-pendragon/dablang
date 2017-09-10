@@ -163,6 +163,24 @@ void DabVM::define_default_classes()
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
     });
+    array_class.add_function("shift", [this](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 1);
+        assert(n_ret == 1);
+        auto self = stack.pop_value();
+        assert(self.data.type == TYPE_ARRAY);
+        auto &a = self.array();
+        if (a.size() == 0)
+        {
+            stack.push_value(nullptr);
+        }
+        else
+        {
+            auto ret = a[0];
+            a.erase(a.begin());
+            stack.push_value(ret);
+        }
+    });
     array_class.add_function("insert", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 2);
