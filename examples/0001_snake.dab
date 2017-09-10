@@ -56,16 +56,28 @@ func SDL_GetPerformanceCounter<Uint64>() {}
 [__import_sdl]
 func SDL_GetPerformanceFrequency<Uint64>() {}
 
-func draw_square(renderer, size, x, y, alpha, apple)
+func draw_square(renderer, _size, _x, _y, alpha, apple, head)
 {
  // x = x * size;
  // y = y * size;
 
+  var x = _x + 1;
+  var y = _y + 1;
+  var size = _size - 2;
+
   SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-  SDL_RenderDrawLine(renderer, x + 2, y + 1, x + size - 4, y + 1);
-  SDL_RenderDrawLine(renderer, x + 2, y + size - 2, x + size - 4, y + size - 2);
-  SDL_RenderDrawLine(renderer, x + 1, y + 2, x + 1, y + size - 4);
-  SDL_RenderDrawLine(renderer, x + size - 2, y + 2, x + size - 2, y + size - 4);
+
+  SDL_RenderDrawLine(renderer, x + 1, y, x + size - 2, y);
+  SDL_RenderDrawLine(renderer, x + 1, y + size - 1, x + size - 2, y + size - 1);
+
+  SDL_RenderDrawLine(renderer, x, y + 1, x, y + size - 2);
+  SDL_RenderDrawLine(renderer, x + size - 1, y + 1, x + size - 1, y + size - 2);
+
+  if (head)
+  {
+    SDL_RenderDrawLine(renderer, x + 1, y + 1, x + size - 2, y + size - 2);
+    SDL_RenderDrawLine(renderer, x + size - 2, y + 1, x + 1, y + size - 2);
+  }
 }
 
 class SnakePoint
@@ -87,6 +99,66 @@ class SnakePoint
   func y=(value)
   {
     @y = value;
+  }
+  func to_s()
+  {
+    var ret = "(";
+    ret = ret + @x.to_s;
+    ret = ret + ", ";
+    ret = ret + @y.to_s;
+    ret = ret + ")";
+    return ret;
+  }
+}
+
+class SnakeGame
+{
+  var @snake;
+  var @dx;
+  var @dy;
+  func init()
+  {
+      var start_point = SnakePoint.new;
+      start_point.x = 10;
+      start_point.y = 5;
+      @dx = 1;
+      @dy = 0;
+      @snake = @[start_point];
+  }
+  func input(dx, dy)
+  {
+    @dx = dx;
+    @dy = dy;
+  }
+  func render(renderer, size)
+  {
+    var snake = @snake;
+    var _size = size;
+    var _renderer = renderer;
+    var _last = @snake.count - 1;
+    snake.each_with_index() ^(point, index)
+    {
+      var x = point.x * _size;
+      var y = point.y * _size;
+      draw_square(_renderer, _size, x, y, 255, 0, index == _last);
+    };
+  }
+  func expand()
+  {
+      var new_point = SnakePoint.new;
+      var last_point = @snake.last;
+      new_point.x = last_point.x + @dx;
+      new_point.y = last_point.y + @dy;
+      @snake.insert(new_point);
+  }
+  func contract()
+  {
+    @snake.shift();
+  }
+  func step()
+  {
+      self.expand();
+      self.contract();
   }
 }
 
@@ -136,7 +208,15 @@ func main()
   var last_counter = SDL_GetPerformanceCounter() * mul_counter;
   var mod_counter = SDL_GetPerformanceFrequency();
 
-  var snake = @[start_point];
+  var game = SnakeGame.new;
+  game.init();
+  game.input(1, 0);
+  game.expand();
+  game.expand();
+  game.expand();
+ 
+  var dx = 1;
+  var dy = 0;
 
   while (true)
   {
@@ -169,6 +249,11 @@ func main()
       }
     }
 
+    if ((dx != 0) || (dy != 0))
+    {
+      game.input(dx, dy);
+    }
+
     var current_counter = SDL_GetPerformanceCounter() * mul_counter;
     var dt = current_counter - last_counter;
     dt = dt / mod_counter;
@@ -178,22 +263,15 @@ func main()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    snake.each() ^(point)
-    {
-      draw_square(renderer, size, point.x * size, point.y * size, 255, 0);
-    };
+    game.render(renderer, size);
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);
 
     if (time > step)
     {
-      var new_point = SnakePoint.new;
-      var last_point = snake.last;
-      new_point.x = last_point.x + dx;
-      new_point.y = last_point.y + dy;
+      game.step();
       time = time - step;
-      snake.insert(new_point);
     }
   }
 }
