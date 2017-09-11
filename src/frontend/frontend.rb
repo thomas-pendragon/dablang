@@ -45,7 +45,7 @@ def execute(input, output, run_options)
     input = input.to_s.shellescape
     output = output.to_s.shellescape
     run_options = run_options.presence&.shellescape
-    cmd = "timeout 10 ./bin/cvm #{run_options} < #{input} > #{output}"
+    cmd = "timeout 10 ./bin/cvm #{run_options} #{input} --out=#{output}"
     begin
       psystem_noecho cmd
     rescue SystemCommandError => e
