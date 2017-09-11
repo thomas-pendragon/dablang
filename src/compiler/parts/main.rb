@@ -25,8 +25,6 @@ def run_dab_compiler(settings)
     $no_autorelease = settings[:no_autorelease]
     $feature_reflection = settings[:with_reflection]
     $feature_attributes = settings[:with_attributes]
-    $with_ssa = true
-    $with_ssa = false if settings[:no_ssa]
 
     inputs = settings[:inputs] || [:stdin]
 
@@ -85,13 +83,13 @@ def run_dab_compiler(settings)
         next if dab_benchmark('lower') do
           program.run_lower_processors!
         end
-        next if $with_ssa && dab_benchmark('ssa') do
+        next if dab_benchmark('ssa') do
           program.run_ssa_processors!
         end
-        next if $with_ssa && $opt && dab_benchmark('optimize-ssa') do
+        next if $opt && dab_benchmark('optimize-ssa') do
           program.run_optimize_ssa_processors!
         end
-        next if $with_ssa && dab_benchmark('post-ssa') do
+        next if dab_benchmark('post-ssa') do
           program.run_post_ssa_processors!
         end
         next if dab_benchmark('late_lower') do
