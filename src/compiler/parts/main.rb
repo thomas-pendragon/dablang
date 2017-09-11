@@ -114,7 +114,7 @@ def run_dab_compiler(settings, context)
       end
       context.exit(1)
     else
-      output = DabOutput.new
+      output = DabOutput.new(context)
       program.compile(output)
     end
   end

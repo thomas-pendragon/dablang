@@ -1,7 +1,8 @@
 class DabOutput
-  def initialize
+  def initialize(context)
     @filenames = {}
     @labelcount = {}
+    @context = context
   end
 
   def next_label(kind = 'L')
@@ -33,7 +34,7 @@ class DabOutput
     end
     @last_p = t
     # errn t
-    Kernel.print t
+    @context.stdout.print t
   end
 
   def comment(text)
