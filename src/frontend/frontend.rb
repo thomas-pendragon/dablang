@@ -52,6 +52,7 @@ def execute(input, output, run_options)
       STDERR.puts
       STDERR.puts e.stderr
       STDERR.puts
+      e.stdout = open(output).read
       FileUtils.rm(output)
       raise
     end
