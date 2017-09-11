@@ -18,12 +18,12 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_SYMBOL __foo_LiteralFixnum
+                                 CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL "main__block1"
  
                                  LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fmain, main, -1
-                                 LOAD_FUNCTION F__foo_LiteralFixnum, __foo_LiteralFixnum, -1
+                                 LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
                                  LOAD_FUNCTION Fmain__block1, main__block1, -1
  
                                  BREAK_LOAD 
@@ -41,7 +41,7 @@ func main()
                                  PUSH_ARRAY 0
                                  Q_SET_POP R0
                                  PUSH_NUMBER 1
-/* __foo_Litera */               PUSH_CONSTANT 0
+/* __foo_Fixnum */               PUSH_CONSTANT 0
 /* main__block1 */               PUSH_CONSTANT 1
                                  PUSH_SSA R0
                                  HARDCALL_BLOCK 1
@@ -49,7 +49,7 @@ func main()
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__foo_LiteralFixnum:
+                   F__foo_Fixnum:
                                  STACK_RESERVE 0
                                  PUSH_HAS_BLOCK 
                                  Q_SET_POP R0

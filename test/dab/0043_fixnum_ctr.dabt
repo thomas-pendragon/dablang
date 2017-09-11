@@ -25,5 +25,5 @@ main
 
 '0' (Fixnum)
 '123' (Fixnum)
-'0' (LiteralFixnum)
-'456' (LiteralFixnum)
+'0' (Fixnum)
+'456' (Fixnum)

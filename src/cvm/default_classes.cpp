@@ -88,8 +88,6 @@ void DabVM::define_default_classes()
     });
     string_class.add_simple_function("to_s", [](DabValue self) { return self; });
 
-    define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
-
     auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
     fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
@@ -113,8 +111,6 @@ void DabVM::define_default_classes()
         sprintf(ret, "%" PRId64, self.data.fixnum);
         return std::string(ret);
     });
-
-    define_builtin_class("LiteralFixnum", CLASS_LITERALFIXNUM, CLASS_FIXNUM);
 
     auto &intptr_class = define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
     intptr_class.add_simple_function("to_s", [](DabValue self) {

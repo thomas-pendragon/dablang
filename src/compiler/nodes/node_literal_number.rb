@@ -25,7 +25,7 @@ class DabNodeLiteralNumber < DabNodeLiteral
   end
 
   def my_type
-    DabTypeLiteralFixnum.new
+    DabConcreteType.new(DabTypeFixnum.new)
   end
 
   def formatted_source(_options)

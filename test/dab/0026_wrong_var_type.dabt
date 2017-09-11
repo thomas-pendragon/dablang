@@ -12,4 +12,4 @@ main
 
 ## EXPECT COMPILE ERROR
 
-./tmp/test_dab_0026_wrong_var_type.dab:3: error E0002: Cannot assign <LiteralFixnum> to a variable of type <String>.
+./tmp/test_dab_0026_wrong_var_type.dab:3: error E0002: Cannot assign <Fixnum> to a variable of type <String>.

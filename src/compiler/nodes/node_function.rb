@@ -179,7 +179,7 @@ class DabNodeFunction < DabNode
 
   def concreteify(types)
     return self if @concrete
-    new_name = "__#{identifier}_#{types.map(&:type_string).join('_')}"
+    new_name = "__#{identifier}_#{types.map(&:base_type).map(&:type_string).join('_')}"
     return new_name if root.has_function?(new_name)
     ret = dup
     ret.identifier = new_name

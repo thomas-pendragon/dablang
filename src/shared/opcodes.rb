@@ -164,9 +164,7 @@ KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 STANDARD_CLASSES = %w(
   Object
   String
-  LiteralString
   Fixnum
-  LiteralFixnum
   Boolean
   NilClass
   Array

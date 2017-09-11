@@ -20,7 +20,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 150
-                                 CAST 8
+                                 CAST 6
                                  Q_SET_POP R0
                                  PUSH_NIL 
                                  RETURN

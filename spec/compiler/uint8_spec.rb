@@ -5,7 +5,7 @@ require_relative '../../src/compiler/_requires.rb'
 describe DabNodeCast, uint8: true do
   it 'calculates correct cast requirement' do
     type1 = DabType.parse('Uint8')
-    type2 = DabType.parse('LiteralFixnum')
+    type2 = DabType.parse('Fixnum')
     type3 = DabType.parse('String')
 
     expect(type1.can_assign_from?(type1)).to eq true

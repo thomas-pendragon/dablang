@@ -57,12 +57,12 @@ main
 
 ## EXPECT OK
 
-123 (LiteralString) is a: String Object
+123 (String) is a: String Object
 foobar (String) is a: String Object
 nil (NilClass) is a: Object
 true (Boolean) is a: Object
 false (Boolean) is a: Object
-123 (LiteralFixnum) is a: Fixnum Object
+123 (Fixnum) is a: Fixnum Object
 345 (Fixnum) is a: Fixnum Object
 [1, 2, 3] (Array) is a: Object
 #TestQ (TestQ) is a: TestQ Object

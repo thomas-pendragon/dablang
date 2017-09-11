@@ -20,29 +20,29 @@ func bar()
 /* Dab dev      */                
  
                                  CONSTANT_STRING "str"
-                                 CONSTANT_SYMBOL __foo_LiteralFixnum
-                                 CONSTANT_SYMBOL __foo_LiteralString
+                                 CONSTANT_SYMBOL __foo_Fixnum
+                                 CONSTANT_SYMBOL __foo_String
  
                                  LOAD_FUNCTION Fbar, bar, -1
-                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
-                                 LOAD_FUNCTION F__foo_LiteralFixnum, __foo_LiteralFixnum, -1
+                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
+                                 LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
  
                                  BREAK_LOAD 
  
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               PUSH_CONSTANT 0
-/* __foo_Litera */               PUSH_CONSTANT 2
+/* __foo_String */               PUSH_CONSTANT 2
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NUMBER 12
-/* __foo_Litera */               PUSH_CONSTANT 1
+/* __foo_Fixnum */               PUSH_CONSTANT 1
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__foo_LiteralString:
+                   F__foo_String:
                                  STACK_RESERVE 0
                                  PUSH_TRUE 
                                  Q_SET_POP R0
@@ -50,7 +50,7 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__foo_LiteralFixnum:
+                   F__foo_Fixnum:
                                  STACK_RESERVE 0
                                  PUSH_FALSE 
                                  Q_SET_POP R0

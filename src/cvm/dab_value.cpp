@@ -14,10 +14,10 @@ int DabValue::class_index() const
     switch (data.type)
     {
     case TYPE_FIXNUM:
-        return data.is_constant ? CLASS_LITERALFIXNUM : CLASS_FIXNUM;
+        return CLASS_FIXNUM;
         break;
     case TYPE_STRING:
-        return data.is_constant ? CLASS_LITERALSTRING : CLASS_STRING;
+        return CLASS_STRING;
         break;
     case TYPE_SYMBOL:
         return CLASS_INT_SYMBOL;

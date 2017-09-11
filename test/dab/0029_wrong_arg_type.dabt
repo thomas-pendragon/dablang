@@ -16,4 +16,4 @@ main
 
 ## EXPECT COMPILE ERROR
 
-./tmp/test_dab_0029_wrong_arg_type.dab:8: error E0003: Cannot pass <LiteralFixnum> to an argument of type <String>.
+./tmp/test_dab_0029_wrong_arg_type.dab:8: error E0003: Cannot pass <Fixnum> to an argument of type <String>.

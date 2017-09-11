@@ -3,7 +3,6 @@ class DabType
     return DabTypeObject.new if typename.nil?
     return DabTypeString.new if typename == 'String'
     return DabTypeFixnum.new if typename == 'Fixnum'
-    return DabTypeLiteralFixnum.new if typename == 'LiteralFixnum'
     return DabTypeUint.new(8) if typename == 'Uint8'
     return DabTypeUint.new(32) if typename == 'Uint32'
     return DabTypeUint.new(64) if typename == 'Uint64'
@@ -14,7 +13,7 @@ class DabType
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a?(self.class) || other_type.is_a?(DabTypeNil) || other_type.is_a?(DabTypeObject)
+    other_type.base_type.is_a?(self.class) || other_type.base_type.is_a?(DabTypeNil) || other_type.base_type.is_a?(DabTypeObject)
   end
 
   def requires_cast?(_other_type)
@@ -33,6 +32,14 @@ class DabType
     return true if identifier == 'class'
     return true if identifier == 'to_s'
     false
+  end
+
+  def base_type
+    self
+  end
+
+  def real_type_string
+    type_string
   end
 end
 
@@ -62,20 +69,6 @@ class DabTypeString < DabType
   end
 end
 
-class DabTypeLiteralString < DabTypeString
-  def type_string
-    'LiteralString'
-  end
-
-  def can_assign_from?(other_type)
-    other_type.is_a? DabTypeLiteralString
-  end
-
-  def concrete?
-    true
-  end
-end
-
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'
@@ -98,20 +91,6 @@ class DabTypeClass < DabType
   def has_function?(identifier)
     return true if identifier == 'new'
     super
-  end
-end
-
-class DabTypeLiteralFixnum < DabTypeFixnum
-  def type_string
-    'LiteralFixnum'
-  end
-
-  def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeLiteralFixnum) || super
-  end
-
-  def concrete?
-    true
   end
 end
 
@@ -139,11 +118,11 @@ class DabTypeUint < DabTypeFixnum
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeFixnum) || super
+    other_type.base_type.is_a?(DabTypeFixnum) || super
   end
 
   def requires_cast?(other_type)
-    can_assign_from?(other_type) && !(other_type.is_a? self.class)
+    can_assign_from?(other_type) && !(other_type.base_type.is_a? self.class)
   end
 
   def concrete?
@@ -157,11 +136,11 @@ class DabTypeInt32 < DabTypeFixnum
   end
 
   def requires_cast?(other_type)
-    can_assign_from?(other_type) && !(other_type.is_a? DabTypeInt32)
+    can_assign_from?(other_type) && !(other_type.base_type.is_a? DabTypeInt32)
   end
 
   def can_assign_from?(other_type)
-    other_type.is_a?(DabTypeFixnum) || super
+    other_type.base_type.is_a?(DabTypeFixnum) || super
   end
 
   def concrete?
@@ -200,5 +179,39 @@ class DabTypeNil < DabType
 
   def concrete?
     true
+  end
+end
+
+class DabConcreteType < DabType
+  def initialize(base)
+    @base = base
+  end
+
+  def base_type
+    @base
+  end
+
+  def type_string
+    @base.type_string
+  end
+
+  def real_type_string
+    type_string + '!'
+  end
+
+  def can_assign_from?(other_type)
+    @base.can_assign_from?(other_type)
+  end
+
+  def requires_cast?(other_type)
+    @base.requires_cast?(other_type)
+  end
+
+  def concrete?
+    true
+  end
+
+  def has_function?(identifier)
+    @base.has_function?(identifier)
   end
 end

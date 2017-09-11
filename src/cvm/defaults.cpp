@@ -102,14 +102,11 @@
             bool test       = false;                                                               \
             auto arg0_class = arg0.class_index();                                                  \
             auto arg1_class = arg1.class_index();                                                  \
-            if (arg0_class == CLASS_UINT8 || arg0_class == CLASS_LITERALFIXNUM ||                  \
-                arg0_class == CLASS_FIXNUM || arg0_class == CLASS_INT32)                           \
+            if (arg0_class == CLASS_UINT8 || arg0_class == CLASS_FIXNUM ||                         \
+                arg0_class == CLASS_INT32)                                                         \
             {                                                                                      \
                 if (arg1_class != CLASS_STRING)                                                    \
                 {                                                                                  \
-                    if (arg0_class == CLASS_LITERALFIXNUM)                                         \
-                        arg0_class = CLASS_FIXNUM;                                                 \
-                                                                                                   \
                     arg1 = $VM->cast(arg1, arg0_class);                                            \
                 }                                                                                  \
             }                                                                                      \
@@ -201,12 +198,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             auto int_symbol = (int_fun)symbol;
 
-            auto value = stack.pop_value();
-            if (value.class_index() == CLASS_LITERALFIXNUM)
-            {
-                value = $VM->cast(value, CLASS_INT32);
-            }
-            assert(value.class_index() == CLASS_INT32);
+            auto value = $VM->cast(stack.pop_value(), CLASS_INT32);
 
             auto value_data = value.data.num_int32;
 
@@ -286,12 +278,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
             auto int_symbol = (int_fun)symbol;
 
-            auto value = stack.pop_value();
-            if (value.class_index() == CLASS_LITERALFIXNUM)
-            {
-                value = $VM->cast(value, CLASS_UINT32);
-            }
-            assert(value.class_index() == CLASS_UINT32);
+            auto value = $VM->cast(stack.pop_value(), CLASS_UINT32);
 
             auto value_data = value.data.num_uint32;
 
@@ -307,8 +294,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
             auto int_symbol = (int_fun)symbol;
 
             auto value = stack.pop_value();
-            assert(value.class_index() == CLASS_STRING ||
-                   value.class_index() == CLASS_LITERALSTRING);
+            assert(value.class_index() == CLASS_STRING);
 
             auto value_data = value.data.string.c_str();
 
@@ -406,8 +392,7 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
             auto value1 = $VM->cast(stack.pop_value(), CLASS_INT32);
 
             auto value0 = stack.pop_value();
-            assert(value0.class_index() == CLASS_STRING ||
-                   value0.class_index() == CLASS_LITERALSTRING);
+            assert(value0.class_index() == CLASS_STRING);
 
             auto value0_data = value0.data.string.c_str();
             auto value1_data = value1.data.num_int32;
@@ -463,8 +448,7 @@ void DabVM::define_defaults()
             if (n_args == 2)
             {
                 auto _libc_name = stack.pop_value();
-                assert(_libc_name.class_index() == CLASS_STRING ||
-                       _libc_name.class_index() == CLASS_LITERALSTRING);
+                assert(_libc_name.class_index() == CLASS_STRING);
                 libc_name = _libc_name.data.string;
             }
             auto method = stack.pop_value();

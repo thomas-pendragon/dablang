@@ -19,6 +19,6 @@ main
 
 ## EXPECT OK
 
-arg: 1 [LiteralFixnum]
-arg: foo [LiteralString]
+arg: 1 [Fixnum]
+arg: foo [String]
 arg: true [Boolean]

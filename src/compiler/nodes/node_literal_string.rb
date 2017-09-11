@@ -23,7 +23,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def my_type
-    DabTypeLiteralString.new
+    DabConcreteType.new(DabTypeString.new)
   end
 
   def formatted_source(_options)

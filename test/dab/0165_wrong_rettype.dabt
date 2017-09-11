@@ -17,4 +17,4 @@ main
 ## EXPECT COMPILE ERROR
 
    3:   return 12;
-./tmp/test_dab_0165_wrong_rettype.dab:3: error E0009: Cannot return <LiteralFixnum> from a function of type <String>.
+./tmp/test_dab_0165_wrong_rettype.dab:3: error E0009: Cannot return <Fixnum> from a function of type <String>.

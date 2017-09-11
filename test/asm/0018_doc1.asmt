@@ -20,7 +20,7 @@ func main()
  
                                  LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fmain, main, -1
-                                 LOAD_FUNCTION F__foo_LiteralString, __foo_LiteralString, -1
+                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
  
                                  BREAK_LOAD 
  
@@ -38,15 +38,15 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
                                  PUSH_STRING "hello"
-                                 PUSH_SYMBOL __foo_LiteralString
+                                 PUSH_SYMBOL __foo_String
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__foo_LiteralString:
+                   F__foo_String:
                                  STACK_RESERVE 0
-                                 PUSH_STRING "LiteralString"
+                                 PUSH_STRING "String"
                                  Q_SET_POP R0
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 

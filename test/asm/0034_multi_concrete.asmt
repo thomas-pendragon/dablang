@@ -21,16 +21,16 @@ func foo()
 /* Dab dev      */                
  
                                  CONSTANT_STRING "A"
-                                 CONSTANT_STRING "LiteralFixnum"
-                                 CONSTANT_STRING "LiteralString"
-                                 CONSTANT_SYMBOL __spec_LiteralFixnum
-                                 CONSTANT_SYMBOL __spec_LiteralString
+                                 CONSTANT_STRING "Fixnum"
+                                 CONSTANT_STRING "String"
+                                 CONSTANT_SYMBOL __spec_Fixnum
+                                 CONSTANT_SYMBOL __spec_String
                                  CONSTANT_SYMBOL class
  
                                  LOAD_FUNCTION Fspec, spec, -1
                                  LOAD_FUNCTION Ffoo, foo, -1
-                                 LOAD_FUNCTION F__spec_LiteralFixnum, __spec_LiteralFixnum, -1
-                                 LOAD_FUNCTION F__spec_LiteralString, __spec_LiteralString, -1
+                                 LOAD_FUNCTION F__spec_Fixnum, __spec_Fixnum, -1
+                                 LOAD_FUNCTION F__spec_String, __spec_String, -1
  
                                  BREAK_LOAD 
  
@@ -48,30 +48,30 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 1
-/* __spec_Liter */               PUSH_CONSTANT 3
+/* __spec_Fixnu */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NUMBER 1
-/* __spec_Liter */               PUSH_CONSTANT 3
+/* __spec_Fixnu */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
 /* "A"          */               PUSH_CONSTANT 0
-/* __spec_Liter */               PUSH_CONSTANT 4
+/* __spec_Strin */               PUSH_CONSTANT 4
                                  HARDCALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__spec_LiteralFixnum:
+                   F__spec_Fixnum:
                                  STACK_RESERVE 0
-/* "LiteralFixn */               Q_SET_CONSTANT R0, 1
+/* "Fixnum"     */               Q_SET_CONSTANT R0, 1
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__spec_LiteralString:
+                   F__spec_String:
                                  STACK_RESERVE 0
-/* "LiteralStri */               Q_SET_CONSTANT R0, 2
+/* "String"     */               Q_SET_CONSTANT R0, 2
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

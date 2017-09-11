@@ -25,5 +25,5 @@ main
 
 '' (String)
 'allocated string' (String)
-'' (LiteralString)
-'literal string' (LiteralString)
+'' (String)
+'literal string' (String)

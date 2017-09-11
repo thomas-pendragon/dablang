@@ -932,19 +932,12 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         return value;
     }
 
-    auto from_fixnum = from == CLASS_LITERALFIXNUM || from == CLASS_FIXNUM;
-    auto to_fixnum   = to == CLASS_LITERALFIXNUM || to == CLASS_FIXNUM;
+    auto from_fixnum = from == CLASS_FIXNUM;
+    auto to_fixnum   = to == CLASS_FIXNUM;
 
     if (from_fixnum && to == CLASS_UINT8)
     {
         return DabValue(to, (uint8_t)value.data.fixnum);
-    }
-    else if (from == CLASS_LITERALFIXNUM && to == CLASS_FIXNUM)
-    {
-        DabValue copy;
-        copy.data.type   = TYPE_FIXNUM;
-        copy.data.fixnum = value.data.fixnum;
-        return copy;
     }
     else if (from == CLASS_UINT8 && to_fixnum)
     {

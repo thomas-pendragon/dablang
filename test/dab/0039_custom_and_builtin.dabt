@@ -37,8 +37,8 @@ main
 '#MyObject' (MyObject)
 '#AnotherObject' (AnotherObject)
 '' (String)
-'Example' (LiteralString)
+'Example' (String)
 'true' (Boolean)
 'false' (Boolean)
-'100' (LiteralFixnum)
+'100' (Fixnum)
 

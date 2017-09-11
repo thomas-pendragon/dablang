@@ -35,10 +35,10 @@ main
 ## EXPECT OK
 
 nil: NilClass
-0: LiteralFixnum
-1: LiteralFixnum [true]
-: LiteralString
-a: LiteralString [true]
+0: Fixnum
+1: Fixnum [true]
+: String
+a: String [true]
 true: Boolean [true]
 false: Boolean
 : String
