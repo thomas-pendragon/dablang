@@ -88,22 +88,24 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
   frontend_type ||= "frontend_#{directory}"
   base_path = 'test/' + directory
   path = base_path + '/*.' + extension
+  test_file_name = 'test_' + test_name + '_'
   inputs = Dir.glob(path).sort.reverse
   inputs = ci_parallel(inputs)
   outputs = []
   inputs.each do |input_test_file|
-    output_output_file = input_test_file.gsub(base_path + '/', 'tmp/test_' + test_name + '_').gsub('.' + extension, '.out')
+    output_output_file = input_test_file.gsub(base_path + '/', 'tmp/' + test_file_name).gsub('.' + extension, '.out')
     outputs << output_output_file
-    file output_output_file => $sources + [input_test_file] + $shared_spec_code + extras do
+    inputs = $sources + [input_test_file] + $shared_spec_code + extras
+    file output_output_file => inputs do
       puts '>> '.white + output_output_file.white.bold
-      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=test_#{directory}_ --test_output_dir=./tmp/")
+      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=#{test_file_name} --test_output_dir=./tmp/")
     end
   end
   task test_name.to_sym => outputs
   task "#{test_name}_reverse".to_sym => outputs.reverse
 end
 
-setup_tests('dab', 'dabt', 'frontend', [cvm])
+setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab')
 setup_tests('format', 'dabft', 'frontend_format')
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm])
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
@@ -127,10 +129,10 @@ task :docker do
   psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
 end
 
-task spec: :dab_spec do
+task spec: :dab do
 end
 
-task reverse: :dab_spec_reverse
+task reverse: :dab_reverse
 
 file opcode_docs_file => [opcodes, opcode_docs_task] do
   psystem("ruby #{opcode_docs_task} > #{opcode_docs_file}")

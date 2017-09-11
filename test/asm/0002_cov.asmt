@@ -13,7 +13,7 @@ func main()
 
 /* Dab dev      */                
  
-                                 COV_FILE 1, "./tmp/test_asm_0002_cov.dab"
+                                 COV_FILE 1, "./tmp/test_asm_spec_0002_cov.dab"
  
                                  CONSTANT_STRING "Test"
  

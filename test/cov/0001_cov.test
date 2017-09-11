@@ -36,7 +36,7 @@ func main()
 }
 
 ## EXPECT
-./tmp/test_cov_0001_cov.dab
+./tmp/test_cov_spec_0001_cov.dab
 
     1 hit      1: class MyObject
                2: {
