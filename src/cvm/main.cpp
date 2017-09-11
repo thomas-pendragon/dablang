@@ -62,6 +62,7 @@ void DabVM::kernel_print(int out_reg, bool use_reglist, std::vector<dab_register
     if (!coverage_testing)
     {
         arg.print(dab_output);
+        fflush(dab_output);
     }
 
     if (!output_value)
