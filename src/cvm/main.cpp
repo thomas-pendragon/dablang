@@ -981,7 +981,8 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
     else
     {
-        fprintf(stderr, "vm: cannot cast %d to %d.\n", (int)value.class_index(), (int)klass_index);
+        fprintf(stderr, "vm: cannot cast %s (%d) to %s (%d).\n", value.class_name().c_str(),
+                (int)value.class_index(), get_class(klass_index).name.c_str(), (int)klass_index);
         exit(1);
     }
 }
