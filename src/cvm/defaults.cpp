@@ -16,6 +16,7 @@
     assert(n_ret == 1);                                                                            \
     auto arg1 = stack.pop_value();                                                                 \
     auto arg0 = stack.pop_value();                                                                 \
+    arg1      = cast(arg1, arg0.class_index());                                                    \
     if (arg0.data.type != arg1.data.type)                                                          \
     {                                                                                              \
         assert(false && "mismtached types for operator " STR(op));                                 \
