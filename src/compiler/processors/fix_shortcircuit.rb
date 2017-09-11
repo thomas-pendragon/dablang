@@ -2,7 +2,7 @@ class FixShortcircuit
   def run(operator)
     id = operator.identifier.extra_value.to_s
 
-    return unless id == '&&' || id == '||'
+    return unless ['&&', '||'].include?(id)
 
     left = operator.left
     right = operator.right

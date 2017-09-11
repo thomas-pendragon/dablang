@@ -46,7 +46,7 @@ class String
   end
 end
 
-if format == 'plaintext' || format == 'text'
+if %w[plaintext text].include?(format)
   files.each do |file|
     data = vm.detect { |item| item['file'] == file }
     raise "no data for #{file}" unless data

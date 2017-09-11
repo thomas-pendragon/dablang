@@ -21,7 +21,7 @@ Style/ClassAndModuleChildren:
   Enabled: false
   EnforcedStyle: compact
 
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
 Style/AccessorMethodName:
@@ -30,11 +30,11 @@ Style/AccessorMethodName:
 Metrics/LineLength:
   Enabled: false
 
-Style/IndentHash:
+Layout/IndentHash:
   Enabled: false
   EnforcedStyle: align_braces
 
-Style/IndentationConsistency:
+Layout/IndentationConsistency:
   Enabled: true
 
 Style/TrailingCommaInLiteral:
