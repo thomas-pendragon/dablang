@@ -7,7 +7,7 @@ def debug_check!(settings, program, type)
   end
 end
 
-def run_dab_compiler(settings)
+def run_dab_compiler(settings, context)
   $dab_benchmark_enabled = settings[:benchmark]
   $dab_benchmark_show_result = settings[:show_benchmark]
 
@@ -32,7 +32,7 @@ def run_dab_compiler(settings)
     streams = {}
     dab_benchmark('parse') do
       inputs.each do |input|
-        file = STDIN
+        file = context.stdin
         filename = '<input>'
         if input != :stdin
           file = File.open(input, 'rb')
@@ -109,10 +109,10 @@ def run_dab_compiler(settings)
 
     if program.has_errors?
       program.errors.each do |e|
-        STDERR.puts e.annotated_source(streams[e.source.source_file])
-        STDERR.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line || -1, e.error_code, e.message)
+        context.stderr.puts e.annotated_source(streams[e.source.source_file])
+        context.stderr.puts sprintf('%s:%d: error E%04d: %s', e.source.source_file, e.source.source_line || -1, e.error_code, e.message)
       end
-      exit(1)
+      context.exit(1)
     else
       output = DabOutput.new
       program.compile(output)

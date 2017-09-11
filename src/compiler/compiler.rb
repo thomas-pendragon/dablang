@@ -1,4 +1,23 @@
 require_relative './compiler_noautorun.rb'
 
 settings = read_args!
-run_dab_compiler(settings)
+
+class CompilerContext
+  def stdin
+    STDIN
+  end
+
+  def stdout
+    STDOUT
+  end
+
+  def stderr
+    STDERR
+  end
+
+  def exit(code)
+    Kernel.send(:exit, code)
+  end
+end
+
+run_dab_compiler(settings, CompilerContext.new)
