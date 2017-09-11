@@ -34,6 +34,15 @@
         stack.push_value(value);                                                                   \
         return;                                                                                    \
     }                                                                                              \
+    if (arg0.data.type == TYPE_UINT32)                                                             \
+    {                                                                                              \
+        uint32_t num_value = arg0.data.num_uint32 op arg1.data.num_uint32;                         \
+                                                                                                   \
+        DabValue value(CLASS_UINT32, num_value);                                                   \
+                                                                                                   \
+        stack.push_value(value);                                                                   \
+        return;                                                                                    \
+    }                                                                                              \
     if (arg0.data.type == TYPE_UINT64)                                                             \
     {                                                                                              \
         uint64_t num_value = arg0.data.num_uint64 op arg1.data.num_uint64;                         \
