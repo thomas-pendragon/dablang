@@ -1,7 +1,7 @@
-def read_args!
-  args = ARGV.dup
+def read_args!(input = nil)
+  args = input || ARGV.dup
   flag = nil
-  $settings = {}
+  settings = {}
   $autofix = ENV['AUTOFIX'] == '1'
 
   while args.count > 0
@@ -14,11 +14,14 @@ def read_args!
         flag, value = flag.split('=', 2)
       end
       flag = flag.tr('-', '_').to_sym
-      $settings[flag] = value
+      settings[flag] = value
     else
-      $settings[:input] = arg
-      $settings[:inputs] ||= []
-      $settings[:inputs] << arg
+      settings[:input] = arg
+      settings[:inputs] ||= []
+      settings[:inputs] << arg
     end
   end
+
+  $settings = settings
+  settings
 end
