@@ -1,6 +1,10 @@
 require_relative 'setup.rb'
 require_relative 'src/shared/system.rb'
 
+$autorun = false
+
+require_relative './src/frontend/frontend_asm.rb'
+
 $sources = Dir.glob('src/**/*.rb')
 
 makefile = 'build/Makefile'
@@ -83,7 +87,7 @@ def ci_parallel(inputs)
   inputs[istart...iend] || []
 end
 
-def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil)
+def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil, direct_run = nil)
   test_name ||= "#{directory}_spec"
   frontend_type ||= "frontend_#{directory}"
   base_path = 'test/' + directory
@@ -98,7 +102,17 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
     inputs = $sources + [input_test_file] + $shared_spec_code + extras
     file output_output_file => inputs do
       puts '>> '.white + output_output_file.white.bold
-      psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=#{test_file_name} --test_output_dir=./tmp/")
+      if direct_run.nil?
+        psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=#{test_file_name} --test_output_dir=./tmp/")
+      else
+        settings = {
+          input: input_test_file,
+          inputs: [input_test_file],
+          test_output_prefix: test_file_name,
+          test_output_dir: './tmp/',
+        }
+        direct_run.new.run_test(settings)
+      end
     end
   end
   task test_name.to_sym => outputs
@@ -109,7 +123,7 @@ setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab')
 setup_tests('format', 'dabft', 'frontend_format')
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm])
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
-setup_tests('asm', 'asmt', 'frontend_asm')
+setup_tests('asm', 'asmt', 'frontend_asm', [], nil, AsmSpec)
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 setup_tests('debug', 'test', 'frontend_debug', [cvm])
