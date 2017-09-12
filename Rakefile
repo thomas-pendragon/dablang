@@ -29,6 +29,9 @@ opcode_debug_task = 'tasks/opcode_debuglist.rb'
 opcode_docs_file = 'docs/vm/opcodes.md'
 opcode_docs_task = 'tasks/opcode_docs.rb'
 
+classes_docs_file = './docs/classes.md'
+classes_docs_task = './tasks/classes_docs.rb'
+
 $shared_spec_code = Dir.glob('test/shared/*.dab')
 
 csources = Dir.glob('src/{cvm,cshared,cdisasm,cdumpcov}/**/*')
@@ -152,7 +155,11 @@ file opcode_docs_file => [opcodes, opcode_docs_task] do
   psystem("ruby #{opcode_docs_task} > #{opcode_docs_file}")
 end
 
-task default: [gitlab, opcode_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
+file classes_docs_file => [opcodes, classes_docs_task] do
+  psystem("ruby #{classes_docs_task}")
+end
+
+task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
                :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :build_examples_spec] do
 end
 
