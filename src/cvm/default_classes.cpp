@@ -37,7 +37,7 @@ void DabVM::define_default_classes()
         stack.push_value(instance);
     });
     object_class.add_simple_function("class", [](DabValue self) { return self.get_class(); });
-    object_class.add_simple_function("to_s", [](DabValue self) { return "#" + self.class_name(); });
+    object_class.add_simple_function("to_s", [](DabValue self) { return self.print_value(); });
     object_class.add_simple_function("__construct", [](DabValue) { return nullptr; });
     object_class.add_simple_function("__destruct", [](DabValue) { return nullptr; });
     object_class.add_static_function("to_s", [](size_t n_args, size_t n_ret, void *blockaddr) {
@@ -106,53 +106,20 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
-    fixnum_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%" PRId64, self.data.fixnum);
-        return std::string(ret);
-    });
 
-    auto &intptr_class = define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
-    intptr_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%p", self.data.intptr);
-        return std::string(ret);
-    });
+    define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
 
-    auto &uint8_class = define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
-    uint8_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%d", self.data.num_uint8);
-        return std::string(ret);
-    });
+    define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
 
-    auto &uint32_class = define_builtin_class("Uint32", CLASS_UINT32, CLASS_FIXNUM);
-    uint32_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%d", self.data.num_uint32);
-        return std::string(ret);
-    });
+    define_builtin_class("Uint32", CLASS_UINT32, CLASS_FIXNUM);
 
-    auto &uint64_class = define_builtin_class("Uint64", CLASS_UINT64, CLASS_FIXNUM);
-    uint64_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%" PRIu64, self.data.num_uint64);
-        return std::string(ret);
-    });
+    define_builtin_class("Uint64", CLASS_UINT64, CLASS_FIXNUM);
 
-    auto &int32_class = define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
-    int32_class.add_simple_function("to_s", [](DabValue self) {
-        char ret[32];
-        sprintf(ret, "%d", self.data.num_int32);
-        return std::string(ret);
-    });
+    define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
 
-    auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
-    boolean_class.add_simple_function(
-        "to_s", [](DabValue self) { return std::string(self.data.boolean ? "true" : "false"); });
+    define_builtin_class("Boolean", CLASS_BOOLEAN);
 
-    auto &nil_class = define_builtin_class("NilClass", CLASS_NILCLASS);
-    nil_class.add_simple_function("to_s", [](DabValue) { return std::string("nil"); });
+    define_builtin_class("NilClass", CLASS_NILCLASS);
 
     auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
     array_class.add_simple_function("count", [](DabValue self) {
