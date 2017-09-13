@@ -164,6 +164,8 @@ class SnakeGame
       @apple.x = 20;
       @apple.y = 8;
       @random = SnakeRandom.new;
+      @game_width = 40;
+      @game_height = 30;
   }
   func input(dx, dy)
   {
@@ -193,8 +195,8 @@ class SnakeGame
   {
       var new_point = SnakePoint.new;
       var last_point = self.snake_head;
-      new_point.x = last_point.x + @dx;
-      new_point.y = last_point.y + @dy;
+      new_point.x = (last_point.x + @dx + @game_width) % @game_width;
+      new_point.y = (last_point.y + @dy + @game_height) % @game_height;
       @snake.insert(new_point);
   }
   func generate_new_apple()
@@ -202,8 +204,8 @@ class SnakeGame
     var r1 = @random.next;
     var r2 = @random.next;
 
-    var<Uint32> a = 40;
-    var<Uint32> b = 30;
+    var<Uint32> a = @game_width;
+    var<Uint32> b = @game_height;
 
     @apple.x = r1 % a;
     @apple.y = r2 % b;
