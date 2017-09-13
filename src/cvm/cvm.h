@@ -248,6 +248,8 @@ struct DabValue
 
     bool is_a(const DabClass &klass) const;
 
+    std::string print_value(bool debug = false) const;
+
     DabValue()
     {
     }

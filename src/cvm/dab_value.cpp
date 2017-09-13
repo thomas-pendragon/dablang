@@ -82,66 +82,89 @@ bool DabValue::is_a(const DabClass &klass) const
 
 void DabValue::print(FILE *out, bool debug) const
 {
+    fprintf(out, "%s", print_value(debug).c_str());
+}
+
+std::string DabValue::print_value(bool debug) const
+{
+    char        buffer[32] = {0};
+    std::string ret;
+    bool        use_ret = false;
     switch (data.type)
     {
     case TYPE_FIXNUM:
-        fprintf(out, "%" PRId64, data.fixnum);
+        snprintf(buffer, sizeof(buffer), "%" PRId64, data.fixnum);
         break;
     case TYPE_UINT8:
-        fprintf(out, "%d", data.num_uint8);
+        snprintf(buffer, sizeof(buffer), "%" PRIu8, data.num_uint8);
         break;
     case TYPE_UINT32:
-        fprintf(out, "%d", data.num_uint32);
+        snprintf(buffer, sizeof(buffer), "%" PRIu32, data.num_uint32);
         break;
     case TYPE_UINT64:
-        fprintf(out, "%" PRIu64, data.num_uint64);
+        snprintf(buffer, sizeof(buffer), "%" PRIu64, data.num_uint64);
         break;
     case TYPE_INT32:
-        fprintf(out, "%d", data.num_int32);
+        snprintf(buffer, sizeof(buffer), "%" PRId32, data.num_int32);
         break;
     case TYPE_STRING:
-        fprintf(out, debug ? "\"%s\"" : "%s", data.string.c_str());
-        break;
+    {
+        use_ret = true;
+        ret     = data.string;
+        if (debug)
+        {
+            ret = "\"" + ret + "\"";
+        }
+    }
+    break;
     case TYPE_SYMBOL:
-        fprintf(out, ":%s", data.string.c_str());
+        snprintf(buffer, sizeof(buffer), ":%s", data.string.c_str());
         break;
     case TYPE_BOOLEAN:
-        fprintf(out, "%s", data.boolean ? "true" : "false");
+        snprintf(buffer, sizeof(buffer), "%s", data.boolean ? "true" : "false");
         break;
     case TYPE_NIL:
-        fprintf(out, "nil");
+        snprintf(buffer, sizeof(buffer), "nil");
         break;
     case TYPE_CLASS:
-        fprintf(out, "%s", class_name().c_str());
+        snprintf(buffer, sizeof(buffer), "%s", class_name().c_str());
         break;
     case TYPE_OBJECT:
-        fprintf(out, "#%s", class_name().c_str());
+        snprintf(buffer, sizeof(buffer), "#%s", class_name().c_str());
         break;
     case TYPE_INTPTR:
-        fprintf(out, "%p", data.intptr);
+        snprintf(buffer, sizeof(buffer), "%p", data.intptr);
         break;
     case TYPE_ARRAY:
     {
-        fprintf(out, "[");
+        use_ret  = true;
+        ret      = "[";
         size_t i = 0;
         for (auto &item : array())
         {
             if (i)
-                fprintf(out, ", ");
-            item.print(out, debug);
+                ret += ", ";
+            ret += item.print_value(debug);
             i++;
         }
-        fprintf(out, "]");
+        ret += "]";
     }
     break;
     default:
-        fprintf(out, "?");
+        snprintf(buffer, sizeof(buffer), "?");
         break;
+    }
+    if (!use_ret)
+    {
+        ret = buffer;
     }
     if (debug && data.object)
     {
-        fprintf(out, " [%d strong]", (int)data.object->count_strong);
+        char extra[64] = {0};
+        snprintf(extra, sizeof(extra), " [%d strong]", (int)data.object->count_strong);
+        ret += extra;
     }
+    return ret;
 }
 
 std::vector<DabValue> &DabValue::array() const
