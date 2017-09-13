@@ -65,7 +65,14 @@ func draw_square(renderer, _size, _x, _y, alpha, apple, head)
   var y = _y + 1;
   var size = _size - 2;
 
-  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+  if (apple)
+  {
+   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  }
+  else
+  {
+   SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  
+  }
 
   SDL_RenderDrawLine(renderer, x + 1, y, x + size - 2, y);
   SDL_RenderDrawLine(renderer, x + 1, y + size - 1, x + size - 2, y + size - 1);
@@ -77,6 +84,11 @@ func draw_square(renderer, _size, _x, _y, alpha, apple, head)
   {
     SDL_RenderDrawLine(renderer, x + 1, y + 1, x + size - 2, y + size - 2);
     SDL_RenderDrawLine(renderer, x + size - 2, y + 1, x + 1, y + size - 2);
+  }
+
+  if (apple)
+  {
+      SDL_RenderDrawLine(renderer, x + size / 2, y, x + size / 2 + size / 4, y - size / 4);
   }
 }
 
@@ -109,13 +121,37 @@ class SnakePoint
     ret = ret + ")";
     return ret;
   }
+  func equals(other)
+  {
+    return (self.x == other.x) && (self.y == other.y);
+  }
+}
+
+class SnakeRandom
+{
+  var @value;
+  construct()
+  {
+    var<Uint32> uint32 = 1;
+    @value = uint32;
+    self.next();
+  }
+  func next()
+  {
+    var<Uint32> a = 214013;
+    var<Uint32> b = 2531011;
+    @value = @value * a + b;
+    return @value;
+  }
 }
 
 class SnakeGame
 {
   var @snake;
-  var @dx;
+  var @dx;  
   var @dy;
+  var @apple;
+  var @random;
   func init()
   {
       var start_point = SnakePoint.new;
@@ -124,6 +160,10 @@ class SnakeGame
       @dx = 1;
       @dy = 0;
       @snake = @[start_point];
+      @apple = SnakePoint.new;
+      @apple.x = 20;
+      @apple.y = 8;
+      @random = SnakeRandom.new;
   }
   func input(dx, dy)
   {
@@ -142,14 +182,37 @@ class SnakeGame
       var y = point.y * _size;
       draw_square(_renderer, _size, x, y, 255, 0, index == _last);
     };
+
+    draw_square(_renderer, _size, @apple.x * _size, @apple.y * _size, 255, 1, true);
+  }
+  func snake_head()
+  {
+    return @snake.last;
   }
   func expand()
   {
       var new_point = SnakePoint.new;
-      var last_point = @snake.last;
+      var last_point = self.snake_head;
       new_point.x = last_point.x + @dx;
       new_point.y = last_point.y + @dy;
       @snake.insert(new_point);
+  }
+  func generate_new_apple()
+  {
+    var r1 = @random.next;
+    var r2 = @random.next;
+
+    var<Uint32> a = 40;
+    var<Uint32> b = 30;
+
+    @apple.x = r1 % a;
+    @apple.y = r2 % b;
+  }
+  func is_eating_apple()
+  {
+    var head = self.snake_head;
+    var ret = head.equals(@apple);
+    return ret;
   }
   func contract()
   {
@@ -158,7 +221,14 @@ class SnakeGame
   func step()
   {
       self.expand();
-      self.contract();
+      if (self.is_eating_apple())
+      {
+        self.generate_new_apple();
+      }
+      else
+      {
+        self.contract();
+      }
   }
 }
 
