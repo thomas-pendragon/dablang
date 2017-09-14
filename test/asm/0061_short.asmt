@@ -22,6 +22,12 @@ func main_or()
   print(fun1() || fun2());
 }
 
+func main()
+{
+  main_and();
+  main_or();
+}
+
 ## EXPECT
 
 /* Dab dev      */                
@@ -30,11 +36,14 @@ func main_or()
                                  CONSTANT_STRING "fun2"
                                  CONSTANT_SYMBOL "fun1"
                                  CONSTANT_SYMBOL "fun2"
+                                 CONSTANT_SYMBOL main_and
+                                 CONSTANT_SYMBOL main_or
  
                                  LOAD_FUNCTION Ffun1, fun1, -1
                                  LOAD_FUNCTION Ffun2, fun2, -1
                                  LOAD_FUNCTION Fmain_and, main_and, -1
                                  LOAD_FUNCTION Fmain_or, main_or, -1
+                                 LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 
  
@@ -75,5 +84,16 @@ func main_or()
                                  JMP L3
                    L3:
                                  Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* main_and     */               PUSH_CONSTANT 4
+                                 CALL 0
+                                 POP 1
+/* main_or      */               PUSH_CONSTANT 5
+                                 CALL 0
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN

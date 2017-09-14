@@ -9,7 +9,7 @@ func assert_equal(value)
 
 ## OPTIONS
 
-
+--entry=assert_equal
 
 ## EXPECT
 

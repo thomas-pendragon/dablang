@@ -7,7 +7,7 @@ func foo(a, b<Uint8>)
 
 ## OPTIONS
 
---no-opt --with-reflection
+--no-opt --with-reflection --entry=foo
 
 ## EXPECT
 

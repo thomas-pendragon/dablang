@@ -16,7 +16,7 @@ func foo()
 
 ## OPTIONS
 
---no-opt
+--no-opt --entry=foo
 
 ## EXPECT
 

@@ -9,7 +9,7 @@ func tap(a)
 
 ## OPTIONS
 
---no-opt --no-constants
+--no-opt --no-constants --entry=tap
 
 ## EXPECT
 

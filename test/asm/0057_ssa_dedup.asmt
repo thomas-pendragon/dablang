@@ -5,6 +5,10 @@ func foo(a)
   print((a * 2) + (a * 2));
 }
 
+## OPTIONS
+
+--entry=foo
+
 ## EXPECT
 
 /* Dab dev      */                

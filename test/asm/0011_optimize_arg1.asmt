@@ -7,7 +7,7 @@ func foo(a)
 
 ## OPTIONS
 
---opt
+--opt --entry=foo
 
 ## EXPECT
 

@@ -12,7 +12,7 @@ func bar()
 
 ## OPTIONS
 
---no-opt
+--no-opt --entry=bar
 
 ## EXPECT
 

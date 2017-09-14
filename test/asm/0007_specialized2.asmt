@@ -12,7 +12,7 @@ func bar()
 
 ## OPTIONS
 
---opt
+--opt --entry=bar --strip
 
 ## EXPECT
 
@@ -21,24 +21,11 @@ func bar()
                                  CONSTANT_STRING "String"
                                  CONSTANT_STRING "str"
                                  CONSTANT_SYMBOL __foo_String
-                                 CONSTANT_SYMBOL class
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fbar, bar, -1
                                  LOAD_FUNCTION F__foo_String, __foo_String, -1
  
                                  BREAK_LOAD 
- 
-                   Ffoo:
-                                 STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
-                                 PUSH_SSA R0
-/* class        */               PUSH_CONSTANT 3
-                                 INSTCALL 0
-                                 Q_SET_POP R1
-                                 Q_VOID_SYSCALL 0, R1
-                                 PUSH_NIL 
-                                 RETURN 
  
                    Fbar:
                                  STACK_RESERVE 0

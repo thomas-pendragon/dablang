@@ -16,6 +16,10 @@ func main()
     foo(2);
 }
 
+## OPTIONS
+
+--strip --entry=main
+
 ## EXPECT
 
 /* Dab dev      */                
@@ -25,37 +29,10 @@ func main()
                                  CONSTANT_SYMBOL "=="
                                  CONSTANT_SYMBOL __foo_Fixnum
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
  
                                  BREAK_LOAD 
- 
-                   Ffoo:
-                                 STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
-                                 Q_VOID_SYSCALL 0, R0
-/* 2            */               Q_SET_NUMBER R1, 2
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* *            */               Q_SET_CALL_STACK R2, S1, 2
-/* 2            */               Q_SET_NUMBER R3, 2
-                                 PUSH_SSA R0
-                                 PUSH_SSA R3
-/* *            */               Q_SET_CALL_STACK R4, S1, 2
-                                 PUSH_SSA R2
-                                 PUSH_SSA R4
-/* ==           */               PUSH_CONSTANT 2
-                                 CALL 2
-                                 JMP_IF2 L1, L2
-                   L1:
-/* "yes"        */               Q_SET_CONSTANT R5, 0
-                                 Q_VOID_SYSCALL 0, R5
-                                 JMP L2
-                   L2:
-                                 Q_VOID_SYSCALL 0, R0
-                                 PUSH_NIL 
-                                 RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -86,12 +63,12 @@ func main()
                                  PUSH_SSA R4
 /* ==           */               PUSH_CONSTANT 2
                                  CALL 2
-                                 JMP_IF2 L3, L4
-                   L3:
+                                 JMP_IF2 L1, L2
+                   L1:
 /* "yes"        */               Q_SET_CONSTANT R5, 0
                                  Q_VOID_SYSCALL 0, R5
-                                 JMP L4
-                   L4:
+                                 JMP L2
+                   L2:
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

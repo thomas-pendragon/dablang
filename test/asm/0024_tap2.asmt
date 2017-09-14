@@ -14,7 +14,7 @@ func tap2()
 
 ## OPTIONS
 
-
+--entry=tap2
 
 ## EXPECT
 

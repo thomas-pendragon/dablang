@@ -9,7 +9,7 @@ func yield1()
 
 ## OPTIONS
 
---no-opt --no-constants
+--no-opt --no-constants --entry=yield1
 
 ## EXPECT
 

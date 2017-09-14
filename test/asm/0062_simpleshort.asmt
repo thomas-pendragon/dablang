@@ -9,6 +9,10 @@ func main_or()
   print(fun1() || fun2());
 }
 
+## OPTIONS
+
+--entry=main_or
+
 ## EXPECT
 
 /* Dab dev      */                

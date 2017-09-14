@@ -15,7 +15,7 @@ func another_attribute(method, arg1, arg2)
 
 ## OPTIONS
 
---no-opt --with-attributes
+--no-opt --with-attributes --entry=foo
 
 ## EXPECT
 

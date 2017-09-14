@@ -7,7 +7,7 @@ func foo()
 
 ## OPTIONS
 
---no-opt --no-autorelease
+--no-opt --no-autorelease --entry=foo
 
 ## EXPECT
 

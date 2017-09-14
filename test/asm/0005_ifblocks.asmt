@@ -28,7 +28,7 @@ func foo(a, b)
 
 ## OPTIONS
 
-
+--entry=foo
 
 ## EXPECT
 
