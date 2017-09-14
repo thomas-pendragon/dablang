@@ -1,5 +1,5 @@
-# docker build -t dablang/dablangenv:0.5 .
-# docker push dablang/dablangenv:0.5
+# docker build -t dablang/dablangenv:0.6 .
+# docker push dablang/dablangenv:0.6
 
 FROM ubuntu:16.10
 RUN apt-get update 
@@ -20,3 +20,5 @@ RUN apt-get install -y wget
 RUN cd /usr/bin/ ; wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz ; tar xf premake-5.0.0-alpha11-linux.tar.gz
 RUN apt-get install -y make
 RUN apt-get install -y gcc
+RUN echo 'gem: --no-document' >> ~/.gemrc
+RUN gem install bundler
