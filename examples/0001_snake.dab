@@ -373,9 +373,6 @@ func main()
   game.expand();
   game.expand();
  
-  var dx = 1;
-  var dy = 0;
-
   while (true)
   {
     var has_event = SDL_PollEvent(eventBuffer);
@@ -399,17 +396,12 @@ func main()
 
       if (test1 && test3) // SDL_KEYDOWN
       {
-        if (test_right) { dx =  1; dy =  0; }
-        if (test_left)  { dx = -1; dy =  0; }
-        if (test_down)  { dx =  0; dy =  1; }
-        if (test_up)    { dx =  0; dy = -1; }
+        if (test_right) { game.input( 1,  0); }
+        if (test_left)  { game.input(-1,  0); }
+        if (test_down)  { game.input( 0,  1); }
+        if (test_up)    { game.input( 0, -1); }
         if (test_esc)   { puts("ESC QUIT"); exit(0); }
       }
-    }
-
-    if ((dx != 0) || (dy != 0))
-    {
-      game.input(dx, dy);
     }
 
     var current_counter = SDL_GetPerformanceCounter() * mul_counter;
