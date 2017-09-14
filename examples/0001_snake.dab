@@ -182,6 +182,10 @@ class SnakeGame
       @game_width = 40;
       @game_height = 26;
       @score = 0;
+      self.input(1, 0);
+      self.expand();
+      self.expand();
+      self.expand();
   }
   func input(dx, dy)
   {
@@ -214,13 +218,34 @@ class SnakeGame
   {
     return @snake.last;
   }
-  func expand()
+  func new_head_point()
   {
       var new_point = SnakePoint.new;
       var last_point = self.snake_head;
       new_point.x = (last_point.x + @dx + @game_width) % @game_width;
       new_point.y = (last_point.y + @dy + @game_height) % @game_height;
+      return new_point;
+  }
+  func expand()
+  {
+      var new_point = self.new_head_point();
       @snake.insert(new_point);
+  }
+  func new_head_will_collapse()
+  {
+    var new_point = self.new_head_point();
+    var index = 1; // new head can take the same place as the last point
+    var count = @snake.count;
+    while (index < count)
+    {
+      var point = @snake[index];
+      if (point.equals(new_point))
+      {
+        return true;
+      }
+      index = index + 1;
+    };
+    return false;
   }
   func generate_new_apple()
   {
@@ -247,14 +272,22 @@ class SnakeGame
   }
   func step()
   {
-      self.expand();
-      if (self.is_eating_apple())
+      if (self.new_head_will_collapse())
       {
-        self.generate_new_apple();
+        self.init();
       }
       else
       {
-        self.contract();
+        self.expand();
+
+        if (self.is_eating_apple())
+        {
+          self.generate_new_apple();
+        }
+        else
+        {
+          self.contract();
+        }
       }
   }
 }
@@ -368,10 +401,6 @@ func main()
 
   var game = SnakeGame.new;
   game.init();
-  game.input(1, 0);
-  game.expand();
-  game.expand();
-  game.expand();
  
   while (true)
   {
