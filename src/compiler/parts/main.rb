@@ -64,46 +64,7 @@ class DabCompilerFrontend
       debug_check!(settings, program, 'rawinit')
 
       dab_benchmark('process') do
-        while true
-          if $debug
-            program.dump
-            err ''
-            err '--~'.yellow * 50
-            err ''
-          end
-          break if dab_benchmark('dirty_check') do
-            program.run_dirty_check_callbacks!
-          end
-          break if dab_benchmark('check') do
-            program.run_check_callbacks!
-          end
-          break if program.has_errors?
-          next if $opt && dab_benchmark('optimize') do
-            program.run_optimize_processors!
-          end
-          next if dab_benchmark('lower') do
-            program.run_lower_processors!
-          end
-          next if dab_benchmark('ssa') do
-            program.run_ssa_processors!
-          end
-          next if $opt && dab_benchmark('optimize-ssa') do
-            program.run_optimize_ssa_processors!
-          end
-          next if dab_benchmark('post-ssa') do
-            program.run_post_ssa_processors!
-          end
-          next if dab_benchmark('late_lower') do
-            program.run_late_lower_processors!
-          end
-          next if $strip && dab_benchmark('strip') do
-            program.run_strip_processors!
-          end
-          next if dab_benchmark('flatten') do
-            program.run_flatten_processors!
-          end
-          break
-        end
+        process_node(program)
       end
 
       debug_check!(settings, program, 'post')
@@ -125,6 +86,49 @@ class DabCompilerFrontend
     if $dab_benchmark_show_result
       time = Time.now - dab_benchmark_start_time
       printf("Total running time: %.2fs\n", time)
+    end
+  end
+
+  def process_node(program)
+    while true
+      if $debug
+        program.dump
+        err ''
+        err '--~'.yellow * 50
+        err ''
+      end
+      break if dab_benchmark('dirty_check') do
+        program.run_dirty_check_callbacks!
+      end
+      break if dab_benchmark('check') do
+        program.run_check_callbacks!
+      end
+      break if program.has_errors?
+      next if $opt && dab_benchmark('optimize') do
+        program.run_optimize_processors!
+      end
+      next if dab_benchmark('lower') do
+        program.run_lower_processors!
+      end
+      next if dab_benchmark('ssa') do
+        program.run_ssa_processors!
+      end
+      next if $opt && dab_benchmark('optimize-ssa') do
+        program.run_optimize_ssa_processors!
+      end
+      next if dab_benchmark('post-ssa') do
+        program.run_post_ssa_processors!
+      end
+      next if dab_benchmark('late_lower') do
+        program.run_late_lower_processors!
+      end
+      next if $strip && dab_benchmark('strip') do
+        program.run_strip_processors!
+      end
+      next if dab_benchmark('flatten') do
+        program.run_flatten_processors!
+      end
+      break
     end
   end
 end
