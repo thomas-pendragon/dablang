@@ -194,8 +194,20 @@ class DabNodeFunction < DabNode
     blocks.index(block)
   end
 
+  def call_users
+    root.all_nodes(DabNodeExternalBasecall).select { |node| node.target_function == self }
+  end
+
+  def block_users
+    root.all_nodes(DabNodeBlockReference).select { |node| node.real_identifier == self.identifier }
+  end
+
+  def attribute_users
+    root.all_nodes(DabNodeAttribute).select { |node| node.real_identifier == self.identifier }
+  end
+
   def users
-    root.all_nodes(DabNodeBasecall).select { |node| node.target_function == self }
+    call_users + block_users + attribute_users
   end
 
   def allocate_ssa

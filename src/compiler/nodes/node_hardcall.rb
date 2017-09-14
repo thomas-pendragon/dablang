@@ -1,8 +1,8 @@
-require_relative 'node_basecall.rb'
+require_relative 'node_external_basecall.rb'
 require_relative '../../shared/opcodes.rb'
 require_relative '../processors/extract_call_block.rb'
 
-class DabNodeHardcall < DabNodeBasecall
+class DabNodeHardcall < DabNodeExternalBasecall
   lower_with ExtractCallBlock
 
   def initialize(identifier, args, block)

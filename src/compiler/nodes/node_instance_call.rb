@@ -1,9 +1,9 @@
-require_relative 'node_basecall.rb'
+require_relative 'node_external_basecall.rb'
 require_relative '../processors/extract_call_block.rb'
 require_relative '../processors/simplify_class_property.rb'
 require_relative '../processors/check_instance_function_existence.rb'
 
-class DabNodeInstanceCall < DabNodeBasecall
+class DabNodeInstanceCall < DabNodeExternalBasecall
   lower_with ExtractCallBlock
   optimize_with SimplifyClassProperty
   check_with CheckInstanceFunctionExistence

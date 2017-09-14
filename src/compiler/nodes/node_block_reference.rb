@@ -10,4 +10,8 @@ class DabNodeBlockReference < DabNode
   def identifier
     self[0]
   end
+
+  def real_identifier
+    identifier.extra_value
+  end
 end
