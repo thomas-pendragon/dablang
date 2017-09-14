@@ -41,6 +41,8 @@ class AsmSpec
   end
 
   def compile(input, output, options)
+    err ' > inline compile:'.bold.white
+    err " > ruby src/compiler/compiler.rb #{input} #{options}".bold.white
     settings = options.split(' ') + [input]
     context = InlineCompilerContext.new
     settings = read_args!(settings)
