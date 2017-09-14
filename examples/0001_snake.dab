@@ -92,6 +92,21 @@ func draw_square(renderer, _size, _x, _y, alpha, apple, head)
   }
 }
 
+
+func draw_simple_square(renderer, _size, _x, _y)
+{
+  var x = _x + 1;
+  var y = _y + 1;
+  var size = _size - 2;
+
+  SDL_RenderDrawLine(renderer, x + 1, y, x + size - 2, y);
+  SDL_RenderDrawLine(renderer, x + 1, y + size - 1, x + size - 2, y + size - 1);
+
+  SDL_RenderDrawLine(renderer, x, y + 1, x, y + size - 2);
+  SDL_RenderDrawLine(renderer, x + size - 1, y + 1, x + size - 1, y + size - 2);
+}
+
+
 class SnakePoint
 {
   var @x;
@@ -165,7 +180,8 @@ class SnakeGame
       @apple.y = 8;
       @random = SnakeRandom.new;
       @game_width = 40;
-      @game_height = 30;
+      @game_height = 26;
+      @score = 0;
   }
   func input(dx, dy)
   {
@@ -186,6 +202,13 @@ class SnakeGame
     };
 
     draw_square(_renderer, _size, @apple.x * _size, @apple.y * _size, 255, 1, true);
+
+    var sy = @game_height * size;
+    var sx = @game_width * size;
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  
+    SDL_RenderDrawLine(renderer, 0, sy, sx, sy);
+    draw_number(renderer, 2, sy + 2, 8, @score, 0, 5);
   }
   func snake_head()
   {
@@ -209,6 +232,8 @@ class SnakeGame
 
     @apple.x = r1 % a;
     @apple.y = r2 % b;
+
+    @score = @score + 1;
   }
   func is_eating_apple()
   {
@@ -231,6 +256,67 @@ class SnakeGame
       {
         self.contract();
       }
+  }
+}
+
+func draw_digit(renderer, dx, dy, size, digit, margin)
+{
+  var row0 = @[1,1,1,  0,0,1,  1,1,1,  1,1,1,  1,0,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1];
+  var row1 = @[1,0,1,  0,1,1,  0,0,1,  0,0,1,  1,0,1,  1,0,0,  1,0,0,  0,0,1,  1,0,1,  1,0,1];
+  var row2 = @[1,0,1,  0,0,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  0,0,1,  1,1,1,  1,1,1];
+  var row3 = @[1,0,1,  0,0,1,  1,0,0,  0,0,1,  0,0,1,  0,0,1,  1,0,1,  0,1,0,  1,0,1,  0,0,1];
+  var row4 = @[1,1,1,  0,0,1,  1,1,1,  1,1,1,  0,0,1,  1,1,1,  1,1,1,  0,1,0,  1,1,1,  1,1,1];
+
+  var rows = @[row0, row1, row2, row3, row4];
+
+  var y = 0;
+  var x = 0;
+  while (y < 5)
+  {
+    x = 0;
+    while (x < 3)
+    {
+     var c = rows[y][digit * 3 + x];
+      if (c)
+      {
+        draw_simple_square(renderer, size, dx + x * (size + margin), dy + y * (size + margin));
+      }
+      x = x + 1;
+    };
+    y = y + 1;
+  };
+}
+
+func number_length(number)
+{
+  if (number == 0)
+  {
+    return 1;
+  }
+
+  var length = 0;
+  while (number > 0)
+  {
+    length = length + 1;
+    number = number / 10;
+  }
+  return length;
+}
+
+func draw_number(renderer, dx, dy, size, number, margin, extra_offset)
+{
+  var offset = 3 * size + 6 * margin + extra_offset;
+  var index = number_length(number) - 1;
+  if (number == 0)
+  {
+    draw_digit(renderer, dx, dy, size, 0, margin);
+  }
+  while (number > 0)
+  {
+    var digit = number % 10;
+    draw_digit(renderer, dx + offset * index, dy, size, digit, margin);
+    number = number / 10;
+    index = index - 1;
   }
 }
 
@@ -272,7 +358,7 @@ func main()
   var dx = 1;
   var dy = 0;
   var<Uint64> time = 0;
-  var<Uint64> step = 500;
+  var<Uint64> step = 400;
 
   var eventBuffer = ByteBuffer.new(2048);
 
