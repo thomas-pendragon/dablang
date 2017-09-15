@@ -14,7 +14,11 @@ class InputStream
     @stream = DabParser.new(input.read, false)
     @context = DabAsmContext.new(@stream)
     @lines = @context.read_program
-    errap @lines
+    errap @lines if debug?
+  end
+
+  def debug?
+    $debug
   end
 
   def each
@@ -30,6 +34,10 @@ class OutputStream
     @preamble = []
     @code = ''
     @metadata_source = nil
+  end
+
+  def debug?
+    $debug
   end
 
   def begin(metadata_source)
@@ -73,7 +81,7 @@ class OutputStream
     opcode = code
     arg_specifiers = opcode[:args] || []
 
-    errap ['arg_specifiers', arg_specifiers]
+    errap ['arg_specifiers', arg_specifiers] if debug?
 
     arg_specifiers.each_with_index do |kind, index|
       reglist = kind == :reglist
@@ -155,7 +163,6 @@ class OutputStream
   end
 
   def fix_jumps(labels, jumps, offset)
-    # errap ['jumps:', jumps, 'labels:', labels]
     jumps.each do |jump|
       jump_pos = jump[0]
       jump_label = jump[1]
@@ -171,6 +178,10 @@ class Parser
   def initialize(input_stream, output_stream)
     @input_stream = input_stream
     @output_stream = output_stream
+  end
+
+  def debug?
+    $debug
   end
 
   def compiler_version
@@ -191,9 +202,9 @@ class Parser
     @jump_corrections2 = []
     @output_stream.begin(self)
     @input_stream.each do |instr|
-      errap instr
+      errap instr if debug?
       line = [instr[:op]] + (instr[:arglist] || [])
-      errap line
+      errap line if debug?
       label = instr[:label]
       next if line[0] == '' || line[0].nil?
       if line[0] == 'JMP_IF2'
@@ -216,11 +227,16 @@ class Parser
   end
 end
 
-if $autorun
-  read_args!
-  $debug = $settings[:debug]
-  input = InputStream.new
-  output = OutputStream.new
+def run_tobinary(input, output, debug)
+  $debug = debug
+  input = InputStream.new(input)
+  output = OutputStream.new(output)
   parser = Parser.new(input, output)
   parser.run!
+end
+
+if $autorun
+  read_args!
+  debug = $settings[:debug]
+  run_tobinary(STDIN, STDOUT, debug)
 end

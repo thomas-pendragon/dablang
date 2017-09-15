@@ -1,5 +1,6 @@
 require_relative './shared_noautorun.rb'
 require_relative '../compiler/compiler_noautorun.rb'
+require_relative '../tobinary/tobinary.rb'
 
 $autorun = true if $autorun.nil?
 
@@ -41,7 +42,13 @@ class DabSpec
   end
 
   def assemble(input, output)
-    run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
+    err ' > inline tobinary:'.bold.white
+    err " > ruby src/tobinary/tobinary.rb #{input} > #{output}".bold.white
+    input = File.open(input, 'r')
+    output = File.open(output, 'wb')
+    run_tobinary(input, output, false)
+    input.close
+    output.close
   end
 
   def execute(input, output, run_options)
