@@ -16,11 +16,11 @@ class Foo
 /* Dab dev      */                
  
                                  DEFINE_CLASS Foo, 256, 0
-                                 LOAD_FUNCTION F__destruct, __destruct, 256
+                                 LOAD_FUNCTION CFoo_F__destruct, __destruct, 256
  
                                  BREAK_LOAD 
  
-                   F__destruct:
+                   CFoo_F__destruct:
                                  STACK_RESERVE 0
                                  PUSH_NIL 
                                  RETURN

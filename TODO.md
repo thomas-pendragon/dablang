@@ -19,9 +19,6 @@
 
 ## Disasm
 
-- support for reglist
-- support for typed numbers
-
 ## Performance
 
 - runtime performance specs
@@ -82,8 +79,6 @@
 - debug: should disasm single function at a time
 
 ## Assembler ##
-
-- different labels for `func foo()` and `Array.foo`
 
 ## Testing ##
 

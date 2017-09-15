@@ -93,7 +93,11 @@ class DabNodeFunction < DabNode
   end
 
   def funclabel
-    'F' + identifier.gsub('=', '%EQ')
+    ret = 'F' + identifier.gsub('=', '%EQ')
+    if member_function?
+      ret = 'C' + parent_class.identifier + '_' + ret
+    end
+    ret
   end
 
   def create_attribute_init(body)
@@ -233,5 +237,9 @@ class DabNodeFunction < DabNode
       return name unless self.root.has_function?(name)
       num += 1
     end
+  end
+
+  def member_function?
+    !!parent_class
   end
 end

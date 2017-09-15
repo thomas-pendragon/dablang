@@ -1,0 +1,72 @@
+## CODE
+
+class Foo
+{
+  func run()
+  {
+    print("foo");
+  }
+}
+
+class Bar
+{
+  func run()
+  {
+    print("bar");
+  }
+}
+
+func main()
+{
+  Foo.new.run();
+  Bar.new.run();
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "bar"
+                                 CONSTANT_STRING "foo"
+                                 CONSTANT_SYMBOL new
+                                 CONSTANT_SYMBOL run
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION CFoo_Frun, run, 256
+                                 DEFINE_CLASS Bar, 257, 0
+                                 LOAD_FUNCTION CBar_Frun, run, 257
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* Foo          */               PUSH_CLASS 256
+/* new          */               PUSH_CONSTANT 2
+                                 INSTCALL 0
+/* run          */               PUSH_CONSTANT 3
+                                 INSTCALL 0
+                                 POP 1
+/* Bar          */               PUSH_CLASS 257
+/* new          */               PUSH_CONSTANT 2
+                                 INSTCALL 0
+/* run          */               PUSH_CONSTANT 3
+                                 INSTCALL 0
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   CFoo_Frun:
+                                 STACK_RESERVE 0
+/* "foo"        */               Q_SET_CONSTANT R0, 1
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   CBar_Frun:
+                                 STACK_RESERVE 0
+/* "bar"        */               Q_SET_CONSTANT R0, 0
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN
