@@ -37,12 +37,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_ARRAY 0
-                                 Q_SET_POP R0
                                  PUSH_NUMBER 1
 /* __foo_Fixnum */               PUSH_CONSTANT 0
 /* main__block1 */               PUSH_CONSTANT 1
-                                 PUSH_SSA R0
+                                 PUSH_NIL 
                                  HARDCALL_BLOCK 1
                                  POP 1
                                  PUSH_NIL 

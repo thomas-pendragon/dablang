@@ -27,20 +27,23 @@ class ExtractCallBlock
       capture_extract << DabNodeDefineLocalVar.new(identifier, value)
     end
 
-    id = node.function.allocate_tempvar
-    capture = DabNodeLiteralArray.new(capture_args)
-    reg = node.function.allocate_ssa
-    capture_setter = DabNodeSSASet.new(capture, reg, id)
-    capture_getter = DabNodeSSAGet.new(reg, id)
+    has_capture = capture_args.count > 0
+    if has_capture
+      id = node.function.allocate_tempvar
+      capture = DabNodeLiteralArray.new(capture_args)
+      reg = node.function.allocate_ssa
+      capture_setter = DabNodeSSASet.new(capture, reg, id)
+      capture_getter = DabNodeSSAGet.new(reg, id)
+    end
 
     fun = DabNodeFunction.new(name, new_body, arglist, false)
 
     fun.init!
 
     node.root.add_function(fun)
-    node.block_capture.replace_with!(capture_getter)
+    node.block_capture.replace_with!(capture_getter) if has_capture
     node.block.replace_with!(DabNodeBlockReference.new(fun))
-    node.prepend_instruction(capture_setter)
+    node.prepend_instruction(capture_setter) if has_capture
 
     true
   end
