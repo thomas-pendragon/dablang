@@ -32,10 +32,23 @@ func bar()
                                  CONSTANT_SYMBOL foo
                                  CONSTANT_SYMBOL is
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fbar, bar, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
+ 
+                   Fbar:
+                                 STACK_RESERVE 0
+/* "str"        */               PUSH_CONSTANT 2
+/* foo          */               PUSH_CONSTANT 3
+                                 CALL 1
+                                 POP 1
+                                 PUSH_NUMBER 12
+/* foo          */               PUSH_CONSTANT 3
+                                 CALL 1
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -62,18 +75,5 @@ func bar()
                                  Q_VOID_SYSCALL 0, R4
                                  JMP L4
                    L4:
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   Fbar:
-                                 STACK_RESERVE 0
-/* "str"        */               PUSH_CONSTANT 2
-/* foo          */               PUSH_CONSTANT 3
-                                 CALL 1
-                                 POP 1
-                                 PUSH_NUMBER 12
-/* foo          */               PUSH_CONSTANT 3
-                                 CALL 1
-                                 POP 1
                                  PUSH_NIL 
                                  RETURN

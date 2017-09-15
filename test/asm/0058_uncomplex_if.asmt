@@ -29,23 +29,10 @@ func main()
                                  CONSTANT_SYMBOL "=="
                                  CONSTANT_SYMBOL __foo_Fixnum
  
-                                 LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
+                                 LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 
- 
-                   Fmain:
-                                 STACK_RESERVE 0
-                                 PUSH_NUMBER 1
-/* __foo_Fixnum */               PUSH_CONSTANT 3
-                                 HARDCALL 1
-                                 POP 1
-                                 PUSH_NUMBER 2
-/* __foo_Fixnum */               PUSH_CONSTANT 3
-                                 HARDCALL 1
-                                 POP 1
-                                 PUSH_NIL 
-                                 RETURN 
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
@@ -70,5 +57,18 @@ func main()
                                  JMP L2
                    L2:
                                  Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 1
+/* __foo_Fixnum */               PUSH_CONSTANT 3
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NUMBER 2
+/* __foo_Fixnum */               PUSH_CONSTANT 3
+                                 HARDCALL 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN

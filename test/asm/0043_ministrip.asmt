@@ -23,22 +23,17 @@ func bar()
                                  CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL __foo_String
  
-                                 LOAD_FUNCTION Fbar, bar, -1
-                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
+                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
+                                 LOAD_FUNCTION Fbar, bar, -1
  
                                  BREAK_LOAD 
  
-                   Fbar:
+                   F__foo_Fixnum:
                                  STACK_RESERVE 0
-/* "str"        */               PUSH_CONSTANT 0
-/* __foo_String */               PUSH_CONSTANT 2
-                                 HARDCALL 1
-                                 POP 1
-                                 PUSH_NUMBER 12
-/* __foo_Fixnum */               PUSH_CONSTANT 1
-                                 HARDCALL 1
-                                 POP 1
+                                 PUSH_FALSE 
+                                 Q_SET_POP R0
+                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
@@ -50,10 +45,15 @@ func bar()
                                  PUSH_NIL 
                                  RETURN 
  
-                   F__foo_Fixnum:
+                   Fbar:
                                  STACK_RESERVE 0
-                                 PUSH_FALSE 
-                                 Q_SET_POP R0
-                                 Q_VOID_SYSCALL 0, R0
+/* "str"        */               PUSH_CONSTANT 0
+/* __foo_String */               PUSH_CONSTANT 2
+                                 HARDCALL 1
+                                 POP 1
+                                 PUSH_NUMBER 12
+/* __foo_Fixnum */               PUSH_CONSTANT 1
+                                 HARDCALL 1
+                                 POP 1
                                  PUSH_NIL 
                                  RETURN

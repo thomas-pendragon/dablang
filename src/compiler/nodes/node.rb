@@ -512,4 +512,8 @@ class DabNode
   def cast_to(target_type)
     raise "cannot compile-time cast from #{my_type} to #{target_type}"
   end
+
+  def sort_by(&block)
+    @children.sort_by(&block)
+  end
 end

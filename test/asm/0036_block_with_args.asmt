@@ -21,11 +21,19 @@ func main()
                                  CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL "main__block1"
  
-                                 LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
+                                 LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION Fmain__block1, main__block1, -1
  
                                  BREAK_LOAD 
+ 
+                   F__foo_Fixnum:
+                                 STACK_RESERVE 0
+                                 PUSH_HAS_BLOCK 
+                                 Q_SET_POP R0
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -37,14 +45,6 @@ func main()
                                  PUSH_SSA R0
                                  HARDCALL_BLOCK 1
                                  POP 1
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   F__foo_Fixnum:
-                                 STACK_RESERVE 0
-                                 PUSH_HAS_BLOCK 
-                                 Q_SET_POP R0
-                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN 
  

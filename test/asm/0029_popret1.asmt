@@ -19,16 +19,10 @@ func main()
 
 /* Dab dev      */                
  
-                                 LOAD_FUNCTION Fputs, puts, -1
                                  LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION Fputs, puts, -1
  
                                  BREAK_LOAD 
- 
-                   Fputs:
-                                 STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
-                                 PUSH_NIL 
-                                 RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -53,5 +47,11 @@ func main()
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fputs:
+                                 STACK_RESERVE 0
+/* a            */               Q_SET_ARG R0, 0
                                  PUSH_NIL 
                                  RETURN

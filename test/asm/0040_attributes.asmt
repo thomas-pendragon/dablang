@@ -25,31 +25,12 @@ func another_attribute(method, arg1, arg2)
                                  CONSTANT_SYMBOL another_attribute
                                  CONSTANT_SYMBOL sample_attribute
  
+                                 LOAD_FUNCTION F__init, __init, -1
+                                 LOAD_FUNCTION Fanother_attribute, another_attribute, -1
                                  LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fsample_attribute, sample_attribute, -1
-                                 LOAD_FUNCTION Fanother_attribute, another_attribute, -1
-                                 LOAD_FUNCTION F__init, __init, -1
  
                                  BREAK_LOAD 
- 
-                   Ffoo:
-                                 STACK_RESERVE 0
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   Fsample_attribute:
-                                 STACK_RESERVE 0
-/* method       */               Q_SET_ARG R0, 0
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   Fanother_attribute:
-                                 STACK_RESERVE 0
-/* arg2         */               Q_SET_ARG R0, 2
-/* arg1         */               Q_SET_ARG R1, 1
-/* method       */               Q_SET_ARG R2, 0
-                                 PUSH_NIL 
-                                 RETURN 
  
                    F__init:
                                  STACK_RESERVE 0
@@ -63,5 +44,24 @@ func another_attribute(method, arg1, arg2)
 /* another_attr */               PUSH_CONSTANT 1
                                  CALL 3
                                  POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fanother_attribute:
+                                 STACK_RESERVE 0
+/* arg2         */               Q_SET_ARG R0, 2
+/* arg1         */               Q_SET_ARG R1, 1
+/* method       */               Q_SET_ARG R2, 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fsample_attribute:
+                                 STACK_RESERVE 0
+/* method       */               Q_SET_ARG R0, 0
                                  PUSH_NIL 
                                  RETURN

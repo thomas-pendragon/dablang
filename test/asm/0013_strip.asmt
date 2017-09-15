@@ -32,11 +32,25 @@ func bar()
                                  CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL __foo_String
  
-                                 LOAD_FUNCTION Fbar, bar, -1
-                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
+                                 LOAD_FUNCTION F__foo_String, __foo_String, -1
+                                 LOAD_FUNCTION Fbar, bar, -1
  
                                  BREAK_LOAD 
+ 
+                   F__foo_Fixnum:
+                                 STACK_RESERVE 0
+/* "got fixnum" */               Q_SET_CONSTANT R0, 0
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__foo_String:
+                                 STACK_RESERVE 0
+/* "got string" */               Q_SET_CONSTANT R0, 1
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
  
                    Fbar:
                                  STACK_RESERVE 0
@@ -48,19 +62,5 @@ func bar()
 /* __foo_Fixnum */               PUSH_CONSTANT 3
                                  HARDCALL 1
                                  POP 1
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   F__foo_String:
-                                 STACK_RESERVE 0
-/* "got string" */               Q_SET_CONSTANT R0, 1
-                                 Q_VOID_SYSCALL 0, R0
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   F__foo_Fixnum:
-                                 STACK_RESERVE 0
-/* "got fixnum" */               Q_SET_CONSTANT R0, 0
-                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

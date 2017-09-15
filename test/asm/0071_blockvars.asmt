@@ -24,25 +24,12 @@ func main()
                                  CONSTANT_SYMBOL qux
                                  CONSTANT_SYMBOL test
  
-                                 LOAD_FUNCTION Ftest, test, -1
-                                 LOAD_FUNCTION Fqux, qux, -1
                                  LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION Fmain__block1, main__block1, -1
+                                 LOAD_FUNCTION Fqux, qux, -1
+                                 LOAD_FUNCTION Ftest, test, -1
  
                                  BREAK_LOAD 
- 
-                   Ftest:
-                                 STACK_RESERVE 0
-                                 PUSH_NUMBER 1
-                                 YIELD 1
-                                 POP 1
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   Fqux:
-                                 STACK_RESERVE 0
-                                 PUSH_NIL 
-                                 RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -66,6 +53,19 @@ func main()
                                  PUSH_SSA R1
 /* qux          */               PUSH_CONSTANT 1
                                  CALL 2
+                                 POP 1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fqux:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Ftest:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 1
+                                 YIELD 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN

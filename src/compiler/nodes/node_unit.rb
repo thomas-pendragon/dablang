@@ -123,18 +123,18 @@ class DabNodeUnit < DabNode
       end
       output.separate
     end
-    @functions.each do |function|
+    @functions.sort_by(&:identifier).each do |function|
       function.compile(output)
     end
     output.separate
     output.print('BREAK_LOAD')
     output.separate
-    @functions.each do |function|
+    @functions.sort_by(&:identifier).each do |function|
       function.compile_body(output)
       output.separate
     end
-    @classes.each do |klass|
-      klass.functions.each do |function|
+    @classes.sort_by(&:identifier).each do |klass|
+      klass.functions.sort_by(&:identifier).each do |function|
         function.compile_body(output)
         output.separate
       end

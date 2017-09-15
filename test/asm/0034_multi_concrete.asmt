@@ -26,11 +26,25 @@ func foo()
                                  CONSTANT_SYMBOL __spec_Fixnum
                                  CONSTANT_SYMBOL __spec_String
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION F__spec_Fixnum, __spec_Fixnum, -1
                                  LOAD_FUNCTION F__spec_String, __spec_String, -1
+                                 LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
+ 
+                   F__spec_Fixnum:
+                                 STACK_RESERVE 0
+/* "Fixnum"     */               Q_SET_CONSTANT R0, 1
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   F__spec_String:
+                                 STACK_RESERVE 0
+/* "String"     */               Q_SET_CONSTANT R0, 2
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN 
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -46,19 +60,5 @@ func foo()
 /* __spec_Strin */               PUSH_CONSTANT 4
                                  HARDCALL 1
                                  POP 1
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   F__spec_Fixnum:
-                                 STACK_RESERVE 0
-/* "Fixnum"     */               Q_SET_CONSTANT R0, 1
-                                 Q_VOID_SYSCALL 0, R0
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   F__spec_String:
-                                 STACK_RESERVE 0
-/* "String"     */               Q_SET_CONSTANT R0, 2
-                                 Q_VOID_SYSCALL 0, R0
                                  PUSH_NIL 
                                  RETURN

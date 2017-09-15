@@ -41,9 +41,9 @@ func main()
  
                                  LOAD_FUNCTION Ffun1, fun1, -1
                                  LOAD_FUNCTION Ffun2, fun2, -1
+                                 LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION Fmain_and, main_and, -1
                                  LOAD_FUNCTION Fmain_or, main_or, -1
-                                 LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 
  
@@ -59,6 +59,17 @@ func main()
 /* "fun2"       */               Q_SET_CONSTANT R0, 1
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_TRUE 
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* main_and     */               PUSH_CONSTANT 4
+                                 CALL 0
+                                 POP 1
+/* main_or      */               PUSH_CONSTANT 5
+                                 CALL 0
+                                 POP 1
+                                 PUSH_NIL 
                                  RETURN 
  
                    Fmain_and:
@@ -84,16 +95,5 @@ func main()
                                  JMP L3
                    L3:
                                  Q_VOID_SYSCALL 0, R0
-                                 PUSH_NIL 
-                                 RETURN 
- 
-                   Fmain:
-                                 STACK_RESERVE 0
-/* main_and     */               PUSH_CONSTANT 4
-                                 CALL 0
-                                 POP 1
-/* main_or      */               PUSH_CONSTANT 5
-                                 CALL 0
-                                 POP 1
                                  PUSH_NIL 
                                  RETURN
