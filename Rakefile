@@ -3,6 +3,7 @@ require_relative 'src/shared/system.rb'
 
 $autorun = false
 
+require_relative './src/frontend/frontend.rb'
 require_relative './src/frontend/frontend_asm.rb'
 
 $sources = Dir.glob('src/**/*.rb')
@@ -122,7 +123,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
   task "#{test_name}_reverse".to_sym => outputs.reverse
 end
 
-setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab')
+setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec)
 setup_tests('format', 'dabft', 'frontend_format')
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm])
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
