@@ -3,9 +3,9 @@ require_relative '../shared/debug_output.rb'
 require_relative '../shared/opcodes.rb'
 require_relative '../shared/parser.rb'
 require_relative '../shared/asm_context.rb'
-require_relative '../shared/args.rb'
+require_relative '../shared/args_noautorun.rb'
 
-$debug = $settings[:debug]
+$autorun = true if $autorun.nil?
 
 class InputStream
   attr_reader :lines
@@ -216,7 +216,11 @@ class Parser
   end
 end
 
-input = InputStream.new
-output = OutputStream.new
-parser = Parser.new(input, output)
-parser.run!
+if $autorun
+  read_args!
+  $debug = $settings[:debug]
+  input = InputStream.new
+  output = OutputStream.new
+  parser = Parser.new(input, output)
+  parser.run!
+end
