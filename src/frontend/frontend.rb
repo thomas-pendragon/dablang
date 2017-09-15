@@ -1,4 +1,5 @@
 require_relative './shared.rb'
+require_relative '../compiler/compiler_noautorun.rb'
 
 def read_test_file(fname)
   base = base_read_test_file(fname)
@@ -33,7 +34,7 @@ def read_test_file(fname)
 end
 
 def compile_to_asm(input, output, options)
-  run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)
+  compile_dab_to_asm(input, output, options)
 end
 
 def assemble(input, output)

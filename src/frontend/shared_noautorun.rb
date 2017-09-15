@@ -102,9 +102,11 @@ class InlineCompilerContext
 end
 
 def compile_dab_to_asm(input, output, options)
+  options ||= ''
   err ' > inline compile:'.bold.white
   err " > ruby src/compiler/compiler.rb #{input} #{options}".bold.white
-  settings = options.split(' ') + [input]
+  input = [input].flatten
+  settings = options.split(' ') + input
   context = InlineCompilerContext.new
   settings = read_args!(settings)
   run_dab_compiler(settings, context)
