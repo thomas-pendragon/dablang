@@ -3,29 +3,6 @@ require_relative '../compiler/compiler_noautorun.rb'
 
 $autorun = true if $autorun.nil?
 
-class InlineCompilerExit < RuntimeError
-  attr_reader :code
-
-  def initialize(code)
-    super()
-    @code = code
-  end
-end
-
-class InlineCompilerContext
-  attr_reader :stdin, :stdout, :stderr
-
-  def initialize
-    @stdin = StringIO.new
-    @stdout = StringIO.new
-    @stderr = StringIO.new
-  end
-
-  def exit(code)
-    raise InlineCompilerExit.new(code)
-  end
-end
-
 class AsmSpec
   def read_test_file(fname)
     base_read_test_file(fname)
@@ -41,15 +18,7 @@ class AsmSpec
   end
 
   def compile(input, output, options)
-    err ' > inline compile:'.bold.white
-    err " > ruby src/compiler/compiler.rb #{input} #{options}".bold.white
-    settings = options.split(' ') + [input]
-    context = InlineCompilerContext.new
-    settings = read_args!(settings)
-    run_dab_compiler(settings, context)
-    File.open(output, 'wb') { |f| f << context.stdout.string }
-  rescue InlineCompilerExit
-    raise SystemCommandError.new('Compile error', context.stderr.string)
+    compile_dab_to_asm(input, output, options)
   end
 
   def write_new_testspec(filename, data)

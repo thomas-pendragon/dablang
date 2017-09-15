@@ -77,3 +77,38 @@ def compare_output(info, actual, expected, soft_match = false)
     raise DabCompareError.new('test error')
   end
 end
+
+class InlineCompilerExit < RuntimeError
+  attr_reader :code
+
+  def initialize(code)
+    super()
+    @code = code
+  end
+end
+
+class InlineCompilerContext
+  attr_reader :stdin, :stdout, :stderr
+
+  def initialize
+    @stdin = StringIO.new
+    @stdout = StringIO.new
+    @stderr = StringIO.new
+  end
+
+  def exit(code)
+    raise InlineCompilerExit.new(code)
+  end
+end
+
+def compile_dab_to_asm(input, output, options)
+  err ' > inline compile:'.bold.white
+  err " > ruby src/compiler/compiler.rb #{input} #{options}".bold.white
+  settings = options.split(' ') + [input]
+  context = InlineCompilerContext.new
+  settings = read_args!(settings)
+  run_dab_compiler(settings, context)
+  File.open(output, 'wb') { |f| f << context.stdout.string }
+rescue InlineCompilerExit
+  raise SystemCommandError.new('Compile error', context.stderr.string)
+end
