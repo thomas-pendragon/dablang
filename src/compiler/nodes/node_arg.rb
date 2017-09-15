@@ -1,9 +1,6 @@
 require_relative 'node.rb'
-require_relative '../processors/store_locally.rb'
 
 class DabNodeArg < DabNode
-  include NodeStoredLocally
-
   attr_reader :index
 
   def initialize(index)

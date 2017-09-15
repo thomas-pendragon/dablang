@@ -1,11 +1,6 @@
 require_relative 'node.rb'
-require_relative '../processors/store_locally.rb'
 
 class DabNodeLiteralArray < DabNode
-  include NodeStoredLocally
-
-  lower_with StoreLocally
-
   def initialize(valuelist)
     super()
     valuelist&.each do |value|

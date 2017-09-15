@@ -1,9 +1,6 @@
 require_relative 'node.rb'
-require_relative '../processors/store_locally.rb'
 
 class DabNodeConstantReference < DabNode
-  include NodeStoredLocally
-
   attr_reader :target
 
   def initialize(target)
