@@ -228,7 +228,7 @@ end
 task format: ['format:sort', 'format:ruby', 'format:cpp']
 
 task :master do
-  psystem('git multipush github master')
+  psystem('git multipush github master; git branch -f master github/master')
 end
 
 task :dev do
