@@ -2,7 +2,7 @@ require_relative 'node.rb'
 require_relative '../processors/strip_unused_constant.rb'
 
 class DabNodeConstant < DabNode
-  optimize_with StripUnusedConstant
+  strip_with StripUnusedConstant
 
   def initialize(value)
     super()

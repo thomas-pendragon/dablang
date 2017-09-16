@@ -72,10 +72,42 @@ class DabCompilerFrontend
       debug_check!(settings, program, 'rawinit')
 
       dab_benchmark('process') do
-        process_node(program)
+        last_functions = []
+        index = 0
+        while true
+          index += 1
+          all_functions = program.all_functions
+
+          new_functions = all_functions - last_functions
+          break if new_functions.count == 0
+          last_functions = all_functions
+
+          new_functions.each do |node|
+            process_node(node)
+            break if node.has_errors?
+          end
+
+          debug_check!(settings, program, "process step #{index}")
+        end
       end
 
       debug_check!(settings, program, 'post')
+
+      if $strip
+        dab_benchmark('strip') do
+          program.all_functions.each(&:run_strip_processors!)
+        end
+      end
+
+      $constants_strip = true
+      if $constants_strip
+        dab_benchmark('strip') do
+          nodes = program.all_nodes([DabNodeConstant])
+          nodes.each(&:run_strip_processors!)
+        end
+      end
+
+      debug_check!(settings, program, 'strip')
 
       if program.has_errors?
         program.errors.each do |e|
@@ -100,10 +132,8 @@ class DabCompilerFrontend
   def process_node(program)
     return if program.run_checks!
 
-    program.all_functions.each do |_function|
-      dab_benchmark('ssa') do
-        program.run_ssa_processors!
-      end
+    dab_benchmark('ssa') do
+      program.run_ssa_processors!
     end
 
     debug_check!(@settings, program, 'ssa')
@@ -130,9 +160,6 @@ class DabCompilerFrontend
       end
       next if dab_benchmark('late_lower') do
         program.run_late_lower_processors!
-      end
-      next if $strip && dab_benchmark('strip') do
-        program.run_strip_processors!
       end
       next if dab_benchmark('flatten') do
         program.run_flatten_processors!

@@ -12,6 +12,7 @@ class DabNodeFunction < DabNode
   attr_accessor :identifier
   attr_reader :inline
 
+  after_init :copy_original_body
   after_init ConvertArgToLocalvar
   after_init AddMissingReturn
   # optimize_with OptimizeFirstBlock
@@ -20,6 +21,8 @@ class DabNodeFunction < DabNode
   post_ssa_with SSABreakPhiNodes
   post_ssa_with ReorderRegisters
   post_ssa_with ReorderRegistersIncr
+
+  attr_accessor :original_body
 
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
@@ -42,6 +45,10 @@ class DabNodeFunction < DabNode
       blocks => 'blocks',
       attrlist => 'attrlist',
     }
+  end
+
+  def rettype
+    self[3]
   end
 
   def return_type
@@ -86,6 +93,10 @@ class DabNodeFunction < DabNode
 
   def attrlist
     self[2]
+  end
+
+  def copy_original_body
+    self.original_body = blocks[0].dup
   end
 
   def constants
@@ -185,12 +196,12 @@ class DabNodeFunction < DabNode
     return self if @concrete
     new_name = "__#{identifier}_#{types.map(&:base_type).map(&:type_string).join('_')}"
     return new_name if root.has_function?(new_name)
-    ret = dup
-    ret.identifier = new_name
+    ret = DabNodeFunction.new(new_name, self.original_body.dup, arglist.dup, inline, attrlist.dup, rettype&.dup)
     ret.arglist.each_with_index do |argdef, index|
       argdef.my_type = types[index]
     end
     root.add_function(ret)
+    ret.run_init!
     new_name
   end
 
