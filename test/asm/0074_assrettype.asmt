@@ -1,0 +1,16 @@
+## CODE
+
+func foo<String>()
+{
+  return "abc";
+}
+
+func main()
+{
+  var<Fixnum> a = foo();
+}
+
+## EXPECT COMPILE ERROR
+
+   8:   var<Fixnum> a = foo();
+./tmp/test_asm_spec_0074_assrettype.dab:8: error E0002: Cannot assign <String> to a variable of type <Fixnum>.
