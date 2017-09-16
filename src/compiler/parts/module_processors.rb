@@ -194,4 +194,14 @@ module DabNodeModuleProcessors
     end
     ret
   end
+
+  def run_checks!
+    return true if dab_benchmark('dirty_check') do
+      self.run_dirty_check_callbacks!
+    end
+    return true if dab_benchmark('check') do
+      self.run_check_callbacks!
+    end
+    self.has_errors?
+  end
 end

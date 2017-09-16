@@ -98,13 +98,7 @@ class DabCompilerFrontend
   end
 
   def process_node(program)
-    dab_benchmark('dirty_check') do
-      program.run_dirty_check_callbacks!
-    end
-    dab_benchmark('check') do
-      program.run_check_callbacks!
-    end
-    return if program.has_errors?
+    return if program.run_checks!
 
     program.all_functions.each do |_function|
       dab_benchmark('ssa') do
@@ -121,13 +115,7 @@ class DabCompilerFrontend
         err '--~'.yellow * 50
         err ''
       end
-      break if dab_benchmark('dirty_check') do
-        program.run_dirty_check_callbacks!
-      end
-      break if dab_benchmark('check') do
-        program.run_check_callbacks!
-      end
-      break if program.has_errors?
+      break if program.run_checks!
       next if $opt && dab_benchmark('optimize') do
         program.run_optimize_processors!
       end
