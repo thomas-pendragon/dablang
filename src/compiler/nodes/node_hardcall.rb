@@ -1,13 +1,10 @@
 require_relative 'node_external_basecall.rb'
 require_relative '../../shared/opcodes.rb'
-require_relative '../processors/extract_call_block.rb'
 
 class DabNodeHardcall < DabNodeExternalBasecall
-  lower_with ExtractCallBlock
-
-  def initialize(identifier, args, block)
+  def initialize(identifier, args, block, block_capture)
     super(args)
-    pre_insert(DabNodeLiteralNil.new)
+    pre_insert(block_capture || DabNodeLiteralNil.new)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(identifier)
   end

@@ -1,5 +1,11 @@
 class DabCompilerFrontend
   def debug_check!(settings, program, type)
+    if $debug
+      puts
+      puts '~'.green * 50
+      puts " > #{type}"
+      puts
+    end
     if $debug || settings[:dump] == type
       program.dump
     end
@@ -9,6 +15,8 @@ class DabCompilerFrontend
   end
 
   def run(settings, context)
+    @settings = settings
+
     $dab_benchmark_enabled = settings[:benchmark]
     $dab_benchmark_show_result = settings[:show_benchmark]
 
@@ -58,7 +66,7 @@ class DabCompilerFrontend
       debug_check!(settings, program, 'raw')
 
       dab_benchmark('init') do
-        program.init!
+        program.run_init!
       end
 
       debug_check!(settings, program, 'rawinit')
@@ -90,6 +98,22 @@ class DabCompilerFrontend
   end
 
   def process_node(program)
+    dab_benchmark('dirty_check') do
+      program.run_dirty_check_callbacks!
+    end
+    dab_benchmark('check') do
+      program.run_check_callbacks!
+    end
+    return if program.has_errors?
+
+    program.all_functions.each do |_function|
+      dab_benchmark('ssa') do
+        program.run_ssa_processors!
+      end
+    end
+
+    debug_check!(@settings, program, 'ssa')
+
     while true
       if $debug
         program.dump
@@ -109,9 +133,6 @@ class DabCompilerFrontend
       end
       next if dab_benchmark('lower') do
         program.run_lower_processors!
-      end
-      next if dab_benchmark('ssa') do
-        program.run_ssa_processors!
       end
       next if $opt && dab_benchmark('optimize-ssa') do
         program.run_optimize_ssa_processors!

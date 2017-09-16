@@ -18,6 +18,8 @@ class DabNode
     @self_source_parts = []
     @children_cache_new_class = {}
     @dirty = true
+    @did_init = false
+    @deleted = false
   end
 
   def depth
@@ -267,6 +269,15 @@ class DabNode
 
   def remove!
     parent._remove_child(self)
+    all_nodes.each(&:mark_deleted!)
+  end
+
+  def mark_deleted!
+    @deleted = true
+  end
+
+  def deleted?
+    @deleted
   end
 
   def replace_child(from, to)

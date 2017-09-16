@@ -9,7 +9,7 @@ class ExtractCallBlock
 
     block.dump
     arglist = block.arglist&.dup
-    body = block.body.dup
+    body = block.body
 
     captured_vars = block.captured_variables
 
@@ -38,12 +38,12 @@ class ExtractCallBlock
 
     fun = DabNodeFunction.new(name, new_body, arglist, false)
 
-    fun.init!
-
     node.root.add_function(fun)
     node.block_capture.replace_with!(capture_getter) if has_capture
     node.block.replace_with!(DabNodeBlockReference.new(fun))
     node.prepend_instruction(capture_setter) if has_capture
+
+    fun.run_init!
 
     true
   end

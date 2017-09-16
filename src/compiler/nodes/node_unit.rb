@@ -191,4 +191,8 @@ class DabNodeUnit < DabNode
   def has_function?(id)
     @available_functions[id]
   end
+
+  def all_functions
+    all_nodes(DabNodeFunction)
+  end
 end

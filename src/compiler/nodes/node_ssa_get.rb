@@ -28,7 +28,7 @@ class DabNodeSSAGet < DabNode
 
   def constant?
     return false if setters.count > 1
-    setters.first.constant_value?
+    setters.first&.constant_value?
   end
 
   def constant_value

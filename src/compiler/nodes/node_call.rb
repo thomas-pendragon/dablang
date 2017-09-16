@@ -5,7 +5,6 @@ require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/concreteify_call.rb'
 require_relative '../processors/convert_call_to_syscall.rb'
-require_relative '../processors/extract_call_block.rb'
 
 class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckFunctionExistence
@@ -13,7 +12,6 @@ class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckCallArgsCount
   lower_with ConvertCallToSyscall
   optimize_with ConcreteifyCall
-  lower_with ExtractCallBlock
 
   def initialize(identifier, args, block)
     super(args)

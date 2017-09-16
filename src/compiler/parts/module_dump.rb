@@ -22,7 +22,8 @@ module DabNodeModuleDump
     if show_ids
       pinfo = self.object_id.to_s.bold.blue + ': ' + pinfo
     end
-    sprintf('%s%s%s%s %s %s', pinfo, self.class.name, exdump, flags, tt, src.white)
+    deadflag = deleted? ? ' [DEAD]'.bold : ''
+    sprintf('%s%s%s%s %s %s%s', pinfo, self.class.name, exdump, flags, tt, src.white, deadflag)
   end
 
   def dump(show_ids = false, level = 0, background_colors = {}, skip_output: false)

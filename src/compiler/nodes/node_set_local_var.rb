@@ -11,7 +11,7 @@ class DabNodeSetLocalVar < DabNode
   attr_reader :original_identifier
 
   check_with CheckAssignType
-  lower_with ConvertSetValue
+  after_init ConvertSetValue
 
   def initialize(identifier, value, type = nil)
     super()

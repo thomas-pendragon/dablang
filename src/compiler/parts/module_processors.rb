@@ -97,8 +97,16 @@ module DabNodeModuleProcessors
     run_all_processors!(PROCESSOR_CHECK_INDEX)
   end
 
-  def init!
-    run_all_processors!(PROCESSOR_INIT_INDEX)
+  def run_init!
+    all_nodes.each(&:sub_init!)
+  end
+
+  def sub_init!
+    return if @did_init
+
+    sub_run_all_processors!(PROCESSOR_INIT_INDEX)
+
+    @did_init = true
   end
 
   def run_optimize_processors!
@@ -156,6 +164,10 @@ module DabNodeModuleProcessors
   end
 
   def sub_run_all_processors!(type)
+    if deleted?
+      return false
+    end
+
     list = _processors(type)
     ret = false
     list.each do |item|

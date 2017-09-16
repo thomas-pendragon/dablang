@@ -10,6 +10,6 @@ class CreateAttributes
 
     func = DabNodeFunction.new('__init', body, nil, false)
     node.add_function(func)
-    func.init!
+    func.run_init!
   end
 end
