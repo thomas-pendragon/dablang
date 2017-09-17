@@ -34,6 +34,8 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
                                  PUSH_STRING "hello"
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL __foo_String
                                  CALL 1
                                  POP 1

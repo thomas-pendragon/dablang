@@ -35,12 +35,18 @@ func another_attribute(method, arg1, arg2)
                    F__init:
                                  STACK_RESERVE 0
                                  PUSH_METHOD foo
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
 /* sample_attri */               PUSH_CONSTANT 2
                                  CALL 1
                                  POP 1
                                  PUSH_METHOD foo
-                                 PUSH_NUMBER 14
-/* "foo"        */               PUSH_CONSTANT 0
+                                 Q_SET_POP R1
+/* 14           */               Q_SET_NUMBER R2, 14
+/* "foo"        */               Q_SET_CONSTANT R3, 0
+                                 PUSH_SSA R1
+                                 PUSH_SSA R2
+                                 PUSH_SSA R3
 /* another_attr */               PUSH_CONSTANT 1
                                  CALL 3
                                  POP 1

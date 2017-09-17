@@ -24,14 +24,20 @@ func foo(a)
                    Ffoo:
                                  STACK_RESERVE 0
                                  PUSH_TRUE 
+                                 Q_SET_POP R0
+                                 PUSH_SSA R0
 /* foo          */               PUSH_CONSTANT 0
                                  CALL 1
                                  POP 1
                                  PUSH_TRUE 
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
 /* foo          */               PUSH_CONSTANT 0
                                  CALL 1
                                  POP 1
                                  PUSH_FALSE 
+                                 Q_SET_POP R2
+                                 PUSH_SSA R2
 /* foo          */               PUSH_CONSTANT 0
                                  CALL 1
                                  POP 1

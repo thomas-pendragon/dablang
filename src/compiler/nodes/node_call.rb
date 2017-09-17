@@ -5,17 +5,19 @@ require_relative '../processors/check_call_args_types.rb'
 require_relative '../processors/check_function_existence.rb'
 require_relative '../processors/concreteify_call.rb'
 require_relative '../processors/convert_call_to_syscall.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckFunctionExistence
   dirty_check_with CheckCallArgsTypes
   dirty_check_with CheckCallArgsCount
   lower_with ConvertCallToSyscall
+  lower_with Uncomplexify
   optimize_with ConcreteifyCall
 
-  def initialize(identifier, args, block)
+  def initialize(identifier, args, block, block_capture = nil)
     super(args)
-    pre_insert(DabNodeLiteralNil.new)
+    pre_insert(block_capture || DabNodeLiteralNil.new)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(DabNodeSymbol.new(identifier))
   end
@@ -81,6 +83,14 @@ class DabNodeCall < DabNodeExternalBasecall
   def my_type
     return DabTypeObject.new if target_function == true || target_function == false
     target_function&.return_type
+  end
+
+  def uncomplexify_args
+    args
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 
   def extra_dump

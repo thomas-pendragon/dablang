@@ -62,11 +62,13 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 1
+/* 1            */               Q_SET_NUMBER R0, 1
+                                 PUSH_SSA R0
 /* __foo_Fixnum */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1
-                                 PUSH_NUMBER 2
+/* 2            */               Q_SET_NUMBER R1, 2
+                                 PUSH_SSA R1
 /* __foo_Fixnum */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1

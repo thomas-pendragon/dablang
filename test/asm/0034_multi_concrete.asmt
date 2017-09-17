@@ -48,15 +48,18 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 1
+/* 1            */               Q_SET_NUMBER R0, 1
+                                 PUSH_SSA R0
 /* __spec_Fixnu */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1
-                                 PUSH_NUMBER 1
+/* 1            */               Q_SET_NUMBER R1, 1
+                                 PUSH_SSA R1
 /* __spec_Fixnu */               PUSH_CONSTANT 3
                                  CALL 1
                                  POP 1
-/* "A"          */               PUSH_CONSTANT 0
+/* "A"          */               Q_SET_CONSTANT R2, 0
+                                 PUSH_SSA R2
 /* __spec_Strin */               PUSH_CONSTANT 4
                                  CALL 1
                                  POP 1
