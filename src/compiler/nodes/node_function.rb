@@ -24,6 +24,8 @@ class DabNodeFunction < DabNode
 
   attr_accessor :original_body
 
+  attr_accessor :concreteified
+
   def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
     super()
     @identifier = identifier
@@ -37,6 +39,7 @@ class DabNodeFunction < DabNode
     insert(rettype) if rettype
     @tempvars = 0
     @ssa_count = 0
+    @concreteified = false
   end
 
   def children_info
@@ -76,7 +79,7 @@ class DabNodeFunction < DabNode
   end
 
   def extra_dump
-    identifier
+    identifier + (concreteified? ? ' [concreteified]' : '')
   end
 
   def argcount
@@ -201,8 +204,13 @@ class DabNodeFunction < DabNode
       argdef.my_type = types[index]
     end
     root.add_function(ret)
+    ret.concreteified = true
     ret.run_init!
     new_name
+  end
+
+  def concreteified?
+    concreteified
   end
 
   def block_index(block)

@@ -50,15 +50,15 @@ func foo()
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 1
 /* __spec_Fixnu */               PUSH_CONSTANT 3
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NUMBER 1
 /* __spec_Fixnu */               PUSH_CONSTANT 3
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
 /* "A"          */               PUSH_CONSTANT 0
 /* __spec_Strin */               PUSH_CONSTANT 4
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN

@@ -35,7 +35,7 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_STRING "hello"
                                  PUSH_SYMBOL __foo_String
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN

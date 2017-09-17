@@ -82,4 +82,10 @@ class DabNodeCall < DabNodeExternalBasecall
     return DabTypeObject.new if target_function == true || target_function == false
     target_function&.return_type
   end
+
+  def extra_dump
+    return '[??]' if target_function.nil?
+    return '[builtin]' if target_function == true
+    target_function.concreteified? ? '[hardcall]' : ''
+  end
 end

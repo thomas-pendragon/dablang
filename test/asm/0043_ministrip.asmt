@@ -49,11 +49,11 @@ func bar()
                                  STACK_RESERVE 0
 /* "str"        */               PUSH_CONSTANT 0
 /* __foo_String */               PUSH_CONSTANT 2
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NUMBER 12
 /* __foo_Fixnum */               PUSH_CONSTANT 1
-                                 HARDCALL 1
+                                 CALL 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN

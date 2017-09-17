@@ -81,7 +81,7 @@ describe DabNode do
       '            DabNodeSSASet [R1= [other#1] (1 users)]',
       '              DabNodeClosureVar [&0]',
       '          DabNodeTreeBlock []',
-      '            DabNodeCall []',
+      '            DabNodeCall [[??]]',
       '              DabNodeSymbol [:qux]',
       '              DabNodeLiteralNil []',
       '              DabNodeLiteralNil []',

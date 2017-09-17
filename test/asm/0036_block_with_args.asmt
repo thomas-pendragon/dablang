@@ -41,7 +41,7 @@ func main()
 /* __foo_Fixnum */               PUSH_CONSTANT 0
 /* main__block1 */               PUSH_CONSTANT 1
                                  PUSH_NIL 
-                                 HARDCALL_BLOCK 1
+                                 CALL_BLOCK 1
                                  POP 1
                                  PUSH_NIL 
                                  RETURN 
