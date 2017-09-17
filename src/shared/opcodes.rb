@@ -131,6 +131,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
       {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)
       {name: 'Q_SET_CALL_STACK', args: %i[reg symbol uint16]}, # reg(arg0) <- call(symbol(arg1), stack), pop(arg2)
+      {name: 'Q_SET_CALL', args: %i[reg symbol reglist]}, # reg(arg0) <- call(symbol(arg1), arg2..argn)
       {name: 'Q_SET_SYSCALL_STACK', args: %i[reg uint8]}, # reg(arg0) <- syscall(arg1, stack), pop(variable)
       {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg(arg0) <- syscall(arg1, arg2...argn)
       {name: 'Q_SET_REG', args: %i[reg reg]}, # reg(arg0) <- reg(arg1)

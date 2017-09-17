@@ -495,7 +495,8 @@ struct DabVM
     size_t stack_position() const;
 
     void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg,
-                        const DabValue &capture);
+                        const DabValue &capture, bool use_reglist = false,
+                        std::vector<dab_register_t> reglist = {});
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
@@ -522,14 +523,17 @@ struct DabVM
     void push_constant(const DabValue &value);
 
     void call(int out_reg, const std::string &name, int n_args, const std::string &block_name,
-              const DabValue &capture);
+              const DabValue &capture, bool use_reglist = false,
+              std::vector<dab_register_t> reglist = {});
 
-    void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args);
+    void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
+                       bool use_reglist = false, std::vector<dab_register_t> reglist = {});
     void call_function_block(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                              const DabFunction &blockfun, const DabValue &capture);
 
     void _call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                        void *blockaddress, const DabValue &capture);
+                        void *blockaddress, const DabValue &capture, bool use_reglist = false,
+                        std::vector<dab_register_t> reglist = {});
 
     void execute_debug(Stream &input);
 

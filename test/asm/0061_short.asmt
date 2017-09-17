@@ -74,11 +74,11 @@ func main()
  
                    Fmain_and:
                                  STACK_RESERVE 0
-/* fun1         */               Q_SET_CALL_STACK R0, S2, 0
+/* fun1         */               Q_SET_CALL R0, S2
                                  PUSH_SSA R0
                                  JMP_IF2 L1, L2
                    L1:
-/* fun2         */               Q_SET_CALL_STACK R0, S3, 0
+/* fun2         */               Q_SET_CALL R0, S3
                                  JMP L2
                    L2:
                                  Q_VOID_SYSCALL 0, R0
@@ -87,11 +87,11 @@ func main()
  
                    Fmain_or:
                                  STACK_RESERVE 0
-/* fun1         */               Q_SET_CALL_STACK R0, S2, 0
+/* fun1         */               Q_SET_CALL R0, S2
                                  PUSH_SSA R0
                                  JMP_IF2 L3, L4
                    L4:
-/* fun2         */               Q_SET_CALL_STACK R0, S3, 0
+/* fun2         */               Q_SET_CALL R0, S3
                                  JMP L3
                    L3:
                                  Q_VOID_SYSCALL 0, R0

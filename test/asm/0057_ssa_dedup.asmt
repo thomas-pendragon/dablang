@@ -24,16 +24,10 @@ func foo(a)
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
 /* 2            */               Q_SET_NUMBER R1, 2
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* *            */               Q_SET_CALL_STACK R2, S0, 2
+/* *            */               Q_SET_CALL R2, S0, R0, R1
 /* 2            */               Q_SET_NUMBER R3, 2
-                                 PUSH_SSA R0
-                                 PUSH_SSA R3
-/* *            */               Q_SET_CALL_STACK R4, S0, 2
-                                 PUSH_SSA R2
-                                 PUSH_SSA R4
-/* +            */               Q_SET_CALL_STACK R5, S1, 2
+/* *            */               Q_SET_CALL R4, S0, R0, R3
+/* +            */               Q_SET_CALL R5, S1, R2, R4
                                  Q_VOID_SYSCALL 0, R5
                                  PUSH_NIL 
                                  RETURN

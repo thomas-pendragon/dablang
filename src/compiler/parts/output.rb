@@ -46,6 +46,8 @@ class DabOutput
   end
 
   def print(*args)
+    args = args.compact
+
     return _print("\n") if args.count == 0 || args[0].nil?
 
     if @label

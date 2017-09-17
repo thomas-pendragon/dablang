@@ -55,9 +55,7 @@ class Array
                                  YIELD 2
                                  POP 1
 /* 1            */               Q_SET_NUMBER R2, 1
-                                 PUSH_SSA R0
-                                 PUSH_SSA R2
-/* +            */               Q_SET_CALL_STACK R0, S1, 2
+/* +            */               Q_SET_CALL R0, S1, R0, R2
                                  JMP L1
                    L3:
                                  PUSH_NIL 

@@ -24,9 +24,7 @@ func main()
                                  INSTCALL 0
                                  Q_SET_POP R0
 /* "a"          */               Q_SET_CONSTANT R1, 0
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* ==           */               Q_SET_CALL_STACK R2, S1, 2
+/* ==           */               Q_SET_CALL R2, S1, R0, R1
                                  Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN

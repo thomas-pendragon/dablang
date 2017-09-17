@@ -60,10 +60,11 @@ class DabNodeCall < DabNodeExternalBasecall
       return
     end
 
-    args.each { |arg| arg.compile(output) }
     output.comment(self.real_identifier)
+    list = args.map(&:input_register).map { |arg| "R#{arg}" }
+    list = nil if list.empty?
     symbol = identifier.index
-    output.print('Q_SET_CALL_STACK', "R#{output_register}", "S#{symbol}", args.count)
+    output.printex(self, 'Q_SET_CALL', "R#{output_register}", "S#{symbol}", list)
   end
 
   def compile(output)

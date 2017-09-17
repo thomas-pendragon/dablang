@@ -32,9 +32,7 @@ func main()
                                  JMP_IF2 L2, L3
                    L2:
 /* 1            */               Q_SET_NUMBER R1, 1
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* -            */               Q_SET_CALL_STACK R0, S0, 2
+/* -            */               Q_SET_CALL R0, S0, R0, R1
                                  JMP L1
                    L3:
                                  PUSH_NIL 

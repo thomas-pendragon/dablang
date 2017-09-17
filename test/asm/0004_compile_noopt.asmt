@@ -23,9 +23,7 @@ func foo()
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
 /* 2            */               Q_SET_NUMBER R1, 2
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* +            */               Q_SET_CALL_STACK R2, S0, 2
+/* +            */               Q_SET_CALL R2, S0, R0, R1
                                  Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN

@@ -49,9 +49,7 @@ func tap2()
                                  STACK_RESERVE 0
 /* b            */               Q_SET_ARG R0, 1
 /* a            */               Q_SET_ARG R1, 0
-                                 PUSH_SSA R1
-                                 PUSH_SSA R0
-/* +            */               Q_SET_CALL_STACK R2, S0, 2
+/* +            */               Q_SET_CALL R2, S0, R1, R0
                                  Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN
