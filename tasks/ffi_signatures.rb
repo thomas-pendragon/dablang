@@ -17,6 +17,7 @@ int32, int32, int32 -> int32
 int32, int32, int32, void*, int32 -> int32
 int32, void*, int32 -> int32
 int32, int32 -> int32
+int32, void*, void* -> int32
 '
 
 DAB_CLASSES = {
