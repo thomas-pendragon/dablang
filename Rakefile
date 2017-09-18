@@ -72,7 +72,7 @@ file cdisasm => csources + [makefile] do
   end
 end
 
-file cvm => csources + [makefile] do
+file cvm => csources + [makefile, ffi_file] do
   Dir.chdir('build') do
     psystem('make cvm verbose=1')
   end
@@ -167,7 +167,7 @@ file ffi_file => [ffi_task] do
   psystem("ruby #{ffi_task} > #{ffi_file}")
 end
 
-task default: [gitlab, ffi_file, opcode_docs_file, classes_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
+task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
                :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :build_examples_spec] do
 end
 
