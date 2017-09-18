@@ -197,7 +197,7 @@ class DabContext < DabBaseContext
   end
 
   def read_function
-    on_subcontext do |subcontext|
+    on_subcontext(merge_local_vars: false) do |subcontext|
       attrlist = subcontext.read_attrlist
       inline = subcontext.read_keyword('inline')
       next unless keyw = subcontext.read_keyword('func')

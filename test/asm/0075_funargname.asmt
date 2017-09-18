@@ -1,0 +1,35 @@
+## CODE
+
+func socket() {}
+
+func setsockopt(socket) {}
+
+func main()
+{
+  var sock = socket();
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION Fsetsockopt, setsockopt, -1
+                                 LOAD_FUNCTION Fsocket, socket, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fsetsockopt:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fsocket:
+                                 STACK_RESERVE 0
+                                 PUSH_NIL 
+                                 RETURN
