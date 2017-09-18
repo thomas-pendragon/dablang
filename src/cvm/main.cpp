@@ -540,15 +540,6 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
         break;
     }
-    case OP_Q_SET_CALL_STACK:
-    {
-        auto out_reg = input.read_reg();
-        auto symbol  = input.read_uint16();
-        auto name    = constants[symbol].data.string;
-        auto n_args  = input.read_uint16();
-        call(out_reg, name, n_args, "", nullptr);
-        break;
-    }
     case OP_HARDCALL_BLOCK:
     case OP_CALL_BLOCK:
     {
@@ -717,13 +708,6 @@ bool DabVM::execute_single(Stream &input)
     {
         auto call = input.read_uint8();
         kernelcall(-1, call, false, {}, true);
-        break;
-    }
-    case OP_Q_SET_SYSCALL_STACK:
-    {
-        auto reg  = input.read_reg();
-        auto call = input.read_uint8();
-        kernelcall(reg, call, false, {}, true);
         break;
     }
     case OP_Q_SET_SYSCALL:

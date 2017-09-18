@@ -6,6 +6,7 @@ source = 'src/shared/opcodes.rb'
 puts "---
 layout: page
 title: VM opcodes
+exclude_from_nav: true
 ---
 
 "

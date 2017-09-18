@@ -14,7 +14,7 @@
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 Q_SET_CALL_STACK R7, S0, 0
+                                 Q_SET_CALL R7, S0
                                  PUSH_SSA R7
                                  SYSCALL 0
                                  RETURN
@@ -42,10 +42,10 @@ IP = 32
         30: PUSH_TRUE 
         31: RETURN 
 >       32: STACK_RESERVE 0
-        35: Q_SET_CALL_STACK R7, S0, 0
-        42: PUSH_SSA R7
-        45: SYSCALL 0
-        47: RETURN 
+        35: Q_SET_CALL R7, S0
+        41: PUSH_SSA R7
+        44: SYSCALL 0
+        46: RETURN 
 debug: break at 31.
 Stack:
 Dump of stack:
@@ -62,7 +62,7 @@ IP = 31
         30: PUSH_TRUE 
 >       31: RETURN 
         32: STACK_RESERVE 0
-        35: Q_SET_CALL_STACK R7, S0, 0
+        35: Q_SET_CALL R7, S0
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -73,7 +73,7 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 4294967295
 [   7] INVA ?
-[   8] FIXN 42
+[   8] FIXN 41
 [   9] FIXN 2
 [  10] FIXN 0
 [  11] NIL  nil
