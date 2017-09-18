@@ -18,3 +18,5 @@ rake example[1]
 
 
 Used libraries: SDL2.
+
+Last revised: 2017-09-18

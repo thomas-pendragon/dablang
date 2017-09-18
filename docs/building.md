@@ -43,3 +43,5 @@ wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/pr
 tar xf premake-5.0.0-alpha11-linux.tar.gz
 PREMAKE='./premake5' bundle exec rake
 ```
+
+Last revised: 2017-09-18
