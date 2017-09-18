@@ -4,6 +4,7 @@ class DabType
     return DabTypeString.new if typename == 'String'
     return DabTypeFixnum.new if typename == 'Fixnum'
     return DabTypeUint.new(8) if typename == 'Uint8'
+    return DabTypeUint.new(16) if typename == 'Uint16'
     return DabTypeUint.new(32) if typename == 'Uint32'
     return DabTypeUint.new(64) if typename == 'Uint64'
     return DabTypeInt32.new if typename == 'Int32'

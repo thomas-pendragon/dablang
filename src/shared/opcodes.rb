@@ -168,10 +168,11 @@ STANDARD_CLASSES = %w(
   NilClass
   Array
   Uint8
+  Uint16
+  Uint32
+  Uint64
   Int32
   Method
-  Uint64
-  Uint32
   IntPtr
   ByteBuffer
 ).freeze
