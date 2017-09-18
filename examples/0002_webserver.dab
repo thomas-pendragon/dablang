@@ -1,0 +1,115 @@
+// int socket(int domain, int type, int protocol);
+[__import_libc] func socket<Int32>(domain<Int32>, type<Int32>, protocol<Int32>) {}
+
+// int setsockopt(int socket, int level, int option_name, const void *option_value, socklen_t option_len);
+// socklen_t - Int32
+[__import_libc] func setsockopt<Int32>(socket<Int32>, level<Int32>, option_name<Int32>, option_value<IntPtr>, option_len<Int32>) {}
+
+// int bind(int socket, const struct sockaddr *address, socklen_t address_len);
+[__import_libc] func bind<Int32>(socket<Int32>, address<IntPtr>, address_len<Int32>) {}
+
+// int listen(int socket, int backlog);
+[__import_libc] func listen<Int32>(socket<Int32>, backlog<Int32>) {}
+
+// int accept(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
+[__import_libc] func accept<Int32>(socket<Int32>, address<IntPtr>, address_len<IntPtr>) {}
+
+// ssize_t read(int fildes, void *buf, size_t nbyte);
+// ssize_t - Uint64
+[__import_libc] func read<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
+
+// ssize_t write(int fildes, const void *buf, size_t nbyte);
+[__import_libc] func write<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
+
+// int close(int fildes);
+[__import_libc] func close<Int32>(fildes<Int32>) {}
+
+func errcheck(test, message)
+{
+  if (test) {}
+  else
+  {
+    print("ERROR: ");
+    puts(message);
+    exit(1);
+  }
+}
+
+func main()
+{
+  puts("DabServer: hello.");
+
+  var AF_INET = 2;
+  var SOCK_STREAM = 1;
+  var sock = socket(AF_INET, SOCK_STREAM, 0);
+  errcheck(sock > 0, "socket");
+      
+  var SOL_SOCKET = 65535;
+  var SO_REUSEADDR = 4;
+
+  var option = ByteBuffer.new(4);
+  option[0] = 1;
+  option[1] = 0;
+  option[2] = 0;
+  option[3] = 0;
+
+  var ret1 = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, option, 4);
+  errcheck(ret1 == 0, "setsockopt");
+      
+  var svr_addr = ByteBuffer.new(16);
+
+  // sin_family
+  svr_addr[1] = AF_INET;
+
+  // sin_addr.s_addr
+  svr_addr[4] = 0; 
+  svr_addr[5] = 0;
+  svr_addr[6] = 0;
+  svr_addr[7] = 0;
+
+  // sin_port - 8080 -> htons=> 36895
+  svr_addr[2] = 31;
+  svr_addr[3] = 144;
+
+  var ret2 = bind(sock, svr_addr, 16);
+  errcheck(ret2 == 0, "bind");
+      
+  var ret3 = listen(sock, 5);
+  errcheck(ret3 == 0, "listen");
+
+  var request_id = 0;
+
+  var cli_addr = ByteBuffer.new(16);
+  var cli_addr_len = ByteBuffer.new(8);
+
+  var buffer = ByteBuffer.new(1024);
+  var buffer_length = ByteBuffer.new(8);
+
+  while (true)
+  {
+    request_id = request_id + 1;
+    puts("DabServer: waiting for connection...");
+  
+    var client_fd = accept(sock, cli_addr, cli_addr_len);
+    errcheck(client_fd != -1, "accept");
+    errcheck(cli_addr_len[0] == 16, "accept");
+
+    var data = read(client_fd, buffer, 1024);
+    puts("DabServer: read " + data.to_s + " bytes");
+    
+    var response = "HTTP/1.1 200 OK\r\n" + 
+      "Content-Type: text/html; charset=UTF-8\r\n" + 
+      "Connection: close\r\n" + "\r\n" + 
+      "Dab server #" + 
+      request_id.to_s + 
+      " says hello!\r\n";
+    
+    var length = response.length;
+    var ret4 = write(client_fd, response, length);
+    puts("DabServer: wrote " + ret4.to_s + " bytes");
+    errcheck(ret4.to_s == length.to_s, "write");
+
+    var ret5 = close(client_fd);
+    errcheck(ret5 == 0, "close");
+  }
+}
