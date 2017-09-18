@@ -66,6 +66,7 @@ class DabTypeString < DabType
   def has_function?(identifier)
     return true if identifier == '[]'
     return true if identifier == 'upcase'
+    return true if identifier == 'length'
     super
   end
 end

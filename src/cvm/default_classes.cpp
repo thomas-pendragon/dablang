@@ -57,6 +57,13 @@ void DabVM::define_default_classes()
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         return arg0;
     });
+    string_class.add_simple_function("length", [](DabValue self) {
+        auto arg0 = self;
+        assert(arg0.data.type == TYPE_STRING);
+        auto &   s = arg0.data.string;
+        DabValue ret(CLASS_INT32, (int)s.size());
+        return ret;
+    });
     string_class.add_function("[]", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 2);

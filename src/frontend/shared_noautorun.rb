@@ -112,5 +112,6 @@ def compile_dab_to_asm(input, output, options)
   run_dab_compiler(settings, context)
   File.open(output, 'wb') { |f| f << context.stdout.string }
 rescue InlineCompilerExit
+  err context.stderr.string
   raise SystemCommandError.new('Compile error', context.stderr.string)
 end
