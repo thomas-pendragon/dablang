@@ -18,6 +18,12 @@ class FoldConstant
       node.replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? left : right)
       return true
     end
+    if lv.is_a?(String) && rv.is_a?(String)
+      if id == '+'
+        node.replace_with!(DabNodeLiteralString.new(lv + rv))
+        return true
+      end
+    end
     if numeric && %w(+ - * / % |).include?(id)
       node.replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
       return true

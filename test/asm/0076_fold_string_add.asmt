@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  print("Foo" + "bar");
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "Foobar"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "Foobar"     */               Q_SET_CONSTANT R0, 0
+                                 Q_VOID_SYSCALL 0, R0
+                                 PUSH_NIL 
+                                 RETURN
