@@ -1,6 +1,7 @@
 ---
 layout: page
 title: VM opcodes
+exclude_from_nav: true
 ---
 
 ## NOP
