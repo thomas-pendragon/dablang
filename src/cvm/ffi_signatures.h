@@ -276,3 +276,22 @@ else if (arg_klasses.size() == 3 && arg_klasses[0] == CLASS_INT32 &&
 
     stack.push_value(DabValue(CLASS_INT32, return_value));
 }
+else if (arg_klasses.size() == 3 && arg_klasses[0] == CLASS_INT32 &&
+         arg_klasses[1] == CLASS_INTPTR && arg_klasses[2] == CLASS_UINT64 &&
+         ret_klass == CLASS_UINT64)
+{
+    typedef uint64_t (*int_fun)(int32_t, void *, uint64_t);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value2 = $VM->cast(stack.pop_value(), CLASS_UINT64);
+    auto value1 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+    auto value0 = $VM->cast(stack.pop_value(), CLASS_INT32);
+
+    auto value0_data = value0.data.num_int32;
+    auto value1_data = value1.data.intptr;
+    auto value2_data = value2.data.num_uint64;
+
+    auto return_value = (*int_symbol)(value0_data, value1_data, value2_data);
+
+    stack.push_value(DabValue(CLASS_UINT64, return_value));
+}

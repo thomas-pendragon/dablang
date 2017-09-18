@@ -18,6 +18,7 @@ int32, int32, int32, void*, int32 -> int32
 int32, void*, int32 -> int32
 int32, int32 -> int32
 int32, void*, void* -> int32
+int32, void*, uint64 -> uint64
 '
 
 DAB_CLASSES = {
@@ -52,6 +53,7 @@ DAB_DATA = {
   'int32' => 'num_int32',
   'uint8' => 'num_uint8',
   'uint32' => 'num_uint32',
+  'uint64' => 'num_uint64',
   'void*' => 'intptr',
   'string' => 'string.c_str()',
 }.freeze
