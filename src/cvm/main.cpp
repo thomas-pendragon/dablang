@@ -980,6 +980,10 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     {
         return DabValue(to, (int32_t)value.data.num_uint32);
     }
+    else if (from == CLASS_INT32 && to == CLASS_UINT64)
+    {
+        return DabValue(to, (uint64_t)value.data.num_int32);
+    }
     else if (from == CLASS_UINT32 && to_fixnum)
     {
         DabValue copy;
@@ -992,6 +996,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         DabValue copy;
         copy.data.type   = TYPE_INTPTR;
         copy.data.intptr = nullptr;
+        return copy;
+    }
+    else if (from == CLASS_STRING && to == CLASS_INTPTR)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_INTPTR;
+        copy.data.intptr = (void *)value.data.string.c_str();
         return copy;
     }
     else if (from == CLASS_BYTEBUFFER && to == CLASS_INTPTR)
