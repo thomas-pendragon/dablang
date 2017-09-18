@@ -201,7 +201,7 @@ class DabParser
   end
 
   def _parse_string(ret)
-    ret.gsub('\\n', "\n")
+    ret.gsub('\\n', "\n").gsub('\\r', "\r")
   end
 
   def read_number
