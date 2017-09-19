@@ -79,12 +79,24 @@ void DabVM::define_default_classes()
     });
     string_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
-        assert(n_args == 1 || n_args == 2);
+        assert(n_args == 1 || n_args == 2 || n_args == 3);
         assert(n_ret == 1);
         auto &   stack = $VM->stack;
         auto     klass = stack.pop_value();
         DabValue ret_value;
         ret_value.data.type = TYPE_STRING;
+        if (n_args == 3)
+        {
+            auto arg2 = $VM->cast(stack.pop_value(), CLASS_FIXNUM);
+            auto arg1 = stack.pop_value();
+            assert(arg1.data.type == TYPE_BYTEBUFFER);
+            const auto &buffer = arg1.bytebuffer();
+            const auto  length = arg2.data.fixnum;
+            if (length)
+            {
+                ret_value.data.string = std::string((const char *)&buffer[0], length);
+            }
+        }
         if (n_args == 2)
         {
             auto arg = stack.pop_value();
