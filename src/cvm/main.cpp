@@ -991,6 +991,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         copy.data.fixnum = value.data.num_uint32;
         return copy;
     }
+    else if (from == CLASS_UINT64 && to_fixnum)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_FIXNUM;
+        copy.data.fixnum = value.data.num_uint64;
+        return copy;
+    }
     else if (from == CLASS_NILCLASS && to == CLASS_INTPTR)
     {
         DabValue copy;
