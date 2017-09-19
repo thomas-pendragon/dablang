@@ -37,7 +37,7 @@ func errcheck(test, message)
 
 func main()
 {
-  puts("DabServer: hello.");
+  puts("DabServer: hello!");
 
   var AF_INET = 2;
   var SOCK_STREAM = 1;
@@ -95,7 +95,8 @@ func main()
     errcheck(cli_addr_len[0] == 16, "accept");
 
     var data = read(client_fd, buffer, 1024);
-    puts("DabServer: read " + data.to_s + " bytes");
+    puts("DabServer: read " + data.to_s + " bytes.");
+    puts(String.new(buffer, data));
     
     var response = "HTTP/1.1 200 OK\r\n" + 
       "Content-Type: text/html; charset=UTF-8\r\n" + 
@@ -106,10 +107,12 @@ func main()
     
     var length = response.length;
     var ret4 = write(client_fd, response, length);
-    puts("DabServer: wrote " + ret4.to_s + " bytes");
+    puts("DabServer: wrote " + ret4.to_s + " bytes.");
     errcheck(ret4.to_s == length.to_s, "write");
 
     var ret5 = close(client_fd);
     errcheck(ret5 == 0, "close");
+
+    puts("");
   }
 }
