@@ -55,14 +55,8 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               Q_SET_CONSTANT R0, 2
-                                 PUSH_SSA R0
-/* __foo_String */               PUSH_CONSTANT 4
-                                 CALL 1
-                                 POP 1
+/* __foo_String */               Q_VOID_CALL S4, R0
 /* 12           */               Q_SET_NUMBER R1, 12
-                                 PUSH_SSA R1
-/* __foo_Fixnum */               PUSH_CONSTANT 3
-                                 CALL 1
-                                 POP 1
+/* __foo_Fixnum */               Q_VOID_CALL S3, R1
                                  PUSH_NIL 
                                  RETURN

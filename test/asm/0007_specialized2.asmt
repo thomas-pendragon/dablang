@@ -37,9 +37,6 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               Q_SET_CONSTANT R0, 1
-                                 PUSH_SSA R0
-/* __foo_String */               PUSH_CONSTANT 2
-                                 CALL 1
-                                 POP 1
+/* __foo_String */               Q_VOID_CALL S2, R0
                                  PUSH_NIL 
                                  RETURN

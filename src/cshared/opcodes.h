@@ -60,6 +60,8 @@ enum
     OP_Q_SET_SYSCALL      = 0x37,
     OP_Q_SET_REG          = 0x38,
     OP_Q_SET_CLOSURE      = 0x39,
-    OP_Q_VOID_SYSCALL     = 0x3A,
-    OP_Q_RELEASE          = 0x3B,
+    OP_Q_VOID_CALL        = 0x3A,
+    OP_Q_VOID_CALL_BLOCK  = 0x3B,
+    OP_Q_VOID_SYSCALL     = 0x3C,
+    OP_Q_RELEASE          = 0x3D,
 };

@@ -313,7 +313,7 @@ void DabVM::call(int out_reg, const std::string &name, int n_args, const std::st
     if (block_name != "")
     {
         call_function_block(out_reg, nullptr, functions[name], n_args, functions[block_name],
-                            capture);
+                            capture, use_reglist, reglist);
     }
     else
     {
@@ -322,11 +322,13 @@ void DabVM::call(int out_reg, const std::string &name, int n_args, const std::st
 }
 
 void DabVM::call_function_block(int out_reg, const DabValue &self, const DabFunction &fun,
-                                int n_args, const DabFunction &blockfun, const DabValue &capture)
+                                int n_args, const DabFunction &blockfun, const DabValue &capture,
+                                bool use_reglist, std::vector<dab_register_t> reglist)
 {
     assert(blockfun.regular);
 
-    _call_function(out_reg, self, fun, n_args, (void *)blockfun.address, capture);
+    _call_function(out_reg, self, fun, n_args, (void *)blockfun.address, capture, use_reglist,
+                   reglist);
 }
 
 void DabVM::call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
@@ -538,6 +540,31 @@ bool DabVM::execute_single(Stream &input)
         auto name    = constants[symbol].data.string;
         auto reglist = input.read_reglist();
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
+        break;
+    }
+    case OP_Q_VOID_CALL:
+    {
+        auto out_reg = -1;
+        auto symbol  = input.read_uint16();
+        auto name    = constants[symbol].data.string;
+        auto reglist = input.read_reglist();
+        call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
+        break;
+    }
+    case OP_Q_VOID_CALL_BLOCK:
+    {
+        auto out_reg = -1;
+
+        auto symbol       = input.read_uint16();
+        auto block_symbol = input.read_uint16();
+        auto capture_reg  = input.read_reg();
+        auto reglist      = input.read_reglist();
+
+        auto name       = constants[symbol].data.string;
+        auto block_name = constants[block_symbol].data.string;
+        auto capture    = register_get(capture_reg);
+
+        call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
         break;
     }
     case OP_HARDCALL_BLOCK:

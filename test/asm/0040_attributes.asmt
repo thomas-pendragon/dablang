@@ -36,20 +36,12 @@ func another_attribute(method, arg1, arg2)
                                  STACK_RESERVE 0
                                  PUSH_METHOD foo
                                  Q_SET_POP R0
-                                 PUSH_SSA R0
-/* sample_attri */               PUSH_CONSTANT 2
-                                 CALL 1
-                                 POP 1
+/* sample_attri */               Q_VOID_CALL S2, R0
                                  PUSH_METHOD foo
                                  Q_SET_POP R1
 /* 14           */               Q_SET_NUMBER R2, 14
 /* "foo"        */               Q_SET_CONSTANT R3, 0
-                                 PUSH_SSA R1
-                                 PUSH_SSA R2
-                                 PUSH_SSA R3
-/* another_attr */               PUSH_CONSTANT 1
-                                 CALL 3
-                                 POP 1
+/* another_attr */               Q_VOID_CALL S1, R1, R2, R3
                                  PUSH_NIL 
                                  RETURN 
  

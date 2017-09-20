@@ -62,7 +62,14 @@ class DabOutput
 
     _print ' ' * 14
 
-    t = args[0] + ' ' + args[1..-1].map { |item| _printable(item) }.join(', ')
+    argsmap = args[1..-1]
+              .flatten
+              .map { |item| _printable(item) }
+              .map(&:to_s)
+              .select(&:present?)
+              .join(', ')
+
+    t = args[0] + ' ' + argsmap
 
     _print(t)
     _print("\n")

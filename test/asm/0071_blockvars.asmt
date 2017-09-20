@@ -37,11 +37,7 @@ func main()
                                  PUSH_SSA R0
                                  PUSH_ARRAY 1
                                  Q_SET_POP R1
-/* test         */               PUSH_CONSTANT 2
-/* main__block1 */               PUSH_CONSTANT 0
-                                 PUSH_SSA R1
-                                 CALL_BLOCK 0
-                                 POP 1
+/* test         */               Q_VOID_CALL_BLOCK S2, S0, R1
                                  PUSH_NIL 
                                  RETURN 
  
@@ -49,11 +45,7 @@ func main()
                                  STACK_RESERVE 0
 /* bar          */               Q_SET_ARG R0, 0
                                  Q_SET_CLOSURE R1, 0
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* qux          */               PUSH_CONSTANT 1
-                                 CALL 2
-                                 POP 1
+/* qux          */               Q_VOID_CALL S1, R0, R1
                                  PUSH_NIL 
                                  RETURN 
  

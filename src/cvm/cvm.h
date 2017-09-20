@@ -529,7 +529,8 @@ struct DabVM
     void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                        bool use_reglist = false, std::vector<dab_register_t> reglist = {});
     void call_function_block(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                             const DabFunction &blockfun, const DabValue &capture);
+                             const DabFunction &blockfun, const DabValue &capture,
+                             bool use_reglist = false, std::vector<dab_register_t> reglist = {});
 
     void _call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
                         void *blockaddress, const DabValue &capture, bool use_reglist = false,

@@ -38,12 +38,9 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
-                                 PUSH_SSA R0
-/* __foo_Fixnum */               PUSH_CONSTANT 0
-/* main__block1 */               PUSH_CONSTANT 1
                                  PUSH_NIL 
-                                 CALL_BLOCK 1
-                                 POP 1
+                                 Q_SET_POP R1
+/* __foo_Fixnum */               Q_VOID_CALL_BLOCK S0, S1, R1, R0
                                  PUSH_NIL 
                                  RETURN 
  

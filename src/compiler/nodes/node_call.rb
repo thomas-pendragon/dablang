@@ -63,8 +63,33 @@ class DabNodeCall < DabNodeExternalBasecall
     output.comment(self.real_identifier)
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     list = nil if list.empty?
-    symbol = identifier.index
-    output.printex(self, 'Q_SET_CALL', "R#{output_register}", "S#{symbol}", list)
+    output.printex(self, 'Q_SET_CALL', "R#{output_register}", "S#{symbol_index}", list)
+  end
+
+  def compile_top_level(output)
+    unless identifier.is_a? DabNodeConstantReference
+      raise 'symbol must be reference' unless $no_constants
+      compile(output)
+      output.print('POP', 1)
+      return
+    end
+
+    blockarg = "S#{block_symbol_index}" if has_block?
+    list = args.map(&:input_register).map { |arg| "R#{arg}" }
+    if has_block?
+      capture_arg = "R#{block_capture.input_register}"
+    end
+    args = ["S#{symbol_index}", blockarg, capture_arg, list].compact
+    output.comment(self.real_identifier)
+    output.printex(self, 'Q_VOID_CALL' + (has_block? ? '_BLOCK' : ''), *args)
+  end
+
+  def symbol_index
+    identifier.index
+  end
+
+  def block_symbol_index
+    block.identifier.index
   end
 
   def compile(output)
@@ -87,7 +112,9 @@ class DabNodeCall < DabNodeExternalBasecall
   end
 
   def uncomplexify_args
-    args
+    list = args
+    list += [block_capture] if has_block?
+    list
   end
 
   def accepts?(arg)
