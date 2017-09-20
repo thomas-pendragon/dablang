@@ -653,6 +653,12 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, DabValue(number));
         break;
     }
+    case OP_Q_SET_NIL:
+    {
+        auto reg_index = input.read_reg();
+        register_set(reg_index, nullptr);
+        break;
+    }
     case OP_Q_SET_ARG:
     {
         auto reg_index = input.read_reg();

@@ -37,8 +37,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
-                                 Q_SET_POP R0
+                                 Q_SET_NIL R0
 /* foo          */               Q_VOID_CALL_BLOCK S0, S1, R0
                                  PUSH_NIL 
                                  RETURN 

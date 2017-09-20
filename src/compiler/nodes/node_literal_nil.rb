@@ -5,6 +5,10 @@ class DabNodeLiteralNil < DabNodeLiteral
     output.print('PUSH_NIL')
   end
 
+  def compile_as_ssa(output, output_register)
+    output.printex(self, 'Q_SET_NIL', "R#{output_register}")
+  end
+
   def my_type
     DabTypeNil.new
   end

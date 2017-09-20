@@ -38,8 +38,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
-                                 Q_SET_POP R0
+                                 Q_SET_NIL R0
 /* foo          */               PUSH_CONSTANT 0
                                  CALL 0
                                  JMP_IF2 L1, L2
