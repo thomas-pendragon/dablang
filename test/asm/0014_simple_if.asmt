@@ -36,17 +36,19 @@ func foo()
 /* "a"          */               Q_SET_CONSTANT R0, 0
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_TRUE 
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
                                  JMP_IF2 L1, L2
                    L1:
-/* "b"          */               Q_SET_CONSTANT R1, 1
-                                 Q_VOID_SYSCALL 0, R1
-                                 JMP L3
-                   L2:
-/* "c"          */               Q_SET_CONSTANT R2, 2
+/* "b"          */               Q_SET_CONSTANT R2, 1
                                  Q_VOID_SYSCALL 0, R2
                                  JMP L3
-                   L3:
-/* "d"          */               Q_SET_CONSTANT R3, 3
+                   L2:
+/* "c"          */               Q_SET_CONSTANT R3, 2
                                  Q_VOID_SYSCALL 0, R3
+                                 JMP L3
+                   L3:
+/* "d"          */               Q_SET_CONSTANT R4, 3
+                                 Q_VOID_SYSCALL 0, R4
                                  PUSH_NIL 
                                  RETURN

@@ -1,11 +1,13 @@
 require_relative 'node_base_jump.rb'
 require_relative '../processors/flatten_conditional_jump.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeConditionalJump < DabNodeBaseJump
   attr_reader :target
   attr_reader :if_true, :if_false
 
   optimize_with FlattenConditionalJump
+  lower_with Uncomplexify
 
   def initialize(condition, if_true, if_false)
     super()
@@ -40,5 +42,13 @@ class DabNodeConditionalJump < DabNodeBaseJump
     super
     @if_true = dictionary[@if_true] || @if_true
     @if_false = dictionary[@if_false] || @if_false
+  end
+
+  def uncomplexify_args
+    [condition]
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

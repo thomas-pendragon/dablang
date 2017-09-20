@@ -37,8 +37,8 @@ func main()
 /* 5            */               Q_SET_NUMBER R0, 5
                                  JMP L1
                    L1:
-/* foo          */               PUSH_CONSTANT 0
-                                 CALL 0
+/* foo          */               Q_SET_CALL R1, S0
+                                 PUSH_SSA R1
                                  JMP_IF2 L2, L3
                    L2:
 /* 2            */               Q_SET_NUMBER R0, 2

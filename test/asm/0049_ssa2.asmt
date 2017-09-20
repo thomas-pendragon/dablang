@@ -38,16 +38,16 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* foo          */               PUSH_CONSTANT 0
-                                 CALL 0
+/* foo          */               Q_SET_CALL R0, S0
+                                 PUSH_SSA R0
                                  JMP_IF2 L1, L2
                    L1:
-/* 2            */               Q_SET_NUMBER R0, 2
+/* 2            */               Q_SET_NUMBER R1, 2
                                  JMP L3
                    L2:
-/* 3            */               Q_SET_NUMBER R0, 3
+/* 3            */               Q_SET_NUMBER R1, 3
                                  JMP L3
                    L3:
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_VOID_SYSCALL 0, R1
                                  PUSH_NIL 
                                  RETURN
