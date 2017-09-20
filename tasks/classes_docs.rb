@@ -1,8 +1,8 @@
 require_relative './common_tools.rb'
-require_relative '../src/shared/opcodes.rb'
+require_relative '../src/shared/classes.rb'
 
-source = 'src/shared/opcodes.rb'
-date_source = 'src/cshared/classes.h'
+source = 'src/shared/classes.rb'
+date_source = source
 
 classes_data = ''
 

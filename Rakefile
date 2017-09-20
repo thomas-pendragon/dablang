@@ -18,6 +18,7 @@ cdumpcov = 'bin/cdumpcov'
 filelist = 'tmp/c_files.txt'
 
 opcodes = 'src/shared/opcodes.rb'
+classes_file = 'src/shared/classes.rb'
 
 cvm_opcodes = 'src/cshared/opcodes.h'
 cvm_classes = 'src/cshared/classes.h'
@@ -159,7 +160,7 @@ file opcode_docs_file => [opcodes, opcode_docs_task] do
   psystem("ruby #{opcode_docs_task} > #{opcode_docs_file}")
 end
 
-file classes_docs_file => [opcodes, classes_docs_task] do
+file classes_docs_file => [classes_file, classes_docs_task] do
   psystem("ruby #{classes_docs_task}")
 end
 
