@@ -11,10 +11,6 @@ class DabNodeJump < DabNodeBaseJump
     "->#{target.block_index}"
   end
 
-  def condition
-    self[0]
-  end
-
   def compile(output)
     output.print('JMP', target.compile_label(output))
   end
