@@ -726,6 +726,16 @@ bool DabVM::execute_single(Stream &input)
         instructions.seek(ip() + (test ? mod_true : mod_false));
         break;
     }
+    case OP_Q_JMP_IF2:
+    {
+        auto value_reg = input.read_reg();
+        auto mod_true  = input.read_int16() - 7;
+        auto mod_false = input.read_int16() - 7;
+        auto value     = register_get(value_reg);
+        auto test      = value.truthy();
+        instructions.seek(ip() + (test ? mod_true : mod_false));
+        break;
+    }
     case OP_NOP:
     {
         break;

@@ -200,6 +200,7 @@ class Parser
     @label_positions = {}
     @jump_corrections = []
     @jump_corrections2 = []
+    @jump_corrections3 = []
     @output_stream.begin(self)
     @input_stream.each do |instr|
       errap instr if debug?
@@ -212,6 +213,11 @@ class Parser
         @jump_corrections2 << [pos, line[2].to_s]
         line[1] = 0
         line[2] = 0
+      elsif line[0] == 'Q_JMP_IF2'
+        @jump_corrections2 << [pos, line[2].to_s]
+        @jump_corrections3 << [pos, line[3].to_s]
+        line[2] = 0
+        line[3] = 0
       elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
         @jump_corrections << [pos, line[1].to_s]
         line[1] = 0
@@ -223,6 +229,7 @@ class Parser
     end
     @output_stream.fix_jumps(@label_positions, @jump_corrections, 0)
     @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
+    @output_stream.fix_jumps(@label_positions, @jump_corrections3, 2)
     @output_stream.finalize
   end
 end

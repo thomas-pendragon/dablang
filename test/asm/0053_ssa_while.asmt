@@ -35,8 +35,7 @@ func main()
                                  JMP L1
                    L1:
 /* >            */               Q_SET_CALL R2, S1, R0, R1
-                                 PUSH_SSA R2
-                                 JMP_IF2 L2, L3
+                                 Q_JMP_IF2 R2, L2, L3
                    L2:
                                  Q_VOID_SYSCALL 0, R0
 /* 1            */               Q_SET_NUMBER R3, 1

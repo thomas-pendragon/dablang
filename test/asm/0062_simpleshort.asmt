@@ -39,8 +39,7 @@ func main_or()
                    Fmain_or:
                                  STACK_RESERVE 0
 /* fun1         */               Q_SET_CALL R0, S0
-                                 PUSH_SSA R0
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R0, L1, L2
                    L2:
 /* fun2         */               Q_SET_CALL R0, S1
                                  JMP L1

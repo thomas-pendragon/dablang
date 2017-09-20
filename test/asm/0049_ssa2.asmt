@@ -39,8 +39,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* foo          */               Q_SET_CALL R0, S0
-                                 PUSH_SSA R0
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R0, L1, L2
                    L1:
 /* 2            */               Q_SET_NUMBER R1, 2
                                  JMP L3

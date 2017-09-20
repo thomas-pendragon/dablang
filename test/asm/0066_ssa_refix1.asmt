@@ -40,8 +40,7 @@ func main()
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
 /* foo          */               Q_SET_CALL R1, S0
-                                 PUSH_SSA R1
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R1, L1, L2
                    L1:
 /* 8            */               Q_SET_NUMBER R2, 8
 /* -1           */               Q_SET_NUMBER R3, -1

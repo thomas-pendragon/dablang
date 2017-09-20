@@ -47,11 +47,9 @@ func foo(a, b)
                                  STACK_RESERVE 0
 /* b            */               Q_SET_ARG R0, 1
 /* a            */               Q_SET_ARG R1, 0
-                                 PUSH_SSA R1
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R1, L1, L2
                    L1:
-                                 PUSH_SSA R0
-                                 JMP_IF2 L3, L4
+                                 Q_JMP_IF2 R0, L3, L4
                    L3:
 /* "a && b"     */               Q_SET_CONSTANT R2, 3
                                  Q_VOID_SYSCALL 0, R2
@@ -61,8 +59,7 @@ func foo(a, b)
                                  Q_VOID_SYSCALL 0, R3
                                  JMP L5
                    L2:
-                                 PUSH_SSA R0
-                                 JMP_IF2 L6, L7
+                                 Q_JMP_IF2 R0, L6, L7
                    L6:
 /* "!a && b"    */               Q_SET_CONSTANT R4, 1
                                  Q_VOID_SYSCALL 0, R4

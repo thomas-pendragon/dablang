@@ -28,8 +28,7 @@ func main()
 /* 5            */               Q_SET_NUMBER R0, 5
                                  JMP L1
                    L1:
-                                 PUSH_SSA R0
-                                 JMP_IF2 L2, L3
+                                 Q_JMP_IF2 R0, L2, L3
                    L2:
 /* 1            */               Q_SET_NUMBER R1, 1
 /* -            */               Q_SET_CALL R0, S0, R0, R1

@@ -37,8 +37,7 @@ func foo()
                                  Q_VOID_SYSCALL 0, R0
                                  PUSH_TRUE 
                                  Q_SET_POP R1
-                                 PUSH_SSA R1
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R1, L1, L2
                    L1:
 /* "b"          */               Q_SET_CONSTANT R2, 1
                                  Q_VOID_SYSCALL 0, R2

@@ -43,8 +43,7 @@ func main()
 /* 2            */               Q_SET_NUMBER R3, 2
 /* *            */               Q_SET_CALL R4, S1, R0, R3
 /* ==           */               Q_SET_CALL R5, S2, R2, R4
-                                 PUSH_SSA R5
-                                 JMP_IF2 L1, L2
+                                 Q_JMP_IF2 R5, L1, L2
                    L1:
 /* "yes"        */               Q_SET_CONSTANT R6, 0
                                  Q_VOID_SYSCALL 0, R6
