@@ -51,8 +51,6 @@ class DabNodeCall < DabNodeExternalBasecall
   end
 
   def compile_as_ssa(output, output_register)
-    raise 'no block support' if has_block?
-
     unless identifier.is_a? DabNodeConstantReference
       raise 'symbol must be reference' unless $no_constants
       compile(output)
@@ -63,7 +61,18 @@ class DabNodeCall < DabNodeExternalBasecall
     output.comment(self.real_identifier)
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     list = nil if list.empty?
-    output.printex(self, 'Q_SET_CALL', "R#{output_register}", "S#{symbol_index}", list)
+
+    blockarg = "S#{block_symbol_index}" if has_block?
+    capture_arg = "R#{block_capture.input_register}" if has_block?
+    args = [
+      "R#{output_register}",
+      "S#{symbol_index}",
+      blockarg,
+      capture_arg,
+      list,
+    ].compact
+
+    output.printex(self, 'Q_SET_CALL' + (has_block? ? '_BLOCK' : ''), *args)
   end
 
   def compile_top_level(output)

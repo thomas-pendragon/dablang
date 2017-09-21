@@ -570,6 +570,20 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
         break;
     }
+    case OP_Q_SET_CALL_BLOCK:
+    {
+        auto out_reg      = input.read_reg();
+        auto symbol       = input.read_uint16();
+        auto name         = constants[symbol].data.string;
+        auto block_symbol = input.read_uint16();
+        auto block_name   = constants[block_symbol].data.string;
+        auto capture_reg  = input.read_reg();
+        auto capture      = register_get(capture_reg);
+        auto reglist      = input.read_reglist();
+
+        call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
+        break;
+    }
     case OP_Q_VOID_CALL_BLOCK:
     {
         auto out_reg = -1;

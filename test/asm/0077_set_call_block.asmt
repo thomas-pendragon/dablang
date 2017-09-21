@@ -1,0 +1,45 @@
+## CODE
+
+func foo() 
+{
+  return 12;
+}
+
+func main()
+{
+  var a = foo() ^ {
+    return 3;
+  };
+  print(a);
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL foo
+                                 CONSTANT_SYMBOL "main__block1"
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+                                 LOAD_FUNCTION Fmain__block1, main__block1, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 12
+                                 RETURN 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 Q_SET_NIL R0
+/* foo          */               Q_SET_CALL_BLOCK R1, S0, S1, R0
+                                 Q_VOID_SYSCALL 0, R1
+                                 PUSH_NIL 
+                                 RETURN 
+ 
+                   Fmain__block1:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 3
+                                 RETURN
