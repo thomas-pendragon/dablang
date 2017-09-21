@@ -42,15 +42,21 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* Foo          */               PUSH_CLASS 256
+/* Foo          */               Q_SET_CLASS R0, 256
+                                 PUSH_SSA R0
 /* new          */               PUSH_CONSTANT 2
                                  INSTCALL 0
+                                 Q_SET_POP R1
+                                 PUSH_SSA R1
 /* run          */               PUSH_CONSTANT 3
                                  INSTCALL 0
                                  POP 1
-/* Bar          */               PUSH_CLASS 257
+/* Bar          */               Q_SET_CLASS R2, 257
+                                 PUSH_SSA R2
 /* new          */               PUSH_CONSTANT 2
                                  INSTCALL 0
+                                 Q_SET_POP R3
+                                 PUSH_SSA R3
 /* run          */               PUSH_CONSTANT 3
                                  INSTCALL 0
                                  POP 1

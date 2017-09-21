@@ -1,10 +1,12 @@
 require_relative 'node_external_basecall.rb'
 require_relative '../processors/simplify_class_property.rb'
 require_relative '../processors/check_instance_function_existence.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeInstanceCall < DabNodeExternalBasecall
   optimize_with SimplifyClassProperty
   check_with CheckInstanceFunctionExistence
+  lower_with Uncomplexify
 
   def initialize(value, identifier, arglist, block)
     super(arglist)
@@ -71,5 +73,13 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
             "#{val}.#{real_identifier}(#{args})"
           end
     ret + formatted_block(options)
+  end
+
+  def uncomplexify_args
+    args + [value]
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

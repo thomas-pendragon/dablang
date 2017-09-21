@@ -33,12 +33,15 @@ func main()
                                  PUSH_SYMBOL puts
                                  CALL 1
                                  POP 1
-                                 PUSH_NUMBER 123
+/* 123          */               Q_SET_NUMBER R1, 123
+                                 PUSH_SSA R1
                                  PUSH_SSA R0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
                                  POP 1
                                  PUSH_STRING "foo"
+                                 Q_SET_POP R2
+                                 PUSH_SSA R2
                                  PUSH_SSA R0
                                  PUSH_SYMBOL insert
                                  INSTCALL 1
