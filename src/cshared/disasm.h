@@ -66,9 +66,16 @@ struct AsmStream
 
     void read_reg(std::string &info)
     {
-        auto value = _read<int16_t>();
+        auto value = _read<uint16_t>();
         char output[32];
-        sprintf(output, "R%d", value);
+        if (value == 0xFFFF)
+        {
+            sprintf(output, "RNIL");
+        }
+        else
+        {
+            sprintf(output, "R%d", (int)value);
+        }
         if (info.length())
             info += ", ";
         info += output;

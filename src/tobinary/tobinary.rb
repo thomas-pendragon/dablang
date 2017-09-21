@@ -56,7 +56,11 @@ class OutputStream
   end
 
   def _push_reg(arg)
-    val = arg.delete('R').to_i
+    val = if arg == 'RNIL'
+            0xFFFF
+          else
+            arg.delete('R').to_i
+          end
     _push_int16(val)
   end
 
