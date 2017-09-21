@@ -136,6 +136,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_REG', args: %i[reg reg]}, # reg(arg0) <- reg(arg1)
       {name: 'Q_SET_CLOSURE', args: %i[reg uint16]}, # reg(arg0) <- closurevar(arg1)
       {name: 'Q_SET_NIL', args: %i[reg]}, # reg(arg0) <- nil
+      {name: 'Q_SET_INSTCALL', args: %i[reg reg symbol reglist]}, # reg(arg0) <- call(symbol(arg2), self: arg1, args: arg3..argn)
     ],
   },
   {

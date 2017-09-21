@@ -144,8 +144,8 @@ size_t DabVM::stack_position() const
     return stack.size();
 }
 
-void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg,
-                           const DabValue &capture, bool use_reglist,
+void DabVM::push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
+                           int out_reg, const DabValue &capture, bool use_reglist,
                            std::vector<dab_register_t> reglist)
 {
     if (use_reglist)
@@ -153,6 +153,10 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
         for (auto reg : reglist)
         {
             stack.push(register_get(reg));
+        }
+        if (use_self)
+        {
+            stack.push_value(self);
         }
     }
     stack.push((uint64_t)ip());
@@ -312,34 +316,35 @@ void DabVM::call(int out_reg, const std::string &name, int n_args, const std::st
     }
     if (block_name != "")
     {
-        call_function_block(out_reg, nullptr, functions[name], n_args, functions[block_name],
+        call_function_block(false, out_reg, nullptr, functions[name], n_args, functions[block_name],
                             capture, use_reglist, reglist);
     }
     else
     {
-        call_function(out_reg, nullptr, functions[name], n_args, use_reglist, reglist);
+        call_function(false, out_reg, nullptr, functions[name], n_args, use_reglist, reglist);
     }
 }
 
-void DabVM::call_function_block(int out_reg, const DabValue &self, const DabFunction &fun,
-                                int n_args, const DabFunction &blockfun, const DabValue &capture,
-                                bool use_reglist, std::vector<dab_register_t> reglist)
+void DabVM::call_function_block(bool use_self, int out_reg, const DabValue &self,
+                                const DabFunction &fun, int n_args, const DabFunction &blockfun,
+                                const DabValue &capture, bool use_reglist,
+                                std::vector<dab_register_t> reglist)
 {
     assert(blockfun.regular);
 
-    _call_function(out_reg, self, fun, n_args, (void *)blockfun.address, capture, use_reglist,
-                   reglist);
+    _call_function(use_self, out_reg, self, fun, n_args, (void *)blockfun.address, capture,
+                   use_reglist, reglist);
 }
 
-void DabVM::call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                          bool use_reglist, std::vector<dab_register_t> reglist)
+void DabVM::call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
+                          int n_args, bool use_reglist, std::vector<dab_register_t> reglist)
 {
-    _call_function(out_reg, self, fun, n_args, nullptr, nullptr, use_reglist, reglist);
+    _call_function(use_self, out_reg, self, fun, n_args, nullptr, nullptr, use_reglist, reglist);
 }
 
-void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                           void *blockaddress, const DabValue &capture, bool use_reglist,
-                           std::vector<dab_register_t> reglist)
+void DabVM::_call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
+                           int n_args, void *blockaddress, const DabValue &capture,
+                           bool use_reglist, std::vector<dab_register_t> reglist)
 {
     if (verbose)
     {
@@ -349,8 +354,8 @@ void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction 
 
     if (fun.regular)
     {
-        push_new_frame(self, n_args, (uint64_t)blockaddress, out_reg, capture, use_reglist,
-                       reglist);
+        push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture,
+                       use_reglist, reglist);
         instructions.seek(fun.address);
     }
     else
@@ -361,6 +366,10 @@ void DabVM::_call_function(int out_reg, const DabValue &self, const DabFunction 
             for (auto reg : reglist)
             {
                 stack.push_value(register_get(reg));
+            }
+            if (use_self)
+            {
+                stack.push_value(self);
             }
         }
         fun.extra(n_args, n_ret, blockaddress);
@@ -594,7 +603,7 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, ".\n");
         }
 
-        push_new_frame(self, n_args, 0, -1, get_block_capture());
+        push_new_frame(true, self, n_args, 0, -1, get_block_capture());
         instructions.seek(addr);
 
         break;
@@ -789,6 +798,22 @@ bool DabVM::execute_single(Stream &input)
         auto n_args = input.read_uint16();
         auto n_rets = 1;
         instcall(recv, name, n_args, n_rets);
+        break;
+    }
+    case OP_Q_SET_INSTCALL:
+    {
+        auto out_reg  = input.read_reg();
+        auto self_reg = input.read_reg();
+        auto symbol   = input.read_uint16();
+        auto name     = constants[symbol].data.string;
+        auto reglist  = input.read_reglist();
+        auto n_args   = reglist.size();
+        auto n_rets   = 1;
+        auto recv     = register_get(self_reg);
+        fprintf(stderr, "vm: instcall, recv = ");
+        recv.dump(stderr);
+        fprintf(stderr, "\n");
+        instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
         break;
     }
     case OP_INSTCALL_BLOCK:
@@ -1086,7 +1111,8 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
-                     const std::string &block_name, const DabValue &capture)
+                     const std::string &block_name, const DabValue &capture, bool use_reglist,
+                     dab_register_t outreg, std::vector<dab_register_t> reglist)
 {
     assert(n_rets == 1);
     auto  class_index = recv.class_index();
@@ -1096,11 +1122,12 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 
     if (block_name != "")
     {
-        call_function_block(-1, recv, fun, 1 + n_args, functions[block_name], capture);
+        call_function_block(true, outreg, recv, fun, 1 + n_args, functions[block_name], capture,
+                            use_reglist, reglist);
     }
     else
     {
-        call_function(-1, recv, fun, 1 + n_args);
+        call_function(true, outreg, recv, fun, 1 + n_args, use_reglist, reglist);
     }
 }
 
@@ -1126,7 +1153,7 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
         stack.push(arg);
     }
 
-    push_new_frame(self, n_args, 0, -1, get_block_capture());
+    push_new_frame(true, self, n_args, 0, -1, get_block_capture());
     instructions.seek((size_t)block_addr);
 
     // temporary hack

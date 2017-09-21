@@ -20,10 +20,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* String       */               Q_SET_CLASS R0, 1
-                                 PUSH_SSA R0
-/* new          */               PUSH_CONSTANT 2
-                                 INSTCALL 0
-                                 Q_SET_POP R1
+/* new          */               Q_SET_INSTCALL R1, R0, S2
 /* "a"          */               Q_SET_CONSTANT R2, 0
 /* ==           */               Q_SET_CALL R3, S1, R1, R2
                                  Q_VOID_SYSCALL 0, R3

@@ -494,8 +494,8 @@ struct DabVM
 
     size_t stack_position() const;
 
-    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr, int out_reg,
-                        const DabValue &capture, bool use_reglist = false,
+    void push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
+                        int out_reg, const DabValue &capture, bool use_reglist = false,
                         std::vector<dab_register_t> reglist = {});
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
@@ -526,15 +526,17 @@ struct DabVM
               const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
 
-    void call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                       bool use_reglist = false, std::vector<dab_register_t> reglist = {});
-    void call_function_block(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                             const DabFunction &blockfun, const DabValue &capture,
-                             bool use_reglist = false, std::vector<dab_register_t> reglist = {});
+    void call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
+                       int n_args, bool use_reglist = false,
+                       std::vector<dab_register_t> reglist = {});
+    void call_function_block(bool use_self, int out_reg, const DabValue &self,
+                             const DabFunction &fun, int n_args, const DabFunction &blockfun,
+                             const DabValue &capture, bool use_reglist = false,
+                             std::vector<dab_register_t> reglist = {});
 
-    void _call_function(int out_reg, const DabValue &self, const DabFunction &fun, int n_args,
-                        void *blockaddress, const DabValue &capture, bool use_reglist = false,
-                        std::vector<dab_register_t> reglist = {});
+    void _call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
+                        int n_args, void *blockaddress, const DabValue &capture,
+                        bool use_reglist = false, std::vector<dab_register_t> reglist = {});
 
     void execute_debug(Stream &input);
 
@@ -565,7 +567,9 @@ struct DabVM
     void add_function(size_t address, const std::string &name, uint16_t class_index);
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
-                  const std::string &block_name = "", const DabValue &capture = nullptr);
+                  const std::string &block_name = "", const DabValue &capture = nullptr,
+                  bool use_reglist = false, dab_register_t outreg = -1,
+                  std::vector<dab_register_t> reglist = {});
 
     DabClass &define_builtin_class(const std::string &name, size_t class_index,
                                    size_t superclass_index = CLASS_OBJECT);

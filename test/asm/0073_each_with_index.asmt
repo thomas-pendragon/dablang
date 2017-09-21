@@ -37,10 +37,7 @@ class Array
 /* 0            */               Q_SET_NUMBER R0, 0
                                  PUSH_SELF 
                                  Q_SET_POP R1
-                                 PUSH_SSA R1
-/* count        */               PUSH_CONSTANT 3
-                                 INSTCALL 0
-                                 Q_SET_POP R2
+/* count        */               Q_SET_INSTCALL R2, R1, S3
                                  JMP L1
                    L1:
 /* !=           */               Q_SET_CALL R3, S0, R0, R2

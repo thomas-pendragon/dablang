@@ -24,11 +24,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "allocated s */               Q_SET_CONSTANT R0, 0
 /* String       */               Q_SET_CLASS R1, 1
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-/* new          */               PUSH_CONSTANT 1
-                                 INSTCALL 1
-                                 Q_SET_POP R2
+/* new          */               Q_SET_INSTCALL R2, R1, S1, R0
                                  Q_VOID_SYSCALL 0, R2
                                  PUSH_NIL 
                                  RETURN
