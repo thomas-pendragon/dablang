@@ -15,6 +15,29 @@ struct Buffer
     void append(const byte *data, size_t data_length);
 };
 
+struct dab_register_t
+{
+    uint16_t _value;
+
+    uint16_t value() const
+    {
+        return _value;
+    }
+    bool nil() const
+    {
+        return _value == 0xFFFF;
+    }
+
+    dab_register_t(uint16_t _value) : _value(_value)
+    {
+    }
+
+    static dab_register_t nilreg()
+    {
+        return dab_register_t(0xFFFF);
+    }
+};
+
 struct Stream
 {
     uint8_t  read_uint8();
@@ -23,9 +46,10 @@ struct Stream
     uint16_t read_uint16();
     uint32_t read_uint32();
     uint64_t read_uint64();
-    int16_t  read_reg();
 
-    std::vector<int16_t> read_reglist();
+    dab_register_t read_reg();
+
+    std::vector<dab_register_t> read_reglist();
 
     std::string read_vlc_string();
 
@@ -432,8 +456,6 @@ struct DabVMReset
     ~DabVMReset();
 };
 
-typedef int16_t dab_register_t;
-
 struct DabVM
 {
     FILE *dab_output = nullptr;
@@ -487,7 +509,7 @@ struct DabVM
         return val.data.string;
     }
 
-    void kernel_print(int out_reg, bool use_reglist, std::vector<dab_register_t> reglist,
+    void kernel_print(dab_register_t out_reg, bool use_reglist, std::vector<dab_register_t> reglist,
                       bool output_value);
 
     bool pop_frame(bool regular);
@@ -495,7 +517,7 @@ struct DabVM
     size_t stack_position() const;
 
     void push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
-                        int out_reg, const DabValue &capture, bool use_reglist = false,
+                        dab_register_t out_reg, const DabValue &capture, bool use_reglist = false,
                         std::vector<dab_register_t> reglist = {});
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
@@ -516,27 +538,29 @@ struct DabVM
 
     uint64_t get_block_addr();
     DabValue get_block_capture();
-    int      get_out_reg();
+
+    dab_register_t get_out_reg();
 
     int number_of_args();
 
     void push_constant(const DabValue &value);
 
-    void call(int out_reg, const std::string &name, int n_args, const std::string &block_name,
-              const DabValue &capture, bool use_reglist = false,
+    void call(dab_register_t out_reg, const std::string &name, int n_args,
+              const std::string &block_name, const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
 
-    void call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
-                       int n_args, bool use_reglist = false,
+    void call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
+                       const DabFunction &fun, int n_args, bool use_reglist = false,
                        std::vector<dab_register_t> reglist = {});
-    void call_function_block(bool use_self, int out_reg, const DabValue &self,
+    void call_function_block(bool use_self, dab_register_t out_reg, const DabValue &self,
                              const DabFunction &fun, int n_args, const DabFunction &blockfun,
                              const DabValue &capture, bool use_reglist = false,
                              std::vector<dab_register_t> reglist = {});
 
-    void _call_function(bool use_self, int out_reg, const DabValue &self, const DabFunction &fun,
-                        int n_args, void *blockaddress, const DabValue &capture,
-                        bool use_reglist = false, std::vector<dab_register_t> reglist = {});
+    void _call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
+                        const DabFunction &fun, int n_args, void *blockaddress,
+                        const DabValue &capture, bool use_reglist = false,
+                        std::vector<dab_register_t> reglist = {});
 
     void execute_debug(Stream &input);
 
@@ -553,8 +577,8 @@ struct DabVM
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 
-    void kernelcall(int out_reg, int call, bool use_reglist, std::vector<dab_register_t> reglist,
-                    bool output_value);
+    void kernelcall(dab_register_t out_reg, int call, bool use_reglist,
+                    std::vector<dab_register_t> reglist, bool output_value);
 
     void push_constant_symbol(const std::string &name);
 
@@ -587,8 +611,8 @@ struct DabVM
     void reflect(size_t reflection_type, const DabValue &symbol);
     void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
 
-    DabValue register_get(size_t reg_index);
-    void register_set(size_t reg_index, const DabValue &value);
+    DabValue register_get(dab_register_t reg_index);
+    void register_set(dab_register_t reg_index, const DabValue &value);
 };
 
 struct DabVM_debug

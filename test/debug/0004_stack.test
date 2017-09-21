@@ -43,7 +43,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 IP = 14
 Stack:
@@ -54,7 +54,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 IP = 15
 Stack:
@@ -65,7 +65,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 [   8] NIL  nil
 IP = 0

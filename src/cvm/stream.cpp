@@ -15,9 +15,9 @@ int32_t Stream::read_int32()
     return _read<int32_t>();
 }
 
-int16_t Stream::read_reg()
+dab_register_t Stream::read_reg()
 {
-    return read_int16();
+    return read_uint16();
 }
 
 uint16_t Stream::read_uint16()
@@ -35,10 +35,11 @@ uint64_t Stream::read_uint64()
     return _read<uint64_t>();
 }
 
-std::vector<int16_t> Stream::read_reglist()
+std::vector<dab_register_t> Stream::read_reglist()
 {
-    auto                 count = read_uint8();
-    std::vector<int16_t> ret;
+    auto count = read_uint8();
+
+    std::vector<dab_register_t> ret;
     for (size_t i = 0; i < count; i++)
     {
         ret.push_back(read_reg());

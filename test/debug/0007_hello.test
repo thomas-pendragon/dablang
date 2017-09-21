@@ -62,7 +62,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 Registers:
 IP = 32
@@ -79,7 +79,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 Registers:
 R0: STRI "hello world"
@@ -96,7 +96,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 Registers:
 R0: STRI "hello world"
@@ -112,7 +112,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 [   8] NIL  nil
 Registers:

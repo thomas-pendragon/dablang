@@ -55,7 +55,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 IP = 31
         27: STACK_RESERVE 0
@@ -71,7 +71,7 @@ Dump of stack:
 [   3] NIL  nil
 [   4] FIXN 0
 [   5] NIL  nil
-[   6] FIXN 4294967295
+[   6] FIXN 65535
 [   7] INVA ?
 [   8] FIXN 41
 [   9] FIXN 2
