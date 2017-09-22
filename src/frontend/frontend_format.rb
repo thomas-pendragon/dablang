@@ -1,11 +1,17 @@
 require_relative './shared.rb'
+require_relative '../compiler/_requires.rb'
 
 def read_test_file(fname)
   base_read_test_file(fname)
 end
 
 def format_source(input, output)
-  run_ruby_part(input, output, 'format source', 'format', $settings[:options])
+  input_data = File.read(input)
+  stream = DabProgramStream.new(input_data)
+  compiler = DabCompiler.new(stream)
+  program = compiler.program
+  options = $settings[:options]
+  File.open(output, 'wb') { |f| f << program.formatted_source(options) }
 end
 
 def extract_format_source(input, output)
