@@ -49,6 +49,11 @@ struct Stream
 
     dab_register_t read_reg();
 
+    uint16_t read_symbol()
+    {
+        return read_uint16();
+    }
+
     std::vector<dab_register_t> read_reglist();
 
     std::string read_vlc_string();

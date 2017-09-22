@@ -555,7 +555,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_Q_SET_CALL:
     {
         auto out_reg = input.read_reg();
-        auto symbol  = input.read_uint16();
+        auto symbol  = input.read_symbol();
         auto name    = constants[symbol].data.string;
         auto reglist = input.read_reglist();
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
@@ -564,7 +564,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_Q_VOID_CALL:
     {
         auto out_reg = -1;
-        auto symbol  = input.read_uint16();
+        auto symbol  = input.read_symbol();
         auto name    = constants[symbol].data.string;
         auto reglist = input.read_reglist();
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
@@ -573,9 +573,9 @@ bool DabVM::execute_single(Stream &input)
     case OP_Q_SET_CALL_BLOCK:
     {
         auto out_reg      = input.read_reg();
-        auto symbol       = input.read_uint16();
+        auto symbol       = input.read_symbol();
         auto name         = constants[symbol].data.string;
-        auto block_symbol = input.read_uint16();
+        auto block_symbol = input.read_symbol();
         auto block_name   = constants[block_symbol].data.string;
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
@@ -588,8 +588,8 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = -1;
 
-        auto symbol       = input.read_uint16();
-        auto block_symbol = input.read_uint16();
+        auto symbol       = input.read_symbol();
+        auto block_symbol = input.read_symbol();
         auto capture_reg  = input.read_reg();
         auto reglist      = input.read_reglist();
 
