@@ -139,6 +139,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg(arg0) <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
       {name: 'Q_SET_TRUE', args: %i[reg]}, # reg(arg0) <- true
       {name: 'Q_SET_FALSE', args: %i[reg]}, # reg(arg0) <- false
+      {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg(arg0) <- self.@arg1
     ],
   },
   {

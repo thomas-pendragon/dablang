@@ -500,7 +500,7 @@ struct DabVM
     DabClass &define_builtin_class(const std::string &name, size_t class_index,
                                    size_t superclass_index = CLASS_OBJECT);
 
-    void get_instvar(const std::string &name);
+    void get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg);
     void set_instvar(const std::string &name, const DabValue &value);
     void push_array(size_t n);
 

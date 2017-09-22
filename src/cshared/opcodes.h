@@ -65,5 +65,6 @@ enum
     OP_Q_SET_CALL_BLOCK   = 0x3C,
     OP_Q_SET_TRUE         = 0x3D,
     OP_Q_SET_FALSE        = 0x3E,
-    OP_Q_RELEASE          = 0x3F,
+    OP_Q_SET_INSTVAR      = 0x3F,
+    OP_Q_RELEASE          = 0x40,
 };

@@ -839,7 +839,15 @@ bool DabVM::execute_single(Stream &input)
     case OP_PUSH_INSTVAR:
     {
         auto name = stack.pop_symbol();
-        get_instvar(name);
+        get_instvar(name, false, dab_register_t::nilreg());
+        break;
+    }
+    case OP_Q_SET_INSTVAR:
+    {
+        auto out_reg = input.read_reg();
+        auto symbol  = input.read_symbol();
+        auto name    = constants[symbol].data.string;
+        get_instvar(name, true, out_reg);
         break;
     }
     case OP_SET_INSTVAR:
@@ -990,9 +998,17 @@ void DabVM::push_array(size_t n)
     stack.push_value(value);
 }
 
-void DabVM::get_instvar(const std::string &name)
+void DabVM::get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg)
 {
-    stack.push_value(get_self().get_instvar(name));
+    auto value = get_self().get_instvar(name);
+    if (use_out_reg)
+    {
+        register_set(out_reg, value);
+    }
+    else
+    {
+        stack.push_value(value);
+    }
 }
 
 void DabVM::set_instvar(const std::string &name, const DabValue &value)

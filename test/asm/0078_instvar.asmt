@@ -24,9 +24,7 @@ func foo()
                                  STACK_RESERVE 0
                                  PUSH_NUMBER 12
                                  SET_INSTVAR a
-/* a            */               PUSH_CONSTANT 0
-                                 PUSH_INSTVAR 
-                                 Q_SET_POP R0
+/* @a           */               Q_SET_INSTVAR R0, S0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN
