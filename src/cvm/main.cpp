@@ -850,6 +850,15 @@ bool DabVM::execute_single(Stream &input)
         get_instvar(name, true, out_reg);
         break;
     }
+    case OP_Q_CHANGE_INSTVAR:
+    {
+        auto symbol = input.read_symbol();
+        auto reg    = input.read_reg();
+        auto name   = constants[symbol].data.string;
+        auto value  = register_get(reg);
+        set_instvar(name, value);
+        break;
+    }
     case OP_SET_INSTVAR:
     {
         auto name  = input.read_vlc_string();

@@ -22,9 +22,9 @@ func foo()
  
                    CFoo_Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 12
-                                 SET_INSTVAR a
-/* @a           */               Q_SET_INSTVAR R0, S0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* 12           */               Q_SET_NUMBER R0, 12
+/* @a=          */               Q_CHANGE_INSTVAR S0, R0
+/* @a           */               Q_SET_INSTVAR R1, S0
+                                 Q_SET_SYSCALL RNIL, 0, R1
                                  PUSH_NIL 
                                  RETURN

@@ -1,11 +1,12 @@
 require_relative 'node.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeSetInstVar < DabNode
-  attr_reader :identifier
+  lower_with Uncomplexify
 
   def initialize(identifier, value)
     super()
-    @identifier = identifier
+    insert(identifier[1..-1])
     insert(value)
   end
 
@@ -13,13 +14,22 @@ class DabNodeSetInstVar < DabNode
     "<#{identifier}>"
   end
 
-  def value
+  def node_identifier
     self[0]
   end
 
+  def value
+    self[1]
+  end
+
+  def identifier
+    '@' + node_identifier.extra_value
+  end
+
   def compile(output)
-    value.compile(output)
-    output.print('SET_INSTVAR', identifier[1..-1])
+    reg = value.input_register
+    output.comment(identifier + '=')
+    output.printex(self, 'Q_CHANGE_INSTVAR', "S#{node_identifier.index}", "R#{reg}")
   end
 
   def formatted_source(options)
@@ -28,5 +38,13 @@ class DabNodeSetInstVar < DabNode
 
   def returns_value?
     false
+  end
+
+  def uncomplexify_args
+    [value]
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

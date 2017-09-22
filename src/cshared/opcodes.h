@@ -67,4 +67,5 @@ enum
     OP_Q_SET_FALSE        = 0x3E,
     OP_Q_SET_INSTVAR      = 0x3F,
     OP_Q_RELEASE          = 0x40,
+    OP_Q_CHANGE_INSTVAR   = 0x41,
 };
