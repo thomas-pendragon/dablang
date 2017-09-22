@@ -1492,7 +1492,10 @@ int main(int argc, char **argv)
     while (!feof(stream))
     {
         size_t bytes = fread(buffer, 1, 1024, stream);
-        input.append(buffer, bytes);
+        if (bytes)
+        {
+            input.append(buffer, bytes);
+        }
     }
     DabVM vm;
     vm.dab_output      = options.output;
