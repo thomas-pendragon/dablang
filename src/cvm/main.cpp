@@ -811,9 +811,12 @@ bool DabVM::execute_single(Stream &input)
         auto n_args   = reglist.size();
         auto n_rets   = 1;
         auto recv     = register_get(self_reg);
-        fprintf(stderr, "vm: instcall, recv = ");
-        recv.dump(stderr);
-        fprintf(stderr, "\n");
+        if (verbose)
+        {
+            fprintf(stderr, "vm: instcall, recv = ");
+            recv.dump(stderr);
+            fprintf(stderr, "\n");
+        }
         instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
         break;
     }
