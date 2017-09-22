@@ -18,6 +18,6 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_NUMBER_UINT8 144
                                  Q_SET_POP R0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN

@@ -34,20 +34,20 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* "a"          */               Q_SET_CONSTANT R0, 0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_TRUE 
                                  Q_SET_POP R1
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
 /* "b"          */               Q_SET_CONSTANT R2, 1
-                                 Q_VOID_SYSCALL 0, R2
+                                 Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L3
                    L2:
 /* "c"          */               Q_SET_CONSTANT R3, 2
-                                 Q_VOID_SYSCALL 0, R3
+                                 Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L3
                    L3:
 /* "d"          */               Q_SET_CONSTANT R4, 3
-                                 Q_VOID_SYSCALL 0, R4
+                                 Q_SET_SYSCALL RNIL, 0, R4
                                  PUSH_NIL 
                                  RETURN

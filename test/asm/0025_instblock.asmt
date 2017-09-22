@@ -35,6 +35,6 @@ func tap(a)
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* arg          */               Q_SET_ARG R0, 0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN

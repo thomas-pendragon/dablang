@@ -25,12 +25,12 @@ func foo(a)
                                  STACK_RESERVE 0
                                  PUSH_TRUE 
                                  Q_SET_POP R0
-/* foo          */               Q_VOID_CALL S0, R0
+/* foo          */               Q_SET_CALL RNIL, S0, R0
                                  PUSH_TRUE 
                                  Q_SET_POP R1
-/* foo          */               Q_VOID_CALL S0, R1
+/* foo          */               Q_SET_CALL RNIL, S0, R1
                                  PUSH_FALSE 
                                  Q_SET_POP R2
-/* foo          */               Q_VOID_CALL S0, R2
+/* foo          */               Q_SET_CALL RNIL, S0, R2
                                  PUSH_NIL 
                                  RETURN

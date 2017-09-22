@@ -25,6 +25,6 @@ Instructions should pop return value if not used.
                                  STACK_RESERVE 0
                                  PUSH_STRING "foo"
                                  Q_SET_POP R0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN

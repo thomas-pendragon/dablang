@@ -50,21 +50,21 @@ func main()
                    Ffun1:
                                  STACK_RESERVE 0
 /* "fun1"       */               Q_SET_CONSTANT R0, 0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_FALSE 
                                  RETURN 
  
                    Ffun2:
                                  STACK_RESERVE 0
 /* "fun2"       */               Q_SET_CONSTANT R0, 1
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_TRUE 
                                  RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
-/* main_and     */               Q_VOID_CALL S4
-/* main_or      */               Q_VOID_CALL S5
+/* main_and     */               Q_SET_CALL RNIL, S4
+/* main_or      */               Q_SET_CALL RNIL, S5
                                  PUSH_NIL 
                                  RETURN 
  
@@ -76,7 +76,7 @@ func main()
 /* fun2         */               Q_SET_CALL R0, S3
                                  JMP L2
                    L2:
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
@@ -88,6 +88,6 @@ func main()
 /* fun2         */               Q_SET_CALL R0, S3
                                  JMP L3
                    L3:
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN

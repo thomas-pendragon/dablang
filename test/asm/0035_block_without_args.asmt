@@ -31,14 +31,14 @@ func main()
                                  STACK_RESERVE 0
                                  PUSH_HAS_BLOCK 
                                  Q_SET_POP R0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
                    Fmain:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-/* foo          */               Q_VOID_CALL_BLOCK S0, S1, R0
+/* foo          */               Q_SET_CALL_BLOCK RNIL, S0, S1, R0
                                  PUSH_NIL 
                                  RETURN 
  

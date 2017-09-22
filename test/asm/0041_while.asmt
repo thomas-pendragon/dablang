@@ -30,7 +30,7 @@ func main()
 /* >            */               Q_SET_CALL R2, S1, R0, R1
                                  Q_JMP_IF2 R2, L2, L3
                    L2:
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
 /* 1            */               Q_SET_NUMBER R3, 1
 /* -            */               Q_SET_CALL R0, S0, R0, R3
                                  JMP L1

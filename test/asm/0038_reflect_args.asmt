@@ -32,6 +32,6 @@ func foo(a, b<Uint8>)
 /* foo          */               PUSH_CONSTANT 0
                                  REFLECT 0
                                  Q_SET_POP R2
-                                 Q_VOID_SYSCALL 0, R2
+                                 Q_SET_SYSCALL RNIL, 0, R2
                                  PUSH_NIL 
                                  RETURN

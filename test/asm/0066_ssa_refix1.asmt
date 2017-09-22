@@ -50,7 +50,7 @@ func main()
                                  Q_SET_REG R3, R2
                                  JMP L3
                    L3:
-                                 Q_VOID_SYSCALL 0, R2
-                                 Q_VOID_SYSCALL 0, R3
+                                 Q_SET_SYSCALL RNIL, 0, R2
+                                 Q_SET_SYSCALL RNIL, 0, R3
                                  PUSH_NIL 
                                  RETURN

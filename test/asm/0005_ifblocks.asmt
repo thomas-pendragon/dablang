@@ -52,21 +52,21 @@ func foo(a, b)
                                  Q_JMP_IF2 R0, L3, L4
                    L3:
 /* "a && b"     */               Q_SET_CONSTANT R2, 3
-                                 Q_VOID_SYSCALL 0, R2
+                                 Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L5
                    L4:
 /* "a && !b"    */               Q_SET_CONSTANT R3, 2
-                                 Q_VOID_SYSCALL 0, R3
+                                 Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L5
                    L2:
                                  Q_JMP_IF2 R0, L6, L7
                    L6:
 /* "!a && b"    */               Q_SET_CONSTANT R4, 1
-                                 Q_VOID_SYSCALL 0, R4
+                                 Q_SET_SYSCALL RNIL, 0, R4
                                  JMP L5
                    L7:
 /* "!a && !b"   */               Q_SET_CONSTANT R5, 0
-                                 Q_VOID_SYSCALL 0, R5
+                                 Q_SET_SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:
                                  PUSH_NIL 

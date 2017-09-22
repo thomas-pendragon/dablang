@@ -90,7 +90,7 @@ class DabNodeCall < DabNodeExternalBasecall
     end
     args = ["S#{symbol_index}", blockarg, capture_arg, list].compact
     output.comment(self.real_identifier)
-    output.printex(self, 'Q_VOID_CALL' + (has_block? ? '_BLOCK' : ''), *args)
+    output.printex(self, 'Q_SET_CALL' + (has_block? ? '_BLOCK' : ''), 'RNIL', *args)
   end
 
   def symbol_index

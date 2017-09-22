@@ -33,12 +33,12 @@ IP = 11
 >       11: STACK_RESERVE 0
         14: PUSH_TRUE 
         15: Q_SET_POP R0
-        18: Q_JMP_IF2 R0, 7, 26
+        18: Q_JMP_IF2 R0, 7, 28
         25: Q_SET_NUMBER R1, 1
-        36: Q_VOID_SYSCALL 0, R1
-        41: JMP 22
-        44: Q_SET_NUMBER R2, 2
-        55: Q_VOID_SYSCALL 0, R2
-        60: JMP 3
-        63: PUSH_NIL 
-        64: RETURN
+        36: Q_SET_SYSCALL RNIL, 0, R1
+        43: JMP 24
+        46: Q_SET_NUMBER R2, 2
+        57: Q_SET_SYSCALL RNIL, 0, R2
+        64: JMP 3
+        67: PUSH_NIL 
+        68: RETURN

@@ -39,7 +39,7 @@ should not generate unnecesary register writes
                                  Q_JMP_IF2 R2, L1, L2
                    L1:
 /* "ok"         */               Q_SET_CONSTANT R3, 0
-                                 Q_VOID_SYSCALL 0, R3
+                                 Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
                                  PUSH_NIL 

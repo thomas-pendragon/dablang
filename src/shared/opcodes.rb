@@ -144,9 +144,6 @@ OPCODES_ARRAY_BASE = [
     group: 'REGISTER-BASED OPCODES - OTHER',
     items:
     [
-      {name: 'Q_VOID_CALL', args: %i[symbol reglist]}, # call(symbol(arg0), arg1..argn)
-      {name: 'Q_VOID_CALL_BLOCK', args: %i[symbol symbol reg reglist]}, # call(symbol(arg0), block=arg1, capture=arg2, args=arg3..argn)
-      {name: 'Q_VOID_SYSCALL', args: %i[uint8 reglist]}, # syscall(arg1, arg2...argn)
       {name: 'Q_RELEASE', args: %i{reg}}, # release(reg(arg0))
     ],
   },

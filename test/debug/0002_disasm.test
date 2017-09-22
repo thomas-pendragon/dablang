@@ -20,10 +20,10 @@ IP = 11
         10: BREAK_LOAD 
 >       11: STACK_RESERVE 0
         14: Q_SET_NUMBER R0, 12
-        25: Q_VOID_SYSCALL 0, R0
+        25: Q_SET_SYSCALL RNIL, 0, R0
 IP = 14
         10: BREAK_LOAD 
         11: STACK_RESERVE 0
 >       14: Q_SET_NUMBER R0, 12
-        25: Q_VOID_SYSCALL 0, R0
-        30: PUSH_NIL
+        25: Q_SET_SYSCALL RNIL, 0, R0
+        32: PUSH_NIL

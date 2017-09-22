@@ -10,7 +10,7 @@
                    Fmain:
                                  STACK_RESERVE 0
 /* "hello world */               Q_SET_CONSTANT R0, 0
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN 
 
@@ -44,16 +44,16 @@ IP = 24
         23: BREAK_LOAD 
 >       24: STACK_RESERVE 0
         27: Q_SET_CONSTANT R0, 0
-        32: Q_VOID_SYSCALL 0, R0
-        37: PUSH_NIL 
-        38: RETURN 
+        32: Q_SET_SYSCALL RNIL, 0, R0
+        39: PUSH_NIL 
+        40: RETURN 
 debug: break at 27.
 IP = 27
         23: BREAK_LOAD 
         24: STACK_RESERVE 0
 >       27: Q_SET_CONSTANT R0, 0
-        32: Q_VOID_SYSCALL 0, R0
-        37: PUSH_NIL 
+        32: Q_SET_SYSCALL RNIL, 0, R0
+        39: PUSH_NIL 
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -68,9 +68,9 @@ Registers:
 IP = 32
         24: STACK_RESERVE 0
         27: Q_SET_CONSTANT R0, 0
->       32: Q_VOID_SYSCALL 0, R0
-        37: PUSH_NIL 
-        38: RETURN 
+>       32: Q_SET_SYSCALL RNIL, 0, R0
+        39: PUSH_NIL 
+        40: RETURN 
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -83,11 +83,11 @@ Dump of stack:
 [   7] INVA ?
 Registers:
 R0: STRI "hello world"
-hello worldIP = 37
+hello worldIP = 39
         27: Q_SET_CONSTANT R0, 0
-        32: Q_VOID_SYSCALL 0, R0
->       37: PUSH_NIL 
-        38: RETURN 
+        32: Q_SET_SYSCALL RNIL, 0, R0
+>       39: PUSH_NIL 
+        40: RETURN 
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -100,10 +100,10 @@ Dump of stack:
 [   7] INVA ?
 Registers:
 R0: STRI "hello world"
-IP = 38
-        32: Q_VOID_SYSCALL 0, R0
-        37: PUSH_NIL 
->       38: RETURN 
+IP = 40
+        32: Q_SET_SYSCALL RNIL, 0, R0
+        39: PUSH_NIL 
+>       40: RETURN 
 Stack:
 Dump of stack:
 [   0] FIXN 0

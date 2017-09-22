@@ -23,6 +23,6 @@ func foo()
                                  PUSH_STRING "abc"
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL R1, 2, R0
-                                 Q_VOID_SYSCALL 0, R1
+                                 Q_SET_SYSCALL RNIL, 0, R1
                                  PUSH_NIL 
                                  RETURN

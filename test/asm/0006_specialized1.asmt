@@ -30,7 +30,7 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               Q_SET_CONSTANT R0, 0
-/* foo          */               Q_VOID_CALL S2, R0
+/* foo          */               Q_SET_CALL RNIL, S2, R0
                                  PUSH_NIL 
                                  RETURN 
  
@@ -38,6 +38,6 @@ func bar()
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
 /* class        */               Q_SET_INSTCALL R1, R0, S1
-                                 Q_VOID_SYSCALL 0, R1
+                                 Q_SET_SYSCALL RNIL, 0, R1
                                  PUSH_NIL 
                                  RETURN

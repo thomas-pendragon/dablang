@@ -32,7 +32,7 @@ DabVMReset::~DabVMReset()
     $VM = nullptr;
 }
 
-void DabVM::kernel_print(dab_register_t out_reg, bool use_reglist,
+void DabVM::kernel_print(bool use_out_reg, dab_register_t out_reg, bool use_reglist,
                          std::vector<dab_register_t> reglist, bool output_value)
 {
     DabValue arg;
@@ -73,7 +73,10 @@ void DabVM::kernel_print(dab_register_t out_reg, bool use_reglist,
 
     if (out_reg.nil())
     {
-        stack.push_nil();
+        if (!use_out_reg)
+        {
+            stack.push_nil();
+        }
     }
     else
     {
@@ -226,11 +229,11 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
         {
             fprintf(stderr, "vm: initialize attributes\n");
             instructions.rewind();
-            call(-1, "__init", 0, "", nullptr);
+            call(dab_register_t::nilreg(), "__init", 0, "", nullptr);
             execute(instructions);
         }
         instructions.rewind();
-        call(-1, "main", 0, "", nullptr);
+        call(dab_register_t::nilreg(), "main", 0, "", nullptr);
         if (autorun)
         {
             execute(instructions);
@@ -549,21 +552,12 @@ bool DabVM::execute_single(Stream &input)
     {
         auto name   = stack.pop_symbol();
         auto n_args = input.read_uint16();
-        call(-1, name, n_args, "", nullptr);
+        call(dab_register_t::nilreg(), name, n_args, "", nullptr);
         break;
     }
     case OP_Q_SET_CALL:
     {
         auto out_reg = input.read_reg();
-        auto symbol  = input.read_symbol();
-        auto name    = constants[symbol].data.string;
-        auto reglist = input.read_reglist();
-        call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
-        break;
-    }
-    case OP_Q_VOID_CALL:
-    {
-        auto out_reg = -1;
         auto symbol  = input.read_symbol();
         auto name    = constants[symbol].data.string;
         auto reglist = input.read_reglist();
@@ -584,22 +578,6 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
         break;
     }
-    case OP_Q_VOID_CALL_BLOCK:
-    {
-        auto out_reg = -1;
-
-        auto symbol       = input.read_symbol();
-        auto block_symbol = input.read_symbol();
-        auto capture_reg  = input.read_reg();
-        auto reglist      = input.read_reglist();
-
-        auto name       = constants[symbol].data.string;
-        auto block_name = constants[block_symbol].data.string;
-        auto capture    = register_get(capture_reg);
-
-        call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
-        break;
-    }
     case OP_HARDCALL_BLOCK:
     case OP_CALL_BLOCK:
     {
@@ -609,7 +587,7 @@ bool DabVM::execute_single(Stream &input)
         auto n_args     = input.read_uint16();
         auto n_rets     = 1;
         assert(n_rets == 1);
-        call(-1, name, n_args, block_name, capture);
+        call(dab_register_t::nilreg(), name, n_args, block_name, capture);
         break;
     }
     case OP_YIELD:
@@ -627,7 +605,7 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, ".\n");
         }
 
-        push_new_frame(true, self, n_args, 0, -1, get_block_capture());
+        push_new_frame(true, self, n_args, 0, dab_register_t::nilreg(), get_block_capture());
         instructions.seek(addr);
 
         break;
@@ -783,7 +761,7 @@ bool DabVM::execute_single(Stream &input)
     case OP_SYSCALL:
     {
         auto call = input.read_uint8();
-        kernelcall(-1, call, false, {}, true);
+        kernelcall(false, dab_register_t::nilreg(), call, false, {}, true);
         break;
     }
     case OP_Q_SET_SYSCALL:
@@ -791,14 +769,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg     = input.read_reg();
         auto call    = input.read_uint8();
         auto reglist = input.read_reglist();
-        kernelcall(reg, call, true, reglist, true);
-        break;
-    }
-    case OP_Q_VOID_SYSCALL:
-    {
-        auto call    = input.read_uint8();
-        auto reglist = input.read_reglist();
-        kernelcall(-1, call, true, reglist, false);
+        kernelcall(true, reg, call, true, reglist, true);
         break;
     }
     case OP_DEFINE_CLASS:
@@ -1177,7 +1148,7 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
         stack.push(arg);
     }
 
-    push_new_frame(true, self, n_args, 0, -1, get_block_capture());
+    push_new_frame(true, self, n_args, 0, dab_register_t::nilreg(), get_block_capture());
     instructions.seek((size_t)block_addr);
 
     // temporary hack
@@ -1187,14 +1158,14 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
     }
 }
 
-void DabVM::kernelcall(dab_register_t out_reg, int call, bool use_reglist,
+void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool use_reglist,
                        std::vector<dab_register_t> reglist, bool output_value)
 {
     switch (call)
     {
     case KERNEL_PRINT:
     {
-        kernel_print(out_reg, use_reglist, reglist, output_value);
+        kernel_print(use_out_reg, out_reg, use_reglist, reglist, output_value);
         break;
     }
     case KERNEL_EXIT:
@@ -1232,7 +1203,10 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, bool use_reglist,
 
         if (out_reg.nil())
         {
-            stack.push_value(dab_value);
+            if (!use_out_reg)
+            {
+                stack.push_value(dab_value);
+            }
         }
         else
         {

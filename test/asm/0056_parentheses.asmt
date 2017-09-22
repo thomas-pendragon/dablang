@@ -20,6 +20,6 @@ func foo(a)
                    Ffoo:
                                  STACK_RESERVE 0
 /* 4            */               Q_SET_NUMBER R0, 4
-                                 Q_VOID_SYSCALL 0, R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN

@@ -40,9 +40,9 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               Q_SET_CONSTANT R0, 2
-/* foo          */               Q_VOID_CALL S3, R0
+/* foo          */               Q_SET_CALL RNIL, S3, R0
 /* 12           */               Q_SET_NUMBER R1, 12
-/* foo          */               Q_VOID_CALL S3, R1
+/* foo          */               Q_SET_CALL RNIL, S3, R1
                                  PUSH_NIL 
                                  RETURN 
  
@@ -54,7 +54,7 @@ func bar()
                                  Q_JMP_IF2 R2, L1, L2
                    L1:
 /* "got string" */               Q_SET_CONSTANT R3, 1
-                                 Q_VOID_SYSCALL 0, R3
+                                 Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
 /* Fixnum       */               Q_SET_CLASS R4, 2
@@ -62,7 +62,7 @@ func bar()
                                  Q_JMP_IF2 R5, L3, L4
                    L3:
 /* "got fixnum" */               Q_SET_CONSTANT R6, 0
-                                 Q_VOID_SYSCALL 0, R6
+                                 Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
                                  PUSH_NIL 
