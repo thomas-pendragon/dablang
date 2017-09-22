@@ -50,47 +50,44 @@ class DabNodeCall < DabNodeExternalBasecall
     self[3..-1]
   end
 
-  def compile_as_ssa(output, output_register)
+  def _compile(output, output_register)
     unless identifier.is_a? DabNodeConstantReference
       raise 'symbol must be reference' unless $no_constants
       compile(output)
-      output.print('Q_SET_POP', "R#{output_register}")
+      if output_register.nil?
+        output.print('POP', 1)
+      else
+        output.print('Q_SET_POP', "R#{output_register}")
+      end
       return
     end
 
-    output.comment(self.real_identifier)
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     list = nil if list.empty?
 
-    blockarg = "S#{block_symbol_index}" if has_block?
-    capture_arg = "R#{block_capture.input_register}" if has_block?
+    if has_block?
+      blockarg = "S#{block_symbol_index}"
+      capture_arg = "R#{block_capture.input_register}"
+    end
+
     args = [
-      "R#{output_register}",
+      output_register.nil? ? 'RNIL' : "R#{output_register}",
       "S#{symbol_index}",
       blockarg,
       capture_arg,
       list,
     ].compact
 
+    output.comment(self.real_identifier)
     output.printex(self, 'Q_SET_CALL' + (has_block? ? '_BLOCK' : ''), *args)
   end
 
-  def compile_top_level(output)
-    unless identifier.is_a? DabNodeConstantReference
-      raise 'symbol must be reference' unless $no_constants
-      compile(output)
-      output.print('POP', 1)
-      return
-    end
+  def compile_as_ssa(output, output_register)
+    _compile(output, output_register)
+  end
 
-    blockarg = "S#{block_symbol_index}" if has_block?
-    list = args.map(&:input_register).map { |arg| "R#{arg}" }
-    if has_block?
-      capture_arg = "R#{block_capture.input_register}"
-    end
-    args = ["S#{symbol_index}", blockarg, capture_arg, list].compact
-    output.comment(self.real_identifier)
-    output.printex(self, 'Q_SET_CALL' + (has_block? ? '_BLOCK' : ''), 'RNIL', *args)
+  def compile_top_level(output)
+    _compile(output, nil)
   end
 
   def symbol_index
