@@ -7,7 +7,7 @@ class DabNodeReferenceInstVar < DabNodeReference
   end
 
   def compiled
-    DabNodeClassVar.new(@name)
+    DabNodeInstanceVar.new(@name)
   end
 
   def formatted_source(_options)

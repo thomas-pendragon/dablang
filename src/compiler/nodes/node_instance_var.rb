@@ -1,6 +1,6 @@
 require_relative 'node.rb'
 
-class DabNodeClassVar < DabNode
+class DabNodeInstanceVar < DabNode
   attr_accessor :identifier
 
   def initialize(identifier)

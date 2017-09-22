@@ -618,7 +618,7 @@ class DabContext < DabBaseContext
   def read_instvar
     on_subcontext do |subcontext|
       next unless id = subcontext.read_classvar
-      DabNodeClassVar.new(id)
+      DabNodeInstanceVar.new(id)
     end
   end
 
