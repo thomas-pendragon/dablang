@@ -117,21 +117,27 @@ void parse_asm(bool raw, std::function<void(Op)> func)
         {
             switch (arg)
             {
-            case ARG_UINT8:
+            case OpcodeArg::ARG_UINT8:
                 op.data.push_back(stream.read_uint8());
                 break;
-            case ARG_UINT16:
+            case OpcodeArg::ARG_UINT16:
                 op.data.push_back(stream.read_uint16());
                 break;
-            case ARG_UINT64:
+            case OpcodeArg::ARG_UINT64:
                 op.data.push_back(stream.read_uint64());
                 break;
-            case ARG_INT16:
+            case OpcodeArg::ARG_INT16:
                 op.data.push_back(stream.read_int16());
                 break;
-            case ARG_VLC:
+            case OpcodeArg::ARG_VLC:
                 op.data.push_back(stream.read_vlc());
                 break;
+            case OpcodeArg::ARG_UINT32:
+            case OpcodeArg::ARG_INT32:
+            case OpcodeArg::ARG_REG:
+            case OpcodeArg::ARG_SYMBOL:
+            case OpcodeArg::ARG_REGLIST:
+                fprintf(stderr, "cdumpcov: TODO\n");
             }
         }
         func(op);

@@ -178,34 +178,34 @@ struct DisasmProcessor
                 {
                     switch (arg)
                     {
-                    case ARG_UINT8:
+                    case OpcodeArg::ARG_UINT8:
                         stream.read_uint8(info);
                         break;
-                    case ARG_INT16:
+                    case OpcodeArg::ARG_INT16:
                         stream.read_int16(info);
                         break;
-                    case ARG_UINT16:
+                    case OpcodeArg::ARG_UINT16:
                         stream.read_uint16(info);
                         break;
-                    case ARG_UINT32:
+                    case OpcodeArg::ARG_UINT32:
                         stream.read_uint32(info);
                         break;
-                    case ARG_INT32:
+                    case OpcodeArg::ARG_INT32:
                         stream.read_int32(info);
                         break;
-                    case ARG_UINT64:
+                    case OpcodeArg::ARG_UINT64:
                         stream.read_uint64(info);
                         break;
-                    case ARG_REG:
+                    case OpcodeArg::ARG_REG:
                         stream.read_reg(info);
                         break;
-                    case ARG_VLC:
+                    case OpcodeArg::ARG_VLC:
                         stream.read_vlc(info);
                         break;
-                    case ARG_SYMBOL:
+                    case OpcodeArg::ARG_SYMBOL:
                         stream.read_symbol(info);
                         break;
-                    case ARG_REGLIST:
+                    case OpcodeArg::ARG_REGLIST:
                         stream.read_reglist(info);
                         break;
                     }

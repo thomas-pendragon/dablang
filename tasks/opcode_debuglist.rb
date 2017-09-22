@@ -14,7 +14,7 @@ OPCODES.each do |_key, opcode|
          else
            [opcode[:arg]].compact
          end
-  args = args.map { |arg| "ARG_#{arg.upcase}" }
+  args = args.map { |arg| "OpcodeArg::ARG_#{arg.upcase}" }
   args = args.join(', ')
   printf(format, name, name, args)
 end

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-enum
+enum class OpcodeArg
 {
     ARG_UINT8,
     ARG_UINT16,
@@ -19,7 +19,7 @@ enum
 
 struct DabOpcodeInfo
 {
-    int              opcode;
-    std::string      name;
-    std::vector<int> args;
+    int                    opcode;
+    std::string            name;
+    std::vector<OpcodeArg> args;
 };
