@@ -31,14 +31,13 @@ IP = 11
          0: LOAD_FUNCTION 11, main, 65535
         10: BREAK_LOAD 
 >       11: STACK_RESERVE 0
-        14: PUSH_TRUE 
-        15: Q_SET_POP R0
-        18: Q_JMP_IF2 R0, 7, 28
-        25: Q_SET_NUMBER R1, 1
-        36: Q_SET_SYSCALL RNIL, 0, R1
-        43: JMP 24
-        46: Q_SET_NUMBER R2, 2
-        57: Q_SET_SYSCALL RNIL, 0, R2
-        64: JMP 3
-        67: PUSH_NIL 
-        68: RETURN
+        14: Q_SET_TRUE R0
+        17: Q_JMP_IF2 R0, 7, 28
+        24: Q_SET_NUMBER R1, 1
+        35: Q_SET_SYSCALL RNIL, 0, R1
+        42: JMP 24
+        45: Q_SET_NUMBER R2, 2
+        56: Q_SET_SYSCALL RNIL, 0, R2
+        63: JMP 3
+        66: PUSH_NIL 
+        67: RETURN

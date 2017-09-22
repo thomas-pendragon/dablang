@@ -77,5 +77,7 @@ const DabOpcodeInfo g_opcodes[] = {
      "Q_SET_CALL_BLOCK",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REG,
       OpcodeArg::ARG_REGLIST}},
+    {OP_Q_SET_TRUE, "Q_SET_TRUE", {OpcodeArg::ARG_REG}},
+    {OP_Q_SET_FALSE, "Q_SET_FALSE", {OpcodeArg::ARG_REG}},
     {OP_Q_RELEASE, "Q_RELEASE", {OpcodeArg::ARG_REG}},
 };

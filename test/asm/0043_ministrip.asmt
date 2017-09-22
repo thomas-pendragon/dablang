@@ -31,16 +31,14 @@ func bar()
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
-                                 PUSH_FALSE 
-                                 Q_SET_POP R0
+                                 Q_SET_FALSE R0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN 
  
                    F__foo_String:
                                  STACK_RESERVE 0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R0
+                                 Q_SET_TRUE R0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  PUSH_NIL 
                                  RETURN 

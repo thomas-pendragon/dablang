@@ -30,10 +30,8 @@ should not generate unnecesary register writes
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R1
+                                 Q_SET_TRUE R0
+                                 Q_SET_TRUE R1
                                  Q_SET_REG R2, R0
                                  Q_SET_REG R2, R1
                                  Q_JMP_IF2 R2, L1, L2

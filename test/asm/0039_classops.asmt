@@ -23,14 +23,11 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R0
+                                 Q_SET_TRUE R0
 /* foo          */               Q_SET_CALL RNIL, S0, R0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R1
+                                 Q_SET_TRUE R1
 /* foo          */               Q_SET_CALL RNIL, S0, R1
-                                 PUSH_FALSE 
-                                 Q_SET_POP R2
+                                 Q_SET_FALSE R2
 /* foo          */               Q_SET_CALL RNIL, S0, R2
                                  PUSH_NIL 
                                  RETURN

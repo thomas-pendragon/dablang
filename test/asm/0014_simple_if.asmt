@@ -35,8 +35,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "a"          */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_TRUE 
-                                 Q_SET_POP R1
+                                 Q_SET_TRUE R1
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
 /* "b"          */               Q_SET_CONSTANT R2, 1
