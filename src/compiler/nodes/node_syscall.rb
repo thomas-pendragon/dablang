@@ -21,21 +21,18 @@ class DabNodeSyscall < DabNodeBasecall
     identifier
   end
 
-  def compile(output)
-    args.each { |arg| arg.compile(output) }
-    output.printex(self, 'SYSCALL', @call)
+  def _compile(output, output_register)
+    output.comment(self.extra_value)
+    list = args.map(&:input_register).map { |arg| "R#{arg}" }
+    output.printex(self, 'Q_SET_SYSCALL', output_register, @call, list)
   end
 
   def compile_as_ssa(output, output_register)
-    output.comment(self.extra_value)
-    list = args.map(&:input_register).map { |arg| "R#{arg}" }
-    output.printex(self, 'Q_SET_SYSCALL', "R#{output_register}", @call, list)
+    _compile(output, "R#{output_register}")
   end
 
   def compile_top_level(output)
-    output.comment(self.extra_value)
-    list = args.map(&:input_register).map { |arg| "R#{arg}" }
-    output.printex(self, 'Q_SET_SYSCALL', 'RNIL', @call, list)
+    _compile(output, 'RNIL')
   end
 
   def target_function

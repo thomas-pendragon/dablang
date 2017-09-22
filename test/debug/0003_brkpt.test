@@ -6,27 +6,30 @@ BREAK_LOAD
 Fmain:
   STACK_RESERVE 0
   PUSH_STRING "foo\n"
-  SYSCALL 0
+  Q_SET_POP R0
+  Q_SET_SYSCALL RNIL, 0, R0
+  PUSH_NIL
   PUSH_STRING "bar\n"
-  SYSCALL 0
-  PUSH_NIL 
+  Q_SET_POP R0
+  Q_SET_SYSCALL RNIL, 0, R0
+  PUSH_NIL
   RETURN 
 
 ## INPUT
 
-break 28
+break 40
 run
 code
 quit
 
 ## EXPECT STDOUT
 
-debug: break at 28.
+debug: break at 40.
 foo
-IP = 28
-        20: SYSCALL 0
-        22: PUSH_STRING bar
+IP = 40
+        31: PUSH_STRING bar
 
->       28: SYSCALL 0
-        30: PUSH_NIL 
-        31: RETURN 
+        37: Q_SET_POP R0
+>       40: Q_SET_SYSCALL RNIL, 0, R0
+        47: PUSH_NIL 
+        48: RETURN

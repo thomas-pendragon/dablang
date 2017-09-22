@@ -15,8 +15,8 @@
                    Fmain:
                                  STACK_RESERVE 0
                                  Q_SET_CALL R7, S0
-                                 PUSH_SSA R7
-                                 SYSCALL 0
+                                 Q_SET_SYSCALL RNIL, 0, R7
+                                 PUSH_NIL
                                  RETURN
 
 ## INPUT
@@ -43,9 +43,9 @@ IP = 32
         31: RETURN 
 >       32: STACK_RESERVE 0
         35: Q_SET_CALL R7, S0
-        41: PUSH_SSA R7
-        44: SYSCALL 0
-        46: RETURN 
+        41: Q_SET_SYSCALL RNIL, 0, R7
+        48: PUSH_NIL 
+        49: RETURN 
 debug: break at 31.
 Stack:
 Dump of stack:

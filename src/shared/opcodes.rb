@@ -77,7 +77,6 @@ OPCODES_ARRAY_BASE = [
       {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 4), push(1)
       {name: 'HARDCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 1), push(1)
       {name: 'HARDCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-      {name: 'SYSCALL', args: %i{uint8}}, # depends on the call
       {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
     ],
   },

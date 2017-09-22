@@ -32,7 +32,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_INSTCALL_BLOCK, "INSTCALL_BLOCK", {OpcodeArg::ARG_UINT16}},
     {OP_HARDCALL, "HARDCALL", {OpcodeArg::ARG_UINT16}},
     {OP_HARDCALL_BLOCK, "HARDCALL_BLOCK", {OpcodeArg::ARG_UINT16}},
-    {OP_SYSCALL, "SYSCALL", {OpcodeArg::ARG_UINT8}},
     {OP_CAST, "CAST", {OpcodeArg::ARG_UINT16}},
     {OP_JMP, "JMP", {OpcodeArg::ARG_INT16}},
     {OP_JMP_IF, "JMP_IF", {OpcodeArg::ARG_INT16}},

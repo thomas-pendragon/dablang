@@ -758,12 +758,6 @@ bool DabVM::execute_single(Stream &input)
         stack.push(var);
         break;
     }
-    case OP_SYSCALL:
-    {
-        auto call = input.read_uint8();
-        kernelcall(false, dab_register_t::nilreg(), call, false, {}, true);
-        break;
-    }
     case OP_Q_SET_SYSCALL:
     {
         auto reg     = input.read_reg();
