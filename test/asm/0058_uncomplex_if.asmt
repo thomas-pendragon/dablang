@@ -50,7 +50,8 @@ func main()
                                  JMP L2
                    L2:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R7
+                                 PUSH_SSA R7
                                  RETURN 
  
                    Fmain:
@@ -59,5 +60,6 @@ func main()
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S3, R0
 /* 2            */               Q_SET_NUMBER R1, 2
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S3, R1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN

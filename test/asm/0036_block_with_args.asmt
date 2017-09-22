@@ -32,7 +32,8 @@ func main()
                                  PUSH_HAS_BLOCK 
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN 
  
                    Fmain:
@@ -40,10 +41,12 @@ func main()
 /* 1            */               Q_SET_NUMBER R0, 1
                                  Q_SET_NIL R1
 /* __foo_Fixnum */               Q_SET_CALL_BLOCK RNIL, S0, S1, R1, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN 
  
                    Fmain__block1:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN

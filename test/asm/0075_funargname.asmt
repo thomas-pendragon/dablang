@@ -21,15 +21,18 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Fsetsockopt:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Fsocket:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN

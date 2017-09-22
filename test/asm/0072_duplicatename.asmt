@@ -54,19 +54,22 @@ func main()
 /* run          */               PUSH_CONSTANT 3
                                  INSTCALL 0
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R4
+                                 PUSH_SSA R4
                                  RETURN 
  
                    CBar_Frun:
                                  STACK_RESERVE 0
 /* "bar"        */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN 
  
                    CFoo_Frun:
                                  STACK_RESERVE 0
 /* "foo"        */               Q_SET_CONSTANT R0, 1
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

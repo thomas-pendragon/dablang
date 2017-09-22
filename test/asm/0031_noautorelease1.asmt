@@ -26,5 +26,6 @@ Instructions should pop return value if not used.
                                  PUSH_STRING "foo"
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

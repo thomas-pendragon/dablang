@@ -29,7 +29,8 @@ func main()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Fmain:
@@ -42,5 +43,6 @@ func main()
                                  JMP L2
                    L2:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN

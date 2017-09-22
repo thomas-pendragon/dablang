@@ -56,5 +56,6 @@ class Array
 /* +            */               Q_SET_CALL R0, S1, R0, R5
                                  JMP L1
                    L3:
-                                 PUSH_NIL 
+                                 Q_SET_NIL R6
+                                 PUSH_SSA R6
                                  RETURN

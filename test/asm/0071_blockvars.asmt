@@ -38,7 +38,8 @@ func main()
                                  PUSH_ARRAY 1
                                  Q_SET_POP R1
 /* test         */               Q_SET_CALL_BLOCK RNIL, S2, S0, R1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN 
  
                    Fmain__block1:
@@ -46,12 +47,14 @@ func main()
 /* bar          */               Q_SET_ARG R0, 0
                                  Q_SET_CLOSURE R1, 0
 /* qux          */               Q_SET_CALL RNIL, S1, R0, R1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN 
  
                    Fqux:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Ftest:
@@ -59,5 +62,6 @@ func main()
                                  PUSH_NUMBER 1
                                  YIELD 1
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN

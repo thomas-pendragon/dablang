@@ -28,12 +28,14 @@ func main_or()
  
                    Ffun1:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Ffun2:
                                  STACK_RESERVE 0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN 
  
                    Fmain_or:
@@ -45,5 +47,6 @@ func main_or()
                                  JMP L1
                    L1:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

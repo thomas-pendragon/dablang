@@ -25,4 +25,6 @@ func addfunc()
                                  PUSH_SSA R1
                                  PUSH_SYMBOL "+"
                                  CALL 2
+                                 Q_SET_POP R2
+                                 PUSH_SSA R2
                                  RETURN

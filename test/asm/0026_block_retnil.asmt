@@ -40,7 +40,8 @@ func tap()
                                  PUSH_SSA R1
                                  CALL_BLOCK 0
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN 
  
                    Ftap__block1:
@@ -48,7 +49,8 @@ func tap()
                                  PUSH_STRING "ok"
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN 
  
                    Ftap__block2:
@@ -56,5 +58,6 @@ func tap()
                                  PUSH_STRING "ok"
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

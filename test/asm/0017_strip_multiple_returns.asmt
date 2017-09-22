@@ -21,5 +21,6 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 12
+/* 12           */               Q_SET_NUMBER R0, 12
+                                 PUSH_SSA R0
                                  RETURN

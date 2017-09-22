@@ -28,7 +28,8 @@ func main()
                                  PUSH_STRING "String"
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN 
  
                    Fmain:
@@ -39,5 +40,6 @@ func main()
                                  PUSH_SYMBOL __foo_String
                                  CALL 1
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

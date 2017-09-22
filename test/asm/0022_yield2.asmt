@@ -29,5 +29,6 @@ func yield1()
                                  PUSH_STRING "foo"
                                  YIELD 2
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN

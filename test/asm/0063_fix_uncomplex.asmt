@@ -34,5 +34,6 @@ func main()
 /* -            */               Q_SET_CALL R0, S0, R0, R1
                                  JMP L1
                    L3:
-                                 PUSH_NIL 
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN

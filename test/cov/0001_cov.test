@@ -44,17 +44,17 @@ func main()
                4:   {
                5:     if (x)
                6:     { 
-    2 hits     7:       return "a";
+               7:       return "a";
                8:     }
                9:     else
               10:     {
-     miss     11:       return "x";
+              11:       return "x";
               12:     };
               13:   }
               14: 
     1 hit     15:   func c()
               16:   {
-     miss     17:     return 12;
+              17:     return 12;
               18:   }
               19: }
               20: 
@@ -63,7 +63,7 @@ func main()
     1 hit     23:   func b()
               24:   {
     1 hit     25:     var n = self.a(true);
-    2 hits    26:     return "b" + n;
+    1 hit     26:     return "b" + n;
               27:   }
               28: }
               29: 

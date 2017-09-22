@@ -26,5 +26,6 @@ func foo()
 /* String       */               Q_SET_CLASS R1, 1
 /* new          */               Q_SET_INSTCALL R2, R1, S1, R0
                                  Q_SET_SYSCALL RNIL, 0, R2
-                                 PUSH_NIL 
+                                 Q_SET_NIL R3
+                                 PUSH_SSA R3
                                  RETURN

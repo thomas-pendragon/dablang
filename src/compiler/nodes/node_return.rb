@@ -1,8 +1,10 @@
 require_relative 'node.rb'
 require_relative '../processors/check_return_type.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeReturn < DabNode
   check_with CheckReturnType
+  lower_with Uncomplexify
 
   def initialize(value)
     super()
@@ -24,5 +26,13 @@ class DabNodeReturn < DabNode
 
   def returns_value?
     false
+  end
+
+  def uncomplexify_args
+    [value]
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

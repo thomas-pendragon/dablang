@@ -29,12 +29,14 @@ func tap(a)
                                  PUSH_NIL 
                                  INSTCALL_BLOCK 0
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN 
  
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* arg          */               Q_SET_ARG R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

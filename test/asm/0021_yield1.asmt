@@ -21,5 +21,6 @@ func yield1()
                                  STACK_RESERVE 0
                                  YIELD 0
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R0
+                                 PUSH_SSA R0
                                  RETURN

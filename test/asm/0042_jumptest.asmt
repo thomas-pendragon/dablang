@@ -29,5 +29,6 @@ func foo(a)
                                  POP 1
                                  PUSH_SSA R0
                                  POP 1
-                                 PUSH_NIL 
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

@@ -33,5 +33,6 @@ func foo(a, b<Uint8>)
                                  REFLECT 0
                                  Q_SET_POP R2
                                  Q_SET_SYSCALL RNIL, 0, R2
-                                 PUSH_NIL 
+                                 Q_SET_NIL R3
+                                 PUSH_SSA R3
                                  RETURN
