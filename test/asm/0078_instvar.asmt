@@ -1,0 +1,29 @@
+## CODE
+
+class Foo
+{
+func foo() 
+{
+  @a = 12;
+  print(@a);
+}
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION CFoo_Ffoo, foo, 256
+ 
+                                 BREAK_LOAD 
+ 
+                   CFoo_Ffoo:
+                                 STACK_RESERVE 0
+                                 PUSH_NUMBER 12
+                                 SET_INSTVAR a
+                                 PUSH_INSTVAR a
+                                 Q_SET_POP R0
+                                 Q_SET_SYSCALL RNIL, 0, R0
+                                 PUSH_NIL 
+                                 RETURN
