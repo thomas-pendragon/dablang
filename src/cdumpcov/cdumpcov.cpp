@@ -13,6 +13,13 @@ struct Arg
     Arg(uint64_t fixnum) : fixnum(fixnum)
     {
     }
+    Arg(dab_register_t reg) : fixnum(reg.value())
+    {
+    }
+    Arg(std::vector<dab_register_t> regs)
+    {
+        (void)regs;
+    }
     Arg(std::string string) : string(string)
     {
     }
@@ -82,11 +89,20 @@ void parse_asm(bool raw, std::function<void(Op)> func)
                 op.data.push_back(stream.read_vlc_string());
                 break;
             case OpcodeArg::ARG_UINT32:
+                op.data.push_back(stream.read_uint32());
+                break;
             case OpcodeArg::ARG_INT32:
+                op.data.push_back(stream.read_int32());
+                break;
             case OpcodeArg::ARG_REG:
+                op.data.push_back(stream.read_reg());
+                break;
             case OpcodeArg::ARG_SYMBOL:
+                op.data.push_back(stream.read_symbol());
+                break;
             case OpcodeArg::ARG_REGLIST:
-                fprintf(stderr, "cdumpcov: TODO\n");
+                op.data.push_back(stream.read_reglist());
+                break;
             }
         }
         func(op);
