@@ -3,63 +3,7 @@
 #include "../cshared/opcodes_format.h"
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/asm_stream.h"
-
-template <typename TReader = StdinReader>
-struct AsmStream
-{
-    TReader reader;
-
-    AsmStream(size_t position) : reader(position)
-    {
-    }
-
-    uint8_t read_uint8()
-    {
-        return _read<uint8_t>();
-    }
-
-    uint16_t read_uint16()
-    {
-        return _read<uint16_t>();
-    }
-
-    uint64_t read_uint64()
-    {
-        return _read<uint64_t>();
-    }
-
-    int16_t read_int16()
-    {
-        return _read<int16_t>();
-    }
-
-    std::string read_vlc()
-    {
-        size_t length = _read<uint8_t>();
-        if (length == 256)
-        {
-            length = _read<uint64_t>();
-        }
-        auto ptr = read(length);
-        return std::string((const char *)ptr, length);
-    }
-
-    unsigned char operator[](size_t index) const
-    {
-        return reader[index];
-    }
-
-    void *read(size_t size = 1)
-    {
-        return reader.read(size);
-    }
-
-    template <typename T>
-    T _read()
-    {
-        return *(T *)read(sizeof(T));
-    }
-};
+#include "../cshared/stream.h"
 
 struct Arg
 {
@@ -100,15 +44,20 @@ void parse_asm(bool raw, std::function<void(Op)> func)
         fread(header, 1, header_size, stdin);
     }
 
-    size_t position = 0;
+    Stream stream;
+    byte   buffer[1024];
     while (!feof(stdin))
     {
-        AsmStream<> stream(position);
-        if (!stream.read())
+        size_t bytes = fread(buffer, 1, 1024, stdin);
+        if (bytes)
         {
-            break;
+            stream.append(buffer, bytes);
         }
-        unsigned char opcode = stream[0];
+    }
+
+    while (!stream.eof())
+    {
+        auto opcode = stream.read_uint8();
         assert(opcode < countof(g_opcodes));
         const auto &data = g_opcodes[opcode];
         Op          op;
@@ -130,7 +79,7 @@ void parse_asm(bool raw, std::function<void(Op)> func)
                 op.data.push_back(stream.read_int16());
                 break;
             case OpcodeArg::ARG_VLC:
-                op.data.push_back(stream.read_vlc());
+                op.data.push_back(stream.read_vlc_string());
                 break;
             case OpcodeArg::ARG_UINT32:
             case OpcodeArg::ARG_INT32:
