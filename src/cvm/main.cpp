@@ -547,14 +547,6 @@ bool DabVM::execute_single(Stream &input)
         push_method(name);
         break;
     }
-    case OP_HARDCALL:
-    case OP_CALL:
-    {
-        auto name   = stack.pop_symbol();
-        auto n_args = input.read_uint16();
-        call(dab_register_t::nilreg(), name, n_args, "", nullptr);
-        break;
-    }
     case OP_Q_SET_CALL:
     {
         auto out_reg = input.read_reg();
@@ -576,18 +568,6 @@ bool DabVM::execute_single(Stream &input)
         auto reglist      = input.read_reglist();
 
         call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
-        break;
-    }
-    case OP_HARDCALL_BLOCK:
-    case OP_CALL_BLOCK:
-    {
-        auto capture    = stack.pop_value();
-        auto block_name = stack.pop_symbol();
-        auto name       = stack.pop_symbol();
-        auto n_args     = input.read_uint16();
-        auto n_rets     = 1;
-        assert(n_rets == 1);
-        call(dab_register_t::nilreg(), name, n_args, block_name, capture);
         break;
     }
     case OP_YIELD:
