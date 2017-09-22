@@ -108,8 +108,8 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
   inputs.each do |input_test_file|
     output_output_file = input_test_file.gsub(base_path + '/', 'tmp/' + test_file_name).gsub('.' + extension, '.out')
     outputs << output_output_file
-    inputs = $sources + [input_test_file] + $shared_spec_code + extras
-    file output_output_file => inputs do
+    file_inputs = $sources + [input_test_file] + $shared_spec_code + extras
+    file output_output_file => file_inputs do
       puts '>> '.white + output_output_file.white.bold
       if direct_run.nil?
         psystem("ruby src/frontend/#{frontend_type}.rb #{input_test_file} --test_output_prefix=#{test_file_name} --test_output_dir=./tmp/")
