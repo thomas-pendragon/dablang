@@ -1,4 +1,4 @@
-#include "cvm.h"
+#include "stream.h"
 
 uint8_t Stream::read_uint8()
 {

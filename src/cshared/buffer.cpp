@@ -1,4 +1,4 @@
-#include "cvm.h"
+#include "stream.h"
 
 Buffer::Buffer()
 {
