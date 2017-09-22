@@ -29,7 +29,7 @@ exclude_from_nav: true
 |`0C`|`PUSH_CLASS`|`uint16`|
 |`0D`|`PUSH_CONSTANT`|`uint16`|
 |`0E`|`PUSH_ARG`|`uint16`|
-|`0F`|`PUSH_INSTVAR`|`vlc`|
+|`0F`|`PUSH_INSTVAR`||
 |`10`|`PUSH_SYMBOL`|`vlc`|
 |`11`|`PUSH_HAS_BLOCK`||
 |`12`|`PUSH_METHOD`|`vlc`|

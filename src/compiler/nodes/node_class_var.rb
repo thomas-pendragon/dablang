@@ -5,15 +5,24 @@ class DabNodeClassVar < DabNode
 
   def initialize(identifier)
     super()
-    @identifier = identifier
+    insert(identifier[1..-1])
+  end
+
+  def node_identifier
+    @children[0]
+  end
+
+  def identifier
+    '@' + node_identifier.extra_value
   end
 
   def extra_dump
-    @identifier
+    identifier
   end
 
   def compile(output)
-    output.print('PUSH_INSTVAR', identifier[1..-1])
+    output.push(node_identifier)
+    output.print('PUSH_INSTVAR')
   end
 
   def formatted_source(_options)

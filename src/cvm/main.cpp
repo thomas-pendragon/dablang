@@ -838,7 +838,7 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_PUSH_INSTVAR:
     {
-        auto name = input.read_vlc_string();
+        auto name = stack.pop_symbol();
         get_instvar(name);
         break;
     }
