@@ -294,11 +294,11 @@ class SnakeGame
 
 func draw_digit(renderer, dx, dy, size, digit, margin)
 {
-  var row0 = @[1,1,1,  0,0,1,  1,1,1,  1,1,1,  1,0,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1];
-  var row1 = @[1,0,1,  0,1,1,  0,0,1,  0,0,1,  1,0,1,  1,0,0,  1,0,0,  0,0,1,  1,0,1,  1,0,1];
-  var row2 = @[1,0,1,  0,0,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  1,1,1,  0,0,1,  1,1,1,  1,1,1];
-  var row3 = @[1,0,1,  0,0,1,  1,0,0,  0,0,1,  0,0,1,  0,0,1,  1,0,1,  0,1,0,  1,0,1,  0,0,1];
-  var row4 = @[1,1,1,  0,0,1,  1,1,1,  1,1,1,  0,0,1,  1,1,1,  1,1,1,  0,1,0,  1,1,1,  1,1,1];
+  var row0 = 0b111001111111101111111111111111;
+  var row1 = 0b101011001001101100100001101101;
+  var row2 = 0b101001111111111111111001111111;
+  var row3 = 0b101001100001001001101010101001;
+  var row4 = 0b111001111111001111111010111111;
 
   var rows = @[row0, row1, row2, row3, row4];
 
@@ -309,7 +309,9 @@ func draw_digit(renderer, dx, dy, size, digit, margin)
     x = 0;
     while (x < 3)
     {
-     var c = rows[y][digit * 3 + x];
+     var index = digit * 3 + x;
+     var value = rows[y] >> (30 - index - 1);
+     var c = value & 1;
       if (c)
       {
         draw_simple_square(renderer, size, dx + x * (size + margin), dy + y * (size + margin));
