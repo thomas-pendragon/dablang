@@ -1098,9 +1098,10 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
     else
     {
-        fprintf(stderr, "vm: cannot cast %s (%d) to %s (%d).\n", value.class_name().c_str(),
-                (int)value.class_index(), get_class(klass_index).name.c_str(), (int)klass_index);
-        exit(1);
+        char info[256];
+        snprintf(info, sizeof(info), "cannot cast %s (%d) to %s (%d)", value.class_name().c_str(),
+                 (int)value.class_index(), get_class(klass_index).name.c_str(), (int)klass_index);
+        throw DabCastError(info);
     }
 }
 
@@ -1460,7 +1461,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     }
 }
 
-int main(int argc, char **argv)
+int unsafe_main(int argc, char **argv)
 {
     setup_handlers();
 
@@ -1511,4 +1512,17 @@ int main(int argc, char **argv)
         vm.coverage.dump(stdout);
     }
     return ret_value;
+}
+
+int main(int argc, char **argv)
+{
+    try
+    {
+        return unsafe_main(argc, argv);
+    }
+    catch (DabRuntimeError &error)
+    {
+        fprintf(stderr, "vm: %s.\n", error.what());
+        return 1;
+    }
 }

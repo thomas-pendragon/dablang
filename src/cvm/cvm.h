@@ -8,6 +8,27 @@ struct DabValue;
 typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
+struct DabRuntimeError : public std::runtime_error
+{
+    DabRuntimeError(std::string message) : std::runtime_error("DabRuntimeError"), message(message)
+    {
+    }
+    virtual char const *what() const throw()
+    {
+        return message.c_str();
+    }
+
+  private:
+    std::string message;
+};
+
+struct DabCastError : public DabRuntimeError
+{
+    DabCastError(const char *message) : DabRuntimeError(message)
+    {
+    }
+};
+
 struct DabFunctionReflection
 {
     std::vector<std::string> arg_names;
