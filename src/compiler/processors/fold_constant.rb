@@ -24,7 +24,7 @@ class FoldConstant
         return true
       end
     end
-    if numeric && %w(+ - * / % | >> <<).include?(id)
+    if numeric && %w(+ - * / % | & >> <<).include?(id)
       node.replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
       return true
     elsif numeric && %w(> >= < <=).include?(id)
