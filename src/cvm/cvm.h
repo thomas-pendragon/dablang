@@ -244,9 +244,20 @@ struct DabValue
     }
     DabValue(size_t class_index, uint64_t value)
     {
-        assert(class_index == CLASS_UINT64);
-        data.type       = TYPE_UINT64;
-        data.num_uint64 = value;
+        if (class_index == CLASS_UINT64)
+        {
+            data.type       = TYPE_UINT64;
+            data.num_uint64 = value;
+        }
+        else if (class_index == CLASS_FIXNUM)
+        {
+            data.type   = TYPE_FIXNUM;
+            data.fixnum = value;
+        }
+        else
+        {
+            assert(false);
+        }
     }
     DabValue(size_t class_index, int32_t value)
     {
