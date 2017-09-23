@@ -127,7 +127,9 @@ class DabNodeFunction < DabNode
   end
 
   def compile(output)
-    output.printex(self, 'LOAD_FUNCTION', funclabel, identifier, parent_class_index)
+    safe_identifier = identifier
+    safe_identifier = "\"#{identifier}\"" unless identifier =~ /^[a-zA-Z0-9_]+$/
+    output.printex(self, 'LOAD_FUNCTION', funclabel, safe_identifier, parent_class_index)
     if $feature_reflection
       return unless parent_class_index == -1 # TODO
       arglist.each do |arg|

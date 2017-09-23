@@ -13,7 +13,7 @@ class Foo
 /* Dab dev      */                
  
                                  DEFINE_CLASS Foo, 256, 0
-                                 LOAD_FUNCTION CFoo_F%EQ%EQ, ==, 256
+                                 LOAD_FUNCTION CFoo_F%EQ%EQ, "==", 256
  
                                  BREAK_LOAD 
  
