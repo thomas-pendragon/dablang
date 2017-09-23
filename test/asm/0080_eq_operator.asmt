@@ -1,0 +1,24 @@
+## CODE
+
+class Foo
+{
+  func ==(other)
+  {
+    return true;
+  }
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION CFoo_F%EQ%EQ, ==, 256
+ 
+                                 BREAK_LOAD 
+ 
+                   CFoo_F%EQ%EQ:
+                                 STACK_RESERVE 0
+                                 Q_SET_TRUE R0
+                                 PUSH_SSA R0
+                                 RETURN

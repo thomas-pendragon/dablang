@@ -246,6 +246,14 @@ class DabContext < DabBaseContext
   end
 
   def read_identifier_fname
+    read_identifier_fname_regular || read_identifier_fname_op
+  end
+
+  def read_identifier_fname_op
+    read_operator('==')
+  end
+
+  def read_identifier_fname_regular
     on_subcontext do |subcontext|
       next unless ident = subcontext.read_identifier
       if op = subcontext.read_operator('=')
