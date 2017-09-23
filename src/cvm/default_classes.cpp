@@ -226,14 +226,15 @@ void DabVM::define_default_classes()
 
     define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
 
-    auto &uint8_class = define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
-    DAB_MEMBER_NUMERIC_OPERATORS(uint8_class, CLASS_UINT8, uint8_t, .data.num_uint8);
+#define CREATE_INT_CLASS(small, Title, BIG)                                                        \
+    auto &small##_class = define_builtin_class(STR(Title), CLASS_##BIG, CLASS_FIXNUM);             \
+    DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
 
-    define_builtin_class("Uint32", CLASS_UINT32, CLASS_FIXNUM);
+    CREATE_INT_CLASS(uint8, Uint8, UINT8);
+    CREATE_INT_CLASS(uint32, Uint32, UINT32);
+    CREATE_INT_CLASS(uint64, Uint64, UINT64);
 
-    define_builtin_class("Uint64", CLASS_UINT64, CLASS_FIXNUM);
-
-    define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
+    CREATE_INT_CLASS(int32, Int32, INT32);
 
     auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
     DAB_MEMBER_EQUALS_OPERATORS(boolean_class, CLASS_BOOLEAN, .data.boolean);
