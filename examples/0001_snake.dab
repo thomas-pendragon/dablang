@@ -136,7 +136,7 @@ class SnakePoint
     ret = ret + ")";
     return ret;
   }
-  func equals(other)
+  func ==(other)
   {
     return (self.x == other.x) && (self.y == other.y);
   }
@@ -239,7 +239,7 @@ class SnakeGame
     while (index < count)
     {
       var point = @snake[index];
-      if (point.equals(new_point))
+      if (point == new_point)
       {
         return true;
       }
@@ -263,7 +263,7 @@ class SnakeGame
   func is_eating_apple()
   {
     var head = self.snake_head;
-    var ret = head.equals(@apple);
+    var ret = head == @apple;
     return ret;
   }
   func contract()
