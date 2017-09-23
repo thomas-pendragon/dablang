@@ -70,16 +70,4 @@ class Array
       return false;
     }
   }
-  
-  func !=(other)
-  {
-    if (self == other)
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
 }
