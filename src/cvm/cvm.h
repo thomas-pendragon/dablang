@@ -224,6 +224,12 @@ struct DabValue
         data.type    = TYPE_BOOLEAN;
         data.boolean = value;
     }
+    DabValue(size_t class_index, bool value)
+    {
+        assert(class_index == CLASS_BOOLEAN);
+        data.type    = TYPE_BOOLEAN;
+        data.boolean = value;
+    }
     DabValue(size_t class_index, uint8_t value)
     {
         assert(class_index == CLASS_UINT8);
