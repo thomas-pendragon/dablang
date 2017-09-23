@@ -44,16 +44,10 @@ func main()
                                  STACK_RESERVE 0
 /* Foo          */               Q_SET_CLASS R0, 256
 /* new          */               Q_SET_INSTCALL R1, R0, S2
-                                 PUSH_SSA R1
-/* run          */               PUSH_CONSTANT 3
-                                 INSTCALL 0
-                                 POP 1
+/* run          */               Q_SET_INSTCALL RNIL, R1, S3
 /* Bar          */               Q_SET_CLASS R2, 257
 /* new          */               Q_SET_INSTCALL R3, R2, S2
-                                 PUSH_SSA R3
-/* run          */               PUSH_CONSTANT 3
-                                 INSTCALL 0
-                                 POP 1
+/* run          */               Q_SET_INSTCALL RNIL, R3, S3
                                  Q_SET_NIL R4
                                  PUSH_SSA R4
                                  RETURN 

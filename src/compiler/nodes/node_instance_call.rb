@@ -53,10 +53,14 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     identifier.extra_value
   end
 
-  def compile_as_ssa(output, output_register)
+  def _compile(output, output_register)
     if has_block? || !identifier.is_a?(DabNodeConstantReference)
       compile(output)
-      output.print('Q_SET_POP', "R#{output_register}")
+      if output_register
+        output.print('Q_SET_POP', "R#{output_register}")
+      else
+        output.print('POP', 1)
+      end
       return
     end
 
@@ -65,12 +69,20 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     self_register = value.input_register
     list = nil if list.empty?
     args = [
-      "R#{output_register}",
+      output_register.nil? ? 'RNIL' : "R#{output_register}",
       "R#{self_register}",
       "S#{symbol_index}",
       list,
     ]
     output.printex(self, 'Q_SET_INSTCALL', *args)
+  end
+
+  def compile_as_ssa(output, output_register)
+    _compile(output, output_register)
+  end
+
+  def compile_top_level(output)
+    _compile(output, nil)
   end
 
   def symbol_index
