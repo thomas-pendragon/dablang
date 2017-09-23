@@ -7,6 +7,10 @@ class DabNodeLiteralNumber < DabNodeLiteral
     @number = number
   end
 
+  def self.new_binary(number)
+    self.new(number.to_i(2))
+  end
+
   def extra_dump
     number.to_s
   end

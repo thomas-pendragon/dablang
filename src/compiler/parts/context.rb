@@ -567,6 +567,16 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_literal_binary_number
+    on_subcontext do |subcontext|
+      str = subcontext.read_binary_number
+      next unless str
+      ret = DabNodeLiteralNumber.new_binary(str)
+      ret.add_source_part(str)
+      ret
+    end
+  end
+
   def read_literal_boolean
     on_subcontext do |subcontext|
       next unless keyword = subcontext.read_any_operator(%w(true false))
@@ -610,6 +620,7 @@ class DabContext < DabBaseContext
   def read_literal_value
     read_extended_literal ||
       read_literal_string ||
+      read_literal_binary_number ||
       read_literal_number ||
       read_literal_boolean ||
       read_literal_nil

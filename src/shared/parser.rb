@@ -204,6 +204,22 @@ class DabParser
     ret.gsub('\\n', "\n").gsub('\\r', "\r")
   end
 
+  def read_binary_number
+    skip_whitespace
+    start_pos = @position
+    debug('binary ?')
+    return false unless input_match_any(%w[0b0 0b1])
+    advance!
+    advance!
+    ret = ''
+    while input_match_any(%w[0 1])
+      ret += current_char
+      advance!
+    end
+    debug('binary ok')
+    _return_source(ret, start_pos)
+  end
+
   def read_number
     skip_whitespace
     start_pos = @position

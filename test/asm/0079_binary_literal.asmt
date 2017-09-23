@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  print(0b1010011010);
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 666          */               Q_SET_NUMBER R0, 666
+                                 Q_SET_SYSCALL RNIL, 0, R0
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
+                                 RETURN

@@ -27,6 +27,10 @@ class DabBaseContext
     @stream.read_number(*args)
   end
 
+  def read_binary_number(*args)
+    @stream.read_binary_number(*args)
+  end
+
   def read_keyword(*args)
     @stream.read_keyword(*args)
   end
