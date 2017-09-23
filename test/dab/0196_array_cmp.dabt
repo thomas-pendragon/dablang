@@ -1,0 +1,35 @@
+## CODE
+
+func main()
+{
+  var a = @[1, 2, 3];
+  var b = @[1, 2];
+  var c = @[1, 2, 3];
+  var d = @[1, 2, 5];
+
+  puts(a == a);
+  puts(a == b);
+  puts(a == c);
+  puts(a == d);
+
+  puts(a != a);
+  puts(a != b);
+  puts(a != c);
+  puts(a != d);
+
+  b.insert(3);
+
+  puts(a == b);
+}
+
+## EXPECT OK
+
+true
+false
+true
+false
+false
+true
+false
+true
+true

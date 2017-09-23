@@ -38,4 +38,48 @@ class Array
       index = index + 1;
     }
   }
+  
+  func ==(other)
+  {
+    if (other is Array)
+    {
+      if (self.count == other.count)
+      {
+        var index = 0;
+        var count = self.count;
+        while (index != count)
+        {
+          if (self[index] == other[index])
+          {
+          }
+          else
+          {
+            return false;
+          }
+          index = index + 1;
+        }
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  func !=(other)
+  {
+    if (self == other)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
 }
