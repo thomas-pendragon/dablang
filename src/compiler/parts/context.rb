@@ -713,8 +713,12 @@ class DabContext < DabBaseContext
     _read_list_or_single(:read_mul_value, ['+', '-'], DabNodeOperator)
   end
 
+  def read_shift_value
+    _read_list_or_single(:read_add_value, ['<<', '>>'], DabNodeOperator)
+  end
+
   def read_or_value
-    _read_list_or_single(:read_add_value, ['||', '&&'], DabNodeOperator)
+    _read_list_or_single(:read_shift_value, ['||', '&&'], DabNodeOperator)
   end
 
   def read_cmp_value

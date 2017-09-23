@@ -59,6 +59,8 @@
     DAB_MEMBER_OPERATOR(klass, cast_to, *, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, /, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, %, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, <<, cast_to, result_type, member);                         \
+    DAB_MEMBER_OPERATOR(klass, cast_to, >>, cast_to, result_type, member);                         \
     DAB_MEMBER_OPERATOR(klass, cast_to, |, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, &, cast_to, result_type, member)
 

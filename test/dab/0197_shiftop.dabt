@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  puts(16 >> 1);
+  puts(16 >> 0);
+  puts(16 << 1);
+  puts(11 >> 3);
+  puts(11 >> 5);
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT OK
+
+8
+16
+32
+1
+0

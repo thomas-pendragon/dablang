@@ -1,0 +1,30 @@
+## CODE
+
+func main()
+{
+  print(16 >> 1);
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL ">>"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 16           */               Q_SET_NUMBER R0, 16
+/* 1            */               Q_SET_NUMBER R1, 1
+/* >>           */               Q_SET_INSTCALL R2, R0, S0, R1
+                                 Q_SET_SYSCALL RNIL, 0, R2
+                                 Q_SET_NIL R3
+                                 PUSH_SSA R3
+                                 RETURN
