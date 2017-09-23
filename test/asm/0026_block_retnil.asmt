@@ -20,6 +20,11 @@ func tap()
 
 /* Dab dev      */                
  
+                                 CONSTANT_STRING "ok"
+                                 CONSTANT_SYMBOL tap
+                                 CONSTANT_SYMBOL "tap__block1"
+                                 CONSTANT_SYMBOL "tap__block2"
+ 
                                  LOAD_FUNCTION Ftap, tap, -1
                                  LOAD_FUNCTION Ftap__block1, tap__block1, -1
                                  LOAD_FUNCTION Ftap__block2, tap__block2, -1
@@ -29,25 +34,16 @@ func tap()
                    Ftap:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SYMBOL tap
-                                 PUSH_SYMBOL "tap__block1"
-                                 PUSH_SSA R0
-                                 CALL_BLOCK 0
-                                 POP 1
+/* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S2, R0
                                  Q_SET_NIL R1
-                                 PUSH_SYMBOL tap
-                                 PUSH_SYMBOL "tap__block2"
-                                 PUSH_SSA R1
-                                 CALL_BLOCK 0
-                                 POP 1
+/* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S3, R1
                                  Q_SET_NIL R2
                                  PUSH_SSA R2
                                  RETURN 
  
                    Ftap__block1:
                                  STACK_RESERVE 0
-                                 PUSH_STRING "ok"
-                                 Q_SET_POP R0
+/* "ok"         */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
                                  PUSH_SSA R1
@@ -55,8 +51,7 @@ func tap()
  
                    Ftap__block2:
                                  STACK_RESERVE 0
-                                 PUSH_STRING "ok"
-                                 Q_SET_POP R0
+/* "ok"         */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
                                  PUSH_SSA R1

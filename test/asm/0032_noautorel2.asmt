@@ -17,6 +17,8 @@ Instructions should pop return value if not used.
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL "+"
+ 
                                  LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
@@ -30,11 +32,7 @@ Instructions should pop return value if not used.
                                  PUSH_NUMBER 3
                                  PUSH_ARRAY 1
                                  Q_SET_POP R1
-                                 PUSH_SSA R1
-                                 PUSH_SSA R0
-                                 PUSH_SYMBOL "+"
-                                 INSTCALL 1
-                                 Q_SET_POP R2
+/* +            */               Q_SET_INSTCALL R2, R0, S0, R1
                                  Q_SET_SYSCALL RNIL, 0, R2
                                  Q_SET_NIL R3
                                  PUSH_SSA R3

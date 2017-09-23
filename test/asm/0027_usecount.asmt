@@ -13,14 +13,15 @@ func foo()
 
 /* Dab dev      */                
  
+                                 CONSTANT_STRING "abc"
+ 
                                  LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 PUSH_STRING "abc"
-                                 Q_SET_POP R0
+/* "abc"        */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 2, R0
                                  Q_SET_NIL R1
                                  PUSH_SSA R1

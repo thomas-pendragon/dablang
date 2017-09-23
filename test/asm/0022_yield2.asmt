@@ -15,6 +15,8 @@ func yield1()
 
 /* Dab dev      */                
  
+                                 CONSTANT_STRING "foo"
+ 
                                  LOAD_FUNCTION Fyield1, yield1, -1
  
                                  BREAK_LOAD 
@@ -26,7 +28,7 @@ func yield1()
                                  YIELD 0
                                  POP 1
                                  PUSH_NUMBER 12
-                                 PUSH_STRING "foo"
+/* "foo"        */               PUSH_CONSTANT 0
                                  YIELD 2
                                  POP 1
                                  Q_SET_NIL R0

@@ -30,7 +30,6 @@ class DabCompilerFrontend
       $opt = false if settings[:no_opt]
       $strip = !!settings[:strip]
       $entry = settings[:entry] || 'main'
-      $no_constants = settings[:no_constants]
       $no_autorelease = settings[:no_autorelease]
       $feature_reflection = settings[:with_reflection]
       $feature_attributes = settings[:with_attributes]
