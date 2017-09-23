@@ -59,9 +59,10 @@ func main()
  
                    Ftest:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 1
+/* 1            */               Q_SET_NUMBER R0, 1
+                                 PUSH_SSA R0
                                  YIELD 1
                                  POP 1
-                                 Q_SET_NIL R0
-                                 PUSH_SSA R0
+                                 Q_SET_NIL R1
+                                 PUSH_SSA R1
                                  RETURN

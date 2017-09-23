@@ -1,6 +1,9 @@
 require_relative 'node_basecall.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeYield < DabNodeBasecall
+  lower_with Uncomplexify
+
   def compile(output)
     args.each { |arg| arg.compile(output) }
     output.printex(self, 'YIELD', args.count)
@@ -13,5 +16,13 @@ class DabNodeYield < DabNodeBasecall
                 ''
               end
     'yield' + argstxt
+  end
+
+  def uncomplexify_args
+    args
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end

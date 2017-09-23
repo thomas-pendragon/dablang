@@ -45,17 +45,15 @@ class Array
                    L2:
                                  PUSH_SELF 
                                  Q_SET_POP R4
-                                 PUSH_SSA R0
-                                 PUSH_SSA R4
-/* []           */               PUSH_CONSTANT 2
-                                 INSTCALL 1
+/* []           */               Q_SET_INSTCALL R5, R4, S2, R0
+                                 PUSH_SSA R5
                                  PUSH_SSA R0
                                  YIELD 2
                                  POP 1
-/* 1            */               Q_SET_NUMBER R5, 1
-/* +            */               Q_SET_INSTCALL R0, R0, S1, R5
+/* 1            */               Q_SET_NUMBER R6, 1
+/* +            */               Q_SET_INSTCALL R0, R0, S1, R6
                                  JMP L1
                    L3:
-                                 Q_SET_NIL R6
-                                 PUSH_SSA R6
+                                 Q_SET_NIL R7
+                                 PUSH_SSA R7
                                  RETURN
