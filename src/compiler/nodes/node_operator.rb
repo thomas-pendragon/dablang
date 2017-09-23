@@ -48,7 +48,7 @@ class DabNodeOperator < DabNode
     right_ = right
     left_.extract
     right_.extract
-    call = DabNodeCall.new(identifier_, DabNode.new << left_ << right_, nil)
+    call = DabNodeInstanceCall.new(left_, identifier_, DabNode.new << right_, nil)
     replace_with!(call)
     true
   end

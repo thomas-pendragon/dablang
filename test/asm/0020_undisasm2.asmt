@@ -21,10 +21,10 @@ func addfunc()
                                  STACK_RESERVE 0
 /* 12           */               Q_SET_NUMBER R0, 12
 /* 23           */               Q_SET_NUMBER R1, 23
-                                 PUSH_SSA R0
                                  PUSH_SSA R1
+                                 PUSH_SSA R0
                                  PUSH_SYMBOL "+"
-                                 CALL 2
+                                 INSTCALL 1
                                  Q_SET_POP R2
                                  PUSH_SSA R2
                                  RETURN

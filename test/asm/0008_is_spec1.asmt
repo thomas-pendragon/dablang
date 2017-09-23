@@ -51,7 +51,7 @@ func bar()
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
 /* String       */               Q_SET_CLASS R1, 1
-/* is           */               Q_SET_CALL R2, S4, R0, R1
+/* is           */               Q_SET_INSTCALL R2, R0, S4, R1
                                  Q_JMP_IF2 R2, L1, L2
                    L1:
 /* "got string" */               Q_SET_CONSTANT R3, 1
@@ -59,7 +59,7 @@ func bar()
                                  JMP L2
                    L2:
 /* Fixnum       */               Q_SET_CLASS R4, 2
-/* is           */               Q_SET_CALL R5, S4, R0, R4
+/* is           */               Q_SET_INSTCALL R5, R0, S4, R4
                                  Q_JMP_IF2 R5, L3, L4
                    L3:
 /* "got fixnum" */               Q_SET_CONSTANT R6, 0

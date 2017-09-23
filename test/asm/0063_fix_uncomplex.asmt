@@ -31,7 +31,7 @@ func main()
                                  Q_JMP_IF2 R0, L2, L3
                    L2:
 /* 1            */               Q_SET_NUMBER R1, 1
-/* -            */               Q_SET_CALL R0, S0, R0, R1
+/* -            */               Q_SET_INSTCALL R0, R0, S0, R1
                                  JMP L1
                    L3:
                                  Q_SET_NIL R2

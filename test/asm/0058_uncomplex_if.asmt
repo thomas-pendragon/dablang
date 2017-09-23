@@ -39,10 +39,10 @@ func main()
 /* a            */               Q_SET_ARG R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
 /* 2            */               Q_SET_NUMBER R1, 2
-/* *            */               Q_SET_CALL R2, S1, R0, R1
+/* *            */               Q_SET_INSTCALL R2, R0, S1, R1
 /* 2            */               Q_SET_NUMBER R3, 2
-/* *            */               Q_SET_CALL R4, S1, R0, R3
-/* ==           */               Q_SET_CALL R5, S2, R2, R4
+/* *            */               Q_SET_INSTCALL R4, R0, S1, R3
+/* ==           */               Q_SET_INSTCALL R5, R2, S2, R4
                                  Q_JMP_IF2 R5, L1, L2
                    L1:
 /* "yes"        */               Q_SET_CONSTANT R6, 0

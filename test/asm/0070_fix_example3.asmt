@@ -22,7 +22,7 @@ func main()
 /* String       */               Q_SET_CLASS R0, 1
 /* new          */               Q_SET_INSTCALL R1, R0, S2
 /* "a"          */               Q_SET_CONSTANT R2, 0
-/* ==           */               Q_SET_CALL R3, S1, R1, R2
+/* ==           */               Q_SET_INSTCALL R3, R1, S1, R2
                                  Q_SET_SYSCALL RNIL, 0, R3
                                  Q_SET_NIL R4
                                  PUSH_SSA R4

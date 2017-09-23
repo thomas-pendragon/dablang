@@ -32,6 +32,7 @@ class DabType
   def has_function?(identifier)
     return true if identifier == 'class'
     return true if identifier == 'to_s'
+    return true if identifier == 'is'
     false
   end
 
@@ -64,9 +65,8 @@ class DabTypeString < DabType
   end
 
   def has_function?(identifier)
-    return true if identifier == '[]'
-    return true if identifier == 'upcase'
-    return true if identifier == 'length'
+    identifiers = %w[+ [] upcase length > >= <= <]
+    return true if identifiers.include?(identifier)
     super
   end
 end
@@ -74,6 +74,12 @@ end
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'
+  end
+
+  def has_function?(identifier)
+    operators = %w[+ - * / == != < <= >= > | & %]
+    return true if operators.include?(identifier)
+    super
   end
 end
 
@@ -92,6 +98,7 @@ class DabTypeClass < DabType
 
   def has_function?(identifier)
     return true if identifier == 'new'
+    return true if identifier == '=='
     super
   end
 end

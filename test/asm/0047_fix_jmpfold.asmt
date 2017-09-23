@@ -25,7 +25,7 @@ func assert_equal(value)
                                  STACK_RESERVE 0
 /* value        */               Q_SET_ARG R0, 0
 /* 1            */               Q_SET_NUMBER R1, 1
-/* !=           */               Q_SET_CALL R2, S0, R0, R1
+/* !=           */               Q_SET_INSTCALL R2, R0, S0, R1
                                  PUSH_SSA R2
                                  POP 1
                                  Q_SET_NIL R3

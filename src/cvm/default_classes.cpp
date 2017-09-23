@@ -1,5 +1,67 @@
 #include "cvm.h"
 
+#define STR2(s) #s
+#define STR(s) STR2(s)
+
+#define DAB_MEMBER_OPERATOR(klass, cast_to, operator, result_class, result_type, member)           \
+    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
+        assert(n_args == 2);                                                                       \
+        assert(n_ret == 1);                                                                        \
+        assert(blockaddr == 0);                                                                    \
+        auto &stack = $VM->stack;                                                                  \
+        auto  arg0  = stack.pop_value();                                                           \
+        auto  arg1  = $VM->cast(stack.pop_value(), cast_to);                                       \
+        auto &v0    = arg0 member;                                                                 \
+        auto &v1    = arg1 member;                                                                 \
+                                                                                                   \
+        DabValue ret(result_class, (result_type)(v0 operator v1));                                 \
+        stack.push(ret);                                                                           \
+    })
+
+#define DAB_MEMBER_EQ_OPERATOR(klass, cast_to, operator, result_class, result_type, member)        \
+    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
+        assert(n_args == 2);                                                                       \
+        assert(n_ret == 1);                                                                        \
+        assert(blockaddr == 0);                                                                    \
+        auto &   stack = $VM->stack;                                                               \
+        auto     arg0  = stack.pop_value();                                                        \
+        auto     arg1  = stack.pop_value();                                                        \
+        DabValue ret;                                                                              \
+        try                                                                                        \
+        {                                                                                          \
+            arg1     = $VM->cast(arg1, cast_to);                                                   \
+            auto &v0 = arg0 member;                                                                \
+            auto &v1 = arg1 member;                                                                \
+            ret      = DabValue(result_class, (result_type)(v0 operator v1));                      \
+        }                                                                                          \
+        catch (DabCastError & error)                                                               \
+        {                                                                                          \
+            ret = DabValue(result_class, (bool)(true operator false));                             \
+        }                                                                                          \
+        stack.push(ret);                                                                           \
+    })
+
+#define DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member)                                        \
+    DAB_MEMBER_EQ_OPERATOR(klass, cast_to, ==, CLASS_BOOLEAN, bool, member);                       \
+    DAB_MEMBER_EQ_OPERATOR(klass, cast_to, !=, CLASS_BOOLEAN, bool, member)
+
+#define DAB_MEMBER_COMPARE_OPERATORS(klass, cast_to, member)                                       \
+    DAB_MEMBER_OPERATOR(klass, cast_to, >, CLASS_BOOLEAN, bool, member);                           \
+    DAB_MEMBER_OPERATOR(klass, cast_to, >=, CLASS_BOOLEAN, bool, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, <=, CLASS_BOOLEAN, bool, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, <, CLASS_BOOLEAN, bool, member)
+
+#define DAB_MEMBER_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                          \
+    DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member);                                           \
+    DAB_MEMBER_COMPARE_OPERATORS(klass, cast_to, member);                                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, +, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, -, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, *, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, /, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, %, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, |, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, &, cast_to, result_type, member)
+
 DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_index,
                                       size_t superclass_index)
 {
@@ -40,6 +102,15 @@ void DabVM::define_default_classes()
     object_class.add_simple_function("to_s", [](DabValue self) { return self.print_value(); });
     object_class.add_simple_function("__construct", [](DabValue) { return nullptr; });
     object_class.add_simple_function("__destruct", [](DabValue) { return nullptr; });
+    object_class.add_function("is", [](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        auto &stack = $VM->stack;
+        auto  arg0  = stack.pop_value();
+        auto  arg1  = stack.pop_value();
+        stack.push_value(arg0.is_a(arg1.get_class()));
+    });
     object_class.add_static_function("to_s", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1);
@@ -47,6 +118,17 @@ void DabVM::define_default_classes()
         auto &stack = $VM->stack;
         auto  arg   = stack.pop_value();
         stack.push_value(arg.class_name());
+    });
+    object_class.add_static_function("==", [](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(blockaddr == 0);
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        auto &stack = $VM->stack;
+        auto  arg0  = stack.pop_value();
+        auto  arg1  = stack.pop_value();
+        assert(arg0.data.type == TYPE_CLASS);
+        assert(arg1.data.type == TYPE_CLASS);
+        stack.push_value(arg0.data.fixnum == arg1.data.fixnum);
     });
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
@@ -77,6 +159,19 @@ void DabVM::define_default_classes()
         auto  n = arg1.data.fixnum;
         stack.push(s.substr(n, 1));
     });
+    string_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        assert(blockaddr == 0);
+        auto &stack = $VM->stack;
+        auto  arg0  = stack.pop_value();
+        assert(arg0.data.type == TYPE_STRING);
+        auto     arg1 = $VM->cast(stack.pop_value(), CLASS_STRING);
+        auto &   s0   = arg0.data.string;
+        auto &   s1   = arg1.data.string;
+        DabValue ret(s0 + s1);
+        stack.push(ret);
+    });
     string_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2 || n_args == 3);
@@ -106,6 +201,8 @@ void DabVM::define_default_classes()
         stack.push_value(ret_value);
     });
     string_class.add_simple_function("to_s", [](DabValue self) { return self; });
+    DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .data.string);
+    DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .data.string);
 
     auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
     fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
@@ -125,10 +222,12 @@ void DabVM::define_default_classes()
         }
         stack.push_value(ret_value);
     });
+    DAB_MEMBER_NUMERIC_OPERATORS(fixnum_class, CLASS_FIXNUM, uint64_t, .data.fixnum);
 
     define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
 
-    define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
+    auto &uint8_class = define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
+    DAB_MEMBER_NUMERIC_OPERATORS(uint8_class, CLASS_UINT8, uint8_t, .data.num_uint8);
 
     define_builtin_class("Uint32", CLASS_UINT32, CLASS_FIXNUM);
 
@@ -136,7 +235,8 @@ void DabVM::define_default_classes()
 
     define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
 
-    define_builtin_class("Boolean", CLASS_BOOLEAN);
+    auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
+    DAB_MEMBER_EQUALS_OPERATORS(boolean_class, CLASS_BOOLEAN, .data.boolean);
 
     define_builtin_class("NilClass", CLASS_NILCLASS);
 
@@ -232,6 +332,15 @@ void DabVM::define_default_classes()
         instcall(self, "join", 0, 1);
         auto inner = stack.pop_value();
         return std::string("[" + inner.data.string + "]");
+    });
+    array_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
+        assert(n_args == 2);
+        assert(n_ret == 1);
+        assert(blockaddr == 0);
+        auto &stack = $VM->stack;
+        auto  arg0  = stack.pop_value();
+        auto  arg1  = $VM->cast(stack.pop_value(), CLASS_ARRAY);
+        stack.push($VM->merge_arrays(arg0, arg1));
     });
 
     auto &method_class = define_builtin_class("Method", CLASS_METHOD);

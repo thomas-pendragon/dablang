@@ -40,7 +40,7 @@ class Array
 /* count        */               Q_SET_INSTCALL R2, R1, S3
                                  JMP L1
                    L1:
-/* !=           */               Q_SET_CALL R3, S0, R0, R2
+/* !=           */               Q_SET_INSTCALL R3, R0, S0, R2
                                  Q_JMP_IF2 R3, L2, L3
                    L2:
                                  PUSH_SELF 
@@ -53,7 +53,7 @@ class Array
                                  YIELD 2
                                  POP 1
 /* 1            */               Q_SET_NUMBER R5, 1
-/* +            */               Q_SET_CALL R0, S1, R0, R5
+/* +            */               Q_SET_INSTCALL R0, R0, S1, R5
                                  JMP L1
                    L3:
                                  Q_SET_NIL R6
