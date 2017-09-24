@@ -26,14 +26,10 @@ func tap(a)
                    Ftap:
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
-                                 PUSH_SSA R0
-/* fun          */               PUSH_CONSTANT 0
-/* tap__block1  */               PUSH_CONSTANT 1
-                                 PUSH_NIL 
-                                 INSTCALL_BLOCK 0
-                                 POP 1
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
+/* fun          */               Q_SET_INSTCALL_BLOCK RNIL, R0, S0, S1, R1
+                                 Q_SET_NIL R2
+                                 PUSH_SSA R2
                                  RETURN 
  
                    Ftap__block1:

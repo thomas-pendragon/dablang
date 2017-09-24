@@ -45,6 +45,10 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     self[3]
   end
 
+  def block_symbol_index
+    block.identifier.index
+  end
+
   def args
     self[4..-1]
   end
@@ -54,27 +58,25 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
   end
 
   def _compile(output, output_register)
-    if has_block? || !identifier.is_a?(DabNodeConstantReference)
-      compile(output)
-      if output_register
-        output.print('Q_SET_POP', "R#{output_register}")
-      else
-        output.print('POP', 1)
-      end
-      return
-    end
-
     output.comment(self.real_identifier)
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     self_register = value.input_register
     list = nil if list.empty?
+
+    if has_block?
+      blockarg = "S#{block_symbol_index}"
+      capture_arg = "R#{block_capture.input_register}"
+    end
+
     args = [
       output_register.nil? ? 'RNIL' : "R#{output_register}",
       "R#{self_register}",
       "S#{symbol_index}",
+      blockarg,
+      capture_arg,
       list,
     ]
-    output.printex(self, 'Q_SET_INSTCALL', *args)
+    output.printex(self, 'Q_SET_INSTCALL' + (has_block? ? '_BLOCK' : ''), *args)
   end
 
   def compile_as_ssa(output, output_register)
@@ -89,17 +91,6 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     identifier.index
   end
 
-  def compile(output)
-    args.each { |arg| arg.compile(output) }
-    value.compile(output)
-    output.push(identifier)
-    if has_block?
-      output.push(block.identifier)
-      block_capture.compile(output)
-    end
-    output.printex(self, has_block? ? 'INSTCALL_BLOCK' : 'INSTCALL', args.count)
-  end
-
   def formatted_source(options)
     val = value.formatted_source(options)
     args = _formatted_arguments(options)
@@ -112,7 +103,9 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
   end
 
   def uncomplexify_args
-    args + [value]
+    list = args + [value]
+    list += [block_capture] if has_block?
+    list
   end
 
   def accepts?(arg)

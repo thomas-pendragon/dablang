@@ -570,6 +570,26 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
         break;
     }
+    case OP_Q_SET_INSTCALL_BLOCK:
+    {
+        auto out_reg  = input.read_reg();
+        auto self_reg = input.read_reg();
+        auto symbol   = input.read_uint16();
+        auto name     = constants[symbol].data.string;
+
+        auto block_symbol = input.read_symbol();
+        auto block_name   = constants[block_symbol].data.string;
+        auto capture_reg  = input.read_reg();
+        auto capture      = register_get(capture_reg);
+
+        auto reglist = input.read_reglist();
+        auto n_args  = reglist.size();
+        auto n_rets  = 1;
+        auto recv    = register_get(self_reg);
+
+        instcall(recv, name, n_args, n_rets, block_name, capture, true, out_reg, reglist);
+        break;
+    }
     case OP_YIELD:
     {
         auto n_args = input.read_uint16();
@@ -772,15 +792,6 @@ bool DabVM::execute_single(Stream &input)
         push_class(index);
         break;
     }
-    case OP_INSTCALL:
-    {
-        auto name   = stack.pop_symbol();
-        auto recv   = stack.pop_value();
-        auto n_args = input.read_uint16();
-        auto n_rets = 1;
-        instcall(recv, name, n_args, n_rets);
-        break;
-    }
     case OP_Q_SET_INSTCALL:
     {
         auto out_reg  = input.read_reg();
@@ -798,17 +809,6 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, "\n");
         }
         instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
-        break;
-    }
-    case OP_INSTCALL_BLOCK:
-    {
-        auto capture    = stack.pop_value();
-        auto block_name = stack.pop_symbol();
-        auto name       = stack.pop_symbol();
-        auto recv       = stack.pop_value();
-        auto n_args     = input.read_uint16();
-        auto n_rets     = 1;
-        instcall(recv, name, n_args, n_rets, block_name, capture);
         break;
     }
     case OP_PUSH_SELF:

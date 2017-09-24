@@ -51,17 +51,6 @@ class DabNodeCall < DabNodeExternalBasecall
   end
 
   def _compile(output, output_register)
-    unless identifier.is_a? DabNodeConstantReference
-      raise 'symbol must be reference' unless $no_constants
-      compile(output)
-      if output_register.nil?
-        output.print('POP', 1)
-      else
-        output.print('Q_SET_POP', "R#{output_register}")
-      end
-      return
-    end
-
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     list = nil if list.empty?
 
@@ -96,16 +85,6 @@ class DabNodeCall < DabNodeExternalBasecall
 
   def block_symbol_index
     block.identifier.index
-  end
-
-  def compile(output)
-    args.each { |arg| arg.compile(output) }
-    output.push(identifier)
-    if has_block?
-      output.push(block.identifier)
-      block_capture.compile(output)
-    end
-    output.printex(self, has_block? ? 'CALL_BLOCK' : 'CALL', args.count.to_s)
   end
 
   def formatted_source(options)

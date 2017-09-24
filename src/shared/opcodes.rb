@@ -71,8 +71,6 @@ OPCODES_ARRAY_BASE = [
     group: 'CALLS',
     items:
     [
-      {name: 'INSTCALL', args: %i(uint16)}, # n = number of arguments, pop(n + 2), push(1)
-      {name: 'INSTCALL_BLOCK', args: %i(uint16)}, # n = number of arguments, pop(n + 4), push(1)
       {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
     ],
   },
@@ -136,6 +134,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_TRUE', args: %i[reg]}, # reg(arg0) <- true
       {name: 'Q_SET_FALSE', args: %i[reg]}, # reg(arg0) <- false
       {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg(arg0) <- self.@arg1
+      {name: 'Q_SET_INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg(arg0) <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)
     ],
   },
   {
