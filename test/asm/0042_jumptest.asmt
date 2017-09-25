@@ -30,5 +30,4 @@ func foo(a)
                                  PUSH_SSA R0
                                  POP 1
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1

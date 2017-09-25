@@ -33,16 +33,14 @@ func tap2()
                    Ftap:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Ftap2:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
 /* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S2, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN 
+                                 Q_RETURN R1
  
                    Ftap2__block1:
                                  STACK_RESERVE 0
@@ -51,5 +49,4 @@ func tap2()
 /* +            */               Q_SET_INSTCALL R2, R1, S0, R0
                                  Q_SET_SYSCALL RNIL, 0, R2
                                  Q_SET_NIL R3
-                                 PUSH_SSA R3
-                                 RETURN
+                                 Q_RETURN R3

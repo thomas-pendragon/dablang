@@ -27,5 +27,4 @@ func foo()
 /* @a           */               Q_SET_INSTVAR R1, S0
                                  Q_SET_SYSCALL RNIL, 0, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN
+                                 Q_RETURN R2

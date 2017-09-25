@@ -40,5 +40,4 @@ IP = 11
         56: Q_SET_SYSCALL RNIL, 0, R2
         63: JMP 3
         66: Q_SET_NIL R3
-        69: PUSH_SSA R3
-        72: RETURN
+        69: Q_RETURN R3

@@ -29,8 +29,7 @@ func main()
                    Ffoo:
                                  STACK_RESERVE 0
 /* 12           */               Q_SET_NUMBER R0, 12
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -38,11 +37,9 @@ func main()
 /* foo          */               Q_SET_CALL_BLOCK R1, S0, S1, R0
                                  Q_SET_SYSCALL RNIL, 0, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN 
+                                 Q_RETURN R2
  
                    Fmain__block1:
                                  STACK_RESERVE 0
 /* 3            */               Q_SET_NUMBER R0, 3
-                                 PUSH_SSA R0
-                                 RETURN
+                                 Q_RETURN R0

@@ -37,16 +37,14 @@ func foo()
 /* "Fixnum"     */               Q_SET_CONSTANT R0, 1
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN 
+                                 Q_RETURN R1
  
                    F__spec_String:
                                  STACK_RESERVE 0
 /* "String"     */               Q_SET_CONSTANT R0, 2
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN 
+                                 Q_RETURN R1
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -57,5 +55,4 @@ func foo()
 /* "A"          */               Q_SET_CONSTANT R2, 0
 /* __spec_Strin */               Q_SET_CALL RNIL, S4, R2
                                  Q_SET_NIL R3
-                                 PUSH_SSA R3
-                                 RETURN
+                                 Q_RETURN R3

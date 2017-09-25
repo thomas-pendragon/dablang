@@ -20,5 +20,4 @@ class Foo
                    CFoo_F%BANG%EQ:
                                  STACK_RESERVE 0
                                  Q_SET_TRUE R0
-                                 PUSH_SSA R0
-                                 RETURN
+                                 Q_RETURN R0

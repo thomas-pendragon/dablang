@@ -34,5 +34,4 @@ func yield1()
                                  YIELD 2
                                  POP 1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN
+                                 Q_RETURN R2

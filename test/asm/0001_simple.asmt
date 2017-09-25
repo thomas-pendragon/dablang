@@ -20,5 +20,4 @@ func main()
 /* "Test"       */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1

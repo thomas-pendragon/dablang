@@ -24,5 +24,4 @@ func main()
 /* 2            */               Q_SET_NUMBER R0, 2
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1

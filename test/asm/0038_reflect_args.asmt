@@ -34,5 +34,4 @@ func foo(a, b<Uint8>)
                                  Q_SET_POP R2
                                  Q_SET_SYSCALL RNIL, 0, R2
                                  Q_SET_NIL R3
-                                 PUSH_SSA R3
-                                 RETURN
+                                 Q_RETURN R3

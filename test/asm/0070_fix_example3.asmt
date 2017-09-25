@@ -25,5 +25,4 @@ func main()
 /* ==           */               Q_SET_INSTCALL R3, R1, S1, R2
                                  Q_SET_SYSCALL RNIL, 0, R3
                                  Q_SET_NIL R4
-                                 PUSH_SSA R4
-                                 RETURN
+                                 Q_RETURN R4

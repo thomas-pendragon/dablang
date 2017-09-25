@@ -29,14 +29,12 @@ func main_or()
                    Ffun1:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Ffun2:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Fmain_or:
                                  STACK_RESERVE 0
@@ -48,5 +46,4 @@ func main_or()
                    L1:
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1

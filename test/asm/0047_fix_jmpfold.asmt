@@ -29,5 +29,4 @@ func assert_equal(value)
                                  PUSH_SSA R2
                                  POP 1
                                  Q_SET_NIL R3
-                                 PUSH_SSA R3
-                                 RETURN
+                                 Q_RETURN R3

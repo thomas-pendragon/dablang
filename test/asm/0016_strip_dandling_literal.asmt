@@ -21,5 +21,4 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* 41           */               Q_SET_NUMBER R0, 41
-                                 PUSH_SSA R0
-                                 RETURN
+                                 Q_RETURN R0

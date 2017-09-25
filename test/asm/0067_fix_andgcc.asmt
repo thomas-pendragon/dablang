@@ -41,5 +41,4 @@ should not generate unnecesary register writes
                                  JMP L2
                    L2:
                                  Q_SET_NIL R4
-                                 PUSH_SSA R4
-                                 RETURN
+                                 Q_RETURN R4

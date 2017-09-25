@@ -23,5 +23,4 @@ class Foo
                    CFoo_F__destruct:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN
+                                 Q_RETURN R0

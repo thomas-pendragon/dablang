@@ -63,4 +63,5 @@ enum
     OP_Q_SET_INSTCALL_BLOCK = 0x3A,
     OP_Q_RELEASE            = 0x3B,
     OP_Q_CHANGE_INSTVAR     = 0x3C,
+    OP_Q_RETURN             = 0x3D,
 };

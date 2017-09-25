@@ -30,8 +30,7 @@ func main()
                    Ffoo:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -44,5 +43,4 @@ func main()
                    L2:
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN
+                                 Q_RETURN R2

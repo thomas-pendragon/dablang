@@ -26,5 +26,4 @@ func foo()
                                  Q_SET_SYSCALL R1, 2, R0
                                  Q_SET_SYSCALL RNIL, 0, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN
+                                 Q_RETURN R2

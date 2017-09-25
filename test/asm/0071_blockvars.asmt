@@ -39,8 +39,7 @@ func main()
                                  Q_SET_POP R1
 /* test         */               Q_SET_CALL_BLOCK RNIL, S2, S0, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN 
+                                 Q_RETURN R2
  
                    Fmain__block1:
                                  STACK_RESERVE 0
@@ -48,14 +47,12 @@ func main()
                                  Q_SET_CLOSURE R1, 0
 /* qux          */               Q_SET_CALL RNIL, S1, R0, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN 
+                                 Q_RETURN R2
  
                    Fqux:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-                                 PUSH_SSA R0
-                                 RETURN 
+                                 Q_RETURN R0
  
                    Ftest:
                                  STACK_RESERVE 0
@@ -64,5 +61,4 @@ func main()
                                  YIELD 1
                                  POP 1
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1

@@ -51,8 +51,7 @@ func main()
                    L2:
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_NIL R7
-                                 PUSH_SSA R7
-                                 RETURN 
+                                 Q_RETURN R7
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -61,5 +60,4 @@ func main()
 /* 2            */               Q_SET_NUMBER R1, 2
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S3, R1
                                  Q_SET_NIL R2
-                                 PUSH_SSA R2
-                                 RETURN
+                                 Q_RETURN R2

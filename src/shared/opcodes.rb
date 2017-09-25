@@ -143,6 +143,7 @@ OPCODES_ARRAY_BASE = [
     [
       {name: 'Q_RELEASE', args: %i{reg}}, # release(reg(arg0))
       {name: 'Q_CHANGE_INSTVAR', args: %i{symbol reg}}, # self.@arg0 <- reg(arg1)
+      {name: 'Q_RETURN', args: %i[reg]}, # return(reg(arg0))
     ],
   },
 ].freeze

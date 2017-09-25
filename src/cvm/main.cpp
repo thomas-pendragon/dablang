@@ -705,6 +705,18 @@ bool DabVM::execute_single(Stream &input)
         register_set(dst_index, register_get(src_index));
         break;
     }
+    case OP_Q_RETURN:
+    {
+        auto  reg_index = input.read_reg();
+        auto  value     = register_get(reg_index);
+        auto &retval    = get_retval();
+        retval          = value;
+        if (!pop_frame(true))
+        {
+            return false;
+        }
+        break;
+    }
     case OP_RETURN:
     {
         auto nrets = 1;

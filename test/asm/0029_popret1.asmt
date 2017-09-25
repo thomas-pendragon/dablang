@@ -40,12 +40,10 @@ func main()
 /* insert       */               Q_SET_INSTCALL RNIL, R0, S1, R2
 /* puts         */               Q_SET_CALL RNIL, S2, R0
                                  Q_SET_NIL R3
-                                 PUSH_SSA R3
-                                 RETURN 
+                                 Q_RETURN R3
  
                    Fputs:
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
                                  Q_SET_NIL R1
-                                 PUSH_SSA R1
-                                 RETURN
+                                 Q_RETURN R1
