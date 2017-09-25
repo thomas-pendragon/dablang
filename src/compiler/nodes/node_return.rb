@@ -16,7 +16,7 @@ class DabNodeReturn < DabNode
   end
 
   def compile(output)
-    output.printex(self, 'Q_RETURN', "R#{value.input_register}")
+    output.printex(self, 'Q_RETURN', value.register_string)
   end
 
   def formatted_source(options)

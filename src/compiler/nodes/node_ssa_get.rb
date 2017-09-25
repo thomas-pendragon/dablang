@@ -48,4 +48,8 @@ class DabNodeSSAGet < DabNode
   def rename(from, to)
     @input_register = to if @input_register == from
   end
+
+  def register_string
+    "R#{input_register}"
+  end
 end
