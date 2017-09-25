@@ -9,20 +9,19 @@
  
                    Ffun1:
                                  STACK_RESERVE 0
-                                 PUSH_TRUE
-                                 RETURN 
+                                 Q_SET_TRUE R0
+                                 Q_RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
                                  Q_SET_CALL R7, S0
                                  Q_SET_SYSCALL RNIL, 0, R7
-                                 PUSH_NIL
-                                 RETURN
+                                 Q_RETURN RNIL
 
 ## INPUT
 
 allcode
-break 31
+break 33
 stack
 registers
 run
@@ -33,20 +32,19 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 32
+IP = 36
          0: CONSTANT_SYMBOL fun1
          6: LOAD_FUNCTION 21, fun1, 65535
-        16: LOAD_FUNCTION 16, main, 65535
+        16: LOAD_FUNCTION 20, main, 65535
         26: BREAK_LOAD 
         27: STACK_RESERVE 0
-        30: PUSH_TRUE 
-        31: RETURN 
->       32: STACK_RESERVE 0
-        35: Q_SET_CALL R7, S0
-        41: Q_SET_SYSCALL RNIL, 0, R7
-        48: PUSH_NIL 
-        49: RETURN 
-debug: break at 31.
+        30: Q_SET_TRUE R0
+        33: Q_RETURN R0
+>       36: STACK_RESERVE 0
+        39: Q_SET_CALL R7, S0
+        45: Q_SET_SYSCALL RNIL, 0, R7
+        52: Q_RETURN RNIL
+debug: break at 33.
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -57,12 +55,12 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
-IP = 31
+IP = 33
         27: STACK_RESERVE 0
-        30: PUSH_TRUE 
->       31: RETURN 
-        32: STACK_RESERVE 0
-        35: Q_SET_CALL R7, S0
+        30: Q_SET_TRUE R0
+>       33: Q_RETURN R0
+        36: STACK_RESERVE 0
+        39: Q_SET_CALL R7, S0
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -73,7 +71,7 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
-[   8] FIXN 41
+[   8] FIXN 45
 [   9] FIXN 2
 [  10] FIXN 0
 [  11] NIL  nil
@@ -81,4 +79,3 @@ Dump of stack:
 [  13] NIL  nil
 [  14] FIXN 7
 [  15] INVA ?
-[  16] BOOL true

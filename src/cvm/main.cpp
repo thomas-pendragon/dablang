@@ -717,19 +717,6 @@ bool DabVM::execute_single(Stream &input)
         }
         break;
     }
-    case OP_RETURN:
-    {
-        auto nrets = 1;
-        assert(nrets == 1);
-        auto &retval = get_retval();
-        retval       = stack.pop_value();
-        if (!pop_frame(true))
-        {
-            return false;
-        }
-
-        break;
-    }
     case OP_JMP:
     {
         auto mod = input.read_int16() - 3;
@@ -896,11 +883,6 @@ bool DabVM::execute_single(Stream &input)
         auto hash = input.read_uint16();
         auto line = input.read_uint16();
         coverage.add_line(hash, line);
-        break;
-    }
-    case OP_DUP:
-    {
-        stack.push_value(stack[-1]);
         break;
     }
     case OP_POP:

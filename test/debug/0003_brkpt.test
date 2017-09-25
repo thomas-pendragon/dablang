@@ -12,8 +12,7 @@ Fmain:
   PUSH_STRING "bar\n"
   Q_SET_POP R0
   Q_SET_SYSCALL RNIL, 0, R0
-  PUSH_NIL
-  RETURN 
+  Q_RETURN RNIL
 
 ## INPUT
 
@@ -31,5 +30,4 @@ IP = 40
 
         37: Q_SET_POP R0
 >       40: Q_SET_SYSCALL RNIL, 0, R0
-        47: PUSH_NIL 
-        48: RETURN
+        47: Q_RETURN RNIL

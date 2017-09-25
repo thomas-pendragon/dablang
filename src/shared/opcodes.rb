@@ -55,7 +55,6 @@ OPCODES_ARRAY_BASE = [
     items:
     [
       {name: 'POP', args: %i{uint16}}, # pop(n)
-      {name: 'DUP'}, # push(1)
     ],
   },
   {
@@ -83,7 +82,6 @@ OPCODES_ARRAY_BASE = [
       {name: 'JMP_IFN', args: %i{int16}}, # pop(1), add +arg to PC if value from stack is false
       {name: 'JMP_IF2', args: %i[int16 int16]}, # pop(1), add +arg0/1 to PC depending on stack value
       {name: 'Q_JMP_IF2', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg[arg0]
-      {name: 'RETURN'}, # pop(1)
       {name: 'YIELD', args: %i{uint16}}, # n = number of args, pop(n)
     ],
   },
