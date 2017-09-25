@@ -26,4 +26,4 @@ IP = 14
         11: STACK_RESERVE 0
 >       14: Q_SET_NUMBER R0, 12
         25: Q_SET_SYSCALL RNIL, 0, R0
-        32: Q_SET_NIL R1
+        32: Q_RETURN RNIL

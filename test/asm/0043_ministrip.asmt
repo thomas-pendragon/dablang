@@ -33,15 +33,13 @@ func bar()
                                  STACK_RESERVE 0
                                  Q_SET_FALSE R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    F__foo_String:
                                  STACK_RESERVE 0
                                  Q_SET_TRUE R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
@@ -49,5 +47,4 @@ func bar()
 /* __foo_String */               Q_SET_CALL RNIL, S2, R0
 /* 12           */               Q_SET_NUMBER R1, 12
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S1, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL

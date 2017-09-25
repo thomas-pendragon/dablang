@@ -29,8 +29,7 @@ func main()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -44,5 +43,4 @@ func main()
                                  JMP L1
                    L3:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL

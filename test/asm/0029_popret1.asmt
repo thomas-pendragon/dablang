@@ -39,11 +39,9 @@ func main()
 /* "foo"        */               Q_SET_CONSTANT R2, 0
 /* insert       */               Q_SET_INSTCALL RNIL, R0, S1, R2
 /* puts         */               Q_SET_CALL RNIL, S2, R0
-                                 Q_SET_NIL R3
-                                 Q_RETURN R3
+                                 Q_RETURN RNIL
  
                    Fputs:
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

@@ -18,5 +18,4 @@ func main()
                                  STACK_RESERVE 0
 /* String       */               Q_SET_CLASS R0, 1
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

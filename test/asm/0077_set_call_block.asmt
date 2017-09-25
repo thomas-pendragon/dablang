@@ -36,8 +36,7 @@ func main()
                                  Q_SET_NIL R0
 /* foo          */               Q_SET_CALL_BLOCK R1, S0, S1, R0
                                  Q_SET_SYSCALL RNIL, 0, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0

@@ -28,13 +28,11 @@ func main_or()
  
                    Ffun1:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL
  
                    Ffun2:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL
  
                    Fmain_or:
                                  STACK_RESERVE 0
@@ -45,5 +43,4 @@ func main_or()
                                  JMP L1
                    L1:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

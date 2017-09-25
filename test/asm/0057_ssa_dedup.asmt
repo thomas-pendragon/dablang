@@ -29,5 +29,4 @@ func foo(a)
 /* *            */               Q_SET_INSTCALL R4, R0, S0, R3
 /* +            */               Q_SET_INSTCALL R5, R2, S1, R4
                                  Q_SET_SYSCALL RNIL, 0, R5
-                                 Q_SET_NIL R6
-                                 Q_RETURN R6
+                                 Q_RETURN RNIL

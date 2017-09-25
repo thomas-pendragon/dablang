@@ -32,6 +32,6 @@ class DabNodeReturn < DabNode
   end
 
   def accepts?(arg)
-    arg.register?
+    arg.register? || arg.literal_nil?
   end
 end

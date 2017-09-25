@@ -26,5 +26,4 @@ func foo()
 /* @a=          */               Q_CHANGE_INSTVAR S0, R0
 /* @a           */               Q_SET_INSTVAR R1, S0
                                  Q_SET_SYSCALL RNIL, 0, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL

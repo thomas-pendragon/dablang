@@ -32,18 +32,15 @@ func main()
                                  PUSH_HAS_BLOCK 
                                  Q_SET_POP R0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
                                  Q_SET_NIL R1
 /* __foo_Fixnum */               Q_SET_CALL_BLOCK RNIL, S0, S1, R1, R0
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL

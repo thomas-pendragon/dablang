@@ -34,5 +34,4 @@ Instructions should pop return value if not used.
                                  Q_SET_POP R1
 /* +            */               Q_SET_INSTCALL R2, R0, S0, R1
                                  Q_SET_SYSCALL RNIL, 0, R2
-                                 Q_SET_NIL R3
-                                 Q_RETURN R3
+                                 Q_RETURN RNIL

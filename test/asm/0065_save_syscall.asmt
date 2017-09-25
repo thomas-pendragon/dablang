@@ -25,5 +25,4 @@ func foo()
 /* "abc"        */               Q_SET_CONSTANT R0, 0
                                  Q_SET_SYSCALL R1, 2, R0
                                  Q_SET_SYSCALL RNIL, 0, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL

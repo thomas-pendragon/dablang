@@ -527,4 +527,8 @@ class DabNode
   def sort_by(&block)
     @children.sort_by(&block)
   end
+
+  def literal_nil?
+    false
+  end
 end

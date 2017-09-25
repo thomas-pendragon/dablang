@@ -36,15 +36,13 @@ func foo()
                                  STACK_RESERVE 0
 /* "Fixnum"     */               Q_SET_CONSTANT R0, 1
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    F__spec_String:
                                  STACK_RESERVE 0
 /* "String"     */               Q_SET_CONSTANT R0, 2
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -54,5 +52,4 @@ func foo()
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S3, R1
 /* "A"          */               Q_SET_CONSTANT R2, 0
 /* __spec_Strin */               Q_SET_CALL RNIL, S4, R2
-                                 Q_SET_NIL R3
-                                 Q_RETURN R3
+                                 Q_RETURN RNIL

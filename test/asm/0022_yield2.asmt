@@ -33,5 +33,4 @@ func yield1()
                                  PUSH_SSA R1
                                  YIELD 2
                                  POP 1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL

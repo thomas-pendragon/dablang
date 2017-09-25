@@ -40,5 +40,4 @@ should not generate unnecesary register writes
                                  Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
-                                 Q_SET_NIL R4
-                                 Q_RETURN R4
+                                 Q_RETURN RNIL

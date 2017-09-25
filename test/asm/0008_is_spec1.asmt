@@ -43,8 +43,7 @@ func bar()
 /* foo          */               Q_SET_CALL RNIL, S3, R0
 /* 12           */               Q_SET_NUMBER R1, 12
 /* foo          */               Q_SET_CALL RNIL, S3, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -65,5 +64,4 @@ func bar()
                                  Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
-                                 Q_SET_NIL R7
-                                 Q_RETURN R7
+                                 Q_RETURN RNIL

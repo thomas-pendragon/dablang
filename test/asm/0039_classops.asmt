@@ -29,5 +29,4 @@ func foo(a)
 /* foo          */               Q_SET_CALL RNIL, S0, R1
                                  Q_SET_FALSE R2
 /* foo          */               Q_SET_CALL RNIL, S0, R2
-                                 Q_SET_NIL R3
-                                 Q_RETURN R3
+                                 Q_RETURN RNIL

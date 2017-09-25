@@ -42,24 +42,20 @@ func another_attribute(method, arg1, arg2)
 /* 14           */               Q_SET_NUMBER R2, 14
 /* "foo"        */               Q_SET_CONSTANT R3, 0
 /* another_attr */               Q_SET_CALL RNIL, S1, R1, R2, R3
-                                 Q_SET_NIL R4
-                                 Q_RETURN R4
+                                 Q_RETURN RNIL
  
                    Fanother_attribute:
                                  STACK_RESERVE 0
 /* arg2         */               Q_SET_ARG R0, 2
 /* arg1         */               Q_SET_ARG R1, 1
 /* method       */               Q_SET_ARG R2, 0
-                                 Q_SET_NIL R3
-                                 Q_RETURN R3
+                                 Q_RETURN RNIL
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL
  
                    Fsample_attribute:
                                  STACK_RESERVE 0
 /* method       */               Q_SET_ARG R0, 0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

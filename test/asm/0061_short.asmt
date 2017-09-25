@@ -65,8 +65,7 @@ func main()
                                  STACK_RESERVE 0
 /* main_and     */               Q_SET_CALL RNIL, S4
 /* main_or      */               Q_SET_CALL RNIL, S5
-                                 Q_SET_NIL R0
-                                 Q_RETURN R0
+                                 Q_RETURN RNIL
  
                    Fmain_and:
                                  STACK_RESERVE 0
@@ -77,8 +76,7 @@ func main()
                                  JMP L2
                    L2:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL
  
                    Fmain_or:
                                  STACK_RESERVE 0
@@ -89,5 +87,4 @@ func main()
                                  JMP L3
                    L3:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

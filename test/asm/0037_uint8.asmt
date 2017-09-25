@@ -22,5 +22,4 @@ func main()
                                  PUSH_NUMBER 150
                                  CAST 6
                                  Q_SET_POP R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

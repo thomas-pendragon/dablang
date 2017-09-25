@@ -69,5 +69,4 @@ func foo(a, b)
                                  Q_SET_SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:
-                                 Q_SET_NIL R6
-                                 Q_RETURN R6
+                                 Q_RETURN RNIL

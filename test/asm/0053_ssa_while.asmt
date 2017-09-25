@@ -43,5 +43,4 @@ func main()
                                  JMP L1
                    L3:
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R4
-                                 Q_RETURN R4
+                                 Q_RETURN RNIL

@@ -48,5 +48,4 @@ func foo()
                    L3:
 /* "d"          */               Q_SET_CONSTANT R4, 3
                                  Q_SET_SYSCALL RNIL, 0, R4
-                                 Q_SET_NIL R5
-                                 Q_RETURN R5
+                                 Q_RETURN RNIL

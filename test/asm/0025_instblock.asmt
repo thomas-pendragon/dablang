@@ -28,12 +28,10 @@ func tap(a)
 /* a            */               Q_SET_ARG R0, 0
                                  Q_SET_NIL R1
 /* fun          */               Q_SET_INSTCALL_BLOCK RNIL, R0, S0, S1, R1
-                                 Q_SET_NIL R2
-                                 Q_RETURN R2
+                                 Q_RETURN RNIL
  
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* arg          */               Q_SET_ARG R0, 0
                                  Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_NIL R1
-                                 Q_RETURN R1
+                                 Q_RETURN RNIL

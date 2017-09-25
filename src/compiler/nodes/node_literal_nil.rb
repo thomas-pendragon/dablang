@@ -20,4 +20,12 @@ class DabNodeLiteralNil < DabNodeLiteral
   def formatted_source(_)
     'nil'
   end
+
+  def literal_nil?
+    true
+  end
+
+  def register_string
+    'RNIL'
+  end
 end
