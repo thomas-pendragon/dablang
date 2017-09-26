@@ -86,13 +86,6 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
-    group: 'VARIABLES',
-    items:
-    [
-      {name: 'SET_INSTVAR', args: %i{vlc}}, # pop(1)
-    ],
-  },
-  {
     group: 'COVERAGE',
     items:
     [

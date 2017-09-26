@@ -32,7 +32,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_JMP_IF2, "JMP_IF2", {OpcodeArg::ARG_INT16, OpcodeArg::ARG_INT16}},
     {OP_Q_JMP_IF2, "Q_JMP_IF2", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT16, OpcodeArg::ARG_INT16}},
     {OP_YIELD, "YIELD", {OpcodeArg::ARG_UINT16}},
-    {OP_SET_INSTVAR, "SET_INSTVAR", {OpcodeArg::ARG_VLC}},
     {OP_COV_FILE, "COV_FILE", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_VLC}},
     {OP_COV, "COV", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
     {OP_START_FUNCTION,

@@ -838,13 +838,6 @@ bool DabVM::execute_single(Stream &input)
         set_instvar(name, value);
         break;
     }
-    case OP_SET_INSTVAR:
-    {
-        auto name  = input.read_vlc_string();
-        auto value = stack.pop_value();
-        set_instvar(name, value);
-        break;
-    }
     case OP_PUSH_ARRAY:
     {
         auto n = input.read_uint16();
