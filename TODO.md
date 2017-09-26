@@ -14,7 +14,6 @@
 - limited number of registers
 - typed registers
 - explicit calls (IP/SP regs management)
-- yield should be a value (eg. `var foo = yield * 2;`)
 
 ## Formatter
 

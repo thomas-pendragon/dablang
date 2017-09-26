@@ -642,7 +642,13 @@ class DabContext < DabBaseContext
   end
 
   def read_base_value
-    read_instvar || read_self || read_class || read_literal_value || read_local_var || read_call
+    read_instvar ||
+      read_self ||
+      read_class ||
+      read_literal_value ||
+      read_local_var ||
+      read_call ||
+      read_yield
   end
 
   def read_simple_value
@@ -739,7 +745,6 @@ class DabContext < DabBaseContext
 
   def read_value
     read_has_block ||
-      read_yield ||
       read_reflect ||
       _read_list_or_single(:read_bor_value, ['is'], DabNodeOperator)
   end

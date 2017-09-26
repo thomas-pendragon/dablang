@@ -1,0 +1,29 @@
+## CODE
+
+func main(a)
+{
+  print(yield * 2);
+}
+
+## OPTIONS
+
+
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "*"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 YIELD 0
+                                 Q_SET_POP R0
+/* 2            */               Q_SET_NUMBER R1, 2
+/* *            */               Q_SET_INSTCALL R2, R0, S0, R1
+                                 Q_SET_SYSCALL RNIL, 0, R2
+                                 Q_RETURN RNIL
