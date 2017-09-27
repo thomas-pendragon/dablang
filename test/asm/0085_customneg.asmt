@@ -1,0 +1,23 @@
+## CODE
+
+class Foo
+{
+  func !()
+  {
+    return true;
+  }
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION CFoo_F%BANG, "!", 256
+ 
+                                 BREAK_LOAD 
+ 
+                   CFoo_F%BANG:
+                                 STACK_RESERVE 0
+                                 Q_SET_TRUE R0
+                                 Q_RETURN R0
