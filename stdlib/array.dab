@@ -41,8 +41,7 @@ class Array
   
   func ==(other)
   {
-    var class_test = other is Array;
-    if (!class_test)
+    if (!(other is Array))
     {
       return false;
     }

@@ -651,7 +651,7 @@ class DabContext < DabBaseContext
       read_yield
   end
 
-  def read_simple_value
+  def read_simple_value_group
     on_subcontext do |subcontext|
       prefix_value = nil
       while true
@@ -661,6 +661,14 @@ class DabContext < DabBaseContext
           break
         end
       end
+      next unless value = subcontext.read_simple_value_group_with_prefix
+      value = prefix_value.fixup(value) if prefix_value
+      value
+    end
+  end
+
+  def read_simple_value
+    on_subcontext do |subcontext|
       value = subcontext.read_base_value
       next unless value
       while true
@@ -669,8 +677,7 @@ class DabContext < DabBaseContext
         else break
         end
       end
-      value = prefix_value.fixup(value) if prefix_value
-      value
+      next value
     end
   end
 
@@ -683,7 +690,7 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_simple_value_group
+  def read_simple_value_group_with_prefix
     read_parentheses_value || read_simple_value
   end
 

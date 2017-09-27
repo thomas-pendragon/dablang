@@ -24,7 +24,7 @@ class DabNodeUnaryOperator < DabNode
   end
 
   def formatted_source(options)
-    identifier.extra_value.to_s + value.formatted_source(options)
+    identifier.extra_value.to_s + '(' + value.formatted_source(options) + ')'
   end
 
   def accepts?(arg)

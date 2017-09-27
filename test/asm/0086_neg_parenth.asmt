@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  print(!(true == false));
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "!"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 Q_SET_FALSE R0
+/* !            */               Q_SET_INSTCALL R1, R0, S0
+                                 Q_SET_SYSCALL RNIL, 0, R1
+                                 Q_RETURN RNIL
