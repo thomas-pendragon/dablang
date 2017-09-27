@@ -2,14 +2,8 @@ class Object
 {
   func !=(other)
   {
-    if (self == other)
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
+    var test = self == other;
+    return !test;
   }
   
   func to_bool()

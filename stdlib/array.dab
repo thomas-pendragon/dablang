@@ -41,34 +41,26 @@ class Array
   
   func ==(other)
   {
-    if (other is Array)
-    {
-      if (self.count == other.count)
-      {
-        var index = 0;
-        var count = self.count;
-        while (index != count)
-        {
-          if (self[index] == other[index])
-          {
-          }
-          else
-          {
-            return false;
-          }
-          index = index + 1;
-        }
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-    else
+    var class_test = other is Array;
+    if (!class_test)
     {
       return false;
     }
+    if (self.count != other.count)
+    {
+      return false;
+    }
+    var index = 0;
+    var count = self.count;
+    while (index != count)
+    {
+      if (self[index] != other[index])
+      {
+        return false;
+      }
+      index = index + 1;
+    }
+    return true;
   }
   
   func to_bool()
