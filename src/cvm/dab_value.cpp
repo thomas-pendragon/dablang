@@ -204,6 +204,8 @@ bool DabValue::truthy() const
         return data.intptr;
     case TYPE_NIL:
         return false;
+    case TYPE_ARRAY:
+        return array().size() > 0;
     default:
         return true;
     }

@@ -1,0 +1,7 @@
+class Fixnum
+{
+  func to_bool()
+  {
+    return self != 0;
+  }
+}

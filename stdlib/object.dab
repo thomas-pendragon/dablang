@@ -11,4 +11,14 @@ class Object
       return true;
     }
   }
+  
+  func to_bool()
+  {
+    return true;
+  }
+  
+  func !()
+  {
+    return self.to_bool == false;
+  }
 }

@@ -1,0 +1,7 @@
+class NilClass
+{
+  func to_bool()
+  {
+    return false;
+  }
+}

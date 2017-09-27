@@ -1,0 +1,7 @@
+class String
+{
+  func to_bool()
+  {
+    return self.length != 0;
+  }
+}

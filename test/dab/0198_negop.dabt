@@ -1,0 +1,47 @@
+## CODE
+
+func test(a)
+{
+  print(a);
+  print(" (");
+  print(a.class);
+  print("):");
+  if (a)
+  {
+    print(" truthy");    
+  }
+  if (!a)
+  {
+    print(" falsey");
+  }
+  puts(".");
+}
+
+func main()
+{
+  test(nil);
+  test(true);
+  test(false);
+  test(1);
+  test(0);
+  test("foo");
+  test("");
+  test(@[1, 2, 3]);
+  test(@[]);
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT OK
+
+nil (NilClass): falsey.
+true (Boolean): truthy.
+false (Boolean): falsey.
+1 (Fixnum): truthy.
+0 (Fixnum): falsey.
+foo (String): truthy.
+ (String): falsey.
+[1, 2, 3] (Array): truthy.
+[] (Array): falsey.

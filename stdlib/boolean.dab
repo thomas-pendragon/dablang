@@ -1,0 +1,7 @@
+class Boolean
+{
+  func to_bool()
+  {
+    return self;
+  }
+}
