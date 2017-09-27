@@ -1,0 +1,27 @@
+## CODE
+
+func main()
+{
+  print(!14);
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL "!"
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 14           */               Q_SET_NUMBER R0, 14
+/* !            */               Q_SET_INSTCALL R1, R0, S0
+                                 Q_SET_SYSCALL RNIL, 0, R1
+                                 Q_RETURN RNIL

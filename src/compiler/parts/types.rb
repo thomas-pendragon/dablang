@@ -77,7 +77,7 @@ class DabTypeFixnum < DabType
   end
 
   def has_function?(identifier)
-    operators = %w[+ - * / == != < <= >= > | & % >> <<]
+    operators = %w[+ - * / == != < <= >= > | & % >> << !]
     return true if operators.include?(identifier)
     super
   end

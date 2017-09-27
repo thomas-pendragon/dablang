@@ -653,6 +653,14 @@ class DabContext < DabBaseContext
 
   def read_simple_value
     on_subcontext do |subcontext|
+      prefix_value = nil
+      while true
+        if new_prefix_value = subcontext.read_prefix(prefix_value)
+          prefix_value = new_prefix_value
+        else
+          break
+        end
+      end
       value = subcontext.read_base_value
       next unless value
       while true
@@ -661,6 +669,7 @@ class DabContext < DabBaseContext
         else break
         end
       end
+      value = prefix_value.fixup(value) if prefix_value
       value
     end
   end
@@ -704,6 +713,13 @@ class DabContext < DabBaseContext
       next unless value = subcontext.read_value
       next unless subcontext.read_operator(']')
       next DabNodeInstanceCall.new(base_value, :[], [value], nil)
+    end
+  end
+
+  def read_prefix(base_prefix)
+    on_subcontext do |subcontext|
+      next unless op = subcontext.read_operator('!')
+      next DabNodePrefixNode.new(op, base_prefix)
     end
   end
 
