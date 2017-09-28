@@ -111,14 +111,15 @@ module BaseFrontend
 
   def compile_dab_to_asm(input, output, options)
     options ||= ''
-    err ' > inline compile:'.bold.white
     input = [input].flatten
-    err " > ruby src/compiler/compiler.rb #{input.join(' ')} #{options}".bold.white
-    settings = options.split(' ') + input
     context = InlineCompilerContext.new
-    settings = read_args!(settings)
-    run_dab_compiler(settings, context)
-    File.open(output, 'wb') { |f| f << context.stdout.string }
+    cmd_replacement = "ruby src/compiler/compiler.rb #{input.join(' ')} #{options}"
+    describe_action_with_replacement(input, output, 'compile', cmd_replacement) do
+      settings = options.split(' ') + input
+      settings = read_args!(settings)
+      run_dab_compiler(settings, context)
+      File.open(output, 'wb') { |f| f << context.stdout.string }
+    end
   rescue InlineCompilerExit
     err context.stderr.string
     raise SystemCommandError.new('Compile error', context.stderr.string)
@@ -126,7 +127,7 @@ module BaseFrontend
 
   def assemble(input, output)
     cmd_replacement = "ruby src/tobinary/tobinary.rb #{input} > #{output}"
-    describe_action_with_replacement(input, output, 'tobinary', cmd_replacement) do
+    describe_action_with_replacement(input, output, 'assemble', cmd_replacement) do
       input = File.open(input, 'r')
       output = File.open(output, 'wb')
       run_tobinary(input, output, false)
