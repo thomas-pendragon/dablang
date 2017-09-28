@@ -66,11 +66,7 @@ class DabSpec
     end
   end
 
-  def run_test(settings)
-    input = settings[:input]
-    test_output_dir = settings[:test_output_dir] || '.'
-    test_prefix = settings[:test_output_prefix] || ''
-
+  def run(_settings)
     data = read_test_file(input)
 
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."

@@ -135,4 +135,21 @@ module BaseFrontend
       output.close
     end
   end
+
+  def run_test(settings)
+    @settings = settings
+    run(@settings)
+  end
+
+  def input
+    @settings[:input]
+  end
+
+  def test_output_dir
+    @settings[:test_output_dir] || '.'
+  end
+
+  def test_prefix
+    @settings[:test_output_prefix] || ''
+  end
 end
