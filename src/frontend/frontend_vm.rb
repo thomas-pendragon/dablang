@@ -35,11 +35,7 @@ class VMFrontend
     end
   end
 
-  def run_test(settings)
-    input = settings[:input]
-    test_output_dir = settings[:test_output_dir] || '.'
-    test_prefix = settings[:test_output_prefix] || ''
-
+  def run(_settings)
     data = read_test_file(input)
 
     runoptions = data[:runoptions] || ''
@@ -49,9 +45,9 @@ class VMFrontend
     puts info
     FileUtils.mkdir_p(test_output_dir)
 
-    asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.asm')).to_s
-    bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.bin')).to_s
-    out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
+    asm = temp_file('asm')
+    bin = temp_file('bin')
+    out = temp_file('out')
     FileUtils.rm(out) if File.exist?(out)
 
     extract_format_source(input, asm)
