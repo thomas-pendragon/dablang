@@ -7,6 +7,29 @@ require_relative '../shared/args_noautorun.rb'
 class DabCompareError < RuntimeError
 end
 
+class InlineCompilerExit < RuntimeError
+  attr_reader :code
+
+  def initialize(code)
+    super()
+    @code = code
+  end
+end
+
+class InlineCompilerContext
+  attr_reader :stdin, :stdout, :stderr
+
+  def initialize
+    @stdin = StringIO.new
+    @stdout = StringIO.new
+    @stderr = StringIO.new
+  end
+
+  def exit(code)
+    raise InlineCompilerExit.new(code)
+  end
+end
+
 def base_read_test_file(fname)
   ret = {}
   mode = nil
@@ -75,29 +98,6 @@ def compare_output(info, actual, expected, soft_match = false)
     puts Diffy::Diff.new(expected + "\n", actual + "\n").to_s(:color)
     puts "#{info}... ERROR!".red.bold
     raise DabCompareError.new('test error')
-  end
-end
-
-class InlineCompilerExit < RuntimeError
-  attr_reader :code
-
-  def initialize(code)
-    super()
-    @code = code
-  end
-end
-
-class InlineCompilerContext
-  attr_reader :stdin, :stdout, :stderr
-
-  def initialize
-    @stdin = StringIO.new
-    @stdout = StringIO.new
-    @stderr = StringIO.new
-  end
-
-  def exit(code)
-    raise InlineCompilerExit.new(code)
   end
 end
 
