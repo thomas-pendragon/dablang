@@ -37,10 +37,6 @@ class DabSpec
     }
   end
 
-  def compile_to_asm(input, output, options)
-    compile_dab_to_asm(input, output, options)
-  end
-
   def assemble(input, output)
     err ' > inline tobinary:'.bold.white
     err " > ruby src/tobinary/tobinary.rb #{input} > #{output}".bold.white
@@ -70,7 +66,7 @@ class DabSpec
     end
   end
 
-  def extract_source(input, output, text) # , extra_file = nil)
+  def extract_source(input, output, text)
     describe_action(input, output, 'extract source') do
       File.open(output, 'wb') do |file|
         file << text
@@ -97,7 +93,7 @@ class DabSpec
 
     FileUtils.rm(out) if File.exist?(out)
 
-    extract_source(input, dab, data[:code]) # , data[:included_file])
+    extract_source(input, dab, data[:code])
 
     stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
     stdlib_glob = stdlib_path + '/*.dab'
@@ -107,7 +103,7 @@ class DabSpec
       if extra
         extra = "./test/shared/#{extra}.dab"
       end
-      compile_to_asm(([dab, extra] + stdlib_files).compact, asm, data[:options])
+      compile_dab_to_asm(([dab, extra] + stdlib_files).compact, asm, data[:options])
     rescue SystemCommandError => e
       if data[:expected_status] == :compile_error
         compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
