@@ -56,6 +56,13 @@ module BaseFrontend
     puts "#{info.white} #{'[OK]'.green}"
   end
 
+  def describe_action_with_replacement(input, output, action, replacement)
+    describe_action(input, output, action) do
+      puts "~> #{replacement.yellow}"
+      yield
+    end
+  end
+
   def run_ruby_part(input, output, action, tool, options = '', input_as_arg = false)
     describe_action(input, output, action) do
       if input.is_a? Array

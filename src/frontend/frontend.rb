@@ -40,13 +40,14 @@ class DabSpec
   end
 
   def assemble(input, output)
-    err ' > inline tobinary:'.bold.white
-    err " > ruby src/tobinary/tobinary.rb #{input} > #{output}".bold.white
-    input = File.open(input, 'r')
-    output = File.open(output, 'wb')
-    run_tobinary(input, output, false)
-    input.close
-    output.close
+    cmd_replacement = "ruby src/tobinary/tobinary.rb #{input} > #{output}"
+    describe_action_with_replacement(input, output, 'tobinary', cmd_replacement) do
+      input = File.open(input, 'r')
+      output = File.open(output, 'wb')
+      run_tobinary(input, output, false)
+      input.close
+      output.close
+    end
   end
 
   def execute(input, output, run_options)
