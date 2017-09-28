@@ -123,4 +123,15 @@ module BaseFrontend
     err context.stderr.string
     raise SystemCommandError.new('Compile error', context.stderr.string)
   end
+
+  def assemble(input, output)
+    cmd_replacement = "ruby src/tobinary/tobinary.rb #{input} > #{output}"
+    describe_action_with_replacement(input, output, 'tobinary', cmd_replacement) do
+      input = File.open(input, 'r')
+      output = File.open(output, 'wb')
+      run_tobinary(input, output, false)
+      input.close
+      output.close
+    end
+  end
 end
