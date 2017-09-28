@@ -152,4 +152,8 @@ module BaseFrontend
   def test_prefix
     @settings[:test_output_prefix] || ''
   end
+
+  def temp_file(extension)
+    Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.' + extension)).to_s
+  end
 end

@@ -73,11 +73,11 @@ class DabSpec
     puts info
     FileUtils.mkdir_p(test_output_dir)
 
-    dab = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dab')).to_s
-    asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabca')).to_s
-    bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabcb')).to_s
-    vmo = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.vm')).to_s
-    out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
+    dab = temp_file('dab')
+    asm = temp_file('dabca')
+    bin = temp_file('dabcb')
+    vmo = temp_file('vm')
+    out = temp_file('out')
 
     FileUtils.rm(out) if File.exist?(out)
 
