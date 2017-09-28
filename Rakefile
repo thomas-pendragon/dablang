@@ -6,6 +6,7 @@ $autorun = false
 require_relative './src/frontend/frontend.rb'
 require_relative './src/frontend/frontend_asm.rb'
 require_relative './src/frontend/frontend_format.rb'
+require_relative './src/frontend/frontend_vm.rb'
 
 $sources = Dir.glob('src/**/*.rb')
 
@@ -146,7 +147,7 @@ end
 
 setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
-setup_tests('vm', 'vmt', 'frontend_vm', [cvm])
+setup_tests('vm', 'vmt', 'frontend_vm', [cvm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm', [], nil, AsmSpec)
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
