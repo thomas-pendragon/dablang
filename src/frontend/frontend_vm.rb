@@ -19,10 +19,6 @@ class VMFrontend
     end
   end
 
-  def assemble(input, output)
-    run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
-  end
-
   def extract_vm_part(input, output, part, runoptions, options)
     describe_action(input, output, 'VM') do
       input = input.to_s.shellescape

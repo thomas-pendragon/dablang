@@ -3,6 +3,11 @@ require_relative '../shared/system.rb'
 require_relative '../shared/presence.rb'
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/args_noautorun.rb'
+require_relative '../compiler/compiler_noautorun.rb'
+old_autorun = $autorun
+$autorun = false
+require_relative '../tobinary/tobinary.rb'
+$autorun = old_autorun
 
 class DabCompareError < RuntimeError
 end
