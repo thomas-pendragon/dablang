@@ -4,6 +4,8 @@ require_relative '../compiler/_requires.rb'
 $autorun = true if $autorun.nil?
 
 class FormatSpec
+  include BaseFrontend
+
   def read_test_file(fname)
     base_read_test_file(fname)
   end

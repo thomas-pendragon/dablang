@@ -4,6 +4,8 @@ require_relative '../compiler/compiler_noautorun.rb'
 $autorun = true if $autorun.nil?
 
 class AsmSpec
+  include BaseFrontend
+
   def read_test_file(fname)
     base_read_test_file(fname)
   end

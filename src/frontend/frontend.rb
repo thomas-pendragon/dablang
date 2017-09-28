@@ -5,6 +5,8 @@ require_relative '../tobinary/tobinary.rb'
 $autorun = true if $autorun.nil?
 
 class DabSpec
+  include BaseFrontend
+
   def read_test_file(fname)
     base = base_read_test_file(fname)
 
