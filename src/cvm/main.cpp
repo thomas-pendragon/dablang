@@ -1505,10 +1505,6 @@ int unsafe_main(int argc, char **argv)
     {
         fclose(stream);
     }
-    if (options.close_output)
-    {
-        fclose(options.output);
-    }
     if (options.cov)
     {
         vm.coverage.dump(stdout);
@@ -1519,6 +1515,10 @@ int unsafe_main(int argc, char **argv)
         {
             ret_value = 1;
         }
+    }
+    if (options.close_output)
+    {
+        fclose(options.output);
     }
     return ret_value;
 }
