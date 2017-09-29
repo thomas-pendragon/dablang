@@ -1,6 +1,8 @@
 #include "cvm.h"
 
 #include "../cshared/opcodes.h"
+#include "../cshared/opcodes_format.h"
+#include "../cshared/opcodes_debug.h"
 
 DabVM *$VM = nullptr;
 
@@ -475,7 +477,7 @@ bool DabVM::execute_single(Stream &input)
     auto opcode = input.read_uint8();
     if (verbose)
     {
-        fprintf(stderr, "@ %d: %d\n", (int)pos, (int)opcode);
+        fprintf(stderr, "@ %d: %d [%s]\n", (int)pos, (int)opcode, g_opcodes[opcode].name.c_str());
     }
     switch (opcode)
     {
