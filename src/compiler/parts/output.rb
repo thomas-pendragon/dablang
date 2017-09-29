@@ -55,7 +55,7 @@ class DabOutput
     end
 
     if !@comment.to_s.strip.empty?
-      _print sprintf('/* %-12s */ ', @comment.to_s.gsub('*/', '')[0...12].gsub('*/', ''))
+      _print sprintf('/* %-12s */ ', @comment.to_s.gsub('*/', '')[0...12].gsub('*/', '').tr("\n", '.'))
     else
       _print ' ' * 19
     end
