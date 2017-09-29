@@ -149,7 +149,7 @@ struct DabObjectProxy
     size_t         count_strong;
     bool           destroying = false;
 
-    void retain();
+    void retain(DabValue *value);
     void release(DabValue *value);
     void destroy(DabValue *value);
 };

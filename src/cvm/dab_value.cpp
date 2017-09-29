@@ -347,14 +347,15 @@ void DabValue::retain()
 {
     if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
-        data.object->retain();
+        data.object->retain(this);
     }
 }
 
 //
 
-void DabObjectProxy::retain()
+void DabObjectProxy::retain(DabValue *value)
 {
+    (void)value;
     if (this->destroying)
         return;
     count_strong += 1;
