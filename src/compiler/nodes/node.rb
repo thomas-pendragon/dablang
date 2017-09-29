@@ -531,4 +531,8 @@ class DabNode
   def literal_nil?
     false
   end
+
+  def active_registers
+    previous_nodes(DabNodeRegisterSet).map(&:output_register)
+  end
 end
