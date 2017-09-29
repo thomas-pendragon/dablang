@@ -41,7 +41,7 @@ class DabSpec
     describe_action(input, output, 'VM') do
       input = input.to_s.shellescape
       output = output.to_s.shellescape
-      run_options = run_options.presence&.shellescape
+      run_options = run_options.presence
       cmd = "timeout 10 ./bin/cvm #{run_options} #{input} --out=#{output}"
       begin
         psystem_noecho cmd
