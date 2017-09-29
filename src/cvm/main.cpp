@@ -1511,7 +1511,8 @@ int unsafe_main(int argc, char **argv)
     }
     if (ret_value == 0 && options.leaktest)
     {
-        if (vm.run_leaktest(stdout))
+        bool leaked = vm.run_leaktest(options.output);
+        if (leaked)
         {
             ret_value = 1;
         }
