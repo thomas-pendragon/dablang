@@ -61,4 +61,5 @@ enum
     OP_Q_RELEASE            = 0x38,
     OP_Q_CHANGE_INSTVAR     = 0x39,
     OP_Q_RETURN             = 0x3A,
+    OP_Q_RETAIN             = 0x3B,
 };
