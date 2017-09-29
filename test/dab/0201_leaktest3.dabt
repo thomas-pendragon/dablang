@@ -1,0 +1,31 @@
+## CODE
+
+func functrue() { return true; }
+
+func main()
+{
+  var a = 1;
+  var b = "String1";
+  var c = String.new("String2");
+  var d = @[a, b, c];
+  puts(d);
+  if (functrue())
+  {
+    d = 123;
+  }
+  puts(d);
+}
+
+## OPTIONS
+
+--no-autorelease --strip
+
+## RUN OPTIONS
+
+--no-autorelease --leaktest
+
+## EXPECT OK
+
+[1, String1, String2]
+123
+leaktest: no leaks

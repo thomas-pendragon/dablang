@@ -18,7 +18,8 @@ class DabNodeReturn < DabNode
   def compile(output)
     if $no_autorelease
       self.active_registers.each do |register|
-        output.printex(self, 'Q_RELEASE', "R#{register}")
+        reg = "R#{register}"
+        output.printex(self, 'Q_RELEASE', reg) unless reg == value.register_string
       end
     end
     output.printex(self, 'Q_RETURN', value.register_string)

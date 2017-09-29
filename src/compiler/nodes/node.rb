@@ -533,6 +533,6 @@ class DabNode
   end
 
   def active_registers
-    previous_nodes(DabNodeRegisterSet).map(&:output_register)
+    previous_nodes(DabNodeRegisterSet).map(&:output_register).uniq
   end
 end

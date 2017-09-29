@@ -1,0 +1,35 @@
+## CODE
+
+func foo()
+{
+  var a = "Abc";
+  var b = "String1";
+  return a + b;
+}
+
+## OPTIONS
+
+--no-autorelease --no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "Abc"
+                                 CONSTANT_STRING "String1"
+                                 CONSTANT_SYMBOL "+"
+ 
+                                 LOAD_FUNCTION Ffoo, foo, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+/* "Abc"        */               Q_RELEASE R0
+                                 Q_SET_CONSTANT R0, 0
+/* "String1"    */               Q_RELEASE R1
+                                 Q_SET_CONSTANT R1, 1
+/* +            */               Q_SET_INSTCALL R2, R0, S2, R1
+                                 Q_RELEASE R0
+                                 Q_RELEASE R1
+                                 Q_RETURN R2

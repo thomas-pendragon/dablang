@@ -21,6 +21,7 @@ class DabNodeLiteralNumber < DabNodeLiteral
 
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
+    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
     output.print('Q_SET_NUMBER', "R#{output_register}", extra_dump)
   end
 

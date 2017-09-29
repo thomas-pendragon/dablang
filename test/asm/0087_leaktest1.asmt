@@ -27,15 +27,20 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 1            */               Q_SET_NUMBER R0, 1
-/* "String1"    */               Q_SET_CONSTANT R1, 0
-/* "String2"    */               Q_SET_CONSTANT R2, 1
-/* String       */               Q_SET_CLASS R3, 1
+/* 1            */               Q_RELEASE R0
+                                 Q_SET_NUMBER R0, 1
+/* "String1"    */               Q_RELEASE R1
+                                 Q_SET_CONSTANT R1, 0
+/* "String2"    */               Q_RELEASE R2
+                                 Q_SET_CONSTANT R2, 1
+/* String       */               Q_RELEASE R3
+                                 Q_SET_CLASS R3, 1
 /* new          */               Q_SET_INSTCALL R4, R3, S2, R2
                                  PUSH_SSA R0
                                  PUSH_SSA R1
                                  PUSH_SSA R4
                                  PUSH_ARRAY 3
+                                 Q_RELEASE R5
                                  Q_SET_POP R5
                                  Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0

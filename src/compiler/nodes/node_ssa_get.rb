@@ -19,6 +19,7 @@ class DabNodeSSAGet < DabNode
   end
 
   def compile_as_ssa(output, output_register)
+    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
     output.print('Q_SET_REG', "R#{output_register}", "R#{input_register}")
   end
 
