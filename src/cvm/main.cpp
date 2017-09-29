@@ -944,6 +944,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg   = input.read_reg();
         auto value = register_get(reg);
         value.release();
+        register_set(reg, nullptr);
         break;
     }
     case OP_CAST:
