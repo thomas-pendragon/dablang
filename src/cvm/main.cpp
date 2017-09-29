@@ -1457,7 +1457,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->cov = true;
     }
 
-    if (flags["--noautorelease"])
+    if (flags["--noautorelease"] || flags["--no-autorelease"])
     {
         this->autorelease = false;
     }
