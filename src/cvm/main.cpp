@@ -1295,46 +1295,52 @@ void DabVM::extract(const std::string &name)
     }
     else if (name == "leaktest")
     {
-        bool error = false;
-        if (stack.size() > 0)
-        {
-            fprintf(output, "leaktest: %zu items on stack\n", stack.size());
-            for (size_t i = 0; i < stack.size(); i++)
-            {
-                fprintf(output, "%4zu: ", i);
-                stack[i].dump(output);
-                fprintf(output, "\n");
-            }
-            error = true;
-        }
-        if (DabMemoryCounter<COUNTER_OBJECT>::counter() > 0)
-        {
-            fprintf(output, "leaktest: %zu allocated objects remaining\n",
-                    DabMemoryCounter<COUNTER_OBJECT>::counter());
-            error = true;
-        }
-        if (DabMemoryCounter<COUNTER_PROXY>::counter() > 0)
-        {
-            fprintf(output, "leaktest: %zu allocated proxies remaining\n",
-                    DabMemoryCounter<COUNTER_PROXY>::counter());
-            error = true;
-        }
-        if (DabMemoryCounter<COUNTER_VALUE>::counter() > 0)
-        {
-            fprintf(output, "leaktest: %zu allocated values remaining\n",
-                    DabMemoryCounter<COUNTER_VALUE>::counter());
-            error = true;
-        }
-        if (!error)
-        {
-            fprintf(output, "leaktest: no leaks\n");
-        }
+        run_leaktest(output);
     }
     else
     {
         fprintf(stderr, "vm: unknown extract option <%s>.\n", name.c_str());
         exit(1);
     }
+}
+
+bool DabVM::run_leaktest(FILE *output)
+{
+    bool error = false;
+    if (stack.size() > 0)
+    {
+        fprintf(output, "leaktest: %zu items on stack\n", stack.size());
+        for (size_t i = 0; i < stack.size(); i++)
+        {
+            fprintf(output, "%4zu: ", i);
+            stack[i].dump(output);
+            fprintf(output, "\n");
+        }
+        error = true;
+    }
+    if (DabMemoryCounter<COUNTER_OBJECT>::counter() > 0)
+    {
+        fprintf(output, "leaktest: %zu allocated objects remaining\n",
+                DabMemoryCounter<COUNTER_OBJECT>::counter());
+        error = true;
+    }
+    if (DabMemoryCounter<COUNTER_PROXY>::counter() > 0)
+    {
+        fprintf(output, "leaktest: %zu allocated proxies remaining\n",
+                DabMemoryCounter<COUNTER_PROXY>::counter());
+        error = true;
+    }
+    if (DabMemoryCounter<COUNTER_VALUE>::counter() > 0)
+    {
+        fprintf(output, "leaktest: %zu allocated values remaining\n",
+                DabMemoryCounter<COUNTER_VALUE>::counter());
+        error = true;
+    }
+    if (!error)
+    {
+        fprintf(output, "leaktest: no leaks\n");
+    }
+    return error;
 }
 
 struct DabRunOptions

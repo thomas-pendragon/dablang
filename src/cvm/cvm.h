@@ -553,6 +553,8 @@ struct DabVM
 
     DabValue register_get(dab_register_t reg_index);
     void register_set(dab_register_t reg_index, const DabValue &value);
+
+    bool run_leaktest(FILE *output);
 };
 
 struct DabVM_debug
