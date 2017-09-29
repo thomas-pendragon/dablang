@@ -1354,6 +1354,7 @@ struct DabRunOptions
     bool  autorelease     = true;
     bool  verbose         = false;
     bool  with_attributes = false;
+    bool  leaktest        = false;
 
     FILE *output       = stdout;
     bool  close_output = false;
@@ -1396,6 +1397,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         fprintf(stderr, "vm: too many file arguments.\n");
         exit(1);
+    }
+
+    if (flags.count("--leaktest"))
+    {
+        this->leaktest = true;
     }
 
     if (options.count("--output"))
@@ -1503,6 +1509,13 @@ int unsafe_main(int argc, char **argv)
     if (options.cov)
     {
         vm.coverage.dump(stdout);
+    }
+    if (ret_value == 0 && options.leaktest)
+    {
+        if (vm.run_leaktest(stdout))
+        {
+            ret_value = 1;
+        }
     }
     return ret_value;
 }
