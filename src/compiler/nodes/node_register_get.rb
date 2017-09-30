@@ -24,7 +24,7 @@ class DabNodeRegisterGet < DabNode
   end
 
   def setters
-    function.all_nodes([DabNodeSSASet, DabNodeRegisterSet]).select { |node| node.output_register == self.input_register }
+    function.all_nodes(DabNodeRegisterSet).select { |node| node.output_register == self.input_register }
   end
 
   def constant?

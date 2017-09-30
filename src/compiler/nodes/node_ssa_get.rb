@@ -15,7 +15,7 @@ class DabNodeSSAGet < DabNode
   end
 
   def setters
-    function.all_nodes([DabNodeSSASet, DabNodeRegisterSet]).select { |node| node.output_register == self.input_register }
+    function.all_nodes(DabNodeSSASet).select { |node| node.output_register == self.input_register }
   end
 
   def constant?
@@ -29,7 +29,7 @@ class DabNodeSSAGet < DabNode
   end
 
   def my_type
-    return DabTypeObject.new unless setters.count == 1
+    raise 'multiple setters for ssa value' if setters.count > 1
     setters.first.value.my_type
   end
 
