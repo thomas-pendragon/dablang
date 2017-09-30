@@ -12,7 +12,7 @@ class ReorderRegisters
     nodes.each do |node|
       node.output_register = mapping[node.output_register]
     end
-    function.all_nodes(DabNodeSSAGet).each do |node|
+    function.all_nodes(DabNodeRegisterGet).each do |node|
       node.input_register = mapping[node.input_register]
     end
     true

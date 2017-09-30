@@ -22,5 +22,10 @@ class SSABreakPhiNodes
 
       phi_setter.remove!
     end
+
+    function.all_nodes(DabNodeSSAGet).each do |node|
+      register_get = DabNodeRegisterGet.new(node.input_register, node.input_varname)
+      node.replace_with!(register_get)
+    end
   end
 end

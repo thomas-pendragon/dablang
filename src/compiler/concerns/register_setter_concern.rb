@@ -4,7 +4,7 @@ module RegisterSetterConcern
   end
 
   def users
-    function.all_nodes(DabNodeSSAGet).select do |node|
+    function.all_nodes([DabNodeSSAGet, DabNodeRegisterGet]).select do |node|
       node.input_register == self.output_register
     end
   end
