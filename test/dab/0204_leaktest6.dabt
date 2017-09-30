@@ -1,0 +1,40 @@
+## CODE
+
+func functrue() { return true; }
+
+class Foo
+{
+  func go()
+{
+@var = 123;
+  var a = 1;
+  var b = "String1";
+  var c = String.new("String2");
+  var d = @[a, b, c];
+  puts(d);
+  if (functrue())
+  {
+    d = @var;
+  }
+  puts(d);
+}
+}
+
+func main()
+{
+  Foo.new.go();
+}
+
+## OPTIONS
+
+--no-autorelease --strip
+
+## RUN OPTIONS
+
+--no-autorelease --leaktest
+
+## EXPECT OK
+
+[1, String1, String2]
+123
+leaktest: no leaks
