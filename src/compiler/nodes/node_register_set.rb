@@ -26,11 +26,11 @@ class DabNodeRegisterSet < DabNode
   end
 
   def compile(output)
+    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
     if value.respond_to?(:compile_as_ssa)
       value.compile_as_ssa(output, output_register)
     else
       value.compile(output)
-      output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
       output.print('Q_SET_POP', "R#{output_register}")
     end
   end

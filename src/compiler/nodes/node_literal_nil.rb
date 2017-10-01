@@ -6,7 +6,6 @@ class DabNodeLiteralNil < DabNodeLiteral
   end
 
   def compile_as_ssa(output, output_register)
-    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
     output.printex(self, 'Q_SET_NIL', "R#{output_register}")
   end
 

@@ -22,7 +22,6 @@ class DabNodeInstanceVar < DabNode
 
   def compile_as_ssa(output, output_register)
     output.comment(identifier)
-    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
     output.printex(self, 'Q_SET_INSTVAR', "R#{output_register}", "S#{node_identifier.index}")
   end
 

@@ -25,10 +25,11 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "Abc"        */               Q_RELEASE R0
-                                 Q_SET_CONSTANT R0, 0
-/* "String1"    */               Q_RELEASE R1
-                                 Q_SET_CONSTANT R1, 1
+                                 Q_RELEASE R0
+/* "Abc"        */               Q_SET_CONSTANT R0, 0
+                                 Q_RELEASE R1
+/* "String1"    */               Q_SET_CONSTANT R1, 1
+                                 Q_RELEASE R2
 /* +            */               Q_SET_INSTCALL R2, R0, S2, R1
                                  Q_RELEASE R0
                                  Q_RELEASE R1

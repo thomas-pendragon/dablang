@@ -25,15 +25,16 @@ Instructions should pop return value if not used.
  
                    Ffoo:
                                  STACK_RESERVE 0
+                                 Q_RELEASE R0
                                  PUSH_NUMBER 1
                                  PUSH_NUMBER 2
                                  PUSH_ARRAY 2
-                                 Q_RELEASE R0
                                  Q_SET_POP R0
+                                 Q_RELEASE R1
                                  PUSH_NUMBER 3
                                  PUSH_ARRAY 1
-                                 Q_RELEASE R1
                                  Q_SET_POP R1
+                                 Q_RELEASE R2
 /* +            */               Q_SET_INSTCALL R2, R0, S0, R1
                                  Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RELEASE R0
