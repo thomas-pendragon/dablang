@@ -1,0 +1,96 @@
+## CODE
+
+func functrue() { return true; }
+
+class Foo
+{
+  func go()
+{
+@var = 123;
+  var a = 1;
+  var b = "String1";
+  var c = String.new("String2");
+  var d = @[a, b, c];
+  print(d);
+  if (functrue())
+  {
+    d = @var;
+  }
+  print(d);
+}
+}
+
+func main()
+{
+  Foo.new.go();
+}
+
+## OPTIONS
+
+--no-autorelease --no-opt
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_STRING "String1"
+                                 CONSTANT_STRING "String2"
+                                 CONSTANT_SYMBOL functrue
+                                 CONSTANT_SYMBOL go
+                                 CONSTANT_SYMBOL new
+                                 CONSTANT_SYMBOL var
+ 
+                                 DEFINE_CLASS Foo, 256, 0
+                                 LOAD_FUNCTION CFoo_Fgo, go, 256
+ 
+                                 LOAD_FUNCTION Ffunctrue, functrue, -1
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Ffunctrue:
+                                 STACK_RESERVE 0
+                                 Q_SET_TRUE R0
+                                 Q_RETURN R0
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* Foo          */               Q_SET_CLASS R0, 256
+/* new          */               Q_SET_INSTCALL R1, R0, S4
+/* go           */               Q_SET_INSTCALL RNIL, R1, S3
+                                 Q_RELEASE R0
+                                 Q_RELEASE R1
+                                 Q_RETURN RNIL
+ 
+                   CFoo_Fgo:
+                                 STACK_RESERVE 0
+/* 123          */               Q_SET_NUMBER R0, 123
+/* @var=        */               Q_CHANGE_INSTVAR S5, R0
+/* 1            */               Q_SET_NUMBER R1, 1
+/* "String1"    */               Q_SET_CONSTANT R2, 0
+/* "String2"    */               Q_SET_CONSTANT R3, 1
+/* String       */               Q_SET_CLASS R4, 1
+/* new          */               Q_SET_INSTCALL R5, R4, S4, R3
+                                 PUSH_SSA R1
+                                 PUSH_SSA R2
+                                 PUSH_SSA R5
+                                 PUSH_ARRAY 3
+                                 Q_SET_POP R6
+                                 Q_SET_SYSCALL RNIL, 0, R6
+/* functrue     */               Q_SET_CALL R7, S2
+                                 Q_JMP_IF2 R7, L1, L2
+                   L1:
+                                 Q_RELEASE R6
+/* @var         */               Q_SET_INSTVAR R6, S5
+                                 JMP L2
+                   L2:
+                                 Q_SET_SYSCALL RNIL, 0, R6
+                                 Q_RELEASE R0
+                                 Q_RELEASE R1
+                                 Q_RELEASE R2
+                                 Q_RELEASE R3
+                                 Q_RELEASE R4
+                                 Q_RELEASE R5
+                                 Q_RELEASE R6
+                                 Q_RELEASE R7
+                                 Q_RETURN RNIL

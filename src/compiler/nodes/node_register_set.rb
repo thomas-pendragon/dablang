@@ -26,7 +26,7 @@ class DabNodeRegisterSet < DabNode
   end
 
   def compile(output)
-    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease
+    output.print('Q_RELEASE', "R#{output_register}") if $no_autorelease && !first_setter?
     if value.respond_to?(:compile_as_ssa)
       value.compile_as_ssa(output, output_register)
     else
@@ -41,5 +41,13 @@ class DabNodeRegisterSet < DabNode
 
   def rename(from, to)
     @output_register = to if @output_register == from
+  end
+
+  def all_setters
+    function.all_nodes(DabNodeRegisterSet).select { |setter| setter.output_register == self.output_register }
+  end
+
+  def first_setter?
+    all_setters.index(self) == 0
   end
 end
