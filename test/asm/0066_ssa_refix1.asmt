@@ -46,7 +46,9 @@ func main()
                                  JMP L3
                    L2:
                                  Q_SET_REG R2, R0
+                                 Q_RETAIN R2
                                  Q_SET_REG R3, R2
+                                 Q_RETAIN R3
                                  JMP L3
                    L3:
                                  Q_SET_SYSCALL RNIL, 0, R2

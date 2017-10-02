@@ -1,0 +1,37 @@
+## CODE
+
+func main()
+{
+  var a = @[1];
+  if (false)
+  {
+    a = nil;
+  }
+  var b = a;
+  if (true)
+  {
+    a = @[2];
+  }
+  print(a);
+  print(b);
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## OPTIONS
+
+--no-autorelease --no-opt --strip
+
+## RUN OPTIONS
+
+--no-autorelease --leaktest
+
+## EXPECT OK
+
+[2][1]leaktest: no leaks
+
+## COMMENT/PENDING
+
+test without --no-opt
