@@ -32,8 +32,9 @@ class DabSpec
       expected_compile_error: compile_error,
       expected_runtime_error: runtime_error,
       included_file: included_file,
-      options: base[:options],
-      run_options: base[:run_options],
+      options: base[:options] || '',
+      run_options: base[:run_options] || '',
+      frontend_options: base[:frontend_options] || '',
     }
   end
 
@@ -84,6 +85,7 @@ class DabSpec
     stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
     stdlib_glob = stdlib_path + '/*.dab'
     stdlib_files = Dir.glob(stdlib_glob)
+    stdlib_files = [] if data[:frontend_options]['--no-stdlib']
     begin
       extra = data[:included_file]
       if extra
