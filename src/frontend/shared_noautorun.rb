@@ -131,7 +131,7 @@ module BaseFrontend
   end
 
   def assemble(input, output)
-    cmd_replacement = "ruby src/tobinary/tobinary.rb #{input} > #{output}"
+    cmd_replacement = "ruby src/tobinary/tobinary.rb < #{input} > #{output}"
     describe_action_with_replacement(input, output, 'assemble', cmd_replacement) do
       input = File.open(input, 'r')
       output = File.open(output, 'wb')
