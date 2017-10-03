@@ -33,7 +33,7 @@ func bar()
                    F__foo_String:
                                  STACK_RESERVE 0
 /* "got string" */               Q_SET_CONSTANT R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fbar:

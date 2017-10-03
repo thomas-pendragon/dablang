@@ -37,7 +37,7 @@ func main()
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
 /* 2            */               Q_SET_NUMBER R1, 2
 /* *            */               Q_SET_INSTCALL R2, R0, S1, R1
 /* 2            */               Q_SET_NUMBER R3, 2
@@ -46,10 +46,10 @@ func main()
                                  Q_JMP_IF2 R5, L1, L2
                    L1:
 /* "yes"        */               Q_SET_CONSTANT R6, 0
-                                 Q_SET_SYSCALL RNIL, 0, R6
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L2
                    L2:
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fmain:

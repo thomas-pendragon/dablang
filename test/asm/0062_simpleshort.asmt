@@ -42,5 +42,5 @@ func main_or()
 /* fun2         */               Q_SET_CALL R0, S1
                                  JMP L1
                    L1:
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

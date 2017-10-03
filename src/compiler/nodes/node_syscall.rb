@@ -22,7 +22,7 @@ class DabNodeSyscall < DabNodeBasecall
   end
 
   def _compile(output, output_register)
-    output.comment(self.extra_value)
+    output.comment(identifier)
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     output.printex(self, 'Q_SET_SYSCALL', output_register, @call, list)
   end

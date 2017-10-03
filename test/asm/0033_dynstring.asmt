@@ -25,7 +25,7 @@ func foo()
 /* "allocated s */               Q_SET_CONSTANT R0, 0
 /* String       */               Q_SET_CLASS R1, 1
 /* new          */               Q_SET_INSTCALL R2, R1, S1, R0
-                                 Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2

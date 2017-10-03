@@ -37,7 +37,7 @@ func main()
                                  PUSH_SSA R4
                                  PUSH_ARRAY 3
                                  Q_SET_POP R5
-                                 Q_SET_SYSCALL RNIL, 0, R5
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2

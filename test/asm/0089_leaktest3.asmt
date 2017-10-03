@@ -76,7 +76,7 @@ func main()
                                  PUSH_SSA R5
                                  PUSH_ARRAY 3
                                  Q_SET_POP R6
-                                 Q_SET_SYSCALL RNIL, 0, R6
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
 /* functrue     */               Q_SET_CALL R7, S2
                                  Q_JMP_IF2 R7, L1, L2
                    L1:
@@ -84,7 +84,7 @@ func main()
 /* @var         */               Q_SET_INSTVAR R6, S5
                                  JMP L2
                    L2:
-                                 Q_SET_SYSCALL RNIL, 0, R6
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2

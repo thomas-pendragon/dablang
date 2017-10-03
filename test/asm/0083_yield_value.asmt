@@ -25,5 +25,5 @@ func main(a)
                                  Q_SET_POP R0
 /* 2            */               Q_SET_NUMBER R1, 2
 /* *            */               Q_SET_INSTCALL R2, R0, S0, R1
-                                 Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL

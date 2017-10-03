@@ -46,5 +46,5 @@ func main()
 /* 3            */               Q_SET_NUMBER R1, 3
                                  JMP L3
                    L3:
-                                 Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL

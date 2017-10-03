@@ -42,11 +42,11 @@ func tap()
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* "ok"         */               Q_SET_CONSTANT R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Ftap__block2:
                                  STACK_RESERVE 0
 /* "ok"         */               Q_SET_CONSTANT R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

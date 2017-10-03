@@ -19,5 +19,5 @@ func main()
                                  STACK_RESERVE 0
                                  Q_SET_FALSE R0
 /* !            */               Q_SET_INSTCALL R1, R0, S0
-                                 Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL

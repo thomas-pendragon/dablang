@@ -53,11 +53,11 @@ func main()
                    CBar_Frun:
                                  STACK_RESERVE 0
 /* "bar"        */               Q_SET_CONSTANT R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    CFoo_Frun:
                                  STACK_RESERVE 0
 /* "foo"        */               Q_SET_CONSTANT R0, 1
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

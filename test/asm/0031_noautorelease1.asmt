@@ -26,6 +26,6 @@ Instructions should pop return value if not used.
                    Ffoo:
                                  STACK_RESERVE 0
 /* "foo"        */               Q_SET_CONSTANT R0, 0
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RELEASE R0
                                  Q_RETURN RNIL

@@ -35,13 +35,13 @@ func foo()
                    F__spec_Fixnum:
                                  STACK_RESERVE 0
 /* "Fixnum"     */               Q_SET_CONSTANT R0, 1
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__spec_String:
                                  STACK_RESERVE 0
 /* "String"     */               Q_SET_CONSTANT R0, 2
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Ffoo:

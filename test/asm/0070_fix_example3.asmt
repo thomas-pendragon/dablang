@@ -23,5 +23,5 @@ func main()
 /* new          */               Q_SET_INSTCALL R1, R0, S2
 /* "a"          */               Q_SET_CONSTANT R2, 0
 /* ==           */               Q_SET_INSTCALL R3, R1, S1, R2
-                                 Q_SET_SYSCALL RNIL, 0, R3
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL

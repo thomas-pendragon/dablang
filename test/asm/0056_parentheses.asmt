@@ -20,5 +20,5 @@ func foo(a)
                    Ffoo:
                                  STACK_RESERVE 0
 /* 4            */               Q_SET_NUMBER R0, 4
-                                 Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
