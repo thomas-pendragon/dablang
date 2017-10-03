@@ -129,6 +129,10 @@ class DabCompilerFrontend
   end
 
   def process_node(program)
+    process_node_single_phase(program)
+  end
+
+  def process_node_single_phase(program)
     return if program.run_checks!
 
     dab_benchmark('ssa') do
