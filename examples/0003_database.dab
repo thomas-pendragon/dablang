@@ -1,0 +1,63 @@
+/* Database schema:
+
+CREATE SEQUENCE books_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE books (
+    id integer NOT NULL,
+    title character varying,
+    author character varying,
+    year integer
+);
+
+ALTER TABLE ONLY books ALTER COLUMN id SET DEFAULT nextval('books_id_seq'::regclass);
+
+ALTER TABLE ONLY books ADD CONSTRAINT books_pkey PRIMARY KEY (id);
+
+INSERT INTO books (title, author, year) VALUES
+  ('The motor boys on the wing', 'Clarence Young', 1912),
+  ('Choice of choices', 'John Haddad', 1905),
+  ('The lotus of the Nile', 'Arthur Eaton', 1907);
+
+*/
+
+// PGconn *PQconnectdb(const char *conninfo);
+[__import_pq]
+func PQconnectdb<IntPtr>(conninfo<String>) {}
+
+// ConnStatusType PQstatus(const PGconn *conn);
+[__import_pq]
+func PQstatus<Uint32>(conn<IntPtr>) {}
+
+// void PQfinish(PGconn *conn);
+[__import_pq]
+func PQfinish<NilClass>(conn<IntPtr>) {}
+
+// char *PQerrorMessage(const PGconn *conn);
+[__import_pq]
+func PQerrorMessage<String>(conn<IntPtr>) {}
+
+func exit_connection(connection)
+{
+  PQfinish(connection);
+  exit(1);
+}
+
+func main()
+{
+  var CONNECTION_OK = 0;
+  var conn = PQconnectdb("postgresql://dablang_ex0003@localhost/dablang_ex0003");
+  print("Connection = ");
+  puts(conn);
+
+  if (PQstatus(conn) != CONNECTION_OK)
+  {
+    print("Connection to database failed: ");
+    puts(PQerrorMessage(conn));
+    exit_connection(conn);
+  }
+}
