@@ -127,6 +127,14 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
+        fun.name                 = "__import_pq";
+        fun.regular              = false;
+        fun.extra                = make_import_function("/usr/local/lib/libpq.dylib");
+        functions["__import_pq"] = fun;
+    }
+
+    {
+        DabFunction fun;
         fun.name    = "||";
         fun.regular = false;
         fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
