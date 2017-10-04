@@ -57,6 +57,10 @@ func PQexec<IntPtr>(conn<IntPtr>, command<String>) {}
 [__import_pq]
 func PQfnumber<Int32>(res<IntPtr>, column_name<String>) {}
 
+// int PQntuples(const PGresult *res);
+[__import_pq]
+func PQntuples<Int32>(res<IntPtr>) {}
+
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
@@ -125,4 +129,14 @@ func main()
   var year_num = PQfnumber(query, "year");
 
   puts("Column order: " + @[title_num, author_num, year_num].to_s);
+
+  var i = 0;
+  var nrows = PQntuples(query);
+
+  puts("Retrieved " + nrows.to_s + " rows.");
+
+  while (i < nrows)
+  {
+    i = i + 1;
+  }
 }
