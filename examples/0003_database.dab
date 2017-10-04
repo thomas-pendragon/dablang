@@ -41,23 +41,49 @@ func PQfinish<NilClass>(conn<IntPtr>) {}
 [__import_pq]
 func PQerrorMessage<String>(conn<IntPtr>) {}
 
-func exit_connection(connection)
+// ExecStatusType PQresultStatus(const PGresult *res);
+[__import_pq]
+func PQresultStatus<Uint32>(res<IntPtr>) {}
+
+// void PQclear(PGresult *res);
+[__import_pq]
+func PQclear<NilClass>(res<IntPtr>) {}
+
+func validate(info, connection, result)
 {
+  var CONNECTION_OK = 0;
+  var PGRES_COMMAND_OK = 1;
+  var failed = false;
+  var message;
+
+  if (result)
+  {
+    failed = (PQresultStatus(result) != PGRES_COMMAND_OK);
+  }
+  else
+  {
+    failed = (PQstatus(connection) != CONNECTION_OK);
+  }
+
+  if (!failed)
+  {
+    return nil;
+  }
+
+  print(info);
+  print(" failed: ");
+  puts(PQerrorMessage(connection));
+  if (result)
+  {
+    PQclear(result);
+  }
   PQfinish(connection);
   exit(1);
 }
 
 func main()
 {
-  var CONNECTION_OK = 0;
   var conn = PQconnectdb("postgresql://dablang_ex0003@localhost/dablang_ex0003");
-  print("Connection = ");
-  puts(conn);
 
-  if (PQstatus(conn) != CONNECTION_OK)
-  {
-    print("Connection to database failed: ");
-    puts(PQerrorMessage(conn));
-    exit_connection(conn);
-  }
+  validate("Connection to database", conn, nil);
 }
