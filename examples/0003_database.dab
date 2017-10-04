@@ -49,6 +49,10 @@ func PQresultStatus<Uint32>(res<IntPtr>) {}
 [__import_pq]
 func PQclear<NilClass>(res<IntPtr>) {}
 
+// PGresult *PQexec(PGconn *conn, const char *command);
+[__import_pq]
+func PQexec<IntPtr>(conn<IntPtr>, command<String>) {}
+
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
@@ -81,9 +85,20 @@ func validate(info, connection, result)
   exit(1);
 }
 
+func execute_noresult(conn, query)
+{
+  print(" > ");
+  puts(query);
+  var res = PQexec(conn, query);
+  validate("SQL query", conn, res);
+  PQclear(res);
+}
+
 func main()
 {
   var conn = PQconnectdb("postgresql://dablang_ex0003@localhost/dablang_ex0003");
 
   validate("Connection to database", conn, nil);
+
+  execute_noresult(conn, "BEGIN");
 }
