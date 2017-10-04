@@ -53,16 +53,22 @@ func PQclear<NilClass>(res<IntPtr>) {}
 [__import_pq]
 func PQexec<IntPtr>(conn<IntPtr>, command<String>) {}
 
+// int PQfnumber(const PGresult *res, const char *column_name);
+[__import_pq]
+func PQfnumber<Int32>(res<IntPtr>, column_name<String>) {}
+
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
   var PGRES_COMMAND_OK = 1;
+  var PGRES_TUPLES_OK = 2;
   var failed = false;
   var message;
 
   if (result)
   {
-    failed = (PQresultStatus(result) != PGRES_COMMAND_OK);
+    var status = PQresultStatus(result);
+    failed = (status != PGRES_COMMAND_OK) && (status != PGRES_TUPLES_OK);
   }
   else
   {
@@ -75,8 +81,9 @@ func validate(info, connection, result)
   }
 
   print(info);
-  print(" failed: ");
-  puts(PQerrorMessage(connection));
+  print(" failed: [");
+  print(PQerrorMessage(connection));
+  puts("].");
   if (result)
   {
     PQclear(result);
@@ -85,12 +92,21 @@ func validate(info, connection, result)
   exit(1);
 }
 
-func execute_noresult(conn, query)
+func execute(conn, query)
 {
   print(" > ");
   puts(query);
   var res = PQexec(conn, query);
+  print(" >> result: ");
+  print(PQresultStatus(res));
+  puts(".");
   validate("SQL query", conn, res);
+  return res;
+}
+
+func execute_noresult(conn, query)
+{
+  var res = execute(conn, query);
   PQclear(res);
 }
 
@@ -101,4 +117,12 @@ func main()
   validate("Connection to database", conn, nil);
 
   execute_noresult(conn, "BEGIN");
+
+  var query = execute(conn, "SELECT * FROM books ORDER BY year");
+
+  var title_num = PQfnumber(query, "title");
+  var author_num = PQfnumber(query, "author");
+  var year_num = PQfnumber(query, "year");
+
+  puts("Column order: " + @[title_num, author_num, year_num].to_s);
 }
