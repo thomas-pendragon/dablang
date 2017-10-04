@@ -271,6 +271,12 @@ struct DabValue
         data.type   = TYPE_INTPTR;
         data.intptr = value;
     }
+    DabValue(size_t class_index, const char *value)
+    {
+        assert(class_index == CLASS_STRING);
+        data.type   = TYPE_STRING;
+        data.string = value;
+    }
 
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);
