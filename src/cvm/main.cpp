@@ -1106,6 +1106,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         copy.data.intptr = &value.bytebuffer()[0];
         return copy;
     }
+    else if (from == CLASS_INTPTR && to == CLASS_STRING)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_STRING;
+        copy.data.string = (const char *)value.data.intptr;
+        return copy;
+    }
     else
     {
         char info[256];

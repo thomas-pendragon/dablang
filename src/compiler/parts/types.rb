@@ -64,6 +64,16 @@ class DabTypeString < DabType
     value.is_a? String
   end
 
+  def can_assign_from?(other_type)
+    return true if other_type.is_a? DabTypeIntPtr
+    super
+  end
+
+  def requires_cast?(other_type)
+    return true if other_type.is_a? DabTypeIntPtr
+    super
+  end
+
   def has_function?(identifier)
     identifiers = %w[+ [] upcase length > >= <= <]
     return true if identifiers.include?(identifier)
