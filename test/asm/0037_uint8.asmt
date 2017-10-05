@@ -20,7 +20,5 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 150          */               Q_SET_NUMBER R0, 150
-                                 PUSH_SSA R0
-                                 CAST 6
-                                 Q_SET_POP R1
+/* Uint8        */               Q_CAST R1, R0, 6
                                  Q_RETURN RNIL

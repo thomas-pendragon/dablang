@@ -136,6 +136,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_CHANGE_INSTVAR', args: %i{symbol reg}}, # self.@arg0 <- reg(arg1)
       {name: 'Q_RETURN', args: %i[reg]}, # return(reg(arg0))
       {name: 'Q_RETAIN', args: %i{reg}}, # retain(reg(arg0))
+      {name: 'Q_CAST', args: %i[reg reg uint16]}, # reg(arg0) = reg(arg1) as arg2
     ],
   },
 ].freeze

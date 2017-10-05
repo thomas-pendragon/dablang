@@ -963,6 +963,19 @@ bool DabVM::execute_single(Stream &input)
         stack.push_value(cast(value, klass_index));
         break;
     }
+    case OP_Q_CAST:
+    {
+        auto dst_reg     = input.read_reg();
+        auto src_reg     = input.read_reg();
+        auto klass_index = input.read_uint16();
+
+        auto src = register_get(src_reg);
+        auto dst = cast(src, klass_index);
+
+        register_set(dst_reg, dst);
+
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
         exit(1);

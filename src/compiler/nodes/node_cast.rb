@@ -32,8 +32,9 @@ class DabNodeCast < DabNode
     arg.register?
   end
 
-  def compile(output)
-    value.compile(output)
-    output.printex(self, 'CAST', root.class_index(target_type.type_string))
+  def compile_as_ssa(output, output_register)
+    input_register = value.input_register
+    output.comment(target_type.type_string)
+    output.printex(self, 'Q_CAST', "R#{output_register}", "R#{input_register}", root.class_index(target_type.type_string))
   end
 end

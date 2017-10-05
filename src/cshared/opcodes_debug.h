@@ -79,4 +79,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_CHANGE_INSTVAR, "Q_CHANGE_INSTVAR", {OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REG}},
     {OP_Q_RETURN, "Q_RETURN", {OpcodeArg::ARG_REG}},
     {OP_Q_RETAIN, "Q_RETAIN", {OpcodeArg::ARG_REG}},
+    {OP_Q_CAST, "Q_CAST", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
 };
