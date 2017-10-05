@@ -61,6 +61,10 @@ func PQfnumber<Int32>(res<IntPtr>, column_name<String>) {}
 [__import_pq]
 func PQntuples<Int32>(res<IntPtr>) {}
 
+// char *PQgetvalue(const PGresult *res, int row_number, int column_number);
+[__import_pq]
+func PQgetvalue<IntPtr>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
+       
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
@@ -128,15 +132,28 @@ func main()
   var author_num = PQfnumber(query, "author");
   var year_num = PQfnumber(query, "year");
 
-  puts("Column order: " + @[title_num, author_num, year_num].to_s);
+  puts(" >> column order: " + @[title_num, author_num, year_num].to_s);
 
   var i = 0;
   var nrows = PQntuples(query);
 
-  puts("Retrieved " + nrows.to_s + " rows.");
+  puts(" >> retrieved " + nrows.to_s + " rows");
 
   while (i < nrows)
   {
+    var title_ptr = PQgetvalue(query, i, title_num);
+    var author_ptr = PQgetvalue(query, i, author_num);
+
+    var<String> title = title_ptr;
+    var<String> author = author_ptr;
+
+    print(" >>> Row " + i.to_s + ": title = '");
+    print(title);
+    print("', author = '");
+    print(author);
+    print("'.");
+    puts("");
+
     i = i + 1;
   }
 }
