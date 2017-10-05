@@ -71,6 +71,7 @@ class DabTypeString < DabType
 
   def requires_cast?(other_type)
     return true if other_type.is_a? DabTypeIntPtr
+    return true if other_type.is_a? DabTypeObject
     super
   end
 

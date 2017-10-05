@@ -1,0 +1,28 @@
+## CODE
+
+//char *strdup(const char *s);
+[__import_libc]
+func strdup<IntPtr>(s<String>) {}
+
+func main()
+{
+  var s0 = strdup("foobar");
+  var<String> s1 = s0;
+  print(s1);
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## OPTIONS
+
+--with-attributes --with-reflection
+
+## RUN OPTIONS
+
+--with-attributes --with-reflection
+
+## EXPECT OK
+
+foobar

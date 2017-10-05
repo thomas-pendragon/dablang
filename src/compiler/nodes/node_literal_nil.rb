@@ -28,4 +28,8 @@ class DabNodeLiteralNil < DabNodeLiteral
   def register_string
     'RNIL'
   end
+
+  def cast_to(_target_type)
+    self
+  end
 end
