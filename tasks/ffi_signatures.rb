@@ -25,6 +25,7 @@ void* -> string
 void*, string -> void*
 void*, string -> int32
 void*, int32, int32 -> void*
+void*, int32, int32 -> int32
 '
 
 DAB_CLASSES = {
