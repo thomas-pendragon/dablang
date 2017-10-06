@@ -232,7 +232,14 @@ void DabVM::define_default_classes()
     });
     DAB_MEMBER_NUMERIC_OPERATORS(fixnum_class, CLASS_FIXNUM, uint64_t, .data.fixnum);
 
-    define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
+    auto &intptr_class = define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
+    intptr_class.add_simple_function("fetch_int32", [](DabValue self) {
+        auto     ptr   = self.data.intptr;
+        auto     iptr  = (int32_t *)ptr;
+        auto     value = *iptr;
+        DabValue ret(CLASS_INT32, value);
+        return ret;
+    });
 
 #define CREATE_INT_CLASS(small, Title, BIG)                                                        \
     auto &small##_class = define_builtin_class(STR(Title), CLASS_##BIG, CLASS_FIXNUM);             \

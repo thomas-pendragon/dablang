@@ -123,6 +123,11 @@ class DabTypeIntPtr < DabType
     other_type.is_a?(DabTypeIntPtr) || super
   end
 
+  def has_function?(identifier)
+    return true if identifier == 'fetch_int32'
+    super
+  end
+
   def concrete?
     true
   end
