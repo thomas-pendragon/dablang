@@ -64,6 +64,12 @@
     DAB_MEMBER_OPERATOR(klass, cast_to, |, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, &, cast_to, result_type, member)
 
+static int32_t byteswap(int32_t value)
+{
+    return ((value >> 24) & 0x000000FF) | ((value << 8) & 0x00FF0000) |
+           ((value >> 8) & 0x0000FF00) | ((value << 24) & 0xFF000000);
+}
+
 DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_index,
                                       size_t superclass_index)
 {
@@ -237,6 +243,13 @@ void DabVM::define_default_classes()
     CREATE_INT_CLASS(uint64, Uint64, UINT64);
 
     CREATE_INT_CLASS(int32, Int32, INT32);
+
+    int32_class.add_simple_function("byteswap", [](DabValue self) {
+        auto     value     = self.data.num_int32;
+        auto     new_value = byteswap(value);
+        DabValue ret(CLASS_INT32, new_value);
+        return ret;
+    });
 
     auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
     DAB_MEMBER_EQUALS_OPERATORS(boolean_class, CLASS_BOOLEAN, .data.boolean);

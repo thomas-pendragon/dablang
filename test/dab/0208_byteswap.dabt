@@ -1,0 +1,11 @@
+## CODE
+
+func main()
+{
+  var<Int32> a = 16711681; // 0x00FF0001
+  print(a.byteswap);
+}
+
+## EXPECT OK
+
+16842496

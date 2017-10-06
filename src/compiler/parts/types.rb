@@ -163,6 +163,11 @@ class DabTypeInt32 < DabTypeFixnum
     other_type.base_type.is_a?(DabTypeFixnum) || super
   end
 
+  def has_function?(identifier)
+    return true if identifier == 'byteswap'
+    super
+  end
+
   def concrete?
     true
   end
