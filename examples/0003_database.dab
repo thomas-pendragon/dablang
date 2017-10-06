@@ -1,3 +1,12 @@
+/* Setup
+
+createuser -s dablang_ex0003
+createdb dablang_ex0003
+[copy initial sql]
+pbpaste | psql --user dablang_ex0003 dablang_ex0003
+
+*/
+
 /* Database schema:
 
 CREATE SEQUENCE books_id_seq
