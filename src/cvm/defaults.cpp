@@ -90,7 +90,10 @@ void DabVM::define_defaults()
                 fprintf(stderr, "vm: dlopen error: %s", dlerror());
                 exit(1);
             }
-            fprintf(stderr, "vm: dlopen handle: %p\n", handle);
+            if (verbose)
+            {
+                fprintf(stderr, "vm: dlopen handle: %p\n", handle);
+            }
 
             auto symbol = dlsym(handle, libc_name.c_str());
             if (!symbol)
@@ -98,7 +101,10 @@ void DabVM::define_defaults()
                 fprintf(stderr, "vm: dlsym error: %s", dlerror());
                 exit(1);
             }
-            fprintf(stderr, "vm: dlsym handle: %p\n", symbol);
+            if (verbose)
+            {
+                fprintf(stderr, "vm: dlsym handle: %p\n", symbol);
+            }
 
             auto &function   = functions[method_name];
             function.regular = false;
