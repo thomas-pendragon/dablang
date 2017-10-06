@@ -73,7 +73,15 @@ func PQntuples<Int32>(res<IntPtr>) {}
 // char *PQgetvalue(const PGresult *res, int row_number, int column_number);
 [__import_pq]
 func PQgetvalue<IntPtr>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
-       
+
+// int PQgetlength(const PGresult *res, int row_number, int column_number);
+[__import_pq]
+func PQgetlength<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
+
+// int PQgetisnull(const PGresult *res, int row_number, int column_number);
+[__import_pq]
+func PQgetisnull<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
+
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
@@ -152,14 +160,18 @@ func main()
   {
     var title_ptr = PQgetvalue(query, i, title_num);
     var author_ptr = PQgetvalue(query, i, author_num);
+    var year_ptr = PQgetvalue(query, i, year_num);
 
     var<String> title = title_ptr;
     var<String> author = author_ptr;
+    var<String> year = year_ptr;//.fetch_int32.byteswap;
 
     print(" >>> Row " + i.to_s + ": title = '");
     print(title);
     print("', author = '");
     print(author);
+    print("', year = '");
+    print(year);
     print("'.");
     puts("");
 
