@@ -5,6 +5,7 @@ def dab_benchmark(*_)
 end
 
 $debug = false
+$debug_code_dump = false
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
