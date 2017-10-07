@@ -30,7 +30,8 @@ ALTER TABLE ONLY books ADD CONSTRAINT books_pkey PRIMARY KEY (id);
 INSERT INTO books (title, author, year) VALUES
   ('The motor boys on the wing', 'Clarence Young', 1912),
   ('Choice of choices', 'John Haddad', 1905),
-  ('The lotus of the Nile', 'Arthur Eaton', 1907);
+  ('The lotus of the Nile', 'Arthur Eaton', 1907),
+  ('Tricky case', 'Year is null', NULL);
 
 */
 
@@ -82,6 +83,13 @@ func PQgetlength<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
 [__import_pq]
 func PQgetisnull<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
 
+//PGresult *PQexecParams(PGconn *conn, const char *command, int nParams, const Oid *paramTypes,
+//                       const char * const *paramValues, const int *paramLengths, const int *paramFormats, int resultFormat);
+[__import_pq]
+func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
+                          paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
+
+
 func validate(info, connection, result)
 {
   var CONNECTION_OK = 0;
@@ -117,11 +125,15 @@ func validate(info, connection, result)
   exit(1);
 }
 
-func execute(conn, query)
+func execute(conn, query, binary)
 {
   print(" > ");
   puts(query);
-  var res = PQexec(conn, query);
+  //func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
+  //                        paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
+  var resultFormat = 0;
+  if (binary) { resultFormat = 1; }
+  var res = PQexecParams(conn, query, 0, nil, nil, nil, nil, resultFormat);
   print(" >> result: ");
   print(PQresultStatus(res));
   puts(".");
@@ -131,7 +143,7 @@ func execute(conn, query)
 
 func execute_noresult(conn, query)
 {
-  var res = execute(conn, query);
+  var res = execute(conn, query, false);
   PQclear(res);
 }
 
@@ -143,7 +155,7 @@ func main()
 
   execute_noresult(conn, "BEGIN");
 
-  var query = execute(conn, "SELECT * FROM books ORDER BY year");
+  var query = execute(conn, "SELECT * FROM books ORDER BY year", true);
 
   var title_num = PQfnumber(query, "title");
   var author_num = PQfnumber(query, "author");
@@ -164,7 +176,12 @@ func main()
 
     var<String> title = title_ptr;
     var<String> author = author_ptr;
-    var<String> year = year_ptr;//.fetch_int32.byteswap;
+    var year;
+
+    if (PQgetisnull(query, i, year_num) == 0)
+    {
+      year = year_ptr.fetch_int32.byteswap;
+    }
 
     print(" >>> Row " + i.to_s + ": title = '");
     print(title);
