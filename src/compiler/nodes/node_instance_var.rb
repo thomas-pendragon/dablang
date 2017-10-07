@@ -1,8 +1,6 @@
 require_relative 'node.rb'
 
 class DabNodeInstanceVar < DabNode
-  attr_accessor :identifier
-
   def initialize(identifier)
     super()
     insert(identifier[1..-1])
