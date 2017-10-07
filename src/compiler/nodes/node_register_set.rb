@@ -52,6 +52,6 @@ class DabNodeRegisterSet < DabNode
   end
 
   def formatted_source(options)
-    "R#{output_register}_#{output_varname} = " + value.formatted_source(options)
+    "R#{output_register} = " + value.formatted_source(options)
   end
 end

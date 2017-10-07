@@ -19,4 +19,8 @@ class DabNodeSSAPhi < DabNode
   def extra_dump
     "[#{input_varname}]"
   end
+
+  def formatted_source(_options)
+    '__phi(' + input_registers.map { |reg| "SR#{reg}" }.join(', ') + ')'
+  end
 end

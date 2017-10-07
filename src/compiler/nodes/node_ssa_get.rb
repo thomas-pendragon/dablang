@@ -46,6 +46,6 @@ class DabNodeSSAGet < DabNode
   end
 
   def formatted_source(_options)
-    "SR#{input_register}_#{input_varname}"
+    "SR#{input_register}"
   end
 end

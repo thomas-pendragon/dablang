@@ -55,6 +55,6 @@ class DabNodeRegisterGet < DabNode
   end
 
   def formatted_source(_options)
-    "R#{input_register}_#{input_varname}"
+    "R#{input_register}"
   end
 end
