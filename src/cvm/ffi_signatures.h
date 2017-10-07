@@ -403,3 +403,36 @@ else if (arg_klasses.size() == 3 && arg_klasses[0] == CLASS_INTPTR &&
 
     stack.push_value(DabValue(CLASS_INT32, return_value));
 }
+else if (arg_klasses.size() == 8 && arg_klasses[0] == CLASS_INTPTR &&
+         arg_klasses[1] == CLASS_STRING && arg_klasses[2] == CLASS_INT32 &&
+         arg_klasses[3] == CLASS_INTPTR && arg_klasses[4] == CLASS_INTPTR &&
+         arg_klasses[5] == CLASS_INTPTR && arg_klasses[6] == CLASS_INTPTR &&
+         arg_klasses[7] == CLASS_INT32 && ret_klass == CLASS_INTPTR)
+{
+    typedef void *(*int_fun)(void *, const char *, int32_t, void *, void *, void *, void *,
+                             int32_t);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value7 = $VM->cast(stack.pop_value(), CLASS_INT32);
+    auto value6 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+    auto value5 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+    auto value4 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+    auto value3 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+    auto value2 = $VM->cast(stack.pop_value(), CLASS_INT32);
+    auto value1 = $VM->cast(stack.pop_value(), CLASS_STRING);
+    auto value0 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
+
+    auto value0_data = value0.data.intptr;
+    auto value1_data = value1.data.string.c_str();
+    auto value2_data = value2.data.num_int32;
+    auto value3_data = value3.data.intptr;
+    auto value4_data = value4.data.intptr;
+    auto value5_data = value5.data.intptr;
+    auto value6_data = value6.data.intptr;
+    auto value7_data = value7.data.num_int32;
+
+    auto return_value = (*int_symbol)(value0_data, value1_data, value2_data, value3_data,
+                                      value4_data, value5_data, value6_data, value7_data);
+
+    stack.push_value(DabValue(CLASS_INTPTR, return_value));
+}
