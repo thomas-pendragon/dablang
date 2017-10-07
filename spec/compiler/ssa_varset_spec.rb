@@ -96,4 +96,53 @@ describe DabNode do
 
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
+
+  it 'should ssaify var inside if inside while' do
+    arglist = DabNode.new
+    arglist << DabNodeArgDefinition.new(0, 'bar', nil)
+
+    tree = DabNodeTreeBlock.new
+
+    tree << DabNodeDefineLocalVar.new('foo', DabNodeArg.new(0))
+
+    nif = DabNodeTreeBlock.new
+    nif << DabNodeSetLocalVar.new('foo', DabNodeArg.new(1))
+    tree << DabNodeIf.new(DabNodeLiteralBoolean.new(true), nif, nil)
+
+    nwhile = DabNodeWhile.new(DabNodeLiteralBoolean.new(true), tree)
+
+    root = DabNodeUnit.new
+    func = DabNodeFunction.new('test', nwhile, arglist, false)
+    root.add_function(func)
+
+    SSAify.new.run(func)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [test]',
+      '      DabNode []',
+      '        DabNodeArgDefinition [#0[bar]]',
+      '      DabNodeBlockNode []',
+      '        DabNodeWhile []',
+      '          DabNodeLiteralBoolean [true]',
+      '          DabNodeTreeBlock []',
+      '            DabNodeSSASet [R0= [foo] (1 users)]',
+      '              DabNodeArg [$0]',
+      '            DabNodeIf []',
+      '              DabNodeLiteralBoolean [true]',
+      '              DabNodeTreeBlock []',
+      '                DabNodeSSASet [R1= [foo] (1 users)]',
+      '                  DabNodeArg [$1]',
+      '            DabNodeSSASet [R2= [foo] (0 users)]',
+      '              DabNodeSSAPhi [[foo]]',
+      '                DabNodeSSAGet [R1 []]',
+      '                DabNodeSSAGet [R0 []]',
+      '      DabNode []',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+  end
 end

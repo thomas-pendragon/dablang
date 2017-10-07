@@ -61,7 +61,7 @@ class DabNodeWhile < DabNodeTreeBlock
   end
 
   def fixup_ssa(variable, last_setter)
-    return last_setter if on_block.includes?(variable.var_definition)
+    return on_block.fixup_ssa(variable, last_setter) if on_block.includes?(variable.var_definition)
 
     temp_value = DabNode.new
     interim_setter = DabNodeSetLocalVar.new(variable.identifier, temp_value)
