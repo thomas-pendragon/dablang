@@ -1,0 +1,43 @@
+## CODE
+
+func main()
+{
+  while (true)
+  {
+    var year = 2;
+
+    print(year);
+    
+    if (main())
+    {
+      year = nil;
+    }
+
+    print(year);
+  }
+}
+
+## EXPECT
+
+/* Dab dev      */                
+ 
+                                 CONSTANT_SYMBOL main
+ 
+                                 LOAD_FUNCTION Fmain, main, -1
+ 
+                                 BREAK_LOAD 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 JMP L1
+                   L1:
+/* 2            */               Q_SET_NUMBER R0, 2
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* main         */               Q_SET_CALL R1, S0
+                                 Q_JMP_IF2 R1, L2, L3
+                   L2:
+                                 Q_SET_NIL R0
+                                 JMP L3
+                   L3:
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+                                 JMP L1
