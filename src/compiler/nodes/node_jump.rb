@@ -27,4 +27,8 @@ class DabNodeJump < DabNodeBaseJump
     super
     @target = dictionary[@target] || @target
   end
+
+  def formatted_source(_options)
+    "jmp B#{target.block_index}"
+  end
 end

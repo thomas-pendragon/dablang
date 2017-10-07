@@ -42,4 +42,8 @@ class DabNodeSSASet < DabNode
       node.input_registers.include? output_register
     end
   end
+
+  def formatted_source(options)
+    "SR#{output_register}_#{output_varname} = " + value.formatted_source(options)
+  end
 end

@@ -36,4 +36,8 @@ class DabNodeSymbol < DabNodeExtractableLiteral
   def compile(output)
     output.print('PUSH_SYMBOL', escaped_symbol)
   end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

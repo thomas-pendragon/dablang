@@ -55,4 +55,9 @@ class DabNodeConditionalJump < DabNodeBaseJump
   def accepts?(arg)
     arg.register?
   end
+
+  def formatted_source(options)
+    cnd = condition.formatted_source(options)
+    "jmp #{cnd} ? B#{if_true.block_index} : B#{if_false.block_index}"
+  end
 end

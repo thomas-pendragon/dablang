@@ -46,4 +46,8 @@ class DabNodeSyscall < DabNodeBasecall
   def accepts?(arg)
     arg.register?
   end
+
+  def formatted_source(options)
+    "sys_#{real_identifier}(" + _formatted_arguments(options) + ')' + formatted_block(options)
+  end
 end

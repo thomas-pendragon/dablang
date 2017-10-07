@@ -50,4 +50,8 @@ class DabNodeRegisterSet < DabNode
   def first_setter?
     all_setters.index(self) == 0
   end
+
+  def formatted_source(options)
+    "R#{output_register}_#{output_varname} = " + value.formatted_source(options)
+  end
 end

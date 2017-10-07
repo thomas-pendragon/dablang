@@ -77,4 +77,10 @@ class DabNodeBasicBlock < DabNode
   def unreachable?
     sources.empty?
   end
+
+  def formatted_source(options)
+    lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
+    return '' unless lines.count > 0
+    'B' + block_index.to_s + ":\n" + lines.join("\n") + "\n"
+  end
 end

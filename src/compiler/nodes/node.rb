@@ -306,6 +306,14 @@ class DabNode
     raise "unknown source for #{self.class.name}"
   end
 
+  def code_dump
+    err dirty_formatted_source({})
+  end
+
+  def dirty_formatted_source(options)
+    formatted_source(options)
+  end
+
   def formatted_skip_semicolon?
     false
   end

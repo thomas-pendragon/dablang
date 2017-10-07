@@ -53,4 +53,8 @@ class DabNodeRegisterGet < DabNode
   def register_string
     "R#{input_register}"
   end
+
+  def formatted_source(_options)
+    "R#{input_register}_#{input_varname}"
+  end
 end

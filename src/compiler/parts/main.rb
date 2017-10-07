@@ -17,6 +17,8 @@ class DabCompilerFrontend
   def run(settings, context)
     @settings = settings
 
+    $debug_code_dump = settings[:debug_code_dump]
+
     $dab_benchmark_enabled = settings[:benchmark]
     $dab_benchmark_show_result = settings[:show_benchmark]
 

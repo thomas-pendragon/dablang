@@ -27,6 +27,7 @@ module DabNodeModuleDump
   end
 
   def dump(show_ids = false, level = 0, background_colors = {}, skip_output: false)
+    return code_dump if $debug_code_dump
     text = sprintf('%s - %s', '  ' * level, to_s(show_ids))
     text = text.green if constant?
     if has_errors?

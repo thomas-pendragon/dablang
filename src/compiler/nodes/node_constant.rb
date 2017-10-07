@@ -62,4 +62,8 @@ class DabNodeConstant < DabNode
   def references
     @references
   end
+
+  def formatted_source(options)
+    'const[' + value.formatted_source(options) + ']'
+  end
 end
