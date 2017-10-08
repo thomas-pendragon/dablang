@@ -12,7 +12,7 @@ func main()
 
 ## OPTIONS
 
---opt --no-constants --strip
+--opt --strip
 
 ## EXPECT
 

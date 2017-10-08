@@ -11,7 +11,7 @@ Instructions should pop return value if not used.
 
 ## OPTIONS
 
---no-opt --no-constants --no-autorelease --entry=foo
+--no-opt --no-autorelease --entry=foo
 
 ## EXPECT
 

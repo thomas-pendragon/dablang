@@ -7,7 +7,7 @@ func addfunc()
 
 ## OPTIONS
 
---no-opt --no-constants --entry=addfunc
+--no-opt --entry=addfunc
 
 ## EXPECT
 

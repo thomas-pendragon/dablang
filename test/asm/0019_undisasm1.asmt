@@ -7,7 +7,7 @@ func fun0()
 
 ## OPTIONS
 
---opt --no-constants --entry=fun0
+--opt --entry=fun0
 
 ## EXPECT
 

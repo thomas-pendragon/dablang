@@ -8,7 +8,7 @@ func foo()
 
 ## OPTIONS
 
---no-opt --no-constants --entry=foo
+--no-opt --entry=foo
 
 ## EXPECT
 
