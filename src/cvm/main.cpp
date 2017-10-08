@@ -753,13 +753,14 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_JMP:
     {
-        auto mod = input.read_int16() - 3;
+        auto mod         = input.read_int16() - 3;
+        auto new_address = ip() + mod;
         if (verbose)
         {
             fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
-                    (void *)(ip() + mod));
+                    (void *)new_address);
         }
-        instructions.seek(ip() + mod);
+        instructions.seek(new_address);
         break;
     }
     case OP_JMP_IF:
