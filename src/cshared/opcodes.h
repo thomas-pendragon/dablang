@@ -63,4 +63,8 @@ enum
     OP_Q_RETURN             = 0x3A,
     OP_Q_RETAIN             = 0x3B,
     OP_Q_CAST               = 0x3C,
+    OP_Q_SET_NUMBER_INT32   = 0x3D,
+    OP_Q_SET_NUMBER_UINT8   = 0x3E,
+    OP_Q_SET_NUMBER_UINT32  = 0x3F,
+    OP_Q_SET_NUMBER_UINT64  = 0x40,
 };

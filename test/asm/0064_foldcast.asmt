@@ -16,7 +16,6 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER_UINT8 144
-                                 Q_SET_POP R0
+                                 Q_SET_NUMBER_UINT8 R0, 144
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

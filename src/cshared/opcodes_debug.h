@@ -80,4 +80,8 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_RETURN, "Q_RETURN", {OpcodeArg::ARG_REG}},
     {OP_Q_RETAIN, "Q_RETAIN", {OpcodeArg::ARG_REG}},
     {OP_Q_CAST, "Q_CAST", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
+    {OP_Q_SET_NUMBER_INT32, "Q_SET_NUMBER_INT32", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT32}},
+    {OP_Q_SET_NUMBER_UINT8, "Q_SET_NUMBER_UINT8", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT8}},
+    {OP_Q_SET_NUMBER_UINT32, "Q_SET_NUMBER_UINT32", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT32}},
+    {OP_Q_SET_NUMBER_UINT64, "Q_SET_NUMBER_UINT64", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64}},
 };

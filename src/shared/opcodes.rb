@@ -139,6 +139,16 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_CAST', args: %i[reg reg uint16]}, # reg(arg0) = reg(arg1) as arg2
     ],
   },
+  {
+    group: 'REGISTER-BASED OPCODES - TYPED NUMBERS',
+    items:
+    [
+      {name: 'Q_SET_NUMBER_INT32', args: %i{reg int32}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_UINT8', args: %i{reg uint8}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_UINT32', args: %i{reg uint32}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_UINT64', args: %i{reg uint64}}, # reg(arg0) = arg1
+    ],
+  },
 ].freeze
 
 OPCODES_ARRAY = OPCODES_ARRAY_BASE.flat_map { |item| item[:items] }
