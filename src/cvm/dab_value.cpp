@@ -390,7 +390,10 @@ void DabObjectProxy::destroy(DabValue *value)
 {
     (void)value;
     this->destroying = true;
-    fprintf(stderr, "vm: proxy %p (strong %3d): X destroy\n", this, (int)this->count_strong);
+    if ($VM->verbose)
+    {
+        fprintf(stderr, "vm: proxy %p (strong %3d): X destroy\n", this, (int)this->count_strong);
+    }
     delete object;
     delete this;
 }
