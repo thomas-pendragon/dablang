@@ -14,10 +14,6 @@ func main()
   }
 }
 
-## PENDING
-
-should not generate unnecesary register writes
-
 ## EXPECT
 
 /* Dab dev      */                
@@ -30,16 +26,6 @@ should not generate unnecesary register writes
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 Q_SET_TRUE R0
-                                 Q_SET_TRUE R1
-                                 Q_SET_REG R2, R0
-                                 Q_RETAIN R2
-                                 Q_SET_REG R2, R1
-                                 Q_RETAIN R2
-                                 Q_JMP_IF2 R2, L1, L2
-                   L1:
-/* "ok"         */               Q_SET_CONSTANT R3, 0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
-                                 JMP L2
-                   L2:
+/* "ok"         */               Q_SET_CONSTANT R0, 0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

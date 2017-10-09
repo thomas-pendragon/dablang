@@ -4,6 +4,8 @@ class DabNodeRegisterGet < DabNode
   attr_accessor :input_register
   attr_accessor :input_varname
 
+  unssa_with :unssa!
+
   def initialize(input_register, input_varname = nil)
     super()
     @input_register = input_register
@@ -56,5 +58,11 @@ class DabNodeRegisterGet < DabNode
 
   def formatted_source(_options)
     "R#{input_register}"
+  end
+
+  def unssa!
+    node = DabNodeLocalVar.new("r#{input_register}")
+    replace_with!(node)
+    true
   end
 end

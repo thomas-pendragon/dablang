@@ -131,10 +131,38 @@ class DabCompilerFrontend
   end
 
   def process_node(program)
+    process_node_single_phase(program, false)
+    return if program.has_errors?
+
+    while true
+      if $debug
+        err '--~'.blue * 50
+        err ''
+        err ' * unssa step *'
+        err ''
+        program.dump
+      end
+      next if program.run_unssa_processors!
+      break
+    end
+
+    if $debug
+      err ''
+      err '--~'.green * 50
+      err ''
+      err ' * UN_SSA *'
+      err ''
+      program.dump
+      err ''
+      err '--~'.green * 50
+      err ''
+    end
+    return if program.has_errors?
+
     process_node_single_phase(program)
   end
 
-  def process_node_single_phase(program)
+  def process_node_single_phase(program, do_flatten = true)
     return if program.run_checks!
 
     dab_benchmark('ssa') do
@@ -142,6 +170,11 @@ class DabCompilerFrontend
     end
 
     debug_check!(@settings, program, 'ssa')
+
+    if $debug
+      err ''
+      err '--'
+    end
 
     while true
       if $debug
@@ -166,7 +199,7 @@ class DabCompilerFrontend
       next if dab_benchmark('late_lower') do
         program.run_late_lower_processors!
       end
-      next if dab_benchmark('flatten') do
+      next if do_flatten && dab_benchmark('flatten') do
         program.run_flatten_processors!
       end
       break

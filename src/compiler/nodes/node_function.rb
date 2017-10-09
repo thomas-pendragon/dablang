@@ -21,6 +21,7 @@ class DabNodeFunction < DabNode
   post_ssa_with SSABreakPhiNodes
   post_ssa_with ReorderRegisters
   post_ssa_with ReorderRegistersIncr
+  unssa_with :unssa!
 
   attr_accessor :original_body
 
@@ -262,5 +263,16 @@ class DabNodeFunction < DabNode
 
   def member_function?
     !!parent_class
+  end
+
+  def unssa!
+    return false if @did_unssa
+    registers = all_nodes(DabNodeRegisterSet).map(&:output_register)
+    registers.sort.uniq.reverse.each do |reg|
+      node = DabNodeDefineLocalVar.new("r#{reg}", DabNodeLiteralNil.new)
+      blocks[0].pre_insert(node)
+    end
+    @did_unssa = true
+    true
   end
 end

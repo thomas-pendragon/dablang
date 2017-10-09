@@ -6,6 +6,9 @@ class DabNodeRegisterSet < DabNode
   include RegisterSetterConcern
 
   ssa_optimize_with SSAPruneUnusedSetter
+  post_ssa_with :prune_nil!
+
+  unssa_with :unssa!
 
   attr_accessor :output_register
   attr_accessor :output_varname
@@ -53,5 +56,18 @@ class DabNodeRegisterSet < DabNode
 
   def formatted_source(options)
     "R#{output_register} = " + value.formatted_source(options)
+  end
+
+  def unssa!
+    node = DabNodeSetLocalVar.new("r#{output_register}", value.dup)
+    replace_with!(node)
+    true
+  end
+
+  def prune_nil!
+    return unless value.is_a? DabNodeLiteralNil
+    return if users.count > 0
+    remove!
+    true
   end
 end
