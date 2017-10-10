@@ -22,7 +22,9 @@ class DabNodeRegisterGet < DabNode
 
   def compile_as_ssa(output, output_register)
     output.print('Q_SET_REG', "R#{output_register}", "R#{input_register}")
-    output.print('Q_RETAIN', "R#{output_register}")
+    if $no_autorelease
+      output.print('Q_RETAIN', "R#{output_register}")
+    end
   end
 
   def setters
