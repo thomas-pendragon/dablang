@@ -149,6 +149,13 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_NUMBER_UINT64', args: %i{reg uint64}}, # reg(arg0) = arg1
     ],
   },
+  {
+    group: 'NEW',
+    items:
+    [
+      {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg(arg0) <- has_block?
+    ],
+  },
 ].freeze
 
 OPCODES_ARRAY = OPCODES_ARRAY_BASE.flat_map { |item| item[:items] }

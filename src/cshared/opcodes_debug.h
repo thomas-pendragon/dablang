@@ -84,4 +84,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_SET_NUMBER_UINT8, "Q_SET_NUMBER_UINT8", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT8}},
     {OP_Q_SET_NUMBER_UINT32, "Q_SET_NUMBER_UINT32", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT32}},
     {OP_Q_SET_NUMBER_UINT64, "Q_SET_NUMBER_UINT64", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64}},
+    {OP_Q_SET_HAS_BLOCK, "Q_SET_HAS_BLOCK", {OpcodeArg::ARG_REG}},
 };

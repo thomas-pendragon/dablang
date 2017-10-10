@@ -671,6 +671,13 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, DabValue(false));
         break;
     }
+    case OP_Q_SET_HAS_BLOCK:
+    {
+        auto reg_index = input.read_reg();
+        auto addr      = get_block_addr();
+        register_set(reg_index, DabValue(addr != 0));
+        break;
+    }
     case OP_Q_SET_NUMBER:
     {
         auto reg_index = input.read_reg();
