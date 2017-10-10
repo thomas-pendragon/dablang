@@ -47,23 +47,21 @@ func bar()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
-                                 Q_SET_NIL R1
-/* a            */               Q_SET_ARG R2, 0
-/* String       */               Q_SET_CLASS R3, 1
-/* is           */               Q_SET_INSTCALL R4, R2, S4, R3
-                                 Q_JMP_IF2 R4, L1, L2
+/* a            */               Q_SET_ARG R0, 0
+/* String       */               Q_SET_CLASS R1, 1
+/* is           */               Q_SET_INSTCALL R2, R0, S4, R1
+                                 Q_JMP_IF2 R2, L1, L2
                    L1:
-/* "got string" */               Q_SET_CONSTANT R0, 1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* "got string" */               Q_SET_CONSTANT R3, 1
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
-/* Fixnum       */               Q_SET_CLASS R5, 2
-/* is           */               Q_SET_INSTCALL R6, R2, S4, R5
-                                 Q_JMP_IF2 R6, L3, L4
+/* Fixnum       */               Q_SET_CLASS R4, 2
+/* is           */               Q_SET_INSTCALL R5, R0, S4, R4
+                                 Q_JMP_IF2 R5, L3, L4
                    L3:
-/* "got fixnum" */               Q_SET_CONSTANT R1, 0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* "got fixnum" */               Q_SET_CONSTANT R6, 0
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
                                  Q_RETURN RNIL

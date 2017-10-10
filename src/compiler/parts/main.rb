@@ -35,6 +35,7 @@ class DabCompilerFrontend
       $no_autorelease = settings[:no_autorelease]
       $feature_reflection = settings[:with_reflection]
       $feature_attributes = settings[:with_attributes]
+      $multipass = settings[:multipass]
 
       inputs = settings[:inputs] || [:stdin]
 
@@ -131,33 +132,35 @@ class DabCompilerFrontend
   end
 
   def process_node(program)
-    process_node_single_phase(program, false)
-    return if program.has_errors?
+    if $multipass
+      process_node_single_phase(program, false)
+      return if program.has_errors?
 
-    while true
+      while true
+        if $debug
+          err '--~'.blue * 50
+          err ''
+          err ' * unssa step *'
+          err ''
+          program.dump
+        end
+        next if program.run_unssa_processors!
+        break
+      end
+
       if $debug
-        err '--~'.blue * 50
         err ''
-        err ' * unssa step *'
+        err '--~'.green * 50
+        err ''
+        err ' * UN_SSA *'
         err ''
         program.dump
+        err ''
+        err '--~'.green * 50
+        err ''
       end
-      next if program.run_unssa_processors!
-      break
+      return if program.has_errors?
     end
-
-    if $debug
-      err ''
-      err '--~'.green * 50
-      err ''
-      err ' * UN_SSA *'
-      err ''
-      program.dump
-      err ''
-      err '--~'.green * 50
-      err ''
-    end
-    return if program.has_errors?
 
     process_node_single_phase(program)
   end
