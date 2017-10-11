@@ -549,6 +549,25 @@ bool DabVM::execute_single(Stream &input)
         push_method(name);
         break;
     }
+    case OP_Q_SET_NEW_ARRAY:
+    {
+        auto out_reg = input.read_reg();
+        auto reglist = input.read_reglist();
+
+        auto n = reglist.size();
+
+        DabValue array_class = classes[CLASS_ARRAY];
+        DabValue value       = array_class.create_instance();
+        auto &   array       = value.array();
+        array.resize(n);
+        for (size_t i = 0; i < n; i++)
+        {
+            array[i] = register_get(reglist[i]);
+        }
+        register_set(out_reg, value);
+
+        break;
+    }
     case OP_Q_SET_CALL:
     {
         auto out_reg = input.read_reg();

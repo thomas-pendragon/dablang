@@ -71,11 +71,7 @@ func main()
 /* "String2"    */               Q_SET_CONSTANT R3, 1
 /* String       */               Q_SET_CLASS R4, 1
 /* new          */               Q_SET_INSTCALL R5, R4, S4, R3
-                                 PUSH_SSA R1
-                                 PUSH_SSA R2
-                                 PUSH_SSA R5
-                                 PUSH_ARRAY 3
-                                 Q_SET_POP R6
+                                 Q_SET_NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
 /* functrue     */               Q_SET_CALL R7, S2
                                  Q_JMP_IF2 R7, L1, L2

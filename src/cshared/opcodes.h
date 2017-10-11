@@ -68,4 +68,5 @@ enum
     OP_Q_SET_NUMBER_UINT32  = 0x3F,
     OP_Q_SET_NUMBER_UINT64  = 0x40,
     OP_Q_SET_HAS_BLOCK      = 0x41,
+    OP_Q_SET_NEW_ARRAY      = 0x42,
 };

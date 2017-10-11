@@ -31,9 +31,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 12           */               Q_SET_NUMBER R0, 12
-                                 PUSH_SSA R0
-                                 PUSH_ARRAY 1
-                                 Q_SET_POP R1
+                                 Q_SET_NEW_ARRAY R1, R0
 /* puts         */               Q_SET_CALL RNIL, S2, R1
 /* 123          */               Q_SET_NUMBER R2, 123
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S1, R2

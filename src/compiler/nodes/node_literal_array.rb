@@ -26,6 +26,11 @@ class DabNodeLiteralArray < DabNode
     output.print('PUSH_ARRAY', items.count)
   end
 
+  def compile_as_ssa(output, output_register)
+    list = items.map(&:register_string)
+    output.print('Q_SET_NEW_ARRAY', "R#{output_register}", *list)
+  end
+
   def my_type
     DabTypeArray.new
   end
