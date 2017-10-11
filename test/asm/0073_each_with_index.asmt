@@ -44,9 +44,7 @@ class Array
                    L2:
                                  Q_SET_SELF R4
 /* []           */               Q_SET_INSTCALL R5, R4, S2, R0
-                                 PUSH_SSA R5
-                                 PUSH_SSA R0
-                                 YIELD 2
+                                 Q_YIELD R5, R0
                                  POP 1
 /* 1            */               Q_SET_NUMBER R6, 1
 /* +            */               Q_SET_INSTCALL R0, R0, S1, R6

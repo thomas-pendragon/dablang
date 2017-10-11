@@ -631,6 +631,29 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
+    case OP_Q_YIELD:
+    {
+        auto reglist = input.read_reglist();
+
+        auto n_args = reglist.size();
+
+        auto self = get_self();
+        auto addr = get_block_addr();
+
+        if (verbose)
+        {
+            fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
+            fprintf(stderr, "vm: capture data is ");
+            get_block_capture().dump(stderr);
+            fprintf(stderr, ".\n");
+        }
+
+        push_new_frame(false, self, n_args, 0, dab_register_t::nilreg(), get_block_capture(), true,
+                       reglist);
+        instructions.seek(addr);
+
+        break;
+    }
     case OP_PUSH_HAS_BLOCK:
     {
         auto addr = get_block_addr();

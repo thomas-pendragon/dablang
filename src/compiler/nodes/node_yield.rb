@@ -5,8 +5,8 @@ class DabNodeYield < DabNodeBasecall
   lower_with Uncomplexify
 
   def compile(output)
-    args.each { |arg| arg.compile(output) }
-    output.printex(self, 'YIELD', args.count)
+    list = args.map(&:register_string)
+    output.printex(self, 'Q_YIELD', *list)
   end
 
   def formatted_source(options)

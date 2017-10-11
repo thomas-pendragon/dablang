@@ -23,14 +23,12 @@ func yield1()
  
                    Fyield1:
                                  STACK_RESERVE 0
-                                 YIELD 0
+                                 Q_YIELD 
                                  POP 1
-                                 YIELD 0
+                                 Q_YIELD 
                                  POP 1
 /* 12           */               Q_SET_NUMBER R0, 12
 /* "foo"        */               Q_SET_CONSTANT R1, 0
-                                 PUSH_SSA R0
-                                 PUSH_SSA R1
-                                 YIELD 2
+                                 Q_YIELD R0, R1
                                  POP 1
                                  Q_RETURN RNIL

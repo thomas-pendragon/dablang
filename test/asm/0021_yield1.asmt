@@ -19,6 +19,6 @@ func yield1()
  
                    Fyield1:
                                  STACK_RESERVE 0
-                                 YIELD 0
+                                 Q_YIELD 
                                  POP 1
                                  Q_RETURN RNIL
