@@ -155,6 +155,7 @@ OPCODES_ARRAY_BASE = [
     [
       {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg(arg0) <- has_block?
       {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg(arg0) <- [reg(arg1), reg(arg2), ... reg(argn)]
+      {name: 'Q_SET_SELF', args: %i[reg]}, # reg(arg0) <- self
     ],
   },
 ].freeze
