@@ -30,8 +30,4 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   def constant_value
     @string
   end
-
-  def compile(output)
-    output.print('PUSH_STRING', extra_value)
-  end
 end
