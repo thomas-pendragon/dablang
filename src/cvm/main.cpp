@@ -654,18 +654,6 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
-    case OP_PUSH_HAS_BLOCK:
-    {
-        auto addr = get_block_addr();
-        fprintf(stderr, "vm: has block? (%p)\n", (void *)addr);
-        stack.push(addr != 0);
-        break;
-    }
-    case OP_PUSH_NIL:
-    {
-        stack.push_nil();
-        break;
-    }
     case OP_PUSH_SSA:
     {
         auto reg_index = input.read_reg();
@@ -900,11 +888,6 @@ bool DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
         break;
     }
-    case OP_PUSH_SELF:
-    {
-        stack.push(get_self());
-        break;
-    }
     case OP_PUSH_INSTVAR:
     {
         auto name = stack.pop_symbol();
@@ -926,22 +909,6 @@ bool DabVM::execute_single(Stream &input)
         auto name   = constants[symbol].data.string;
         auto value  = register_get(reg);
         set_instvar(name, value);
-        break;
-    }
-    case OP_PUSH_ARRAY:
-    {
-        auto n = input.read_uint16();
-        push_array(n);
-        break;
-    }
-    case OP_PUSH_TRUE:
-    {
-        stack.push(true);
-        break;
-    }
-    case OP_PUSH_FALSE:
-    {
-        stack.push(false);
         break;
     }
     case OP_BREAK_LOAD:
@@ -973,52 +940,6 @@ bool DabVM::execute_single(Stream &input)
         auto n = input.read_uint16();
         for (size_t i = 0; i < n; i++)
             stack.pop_value();
-        break;
-    }
-    case OP_PUSH_STRING:
-    {
-        auto s = input.read_vlc_string();
-        stack.push(s);
-        break;
-    }
-    case OP_PUSH_NUMBER:
-    {
-        auto     n             = input.read_uint64();
-        DabValue value         = n;
-        value.data.is_constant = true;
-        stack.push(value);
-        break;
-    }
-    case OP_PUSH_NUMBER_UINT8:
-    {
-        auto     n = input.read_uint8();
-        DabValue value(CLASS_UINT8, n);
-        value.data.is_constant = true;
-        stack.push(value);
-        break;
-    }
-    case OP_PUSH_NUMBER_INT32:
-    {
-        auto     n = input.read_int32();
-        DabValue value(CLASS_INT32, n);
-        value.data.is_constant = true;
-        stack.push(value);
-        break;
-    }
-    case OP_PUSH_NUMBER_UINT32:
-    {
-        auto     n = input.read_uint32();
-        DabValue value(CLASS_UINT32, n);
-        value.data.is_constant = true;
-        stack.push(value);
-        break;
-    }
-    case OP_PUSH_NUMBER_UINT64:
-    {
-        auto     n = input.read_uint64();
-        DabValue value(CLASS_UINT64, n);
-        value.data.is_constant = true;
-        stack.push(value);
         break;
     }
     case OP_PUSH_SYMBOL:

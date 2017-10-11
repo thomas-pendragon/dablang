@@ -1,18 +1,20 @@
 ## CODE
 
-PUSH_NUMBER 1
-PUSH_NUMBER 2
-PUSH_NUMBER 3
-PUSH_ARRAY 3
+Q_SET_NUMBER R0, 1
+Q_SET_NUMBER R1, 2
+Q_SET_NUMBER R2, 3
+Q_SET_NEW_ARRAY R3, R0, R1, R2
 
 ## TESTCASE
 
 $leaktest
 
+## OPTIONS
+
+--noautorelease
+
 ## EXPECT
 
-leaktest: 1 items on stack
-   0: ARRY [1, 2, 3] [1 strong]
 leaktest: 1 allocated objects remaining
 leaktest: 1 allocated proxies remaining
-leaktest: 4 allocated values remaining
+leaktest: 3 allocated values remaining

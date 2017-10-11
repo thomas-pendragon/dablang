@@ -1,33 +1,36 @@
 ## ASM CODE
 
+CONSTANT_STRING "foo\n"
+CONSTANT_STRING "bar\n"
+
 LOAD_FUNCTION Fmain, main, -1
 BREAK_LOAD 
 
 Fmain:
   STACK_RESERVE 0
-  PUSH_STRING "foo\n"
+  PUSH_CONSTANT 0
   Q_SET_POP R0
   Q_SET_SYSCALL RNIL, 0, R0
-  PUSH_NIL
-  PUSH_STRING "bar\n"
+  Q_SET_NIL R1
+  PUSH_SSA R1
+  PUSH_CONSTANT 1
   Q_SET_POP R0
   Q_SET_SYSCALL RNIL, 0, R0
   Q_RETURN RNIL
 
 ## INPUT
 
-break 40
+break 51
 run
 code
 quit
 
 ## EXPECT STDOUT
 
-debug: break at 40.
+debug: break at 51.
 foo
-IP = 40
-        31: PUSH_STRING bar
-
-        37: Q_SET_POP R0
->       40: Q_SET_SYSCALL RNIL, 0, R0
-        47: Q_RETURN RNIL
+IP = 51
+        45: PUSH_CONSTANT 1
+        48: Q_SET_POP R0
+>       51: Q_SET_SYSCALL RNIL, 0, R0
+        58: Q_RETURN RNIL
