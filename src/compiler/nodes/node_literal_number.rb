@@ -15,10 +15,6 @@ class DabNodeLiteralNumber < DabNodeLiteral
     number.to_s
   end
 
-  def compile(output)
-    output.print('PUSH_NUMBER', extra_dump)
-  end
-
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
     output.print('Q_SET_NUMBER', "R#{output_register}", extra_dump)
