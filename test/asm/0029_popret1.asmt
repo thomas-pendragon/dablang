@@ -30,15 +30,16 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 PUSH_NUMBER 12
+/* 12           */               Q_SET_NUMBER R0, 12
+                                 PUSH_SSA R0
                                  PUSH_ARRAY 1
-                                 Q_SET_POP R0
-/* puts         */               Q_SET_CALL RNIL, S2, R0
-/* 123          */               Q_SET_NUMBER R1, 123
-/* insert       */               Q_SET_INSTCALL RNIL, R0, S1, R1
-/* "foo"        */               Q_SET_CONSTANT R2, 0
-/* insert       */               Q_SET_INSTCALL RNIL, R0, S1, R2
-/* puts         */               Q_SET_CALL RNIL, S2, R0
+                                 Q_SET_POP R1
+/* puts         */               Q_SET_CALL RNIL, S2, R1
+/* 123          */               Q_SET_NUMBER R2, 123
+/* insert       */               Q_SET_INSTCALL RNIL, R1, S1, R2
+/* "foo"        */               Q_SET_CONSTANT R3, 0
+/* insert       */               Q_SET_INSTCALL RNIL, R1, S1, R3
+/* puts         */               Q_SET_CALL RNIL, S2, R1
                                  Q_RETURN RNIL
  
                    Fputs:

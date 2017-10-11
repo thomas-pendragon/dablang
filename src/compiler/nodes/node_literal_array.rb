@@ -1,6 +1,9 @@
 require_relative 'node.rb'
+require_relative '../processors/uncomplexify.rb'
 
 class DabNodeLiteralArray < DabNode
+  lower_with Uncomplexify
+
   def initialize(valuelist)
     super()
     valuelist&.each do |value|
@@ -29,5 +32,13 @@ class DabNodeLiteralArray < DabNode
 
   def formatted_source(options)
     '@[' + items.map { |item| item.formatted_source(options) }.join(', ') + ']'
+  end
+
+  def uncomplexify_args
+    items
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 end
