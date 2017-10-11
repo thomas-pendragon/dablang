@@ -11,10 +11,6 @@ class DabNodeLiteralBoolean < DabNode
     boolean.to_s
   end
 
-  def compile(output)
-    output.print(@boolean ? 'PUSH_TRUE' : 'PUSH_FALSE')
-  end
-
   def compile_as_ssa(output, output_register)
     output.printex(self, 'Q_SET_' + (@boolean ? 'TRUE' : 'FALSE'), "R#{output_register}")
   end
