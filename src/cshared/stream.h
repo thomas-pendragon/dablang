@@ -58,6 +58,8 @@ struct Stream
 
     std::string read_vlc_string();
 
+    std::string read_string4();
+
     Buffer read_vlc_buffer();
 
     void append(const byte *data, size_t length);

@@ -60,6 +60,16 @@ std::string Stream::read_vlc_string()
     return ret;
 }
 
+std::string Stream::read_string4()
+{
+    std::string ret;
+    for (int i = 0; i < 4; i++)
+    {
+        ret += _read<char>();
+    }
+    return ret;
+}
+
 Buffer Stream::read_vlc_buffer()
 {
     size_t len = read_uint8();

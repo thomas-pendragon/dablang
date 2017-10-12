@@ -103,6 +103,9 @@ void parse_asm(bool raw, std::function<void(Op)> func)
             case OpcodeArg::ARG_REGLIST:
                 op.data.push_back(stream.read_reglist());
                 break;
+            case OpcodeArg::ARG_STRING4:
+                op.data.push_back(stream.read_string4());
+                break;
             }
         }
         func(op);

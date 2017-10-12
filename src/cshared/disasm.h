@@ -134,6 +134,17 @@ struct AsmStream
         info += output;
     }
 
+    void read_string4(std::string &info)
+    {
+        std::string output;
+        for (int i = 0; i < 4; i++)
+            output += _read<char>();
+
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     unsigned char operator[](size_t index) const
     {
         return reader[index];
@@ -207,6 +218,9 @@ struct DisasmProcessor
                         break;
                     case OpcodeArg::ARG_REGLIST:
                         stream.read_reglist(info);
+                        break;
+                    case OpcodeArg::ARG_STRING4:
+                        stream.read_string4(info);
                         break;
                     }
                 }

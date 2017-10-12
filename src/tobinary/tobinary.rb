@@ -76,6 +76,11 @@ class OutputStream
     _push_uint16(val)
   end
 
+  def _push_string4(arg)
+    str = sprintf('%-4s', arg)[0..4]
+    _push(str)
+  end
+
   def write(line)
     code = OPCODES_REV[line[0]]
     raise "unknown token (#{line[0]})" unless code
