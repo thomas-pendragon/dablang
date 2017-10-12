@@ -3,6 +3,7 @@
 - alternative syntax (end instead of {})
 - optional semicolons
 - keep comments (for formatter)
+- in '.dabca' files, allow extra blank lines (`CODE:\n\nNOP`)
 
 ## Compiler
 
