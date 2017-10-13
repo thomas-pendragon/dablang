@@ -138,6 +138,19 @@ class OutputStream
     @code += arg
   end
 
+  def write_string4(arg)
+    str = sprintf('%-4s', arg)[0...4]
+    _write(str)
+  end
+
+  def write_uint8(value)
+    _write([value].pack('C'))
+  end
+
+  def write_uint32(value)
+    _write([value].pack('L<'))
+  end
+
   def write_uint64(value)
     _write([value].pack('Q<'))
   end
