@@ -35,6 +35,7 @@ class VMFrontend
     data = read_test_file(input)
 
     runoptions = data[:runoptions] || ''
+    assemble_options = data[:assemble_options] || ''
     options = data[:options] || ''
 
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
@@ -47,7 +48,7 @@ class VMFrontend
     FileUtils.rm(out) if File.exist?(out)
 
     extract_format_source(input, asm)
-    assemble(asm, bin)
+    assemble(asm, bin, assemble_options)
 
     testcase = data[:testcase]
     expected = data[:expect]

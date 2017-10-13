@@ -256,7 +256,7 @@ class Parser
   end
 end
 
-def run_tobinary(input, output, debug)
+def run_tobinary(input, output, debug, _newformat)
   $debug = debug
   input = InputStream.new(input)
   output = OutputStream.new(output)
@@ -267,5 +267,5 @@ end
 if $autorun
   read_args!
   debug = $settings[:debug]
-  run_tobinary(STDIN, STDOUT, debug)
+  run_tobinary(STDIN, STDOUT, debug, false)
 end
