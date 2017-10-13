@@ -198,6 +198,41 @@ size_t DabVM::ip() const
     return instructions.position();
 }
 
+int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing)
+{
+    (void)autorun;
+    (void)raw;
+    (void)coverage_testing;
+
+    auto zero_byte = input.read_uint8();
+    assert(zero_byte == 0);
+
+    auto version = input.read_uint32();
+    assert(version == 2);
+
+    auto size_of_header     = input.read_uint64();
+    auto size_of_data       = input.read_uint64();
+    auto number_of_sections = input.read_uint64();
+
+    fprintf(stderr, "vm: newformat: h: %d, d: %d, s: %d\n", (int)size_of_header, (int)size_of_data,
+            (int)number_of_sections);
+
+    for (uint32_t index = 0; index < number_of_sections; index++)
+    {
+        auto name = input.read_string4();
+        auto zero = input.read_uint32();
+        assert(zero == 0);
+        auto address = input.read_uint64();
+
+        fprintf(stderr, "vm: newformat: section %d: name '%s' address %d\n", index, name.c_str(),
+                (int)address);
+    }
+
+    instructions.append(input);
+
+    return continue_run(input, autorun, raw, coverage_testing);
+}
+
 int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
     this->coverage_testing = coverage_testing;
@@ -211,6 +246,12 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
                 (char)mark2, (char)mark3);
         exit(1);
     }
+
+    if (this->newformat)
+    {
+        return run_newformat(input, autorun, raw, coverage_testing);
+    }
+
     auto compiler_version = input.read_uint64();
     auto vm_version       = input.read_uint64();
     auto code_length      = input.read_uint64();
@@ -222,6 +263,14 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
     (void)code_crc;
 
     instructions.append(input);
+
+    return continue_run(input, autorun, raw, coverage_testing);
+}
+
+int DabVM::continue_run(Stream &input, bool autorun, bool raw, bool coverage_testing)
+{
+    (void)input;
+    (void)coverage_testing;
 
     execute(instructions);
 
@@ -1394,6 +1443,7 @@ struct DabRunOptions
     bool  verbose         = false;
     bool  with_attributes = false;
     bool  leaktest        = false;
+    bool  newformat       = false;
 
     FILE *output       = stdout;
     bool  close_output = false;
@@ -1497,6 +1547,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->autorelease = false;
     }
+
+    if (flags["--newformat"])
+    {
+        this->newformat = true;
+    }
 }
 
 int unsafe_main(int argc, char **argv)
@@ -1529,6 +1584,7 @@ int unsafe_main(int argc, char **argv)
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
+    vm.newformat       = options.newformat;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
     vm._registers.resize(0);

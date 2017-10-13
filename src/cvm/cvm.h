@@ -410,6 +410,7 @@ struct DabVM
     bool       shutdown        = false;
     bool       verbose         = false;
     bool       with_attributes = false;
+    bool       newformat       = false;
     DabVMReset reset;
     Coverage   coverage;
     bool       coverage_testing;
@@ -471,6 +472,10 @@ struct DabVM
     size_t ip() const;
 
     int run(Stream &input, bool autorun, bool raw, bool coverage_testing);
+
+    int continue_run(Stream &input, bool autorun, bool raw, bool coverage_testing);
+
+    int run_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing);
 
     DabValue &get_arg(int arg_index);
 

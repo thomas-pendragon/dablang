@@ -1,0 +1,25 @@
+## CODE
+
+W_HEADER 2
+W_SECTION CODE, "code"
+W_END_HEADER
+
+CODE:
+Q_SET_TRUE R0
+Q_SET_SYSCALL RNIL, 0, R0
+
+## ASSEMBLE OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--newformat
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+true

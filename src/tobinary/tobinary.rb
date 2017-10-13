@@ -171,6 +171,29 @@ class OutputStream
     _write(@code)
   end
 
+  def finalize_newformat(version, sections, labels)
+    _write('DAB')
+    write_uint8(0)
+
+    write_uint32(version)
+
+    size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 16
+    size_of_data = @code.length
+
+    write_uint64(size_of_header)
+    write_uint64(size_of_data)
+    write_uint64(sections.count)
+
+    sections.each do |section|
+      section[:address] = labels[section[:label]]
+      write_string4(section[:name])
+      write_uint32(0)
+      write_uint64(section[:address])
+    end
+
+    _write(@code)
+  end
+
   def pos
     @code.length
   end
@@ -218,7 +241,11 @@ class Parser
     @output_stream.pos
   end
 
-  def run!
+  def run!(newformat)
+    @sections = []
+    @header_version = nil
+    @header_finished = false
+
     @label_positions = {}
     @jump_corrections = []
     @jump_corrections2 = []
@@ -230,42 +257,61 @@ class Parser
       errap line if debug?
       label = instr[:label]
       next if line[0] == '' || line[0].nil?
-      if line[0] == 'JMP_IF2'
-        @jump_corrections << [pos, line[1].to_s]
-        @jump_corrections2 << [pos, line[2].to_s]
-        line[1] = 0
-        line[2] = 0
-      elsif line[0] == 'Q_JMP_IF2'
-        @jump_corrections2 << [pos, line[2].to_s]
-        @jump_corrections3 << [pos, line[3].to_s]
-        line[2] = 0
-        line[3] = 0
-      elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
-        @jump_corrections << [pos, line[1].to_s]
-        line[1] = 0
+      if line[0].start_with?('W_')
+        case line[0]
+        when 'W_HEADER'
+          @header_version = line[1].to_i
+        when 'W_SECTION'
+          @sections << {name: line[2].to_s, label: line[1].to_s}
+        when 'W_END_HEADER'
+          @header_finished = true
+        else
+          raise 'unknown W_ op'
+        end
+      else
+        raise 'header not finished yet' if newformat && !@header_finished
+        if line[0] == 'JMP_IF2'
+          @jump_corrections << [pos, line[1].to_s]
+          @jump_corrections2 << [pos, line[2].to_s]
+          line[1] = 0
+          line[2] = 0
+        elsif line[0] == 'Q_JMP_IF2'
+          @jump_corrections2 << [pos, line[2].to_s]
+          @jump_corrections3 << [pos, line[3].to_s]
+          line[2] = 0
+          line[3] = 0
+        elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
+          @jump_corrections << [pos, line[1].to_s]
+          line[1] = 0
+        end
+        if label
+          @label_positions[label.to_s] = pos
+        end
+        @output_stream.write(line)
       end
-      if label
-        @label_positions[label.to_s] = pos
-      end
-      @output_stream.write(line)
     end
     @output_stream.fix_jumps(@label_positions, @jump_corrections, 0)
     @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
     @output_stream.fix_jumps(@label_positions, @jump_corrections3, 2)
-    @output_stream.finalize
+    if newformat
+      @output_stream.finalize_newformat(@header_version, @sections, @label_positions)
+    else
+      @output_stream.finalize
+    end
   end
 end
 
-def run_tobinary(input, output, debug, _newformat)
+def run_tobinary(input, output, debug, newformat)
   $debug = debug
   input = InputStream.new(input)
   output = OutputStream.new(output)
   parser = Parser.new(input, output)
-  parser.run!
+  parser.run!(newformat)
 end
 
 if $autorun
   read_args!
   debug = $settings[:debug]
-  run_tobinary(STDIN, STDOUT, debug, false)
+  newformat = $settings[:newformat]
+  run_tobinary(STDIN, STDOUT, debug, newformat)
 end
