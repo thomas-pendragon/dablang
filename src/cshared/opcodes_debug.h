@@ -76,4 +76,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_SET_NEW_ARRAY, "Q_SET_NEW_ARRAY", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REGLIST}},
     {OP_Q_SET_SELF, "Q_SET_SELF", {OpcodeArg::ARG_REG}},
     {OP_Q_YIELD, "Q_YIELD", {OpcodeArg::ARG_REGLIST}},
+    {OP_W_HEADER, "W_HEADER", {OpcodeArg::ARG_UINT16}},
+    {OP_W_SECTION, "W_SECTION", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_STRING4}},
+    {OP_W_END_HEADER, "W_END_HEADER", {}},
 };

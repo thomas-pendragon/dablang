@@ -145,6 +145,9 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg(arg0) <- [reg(arg1), reg(arg2), ... reg(argn)]
       {name: 'Q_SET_SELF', args: %i[reg]}, # reg(arg0) <- self
       {name: 'Q_YIELD', args: %i[reglist]}, # yield(reg(arg0)..reg(argn))
+      {name: 'W_HEADER', args: %i[uint16]}, # dump header, version number = arg0
+      {name: 'W_SECTION', args: %i[uint16 string4]}, # header entry, address = arg0, label = arg1
+      {name: 'W_END_HEADER'}, # finish header
     ],
   },
 ].freeze

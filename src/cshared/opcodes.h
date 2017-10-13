@@ -59,4 +59,7 @@ enum
     OP_Q_SET_NEW_ARRAY      = 0x36,
     OP_Q_SET_SELF           = 0x37,
     OP_Q_YIELD              = 0x38,
+    OP_W_HEADER             = 0x39,
+    OP_W_SECTION            = 0x3A,
+    OP_W_END_HEADER         = 0x3B,
 };
