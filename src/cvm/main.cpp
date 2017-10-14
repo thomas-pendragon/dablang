@@ -222,6 +222,10 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         auto name = input.read_string4();
         auto zero = input.read_uint32();
         assert(zero == 0);
+        zero = input.read_uint32();
+        assert(zero == 0);
+        zero = input.read_uint32();
+        assert(zero == 0);
         auto address = input.read_uint64();
         auto length  = input.read_uint64();
 

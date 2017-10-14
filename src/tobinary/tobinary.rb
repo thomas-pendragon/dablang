@@ -206,6 +206,8 @@ class OutputStream
     sections.each do |section|
       write_string4(section[:name])
       write_uint32(0)
+      write_uint32(0)
+      write_uint32(0)
       write_uint64(section[:address])
       write_uint64(section[:length])
     end
