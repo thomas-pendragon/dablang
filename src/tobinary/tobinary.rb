@@ -81,6 +81,11 @@ class OutputStream
     _push(str)
   end
 
+  def _push_cstring(str)
+    _push(str)
+    _push_uint8(0)
+  end
+
   def write(line)
     code = OPCODES_REV[line[0]]
     raise "unknown token (#{line[0]})" unless code

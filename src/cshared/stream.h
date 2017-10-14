@@ -59,6 +59,7 @@ struct Stream
     std::string read_vlc_string();
 
     std::string read_string4();
+    std::string read_cstring();
 
     Buffer read_vlc_buffer();
 

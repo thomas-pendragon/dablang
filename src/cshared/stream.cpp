@@ -70,6 +70,20 @@ std::string Stream::read_string4()
     return ret;
 }
 
+std::string Stream::read_cstring()
+{
+    std::string ret;
+    for (int i = 0; i < 4; i++)
+    {
+        auto c = _read<char>();
+        ;
+        if (c == 0)
+            break;
+        ret += c;
+    }
+    return ret;
+}
+
 Buffer Stream::read_vlc_buffer()
 {
     size_t len = read_uint8();
