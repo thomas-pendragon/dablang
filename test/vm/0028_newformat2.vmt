@@ -1,0 +1,29 @@
+## CODE
+
+  W_HEADER 2
+  W_SECTION DATA, "data"
+  W_SECTION CODE, "code"
+  W_END_HEADER
+
+DATA:
+  W_STRING "averylongstring"
+
+CODE:
+  Q_SET_STRING R0, 2, 4
+  Q_SET_SYSCALL RNIL, 0, R0
+
+## ASSEMBLE OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--newformat
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+eryl

@@ -63,4 +63,5 @@ enum
     OP_W_SECTION            = 0x3A,
     OP_W_END_HEADER         = 0x3B,
     OP_W_STRING             = 0x3C,
+    OP_Q_SET_STRING         = 0x3D,
 };

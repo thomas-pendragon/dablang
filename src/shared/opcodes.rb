@@ -149,6 +149,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_SECTION', args: %i[uint16 string4]}, # header entry, address = arg0, label = arg1
       {name: 'W_END_HEADER'}, # finish header
       {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
+      {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg(arg0) <- string(*arg1, length = arg2)
     ],
   },
 ].freeze
