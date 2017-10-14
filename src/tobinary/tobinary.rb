@@ -277,6 +277,9 @@ class Parser
       line = [instr[:op]] + (instr[:arglist] || [])
       errap line if debug?
       label = instr[:label]
+      if label
+        @label_positions[label.to_s] = pos
+      end
       next if line[0] == '' || line[0].nil?
       if line[0].start_with?('W_')
         case line[0]
@@ -304,9 +307,6 @@ class Parser
         elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
           @jump_corrections << [pos, line[1].to_s]
           line[1] = 0
-        end
-        if label
-          @label_positions[label.to_s] = pos
         end
         @output_stream.write(line)
       end
