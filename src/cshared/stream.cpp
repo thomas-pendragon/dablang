@@ -1,5 +1,11 @@
 #include "stream.h"
 
+std::string Stream::string_data(size_t address, size_t length)
+{
+    auto ptr = buffer.data + address;
+    return std::string((const char *)ptr, length);
+}
+
 uint8_t Stream::read_uint8()
 {
     return _read<uint8_t>();

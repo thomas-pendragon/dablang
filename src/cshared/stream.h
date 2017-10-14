@@ -93,6 +93,8 @@ struct Stream
         return buffer.length;
     }
 
+    std::string string_data(size_t address, size_t length);
+
   private:
     Buffer buffer;
     size_t _position = 0;
