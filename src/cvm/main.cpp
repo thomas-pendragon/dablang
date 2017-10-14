@@ -217,6 +217,8 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
     fprintf(stderr, "vm: newformat: h: %d, d: %d, s: %d\n", (int)size_of_header, (int)size_of_data,
             (int)number_of_sections);
 
+    size_t code_address = 0;
+
     for (uint32_t index = 0; index < number_of_sections; index++)
     {
         auto name = input.read_string4();
@@ -231,9 +233,16 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
 
         fprintf(stderr, "vm: newformat: section %d: name '%s' address %d length %d\n", index,
                 name.c_str(), (int)address, (int)length);
+
+        if (name == "code")
+        {
+            code_address = address;
+        }
     }
 
     instructions.append(input);
+    fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
+    instructions.seek(code_address);
 
     return continue_run(input, autorun, raw, coverage_testing);
 }
