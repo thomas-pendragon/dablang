@@ -186,9 +186,23 @@ class OutputStream
 
     sections.each do |section|
       section[:address] = labels[section[:label]]
+    end
+
+    sections.each_with_index do |section, index|
+      next_section = sections[index + 1]
+      next_address = if next_section
+                       next_section[:address]
+                     else
+                       size_of_data
+                     end
+      section[:length] = next_address - section[:address]
+    end
+
+    sections.each do |section|
       write_string4(section[:name])
       write_uint32(0)
       write_uint64(section[:address])
+      write_uint64(section[:length])
     end
 
     _write(@code)

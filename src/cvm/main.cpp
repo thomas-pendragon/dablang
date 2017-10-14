@@ -223,9 +223,10 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         auto zero = input.read_uint32();
         assert(zero == 0);
         auto address = input.read_uint64();
+        auto length  = input.read_uint64();
 
-        fprintf(stderr, "vm: newformat: section %d: name '%s' address %d\n", index, name.c_str(),
-                (int)address);
+        fprintf(stderr, "vm: newformat: section %d: name '%s' address %d length %d\n", index,
+                name.c_str(), (int)address, (int)length);
     }
 
     instructions.append(input);
