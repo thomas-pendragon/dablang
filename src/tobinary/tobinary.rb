@@ -289,6 +289,8 @@ class Parser
           @sections << {name: line[2].to_s, label: line[1].to_s}
         when 'W_END_HEADER'
           @header_finished = true
+        when 'W_STRING'
+          @output_stream._push_cstring(line[1])
         else
           raise 'unknown W_ op'
         end

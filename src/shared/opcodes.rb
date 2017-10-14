@@ -148,6 +148,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_HEADER', args: %i[uint16]}, # dump header, version number = arg0
       {name: 'W_SECTION', args: %i[uint16 string4]}, # header entry, address = arg0, label = arg1
       {name: 'W_END_HEADER'}, # finish header
+      {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
     ],
   },
 ].freeze

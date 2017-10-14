@@ -79,4 +79,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_W_HEADER, "W_HEADER", {OpcodeArg::ARG_UINT16}},
     {OP_W_SECTION, "W_SECTION", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_STRING4}},
     {OP_W_END_HEADER, "W_END_HEADER", {}},
+    {OP_W_STRING, "W_STRING", {OpcodeArg::ARG_CSTRING}},
 };
