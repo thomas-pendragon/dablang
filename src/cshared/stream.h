@@ -93,7 +93,9 @@ struct Stream
         return buffer.length;
     }
 
+    std::string cstring_data(size_t address);
     std::string string_data(size_t address, size_t length);
+    uint64_t uint64_data(size_t address);
 
   private:
     Buffer buffer;

@@ -6,6 +6,20 @@ std::string Stream::string_data(size_t address, size_t length)
     return std::string((const char *)ptr, length);
 }
 
+std::string Stream::cstring_data(size_t address)
+{
+    auto ptr = buffer.data + address;
+    return std::string((const char *)ptr);
+}
+
+uint64_t Stream::uint64_data(size_t address)
+{
+    auto ptr = buffer.data + address;
+    auto ret = *(uint64_t *)ptr;
+    fprintf(stderr, "ret = %p\n", (void *)ret);
+    return ret;
+}
+
 uint8_t Stream::read_uint8()
 {
     return _read<uint8_t>();
