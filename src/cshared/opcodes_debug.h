@@ -83,4 +83,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_SET_STRING,
      "Q_SET_STRING",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64, OpcodeArg::ARG_UINT64}},
+    {OP_W_SYMBOL, "W_SYMBOL", {OpcodeArg::ARG_UINT64}},
 };

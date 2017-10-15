@@ -291,6 +291,8 @@ class Parser
           @header_finished = true
         when 'W_STRING'
           @output_stream._push_cstring(line[1])
+        when 'W_SYMBOL'
+          @output_stream._push_uint64(line[1])
         else
           raise 'unknown W_ op'
         end
