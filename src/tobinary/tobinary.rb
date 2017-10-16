@@ -190,7 +190,7 @@ class OutputStream
     write_uint64(sections.count)
 
     sections.each do |section|
-      section[:address] = size_of_header + labels[section[:label]]
+      section[:address] = labels[section[:label]]
     end
 
     sections.each_with_index do |section, index|
@@ -212,7 +212,7 @@ class OutputStream
       write_uint64(section[:length])
     end
 
-    _write(@code)
+    _write(@code[@header_length..-1])
   end
 
   def pos
@@ -238,6 +238,11 @@ class OutputStream
       _rewrite_int16(diff)
     end
   end
+
+  def push_header(length)
+    @header_length = length
+    _push(' ' * @header_length)
+  end
 end
 
 class Parser
@@ -260,6 +265,11 @@ class Parser
 
   def pos
     @output_stream.pos
+  end
+
+  def print_temp_header!(sections_count)
+    @header_length = 32 + 32 * sections_count
+    @output_stream.push_header(@header_length)
   end
 
   def run!(newformat)
@@ -289,10 +299,11 @@ class Parser
           @sections << {name: line[2].to_s, label: line[1].to_s}
         when 'W_END_HEADER'
           @header_finished = true
+          print_temp_header!(@sections.count)
         when 'W_STRING'
           @output_stream._push_cstring(line[1])
         when 'W_SYMBOL'
-          @output_stream._push_uint64(line[1])
+          @output_stream._push_uint64(line[1] + @header_length)
         else
           raise 'unknown W_ op'
         end

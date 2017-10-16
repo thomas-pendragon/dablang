@@ -22,7 +22,7 @@
 
 ## new assembly format
 
-- symbol pointers should be absolute (include header size)
+- symbol section should work when data is not at 0
 
 ## Performance
 

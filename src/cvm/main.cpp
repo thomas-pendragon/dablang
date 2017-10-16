@@ -292,8 +292,7 @@ void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
     {
         auto address = symb_address + i * symbol_len;
         auto ptr     = input.uint64_data(address);
-        ptr += data_address;
-        auto str = input.cstring_data(ptr);
+        auto str     = input.cstring_data(ptr);
         push_constant_symbol(str);
     }
 }
