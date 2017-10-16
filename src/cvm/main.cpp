@@ -200,9 +200,22 @@ size_t DabVM::ip() const
 
 int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
+    instructions.append(input);
+    input.seek(0);
+
     (void)autorun;
     (void)raw;
     (void)coverage_testing;
+
+    auto mark1 = input.read_uint8();
+    auto mark2 = input.read_uint8();
+    auto mark3 = input.read_uint8();
+    if (mark1 != 'D' || mark2 != 'A' || mark3 != 'B')
+    {
+        fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
+                (char)mark2, (char)mark3);
+        exit(1);
+    }
 
     auto zero_byte = input.read_uint8();
     assert(zero_byte == 0);
@@ -218,6 +231,9 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
             (int)number_of_sections);
 
     size_t code_address = 0;
+    size_t symb_address = 0;
+    size_t symb_length  = 0;
+    bool   has_symbols  = false;
 
     for (uint32_t index = 0; index < number_of_sections; index++)
     {
@@ -231,25 +247,65 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         auto address = input.read_uint64();
         auto length  = input.read_uint64();
 
-        fprintf(stderr, "vm: newformat: section %d: name '%s' address %d length %d\n", index,
-                name.c_str(), (int)address, (int)length);
+        fprintf(stderr, "vm: newformat: section %d: name '%s' address %p/%d length %d\n", index,
+                name.c_str(), (void *)address, (int)address, (int)length);
 
         if (name == "code")
         {
             code_address = address;
         }
+        if (name == "symb")
+        {
+            symb_address = address;
+            symb_length  = length;
+            has_symbols  = true;
+        }
+        if (name == "data")
+        {
+            data_address = address;
+        }
     }
 
-    instructions.append(input);
+    if (has_symbols)
+    {
+        read_symbols(instructions, symb_address, symb_length, data_address);
+    }
+
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
     instructions.seek(code_address);
 
     return continue_run(input, autorun, raw, coverage_testing);
 }
 
+void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
+                         size_t data_address)
+{
+    (void)data_address;
+
+    fprintf(stderr, "symbad=%p symblen=%d data_address=%p\n", (void *)symb_address,
+            (int)symb_length, (void *)data_address);
+    const auto symbol_len = sizeof(uint64_t);
+
+    auto n_symbols = symb_length / symbol_len;
+
+    for (size_t i = 0; i < n_symbols; i++)
+    {
+        auto address = symb_address + i * symbol_len;
+        auto ptr     = input.uint64_data(address);
+        ptr += data_address;
+        auto str = input.cstring_data(ptr);
+        push_constant_symbol(str);
+    }
+}
+
 int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
     this->coverage_testing = coverage_testing;
+
+    if (this->newformat)
+    {
+        return run_newformat(input, autorun, raw, coverage_testing);
+    }
 
     auto mark1 = input.read_uint8();
     auto mark2 = input.read_uint8();
@@ -259,11 +315,6 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
         fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
                 (char)mark2, (char)mark3);
         exit(1);
-    }
-
-    if (this->newformat)
-    {
-        return run_newformat(input, autorun, raw, coverage_testing);
     }
 
     auto compiler_version = input.read_uint64();
@@ -750,7 +801,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto address   = input.read_uint64();
         auto length    = input.read_uint64();
-        auto str       = instructions.string_data(address, length);
+        auto str       = instructions.string_data(address + data_address, length);
         register_set(reg_index, str);
         break;
     }

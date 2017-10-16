@@ -1,0 +1,38 @@
+## CODE
+
+  W_HEADER 2
+  W_SECTION DATA, "data"
+  W_SECTION SYMBOLS, "symb"
+  W_SECTION CODE, "code"
+  W_END_HEADER
+
+DATA:
+  W_STRING "notcount"
+
+SYMBOLS:
+  W_SYMBOL 0 # notcount
+  W_SYMBOL 3 # count
+
+CODE:
+  Q_SET_NUMBER R0, 12
+  Q_SET_NUMBER R1, 24
+  Q_SET_NUMBER R2, 36
+  Q_SET_NEW_ARRAY R3, R0, R1, R2
+  Q_SET_INSTCALL R4, R3, S1
+  Q_SET_SYSCALL RNIL, 0, R4
+
+## ASSEMBLE OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--newformat
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+3

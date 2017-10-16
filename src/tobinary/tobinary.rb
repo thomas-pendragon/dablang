@@ -182,7 +182,7 @@ class OutputStream
 
     write_uint32(version)
 
-    size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 16
+    size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 32
     size_of_data = @code.length
 
     write_uint64(size_of_header)
@@ -190,7 +190,7 @@ class OutputStream
     write_uint64(sections.count)
 
     sections.each do |section|
-      section[:address] = labels[section[:label]]
+      section[:address] = size_of_header + labels[section[:label]]
     end
 
     sections.each_with_index do |section, index|
@@ -198,7 +198,7 @@ class OutputStream
       next_address = if next_section
                        next_section[:address]
                      else
-                       size_of_data
+                       size_of_data + size_of_header
                      end
       section[:length] = next_address - section[:address]
     end
