@@ -16,7 +16,6 @@ uint64_t Stream::uint64_data(size_t address)
 {
     auto ptr = buffer.data + address;
     auto ret = *(uint64_t *)ptr;
-    fprintf(stderr, "ret = %p\n", (void *)ret);
     return ret;
 }
 
