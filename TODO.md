@@ -20,6 +20,10 @@
 
 ## Disasm
 
+## new assembly format
+
+- symbol pointers should be absolute (include header size)
+
 ## Performance
 
 - runtime performance specs
