@@ -800,7 +800,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto address   = input.read_uint64();
         auto length    = input.read_uint64();
-        auto str       = instructions.string_data(address + data_address, length);
+        auto str       = instructions.string_data(address, length);
         register_set(reg_index, str);
         break;
     }

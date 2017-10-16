@@ -22,7 +22,6 @@
 
 ## new assembly format
 
-- symbol section should work when data is not at 0
 
 ## Performance
 

@@ -82,13 +82,28 @@ class DabAsmContext < DabBaseContext
     end
   end
 
-  def read_arg
+  def read_arg_base
     read_identifier_fname || read_fixnum || read_string
+  end
+
+  def read_arg
+    _read_list_or_single(:read_arg_base, ['+'])
   end
 
   def _read_list(item_method, separator = ',')
     __read_list(item_method, separator, []) do |array, item, _|
       array << item
     end
+  end
+
+  def _read_list_or_single(method, separator)
+    list = _read_list(method, separator)
+    return list unless list
+    ret = list[0]
+    (list.count - 1).times do |n|
+      i = n + 1
+      ret = {op: separator[0], left: ret, right: list[i]}
+    end
+    ret
   end
 end

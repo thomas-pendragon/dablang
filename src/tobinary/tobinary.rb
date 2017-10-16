@@ -272,6 +272,22 @@ class Parser
     @output_stream.push_header(@header_length)
   end
 
+  def _process(item)
+    case item
+    when Hash
+      left = _process(item[:left])
+      right = _process(item[:right])
+      raise '?' unless item[:op] == '+'
+      left + right
+    when String
+      @label_positions[item]
+    when Fixnum
+      item
+    else
+      raise "unknown item #{item.class}"
+    end
+  end
+
   def run!(newformat)
     @sections = []
     @header_version = nil
@@ -303,7 +319,7 @@ class Parser
         when 'W_STRING'
           @output_stream._push_cstring(line[1])
         when 'W_SYMBOL'
-          @output_stream._push_uint64(line[1] + @header_length)
+          @output_stream._push_uint64(_process(line[1]))
         else
           raise 'unknown W_ op'
         end
@@ -322,6 +338,9 @@ class Parser
         elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
           @jump_corrections << [pos, line[1].to_s]
           line[1] = 0
+        end
+        if line[0] == 'Q_SET_STRING'
+          line[2] = _process(line[2])
         end
         @output_stream.write(line)
       end

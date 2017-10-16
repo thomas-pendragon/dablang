@@ -10,8 +10,8 @@ DATA:
   W_STRING "notcount"
 
 SYMBOLS:
-  W_SYMBOL 0 # notcount
-  W_SYMBOL 3 # count
+  W_SYMBOL DATA + 0 # notcount
+  W_SYMBOL DATA + 3 # count
 
 CODE:
   Q_SET_NUMBER R0, 12
