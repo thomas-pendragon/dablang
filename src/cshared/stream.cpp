@@ -19,6 +19,13 @@ uint64_t Stream::uint64_data(size_t address)
     return ret;
 }
 
+uint16_t Stream::uint16_data(size_t address)
+{
+    auto ptr = buffer.data + address;
+    auto ret = *(uint16_t *)ptr;
+    return ret;
+}
+
 uint8_t Stream::read_uint8()
 {
     return _read<uint8_t>();

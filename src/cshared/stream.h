@@ -95,6 +95,7 @@ struct Stream
 
     std::string cstring_data(size_t address);
     std::string string_data(size_t address, size_t length);
+    uint16_t uint16_data(size_t address);
     uint64_t uint64_data(size_t address);
 
   private:
