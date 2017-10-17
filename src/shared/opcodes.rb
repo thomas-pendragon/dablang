@@ -150,7 +150,8 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_END_HEADER'}, # finish header
       {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
       {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg(arg0) <- string(*arg1, length = arg2)
-      {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero
+      {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
+      {name: 'W_METHOD', args: %i[symbol uint64]}, # define method with symbol and address
     ],
   },
 ].freeze

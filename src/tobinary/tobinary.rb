@@ -183,7 +183,7 @@ class OutputStream
     write_uint32(version)
 
     size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 32
-    size_of_data = @code.length
+    size_of_data = @code.length - size_of_header
 
     write_uint64(size_of_header)
     write_uint64(size_of_data)
@@ -320,6 +320,9 @@ class Parser
           @output_stream._push_cstring(line[1])
         when 'W_SYMBOL'
           @output_stream._push_uint64(_process(line[1]))
+        when 'W_METHOD'
+          @output_stream._push_uint16(line[1])
+          @output_stream._push_uint64(@label_positions[line[2]])
         else
           raise 'unknown W_ op'
         end

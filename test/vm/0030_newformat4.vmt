@@ -1,0 +1,58 @@
+## CODE
+
+  W_HEADER 2
+  W_SECTION DATA, "data"
+  W_SECTION SYMBOLS, "symb"
+  W_SECTION CODE, "code"
+  W_SECTION FUNC, "func"
+  W_END_HEADER
+
+DATA:
+  W_STRING "notcount"
+
+DATA2:
+  W_STRING "foo"
+  W_STRING "main"
+
+SYMBOLS:
+  W_SYMBOL DATA + 0 # notcount
+  W_SYMBOL DATA + 3 # count
+  W_SYMBOL DATA2 + 0 # foo
+  W_SYMBOL DATA2 + 4 # main
+
+CODE:
+  NOP
+
+Fmain:
+  Q_SET_CALL R2, S2
+  Q_SET_SYSCALL RNIL, 0, R2
+  Q_RETURN RNIL
+
+Ffoo:
+  STACK_RESERVE 0
+  Q_SET_NUMBER R5, 123
+  Q_RETURN R5
+
+FUNC:
+  W_METHOD 2, Ffoo # foo
+  W_METHOD 3, Fmain
+
+## RUNOPTIONS
+
+--noraw
+
+## ASSEMBLE OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--newformat
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+123

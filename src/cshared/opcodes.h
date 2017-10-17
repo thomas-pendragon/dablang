@@ -65,4 +65,5 @@ enum
     OP_W_STRING             = 0x3C,
     OP_Q_SET_STRING         = 0x3D,
     OP_W_SYMBOL             = 0x3E,
+    OP_W_METHOD             = 0x3F,
 };
