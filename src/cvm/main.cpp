@@ -291,14 +291,14 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         read_symbols(instructions, symb_address, symb_length, data_address);
     }
 
-    if (has_functions)
-    {
-        read_functions(instructions, func_address, func_length);
-    }
-
     if (has_classes)
     {
         read_classes(instructions, classes_address, classes_length);
+    }
+
+    if (has_functions)
+    {
+        read_functions(instructions, func_address, func_length);
     }
 
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
