@@ -41,6 +41,7 @@ class DabNodeFunction < DabNode
     @tempvars = 0
     @ssa_count = 0
     @concreteified = false
+    insert(DabNodeSymbol.new(identifier)) if $newformat
   end
 
   def children_info
@@ -49,6 +50,10 @@ class DabNodeFunction < DabNode
       blocks => 'blocks',
       attrlist => 'attrlist',
     }
+  end
+
+  def node_identifier
+    self[4]
   end
 
   def rettype
@@ -127,6 +132,11 @@ class DabNodeFunction < DabNode
       call = DabNodeCall.new(attribute.real_identifier, arglist, nil)
       body << call
     end
+  end
+
+  def compile_definition(output)
+    output.comment(identifier)
+    output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
   end
 
   def compile(output)

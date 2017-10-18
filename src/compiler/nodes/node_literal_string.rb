@@ -15,6 +15,14 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
     output.print('CONSTANT_STRING', extra_dump)
   end
 
+  def compile_string(output)
+    output.print('W_STRING "' + string + '"')
+  end
+
+  def asm_length
+    string.length + 1
+  end
+
   def extra_value
     extra_dump
   end

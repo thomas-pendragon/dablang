@@ -25,6 +25,14 @@ class DabNodeSymbol < DabNodeExtractableLiteral
     end
   end
 
+  def asm_length
+    symbol.length + 1
+  end
+
+  def compile_string(output)
+    output.print('W_STRING "' + symbol + '"')
+  end
+
   def compile_constant(output)
     output.print('CONSTANT_SYMBOL', escaped_symbol)
   end

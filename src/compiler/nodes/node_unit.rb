@@ -109,10 +109,13 @@ class DabNodeUnit < DabNode
   end
 
   def symbol_index(node)
+    if $newformat
+      return constant_symbols.index(node)
+    end
     constant_index(node)
   end
 
-  def compile(output)
+  def compile_old(output)
     output.comment('Dab dev')
     output.print('')
     output.separate
@@ -143,6 +146,102 @@ class DabNodeUnit < DabNode
         function.compile_body(output)
         output.separate
       end
+    end
+  end
+
+  def constant_symbols
+    @constants.to_a.select do |constant|
+      constant.value.is_a? DabNodeSymbol
+    end
+  end
+
+  def constant_strings
+    @constants.to_a.select do |constant|
+      constant.value.is_a? DabNodeLiteralString
+    end
+  end
+
+  def compile_new(output)
+    output.comment('Dab dev 2')
+    output.print('')
+    output.separate
+
+    if $with_cov
+      register_filename(output)
+      output.separate
+    end
+
+    output.print('W_HEADER', 2)
+    output.print('W_SECTION', '_DATA', '"data"')
+    output.print('W_SECTION', '_SDAT', '"data"')
+    output.print('W_SECTION', '_SYMB', '"symb"')
+    output.print('W_SECTION', '_CLAS', '"clas"')
+    output.print('W_SECTION', '_CODE', '"code"')
+    output.print('W_SECTION', '_FUNC', '"func"')
+    output.print('W_END_HEADER')
+    output.separate
+
+    output.label('_DATA')
+    pos = 0
+    constant_strings.each do |constant|
+      constant.asm_position = pos
+      constant.compile_string(output)
+      pos += constant.asm_length
+    end
+    output.separate
+
+    output.label('_SDAT')
+    pos = 0
+    constant_symbols.each do |constant|
+      constant.asm_position = pos
+      constant.compile_string(output)
+      pos += constant.asm_length
+    end
+    output.separate
+
+    output.label('_SYMB')
+    constant_symbols.each do |constant|
+      constant.compile_symbol(output)
+    end
+    output.separate
+
+    output.label('_CLAS')
+    @classes.sort_by(&:identifier).each do |klass|
+      klass.compile_definition(output)
+    end
+    output.separate
+
+    output.label('_CODE')
+    output.print('NOP')
+    output.separate
+
+    @functions.sort_by(&:identifier).each do |function|
+      function.compile_body(output)
+      output.separate
+    end
+    @classes.sort_by(&:identifier).each do |klass|
+      klass.functions.sort_by(&:identifier).each do |function|
+        function.compile_body(output)
+        output.separate
+      end
+    end
+
+    output.label('_FUNC')
+    @functions.sort_by(&:identifier).each do |function|
+      function.compile_definition(output)
+    end
+    @classes.sort_by(&:identifier).each do |klass|
+      klass.functions.sort_by(&:identifier).each do |function|
+        function.compile_definition(output)
+      end
+    end
+  end
+
+  def compile(output)
+    if $newformat
+      compile_new(output)
+    else
+      compile_old(output)
     end
   end
 

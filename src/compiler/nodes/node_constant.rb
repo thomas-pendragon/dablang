@@ -4,6 +4,8 @@ require_relative '../processors/strip_unused_constant.rb'
 class DabNodeConstant < DabNode
   strip_with StripUnusedConstant
 
+  attr_accessor :asm_position
+
   def initialize(value)
     super()
     insert(value)
@@ -29,6 +31,19 @@ class DabNodeConstant < DabNode
 
   def value
     @children[0]
+  end
+
+  def asm_length
+    value.asm_length
+  end
+
+  def compile_string(output)
+    value.compile_string(output)
+  end
+
+  def compile_symbol(output)
+    output.comment(extra_value)
+    output.print("W_SYMBOL _SDAT + #{asm_position}")
   end
 
   def compile(output)

@@ -1,0 +1,35 @@
+## CODE
+
+class Zomg
+{
+  func foo(a, b)
+  {
+    print(a);
+    print(" = ");
+    print(b);
+    print("; ");
+  }  
+}
+
+func main()
+{
+  var i = 4;
+  while (i > 0)
+  {
+    var zomg = Zomg.new;
+    zomg.foo("foobar", i);
+    i = i - 1;    
+  }
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib --newformat
+
+## OPTIONS
+
+## RUN OPTIONS
+
+## EXPECT OK
+
+foobar = 4; foobar = 3; foobar = 2; foobar = 1;

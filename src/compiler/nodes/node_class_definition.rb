@@ -4,6 +4,8 @@ class DabNodeClassDefinition < DabNode
   attr_reader :identifier
   attr_reader :number
 
+  after_init :extract_literal
+
   def initialize(identifier, parent, functions)
     super()
     @identifier = identifier
@@ -13,6 +15,17 @@ class DabNodeClassDefinition < DabNode
       @functions.insert(fun)
     end
     insert(@functions)
+    if $newformat
+      insert(DabNodeSymbol.new(identifier))
+    end
+  end
+
+  def extract_literal
+    ExtractLiteral.new.run(node_identifier) if $newformat
+  end
+
+  def node_identifier
+    self[1]
   end
 
   def functions
@@ -21,6 +34,12 @@ class DabNodeClassDefinition < DabNode
 
   def extra_dump
     identifier
+  end
+
+  def compile_definition(output)
+    parent_number = @parent_class ? root.class_number(@parent_class) : 0
+    output.comment(identifier)
+    output.print('W_CLASS', number, parent_number, node_identifier.symbol_index)
   end
 
   def compile(output)
