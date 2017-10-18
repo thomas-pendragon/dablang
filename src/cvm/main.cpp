@@ -294,7 +294,7 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
 
 void DabVM::read_functions(Stream &input, size_t func_address, size_t func_length)
 {
-    auto fun_len = 2 + 8; // uint16 + uint64
+    auto fun_len = 2 + 2 + 8; // uint16 + uint16 + uint64
 
     auto n_func = func_length / fun_len;
 
@@ -303,15 +303,15 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
 
     for (size_t i = 0; i < n_func; i++)
     {
-        auto symbol_address  = func_address + i * fun_len;
-        auto address_address = symbol_address + 2;
+        auto symbol_address      = func_address + i * fun_len;
+        auto class_index_address = symbol_address + 2;
+        auto address_address     = class_index_address + 2;
 
-        auto symbol  = input.uint16_data(symbol_address);
-        auto address = input.uint64_data(address_address);
+        auto symbol      = input.uint16_data(symbol_address);
+        auto class_index = input.uint16_data(class_index_address);
+        auto address     = input.uint64_data(address_address);
 
         auto symbol_str = constants[symbol].data.string;
-
-        auto class_index = -1;
 
         if (verbose)
         {

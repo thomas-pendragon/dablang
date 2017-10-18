@@ -34,8 +34,8 @@ Ffoo:
   Q_RETURN R5
 
 FUNC:
-  W_METHOD 2, Ffoo # foo
-  W_METHOD 3, Fmain
+  W_METHOD 2, -1, Ffoo # foo
+  W_METHOD 3, -1, Fmain
 
 ## RUNOPTIONS
 
