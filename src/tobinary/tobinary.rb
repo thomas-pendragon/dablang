@@ -193,6 +193,10 @@ class OutputStream
       section[:address] = labels[section[:label]]
     end
 
+    sections.sort_by! do |section|
+      section[:address]
+    end
+
     sections.each_with_index do |section, index|
       next_section = sections[index + 1]
       next_address = if next_section
