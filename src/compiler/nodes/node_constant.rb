@@ -23,6 +23,10 @@ class DabNodeConstant < DabNode
     root.constant_index(self)
   end
 
+  def symbol_index
+    root.symbol_index(self)
+  end
+
   def value
     @children[0]
   end

@@ -108,6 +108,10 @@ class DabNodeUnit < DabNode
     @constants.index(node)
   end
 
+  def symbol_index(node)
+    constant_index(node)
+  end
+
   def compile(output)
     output.comment('Dab dev')
     output.print('')

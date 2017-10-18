@@ -80,11 +80,11 @@ class DabNodeCall < DabNodeExternalBasecall
   end
 
   def symbol_index
-    identifier.index
+    identifier.symbol_index
   end
 
   def block_symbol_index
-    block.identifier.index
+    block.identifier.symbol_index
   end
 
   def formatted_source(options)
