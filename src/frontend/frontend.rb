@@ -86,12 +86,24 @@ class DabSpec
     stdlib_glob = stdlib_path + '/*.dab'
     stdlib_files = Dir.glob(stdlib_glob)
     stdlib_files = [] if data[:frontend_options]['--no-stdlib']
+
+    newformat = data[:frontend_options]['--newformat']
+
+    compile_options = data[:options]
+    compile_options += ' --newformat' if newformat
+
+    assemble_options = ''
+    assemble_options += ' --newformat' if newformat
+
+    run_options = data[:run_options]
+    run_options += ' --newformat' if newformat
+
     begin
       extra = data[:included_file]
       if extra
         extra = "./test/shared/#{extra}.dab"
       end
-      compile_dab_to_asm(([dab, extra] + stdlib_files).compact, asm, data[:options])
+      compile_dab_to_asm(([dab, extra] + stdlib_files).compact, asm, compile_options)
     rescue SystemCommandError => e
       if data[:expected_status] == :compile_error
         compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
@@ -104,10 +116,10 @@ class DabSpec
     if data[:expected_status] == :compile_error
       raise "Expected compiler error in #{input}"
     end
-    assemble(asm, bin)
+    assemble(asm, bin, assemble_options)
 
     begin
-      execute(bin, vmo, data[:run_options])
+      execute(bin, vmo, run_options)
     rescue SystemCommandError => e
       if data[:expected_status] == :runtime_error
         compare_output('compare runtime output', e.stdout, data[:expected_runtime_error], true)
