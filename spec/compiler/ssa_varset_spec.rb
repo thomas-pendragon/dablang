@@ -90,6 +90,7 @@ describe DabNode do
       '          DabNodeReturn []',
       '            DabNodeLiteralNil []',
       '      DabNode []',
+      '      DabNodeLiteralNil []',
       '  DabNode []',
       '  DabNode []',
     ]
@@ -139,6 +140,7 @@ describe DabNode do
       '                DabNodeSSAGet [R1 []]',
       '                DabNodeSSAGet [R0 []]',
       '      DabNode []',
+      '      DabNodeLiteralNil []',
       '  DabNode []',
       '  DabNode []',
     ]

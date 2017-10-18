@@ -36,6 +36,7 @@ describe FixShortcircuit, uint8: true do
       '            DabNodeSSAGet [R2 [$temp0]]',
       '          DabNodeSymbol [:post]',
       '      DabNode []',
+      '      DabNodeLiteralNil []',
       '  DabNode []',
       '  DabNode []',
     ]

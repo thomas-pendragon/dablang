@@ -41,6 +41,7 @@ describe DabNode do
       '              DabNodeSymbol [:on_true]',
       '          DabNodeSymbol [:after]',
       '      DabNode []',
+      '      DabNodeLiteralNil []',
       '  DabNode []',
       '  DabNode []',
     ]
@@ -71,6 +72,7 @@ describe DabNode do
       '              DabNodeSymbol [:on_true]',
       '          DabNodeSymbol [:after]',
       '      DabNode []',
+      '      DabNodeLiteralNil []',
       '  DabNode []',
       '  DabNode []',
     ]

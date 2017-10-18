@@ -37,7 +37,7 @@ class DabNodeFunction < DabNode
     @concrete = false
     @inline = inline
     @autovars = 0
-    insert(rettype) if rettype
+    insert(rettype || DabNodeLiteralNil.new)
     @tempvars = 0
     @ssa_count = 0
     @concreteified = false
@@ -52,11 +52,13 @@ class DabNodeFunction < DabNode
   end
 
   def rettype
-    self[3]
+    ret = self[3]
+    return nil if ret.is_a? DabNodeLiteralNil
+    ret
   end
 
   def return_type
-    self[3]&.dab_type || DabType.parse(nil)
+    self.rettype&.dab_type || DabType.parse(nil)
   end
 
   def autovar_name
