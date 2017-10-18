@@ -328,6 +328,10 @@ class Parser
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
           @output_stream._push_uint64(@label_positions[line[3]])
+        when 'W_CLASS'
+          @output_stream._push_uint16(line[1])
+          @output_stream._push_uint16(line[2])
+          @output_stream._push_uint16(line[3])
         else
           raise 'unknown W_ op'
         end

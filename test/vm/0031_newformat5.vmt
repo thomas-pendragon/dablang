@@ -1,0 +1,62 @@
+## CODE
+
+  W_HEADER 2
+  W_SECTION DATA, "data"
+  W_SECTION SYMBOLS, "symb"
+  W_SECTION CODE, "code"
+  W_SECTION FUNC, "func"
+  W_SECTION CLASS, "clas"
+  W_END_HEADER
+
+DATA:
+  W_STRING "notcount"
+
+DATA2:
+  W_STRING "foo"
+  W_STRING "main"
+
+DATA3:
+  W_STRING "Foobar"
+
+CLASS:
+  W_CLASS 17, 0, 4 # Foobar
+
+SYMBOLS:
+  W_SYMBOL DATA + 0 # notcount
+  W_SYMBOL DATA + 3 # count
+  W_SYMBOL DATA2 + 0 # foo
+  W_SYMBOL DATA2 + 4 # main
+  W_SYMBOL DATA3 # Foobar
+
+CODE:
+  NOP
+
+Fmain:
+  Q_SET_CLASS R2, 0
+  Q_SET_SYSCALL RNIL, 0, R2
+  Q_SET_CLASS R2, 17
+  Q_SET_SYSCALL RNIL, 0, R2
+  Q_RETURN RNIL
+
+FUNC:
+  W_METHOD 3, -1, Fmain
+
+## RUNOPTIONS
+
+--noraw
+
+## ASSEMBLE OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--newformat
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+ObjectFoobar

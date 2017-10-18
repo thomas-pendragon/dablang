@@ -152,6 +152,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg(arg0) <- string(*arg1, length = arg2)
       {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
       {name: 'W_METHOD', args: %i[symbol uint16 uint64]}, # arg0 = symbol arg1 = class index arg2 = address
+      {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
     ],
   },
 ].freeze

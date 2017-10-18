@@ -239,6 +239,10 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
     size_t func_length   = 0;
     bool   has_functions = false;
 
+    size_t classes_address = 0;
+    size_t classes_length  = 0;
+    bool   has_classes     = false;
+
     for (uint32_t index = 0; index < number_of_sections; index++)
     {
         auto name = input.read_string4();
@@ -274,6 +278,12 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
             func_length   = length;
             has_functions = true;
         }
+        if (name == "clas")
+        {
+            classes_address = address;
+            classes_length  = length;
+            has_classes     = true;
+        }
     }
 
     if (has_symbols)
@@ -286,10 +296,51 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         read_functions(instructions, func_address, func_length);
     }
 
+    if (has_classes)
+    {
+        read_classes(instructions, classes_address, classes_length);
+    }
+
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
     instructions.seek(code_address);
 
+    if (raw)
+    {
+        execute(instructions);
+    }
+
     return continue_run(input, autorun, raw, coverage_testing);
+}
+
+void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_length)
+{
+    auto class_len = 2 + 2 + 2; // uint16 + uint16 + uint16
+
+    auto n_class = classes_length / class_len;
+
+    fprintf(stderr, "classad=%p classlen=%d n_class=%d\n", (void *)classes_address,
+            (int)classes_length, (int)n_class);
+
+    for (size_t i = 0; i < n_class; i++)
+    {
+        auto class_index_address        = classes_address + i * class_len;
+        auto parent_class_index_address = class_index_address + 2;
+        auto symbol_address             = parent_class_index_address + 2;
+
+        auto class_index        = input.uint16_data(class_index_address);
+        auto parent_class_index = input.uint16_data(parent_class_index_address);
+        auto symbol             = input.uint16_data(symbol_address);
+
+        auto symbol_str = constants[symbol].data.string;
+
+        if (verbose)
+        {
+            fprintf(stderr, "vm/debug: class %d [parent=%d]: '%s'\n", (int)class_index,
+                    (int)parent_class_index, symbol_str.c_str());
+        }
+
+        add_class(symbol_str, class_index, parent_class_index);
+    }
 }
 
 void DabVM::read_functions(Stream &input, size_t func_address, size_t func_length)
@@ -374,6 +425,8 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 
     instructions.append(input);
 
+    execute(instructions);
+
     return continue_run(input, autorun, raw, coverage_testing);
 }
 
@@ -381,8 +434,6 @@ int DabVM::continue_run(Stream &input, bool autorun, bool raw, bool coverage_tes
 {
     (void)input;
     (void)coverage_testing;
-
-    execute(instructions);
 
     if (!raw)
     {
