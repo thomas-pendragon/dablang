@@ -238,6 +238,7 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
     size_t func_address  = 0;
     size_t func_length   = 0;
     bool   has_functions = false;
+    bool   functions_ex  = false;
 
     size_t classes_address = 0;
     size_t classes_length  = 0;
@@ -272,11 +273,12 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
         {
             data_address = address;
         }
-        if (name == "func")
+        if (name == "func" || name == "fext")
         {
             func_address  = address;
             func_length   = length;
             has_functions = true;
+            functions_ex  = name == "fext";
         }
         if (name == "clas")
         {
@@ -298,7 +300,14 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
 
     if (has_functions)
     {
-        read_functions(instructions, func_address, func_length);
+        if (functions_ex)
+        {
+            read_functions_ex(instructions, func_address, func_length);
+        }
+        else
+        {
+            read_functions(instructions, func_address, func_length);
+        }
     }
 
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
@@ -371,6 +380,73 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
         }
 
         add_function(address, symbol_str, class_index);
+    }
+}
+
+struct MethodArgData
+{
+    uint16_t symbol_index;
+    uint16_t class_index;
+};
+
+void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_length)
+{
+    auto fun_len = 2 + 2 + 8 + 2; // uint16 + uint16 + uint64 + uint16
+    auto arg_len = 2 + 2;         // uint16 + uint16
+
+    auto ptr     = func_address;
+    auto end_ptr = func_address + func_length;
+
+    auto fun_index = 0;
+
+    while (ptr < end_ptr)
+    {
+        auto symbol_address      = ptr;
+        auto class_index_address = symbol_address + 2;
+        auto address_address     = class_index_address + 2;
+        auto arg_count_address   = address_address + 8;
+
+        ptr += fun_len;
+
+        auto symbol      = input.uint16_data(symbol_address);
+        auto class_index = input.uint16_data(class_index_address);
+        auto address     = input.uint64_data(address_address);
+        auto arg_count   = input.uint16_data(arg_count_address);
+
+        auto symbol_str = constants[symbol].data.string;
+
+        if (verbose)
+        {
+            fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d) with %d args\n",
+                    (int)fun_index, symbol_str.c_str(), (void *)address, (int)class_index,
+                    (int)arg_count);
+        }
+        auto data = (MethodArgData *)(input.raw_base_data() + ptr);
+
+        ptr += arg_len * (arg_count + 1);
+
+        add_function(address, symbol_str, class_index);
+
+        auto &reflection = functions[symbol_str].reflection;
+        reflection.arg_names.resize(arg_count);
+        reflection.arg_klasses.resize(arg_count);
+        reflection.ret_klass = data[arg_count].class_index;
+
+        fprintf(stderr, "vm: describe %s:\n", symbol_str.c_str());
+        fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
+
+        for (size_t i = 0; i < arg_count; i++)
+        {
+            auto klass                    = data[i].class_index;
+            auto name                     = constants[data[i].symbol_index].data.string;
+            auto arg_i                    = i;
+            reflection.arg_klasses[arg_i] = klass;
+            reflection.arg_names[arg_i]   = name;
+            fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
+                    name.c_str());
+        }
+
+        fun_index++;
     }
 }
 
@@ -655,6 +731,11 @@ void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
 
 void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &symbol)
 {
+    if (verbose)
+    {
+        fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.data.string.c_str());
+    }
+
     const auto &function   = functions[symbol.data.string];
     const auto &reflection = function.reflection;
 

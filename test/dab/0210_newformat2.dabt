@@ -1,0 +1,33 @@
+## CODE
+
+func foo(a<String>, b<Uint8>, c)
+{
+}
+
+func main()
+{
+  print(reflect_method_arguments(foo));
+  print("\n");
+  print(reflect_method_argument_names(foo));
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib --newformat
+
+## OPTIONS
+
+--no-opt --with-reflection
+
+## RUN OPTIONS
+
+--with-reflection
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+[String, Uint8, Object]
+[a, b, c]
