@@ -175,7 +175,9 @@ class DabNodeUnit < DabNode
     output.print('W_SECTION', '_DATA', '"data"')
     output.print('W_SECTION', '_SDAT', '"data"')
     output.print('W_SECTION', '_SYMB', '"symb"')
-    output.print('W_SECTION', '_CLAS', '"clas"')
+    if @classes.count > 0
+      output.print('W_SECTION', '_CLAS', '"clas"')
+    end
     output.print('W_SECTION', '_CODE', '"code"')
     if $feature_reflection
       output.print('W_SECTION', '_FUNC', '"fext"')
@@ -209,11 +211,13 @@ class DabNodeUnit < DabNode
     end
     output.separate
 
-    output.label('_CLAS')
-    @classes.sort_by(&:identifier).each do |klass|
-      klass.compile_definition(output)
+    if @classes.count > 0
+      output.label('_CLAS')
+      @classes.sort_by(&:identifier).each do |klass|
+        klass.compile_definition(output)
+      end
+      output.separate
     end
-    output.separate
 
     output.label('_CODE')
     output.print('NOP')

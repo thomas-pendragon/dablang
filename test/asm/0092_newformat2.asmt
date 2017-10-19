@@ -17,7 +17,6 @@ func foo(a, b<Uint8>)
                                  W_SECTION _DATA, "data"
                                  W_SECTION _SDAT, "data"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CLAS, "clas"
                                  W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
