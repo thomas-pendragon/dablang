@@ -714,13 +714,14 @@ void DabVM::register_set(dab_register_t reg, const DabValue &value)
     _registers[reg_index] = value;
 }
 
-void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
+void DabVM::reflect(size_t reflection_type, const DabValue &symbol, bool out_reg,
+                    dab_register_t reg)
 {
     switch (reflection_type)
     {
     case REFLECT_METHOD_ARGUMENTS:
     case REFLECT_METHOD_ARGUMENT_NAMES:
-        reflect_method_arguments(reflection_type, symbol);
+        reflect_method_arguments(reflection_type, symbol, out_reg, reg);
         break;
     default:
         fprintf(stderr, "vm: unknown reflection %d\n", (int)reflection_type);
@@ -729,7 +730,8 @@ void DabVM::reflect(size_t reflection_type, const DabValue &symbol)
     }
 }
 
-void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &symbol)
+void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &symbol, bool out_reg,
+                                     dab_register_t reg)
 {
     if (verbose)
     {
@@ -759,7 +761,15 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
         }
         array[i] = value;
     }
-    stack.push_value(value);
+
+    if (out_reg)
+    {
+        register_set(reg, value);
+    }
+    else
+    {
+        stack.push_value(value);
+    }
 }
 
 bool DabVM::execute_single(Stream &input)
@@ -807,7 +817,7 @@ bool DabVM::execute_single(Stream &input)
     {
         size_t reflection_type = input.read_uint16();
         auto   symbol          = stack.pop_symbol();
-        reflect(reflection_type, symbol);
+        reflect(reflection_type, symbol, false, 0);
         break;
     }
     case OP_CONSTANT_SYMBOL:
@@ -1019,6 +1029,16 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto number    = input.read_uint64();
         register_set(reg_index, DabValue(number));
+        break;
+    }
+    case OP_Q_SET_REFLECT:
+    {
+        auto reg_index       = input.read_reg();
+        auto symbol_index    = input.read_symbol();
+        auto reflection_type = input.read_uint16();
+        auto symbol          = constants[symbol_index].data.string;
+
+        reflect(reflection_type, symbol, true, reg_index);
         break;
     }
     case OP_Q_SET_NUMBER_INT32:

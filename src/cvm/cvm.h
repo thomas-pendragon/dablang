@@ -568,8 +568,9 @@ struct DabVM
 
     DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
 
-    void reflect(size_t reflection_type, const DabValue &symbol);
-    void reflect_method_arguments(size_t reflection_type, const DabValue &symbol);
+    void reflect(size_t reflection_type, const DabValue &symbol, bool out_reg, dab_register_t reg);
+    void reflect_method_arguments(size_t reflection_type, const DabValue &symbol, bool out_reg,
+                                  dab_register_t reg);
 
     DabValue register_get(dab_register_t reg_index);
     void register_set(dab_register_t reg_index, const DabValue &value);

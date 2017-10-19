@@ -155,6 +155,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
       {name: 'W_METHOD_EX', args: %i[symbol uint16 uint64 uint16]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection)
       {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
+      {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16]}, # reg0 <- reflect(sym1) with type arg2
     ],
   },
 ].freeze

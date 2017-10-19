@@ -13,8 +13,8 @@ class DabNodeReflect < DabNode
     self[0]
   end
 
-  def compile(output)
-    value.compile(output)
-    output.printex(self, 'REFLECT', REFLECTION_REV[reflect_type])
+  def compile_as_ssa(output, output_register)
+    output.comment(self.extra_value)
+    output.print('Q_SET_REFLECT', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type])
   end
 end

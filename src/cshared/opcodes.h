@@ -69,4 +69,5 @@ enum
     OP_W_CLASS              = 0x40,
     OP_W_METHOD_EX          = 0x41,
     OP_W_METHOD_ARG         = 0x42,
+    OP_Q_SET_REFLECT        = 0x43,
 };
