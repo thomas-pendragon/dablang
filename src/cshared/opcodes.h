@@ -67,4 +67,6 @@ enum
     OP_W_SYMBOL             = 0x3E,
     OP_W_METHOD             = 0x3F,
     OP_W_CLASS              = 0x40,
+    OP_W_METHOD_EX          = 0x41,
+    OP_W_METHOD_ARG         = 0x42,
 };

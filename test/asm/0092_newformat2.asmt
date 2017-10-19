@@ -1,0 +1,52 @@
+## CODE
+
+func foo(a, b<Uint8>)
+{
+  print(reflect_method_arguments(foo));
+}
+
+## OPTIONS
+
+--no-opt --with-reflection --entry=foo --newformat
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "fext"
+                                 W_END_HEADER 
+ 
+                   _SDAT:
+                                 W_STRING "a" 
+                                 W_STRING "b" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* a            */               W_SYMBOL _SDAT + 0 
+/* b            */               W_SYMBOL _SDAT + 2 
+/* foo          */               W_SYMBOL _SDAT + 4 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+/* b            */               Q_SET_ARG R0, 1
+/* a            */               Q_SET_ARG R1, 0
+/* foo          */               PUSH_CONSTANT 2
+                                 REFLECT 0
+                                 Q_SET_POP R2
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+                                 Q_RETURN RNIL
+ 
+                   _FUNC:
+/* foo          */               W_METHOD_EX 2, -1, Ffoo, 2
+/* a<Object>    */               W_METHOD_ARG 0, 0
+/* b<Uint8>     */               W_METHOD_ARG 1, 6
+/* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -153,6 +153,8 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
       {name: 'W_METHOD', args: %i[symbol uint16 uint64]}, # arg0 = symbol arg1 = class index arg2 = address
       {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
+      {name: 'W_METHOD_EX', args: %i[symbol uint16 uint64 uint16]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection)
+      {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
     ],
   },
 ].freeze
