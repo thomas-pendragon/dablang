@@ -25,6 +25,8 @@
 - FUNC section should be allowed before actual functions
 - reflection
 - coverage support
+- function attributes
+- disassembly support
 
 ## Performance
 
@@ -115,4 +117,3 @@
 		- weak arrays
 - native compilation
 - lexer: pass actual EOF mark to compiler (see 59)
-- new format for Dab binary with headers
