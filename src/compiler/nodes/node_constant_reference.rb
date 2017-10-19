@@ -30,7 +30,7 @@ class DabNodeConstantReference < DabNode
 
   def compile(output)
     output.comment(self.extra_value)
-    output.print('PUSH_CONSTANT', self.index)
+    output.print('PUSH_CONSTANT', self.symbol_index)
   end
 
   def compile_as_ssa(output, output_register)
