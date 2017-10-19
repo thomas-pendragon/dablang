@@ -87,5 +87,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_W_METHOD,
      "W_METHOD",
      {OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT64}},
-    {OP_W_CLASS, "W_CLASS", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_SYMBOL}},
+    {OP_W_CLASS, "W_CLASS", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_SYMBOL}},
 };
