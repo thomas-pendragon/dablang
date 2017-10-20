@@ -30,7 +30,7 @@ class DabNodeSymbol < DabNodeExtractableLiteral
   end
 
   def compile_string(output)
-    output.print('W_STRING "' + symbol + '"')
+    output.print('W_STRING "' + symbol.to_s + '"')
   end
 
   def compile_constant(output)
