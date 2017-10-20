@@ -1032,6 +1032,7 @@ bool DabVM::execute_single(Stream &input)
         break;
     }
     case OP_Q_SET_REFLECT:
+    case OP_Q_SET_REFLECT2:
     {
         auto reg_index       = input.read_reg();
         auto symbol_index    = input.read_symbol();
