@@ -425,9 +425,9 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
 
         ptr += arg_len * (arg_count + 1);
 
-        add_function(address, symbol_str, class_index);
+        auto &function = add_function(address, symbol_str, class_index);
 
-        auto &reflection = functions[symbol_str].reflection;
+        auto &reflection = function.reflection;
         reflection.arg_names.resize(arg_count);
         reflection.arg_klasses.resize(arg_count);
         reflection.ret_klass = data[arg_count].class_index;
@@ -1619,7 +1619,7 @@ void DabVM::push_method(const std::string &name)
     stack.push_value(val);
 }
 
-void DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
+DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
 {
     fprintf(stderr, "vm: add function <%s>.\n", name.c_str());
     DabFunction function;
@@ -1628,10 +1628,12 @@ void DabVM::add_function(size_t address, const std::string &name, uint16_t class
     if (class_index == 0xFFFF)
     {
         functions[name] = function;
+        return functions[name];
     }
     else
     {
         get_class(class_index).functions[name] = function;
+        return get_class(class_index).functions[name];
     }
 }
 
