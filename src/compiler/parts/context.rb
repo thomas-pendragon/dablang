@@ -296,32 +296,26 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_reflect_method_arguments
+  def _read_reflect(key)
     on_subcontext do |subcontext|
-      next unless kw = subcontext.read_operator('reflect_method_arguments')
+      next unless kw = subcontext.read_operator(key)
 
       next unless lparen = subcontext.read_operator('(')
       next unless id = subcontext.read_identifier
       next unless rparen = subcontext.read_operator(')')
 
-      ret = DabNodeReflect.new(:method_arguments, id)
+      ret = DabNodeReflect.new(key.gsub('reflect_', '').to_sym, id)
       ret.add_source_parts(kw, lparen, rparen)
       ret
     end
   end
 
+  def read_reflect_method_arguments
+    _read_reflect('reflect_method_arguments')
+  end
+
   def read_reflect_method_argument_names
-    on_subcontext do |subcontext|
-      next unless kw = subcontext.read_operator('reflect_method_argument_names')
-
-      next unless lparen = subcontext.read_operator('(')
-      next unless id = subcontext.read_identifier
-      next unless rparen = subcontext.read_operator(')')
-
-      ret = DabNodeReflect.new(:method_argument_names, id)
-      ret.add_source_parts(kw, lparen, rparen)
-      ret
-    end
+    _read_reflect('reflect_method_argument_names')
   end
 
   def read_reflect
