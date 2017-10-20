@@ -1,39 +1,33 @@
 #include "cvm.h"
 
-const DabFunction &DabClass::get_function(const DabValue &klass, const std::string &name) const
+const DabFunction &DabClass::get_instance_function(const std::string &name) const
 {
-    if (klass.data.type == TYPE_CLASS)
-    {
-        return get_static_function(klass, name);
-    }
-    return _get_function(false, klass, name);
+    return _get_function(false, name);
 }
 
-const DabFunction &DabClass::get_static_function(const DabValue &   klass,
-                                                 const std::string &name) const
+const DabFunction &DabClass::get_static_function(const std::string &name) const
 {
-    return _get_function(true, klass, name);
+    return _get_function(true, name);
 }
 
-const DabFunction &DabClass::_get_function(bool _static, const DabValue &klass,
-                                           const std::string &name) const
+const DabFunction &DabClass::_get_function(bool _static, const std::string &func_name) const
 {
     auto &collection = _static ? static_functions : functions;
-    if (!collection.count(name))
+    if (!collection.count(func_name))
     {
         if (index == superclass_index)
         {
             fprintf(stderr, "VM error: Unknown %sfunction <%s> in <%s>.\n",
-                    _static ? "static " : "", name.c_str(), klass.class_name().c_str());
+                    _static ? "static " : "", func_name.c_str(), name.c_str());
             exit(1);
         }
         else
         {
             auto &superclass = $VM->get_class(superclass_index);
-            return superclass._get_function(_static, klass, name);
+            return superclass._get_function(_static, func_name);
         }
     }
-    return collection.at(name);
+    return collection.at(func_name);
 }
 
 void DabClass::add_static_function(const std::string &name, dab_function_t body)

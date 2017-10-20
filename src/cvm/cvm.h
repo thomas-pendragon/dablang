@@ -92,9 +92,9 @@ struct DabClass
     std::map<std::string, DabFunction> static_functions;
     int superclass_index = CLASS_OBJECT;
 
-    const DabFunction &get_function(const DabValue &klass, const std::string &name) const;
+    const DabFunction &get_instance_function(const std::string &name) const;
 
-    const DabFunction &get_static_function(const DabValue &klass, const std::string &name) const;
+    const DabFunction &get_static_function(const std::string &name) const;
 
     void add_function(const std::string &name, dab_function_t body);
     void add_static_function(const std::string &name, dab_function_t body);
@@ -104,8 +104,7 @@ struct DabClass
     bool is_subclass_of(const DabClass &klass) const;
 
   private:
-    const DabFunction &_get_function(bool _static, const DabValue &klass,
-                                     const std::string &name) const;
+    const DabFunction &_get_function(bool _static, const std::string &name) const;
 };
 
 enum
