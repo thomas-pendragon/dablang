@@ -180,6 +180,8 @@ require_relative './classes.rb'
 REFLECTION = {
   0x00 => :method_arguments,
   0x01 => :method_argument_names,
+  0x02 => :instance_method_argument_types,
+  0x03 => :instance_method_argument_names,
 }.freeze
 
 REFLECTION_REV = REFLECTION.map { |k, v| [v, k] }.to_h

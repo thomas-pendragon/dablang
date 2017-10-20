@@ -1,0 +1,74 @@
+## CODE
+
+class Foo
+{
+  func zomg(a, b<Uint8>)
+  {  
+  }
+}
+
+func foo(n)
+{
+  print(reflect_instance_method_argument_types(Foo, zomg));
+}
+
+## OPTIONS
+
+--no-opt --with-reflection --entry=foo --newformat
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "fext"
+                                 W_END_HEADER 
+ 
+                   _SDAT:
+                                 W_STRING "Foo" 
+                                 W_STRING "a" 
+                                 W_STRING "b" 
+                                 W_STRING "foo" 
+                                 W_STRING "n" 
+                                 W_STRING "zomg" 
+ 
+                   _SYMB:
+/* Foo          */               W_SYMBOL _SDAT + 0 
+/* a            */               W_SYMBOL _SDAT + 4 
+/* b            */               W_SYMBOL _SDAT + 6 
+/* foo          */               W_SYMBOL _SDAT + 8 
+/* n            */               W_SYMBOL _SDAT + 12 
+/* zomg         */               W_SYMBOL _SDAT + 14 
+ 
+                   _CLAS:
+/* Foo          */               W_CLASS 256, 0, 0
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+/* n            */               Q_SET_ARG R0, 0
+                                 Q_SET_REFLECT2 R1, S5, 2, 256
+/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+                                 Q_RETURN RNIL
+ 
+                   CFoo_Fzomg:
+                                 STACK_RESERVE 0
+/* b            */               Q_SET_ARG R0, 1
+/* a            */               Q_SET_ARG R1, 0
+                                 Q_RETURN RNIL
+ 
+                   _FUNC:
+/* foo          */               W_METHOD_EX 3, -1, Ffoo, 1
+/* n<Object>    */               W_METHOD_ARG 4, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* zomg         */               W_METHOD_EX 5, 256, CFoo_Fzomg, 2
+/* a<Object>    */               W_METHOD_ARG 1, 0
+/* b<Uint8>     */               W_METHOD_ARG 2, 6
+/* $ret<Object> */               W_METHOD_ARG -1, 0

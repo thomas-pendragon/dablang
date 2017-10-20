@@ -76,8 +76,10 @@ enum
 
 enum
 {
-    REFLECT_METHOD_ARGUMENTS      = 0,
-    REFLECT_METHOD_ARGUMENT_NAMES = 1,
+    REFLECT_METHOD_ARGUMENTS               = 0,
+    REFLECT_METHOD_ARGUMENT_NAMES          = 1,
+    REFLECT_INSTANCE_METHOD_ARGUMENT_TYPES = 2,
+    REFLECT_INSTANCE_METHOD_ARGUMENT_NAMES = 3,
 };
 
 struct DabVM;
@@ -567,9 +569,14 @@ struct DabVM
 
     DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
 
-    void reflect(size_t reflection_type, const DabValue &symbol, bool out_reg, dab_register_t reg);
+    void reflect(size_t reflection_type, const DabValue &symbol, bool out_reg, dab_register_t reg,
+                 bool has_class, uint16_t class_index);
+    void reflect_instance_method(size_t reflection_type, const DabValue &symbol, bool out_reg,
+                                 dab_register_t reg, bool has_class, uint16_t class_index);
     void reflect_method_arguments(size_t reflection_type, const DabValue &symbol, bool out_reg,
                                   dab_register_t reg);
+
+    void _reflect(const DabFunction &function, bool out_reg, dab_register_t reg, bool output_names);
 
     DabValue register_get(dab_register_t reg_index);
     void register_set(dab_register_t reg_index, const DabValue &value);

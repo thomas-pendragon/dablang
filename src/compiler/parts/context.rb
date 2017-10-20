@@ -296,16 +296,20 @@ class DabContext < DabBaseContext
     end
   end
 
-  def _read_reflect(key)
+  def _read_reflect(key, read_klass = false)
     on_subcontext do |subcontext|
       next unless kw = subcontext.read_operator(key)
 
       next unless lparen = subcontext.read_operator('(')
+      if read_klass
+        next unless klass = subcontext.read_identifier
+        next unless comma = subcontext.read_operator(',')
+      end
       next unless id = subcontext.read_identifier
       next unless rparen = subcontext.read_operator(')')
 
-      ret = DabNodeReflect.new(key.gsub('reflect_', '').to_sym, id)
-      ret.add_source_parts(kw, lparen, rparen)
+      ret = DabNodeReflect.new(key.gsub('reflect_', '').to_sym, id, klass)
+      ret.add_source_parts(kw, lparen, rparen, comma)
       ret
     end
   end
@@ -318,9 +322,19 @@ class DabContext < DabBaseContext
     _read_reflect('reflect_method_argument_names')
   end
 
+  def read_reflect_instance_method_argument_types
+    _read_reflect('reflect_instance_method_argument_types', true)
+  end
+
+  def read_reflect_instance_method_argument_names
+    _read_reflect('reflect_instance_method_argument_names', true)
+  end
+
   def read_reflect
     read_reflect_method_arguments ||
-      read_reflect_method_argument_names
+      read_reflect_method_argument_names ||
+      read_reflect_instance_method_argument_types ||
+      read_reflect_instance_method_argument_names
   end
 
   def read_instruction

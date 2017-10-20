@@ -715,13 +715,17 @@ void DabVM::register_set(dab_register_t reg, const DabValue &value)
 }
 
 void DabVM::reflect(size_t reflection_type, const DabValue &symbol, bool out_reg,
-                    dab_register_t reg)
+                    dab_register_t reg, bool has_class, uint16_t class_index)
 {
     switch (reflection_type)
     {
     case REFLECT_METHOD_ARGUMENTS:
     case REFLECT_METHOD_ARGUMENT_NAMES:
         reflect_method_arguments(reflection_type, symbol, out_reg, reg);
+        break;
+    case REFLECT_INSTANCE_METHOD_ARGUMENT_TYPES:
+    case REFLECT_INSTANCE_METHOD_ARGUMENT_NAMES:
+        reflect_instance_method(reflection_type, symbol, out_reg, reg, has_class, class_index);
         break;
     default:
         fprintf(stderr, "vm: unknown reflection %d\n", (int)reflection_type);
@@ -737,8 +741,32 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
     {
         fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.data.string.c_str());
     }
+    const auto &function = functions[symbol.data.string];
 
-    const auto &function   = functions[symbol.data.string];
+    auto output_names = reflection_type == REFLECT_METHOD_ARGUMENT_NAMES;
+    _reflect(function, out_reg, reg, output_names);
+}
+
+void DabVM::reflect_instance_method(size_t reflection_type, const DabValue &symbol, bool out_reg,
+                                    dab_register_t reg, bool has_class, uint16_t class_index)
+{
+    assert(has_class);
+
+    auto &klass = get_class(class_index);
+    if (verbose)
+    {
+        fprintf(stderr, "vm: reflect %d on %s [%s]\n", (int)reflection_type,
+                symbol.data.string.c_str(), klass.name.c_str());
+    }
+    const auto &function = klass.get_instance_function(symbol.data.string);
+
+    auto output_names = reflection_type == REFLECT_INSTANCE_METHOD_ARGUMENT_NAMES;
+    _reflect(function, out_reg, reg, output_names);
+}
+
+void DabVM::_reflect(const DabFunction &function, bool out_reg, dab_register_t reg,
+                     bool output_names)
+{
     const auto &reflection = function.reflection;
 
     auto n = reflection.arg_names.size();
@@ -747,10 +775,16 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
     DabValue value       = array_class.create_instance();
     auto &   array       = value.array();
     array.resize(n);
+
+    if (verbose)
+    {
+        fprintf(stderr, "vm: reflect %d arguments\n", (int)n);
+    }
+
     for (size_t i = 0; i < n; i++)
     {
         DabValue value;
-        if (reflection_type == REFLECT_METHOD_ARGUMENT_NAMES)
+        if (output_names)
         {
             value = DabValue(reflection.arg_names[i]);
         }
@@ -817,7 +851,7 @@ bool DabVM::execute_single(Stream &input)
     {
         size_t reflection_type = input.read_uint16();
         auto   symbol          = stack.pop_symbol();
-        reflect(reflection_type, symbol, false, 0);
+        reflect(reflection_type, symbol, false, 0, false, 0);
         break;
     }
     case OP_CONSTANT_SYMBOL:
@@ -1039,7 +1073,15 @@ bool DabVM::execute_single(Stream &input)
         auto reflection_type = input.read_uint16();
         auto symbol          = constants[symbol_index].data.string;
 
-        reflect(reflection_type, symbol, true, reg_index);
+        bool     has_class   = opcode == OP_Q_SET_REFLECT2;
+        uint16_t class_index = 0;
+
+        if (has_class)
+        {
+            class_index = input.read_uint16();
+        }
+
+        reflect(reflection_type, symbol, true, reg_index, has_class, class_index);
         break;
     }
     case OP_Q_SET_NUMBER_INT32:

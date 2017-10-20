@@ -1,0 +1,27 @@
+## CODE
+
+class Foo
+{
+  func zomg(a, b<Uint8>)
+  {  
+  }
+}
+
+func main()
+{
+  puts(reflect_instance_method_argument_types(Foo, zomg));
+  print(reflect_instance_method_argument_names(Foo, zomg));
+}
+
+## FRONTEND OPTIONS
+
+--newformat
+
+## OPTIONS
+
+--no-opt --with-reflection --entry=foo
+
+## EXPECT OK
+
+[Object, Uint8]
+[a, b]
