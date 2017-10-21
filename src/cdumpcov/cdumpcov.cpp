@@ -129,21 +129,63 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
 
 int main(int argc, char **argv)
 {
-    bool raw = (argc == 2) && (std::string(argv[1]) == "--raw");
+    bool raw       = (argc == 2) && (std::string(argv[1]) == "--raw");
+    bool newformat = (argc == 2) && (std::string(argv[1]) == "--newformat");
 
     std::map<uint64_t, std::string>        files;
     std::map<uint64_t, std::set<uint64_t>> lines;
 
-    parse_asm(raw, [&files, &lines](Op op) {
-        if (op.code == OP_COV_FILE)
+    if (newformat)
+    {
+        Stream stream;
+        read_stream(stream);
+        auto header = stream.peek_header();
+        fprintf(stderr, "cdumpcov: %d sections\n", (int)header->section_count);
+        for (size_t i = 0; i < header->section_count; i++)
         {
-            files[op.arg_uint16(0)] = op.arg_string(1);
+            auto section = header->sections[i];
+            fprintf(stderr, "cdumpcov: section[%d] '%s'\n", (int)i, section.name);
+            std::string section_name = section.name;
+            if (section_name == "cove")
+            {
+                auto size_of_cov_file    = sizeof(uint64_t);
+                auto number_of_cov_files = section.length / size_of_cov_file;
+                fprintf(stderr, "cdumpcov: %d cov files\n", (int)number_of_cov_files);
+                for (size_t j = 0; j < number_of_cov_files; j++)
+                {
+                    auto ptr    = section.pos + size_of_cov_file * j;
+                    auto data   = stream.uint64_data(ptr);
+                    auto string = stream.cstring_data(data);
+                    fprintf(stderr, "cdumpcov: cov[%d] %p -> %p -> '%s'\n", (int)j, (void *)ptr,
+                            (void *)data, string.c_str());
+                    files[j + 1] = string;
+                }
+            }
+            if (section_name == "code")
+            {
+                auto substream = stream.section_stream(i);
+                parse_stream(substream, [&files, &lines](Op op) {
+                    if (op.code == OP_COV)
+                    {
+                        lines[op.arg_uint16(0)].insert(op.arg_uint16(1));
+                    }
+                });
+            }
         }
-        if (op.code == OP_COV)
-        {
-            lines[op.arg_uint16(0)].insert(op.arg_uint16(1));
-        }
-    });
+    }
+    else
+    {
+        parse_asm(raw, [&files, &lines](Op op) {
+            if (op.code == OP_COV_FILE)
+            {
+                files[op.arg_uint16(0)] = op.arg_string(1);
+            }
+            if (op.code == OP_COV)
+            {
+                lines[op.arg_uint16(0)].insert(op.arg_uint16(1));
+            }
+        });
+    }
 
     printf("[");
     int j = 0;

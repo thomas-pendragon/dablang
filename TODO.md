@@ -25,7 +25,6 @@
 - FUNC section should be allowed before actual functions
 - function attributes
 - disassembly support
-- dumpcov support
 
 ## Performance
 
