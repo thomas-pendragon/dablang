@@ -14,10 +14,6 @@ def extract_format_source(input, output)
   end
 end
 
-def assemble(input, output)
-  run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
-end
-
 def dumpcov(input, output)
   describe_action(input, output, 'dumpcov') do
     input = input.to_s.shellescape
