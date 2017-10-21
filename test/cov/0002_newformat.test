@@ -1,0 +1,78 @@
+## CODE
+
+class MyObject
+{
+  func a(x)
+  {
+    if (x)
+    { 
+      return "a";
+    }
+    else
+    {
+      return "x";
+    };
+  }
+
+  func c()
+  {
+    return 12;
+  }
+}
+
+class MyObject
+{
+  func b()
+  {
+    var n = self.a(true);
+    return "b" + n;
+  }
+}
+
+func main()
+{
+  print(MyObject.new.b);
+  print(MyObject.new.a(true));
+}
+
+## FRONTEND OPTIONS
+
+--newformat
+
+## EXPECT
+./tmp/test_cov_spec_0002_newformat.dab
+
+               1: class MyObject
+               2: {
+               3:   func a(x)
+               4:   {
+               5:     if (x)
+               6:     { 
+               7:       return "a";
+               8:     }
+               9:     else
+              10:     {
+              11:       return "x";
+              12:     };
+              13:   }
+              14: 
+              15:   func c()
+              16:   {
+              17:     return 12;
+              18:   }
+              19: }
+              20: 
+              21: class MyObject
+              22: {
+              23:   func b()
+              24:   {
+    1 hit     25:     var n = self.a(true);
+    1 hit     26:     return "b" + n;
+              27:   }
+              28: }
+              29: 
+              30: func main()
+              31: {
+    3 hits    32:   print(MyObject.new.b);
+    3 hits    33:   print(MyObject.new.a(true));
+              34: }

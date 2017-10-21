@@ -198,6 +198,24 @@ size_t DabVM::ip() const
     return instructions.position();
 }
 
+void DabVM::read_coverage_files(Stream &stream, size_t address, size_t length)
+{
+    auto size_of_cov_file    = sizeof(uint64_t);
+    auto number_of_cov_files = length / size_of_cov_file;
+    fprintf(stderr, "vm: %d cov files\n", (int)number_of_cov_files);
+    for (size_t j = 0; j < number_of_cov_files; j++)
+    {
+        auto ptr    = address + size_of_cov_file * j;
+        auto data   = stream.uint64_data(ptr);
+        auto string = stream.cstring_data(data);
+        fprintf(stderr, "vm: cov[%d] %p -> %p -> '%s'\n", (int)j, (void *)ptr, (void *)data,
+                string.c_str());
+        auto hash  = j + 1;
+        auto fname = string;
+        coverage.add_file(hash, fname);
+    }
+}
+
 int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
     instructions.append(input);
@@ -285,6 +303,11 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
             classes_address = address;
             classes_length  = length;
             has_classes     = true;
+        }
+
+        if (name == "cove")
+        {
+            read_coverage_files(instructions, address, length);
         }
     }
 
