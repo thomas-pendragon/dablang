@@ -41,6 +41,19 @@ struct Op
     }
 };
 
+void read_stream(Stream &stream)
+{
+    byte buffer[1024];
+    while (!feof(stdin))
+    {
+        size_t bytes = fread(buffer, 1, 1024, stdin);
+        if (bytes)
+        {
+            stream.append(buffer, bytes);
+        }
+    }
+}
+
 void parse_asm(bool raw, std::function<void(Op)> func)
 {
     if (!raw)
@@ -52,15 +65,7 @@ void parse_asm(bool raw, std::function<void(Op)> func)
     }
 
     Stream stream;
-    byte   buffer[1024];
-    while (!feof(stdin))
-    {
-        size_t bytes = fread(buffer, 1, 1024, stdin);
-        if (bytes)
-        {
-            stream.append(buffer, bytes);
-        }
-    }
+    read_stream(stream);
 
     while (!stream.eof())
     {
