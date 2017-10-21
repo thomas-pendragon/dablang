@@ -157,6 +157,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
       {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16]}, # reg0 <- reflect(sym1) with type arg2
       {name: 'Q_SET_REFLECT2', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
+      {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
     ],
   },
 ].freeze

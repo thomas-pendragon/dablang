@@ -71,4 +71,5 @@ enum
     OP_W_METHOD_ARG         = 0x42,
     OP_Q_SET_REFLECT        = 0x43,
     OP_Q_SET_REFLECT2       = 0x44,
+    OP_W_COV_FILE           = 0x45,
 };

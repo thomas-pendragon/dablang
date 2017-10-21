@@ -98,4 +98,5 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_Q_SET_REFLECT2,
      "Q_SET_REFLECT2",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
+    {OP_W_COV_FILE, "W_COV_FILE", {OpcodeArg::ARG_UINT64}},
 };
