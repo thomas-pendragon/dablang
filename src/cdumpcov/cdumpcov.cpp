@@ -54,6 +54,8 @@ void read_stream(Stream &stream)
     }
 }
 
+void parse_stream(Stream &stream, std::function<void(Op)> func);
+
 void parse_asm(bool raw, std::function<void(Op)> func)
 {
     if (!raw)
@@ -67,6 +69,11 @@ void parse_asm(bool raw, std::function<void(Op)> func)
     Stream stream;
     read_stream(stream);
 
+    parse_stream(stream, func);
+}
+
+void parse_stream(Stream &stream, std::function<void(Op)> func)
+{
     while (!stream.eof())
     {
         auto opcode = stream.read_uint8();
