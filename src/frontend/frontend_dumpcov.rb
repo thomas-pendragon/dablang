@@ -14,11 +14,11 @@ def extract_format_source(input, output)
   end
 end
 
-def dumpcov(input, output)
+def dumpcov(input, output, options)
   describe_action(input, output, 'dumpcov') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cdumpcov < #{input} > #{output}"
+    cmd = "timeout 10 ./bin/cdumpcov #{options} < #{input} > #{output}"
     psystem_noecho cmd
   end
 end
@@ -29,6 +29,11 @@ def run_test(settings)
   test_prefix = settings[:test_output_prefix] || ''
 
   data = read_test_file(input)
+
+  options = data[:options] || ''
+  newformat = options['--newformat']
+  newformat_option = ''
+  newformat_option = '--newformat' if newformat
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
@@ -41,8 +46,8 @@ def run_test(settings)
   FileUtils.rm(out) if File.exist?(out)
 
   extract_format_source(input, asm)
-  assemble(asm, bin)
-  dumpcov(bin, cov)
+  assemble(asm, bin, newformat_option)
+  dumpcov(bin, cov, newformat_option)
 
   expected = data[:expect].strip
 

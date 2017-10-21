@@ -5,16 +5,20 @@ require_relative '../shared/system.rb'
 
 input = $settings[:input]
 format = $settings[:format] || 'text'
+newformat = $settings[:newformat]
+
+options = ''
+options = '--newformat' if newformat
 
 if input.end_with? '.dab'
   target = input.gsub(/\.dab$/, '.dabca')
-  psystem "ruby ./src/compiler/compiler.rb #{input} --with-cov > #{target} 2> /dev/null"
+  psystem "ruby ./src/compiler/compiler.rb #{input} #{options} --with-cov > #{target} 2> /dev/null"
   input = target
 end
 
 if input.end_with? '.dabca'
   target = input.gsub(/\.dabca$/, '.dabcb')
-  psystem "ruby ./src/tobinary/tobinary.rb < #{input} > #{target} 2> /dev/null"
+  psystem "ruby ./src/tobinary/tobinary.rb #{options} < #{input} > #{target} 2> /dev/null"
   input = target
 end
 
@@ -23,10 +27,10 @@ unless input.end_with? '.dabcb'
 end
 
 vm_cov_target = input.gsub(/\.dabcb$/, '.vm_cov')
-psystem "./bin/cvm --cov #{input} > #{vm_cov_target}"
+psystem "./bin/cvm #{options} --cov #{input} > #{vm_cov_target}"
 
 dump_cov_target = input.gsub(/\.dabcb$/, '.dump_cov')
-psystem "./bin/cdumpcov < #{input} > #{dump_cov_target}"
+psystem "./bin/cdumpcov #{options} < #{input} > #{dump_cov_target}"
 
 dump = JSON.parse(File.read(dump_cov_target))
 vm = JSON.parse(File.read(vm_cov_target))
