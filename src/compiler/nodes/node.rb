@@ -341,6 +341,20 @@ class DabNode
     end
   end
 
+  def register_filename_new(output)
+    output.register_filename_new(source_file) if source_file
+    @children.each do |child|
+      child.register_filename_new(output)
+    end
+  end
+
+  def register_filename_new2(output)
+    output.register_filename_new2(source_file) if source_file
+    @children.each do |child|
+      child.register_filename_new2(output)
+    end
+  end
+
   def clear
     @children.each do |node|
       node._set_parent(nil)

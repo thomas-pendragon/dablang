@@ -166,12 +166,11 @@ class DabNodeUnit < DabNode
     output.print('')
     output.separate
 
-    if $with_cov
-      register_filename(output)
-      output.separate
-    end
-
     output.print('W_HEADER', 2)
+    if $with_cov
+      output.print('W_SECTION', '_COVD', '"data"')
+      output.print('W_SECTION', '_COVE', '"cove"')
+    end
     output.print('W_SECTION', '_DATA', '"data"')
     output.print('W_SECTION', '_SDAT', '"data"')
     output.print('W_SECTION', '_SYMB', '"symb"')
@@ -186,6 +185,16 @@ class DabNodeUnit < DabNode
     end
     output.print('W_END_HEADER')
     output.separate
+
+    if $with_cov
+      output.label('_COVD')
+      register_filename_new(output)
+      output.separate
+
+      output.label('_COVE')
+      register_filename_new2(output)
+      output.separate
+    end
 
     output.label('_DATA')
     pos = 0
@@ -243,6 +252,7 @@ class DabNodeUnit < DabNode
         function.compile_definition(output)
       end
     end
+    output.separate
   end
 
   def compile(output)

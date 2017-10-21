@@ -22,6 +22,26 @@ class DabOutput
     end
   end
 
+  def register_filename_new(filename)
+    unless @filenames[filename]
+      @filenames[filename] = @filenames.count + 1
+      @filenamelength ||= 0
+      @filenamepos ||= {}
+      @filenamepos[filename] = @filenamelength
+      print('W_STRING', "\"#{filename}\"")
+      @filenamelength += filename.length + 1
+    end
+  end
+
+  def register_filename_new2(filename)
+    @filenamepos2 ||= {}
+    unless @filenamepos2[filename]
+      @filenamepos2[filename] = true
+      pos = @filenamepos[filename]
+      print('W_COV_FILE', "_COVD + #{pos}")
+    end
+  end
+
   def get_filename(filename)
     ret = @filenames[filename]
     raise "unregistered filename <#{filename}>" unless ret
