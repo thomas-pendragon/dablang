@@ -88,6 +88,8 @@
 
 ## Assembler ##
 
+- COV should not steal opcode labels
+
 ## Testing ##
 
 - test frontend: don't show errors on should-fail test cases (eg. 59)
@@ -116,3 +118,4 @@
 		- weak arrays
 - native compilation
 - lexer: pass actual EOF mark to compiler (see 59)
+- run `rake format` after updating `opcodes_debug.h`
