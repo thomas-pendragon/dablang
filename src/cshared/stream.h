@@ -38,8 +38,30 @@ struct dab_register_t
     }
 };
 
+struct BinSection
+{
+    char     name[4];
+    uint32_t zero1;
+    uint32_t zero2;
+    uint32_t zero3;
+    uint64_t pos;
+    uint64_t length;
+};
+
+struct BinHeader
+{
+    char       dab[4];
+    uint32_t   version;
+    uint64_t   size_of_header;
+    uint64_t   size_of_data;
+    uint64_t   section_count;
+    BinSection sections[0];
+};
+
 struct Stream
 {
+    BinHeader *peek_header();
+
     uint8_t  read_uint8();
     int16_t  read_int16();
     int32_t  read_int32();

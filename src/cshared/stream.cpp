@@ -1,5 +1,10 @@
 #include "stream.h"
 
+BinHeader *Stream::peek_header()
+{
+    return (BinHeader *)buffer.data;
+}
+
 std::string Stream::string_data(size_t address, size_t length)
 {
     auto ptr = buffer.data + address;
