@@ -7,8 +7,11 @@ struct Buffer
     byte * data   = nullptr;
     size_t length = 0;
 
+    bool _dont_delete = false;
+
     Buffer();
     Buffer(const Buffer &other);
+    Buffer(const Buffer &other, size_t start, size_t length); // nocopy
     ~Buffer();
     Buffer &operator=(const Buffer &other);
     void resize(size_t new_length);
@@ -61,6 +64,8 @@ struct BinHeader
 struct Stream
 {
     BinHeader *peek_header();
+
+    Stream section_stream(uint64_t section_index);
 
     uint8_t  read_uint8();
     int16_t  read_int16();

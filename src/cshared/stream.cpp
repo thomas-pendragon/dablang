@@ -1,5 +1,17 @@
 #include "stream.h"
 
+Stream Stream::section_stream(uint64_t section_index)
+{
+    Stream ret;
+    auto   header  = peek_header();
+    auto   section = header->sections[section_index];
+    auto   start   = section.pos;
+    auto   length  = section.length;
+    fprintf(stderr, "sec %d start %d length %d\n", (int)section_index, (int)start, (int)length);
+    ret.buffer = Buffer(this->buffer, start, length);
+    return ret;
+}
+
 BinHeader *Stream::peek_header()
 {
     return (BinHeader *)buffer.data;

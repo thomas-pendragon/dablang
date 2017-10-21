@@ -4,6 +4,13 @@ Buffer::Buffer()
 {
 }
 
+Buffer::Buffer(const Buffer &other, size_t start, size_t length)
+{
+    this->data         = other.data + start;
+    this->length       = length;
+    this->_dont_delete = true;
+}
+
 Buffer::Buffer(const Buffer &other)
 {
     this->length = other.length;
@@ -16,7 +23,10 @@ Buffer::Buffer(const Buffer &other)
 
 Buffer::~Buffer()
 {
-    delete[] this->data;
+    if (!_dont_delete)
+    {
+        delete[] this->data;
+    }
 }
 
 Buffer &Buffer::operator=(const Buffer &other)
