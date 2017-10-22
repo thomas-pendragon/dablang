@@ -44,4 +44,9 @@ struct StdinReader : public BaseReader
     {
         return fread(buffer, 1, size, stdin);
     }
+
+    bool feof()
+    {
+        return ::feof(stdin);
+    }
 };

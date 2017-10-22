@@ -16,11 +16,11 @@ def extract_format_source(input, output)
   end
 end
 
-def disassemble(input, output)
+def disassemble(input, output, disasm_options)
   describe_action(input, output, 'disassemble') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cdisasm --raw < #{input} > #{output}"
+    cmd = "timeout 10 ./bin/cdisasm #{disasm_options} < #{input} > #{output}"
     psystem_noecho cmd
   end
 end
@@ -32,6 +32,11 @@ def run_test(settings)
 
   data = read_test_file(input)
 
+  options = data[:options] || ''
+  with_headers = options['--with-headers']
+  disasm_options = '--raw'
+  disasm_options = '' if with_headers
+
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
   FileUtils.mkdir_p(test_output_dir)
@@ -42,7 +47,7 @@ def run_test(settings)
   FileUtils.rm(out) if File.exist?(out)
 
   extract_format_source(input, bin)
-  disassemble(bin, asm)
+  disassemble(bin, asm, disasm_options)
 
   expected = data[:expect].strip
 

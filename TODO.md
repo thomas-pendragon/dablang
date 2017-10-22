@@ -23,7 +23,7 @@
 ## new assembly format
 
 - FUNC section should be allowed before actual functions
-- disassembly support
+- disassembly support for non-code
 
 ## Performance
 

@@ -109,6 +109,11 @@ struct InstructionsReader : public BaseReader
 
         return max_length;
     }
+
+    bool feof()
+    {
+        return false;
+    }
 };
 
 void DabVM_debug::prepare_disasm()

@@ -19,6 +19,11 @@ struct AsmStream
     {
     }
 
+    bool feof()
+    {
+        return reader.feof();
+    }
+
     uint8_t read_uint8()
     {
         return _read<uint8_t>();
@@ -192,7 +197,7 @@ struct DisasmProcessor
     void go(std::function<void(size_t, std::string)> yield)
     {
         AsmStream<TReader> stream(reader);
-        while (!feof(stdin))
+        while (!stream.feof())
         {
             try
             {
