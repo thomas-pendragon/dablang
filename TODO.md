@@ -8,6 +8,7 @@
 ## Compiler
 
 - unified cache invalidation
+- change all `"S#{node_identifier.symbol_index}"` to `.asm_operand`
 
 ## Language/VM
 

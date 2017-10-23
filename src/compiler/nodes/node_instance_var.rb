@@ -20,7 +20,7 @@ class DabNodeInstanceVar < DabNode
 
   def compile_as_ssa(output, output_register)
     output.comment(identifier)
-    output.printex(self, 'Q_SET_INSTVAR', "R#{output_register}", "S#{node_identifier.index}")
+    output.printex(self, 'Q_SET_INSTVAR', "R#{output_register}", "S#{node_identifier.symbol_index}")
   end
 
   def compile(output)
