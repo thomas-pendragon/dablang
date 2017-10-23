@@ -13,6 +13,7 @@ func foo()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL Foo
                                  CONSTANT_SYMBOL a
                                  CONSTANT_SYMBOL foo
  
@@ -24,7 +25,7 @@ func foo()
                    CFoo_Ffoo:
                                  STACK_RESERVE 0
 /* 12           */               Q_SET_NUMBER R0, 12
-/* @a=          */               Q_CHANGE_INSTVAR S0, R0
-/* @a           */               Q_SET_INSTVAR R1, S0
+/* @a=          */               Q_CHANGE_INSTVAR S1, R0
+/* @a           */               Q_SET_INSTVAR R1, S1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL

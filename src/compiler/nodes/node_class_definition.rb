@@ -15,13 +15,11 @@ class DabNodeClassDefinition < DabNode
       @functions.insert(fun)
     end
     insert(@functions)
-    if $newformat
-      insert(DabNodeSymbol.new(identifier))
-    end
+    insert(DabNodeSymbol.new(identifier))
   end
 
   def extract_literal
-    ExtractLiteral.new.run(node_identifier) if $newformat
+    ExtractLiteral.new.run(node_identifier)
   end
 
   def node_identifier
