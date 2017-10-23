@@ -19,9 +19,9 @@ func bar()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "str"
                                  CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL __foo_String
+                                 CONSTANT_STRING "str"
  
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
                                  LOAD_FUNCTION F__foo_String, __foo_String, -1
@@ -43,8 +43,8 @@ func bar()
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 0
-/* __foo_String */               Q_SET_CALL RNIL, S2, R0
+/* "str"        */               Q_SET_CONSTANT R0, 2
+/* __foo_String */               Q_SET_CALL RNIL, S1, R0
 /* 12           */               Q_SET_NUMBER R1, 12
-/* __foo_Fixnum */               Q_SET_CALL RNIL, S1, R1
+/* __foo_Fixnum */               Q_SET_CALL RNIL, S0, R1
                                  Q_RETURN RNIL

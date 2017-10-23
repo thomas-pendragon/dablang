@@ -19,9 +19,9 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "foo"
                                  CONSTANT_SYMBOL insert
                                  CONSTANT_SYMBOL puts
+                                 CONSTANT_STRING "foo"
  
                                  LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION Fputs, puts, -1
@@ -32,12 +32,12 @@ func main()
                                  STACK_RESERVE 0
 /* 12           */               Q_SET_NUMBER R0, 12
                                  Q_SET_NEW_ARRAY R1, R0
-/* puts         */               Q_SET_CALL RNIL, S2, R1
+/* puts         */               Q_SET_CALL RNIL, S1, R1
 /* 123          */               Q_SET_NUMBER R2, 123
-/* insert       */               Q_SET_INSTCALL RNIL, R1, S1, R2
-/* "foo"        */               Q_SET_CONSTANT R3, 0
-/* insert       */               Q_SET_INSTCALL RNIL, R1, S1, R3
-/* puts         */               Q_SET_CALL RNIL, S2, R1
+/* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R2
+/* "foo"        */               Q_SET_CONSTANT R3, 2
+/* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R3
+/* puts         */               Q_SET_CALL RNIL, S1, R1
                                  Q_RETURN RNIL
  
                    Fputs:

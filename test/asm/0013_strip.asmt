@@ -26,11 +26,11 @@ func bar()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL __foo_Fixnum
+                                 CONSTANT_SYMBOL __foo_String
                                  CONSTANT_STRING "got fixnum"
                                  CONSTANT_STRING "got string"
                                  CONSTANT_STRING "str"
-                                 CONSTANT_SYMBOL __foo_Fixnum
-                                 CONSTANT_SYMBOL __foo_String
  
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
                                  LOAD_FUNCTION F__foo_String, __foo_String, -1
@@ -40,20 +40,20 @@ func bar()
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
-/* "got fixnum" */               Q_SET_CONSTANT R0, 0
+/* "got fixnum" */               Q_SET_CONSTANT R0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "got string" */               Q_SET_CONSTANT R0, 1
+/* "got string" */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 2
-/* __foo_String */               Q_SET_CALL RNIL, S4, R0
+/* "str"        */               Q_SET_CONSTANT R0, 4
+/* __foo_String */               Q_SET_CALL RNIL, S1, R0
 /* 12           */               Q_SET_NUMBER R1, 12
-/* __foo_Fixnum */               Q_SET_CALL RNIL, S3, R1
+/* __foo_Fixnum */               Q_SET_CALL RNIL, S0, R1
                                  Q_RETURN RNIL

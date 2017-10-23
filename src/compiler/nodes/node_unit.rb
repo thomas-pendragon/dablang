@@ -77,8 +77,8 @@ class DabNodeUnit < DabNode
     const = DabNodeConstant.new(literal)
     @constants.insert(const)
     sort_order = {
-      DabNodeSymbol => 1,
-      DabNodeLiteralString => 0,
+      DabNodeSymbol => 0,
+      DabNodeLiteralString => 1,
     }
     @constants.sort_by! do |node|
       raise 'invalid node' unless node.is_a?(DabNodeConstant)

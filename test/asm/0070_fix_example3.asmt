@@ -9,9 +9,9 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "a"
                                  CONSTANT_SYMBOL "=="
                                  CONSTANT_SYMBOL new
+                                 CONSTANT_STRING "a"
  
                                  LOAD_FUNCTION Fmain, main, -1
  
@@ -20,8 +20,8 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* String       */               Q_SET_CLASS R0, 1
-/* new          */               Q_SET_INSTCALL R1, R0, S2
-/* "a"          */               Q_SET_CONSTANT R2, 0
-/* ==           */               Q_SET_INSTCALL R3, R1, S1, R2
+/* new          */               Q_SET_INSTCALL R1, R0, S1
+/* "a"          */               Q_SET_CONSTANT R2, 2
+/* ==           */               Q_SET_INSTCALL R3, R1, S0, R2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL

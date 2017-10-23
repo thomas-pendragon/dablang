@@ -21,9 +21,9 @@ func bar()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL __foo_String
                                  CONSTANT_STRING "got string"
                                  CONSTANT_STRING "str"
-                                 CONSTANT_SYMBOL __foo_String
  
                                  LOAD_FUNCTION F__foo_String, __foo_String, -1
                                  LOAD_FUNCTION Fbar, bar, -1
@@ -32,12 +32,12 @@ func bar()
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "got string" */               Q_SET_CONSTANT R0, 0
+/* "got string" */               Q_SET_CONSTANT R0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 1
-/* __foo_String */               Q_SET_CALL RNIL, S2, R0
+/* "str"        */               Q_SET_CONSTANT R0, 2
+/* __foo_String */               Q_SET_CALL RNIL, S0, R0
                                  Q_RETURN RNIL

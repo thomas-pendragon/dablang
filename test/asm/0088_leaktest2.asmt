@@ -15,9 +15,9 @@ func foo()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL "+"
                                  CONSTANT_STRING "Abc"
                                  CONSTANT_STRING "String1"
-                                 CONSTANT_SYMBOL "+"
  
                                  LOAD_FUNCTION Ffoo, foo, -1
  
@@ -25,9 +25,9 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "Abc"        */               Q_SET_CONSTANT R0, 0
-/* "String1"    */               Q_SET_CONSTANT R1, 1
-/* +            */               Q_SET_INSTCALL R2, R0, S2, R1
+/* "Abc"        */               Q_SET_CONSTANT R0, 1
+/* "String1"    */               Q_SET_CONSTANT R1, 2
+/* +            */               Q_SET_INSTCALL R2, R0, S0, R1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RETURN R2

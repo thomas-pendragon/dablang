@@ -26,10 +26,10 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "bar"
-                                 CONSTANT_STRING "foo"
                                  CONSTANT_SYMBOL new
                                  CONSTANT_SYMBOL run
+                                 CONSTANT_STRING "bar"
+                                 CONSTANT_STRING "foo"
  
                                  DEFINE_CLASS Foo, 256, 0
                                  LOAD_FUNCTION CFoo_Frun, run, 256
@@ -43,21 +43,21 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               Q_SET_CLASS R0, 256
-/* new          */               Q_SET_INSTCALL R1, R0, S2
-/* run          */               Q_SET_INSTCALL RNIL, R1, S3
+/* new          */               Q_SET_INSTCALL R1, R0, S0
+/* run          */               Q_SET_INSTCALL RNIL, R1, S1
 /* Bar          */               Q_SET_CLASS R2, 257
-/* new          */               Q_SET_INSTCALL R3, R2, S2
-/* run          */               Q_SET_INSTCALL RNIL, R3, S3
+/* new          */               Q_SET_INSTCALL R3, R2, S0
+/* run          */               Q_SET_INSTCALL RNIL, R3, S1
                                  Q_RETURN RNIL
  
                    CBar_Frun:
                                  STACK_RESERVE 0
-/* "bar"        */               Q_SET_CONSTANT R0, 0
+/* "bar"        */               Q_SET_CONSTANT R0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    CFoo_Frun:
                                  STACK_RESERVE 0
-/* "foo"        */               Q_SET_CONSTANT R0, 1
+/* "foo"        */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

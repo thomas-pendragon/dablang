@@ -20,11 +20,11 @@ func foo()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL __spec_Fixnum
+                                 CONSTANT_SYMBOL __spec_String
                                  CONSTANT_STRING "A"
                                  CONSTANT_STRING "Fixnum"
                                  CONSTANT_STRING "String"
-                                 CONSTANT_SYMBOL __spec_Fixnum
-                                 CONSTANT_SYMBOL __spec_String
  
                                  LOAD_FUNCTION F__spec_Fixnum, __spec_Fixnum, -1
                                  LOAD_FUNCTION F__spec_String, __spec_String, -1
@@ -34,22 +34,22 @@ func foo()
  
                    F__spec_Fixnum:
                                  STACK_RESERVE 0
-/* "Fixnum"     */               Q_SET_CONSTANT R0, 1
+/* "Fixnum"     */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__spec_String:
                                  STACK_RESERVE 0
-/* "String"     */               Q_SET_CONSTANT R0, 2
+/* "String"     */               Q_SET_CONSTANT R0, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Ffoo:
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
-/* __spec_Fixnu */               Q_SET_CALL RNIL, S3, R0
+/* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R0
 /* 1            */               Q_SET_NUMBER R1, 1
-/* __spec_Fixnu */               Q_SET_CALL RNIL, S3, R1
-/* "A"          */               Q_SET_CONSTANT R2, 0
-/* __spec_Strin */               Q_SET_CALL RNIL, S4, R2
+/* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R1
+/* "A"          */               Q_SET_CONSTANT R2, 2
+/* __spec_Strin */               Q_SET_CALL RNIL, S1, R2
                                  Q_RETURN RNIL

@@ -33,12 +33,12 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "String1"
-                                 CONSTANT_STRING "String2"
                                  CONSTANT_SYMBOL functrue
                                  CONSTANT_SYMBOL go
                                  CONSTANT_SYMBOL new
                                  CONSTANT_SYMBOL var
+                                 CONSTANT_STRING "String1"
+                                 CONSTANT_STRING "String2"
  
                                  DEFINE_CLASS Foo, 256, 0
                                  LOAD_FUNCTION CFoo_Fgo, go, 256
@@ -56,8 +56,8 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               Q_SET_CLASS R0, 256
-/* new          */               Q_SET_INSTCALL R1, R0, S4
-/* go           */               Q_SET_INSTCALL RNIL, R1, S3
+/* new          */               Q_SET_INSTCALL R1, R0, S2
+/* go           */               Q_SET_INSTCALL RNIL, R1, S1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RETURN RNIL
@@ -65,19 +65,19 @@ func main()
                    CFoo_Fgo:
                                  STACK_RESERVE 0
 /* 123          */               Q_SET_NUMBER R0, 123
-/* @var=        */               Q_CHANGE_INSTVAR S5, R0
+/* @var=        */               Q_CHANGE_INSTVAR S3, R0
 /* 1            */               Q_SET_NUMBER R1, 1
-/* "String1"    */               Q_SET_CONSTANT R2, 0
-/* "String2"    */               Q_SET_CONSTANT R3, 1
+/* "String1"    */               Q_SET_CONSTANT R2, 4
+/* "String2"    */               Q_SET_CONSTANT R3, 5
 /* String       */               Q_SET_CLASS R4, 1
-/* new          */               Q_SET_INSTCALL R5, R4, S4, R3
+/* new          */               Q_SET_INSTCALL R5, R4, S2, R3
                                  Q_SET_NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
-/* functrue     */               Q_SET_CALL R7, S2
+/* functrue     */               Q_SET_CALL R7, S0
                                  Q_JMP_IF2 R7, L1, L2
                    L1:
                                  Q_RELEASE R6
-/* @var         */               Q_SET_INSTVAR R6, S5
+/* @var         */               Q_SET_INSTVAR R6, S3
                                  JMP L2
                    L2:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6

@@ -32,12 +32,12 @@ func main()
 
 /* Dab dev      */                
  
-                                 CONSTANT_STRING "fun1"
-                                 CONSTANT_STRING "fun2"
                                  CONSTANT_SYMBOL "fun1"
                                  CONSTANT_SYMBOL "fun2"
                                  CONSTANT_SYMBOL main_and
                                  CONSTANT_SYMBOL main_or
+                                 CONSTANT_STRING "fun1"
+                                 CONSTANT_STRING "fun2"
  
                                  LOAD_FUNCTION Ffun1, fun1, -1
                                  LOAD_FUNCTION Ffun2, fun2, -1
@@ -49,30 +49,30 @@ func main()
  
                    Ffun1:
                                  STACK_RESERVE 0
-/* "fun1"       */               Q_SET_CONSTANT R0, 0
+/* "fun1"       */               Q_SET_CONSTANT R0, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_FALSE R1
                                  Q_RETURN R1
  
                    Ffun2:
                                  STACK_RESERVE 0
-/* "fun2"       */               Q_SET_CONSTANT R0, 1
+/* "fun2"       */               Q_SET_CONSTANT R0, 5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_TRUE R1
                                  Q_RETURN R1
  
                    Fmain:
                                  STACK_RESERVE 0
-/* main_and     */               Q_SET_CALL RNIL, S4
-/* main_or      */               Q_SET_CALL RNIL, S5
+/* main_and     */               Q_SET_CALL RNIL, S2
+/* main_or      */               Q_SET_CALL RNIL, S3
                                  Q_RETURN RNIL
  
                    Fmain_and:
                                  STACK_RESERVE 0
-/* fun1         */               Q_SET_CALL R0, S2
+/* fun1         */               Q_SET_CALL R0, S0
                                  Q_JMP_IF2 R0, L1, L2
                    L1:
-/* fun2         */               Q_SET_CALL R0, S3
+/* fun2         */               Q_SET_CALL R0, S1
                                  JMP L2
                    L2:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
@@ -80,10 +80,10 @@ func main()
  
                    Fmain_or:
                                  STACK_RESERVE 0
-/* fun1         */               Q_SET_CALL R0, S2
+/* fun1         */               Q_SET_CALL R0, S0
                                  Q_JMP_IF2 R0, L3, L4
                    L4:
-/* fun2         */               Q_SET_CALL R0, S3
+/* fun2         */               Q_SET_CALL R0, S1
                                  JMP L3
                    L3:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
