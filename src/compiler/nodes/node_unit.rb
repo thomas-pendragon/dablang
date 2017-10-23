@@ -179,7 +179,9 @@ class DabNodeUnit < DabNode
       output.print('W_SECTION', '_COVD', '"data"')
       output.print('W_SECTION', '_COVE', '"cove"')
     end
-    output.print('W_SECTION', '_DATA', '"data"')
+    if constant_strings.count > 0
+      output.print('W_SECTION', '_DATA', '"data"')
+    end
     output.print('W_SECTION', '_SDAT', '"data"')
     output.print('W_SECTION', '_SYMB', '"symb"')
     if @classes.count > 0
@@ -204,14 +206,16 @@ class DabNodeUnit < DabNode
       output.separate
     end
 
-    output.label('_DATA')
-    pos = 0
-    constant_strings.each do |constant|
-      constant.asm_position = pos
-      constant.compile_string(output)
-      pos += constant.asm_length
+    if constant_strings.count > 0
+      output.label('_DATA')
+      pos = 0
+      constant_strings.each do |constant|
+        constant.asm_position = pos
+        constant.compile_string(output)
+        pos += constant.asm_length
+      end
+      output.separate
     end
-    output.separate
 
     output.label('_SDAT')
     pos = 0
