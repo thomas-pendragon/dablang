@@ -76,8 +76,16 @@ class DabNodeUnit < DabNode
   def _create_constant(literal)
     const = DabNodeConstant.new(literal)
     @constants.insert(const)
+    sort_order = {
+      DabNodeSymbol => 1,
+      DabNodeLiteralString => 0,
+    }
     @constants.sort_by! do |node|
-      node.class.to_s + node.extra_value.to_s
+      raise 'invalid node' unless node.is_a?(DabNodeConstant)
+      class_order_name = node.value.class
+      class_order = sort_order[class_order_name]
+      raise "unknown '#{class_order_name}'" unless class_order
+      class_order.to_s + node.extra_value.to_s
     end
     @constant_table[literal.extra_value] = const
     const
