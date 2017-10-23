@@ -16,21 +16,35 @@ func bar()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL bar
-                                 CONSTANT_SYMBOL class
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_STRING "str"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Fbar, bar, -1
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "str" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "bar" 
+                                 W_STRING "class" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* bar          */               W_SYMBOL _SDAT + 0 
+/* class        */               W_SYMBOL _SDAT + 4 
+/* foo          */               W_SYMBOL _SDAT + 10 
+ 
+                   _CODE:
+                                 NOP 
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 3
+/* "str"        */               Q_SET_STRING R0, _DATA + 0, 3
 /* foo          */               Q_SET_CALL RNIL, S2, R0
                                  Q_RETURN RNIL
  
@@ -40,3 +54,7 @@ func bar()
 /* class        */               Q_SET_INSTCALL R1, R0, S1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* bar          */               W_METHOD 0, -1, Fbar
+/* foo          */               W_METHOD 2, -1, Ffoo

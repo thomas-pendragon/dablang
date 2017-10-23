@@ -13,22 +13,39 @@ func foo()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL "+"
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_STRING "Abc"
-                                 CONSTANT_STRING "String1"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "Abc" 
+                                 W_STRING "String1" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "+" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* +            */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 2 
+ 
+                   _CODE:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "Abc"        */               Q_SET_CONSTANT R0, 2
-/* "String1"    */               Q_SET_CONSTANT R1, 3
+/* "Abc"        */               Q_SET_STRING R0, _DATA + 0, 3
+/* "String1"    */               Q_SET_STRING R1, _DATA + 4, 7
 /* +            */               Q_SET_INSTCALL R2, R0, S0, R1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RETURN R2
+ 
+                   _FUNC:
+/* foo          */               W_METHOD 1, -1, Ffoo

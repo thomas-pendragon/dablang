@@ -13,20 +13,17 @@ DATA:
 SYM_MAIN:
   W_STRING "main"
 
-SYM_PLUS:
-  W_STRING "+"
-
 SYMBOLS:
-  W_SYMBOL SYM_MAIN
-  W_SYMBOL SYM_PLUS
+  W_SYMBOL SYM_MAIN # main
 
 CODE:
   NOP
 
 Fmain:
 STACK_RESERVE 0
-Q_SET_NEW_ARRAY R0
-Q_RELEASE R0
+PUSH_METHOD main
+Q_SET_POP R0
+Q_SET_SYSCALL RNIL, 0, R0
 Q_RETURN RNIL
 
 FUNC:
@@ -34,12 +31,12 @@ FUNC:
 
 ## OPTIONS
 
---noraw --noautorelease
+--noraw
 
 ## TESTCASE
 
-$leaktest
+$output
 
 ## EXPECT
 
-leaktest: no leaks
+@method(main)

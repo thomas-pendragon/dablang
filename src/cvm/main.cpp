@@ -1800,7 +1800,7 @@ struct DabRunOptions
     bool  verbose         = false;
     bool  with_attributes = false;
     bool  leaktest        = false;
-    bool  newformat       = false;
+    bool  newformat       = true;
     bool  bare            = false;
 
     FILE *output       = stdout;

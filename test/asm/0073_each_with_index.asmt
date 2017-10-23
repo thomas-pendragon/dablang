@@ -20,19 +20,37 @@ class Array
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL "!="
-                                 CONSTANT_SYMBOL "+"
-                                 CONSTANT_SYMBOL Array
-                                 CONSTANT_SYMBOL "[]"
-                                 CONSTANT_SYMBOL count
-                                 CONSTANT_SYMBOL each_with_index
+                                 W_HEADER 2
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 DEFINE_CLASS Array, 5, 0
-                                 LOAD_FUNCTION CArray_Feach_with_index, each_with_index, 5
+                   _SDAT:
+                                 W_STRING "!=" 
+                                 W_STRING "+" 
+                                 W_STRING "Array" 
+                                 W_STRING "[]" 
+                                 W_STRING "count" 
+                                 W_STRING "each_with_index" 
  
-                                 BREAK_LOAD 
+                   _SYMB:
+/* !=           */               W_SYMBOL _SDAT + 0 
+/* +            */               W_SYMBOL _SDAT + 3 
+/* Array        */               W_SYMBOL _SDAT + 5 
+/* []           */               W_SYMBOL _SDAT + 11 
+/* count        */               W_SYMBOL _SDAT + 14 
+/* each_with_in */               W_SYMBOL _SDAT + 20 
+ 
+                   _CLAS:
+/* Array        */               W_CLASS 5, 0, 2
+ 
+                   _CODE:
+                                 NOP 
  
                    CArray_Feach_with_index:
                                  STACK_RESERVE 0
@@ -53,3 +71,6 @@ class Array
                                  JMP L1
                    L3:
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* each_with_in */               W_METHOD 5, 5, CArray_Feach_with_index

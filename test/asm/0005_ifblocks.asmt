@@ -32,17 +32,30 @@ func foo(a, b)
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_STRING "!a && !b"
-                                 CONSTANT_STRING "!a && b"
-                                 CONSTANT_STRING "a && !b"
-                                 CONSTANT_STRING "a && b"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "!a && !b" 
+                                 W_STRING "!a && b" 
+                                 W_STRING "a && !b" 
+                                 W_STRING "a && b" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
+ 
+                   _CODE:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -52,22 +65,25 @@ func foo(a, b)
                    L1:
                                  Q_JMP_IF2 R0, L3, L4
                    L3:
-/* "a && b"     */               Q_SET_CONSTANT R2, 4
+/* "a && b"     */               Q_SET_STRING R2, _DATA + 25, 6
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L5
                    L4:
-/* "a && !b"    */               Q_SET_CONSTANT R3, 3
+/* "a && !b"    */               Q_SET_STRING R3, _DATA + 17, 7
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L5
                    L2:
                                  Q_JMP_IF2 R0, L6, L7
                    L6:
-/* "!a && b"    */               Q_SET_CONSTANT R4, 2
+/* "!a && b"    */               Q_SET_STRING R4, _DATA + 9, 7
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R4
                                  JMP L5
                    L7:
-/* "!a && !b"   */               Q_SET_CONSTANT R5, 1
+/* "!a && !b"   */               Q_SET_STRING R5, _DATA + 0, 8
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* foo          */               W_METHOD 0, -1, Ffoo

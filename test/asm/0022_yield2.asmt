@@ -13,14 +13,27 @@ func yield1()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL "yield1"
-                                 CONSTANT_STRING "foo"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Fyield1, yield1, -1
+                   _DATA:
+                                 W_STRING "foo" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "yield1" 
+ 
+                   _SYMB:
+/* yield1       */               W_SYMBOL _SDAT + 0 
+ 
+                   _CODE:
+                                 NOP 
  
                    Fyield1:
                                  STACK_RESERVE 0
@@ -29,7 +42,10 @@ func yield1()
                                  Q_YIELD 
                                  POP 1
 /* 12           */               Q_SET_NUMBER R0, 12
-/* "foo"        */               Q_SET_CONSTANT R1, 1
+/* "foo"        */               Q_SET_STRING R1, _DATA + 0, 3
                                  Q_YIELD R0, R1
                                  POP 1
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* yield1       */               W_METHOD 0, -1, Fyield1

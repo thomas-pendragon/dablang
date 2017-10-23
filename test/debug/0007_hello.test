@@ -1,23 +1,39 @@
 ## ASM CODE
+ 
+W_HEADER 2
+W_SECTION _DATA, "data"
+W_SECTION _SYMB, "symb"
+W_SECTION _CODE, "code"
+W_SECTION _FUNC, "func"
 
- 
-                                 CONSTANT_STRING "hello world"
- 
-                                 LOAD_FUNCTION Fmain, main, -1
- 
-                                 BREAK_LOAD 
- 
-                   Fmain:
+W_END_HEADER
+
+_DATA:
+  W_STRING "hello world"
+
+SYM_MAIN:
+  W_STRING "main"
+
+_SYMB:
+  W_SYMBOL SYM_MAIN
+
+_CODE:
+  NOP
+
+Fmain:
                                  STACK_RESERVE 0
-/* "hello world */               Q_SET_CONSTANT R0, 0
+/* "hello world */               Q_SET_STRING R0, _DATA, 11
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  NOP
                                  Q_RETURN RNIL 
 
+_FUNC:
+  W_METHOD 0, -1, Fmain
+
 ## INPUT
 
 allcode
-break 27
+break 189
 run
 code
 stack
@@ -38,22 +54,20 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 24
-         0: CONSTANT_STRING hello world
-        13: LOAD_FUNCTION 11, main, 65535
-        23: BREAK_LOAD 
->       24: STACK_RESERVE 0
-        27: Q_SET_CONSTANT R0, 0
-        32: Q_SET_SYSCALL RNIL, 0, R0
-        39: NOP 
-        40: Q_RETURN RNIL
-debug: break at 27.
-IP = 27
-        23: BREAK_LOAD 
-        24: STACK_RESERVE 0
->       27: Q_SET_CONSTANT R0, 0
-        32: Q_SET_SYSCALL RNIL, 0, R0
-        39: NOP 
+IP = 186
+       185: NOP 
+>      186: STACK_RESERVE 0
+       189: Q_SET_STRING R0, 160, 11
+       208: Q_SET_SYSCALL RNIL, 0, R0
+       215: NOP 
+       216: Q_RETURN RNIL
+debug: break at 189.
+IP = 189
+       185: NOP 
+       186: STACK_RESERVE 0
+>      189: Q_SET_STRING R0, 160, 11
+       208: Q_SET_SYSCALL RNIL, 0, R0
+       215: NOP 
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -65,29 +79,12 @@ Dump of stack:
 [   6] FIXN 65535
 [   7] INVA ?
 Registers:
-IP = 32
-        24: STACK_RESERVE 0
-        27: Q_SET_CONSTANT R0, 0
->       32: Q_SET_SYSCALL RNIL, 0, R0
-        39: NOP 
-        40: Q_RETURN RNIL
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
-Registers:
-R0: STRI "hello world"
-hello worldIP = 39
-        27: Q_SET_CONSTANT R0, 0
-        32: Q_SET_SYSCALL RNIL, 0, R0
->       39: NOP 
-        40: Q_RETURN RNIL
+IP = 208
+       186: STACK_RESERVE 0
+       189: Q_SET_STRING R0, 160, 11
+>      208: Q_SET_SYSCALL RNIL, 0, R0
+       215: NOP 
+       216: Q_RETURN RNIL
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -100,10 +97,27 @@ Dump of stack:
 [   7] INVA ?
 Registers:
 R0: STRI "hello world"
-IP = 40
-        32: Q_SET_SYSCALL RNIL, 0, R0
-        39: NOP 
->       40: Q_RETURN RNIL
+hello worldIP = 215
+       189: Q_SET_STRING R0, 160, 11
+       208: Q_SET_SYSCALL RNIL, 0, R0
+>      215: NOP 
+       216: Q_RETURN RNIL
+Stack:
+Dump of stack:
+[   0] FIXN 0
+[   1] FIXN -1
+[   2] FIXN 0
+[   3] NIL  nil
+[   4] FIXN 0
+[   5] NIL  nil
+[   6] FIXN 65535
+[   7] INVA ?
+Registers:
+R0: STRI "hello world"
+IP = 216
+       208: Q_SET_SYSCALL RNIL, 0, R0
+       215: NOP 
+>      216: Q_RETURN RNIL
 Stack:
 Dump of stack:
 [   0] FIXN 0

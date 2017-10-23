@@ -22,18 +22,33 @@ func main()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL "*"
-                                 CONSTANT_SYMBOL "=="
-                                 CONSTANT_SYMBOL __foo_Fixnum
-                                 CONSTANT_SYMBOL main
-                                 CONSTANT_STRING "yes"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
-                                 LOAD_FUNCTION Fmain, main, -1
+                   _DATA:
+                                 W_STRING "yes" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "*" 
+                                 W_STRING "==" 
+                                 W_STRING "__foo_Fixnum" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* *            */               W_SYMBOL _SDAT + 0 
+/* ==           */               W_SYMBOL _SDAT + 2 
+/* __foo_Fixnum */               W_SYMBOL _SDAT + 5 
+/* main         */               W_SYMBOL _SDAT + 18 
+ 
+                   _CODE:
+                                 NOP 
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
@@ -46,7 +61,7 @@ func main()
 /* ==           */               Q_SET_INSTCALL R5, R2, S1, R4
                                  Q_JMP_IF2 R5, L1, L2
                    L1:
-/* "yes"        */               Q_SET_CONSTANT R6, 4
+/* "yes"        */               Q_SET_STRING R6, _DATA + 0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L2
                    L2:
@@ -60,3 +75,7 @@ func main()
 /* 2            */               Q_SET_NUMBER R1, 2
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S2, R1
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* __foo_Fixnum */               W_METHOD 2, -1, F__foo_Fixnum
+/* main         */               W_METHOD 3, -1, Fmain

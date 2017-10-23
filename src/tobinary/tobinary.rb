@@ -388,13 +388,14 @@ def run_tobinary(input, output, debug, newformat, raw)
   input = InputStream.new(input)
   output = OutputStream.new(output)
   parser = Parser.new(input, output)
+  newformat = true
   parser.run!(newformat, raw)
 end
 
 if $autorun
   read_args!
   debug = $settings[:debug]
-  newformat = $settings[:newformat]
+  newformat = true
   raw = $settings[:raw]
   run_tobinary(STDIN, STDOUT, debug, newformat, raw)
 end

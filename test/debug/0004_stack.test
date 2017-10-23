@@ -1,11 +1,31 @@
 ## ASM CODE
 
-LOAD_FUNCTION Fmain, main, -1
-BREAK_LOAD 
+W_HEADER 2
+W_SECTION _DATA, "data"
+W_SECTION _SYMB, "symb"
+W_SECTION _CODE, "code"
+W_SECTION _FUNC, "func"
+
+W_END_HEADER
+
+_DATA:
+  W_STRING "hello world"
+
+SYM_MAIN:
+  W_STRING "main"
+
+_SYMB:
+  W_SYMBOL SYM_MAIN
+
+_CODE:
+  NOP
 
 Fmain:
   STACK_RESERVE 0
   Q_RETURN RNIL 
+
+_FUNC:
+  W_METHOD 0, -1, Fmain
 
 ## INPUT
 
@@ -18,21 +38,15 @@ stack
 step
 ip
 stack
-step
-ip
-ip
-ip
-stack
 quit
 
 ## EXPECT STDOUT
 
-IP = 11
-         0: LOAD_FUNCTION 11, main, 65535
-        10: BREAK_LOAD 
->       11: STACK_RESERVE 0
-        14: Q_RETURN RNIL
-IP = 11
+IP = 186
+       185: NOP 
+>      186: STACK_RESERVE 0
+       189: Q_RETURN RNIL
+IP = 186
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -43,7 +57,7 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
-IP = 14
+IP = 189
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -55,10 +69,5 @@ Dump of stack:
 [   6] FIXN 65535
 [   7] INVA ?
 IP = 0
-Stack:
-Dump of stack:
-IP = 10
-IP = 10
-IP = 10
 Stack:
 Dump of stack:

@@ -6,7 +6,7 @@ end
 
 $debug = false
 $debug_code_dump = false
-$newformat = false
+$newformat = true
 $feature_reflection = false
 
 RSpec.configure do |config|

@@ -17,17 +17,31 @@ func main()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL insert
-                                 CONSTANT_SYMBOL main
-                                 CONSTANT_SYMBOL puts
-                                 CONSTANT_STRING "foo"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Fmain, main, -1
-                                 LOAD_FUNCTION Fputs, puts, -1
+                   _DATA:
+                                 W_STRING "foo" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "insert" 
+                                 W_STRING "main" 
+                                 W_STRING "puts" 
+ 
+                   _SYMB:
+/* insert       */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 7 
+/* puts         */               W_SYMBOL _SDAT + 12 
+ 
+                   _CODE:
+                                 NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -36,7 +50,7 @@ func main()
 /* puts         */               Q_SET_CALL RNIL, S2, R1
 /* 123          */               Q_SET_NUMBER R2, 123
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R2
-/* "foo"        */               Q_SET_CONSTANT R3, 3
+/* "foo"        */               Q_SET_STRING R3, _DATA + 0, 3
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R3
 /* puts         */               Q_SET_CALL RNIL, S2, R1
                                  Q_RETURN RNIL
@@ -45,3 +59,7 @@ func main()
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* main         */               W_METHOD 1, -1, Fmain
+/* puts         */               W_METHOD 2, -1, Fputs

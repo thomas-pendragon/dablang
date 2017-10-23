@@ -130,7 +130,7 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
 int main(int argc, char **argv)
 {
     bool raw       = (argc == 2) && (std::string(argv[1]) == "--raw");
-    bool newformat = (argc == 2) && (std::string(argv[1]) == "--newformat");
+    bool newformat = true;
 
     std::map<uint64_t, std::string>        files;
     std::map<uint64_t, std::set<uint64_t>> lines;

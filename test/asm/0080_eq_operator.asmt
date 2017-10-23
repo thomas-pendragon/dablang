@@ -10,17 +10,34 @@ class Foo
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL "=="
-                                 CONSTANT_SYMBOL Foo
+                                 W_HEADER 2
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 DEFINE_CLASS Foo, 256, 0
-                                 LOAD_FUNCTION CFoo_F%EQ%EQ, "==", 256
+                   _SDAT:
+                                 W_STRING "==" 
+                                 W_STRING "Foo" 
  
-                                 BREAK_LOAD 
+                   _SYMB:
+/* ==           */               W_SYMBOL _SDAT + 0 
+/* Foo          */               W_SYMBOL _SDAT + 3 
+ 
+                   _CLAS:
+/* Foo          */               W_CLASS 256, 0, 1
+ 
+                   _CODE:
+                                 NOP 
  
                    CFoo_F%EQ%EQ:
                                  STACK_RESERVE 0
                                  Q_SET_TRUE R0
                                  Q_RETURN R0
+ 
+                   _FUNC:
+/* ==           */               W_METHOD 0, 256, CFoo_F%EQ%EQ

@@ -19,20 +19,33 @@ func another_attribute(method, arg1, arg2)
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL __init
-                                 CONSTANT_SYMBOL another_attribute
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_SYMBOL sample_attribute
-                                 CONSTANT_STRING "foo"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION F__init, __init, -1
-                                 LOAD_FUNCTION Fanother_attribute, another_attribute, -1
-                                 LOAD_FUNCTION Ffoo, foo, -1
-                                 LOAD_FUNCTION Fsample_attribute, sample_attribute, -1
+                   _DATA:
+                                 W_STRING "foo" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "another_attribute" 
+                                 W_STRING "foo" 
+                                 W_STRING "sample_attribute" 
+ 
+                   _SYMB:
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* another_attr */               W_SYMBOL _SDAT + 7 
+/* foo          */               W_SYMBOL _SDAT + 25 
+/* sample_attri */               W_SYMBOL _SDAT + 29 
+ 
+                   _CODE:
+                                 NOP 
  
                    F__init:
                                  STACK_RESERVE 0
@@ -42,7 +55,7 @@ func another_attribute(method, arg1, arg2)
                                  PUSH_METHOD foo
                                  Q_SET_POP R1
 /* 14           */               Q_SET_NUMBER R2, 14
-/* "foo"        */               Q_SET_CONSTANT R3, 4
+/* "foo"        */               Q_SET_STRING R3, _DATA + 0, 3
 /* another_attr */               Q_SET_CALL RNIL, S1, R1, R2, R3
                                  Q_RETURN RNIL
  
@@ -61,3 +74,9 @@ func another_attribute(method, arg1, arg2)
                                  STACK_RESERVE 0
 /* method       */               Q_SET_ARG R0, 0
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* __init       */               W_METHOD 0, -1, F__init
+/* another_attr */               W_METHOD 1, -1, Fanother_attribute
+/* foo          */               W_METHOD 2, -1, Ffoo
+/* sample_attri */               W_METHOD 3, -1, Fsample_attribute

@@ -87,7 +87,7 @@ class DabSpec
     stdlib_files = Dir.glob(stdlib_glob)
     stdlib_files = [] if data[:frontend_options]['--no-stdlib']
 
-    newformat = data[:frontend_options]['--newformat']
+    newformat = true
 
     compile_options = data[:options]
     compile_options += ' --newformat' if newformat

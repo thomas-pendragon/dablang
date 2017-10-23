@@ -1,12 +1,29 @@
 ## ASM CODE
 
-                                 CONSTANT_SYMBOL "fun1"
- 
-                                 LOAD_FUNCTION Ffun1, fun1, -1
-                                 LOAD_FUNCTION Fmain, main, -1
- 
-                                 BREAK_LOAD 
- 
+W_HEADER 2
+W_SECTION _DATA, "data"
+W_SECTION _SYMB, "symb"
+W_SECTION _CODE, "code"
+W_SECTION _FUNC, "func"
+
+W_END_HEADER
+
+_DATA:
+  W_STRING "hello world"
+
+SYM_MAIN:
+  W_STRING "main"
+
+SYM_FUN1:
+  W_STRING "fun1"
+
+_SYMB:
+  W_SYMBOL SYM_FUN1
+  W_SYMBOL SYM_MAIN
+
+_CODE:
+  NOP
+
                    Ffun1:
                                  STACK_RESERVE 0
                                  Q_SET_TRUE R0
@@ -18,10 +35,14 @@
                                  Q_SET_SYSCALL RNIL, 0, R7
                                  Q_RETURN RNIL
 
+_FUNC:
+  W_METHOD 0, -1, Ffun1
+  W_METHOD 1, -1, Fmain
+
 ## INPUT
 
 allcode
-break 33
+break 205
 stack
 registers
 run
@@ -32,19 +53,16 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 36
-         0: CONSTANT_SYMBOL fun1
-         6: LOAD_FUNCTION 21, fun1, 65535
-        16: LOAD_FUNCTION 20, main, 65535
-        26: BREAK_LOAD 
-        27: STACK_RESERVE 0
-        30: Q_SET_TRUE R0
-        33: Q_RETURN R0
->       36: STACK_RESERVE 0
-        39: Q_SET_CALL R7, S0
-        45: Q_SET_SYSCALL RNIL, 0, R7
-        52: Q_RETURN RNIL
-debug: break at 33.
+IP = 208
+       198: NOP 
+       199: STACK_RESERVE 0
+       202: Q_SET_TRUE R0
+       205: Q_RETURN R0
+>      208: STACK_RESERVE 0
+       211: Q_SET_CALL R7, S0
+       217: Q_SET_SYSCALL RNIL, 0, R7
+       224: Q_RETURN RNIL
+debug: break at 205.
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -55,12 +73,12 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
-IP = 33
-        27: STACK_RESERVE 0
-        30: Q_SET_TRUE R0
->       33: Q_RETURN R0
-        36: STACK_RESERVE 0
-        39: Q_SET_CALL R7, S0
+IP = 205
+       199: STACK_RESERVE 0
+       202: Q_SET_TRUE R0
+>      205: Q_RETURN R0
+       208: STACK_RESERVE 0
+       211: Q_SET_CALL R7, S0
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -71,7 +89,7 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
-[   8] FIXN 45
+[   8] FIXN 217
 [   9] FIXN 2
 [  10] FIXN 0
 [  11] NIL  nil

@@ -27,17 +27,15 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 17
-         0: CONSTANT_SYMBOL main
-         6: LOAD_FUNCTION 11, main, 65535
-        16: BREAK_LOAD 
->       17: STACK_RESERVE 0
-        20: Q_SET_TRUE R0
-        23: Q_JMP_IF2 R0, 7, 28
-        30: Q_SET_NUMBER R1, 1
-        41: Q_SET_SYSCALL RNIL, 0, R1
-        48: JMP 24
-        51: Q_SET_NUMBER R2, 2
-        62: Q_SET_SYSCALL RNIL, 0, R2
-        69: JMP 3
-        72: Q_RETURN RNIL
+IP = 174
+       173: NOP 
+>      174: STACK_RESERVE 0
+       177: Q_SET_TRUE R0
+       180: Q_JMP_IF2 R0, 7, 28
+       187: Q_SET_NUMBER R1, 1
+       198: Q_SET_SYSCALL RNIL, 0, R1
+       205: JMP 24
+       208: Q_SET_NUMBER R2, 2
+       219: Q_SET_SYSCALL RNIL, 0, R2
+       226: JMP 3
+       229: Q_RETURN RNIL

@@ -24,23 +24,37 @@ func bar()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL bar
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_SYMBOL is
-                                 CONSTANT_STRING "got fixnum"
-                                 CONSTANT_STRING "got string"
-                                 CONSTANT_STRING "str"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Fbar, bar, -1
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "got fixnum" 
+                                 W_STRING "got string" 
+                                 W_STRING "str" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "bar" 
+                                 W_STRING "foo" 
+                                 W_STRING "is" 
+ 
+                   _SYMB:
+/* bar          */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 4 
+/* is           */               W_SYMBOL _SDAT + 8 
+ 
+                   _CODE:
+                                 NOP 
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 5
+/* "str"        */               Q_SET_STRING R0, _DATA + 22, 3
 /* foo          */               Q_SET_CALL RNIL, S1, R0
 /* 12           */               Q_SET_NUMBER R1, 12
 /* foo          */               Q_SET_CALL RNIL, S1, R1
@@ -53,7 +67,7 @@ func bar()
 /* is           */               Q_SET_INSTCALL R2, R0, S2, R1
                                  Q_JMP_IF2 R2, L1, L2
                    L1:
-/* "got string" */               Q_SET_CONSTANT R3, 4
+/* "got string" */               Q_SET_STRING R3, _DATA + 11, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
@@ -61,8 +75,12 @@ func bar()
 /* is           */               Q_SET_INSTCALL R5, R0, S2, R4
                                  Q_JMP_IF2 R5, L3, L4
                    L3:
-/* "got fixnum" */               Q_SET_CONSTANT R6, 3
+/* "got fixnum" */               Q_SET_STRING R6, _DATA + 0, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* bar          */               W_METHOD 0, -1, Fbar
+/* foo          */               W_METHOD 1, -1, Ffoo

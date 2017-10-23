@@ -36,7 +36,7 @@ class DabCompilerFrontend
       $feature_reflection = settings[:with_reflection]
       $feature_attributes = settings[:with_attributes]
       $multipass = settings[:multipass]
-      $newformat = settings[:newformat]
+      $newformat = true
 
       inputs = settings[:inputs] || [:stdin]
 

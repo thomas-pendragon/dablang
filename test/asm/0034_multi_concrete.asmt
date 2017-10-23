@@ -18,30 +18,43 @@ func foo()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL __spec_Fixnum
-                                 CONSTANT_SYMBOL __spec_String
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_STRING "A"
-                                 CONSTANT_STRING "Fixnum"
-                                 CONSTANT_STRING "String"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION F__spec_Fixnum, __spec_Fixnum, -1
-                                 LOAD_FUNCTION F__spec_String, __spec_String, -1
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "A" 
+                                 W_STRING "Fixnum" 
+                                 W_STRING "String" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "__spec_Fixnum" 
+                                 W_STRING "__spec_String" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* __spec_Fixnu */               W_SYMBOL _SDAT + 0 
+/* __spec_Strin */               W_SYMBOL _SDAT + 14 
+/* foo          */               W_SYMBOL _SDAT + 28 
+ 
+                   _CODE:
+                                 NOP 
  
                    F__spec_Fixnum:
                                  STACK_RESERVE 0
-/* "Fixnum"     */               Q_SET_CONSTANT R0, 4
+/* "Fixnum"     */               Q_SET_STRING R0, _DATA + 2, 6
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__spec_String:
                                  STACK_RESERVE 0
-/* "String"     */               Q_SET_CONSTANT R0, 5
+/* "String"     */               Q_SET_STRING R0, _DATA + 9, 6
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
@@ -51,6 +64,11 @@ func foo()
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R0
 /* 1            */               Q_SET_NUMBER R1, 1
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R1
-/* "A"          */               Q_SET_CONSTANT R2, 3
+/* "A"          */               Q_SET_STRING R2, _DATA + 0, 1
 /* __spec_Strin */               Q_SET_CALL RNIL, S1, R2
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* __spec_Fixnu */               W_METHOD 0, -1, F__spec_Fixnum
+/* __spec_Strin */               W_METHOD 1, -1, F__spec_String
+/* foo          */               W_METHOD 2, -1, Ffoo

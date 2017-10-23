@@ -5,7 +5,7 @@ require_relative '../shared/system.rb'
 
 input = $settings[:input]
 format = $settings[:format] || 'text'
-newformat = $settings[:newformat]
+newformat = true
 
 options = ''
 options = '--newformat' if newformat

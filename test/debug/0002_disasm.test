@@ -15,15 +15,14 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 17
-         6: LOAD_FUNCTION 11, main, 65535
-        16: BREAK_LOAD 
->       17: STACK_RESERVE 0
-        20: Q_SET_NUMBER R0, 12
-        31: Q_SET_SYSCALL RNIL, 0, R0
-IP = 20
-        16: BREAK_LOAD 
-        17: STACK_RESERVE 0
->       20: Q_SET_NUMBER R0, 12
-        31: Q_SET_SYSCALL RNIL, 0, R0
-        38: Q_RETURN RNIL
+IP = 174
+       173: NOP 
+>      174: STACK_RESERVE 0
+       177: Q_SET_NUMBER R0, 12
+       188: Q_SET_SYSCALL RNIL, 0, R0
+IP = 177
+       173: NOP 
+       174: STACK_RESERVE 0
+>      177: Q_SET_NUMBER R0, 12
+       188: Q_SET_SYSCALL RNIL, 0, R0
+       195: Q_RETURN RNIL

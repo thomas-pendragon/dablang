@@ -38,9 +38,9 @@ func main()
 ## EXPECT
 ./tmp/test_cov_spec_0001_cov.dab
 
-    1 hit      1: class MyObject
+               1: class MyObject
                2: {
-    1 hit      3:   func a(x)
+               3:   func a(x)
                4:   {
                5:     if (x)
                6:     { 
@@ -52,22 +52,22 @@ func main()
               12:     };
               13:   }
               14: 
-    1 hit     15:   func c()
+              15:   func c()
               16:   {
               17:     return 12;
               18:   }
               19: }
               20: 
-    1 hit     21: class MyObject
+              21: class MyObject
               22: {
-    1 hit     23:   func b()
+              23:   func b()
               24:   {
     1 hit     25:     var n = self.a(true);
     1 hit     26:     return "b" + n;
               27:   }
               28: }
               29: 
-    1 hit     30: func main()
+              30: func main()
               31: {
     3 hits    32:   print(MyObject.new.b);
     3 hits    33:   print(MyObject.new.a(true));

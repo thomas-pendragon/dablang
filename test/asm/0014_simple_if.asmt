@@ -20,33 +20,49 @@ func foo()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_STRING "a"
-                                 CONSTANT_STRING "b"
-                                 CONSTANT_STRING "c"
-                                 CONSTANT_STRING "d"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "a" 
+                                 W_STRING "b" 
+                                 W_STRING "c" 
+                                 W_STRING "d" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
+ 
+                   _CODE:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "a"          */               Q_SET_CONSTANT R0, 1
+/* "a"          */               Q_SET_STRING R0, _DATA + 0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_TRUE R1
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
-/* "b"          */               Q_SET_CONSTANT R2, 2
+/* "b"          */               Q_SET_STRING R2, _DATA + 2, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L3
                    L2:
-/* "c"          */               Q_SET_CONSTANT R3, 3
+/* "c"          */               Q_SET_STRING R3, _DATA + 4, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L3
                    L3:
-/* "d"          */               Q_SET_CONSTANT R4, 4
+/* "d"          */               Q_SET_STRING R4, _DATA + 6, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R4
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* foo          */               W_METHOD 0, -1, Ffoo

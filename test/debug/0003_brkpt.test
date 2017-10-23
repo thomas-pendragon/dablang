@@ -1,36 +1,50 @@
 ## ASM CODE
 
-CONSTANT_STRING "foo\n"
-CONSTANT_STRING "bar\n"
+W_HEADER 2
+W_SECTION _DATA, "data"
+W_SECTION _SYMB, "symb"
+W_SECTION _CODE, "code"
+W_SECTION _FUNC, "func"
 
-LOAD_FUNCTION Fmain, main, -1
-BREAK_LOAD 
+W_END_HEADER
+
+_DATA:
+  W_STRING "hello world"
+  W_STRING "foo\nbar\n"
+
+SYM_MAIN:
+  W_STRING "main"
+
+_SYMB:
+  W_SYMBOL SYM_MAIN
+
+_CODE:
+  NOP
 
 Fmain:
   STACK_RESERVE 0
-  PUSH_CONSTANT 0
-  Q_SET_POP R0
+  Q_SET_STRING R0, _DATA + 12, 4
   Q_SET_SYSCALL RNIL, 0, R0
-  Q_SET_NIL R1
-  PUSH_SSA R1
-  PUSH_CONSTANT 1
-  Q_SET_POP R0
+  Q_SET_STRING R0, _DATA + 16, 4
   Q_SET_SYSCALL RNIL, 0, R0
   Q_RETURN RNIL
 
+_FUNC:
+  W_METHOD 0, -1, Fmain
+
 ## INPUT
 
-break 51
+break 243
 run
 code
 quit
 
 ## EXPECT STDOUT
 
-debug: break at 51.
+debug: break at 243.
 foo
-IP = 51
-        45: PUSH_CONSTANT 1
-        48: Q_SET_POP R0
->       51: Q_SET_SYSCALL RNIL, 0, R0
-        58: Q_RETURN RNIL
+IP = 243
+       217: Q_SET_SYSCALL RNIL, 0, R0
+       224: Q_SET_STRING R0, 176, 4
+>      243: Q_SET_SYSCALL RNIL, 0, R0
+       250: Q_RETURN RNIL

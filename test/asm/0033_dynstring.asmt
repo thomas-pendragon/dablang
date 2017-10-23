@@ -11,19 +11,33 @@ func foo()
 
 ## EXPECT
 
-/* Dab dev      */                
+/* Dab dev 2    */                
  
-                                 CONSTANT_SYMBOL foo
-                                 CONSTANT_SYMBOL new
-                                 CONSTANT_STRING "allocated string"
+                                 W_HEADER 2
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
  
-                                 LOAD_FUNCTION Ffoo, foo, -1
+                   _DATA:
+                                 W_STRING "allocated string" 
  
-                                 BREAK_LOAD 
+                   _SDAT:
+                                 W_STRING "foo" 
+                                 W_STRING "new" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
+/* new          */               W_SYMBOL _SDAT + 4 
+ 
+                   _CODE:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "allocated s */               Q_SET_CONSTANT R0, 2
+/* "allocated s */               Q_SET_STRING R0, _DATA + 0, 16
 /* String       */               Q_SET_CLASS R1, 1
 /* new          */               Q_SET_INSTCALL R2, R1, S1, R0
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
@@ -31,3 +45,6 @@ func foo()
                                  Q_RELEASE R1
                                  Q_RELEASE R2
                                  Q_RETURN RNIL
+ 
+                   _FUNC:
+/* foo          */               W_METHOD 0, -1, Ffoo
