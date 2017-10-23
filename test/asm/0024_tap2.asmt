@@ -22,6 +22,7 @@ func tap2()
  
                                  CONSTANT_SYMBOL "+"
                                  CONSTANT_SYMBOL tap
+                                 CONSTANT_SYMBOL "tap2"
                                  CONSTANT_SYMBOL "tap2__block1"
  
                                  LOAD_FUNCTION Ftap, tap, -1
@@ -37,7 +38,7 @@ func tap2()
                    Ftap2:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-/* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S2, R0
+/* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S3, R0
                                  Q_RETURN RNIL
  
                    Ftap2__block1:

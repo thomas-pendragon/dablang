@@ -34,6 +34,7 @@ func main()
  
                                  CONSTANT_SYMBOL "fun1"
                                  CONSTANT_SYMBOL "fun2"
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL main_and
                                  CONSTANT_SYMBOL main_or
                                  CONSTANT_STRING "fun1"
@@ -49,22 +50,22 @@ func main()
  
                    Ffun1:
                                  STACK_RESERVE 0
-/* "fun1"       */               Q_SET_CONSTANT R0, 4
+/* "fun1"       */               Q_SET_CONSTANT R0, 5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_FALSE R1
                                  Q_RETURN R1
  
                    Ffun2:
                                  STACK_RESERVE 0
-/* "fun2"       */               Q_SET_CONSTANT R0, 5
+/* "fun2"       */               Q_SET_CONSTANT R0, 6
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_SET_TRUE R1
                                  Q_RETURN R1
  
                    Fmain:
                                  STACK_RESERVE 0
-/* main_and     */               Q_SET_CALL RNIL, S2
-/* main_or      */               Q_SET_CALL RNIL, S3
+/* main_and     */               Q_SET_CALL RNIL, S3
+/* main_or      */               Q_SET_CALL RNIL, S4
                                  Q_RETURN RNIL
  
                    Fmain_and:

@@ -13,6 +13,8 @@ func fun0()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL "fun0"
+ 
                                  LOAD_FUNCTION Ffun0, fun0, -1
  
                                  BREAK_LOAD 

@@ -20,6 +20,7 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL "main__block1"
                                  CONSTANT_SYMBOL qux
                                  CONSTANT_SYMBOL test
@@ -35,14 +36,14 @@ func main()
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
                                  Q_SET_NEW_ARRAY R1, R0
-/* test         */               Q_SET_CALL_BLOCK RNIL, S2, S0, R1
+/* test         */               Q_SET_CALL_BLOCK RNIL, S3, S1, R1
                                  Q_RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0
 /* bar          */               Q_SET_ARG R0, 0
                                  Q_SET_CLOSURE R1, 0
-/* qux          */               Q_SET_CALL RNIL, S1, R0, R1
+/* qux          */               Q_SET_CALL RNIL, S2, R0, R1
                                  Q_RETURN RNIL
  
                    Fqux:

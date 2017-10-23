@@ -9,6 +9,7 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_STRING "Foobar"
  
                                  LOAD_FUNCTION Fmain, main, -1
@@ -17,6 +18,6 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* "Foobar"     */               Q_SET_CONSTANT R0, 0
+/* "Foobar"     */               Q_SET_CONSTANT R0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

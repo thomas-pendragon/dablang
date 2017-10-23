@@ -22,6 +22,7 @@ func foo()
  
                                  CONSTANT_SYMBOL __spec_Fixnum
                                  CONSTANT_SYMBOL __spec_String
+                                 CONSTANT_SYMBOL foo
                                  CONSTANT_STRING "A"
                                  CONSTANT_STRING "Fixnum"
                                  CONSTANT_STRING "String"
@@ -34,13 +35,13 @@ func foo()
  
                    F__spec_Fixnum:
                                  STACK_RESERVE 0
-/* "Fixnum"     */               Q_SET_CONSTANT R0, 3
+/* "Fixnum"     */               Q_SET_CONSTANT R0, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__spec_String:
                                  STACK_RESERVE 0
-/* "String"     */               Q_SET_CONSTANT R0, 4
+/* "String"     */               Q_SET_CONSTANT R0, 5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
@@ -50,6 +51,6 @@ func foo()
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R0
 /* 1            */               Q_SET_NUMBER R1, 1
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R1
-/* "A"          */               Q_SET_CONSTANT R2, 2
+/* "A"          */               Q_SET_CONSTANT R2, 3
 /* __spec_Strin */               Q_SET_CALL RNIL, S1, R2
                                  Q_RETURN RNIL

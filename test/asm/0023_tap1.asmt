@@ -21,6 +21,7 @@ func tap2()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL tap
+                                 CONSTANT_SYMBOL "tap2"
                                  CONSTANT_SYMBOL "tap2__block1"
                                  CONSTANT_STRING "foo"
  
@@ -37,11 +38,11 @@ func tap2()
                    Ftap2:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-/* tap          */               Q_SET_CALL_BLOCK RNIL, S0, S1, R0
+/* tap          */               Q_SET_CALL_BLOCK RNIL, S0, S2, R0
                                  Q_RETURN RNIL
  
                    Ftap2__block1:
                                  STACK_RESERVE 0
-/* "foo"        */               Q_SET_CONSTANT R0, 2
+/* "foo"        */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

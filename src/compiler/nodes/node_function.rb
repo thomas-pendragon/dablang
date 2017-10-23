@@ -41,15 +41,13 @@ class DabNodeFunction < DabNode
     @tempvars = 0
     @ssa_count = 0
     @concreteified = false
-    if $newformat
-      insert(DabNodeSymbol.new(identifier))
-      if $feature_reflection
-        argsymbols = DabNode.new
-        arglist&.each do |arg|
-          argsymbols << DabNodeSymbol.new(arg.identifier)
-        end
-        insert(argsymbols)
+    insert(DabNodeSymbol.new(identifier))
+    if $feature_reflection
+      argsymbols = DabNode.new
+      arglist&.each do |arg|
+        argsymbols << DabNodeSymbol.new(arg.identifier)
       end
+      insert(argsymbols)
     end
   end
 

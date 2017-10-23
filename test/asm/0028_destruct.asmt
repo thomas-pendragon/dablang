@@ -15,6 +15,8 @@ class Foo
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL __destruct
+ 
                                  DEFINE_CLASS Foo, 256, 0
                                  LOAD_FUNCTION CFoo_F__destruct, __destruct, 256
  

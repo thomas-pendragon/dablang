@@ -28,6 +28,7 @@ func bar()
  
                                  CONSTANT_SYMBOL __foo_Fixnum
                                  CONSTANT_SYMBOL __foo_String
+                                 CONSTANT_SYMBOL bar
                                  CONSTANT_STRING "got fixnum"
                                  CONSTANT_STRING "got string"
                                  CONSTANT_STRING "str"
@@ -40,19 +41,19 @@ func bar()
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
-/* "got fixnum" */               Q_SET_CONSTANT R0, 2
+/* "got fixnum" */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "got string" */               Q_SET_CONSTANT R0, 3
+/* "got string" */               Q_SET_CONSTANT R0, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_CONSTANT R0, 4
+/* "str"        */               Q_SET_CONSTANT R0, 5
 /* __foo_String */               Q_SET_CALL RNIL, S1, R0
 /* 12           */               Q_SET_NUMBER R1, 12
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S0, R1

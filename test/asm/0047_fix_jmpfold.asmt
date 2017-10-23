@@ -16,6 +16,7 @@ func assert_equal(value)
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL "!="
+                                 CONSTANT_SYMBOL assert_equal
  
                                  LOAD_FUNCTION Fassert_equal, assert_equal, -1
  

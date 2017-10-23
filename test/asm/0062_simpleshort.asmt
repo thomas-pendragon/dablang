@@ -19,6 +19,7 @@ func main_or()
  
                                  CONSTANT_SYMBOL "fun1"
                                  CONSTANT_SYMBOL "fun2"
+                                 CONSTANT_SYMBOL main_or
  
                                  LOAD_FUNCTION Ffun1, fun1, -1
                                  LOAD_FUNCTION Ffun2, fun2, -1

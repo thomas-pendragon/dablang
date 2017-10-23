@@ -21,7 +21,9 @@ func another_attribute(method, arg1, arg2)
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL __init
                                  CONSTANT_SYMBOL another_attribute
+                                 CONSTANT_SYMBOL foo
                                  CONSTANT_SYMBOL sample_attribute
                                  CONSTANT_STRING "foo"
  
@@ -36,12 +38,12 @@ func another_attribute(method, arg1, arg2)
                                  STACK_RESERVE 0
                                  PUSH_METHOD foo
                                  Q_SET_POP R0
-/* sample_attri */               Q_SET_CALL RNIL, S1, R0
+/* sample_attri */               Q_SET_CALL RNIL, S3, R0
                                  PUSH_METHOD foo
                                  Q_SET_POP R1
 /* 14           */               Q_SET_NUMBER R2, 14
-/* "foo"        */               Q_SET_CONSTANT R3, 2
-/* another_attr */               Q_SET_CALL RNIL, S0, R1, R2, R3
+/* "foo"        */               Q_SET_CONSTANT R3, 4
+/* another_attr */               Q_SET_CALL RNIL, S1, R1, R2, R3
                                  Q_RETURN RNIL
  
                    Fanother_attribute:

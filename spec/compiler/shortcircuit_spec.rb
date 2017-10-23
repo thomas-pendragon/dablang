@@ -37,6 +37,7 @@ describe FixShortcircuit, uint8: true do
       '          DabNodeSymbol [:post]',
       '      DabNode []',
       '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:fun1]',
       '  DabNode []',
       '  DabNode []',
     ]

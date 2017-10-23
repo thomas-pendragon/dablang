@@ -9,6 +9,8 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
+ 
                                  LOAD_FUNCTION Fmain, main, -1
  
                                  BREAK_LOAD 

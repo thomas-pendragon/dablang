@@ -17,6 +17,7 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL new
                                  CONSTANT_STRING "String1"
                                  CONSTANT_STRING "String2"
@@ -28,10 +29,10 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
-/* "String1"    */               Q_SET_CONSTANT R1, 1
-/* "String2"    */               Q_SET_CONSTANT R2, 2
+/* "String1"    */               Q_SET_CONSTANT R1, 2
+/* "String2"    */               Q_SET_CONSTANT R2, 3
 /* String       */               Q_SET_CLASS R3, 1
-/* new          */               Q_SET_INSTCALL R4, R3, S0, R2
+/* new          */               Q_SET_INSTCALL R4, R3, S1, R2
                                  Q_SET_NEW_ARRAY R5, R0, R1, R4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0

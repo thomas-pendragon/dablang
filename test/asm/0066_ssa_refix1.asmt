@@ -25,6 +25,7 @@ func main()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL foo
+                                 CONSTANT_SYMBOL main
  
                                  LOAD_FUNCTION Ffoo, foo, -1
                                  LOAD_FUNCTION Fmain, main, -1

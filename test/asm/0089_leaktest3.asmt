@@ -35,6 +35,7 @@ func main()
  
                                  CONSTANT_SYMBOL functrue
                                  CONSTANT_SYMBOL go
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL new
                                  CONSTANT_SYMBOL var
                                  CONSTANT_STRING "String1"
@@ -56,7 +57,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               Q_SET_CLASS R0, 256
-/* new          */               Q_SET_INSTCALL R1, R0, S2
+/* new          */               Q_SET_INSTCALL R1, R0, S3
 /* go           */               Q_SET_INSTCALL RNIL, R1, S1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
@@ -65,19 +66,19 @@ func main()
                    CFoo_Fgo:
                                  STACK_RESERVE 0
 /* 123          */               Q_SET_NUMBER R0, 123
-/* @var=        */               Q_CHANGE_INSTVAR S3, R0
+/* @var=        */               Q_CHANGE_INSTVAR S4, R0
 /* 1            */               Q_SET_NUMBER R1, 1
-/* "String1"    */               Q_SET_CONSTANT R2, 4
-/* "String2"    */               Q_SET_CONSTANT R3, 5
+/* "String1"    */               Q_SET_CONSTANT R2, 5
+/* "String2"    */               Q_SET_CONSTANT R3, 6
 /* String       */               Q_SET_CLASS R4, 1
-/* new          */               Q_SET_INSTCALL R5, R4, S2, R3
+/* new          */               Q_SET_INSTCALL R5, R4, S3, R3
                                  Q_SET_NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
 /* functrue     */               Q_SET_CALL R7, S0
                                  Q_JMP_IF2 R7, L1, L2
                    L1:
                                  Q_RELEASE R6
-/* @var         */               Q_SET_INSTVAR R6, S3
+/* @var         */               Q_SET_INSTVAR R6, S4
                                  JMP L2
                    L2:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6

@@ -22,6 +22,7 @@ func main()
  
                                  CONSTANT_SYMBOL "-"
                                  CONSTANT_SYMBOL ">"
+                                 CONSTANT_SYMBOL main
  
                                  LOAD_FUNCTION Fmain, main, -1
  

@@ -13,6 +13,10 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
+                                 CONSTANT_SYMBOL setsockopt
+                                 CONSTANT_SYMBOL socket
+ 
                                  LOAD_FUNCTION Fmain, main, -1
                                  LOAD_FUNCTION Fsetsockopt, setsockopt, -1
                                  LOAD_FUNCTION Fsocket, socket, -1

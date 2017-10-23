@@ -34,6 +34,7 @@ func foo(a, b)
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL foo
                                  CONSTANT_STRING "!a && !b"
                                  CONSTANT_STRING "!a && b"
                                  CONSTANT_STRING "a && !b"
@@ -51,21 +52,21 @@ func foo(a, b)
                    L1:
                                  Q_JMP_IF2 R0, L3, L4
                    L3:
-/* "a && b"     */               Q_SET_CONSTANT R2, 3
+/* "a && b"     */               Q_SET_CONSTANT R2, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L5
                    L4:
-/* "a && !b"    */               Q_SET_CONSTANT R3, 2
+/* "a && !b"    */               Q_SET_CONSTANT R3, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L5
                    L2:
                                  Q_JMP_IF2 R0, L6, L7
                    L6:
-/* "!a && b"    */               Q_SET_CONSTANT R4, 1
+/* "!a && b"    */               Q_SET_CONSTANT R4, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R4
                                  JMP L5
                    L7:
-/* "!a && !b"   */               Q_SET_CONSTANT R5, 0
+/* "!a && !b"   */               Q_SET_CONSTANT R5, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:

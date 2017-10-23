@@ -13,6 +13,8 @@ func foo()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL foo
+ 
                                  LOAD_FUNCTION Ffoo, foo, -1
  
                                  BREAK_LOAD 

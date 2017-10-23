@@ -13,6 +13,8 @@ func yield1()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL "yield1"
+ 
                                  LOAD_FUNCTION Fyield1, yield1, -1
  
                                  BREAK_LOAD 

@@ -13,6 +13,8 @@ func foo(a, b<Uint8>)
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL a
+                                 CONSTANT_SYMBOL b
                                  CONSTANT_SYMBOL foo
  
                                  LOAD_FUNCTION Ffoo, foo, -1
@@ -29,6 +31,6 @@ func foo(a, b<Uint8>)
                                  STACK_RESERVE 0
 /* b            */               Q_SET_ARG R0, 1
 /* a            */               Q_SET_ARG R1, 0
-                                 Q_SET_REFLECT R2, S0, 0
+                                 Q_SET_REFLECT R2, S2, 0
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL

@@ -91,6 +91,7 @@ describe DabNode do
       '            DabNodeLiteralNil []',
       '      DabNode []',
       '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:test]',
       '  DabNode []',
       '  DabNode []',
     ]
@@ -141,6 +142,7 @@ describe DabNode do
       '                DabNodeSSAGet [R0 []]',
       '      DabNode []',
       '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:test]',
       '  DabNode []',
       '  DabNode []',
     ]

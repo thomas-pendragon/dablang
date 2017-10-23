@@ -26,6 +26,7 @@ func main()
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL new
                                  CONSTANT_SYMBOL run
                                  CONSTANT_STRING "bar"
@@ -43,21 +44,21 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               Q_SET_CLASS R0, 256
-/* new          */               Q_SET_INSTCALL R1, R0, S0
-/* run          */               Q_SET_INSTCALL RNIL, R1, S1
+/* new          */               Q_SET_INSTCALL R1, R0, S1
+/* run          */               Q_SET_INSTCALL RNIL, R1, S2
 /* Bar          */               Q_SET_CLASS R2, 257
-/* new          */               Q_SET_INSTCALL R3, R2, S0
-/* run          */               Q_SET_INSTCALL RNIL, R3, S1
+/* new          */               Q_SET_INSTCALL R3, R2, S1
+/* run          */               Q_SET_INSTCALL RNIL, R3, S2
                                  Q_RETURN RNIL
  
                    CBar_Frun:
                                  STACK_RESERVE 0
-/* "bar"        */               Q_SET_CONSTANT R0, 2
+/* "bar"        */               Q_SET_CONSTANT R0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    CFoo_Frun:
                                  STACK_RESERVE 0
-/* "foo"        */               Q_SET_CONSTANT R0, 3
+/* "foo"        */               Q_SET_CONSTANT R0, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

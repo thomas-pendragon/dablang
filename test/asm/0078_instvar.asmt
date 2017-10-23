@@ -14,6 +14,7 @@ func foo()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL a
+                                 CONSTANT_SYMBOL foo
  
                                  DEFINE_CLASS Foo, 256, 0
                                  LOAD_FUNCTION CFoo_Ffoo, foo, 256

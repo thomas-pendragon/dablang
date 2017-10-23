@@ -26,6 +26,7 @@ class Array
                                  CONSTANT_SYMBOL "+"
                                  CONSTANT_SYMBOL "[]"
                                  CONSTANT_SYMBOL count
+                                 CONSTANT_SYMBOL each_with_index
  
                                  DEFINE_CLASS Array, 5, 0
                                  LOAD_FUNCTION CArray_Feach_with_index, each_with_index, 5

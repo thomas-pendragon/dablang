@@ -16,6 +16,7 @@ func tap(a)
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL fun
+                                 CONSTANT_SYMBOL tap
                                  CONSTANT_SYMBOL "tap__block1"
  
                                  LOAD_FUNCTION Ftap, tap, -1
@@ -27,7 +28,7 @@ func tap(a)
                                  STACK_RESERVE 0
 /* a            */               Q_SET_ARG R0, 0
                                  Q_SET_NIL R1
-/* fun          */               Q_SET_INSTCALL_BLOCK RNIL, R0, S0, S1, R1
+/* fun          */               Q_SET_INSTCALL_BLOCK RNIL, R0, S0, S2, R1
                                  Q_RETURN RNIL
  
                    Ftap__block1:

@@ -12,6 +12,8 @@ class Foo
 
 /* Dab dev      */                
  
+                                 CONSTANT_SYMBOL "!"
+ 
                                  DEFINE_CLASS Foo, 256, 0
                                  LOAD_FUNCTION CFoo_F%BANG, "!", 256
  

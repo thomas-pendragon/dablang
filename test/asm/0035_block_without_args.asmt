@@ -19,6 +19,7 @@ func main()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL foo
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_SYMBOL "main__block1"
  
                                  LOAD_FUNCTION Ffoo, foo, -1
@@ -36,7 +37,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
                                  Q_SET_NIL R0
-/* foo          */               Q_SET_CALL_BLOCK RNIL, S0, S1, R0
+/* foo          */               Q_SET_CALL_BLOCK RNIL, S0, S2, R0
                                  Q_RETURN RNIL
  
                    Fmain__block1:

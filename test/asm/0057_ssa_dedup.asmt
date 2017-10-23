@@ -15,6 +15,7 @@ func foo(a)
  
                                  CONSTANT_SYMBOL "*"
                                  CONSTANT_SYMBOL "+"
+                                 CONSTANT_SYMBOL foo
  
                                  LOAD_FUNCTION Ffoo, foo, -1
  

@@ -27,6 +27,7 @@ func main()
                                  CONSTANT_SYMBOL "*"
                                  CONSTANT_SYMBOL "=="
                                  CONSTANT_SYMBOL __foo_Fixnum
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_STRING "yes"
  
                                  LOAD_FUNCTION F__foo_Fixnum, __foo_Fixnum, -1
@@ -45,7 +46,7 @@ func main()
 /* ==           */               Q_SET_INSTCALL R5, R2, S1, R4
                                  Q_JMP_IF2 R5, L1, L2
                    L1:
-/* "yes"        */               Q_SET_CONSTANT R6, 3
+/* "yes"        */               Q_SET_CONSTANT R6, 4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L2
                    L2:

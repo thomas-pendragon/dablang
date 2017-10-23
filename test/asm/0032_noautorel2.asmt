@@ -18,6 +18,7 @@ Instructions should pop return value if not used.
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL "+"
+                                 CONSTANT_SYMBOL foo
  
                                  LOAD_FUNCTION Ffoo, foo, -1
  

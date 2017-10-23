@@ -19,6 +19,7 @@ func main()
 /* Dab dev      */                
  
                                  CONSTANT_SYMBOL __foo_String
+                                 CONSTANT_SYMBOL main
                                  CONSTANT_STRING "String"
                                  CONSTANT_STRING "hello"
  
@@ -29,12 +30,12 @@ func main()
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "String"     */               Q_SET_CONSTANT R0, 1
+/* "String"     */               Q_SET_CONSTANT R0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
-/* "hello"      */               Q_SET_CONSTANT R0, 2
+/* "hello"      */               Q_SET_CONSTANT R0, 3
 /* __foo_String */               Q_SET_CALL RNIL, S0, R0
                                  Q_RETURN RNIL
