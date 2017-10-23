@@ -23,6 +23,7 @@
 
 ## new assembly format
 
+- subclassing support
 - FUNC section should be allowed before actual functions
 - disassembly support for non-code
 
