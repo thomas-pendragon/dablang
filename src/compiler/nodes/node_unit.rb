@@ -234,7 +234,7 @@ class DabNodeUnit < DabNode
 
     if @classes.count > 0
       output.label('_CLAS')
-      @classes.sort_by(&:identifier).each do |klass|
+      @classes.sort_by(&:number).each do |klass|
         klass.compile_definition(output)
       end
       output.separate
