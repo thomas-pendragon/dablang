@@ -15,13 +15,9 @@ Q_SET_INSTCALL R0, R1, S1, R0
 Q_SET_SYSCALL RNIL, 0, R0
 Q_RETURN RNIL
 
-## RUNOPTIONS
-
---noraw 
-
 ## OPTIONS
 
---noautorelease
+--noraw --noautorelease
 
 ## TESTCASE
 

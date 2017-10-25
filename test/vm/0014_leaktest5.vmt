@@ -12,13 +12,9 @@ Q_RETURN RNIL
 
 It should not automatically release the array.
 
-## RUNOPTIONS
-
---noraw 
-
 ## OPTIONS
 
---noautorelease
+--noraw --noautorelease
 
 ## TESTCASE
 

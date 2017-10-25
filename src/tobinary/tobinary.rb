@@ -164,56 +164,60 @@ class OutputStream
     @stream.print(data)
   end
 
-  def finalize
+  def finalize(raw)
     length = @code.length
     crc = 0
 
-    _write('DAB')
-    write_uint64(@metadata_source.compiler_version)
-    write_uint64(@metadata_source.vm_version)
-    write_uint64(length)
-    write_uint64(crc)
+    unless raw
+      _write('DAB')
+      write_uint64(@metadata_source.compiler_version)
+      write_uint64(@metadata_source.vm_version)
+      write_uint64(length)
+      write_uint64(crc)
+    end
     _write(@code)
   end
 
-  def finalize_newformat(version, sections, labels)
-    _write('DAB')
-    write_uint8(0)
+  def finalize_newformat(raw, version, sections, labels)
+    unless raw
+      _write('DAB')
+      write_uint8(0)
 
-    write_uint32(version)
+      write_uint32(version)
 
-    size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 32
-    size_of_data = @code.length - size_of_header
+      size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 32
+      size_of_data = @code.length - size_of_header
 
-    write_uint64(size_of_header)
-    write_uint64(size_of_data)
-    write_uint64(sections.count)
+      write_uint64(size_of_header)
+      write_uint64(size_of_data)
+      write_uint64(sections.count)
 
-    sections.each do |section|
-      section[:address] = labels[section[:label]]
-    end
+      sections.each do |section|
+        section[:address] = labels[section[:label]]
+      end
 
-    sections.sort_by! do |section|
-      section[:address]
-    end
+      sections.sort_by! do |section|
+        section[:address]
+      end
 
-    sections.each_with_index do |section, index|
-      next_section = sections[index + 1]
-      next_address = if next_section
-                       next_section[:address]
-                     else
-                       size_of_data + size_of_header
-                     end
-      section[:length] = next_address - section[:address]
-    end
+      sections.each_with_index do |section, index|
+        next_section = sections[index + 1]
+        next_address = if next_section
+                         next_section[:address]
+                       else
+                         size_of_data + size_of_header
+                       end
+        section[:length] = next_address - section[:address]
+      end
 
-    sections.each do |section|
-      write_string4(section[:name])
-      write_uint32(0)
-      write_uint32(0)
-      write_uint32(0)
-      write_uint64(section[:address])
-      write_uint64(section[:length])
+      sections.each do |section|
+        write_string4(section[:name])
+        write_uint32(0)
+        write_uint32(0)
+        write_uint32(0)
+        write_uint64(section[:address])
+        write_uint64(section[:length])
+      end
     end
 
     _write(@code[@header_length..-1])
@@ -292,7 +296,7 @@ class Parser
     end
   end
 
-  def run!(newformat)
+  def run!(newformat, raw)
     @sections = []
     @header_version = nil
     @header_finished = false
@@ -371,24 +375,25 @@ class Parser
     @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
     @output_stream.fix_jumps(@label_positions, @jump_corrections3, 2)
     if newformat
-      @output_stream.finalize_newformat(@header_version, @sections, @label_positions)
+      @output_stream.finalize_newformat(raw, @header_version, @sections, @label_positions)
     else
-      @output_stream.finalize
+      @output_stream.finalize(raw)
     end
   end
 end
 
-def run_tobinary(input, output, debug, newformat)
+def run_tobinary(input, output, debug, newformat, raw)
   $debug = debug
   input = InputStream.new(input)
   output = OutputStream.new(output)
   parser = Parser.new(input, output)
-  parser.run!(newformat)
+  parser.run!(newformat, raw)
 end
 
 if $autorun
   read_args!
   debug = $settings[:debug]
   newformat = $settings[:newformat]
-  run_tobinary(STDIN, STDOUT, debug, newformat)
+  raw = $settings[:raw]
+  run_tobinary(STDIN, STDOUT, debug, newformat, raw)
 end

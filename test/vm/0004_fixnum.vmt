@@ -3,6 +3,10 @@
 Q_SET_NUMBER R0, 123
 PUSH_SSA R0
 
+## OPTIONS
+
+--raw 
+
 ## COMMENT
 
 Last stack element should be literal fixnum 123.

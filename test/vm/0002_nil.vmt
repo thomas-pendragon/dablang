@@ -7,6 +7,10 @@ PUSH_SSA R0
 
 Last stack element should be NIL.
 
+## OPTIONS
+
+--raw 
+
 ## TESTCASE
 
 $stack[-1]

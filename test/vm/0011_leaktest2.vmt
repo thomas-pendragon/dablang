@@ -8,6 +8,10 @@ PUSH_SSA R0
 
 $leaktest
 
+## OPTIONS
+
+--raw 
+
 ## EXPECT
 
 leaktest: 1 items on stack

@@ -8,13 +8,9 @@ CODE:
 Q_SET_TRUE R0
 Q_SET_SYSCALL RNIL, 0, R0
 
-## ASSEMBLE OPTIONS
-
---newformat
-
 ## OPTIONS
 
---newformat
+--nomain --newformat
 
 ## TESTCASE
 

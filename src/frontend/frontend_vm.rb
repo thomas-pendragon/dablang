@@ -19,14 +19,12 @@ class VMFrontend
     end
   end
 
-  def extract_vm_part(input, output, part, runoptions, options)
+  def extract_vm_part(input, output, part, flags)
     describe_action(input, output, 'VM') do
       input = input.to_s.shellescape
       output = output.to_s.shellescape
       part = part.to_s.shellescape
-      flags = '--raw'
-      flags = '' if runoptions['--noraw']
-      cmd = "timeout 10 ./bin/cvm #{flags} #{options} --output=#{part} < #{input} > #{output}"
+      cmd = "timeout 10 ./bin/cvm #{flags} --output=#{part} < #{input} > #{output}"
       psystem_noecho cmd
     end
   end
@@ -34,9 +32,26 @@ class VMFrontend
   def run(_settings)
     data = read_test_file(input)
 
-    runoptions = data[:runoptions] || ''
-    assemble_options = data[:assemble_options] || ''
     options = data[:options] || ''
+
+    raw = options['--raw']
+    noraw = options['--noraw']
+    nomain = options['--nomain']
+
+    raise 'must specify either --raw, --nomain or --noraw' unless raw || noraw || nomain
+
+    noautorelease = options['--noautorelease']
+    newformat = options['--newformat']
+
+    assemble_options = ''
+    assemble_options += '--raw ' if raw
+    assemble_options += '--newformat ' if newformat
+
+    runoptions = ''
+    runoptions += '--bare ' if raw
+    runoptions += '--raw ' if nomain || raw
+    runoptions += '--newformat ' if newformat
+    runoptions += '--noautorelease ' if noautorelease
 
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
     puts info
@@ -58,7 +73,7 @@ class VMFrontend
       output = $1
       part = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext(".part#{index}")).to_s
       index += 1
-      extract_vm_part(bin, part, output, runoptions, options)
+      extract_vm_part(bin, part, output, runoptions)
       File.open(part).read.strip
     end
 

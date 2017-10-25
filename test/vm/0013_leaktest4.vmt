@@ -7,7 +7,7 @@ Fmain:
 STACK_RESERVE 0
 Q_RETURN RNIL
 
-## RUNOPTIONS
+## OPTIONS
 
 --noraw
 

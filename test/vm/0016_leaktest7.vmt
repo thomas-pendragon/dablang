@@ -14,13 +14,9 @@ Q_RETURN RNIL
 
 If var is overriden without releasing its value first, it can leak.
 
-## RUNOPTIONS
-
---noraw 
-
 ## OPTIONS
 
---noautorelease
+--noraw --noautorelease
 
 ## TESTCASE
 

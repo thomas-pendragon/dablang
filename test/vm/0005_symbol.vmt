@@ -6,6 +6,10 @@ PUSH_SYMBOL "=="
 
 Last stack element should be literal symbol :==
 
+## OPTIONS
+
+--raw 
+
 ## TESTCASE
 
 $stack[-1]

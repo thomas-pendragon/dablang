@@ -17,13 +17,9 @@ Q_RETURN RNIL
 
 Three arrays are allocated and only one is released.
 
-## RUNOPTIONS
-
---noraw 
-
 ## OPTIONS
 
---noautorelease
+--noraw --noautorelease
 
 ## TESTCASE
 

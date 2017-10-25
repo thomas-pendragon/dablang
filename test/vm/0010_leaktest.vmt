@@ -2,6 +2,10 @@
 
 NOP
 
+## OPTIONS
+
+--raw
+
 ## TESTCASE
 
 $leaktest

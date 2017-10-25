@@ -11,7 +11,7 @@ $leaktest
 
 ## OPTIONS
 
---noautorelease
+--raw --noautorelease
 
 ## EXPECT
 

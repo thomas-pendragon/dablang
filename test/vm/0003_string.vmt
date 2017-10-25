@@ -3,6 +3,10 @@
 CONSTANT_STRING "foo"
 PUSH_CONSTANT 0
 
+## OPTIONS
+
+--raw 
+
 ## COMMENT
 
 Last stack element should be literal string "foo".

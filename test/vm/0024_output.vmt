@@ -4,6 +4,10 @@ CONSTANT_STRING "foobar"
 Q_SET_CONSTANT R0, 0
 Q_SET_SYSCALL RNIL, 0, R0
 
+## OPTIONS
+
+--raw
+
 ## TESTCASE
 
 $output

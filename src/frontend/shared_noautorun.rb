@@ -137,7 +137,8 @@ module BaseFrontend
       output = File.open(output, 'wb')
       options = read_args!(assemble_options.split(' '))
       newformat = options[:newformat]
-      run_tobinary(input, output, false, newformat)
+      raw = options[:raw]
+      run_tobinary(input, output, false, newformat, raw)
       input.close
       output.close
     end

@@ -41,17 +41,9 @@ Fmain:
 FUNC:
   W_METHOD 3, -1, Fmain
 
-## RUNOPTIONS
-
---noraw
-
-## ASSEMBLE OPTIONS
-
---newformat
-
 ## OPTIONS
 
---newformat
+--noraw --newformat
 
 ## TESTCASE
 

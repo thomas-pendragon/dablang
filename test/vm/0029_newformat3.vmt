@@ -21,13 +21,9 @@ CODE:
   Q_SET_INSTCALL R4, R3, S1
   Q_SET_SYSCALL RNIL, 0, R4
 
-## ASSEMBLE OPTIONS
-
---newformat
-
 ## OPTIONS
 
---newformat
+--nomain --newformat
 
 ## TESTCASE
 

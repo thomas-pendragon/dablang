@@ -6,6 +6,10 @@ NOP
 
 NOP is 1-byte op, RIP register should equal 1 after execution.
 
+## OPTIONS
+
+--raw 
+
 ## TESTCASE
 
 $rip

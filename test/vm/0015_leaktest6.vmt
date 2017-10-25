@@ -9,13 +9,9 @@ Q_SET_NEW_ARRAY R0
 Q_RELEASE R0
 Q_RETURN RNIL
 
-## RUNOPTIONS
-
---noraw 
-
 ## OPTIONS
 
---noautorelease
+--noraw --noautorelease
 
 ## TESTCASE
 

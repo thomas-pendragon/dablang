@@ -14,9 +14,9 @@ Q_SET_POP R0
 Q_SET_SYSCALL RNIL, 0, R0
 Q_RETURN RNIL
 
-## RUNOPTIONS
+## OPTIONS
 
---noraw 
+--noraw
 
 ## TESTCASE
 
