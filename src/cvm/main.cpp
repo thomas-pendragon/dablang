@@ -502,25 +502,28 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
         return run_newformat(input, autorun, raw, coverage_testing);
     }
 
-    auto mark1 = input.read_uint8();
-    auto mark2 = input.read_uint8();
-    auto mark3 = input.read_uint8();
-    if (mark1 != 'D' || mark2 != 'A' || mark3 != 'B')
+    if (!this->bare)
     {
-        fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
-                (char)mark2, (char)mark3);
-        exit(1);
+        auto mark1 = input.read_uint8();
+        auto mark2 = input.read_uint8();
+        auto mark3 = input.read_uint8();
+        if (mark1 != 'D' || mark2 != 'A' || mark3 != 'B')
+        {
+            fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
+                    (char)mark2, (char)mark3);
+            exit(1);
+        }
+
+        auto compiler_version = input.read_uint64();
+        auto vm_version       = input.read_uint64();
+        auto code_length      = input.read_uint64();
+        auto code_crc         = input.read_uint64();
+
+        (void)compiler_version;
+        (void)vm_version;
+        (void)code_length;
+        (void)code_crc;
     }
-
-    auto compiler_version = input.read_uint64();
-    auto vm_version       = input.read_uint64();
-    auto code_length      = input.read_uint64();
-    auto code_crc         = input.read_uint64();
-
-    (void)compiler_version;
-    (void)vm_version;
-    (void)code_length;
-    (void)code_crc;
 
     instructions.append(input);
 
@@ -1786,6 +1789,7 @@ struct DabRunOptions
     bool  with_attributes = false;
     bool  leaktest        = false;
     bool  newformat       = false;
+    bool  bare            = false;
 
     FILE *output       = stdout;
     bool  close_output = false;
@@ -1880,6 +1884,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->raw = true;
     }
 
+    if (flags["--bare"])
+    {
+        this->bare = true;
+    }
+
     if (flags["--cov"])
     {
         this->cov = true;
@@ -1927,6 +1936,7 @@ int unsafe_main(int argc, char **argv)
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
     vm.newformat       = options.newformat;
+    vm.bare            = options.bare;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);
     vm._registers.resize(0);

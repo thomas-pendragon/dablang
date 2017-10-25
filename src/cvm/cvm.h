@@ -414,6 +414,7 @@ struct DabVM
     bool       verbose         = false;
     bool       with_attributes = false;
     bool       newformat       = false;
+    bool       bare            = false;
     DabVMReset reset;
     Coverage   coverage;
     bool       coverage_testing;
