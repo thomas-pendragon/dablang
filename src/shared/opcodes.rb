@@ -29,12 +29,6 @@ OPCODES_ARRAY_BASE = [
     group: 'STACK PUSH',
     items:
     [
-      {name: 'PUSH_CLASS', args: %i{uint16}}, # push(1)
-      {name: 'PUSH_CONSTANT', args: %i{uint16}}, # constant index, push(1)
-      {name: 'PUSH_ARG', args: %i{uint16}}, # argument index, push(1)
-      {name: 'PUSH_INSTVAR'}, # pop(1), push(1)
-      {name: 'PUSH_SYMBOL', args: %i{vlc}}, # push(1)
-      {name: 'PUSH_METHOD', args: %i{vlc}}, # arg0 = name, push(1)
       {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
     ],
   },

@@ -840,18 +840,6 @@ bool DabVM::execute_single(Stream &input)
         push_constant_fixnum(value);
         break;
     }
-    case OP_PUSH_CONSTANT:
-    {
-        auto index = input.read_uint16();
-        stack.push(constants[index]);
-        break;
-    }
-    case OP_PUSH_METHOD:
-    {
-        auto name = input.read_vlc_string();
-        push_method(name);
-        break;
-    }
     case OP_Q_SET_METHOD:
     {
         auto out_reg    = input.read_reg();
@@ -1181,25 +1169,12 @@ bool DabVM::execute_single(Stream &input)
     {
         break;
     }
-    case OP_PUSH_ARG:
-    {
-        auto index = input.read_uint16();
-        auto var   = get_arg(index);
-        stack.push(var);
-        break;
-    }
     case OP_Q_SET_SYSCALL:
     {
         auto reg     = input.read_reg();
         auto call    = input.read_uint8();
         auto reglist = input.read_reglist();
         kernelcall(true, reg, call, true, reglist, true);
-        break;
-    }
-    case OP_PUSH_CLASS:
-    {
-        auto index = input.read_uint16();
-        push_class(index);
         break;
     }
     case OP_Q_SET_INSTCALL:
@@ -1219,12 +1194,6 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, "\n");
         }
         instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
-        break;
-    }
-    case OP_PUSH_INSTVAR:
-    {
-        auto name = stack.pop_symbol();
-        get_instvar(name, false, dab_register_t::nilreg());
         break;
     }
     case OP_Q_SET_INSTVAR:
@@ -1269,14 +1238,6 @@ bool DabVM::execute_single(Stream &input)
         auto n = input.read_uint16();
         for (size_t i = 0; i < n; i++)
             stack.pop_value();
-        break;
-    }
-    case OP_PUSH_SYMBOL:
-    {
-        auto     s = input.read_vlc_string();
-        DabValue ds(s);
-        ds.data.type = TYPE_SYMBOL;
-        stack.push(ds);
         break;
     }
     case OP_Q_RELEASE:

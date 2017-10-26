@@ -2,12 +2,6 @@
 
 const DabOpcodeInfo g_opcodes[] = {
     {OP_NOP, "NOP", {}},
-    {OP_PUSH_CLASS, "PUSH_CLASS", {OpcodeArg::ARG_UINT16}},
-    {OP_PUSH_CONSTANT, "PUSH_CONSTANT", {OpcodeArg::ARG_UINT16}},
-    {OP_PUSH_ARG, "PUSH_ARG", {OpcodeArg::ARG_UINT16}},
-    {OP_PUSH_INSTVAR, "PUSH_INSTVAR", {}},
-    {OP_PUSH_SYMBOL, "PUSH_SYMBOL", {OpcodeArg::ARG_VLC}},
-    {OP_PUSH_METHOD, "PUSH_METHOD", {OpcodeArg::ARG_VLC}},
     {OP_PUSH_SSA, "PUSH_SSA", {OpcodeArg::ARG_REG}},
     {OP_POP, "POP", {OpcodeArg::ARG_UINT16}},
     {OP_CONSTANT_SYMBOL, "CONSTANT_SYMBOL", {OpcodeArg::ARG_VLC}},
