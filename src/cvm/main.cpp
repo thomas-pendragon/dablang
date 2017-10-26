@@ -221,6 +221,21 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
     instructions.append(input);
     input.seek(0);
 
+    if (!bare)
+    {
+        DabVM::load_newformat(input, autorun, raw, coverage_testing);
+    }
+
+    if (raw)
+    {
+        execute(instructions);
+    }
+
+    return continue_run(input, autorun, raw, coverage_testing);
+}
+
+void DabVM::load_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing)
+{
     (void)autorun;
     (void)raw;
     (void)coverage_testing;
@@ -335,13 +350,6 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
 
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
     instructions.seek(code_address);
-
-    if (raw)
-    {
-        execute(instructions);
-    }
-
-    return continue_run(input, autorun, raw, coverage_testing);
 }
 
 void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_length)

@@ -480,6 +480,7 @@ struct DabVM
     int continue_run(Stream &input, bool autorun, bool raw, bool coverage_testing);
 
     int run_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing);
+    void load_newformat(Stream &input, bool autorun, bool raw, bool coverage_testing);
 
     DabValue &get_arg(int arg_index);
 
