@@ -240,6 +240,8 @@ void DabVM::load_newformat(Stream &input, bool autorun, bool raw, bool coverage_
     (void)raw;
     (void)coverage_testing;
 
+    auto peeked_header = input.peek_header();
+
     auto mark1 = input.read_uint8();
     auto mark2 = input.read_uint8();
     auto mark3 = input.read_uint8();
@@ -279,6 +281,8 @@ void DabVM::load_newformat(Stream &input, bool autorun, bool raw, bool coverage_
 
     for (uint32_t index = 0; index < number_of_sections; index++)
     {
+        this->sections.push_back(peeked_header->sections[index]);
+
         auto name = input.read_string4();
         auto zero = input.read_uint32();
         assert(zero == 0);

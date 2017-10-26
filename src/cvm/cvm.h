@@ -431,6 +431,8 @@ struct DabVM
     std::vector<DabValue>              _registers;
     std::vector<std::vector<DabValue>> _register_stack;
 
+    std::vector<BinSection> sections;
+
     DabClass &get_class(int index)
     {
         if (!classes.count(index))
