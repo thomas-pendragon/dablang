@@ -890,6 +890,16 @@ bool DabVM::execute_single(Stream &input)
         push_method(name);
         break;
     }
+    case OP_Q_SET_METHOD:
+    {
+        auto out_reg    = input.read_reg();
+        auto symbol     = input.read_symbol();
+        auto symbol_str = constants[symbol].data.string;
+        push_method(symbol_str);
+        auto value = stack.pop_value();
+        register_set(out_reg, value);
+        break;
+    }
     case OP_Q_SET_NEW_ARRAY:
     {
         auto out_reg = input.read_reg();

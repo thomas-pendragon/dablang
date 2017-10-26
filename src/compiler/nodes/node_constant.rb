@@ -29,6 +29,10 @@ class DabNodeConstant < DabNode
     root.symbol_index(self)
   end
 
+  def symbol_arg
+    "S#{symbol_index}"
+  end
+
   def value
     @children[0]
   end
