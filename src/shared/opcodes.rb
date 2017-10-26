@@ -85,13 +85,7 @@ OPCODES_ARRAY_BASE = [
     group: 'OTHER',
     items:
     [
-      {name: 'START_FUNCTION', args: %i(vlc uint16 uint16 uint16)}, # function name, class index (or -1), number of local variables, body length
-      {name: 'LOAD_FUNCTION', args: %i(uint16 vlc uint16)}, # [address, name, classIndex]
       {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
-      {name: 'DEFINE_CLASS', args: %i(vlc uint16 uint16)}, # n = name, n2 = class index, n3 = base class index
-      {name: 'BREAK_LOAD'}, # stop loading the code
-      {name: 'REFLECT', args: %i{uint16}}, # pop symbol, arg0 = reflection type, pop(1), push(1)
-      {name: 'DESCRIBE_FUNCTION', args: %i{vlc uint16}}, # arg0 = name, arg1 = number of arguments, pop(arg1*2 + 1) (argument types + return type)
     ],
   },
   {

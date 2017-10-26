@@ -822,44 +822,6 @@ bool DabVM::execute_single(Stream &input)
     }
     switch (opcode)
     {
-    case OP_DESCRIBE_FUNCTION:
-    {
-        auto  name       = input.read_vlc_string();
-        auto  arg_count  = input.read_uint16();
-        auto &reflection = functions[name].reflection;
-        reflection.arg_names.resize(arg_count);
-        reflection.arg_klasses.resize(arg_count);
-        reflection.ret_klass = stack.pop_value().class_index();
-        fprintf(stderr, "vm: describe %s:\n", name.c_str());
-        fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
-        for (size_t i = 0; i < arg_count; i++)
-        {
-            auto klass                    = stack.pop_value().class_index();
-            auto name                     = stack.pop_symbol();
-            auto arg_i                    = arg_count - i - 1;
-            reflection.arg_klasses[arg_i] = klass;
-            reflection.arg_names[arg_i]   = name;
-            fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
-                    name.c_str());
-        }
-        break;
-    }
-    case OP_LOAD_FUNCTION:
-    {
-        size_t _ip         = ip() - 1;
-        size_t address     = input.read_uint16();
-        auto   name        = input.read_vlc_string();
-        auto   class_index = input.read_uint16();
-        add_function(address + _ip, name, class_index);
-        break;
-    }
-    case OP_REFLECT:
-    {
-        size_t reflection_type = input.read_uint16();
-        auto   symbol          = stack.pop_symbol();
-        reflect(reflection_type, symbol, false, 0, false, 0);
-        break;
-    }
     case OP_CONSTANT_SYMBOL:
     {
         auto name = input.read_vlc_string();
@@ -1234,14 +1196,6 @@ bool DabVM::execute_single(Stream &input)
         kernelcall(true, reg, call, true, reglist, true);
         break;
     }
-    case OP_DEFINE_CLASS:
-    {
-        auto name         = input.read_vlc_string();
-        auto index        = input.read_uint16();
-        auto parent_index = input.read_uint16();
-        add_class(name, index, parent_index);
-        break;
-    }
     case OP_PUSH_CLASS:
     {
         auto index = input.read_uint16();
@@ -1289,10 +1243,6 @@ bool DabVM::execute_single(Stream &input)
         auto value  = register_get(reg);
         set_instvar(name, value);
         break;
-    }
-    case OP_BREAK_LOAD:
-    {
-        return false;
     }
     case OP_STACK_RESERVE:
     {
