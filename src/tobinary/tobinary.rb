@@ -34,6 +34,7 @@ class OutputStream
     @preamble = []
     @code = ''
     @metadata_source = nil
+    @header_length = 0
   end
 
   def debug?
@@ -276,8 +277,8 @@ class Parser
   end
 
   def print_temp_header!(sections_count)
-    @header_length = 32 + 32 * sections_count
-    @output_stream.push_header(@header_length)
+    header_length = 32 + 32 * sections_count
+    @output_stream.push_header(header_length)
   end
 
   def _process(item)
@@ -350,7 +351,7 @@ class Parser
           raise 'unknown W_ op'
         end
       else
-        raise 'header not finished yet' if newformat && !@header_finished
+        raise 'header not finished yet' if !raw && newformat && !@header_finished
         if line[0] == 'JMP_IF2'
           @jump_corrections << [pos, line[1].to_s]
           @jump_corrections2 << [pos, line[2].to_s]
