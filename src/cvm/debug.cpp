@@ -105,9 +105,6 @@ struct InstructionsReader : public BaseReader
         _data   = vm.instructions.raw_base_data();
         _length = vm.instructions.raw_base_length();
 
-        if (!vm.newformat)
-            return;
-
         BinSection code_section;
         bool       has_code = false;
 

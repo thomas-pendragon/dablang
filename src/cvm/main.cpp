@@ -509,39 +509,7 @@ int DabVM::run(Stream &input, bool autorun, bool raw, bool coverage_testing)
 {
     this->coverage_testing = coverage_testing;
 
-    if (this->newformat)
-    {
-        return run_newformat(input, autorun, raw, coverage_testing);
-    }
-
-    if (!this->bare)
-    {
-        auto mark1 = input.read_uint8();
-        auto mark2 = input.read_uint8();
-        auto mark3 = input.read_uint8();
-        if (mark1 != 'D' || mark2 != 'A' || mark3 != 'B')
-        {
-            fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
-                    (char)mark2, (char)mark3);
-            exit(1);
-        }
-
-        auto compiler_version = input.read_uint64();
-        auto vm_version       = input.read_uint64();
-        auto code_length      = input.read_uint64();
-        auto code_crc         = input.read_uint64();
-
-        (void)compiler_version;
-        (void)vm_version;
-        (void)code_length;
-        (void)code_crc;
-    }
-
-    instructions.append(input);
-
-    execute(instructions);
-
-    return continue_run(input, autorun, raw, coverage_testing);
+    return run_newformat(input, autorun, raw, coverage_testing);
 }
 
 int DabVM::continue_run(Stream &input, bool autorun, bool raw, bool coverage_testing)
@@ -1800,7 +1768,6 @@ struct DabRunOptions
     bool  verbose         = false;
     bool  with_attributes = false;
     bool  leaktest        = false;
-    bool  newformat       = true;
     bool  bare            = false;
 
     FILE *output       = stdout;
@@ -1910,11 +1877,6 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->autorelease = false;
     }
-
-    if (flags["--newformat"])
-    {
-        this->newformat = true;
-    }
 }
 
 int unsafe_main(int argc, char **argv)
@@ -1947,7 +1909,6 @@ int unsafe_main(int argc, char **argv)
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
-    vm.newformat       = options.newformat;
     vm.bare            = options.bare;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
     vm.constants.resize(0);

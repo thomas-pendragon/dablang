@@ -413,7 +413,6 @@ struct DabVM
     bool       shutdown        = false;
     bool       verbose         = false;
     bool       with_attributes = false;
-    bool       newformat       = true;
     bool       bare            = false;
     DabVMReset reset;
     Coverage   coverage;
