@@ -95,18 +95,10 @@ def run_test(settings)
   actual_body = open(vmo).read.strip
   begin
     compare_output(info, actual_body, test_body)
+    File.open(out, 'wb') { |f| f << '1' }
   rescue DabCompareError
     raise
   end
-
-  # test_body = data[:expect_stderr]
-  # actual_body = open(vme).read.strip
-  # begin
-  #   compare_output(info, actual_body, test_body)
-  #   File.open(out, 'wb') { |f| f << '1' }
-  # rescue DabCompareError
-  #   raise
-  # end
 end
 
 if $settings[:input].downcase.end_with? '.test'
