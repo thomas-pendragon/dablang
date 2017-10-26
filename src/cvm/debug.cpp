@@ -94,14 +94,46 @@ void DabVM_debug::print_code(bool current_only)
 struct InstructionsReader : public BaseReader
 {
     DabVM &vm;
+
+    const byte *_data;
+    size_t      _length;
+
+    size_t start_position = 0;
+
     InstructionsReader(DabVM &vm, size_t &position) : BaseReader(position), vm(vm)
     {
+        _data   = vm.instructions.raw_base_data();
+        _length = vm.instructions.raw_base_length();
+
+        if (!vm.newformat)
+            return;
+
+        BinSection code_section;
+        bool       has_code = false;
+
+        for (auto &section : vm.sections)
+        {
+            if (std::string(section.name) == "code")
+            {
+                code_section = section;
+                has_code     = true;
+                break;
+            }
+        }
+
+        if (!has_code)
+            throw "no code?";
+
+        start_position = code_section.pos;
+
+        _data += start_position;
+        _length = code_section.length;
     }
 
     virtual size_t raw_read(void *buffer, size_t size) override
     {
-        auto data       = vm.instructions.raw_base_data();
-        auto length     = vm.instructions.raw_base_length();
+        auto data       = _data;
+        auto length     = _length;
         auto offset     = position();
         auto max_length = std::min(size, length - offset);
 
@@ -127,8 +159,9 @@ void DabVM_debug::prepare_disasm()
     InstructionsReader                  reader(vm, position);
     DisasmProcessor<InstructionsReader> processor(reader);
 
-    processor.go(
-        [this](size_t pos, std::string info) { disasm.push_back(std::make_pair(pos, info)); });
+    processor.go([this, reader](size_t pos, std::string info) {
+        disasm.push_back(std::make_pair(pos + reader.start_position, info));
+    });
 }
 
 void DabVM::execute_debug(Stream &input)
