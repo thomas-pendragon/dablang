@@ -268,5 +268,5 @@ task :example, [:number] => [cvm] do |_t, args|
 end
 
 task :benchmark do
-  psystem("git-benchmark performance-base..HEAD 'ruby src/compiler/compiler.rb tmp/test_compiler_performance_0001_random.dab'")
+  psystem("git-benchmark performance-base..HEAD 'timeout 5 ruby src/compiler/compiler.rb tmp/test_compiler_performance_spec_0002_bigger_random.dab'")
 end
