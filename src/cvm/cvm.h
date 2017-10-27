@@ -587,6 +587,8 @@ struct DabVM
     void register_set(dab_register_t reg_index, const DabValue &value);
 
     bool run_leaktest(FILE *output);
+
+    size_t dyn_get_symbol(const std::string &string);
 };
 
 struct DabVM_debug

@@ -11,6 +11,7 @@ enum
     KERNEL_PRINT    = 0x00,
     KERNEL_EXIT     = 0x01,
     KERNEL_USECOUNT = 0x02,
+    KERNEL_TOSYM    = 0x03,
 };
 
 DabVM::DabVM()
@@ -1548,11 +1549,40 @@ void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool 
         }
         break;
     }
+    case KERNEL_TOSYM:
+    {
+        assert(use_reglist);
+        assert(use_out_reg);
+
+        auto string_ob = cast(register_get(reglist[0]), CLASS_STRING);
+        auto string    = string_ob.data.string;
+
+        auto symbol_index = dyn_get_symbol(string);
+
+        auto value = constants[symbol_index];
+
+        register_set(out_reg, value);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown kernel call <%d>.\n", (int)call);
         exit(1);
         break;
     }
+}
+
+size_t DabVM::dyn_get_symbol(const std::string &string)
+{
+    for (size_t i = 0; i < constants.size(); i++)
+    {
+        auto &constant = constants[i];
+        if (constant.data.string == string)
+        {
+            return i;
+        }
+    }
+    push_constant_symbol(string);
+    return constants.size() - 1;
 }
 
 void DabVM::push_constant_symbol(const std::string &name)
