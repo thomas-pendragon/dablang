@@ -539,8 +539,6 @@ struct DabVM
 
     void push_constant_string(const std::string &name);
 
-    void push_constant_fixnum(uint64_t value);
-
     void push_method(const std::string &name);
 
     DabFunction &add_function(size_t address, const std::string &name, uint16_t class_index);
