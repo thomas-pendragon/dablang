@@ -73,7 +73,7 @@ file cvm_opcodes => [opcodes, opcode_task] do
 end
 
 file cvm_opcodes_debug => [opcodes, opcode_debug_task] do
-  psystem("ruby #{opcode_debug_task} > #{cvm_opcodes_debug}")
+  psystem("ruby #{opcode_debug_task} | clang-format > #{cvm_opcodes_debug}")
 end
 
 file makefile => [premake_source] do
