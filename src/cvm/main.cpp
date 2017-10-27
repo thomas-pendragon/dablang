@@ -823,24 +823,6 @@ bool DabVM::execute_single(Stream &input)
     }
     switch (opcode)
     {
-    case OP_CONSTANT_SYMBOL:
-    {
-        auto name = input.read_vlc_string();
-        push_constant_symbol(name);
-        break;
-    }
-    case OP_CONSTANT_STRING:
-    {
-        auto name = input.read_vlc_string();
-        push_constant_string(name);
-        break;
-    }
-    case OP_CONSTANT_NUMBER:
-    {
-        auto value = input.read_uint64();
-        push_constant_fixnum(value);
-        break;
-    }
     case OP_Q_SET_METHOD:
     {
         auto out_reg    = input.read_reg();

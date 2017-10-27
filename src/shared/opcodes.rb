@@ -40,15 +40,6 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
-    group: 'CONSTANTS',
-    items:
-    [
-      {name: 'CONSTANT_SYMBOL', args: %i{vlc}}, # symbol
-      {name: 'CONSTANT_STRING', args: %i{vlc}}, # string
-      {name: 'CONSTANT_NUMBER', args: %i{uint64}}, # number
-    ],
-  },
-  {
     group: 'CALLS',
     items:
     [
