@@ -126,20 +126,6 @@ std::string Stream::read_cstring()
     return ret;
 }
 
-Buffer Stream::read_vlc_buffer()
-{
-    size_t len = read_uint8();
-    if (len == 255)
-    {
-        len = read_uint64();
-    }
-    assert(len <= remaining());
-    Buffer ret;
-    ret.append(data(), len);
-    _position += len;
-    return ret;
-}
-
 void Stream::append(const byte *data, size_t length)
 {
     buffer.append(data, length);
