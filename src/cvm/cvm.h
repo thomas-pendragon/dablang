@@ -566,7 +566,6 @@ struct DabVM
 
     void get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg);
     void set_instvar(const std::string &name, const DabValue &value);
-    void push_array(size_t n);
 
     void extract(const std::string &name);
 

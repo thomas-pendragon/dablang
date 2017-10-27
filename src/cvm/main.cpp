@@ -1266,19 +1266,6 @@ bool DabVM::execute_single(Stream &input)
     return true;
 }
 
-void DabVM::push_array(size_t n)
-{
-    DabValue array_class = classes[CLASS_ARRAY];
-    DabValue value       = array_class.create_instance();
-    auto &   array       = value.array();
-    array.resize(n);
-    for (size_t i = 0; i < n; i++)
-    {
-        array[n - i - 1] = stack.pop_value();
-    }
-    stack.push_value(value);
-}
-
 void DabVM::get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg)
 {
     auto value = get_self().get_instvar(name);
