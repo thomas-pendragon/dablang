@@ -1284,11 +1284,6 @@ void DabVM::set_instvar(const std::string &name, const DabValue &value)
     get_self().set_instvar(name, value);
 }
 
-void DabVM::push_class(int index)
-{
-    stack.push(classes[index]);
-}
-
 DabValue DabVM::cast(const DabValue &value, int klass_index)
 {
     auto from = value.class_index();
