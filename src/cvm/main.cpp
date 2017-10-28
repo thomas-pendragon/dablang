@@ -1191,13 +1191,6 @@ bool DabVM::execute_single(Stream &input)
         value.retain();
         break;
     }
-    case OP_CAST:
-    {
-        auto klass_index = input.read_uint16();
-        auto value       = stack.pop_value();
-        stack.push_value(cast(value, klass_index));
-        break;
-    }
     case OP_Q_CAST:
     {
         auto dst_reg     = input.read_reg();

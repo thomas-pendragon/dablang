@@ -40,13 +40,6 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
-    group: 'CALLS',
-    items:
-    [
-      {name: 'CAST', args: [:uint16]}, # pop(1), push(1)
-    ],
-  },
-  {
     group: 'FLOW',
     items:
     [

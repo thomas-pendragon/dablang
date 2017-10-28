@@ -4,7 +4,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_NOP, "NOP", {}},
     {OP_PUSH_SSA, "PUSH_SSA", {OpcodeArg::ARG_REG}},
     {OP_POP, "POP", {OpcodeArg::ARG_UINT16}},
-    {OP_CAST, "CAST", {OpcodeArg::ARG_UINT16}},
     {OP_JMP, "JMP", {OpcodeArg::ARG_INT16}},
     {OP_Q_JMP_IF2, "Q_JMP_IF2", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT16, OpcodeArg::ARG_INT16}},
     {OP_COV, "COV", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
