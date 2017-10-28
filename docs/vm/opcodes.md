@@ -97,7 +97,7 @@ exclude_from_nav: true
 |`20`|`Q_SET_HAS_BLOCK`|`reg`|
 |`21`|`Q_SET_NEW_ARRAY`|`reg`, `reglist`|
 |`22`|`Q_SET_SELF`|`reg`|
-|`23`|`Q_YIELD`|`reglist`|
+|`23`|`Q_YIELD`|`reg`, `reglist`|
 |`24`|`W_HEADER`|`uint16`|
 |`25`|`W_SECTION`|`uint16`, `string4`|
 |`26`|`W_END_HEADER`||

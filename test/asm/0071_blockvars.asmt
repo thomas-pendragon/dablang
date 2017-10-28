@@ -63,8 +63,7 @@ func main()
                    Ftest:
                                  STACK_RESERVE 0
 /* 1            */               Q_SET_NUMBER R0, 1
-                                 Q_YIELD R0
-                                 POP 1
+                                 Q_YIELD RNIL, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

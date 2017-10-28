@@ -163,11 +163,17 @@ class DabNode
   end
 
   def compile_top_level(output)
+    if self.respond_to?(:compile_as_ssa)
+      return compile_as_ssa(output, nil)
+    end
     compile(output)
     output.print('POP', 1) if returns_value?
   end
 
-  def compile(_output)
+  def compile(output)
+    if self.respond_to?(:compile_as_ssa)
+      return compile_as_ssa(output, nil)
+    end
     err '!'.red * 80
     root.dump
     err '~'.red * 80

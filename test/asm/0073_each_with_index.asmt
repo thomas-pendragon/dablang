@@ -64,8 +64,7 @@ class Array
                    L2:
                                  Q_SET_SELF R4
 /* []           */               Q_SET_INSTCALL R5, R4, S3, R0
-                                 Q_YIELD R5, R0
-                                 POP 1
+                                 Q_YIELD RNIL, R5, R0
 /* 1            */               Q_SET_NUMBER R6, 1
 /* +            */               Q_SET_INSTCALL R0, R0, S1, R6
                                  JMP L1

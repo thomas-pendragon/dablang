@@ -897,6 +897,8 @@ bool DabVM::execute_single(Stream &input)
     }
     case OP_Q_YIELD:
     {
+        auto out_reg = input.read_reg();
+
         auto reglist = input.read_reglist();
 
         auto n_args = reglist.size();
@@ -912,8 +914,7 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, ".\n");
         }
 
-        push_new_frame(false, self, n_args, 0, dab_register_t::nilreg(), get_block_capture(), true,
-                       reglist);
+        push_new_frame(false, self, n_args, 0, out_reg, get_block_capture(), true, reglist);
         instructions.seek(addr);
 
         break;

@@ -4,9 +4,9 @@ require_relative '../processors/uncomplexify.rb'
 class DabNodeYield < DabNodeBasecall
   lower_with Uncomplexify
 
-  def compile(output)
+  def compile_as_ssa(output, output_register)
     list = args.map(&:register_string)
-    output.printex(self, 'Q_YIELD', *list)
+    output.printex(self, 'Q_YIELD', output_register ? "R#{output_register}" : 'RNIL', *list)
   end
 
   def formatted_source(options)
