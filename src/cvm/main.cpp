@@ -895,26 +895,6 @@ bool DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets, block_name, capture, true, out_reg, reglist);
         break;
     }
-    case OP_YIELD:
-    {
-        auto n_args = input.read_uint16();
-
-        auto self = get_self();
-        auto addr = get_block_addr();
-
-        if (verbose)
-        {
-            fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
-            fprintf(stderr, "vm: capture data is ");
-            get_block_capture().dump(stderr);
-            fprintf(stderr, ".\n");
-        }
-
-        push_new_frame(true, self, n_args, 0, dab_register_t::nilreg(), get_block_capture());
-        instructions.seek(addr);
-
-        break;
-    }
     case OP_Q_YIELD:
     {
         auto reglist = input.read_reglist();
@@ -1118,26 +1098,6 @@ bool DabVM::execute_single(Stream &input)
         instructions.seek(new_address);
         break;
     }
-    case OP_JMP_IF:
-    case OP_JMP_IFN:
-    {
-        auto mod   = input.read_int16() - 3;
-        auto value = stack.pop_value();
-        if (value.truthy() == (opcode == OP_JMP_IF))
-        {
-            instructions.seek(ip() + mod);
-        }
-        break;
-    }
-    case OP_JMP_IF2:
-    {
-        auto mod_true  = input.read_int16() - 5;
-        auto mod_false = input.read_int16() - 5;
-        auto value     = stack.pop_value();
-        auto test      = value.truthy();
-        instructions.seek(ip() + (test ? mod_true : mod_false));
-        break;
-    }
     case OP_Q_JMP_IF2:
     {
         auto value_reg = input.read_reg();
@@ -1200,13 +1160,6 @@ bool DabVM::execute_single(Stream &input)
     {
         auto n = input.read_uint16();
         assert(n == 0);
-        break;
-    }
-    case OP_COV_FILE:
-    {
-        auto hash  = input.read_uint16();
-        auto fname = input.read_vlc_string();
-        coverage.add_file(hash, fname);
         break;
     }
     case OP_COV:
