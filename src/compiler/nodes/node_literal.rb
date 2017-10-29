@@ -4,4 +4,8 @@ class DabNodeLiteral < DabNode
   def constant?
     true
   end
+
+  def no_side_effects?
+    true
+  end
 end

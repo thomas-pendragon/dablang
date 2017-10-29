@@ -16,15 +16,15 @@ class DabNodeArg < DabNode
     function&.arg_type(@index) || DabTypeObject.new
   end
 
-  def compile(output)
-    output.print('PUSH_ARG', @index)
-  end
-
   def compile_as_ssa(output, output_register)
     output.comment(function&.arg_name(@index))
     output.print('Q_SET_ARG', "R#{output_register}", @index)
     if $no_autorelease
       output.printex(self, 'Q_RETAIN', "R#{output_register}")
     end
+  end
+
+  def no_side_effects?
+    true
   end
 end

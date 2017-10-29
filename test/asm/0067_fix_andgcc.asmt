@@ -44,6 +44,8 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
+                                 Q_SET_TRUE RNIL
+                                 Q_SET_TRUE RNIL
 /* "ok"         */               Q_SET_STRING R0, _DATA + 0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL

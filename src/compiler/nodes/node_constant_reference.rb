@@ -68,4 +68,8 @@ class DabNodeConstantReference < DabNode
     super
     target.unregister_reference(self)
   end
+
+  def no_side_effects?
+    true
+  end
 end

@@ -35,6 +35,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
+/* socket       */               Q_SET_CALL RNIL, S2
                                  Q_RETURN RNIL
  
                    Fsetsockopt:

@@ -16,10 +16,6 @@ class DabNodeRegisterGet < DabNode
     "R#{input_register} [#{input_varname}]"
   end
 
-  def compile(output)
-    output.print('PUSH_SSA', "R#{input_register}")
-  end
-
   def compile_as_ssa(output, output_register)
     output.print('Q_SET_REG', output_register ? "R#{output_register}" : 'RNIL', "R#{input_register}")
     if $no_autorelease
@@ -65,6 +61,10 @@ class DabNodeRegisterGet < DabNode
   def unssa!
     node = DabNodeLocalVar.new("r#{input_register}")
     replace_with!(node)
+    true
+  end
+
+  def no_side_effects?
     true
   end
 end

@@ -36,9 +36,6 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
-                                 Q_SET_REG RNIL, R0
-                                 Q_SET_REG RNIL, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

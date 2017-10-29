@@ -167,7 +167,7 @@ class DabNode
       return compile_as_ssa(output, nil)
     end
     compile(output)
-    output.print('POP', 1) if returns_value?
+    raise "#{self.class} should not return value here" if returns_value?
   end
 
   def compile(output)
@@ -562,5 +562,9 @@ class DabNode
 
   def active_registers
     previous_nodes(DabNodeRegisterSet).map(&:output_register).uniq
+  end
+
+  def no_side_effects?
+    false
   end
 end

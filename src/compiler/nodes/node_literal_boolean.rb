@@ -12,7 +12,7 @@ class DabNodeLiteralBoolean < DabNode
   end
 
   def compile_as_ssa(output, output_register)
-    output.printex(self, 'Q_SET_' + (@boolean ? 'TRUE' : 'FALSE'), "R#{output_register}")
+    output.printex(self, 'Q_SET_' + (@boolean ? 'TRUE' : 'FALSE'), output_register ? "R#{output_register}" : 'RNIL')
   end
 
   def extra_value
