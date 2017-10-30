@@ -1164,13 +1164,6 @@ bool DabVM::execute_single(Stream &input)
         coverage.add_line(hash, line);
         break;
     }
-    case OP_POP:
-    {
-        auto n = input.read_uint16();
-        for (size_t i = 0; i < n; i++)
-            stack.pop_value();
-        break;
-    }
     case OP_Q_RELEASE:
     {
         auto reg   = input.read_reg();

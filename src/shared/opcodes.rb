@@ -26,13 +26,6 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
-    group: 'STACK OTHER',
-    items:
-    [
-      {name: 'POP', args: %i{uint16}}, # pop(n)
-    ],
-  },
-  {
     group: 'FLOW',
     items:
     [
