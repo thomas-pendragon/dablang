@@ -7,7 +7,6 @@ W_STRING "foo"
 
 CODE:
 Q_SET_STRING R0, STRING, 3
-PUSH_SSA R0
 
 ## OPTIONS
 
@@ -19,7 +18,7 @@ Last stack element should be literal string "foo".
 
 ## TESTCASE
 
-$stack[-1]
+$reg[0]
 
 ## EXPECT
 

@@ -8,7 +8,6 @@ W_STRING "foo"
 CODE:
 Q_SET_STRING R0, STRING, 3
 Q_SET_SYSCALL R1, 3, R0 # TOSYM
-PUSH_SSA R1
 
 ## OPTIONS
 
@@ -20,7 +19,7 @@ Last stack element should be symbol :foo
 
 ## TESTCASE
 
-$stack[-1]
+$reg[1]
 
 ## EXPECT
 
