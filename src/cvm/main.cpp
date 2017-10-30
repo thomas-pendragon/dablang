@@ -919,12 +919,6 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
-    case OP_PUSH_SSA:
-    {
-        auto reg_index = input.read_reg();
-        stack.push(register_get(reg_index));
-        break;
-    }
     case OP_Q_SET_CLOSURE:
     {
         auto reg_index     = input.read_reg();

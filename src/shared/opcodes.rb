@@ -26,13 +26,6 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
-    group: 'STACK PUSH',
-    items:
-    [
-      {name: 'PUSH_SSA', args: %i[reg]}, # stack <- reg(arg0); push(1)
-    ],
-  },
-  {
     group: 'STACK OTHER',
     items:
     [
