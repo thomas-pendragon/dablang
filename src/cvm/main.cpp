@@ -1554,6 +1554,14 @@ void DabVM::extract(const std::string &name)
     {
         run_leaktest(output);
     }
+    else if (name == "reg[0]")
+    {
+        register_get(0).dump(output);
+    }
+    else if (name == "reg[1]")
+    {
+        register_get(1).dump(output);
+    }
     else
     {
         fprintf(stderr, "vm: unknown extract option <%s>.\n", name.c_str());
