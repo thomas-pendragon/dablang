@@ -33,8 +33,7 @@ class DabNodeRegisterSet < DabNode
     if value.respond_to?(:compile_as_ssa)
       value.compile_as_ssa(output, output_register)
     else
-      value.compile(output)
-      output.print('Q_SET_POP', "R#{output_register}")
+      raise "cannot compile #{value.class} (no ssa form)"
     end
   end
 

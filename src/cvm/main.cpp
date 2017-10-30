@@ -950,13 +950,6 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, str);
         break;
     }
-    case OP_Q_SET_POP:
-    {
-        auto reg_index = input.read_reg();
-        auto value     = stack.pop_value();
-        register_set(reg_index, value);
-        break;
-    }
     case OP_Q_SET_SELF:
     {
         auto reg_index = input.read_reg();

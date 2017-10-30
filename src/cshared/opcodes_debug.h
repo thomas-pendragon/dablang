@@ -7,7 +7,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_COV, "COV", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
     {OP_STACK_RESERVE, "STACK_RESERVE", {OpcodeArg::ARG_UINT16}},
     {OP_Q_SET_CONSTANT, "Q_SET_CONSTANT", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT16}},
-    {OP_Q_SET_POP, "Q_SET_POP", {OpcodeArg::ARG_REG}},
     {OP_Q_SET_NUMBER, "Q_SET_NUMBER", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64}},
     {OP_Q_SET_ARG, "Q_SET_ARG", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
     {OP_Q_SET_CLASS, "Q_SET_CLASS", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
