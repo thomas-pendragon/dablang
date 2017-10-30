@@ -1763,12 +1763,24 @@ int unsafe_main(int argc, char **argv)
     vm.with_attributes = options.with_attributes;
     vm.bare            = options.bare;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
-    vm.constants.resize(0);
-    vm._registers.resize(0);
-    vm._register_stack.resize(0);
+
+    auto clear_registers = [&vm]() {
+        vm.constants.resize(0);
+        vm._registers.resize(0);
+        vm._register_stack.resize(0);
+    };
+    auto leaktest = options.extract_part == "leaktest";
+    if (leaktest)
+    {
+        clear_registers();
+    }
     if (options.extract)
     {
         vm.extract(options.extract_part);
+    }
+    if (!leaktest)
+    {
+        clear_registers();
     }
     if (options.close_file)
     {
