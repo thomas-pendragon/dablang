@@ -89,6 +89,7 @@
 ## Assembler ##
 
 - COV should not steal opcode labels
+- reorganize and rename opcodes
 
 ## Testing ##
 
