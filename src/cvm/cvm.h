@@ -62,6 +62,7 @@ enum
     TYPE_UINT32,
     TYPE_UINT64,
     TYPE_INT32,
+    TYPE_INT64,
     TYPE_METHOD,
     TYPE_INTPTR,
     TYPE_BYTEBUFFER,
@@ -164,6 +165,7 @@ struct DabValueData
     uint32_t        num_uint32 = 0;
     uint64_t        num_uint64 = 0;
     int32_t         num_int32  = 0;
+    int64_t         num_int64  = 0;
     std::string     string;
     bool            boolean = false;
     DabObjectProxy *object  = nullptr;
@@ -242,6 +244,12 @@ struct DabValue
         assert(class_index == CLASS_UINT32);
         data.type       = TYPE_UINT32;
         data.num_uint32 = value;
+    }
+    DabValue(size_t class_index, int64_t value)
+    {
+        assert(class_index == CLASS_INT64);
+        data.type      = TYPE_INT64;
+        data.num_int64 = value;
     }
     DabValue(size_t class_index, uint64_t value)
     {

@@ -1026,6 +1026,14 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
+    case OP_Q_SET_NUMBER_INT64:
+    {
+        auto     reg_index = input.read_reg();
+        auto     n         = input.read_int64();
+        DabValue value(CLASS_INT64, n);
+        register_set(reg_index, value);
+        break;
+    }
     case OP_Q_SET_NIL:
     {
         auto reg_index = input.read_reg();

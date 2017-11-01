@@ -10,6 +10,7 @@ STANDARD_CLASSES = %w(
   Uint32
   Uint64
   Int32
+  Int64
   Method
   IntPtr
   ByteBuffer

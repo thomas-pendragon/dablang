@@ -14,6 +14,7 @@
 - [Uint32](/classes/uint32.html)
 - [Uint64](/classes/uint64.html)
 - [Int32](/classes/int32.html)
+- [Int64](/classes/int64.html)
 - [Method](/classes/method.html)
 - [IntPtr](/classes/intptr.html)
 - [ByteBuffer](/classes/bytebuffer.html)

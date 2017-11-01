@@ -13,7 +13,8 @@ enum
     CLASS_UINT32     = 8,
     CLASS_UINT64     = 9,
     CLASS_INT32      = 10,
-    CLASS_METHOD     = 11,
-    CLASS_INTPTR     = 12,
-    CLASS_BYTEBUFFER = 13,
+    CLASS_INT64      = 11,
+    CLASS_METHOD     = 12,
+    CLASS_INTPTR     = 13,
+    CLASS_BYTEBUFFER = 14,
 };

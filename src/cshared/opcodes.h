@@ -48,4 +48,5 @@ enum
     OP_Q_SET_REFLECT2       = 0x2B,
     OP_W_COV_FILE           = 0x2C,
     OP_Q_SET_METHOD         = 0x2D,
+    OP_Q_SET_NUMBER_INT64   = 0x2E,
 };
