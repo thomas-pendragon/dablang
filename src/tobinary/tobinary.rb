@@ -112,7 +112,7 @@ class OutputStream
   end
 
   def _push_fixnum(value, spec)
-    raise TypeError.new("expected Fixnum, got #{value} (#{value.class})") unless value.is_a? Fixnum
+    raise TypeError.new("expected Integer, got #{value} (#{value.class})") unless value.is_a? Integer
     @code += [value].pack(spec)
   end
 
