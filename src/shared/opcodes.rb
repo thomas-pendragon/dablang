@@ -51,7 +51,6 @@ OPCODES_ARRAY_BASE = [
     group: 'REGISTER-BASED OPCODES - SETTERS',
     items:
     [
-      {name: 'Q_SET_CONSTANT', args: %i[reg int16]}, # reg(arg0) <- constant(arg1)
       {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg(arg0) <- arg1
       {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
       {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)

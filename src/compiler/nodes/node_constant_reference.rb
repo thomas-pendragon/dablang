@@ -43,8 +43,7 @@ class DabNodeConstantReference < DabNode
       output.print('Q_SET_STRING', "R#{output_register}", "_DATA + #{target.asm_position}", target.asm_length - 1)
       return
     end
-    output.comment(self.extra_value)
-    output.print('Q_SET_CONSTANT', "R#{output_register}", self.index)
+    raise "cannot compile #{self.class} (#{target.value.class}) as ssa"
   end
 
   def my_type

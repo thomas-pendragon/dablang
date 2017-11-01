@@ -934,13 +934,6 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_CONSTANT:
-    {
-        auto reg_index      = input.read_reg();
-        auto constant_index = input.read_int16();
-        register_set(reg_index, constants[constant_index]);
-        break;
-    }
     case OP_Q_SET_STRING:
     {
         auto reg_index = input.read_reg();
