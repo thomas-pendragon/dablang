@@ -106,6 +106,9 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
             case OpcodeArg::ARG_INT32:
                 op.data.push_back(stream.read_int32());
                 break;
+            case OpcodeArg::ARG_INT64:
+                op.data.push_back(stream.read_int64());
+                break;
             case OpcodeArg::ARG_REG:
                 op.data.push_back(stream.read_reg());
                 break;

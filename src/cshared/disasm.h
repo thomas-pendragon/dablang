@@ -125,6 +125,16 @@ struct AsmStream
         info += output;
     }
 
+    void read_int64(std::string &info)
+    {
+        auto value = _read<int64_t>();
+        char output[32];
+        sprintf(output, "%" PRId64, value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     void read_vlc(std::string &info)
     {
         size_t length = _read<uint8_t>();
@@ -227,6 +237,9 @@ struct DisasmProcessor
                         break;
                     case OpcodeArg::ARG_UINT64:
                         stream.read_uint64(info);
+                        break;
+                    case OpcodeArg::ARG_INT64:
+                        stream.read_int64(info);
                         break;
                     case OpcodeArg::ARG_REG:
                         stream.read_reg(info);

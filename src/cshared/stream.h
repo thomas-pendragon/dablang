@@ -70,6 +70,7 @@ struct Stream
     uint8_t  read_uint8();
     int16_t  read_int16();
     int32_t  read_int32();
+    int64_t  read_int64();
     uint16_t read_uint16();
     uint32_t read_uint32();
     uint64_t read_uint64();

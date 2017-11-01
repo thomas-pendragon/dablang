@@ -140,6 +140,10 @@ class OutputStream
     _push_fixnum(value, 'Q<')
   end
 
+  def _push_int64(value)
+    _push_fixnum(value, 'q<')
+  end
+
   def _push(arg)
     @code += arg
   end

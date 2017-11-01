@@ -57,6 +57,11 @@ int32_t Stream::read_int32()
     return _read<int32_t>();
 }
 
+int64_t Stream::read_int64()
+{
+    return _read<int64_t>();
+}
+
 dab_register_t Stream::read_reg()
 {
     return read_uint16();

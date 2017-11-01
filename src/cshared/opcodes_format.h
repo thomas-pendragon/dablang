@@ -11,6 +11,7 @@ enum class OpcodeArg
     ARG_UINT64,
     ARG_INT16,
     ARG_INT32,
+    ARG_INT64,
     ARG_VLC,
     ARG_REG,
     ARG_SYMBOL,
