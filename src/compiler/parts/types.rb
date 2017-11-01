@@ -7,7 +7,8 @@ class DabType
     return DabTypeUint.new(16) if typename == 'Uint16'
     return DabTypeUint.new(32) if typename == 'Uint32'
     return DabTypeUint.new(64) if typename == 'Uint64'
-    return DabTypeInt32.new if typename == 'Int32'
+    return DabTypeInt.new(32) if typename == 'Int32'
+    return DabTypeInt.new(64) if typename == 'Int64'
     return DabTypeIntPtr.new if typename == 'IntPtr'
     return DabTypeNil.new if typename == 'NilClass'
     raise "Unknown type #{typename}"
@@ -155,13 +156,17 @@ class DabTypeUint < DabTypeFixnum
   end
 end
 
-class DabTypeInt32 < DabTypeFixnum
+class DabTypeInt < DabTypeFixnum
+  def initialize(size)
+    @size = size
+  end
+
   def type_string
-    'Int32'
+    "Int#{@size}"
   end
 
   def requires_cast?(other_type)
-    can_assign_from?(other_type) && !(other_type.base_type.is_a? DabTypeInt32)
+    can_assign_from?(other_type) && !(other_type.base_type.is_a? self.class)
   end
 
   def can_assign_from?(other_type)

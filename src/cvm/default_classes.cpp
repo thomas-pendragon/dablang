@@ -250,6 +250,7 @@ void DabVM::define_default_classes()
     CREATE_INT_CLASS(uint64, Uint64, UINT64);
 
     CREATE_INT_CLASS(int32, Int32, INT32);
+    CREATE_INT_CLASS(int64, Int64, INT64);
 
     int32_class.add_simple_function("byteswap", [](DabValue self) {
         auto     value     = self.data.num_int32;
