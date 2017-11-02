@@ -32,7 +32,7 @@ end
 def run_test(settings)
   input = settings[:input]
   test_output_dir = './tmp/'
-  test_prefix = 'example_'
+  test_prefix = settings[:test_output_prefix] || 'example_'
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
@@ -41,6 +41,7 @@ def run_test(settings)
   dab = input
   asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabca')).to_s
   bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabcb')).to_s
+  out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
 
   stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
   stdlib_glob = stdlib_path + '/*.dab'
@@ -53,7 +54,11 @@ def run_test(settings)
 
   assemble(asm, bin)
 
-  execute(bin, run_options) unless $dont_run_example
+  if $dont_run_example
+    File.open(out, 'wb') { |f| f << '1' }
+  else
+    execute(bin, run_options)
+  end
 end
 
 run_test($settings)
