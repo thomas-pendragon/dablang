@@ -37,8 +37,17 @@ classes_docs_task = './tasks/classes_docs.rb'
 ffi_file = './src/cvm/ffi_signatures.h'
 ffi_task = './tasks/ffi_signatures.rb'
 
-csources = Dir.glob('src/{cvm,cshared,cdisasm,cdumpcov}/**/*')
-csources += [cvm_opcodes, cvm_classes, cvm_opcodes_debug]
+csources_type = {}
+%w[cvm cdisasm cdumpcov].each do |ctype|
+  sources = Dir.glob("src/{#{ctype},cshared}/**/*")
+  sources += [cvm_opcodes, cvm_classes, cvm_opcodes_debug]
+  sources.sort!
+  sources.uniq!
+
+  csources_type[ctype] = sources
+end
+
+csources = csources_type.values.reduce(&:|)
 csources.sort!
 csources.uniq!
 
@@ -81,19 +90,19 @@ file makefile => [premake_source] do
   psystem("mv build/Makefile #{makefile}")
 end
 
-file cdisasm => csources + [makefile] do
+file cdisasm => csources_type['cdisasm'] + [makefile] do
   Dir.chdir('build') do
     psystem("make -f ../#{makefile} cdisasm verbose=1")
   end
 end
 
-file cvm => csources + [makefile, ffi_file] do
+file cvm => csources_type['cvm'] + [makefile, ffi_file] do
   Dir.chdir('build') do
     psystem("make -f ../#{makefile} cvm verbose=1")
   end
 end
 
-file cdumpcov => csources + [makefile] do
+file cdumpcov => csources_type['cdumpcov'] + [makefile] do
   Dir.chdir('build') do
     psystem("make -f ../#{makefile} cdumpcov verbose=1")
   end
