@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  var<Int8> a = 61;
+  var<Int8> b = -19;
+  puts(a * b);
+  puts(a.class);
+}
+
+## OPTIONS
+
+--no-opt
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+121
+Int8

@@ -7,6 +7,7 @@ class DabType
     return DabTypeUint.new(16) if typename == 'Uint16'
     return DabTypeUint.new(32) if typename == 'Uint32'
     return DabTypeUint.new(64) if typename == 'Uint64'
+    return DabTypeInt.new(8) if typename == 'Int8'
     return DabTypeInt.new(16) if typename == 'Int16'
     return DabTypeInt.new(32) if typename == 'Int32'
     return DabTypeInt.new(64) if typename == 'Int64'

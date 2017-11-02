@@ -249,6 +249,7 @@ void DabVM::define_default_classes()
     CREATE_INT_CLASS(uint32, Uint32, UINT32);
     CREATE_INT_CLASS(uint64, Uint64, UINT64);
 
+    CREATE_INT_CLASS(int8, Int8, INT8);
     CREATE_INT_CLASS(int16, Int16, INT16);
     CREATE_INT_CLASS(int32, Int32, INT32);
     CREATE_INT_CLASS(int64, Int64, INT64);
