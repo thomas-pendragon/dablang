@@ -42,6 +42,11 @@ uint16_t Stream::uint16_data(size_t address)
     return ret;
 }
 
+int8_t Stream::read_int8()
+{
+    return _read<int8_t>();
+}
+
 uint8_t Stream::read_uint8()
 {
     return _read<uint8_t>();

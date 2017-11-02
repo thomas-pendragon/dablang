@@ -120,6 +120,10 @@ class OutputStream
     _push_fixnum(value, 'C')
   end
 
+  def _push_int8(value)
+    _push_fixnum(value, 'c')
+  end
+
   def _push_uint16(value)
     _push_fixnum(value, 'S')
   end

@@ -29,6 +29,16 @@ struct AsmStream
         return _read<uint8_t>();
     }
 
+    void read_int8(std::string &info)
+    {
+        auto value = _read<int8_t>();
+        char output[32];
+        sprintf(output, "%d", value);
+        if (info.length())
+            info += ", ";
+        info += output;
+    }
+
     void read_uint8(std::string &info)
     {
         auto value = _read<uint8_t>();
@@ -220,6 +230,9 @@ struct DisasmProcessor
                 {
                     switch (arg)
                     {
+                    case OpcodeArg::ARG_INT8:
+                        stream.read_int8(info);
+                        break;
                     case OpcodeArg::ARG_UINT8:
                         stream.read_uint8(info);
                         break;

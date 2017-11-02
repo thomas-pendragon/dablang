@@ -85,6 +85,9 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
         {
             switch (arg)
             {
+            case OpcodeArg::ARG_INT8:
+                op.data.push_back(stream.read_int8());
+                break;
             case OpcodeArg::ARG_UINT8:
                 op.data.push_back(stream.read_uint8());
                 break;
