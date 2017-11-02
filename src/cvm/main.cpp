@@ -994,6 +994,22 @@ bool DabVM::execute_single(Stream &input)
         reflect(reflection_type, symbol, true, reg_index, has_class, class_index);
         break;
     }
+    case OP_Q_SET_NUMBER_INT8:
+    {
+        auto     reg_index = input.read_reg();
+        auto     n         = input.read_int8();
+        DabValue value(CLASS_INT8, n);
+        register_set(reg_index, value);
+        break;
+    }
+    case OP_Q_SET_NUMBER_INT16:
+    {
+        auto     reg_index = input.read_reg();
+        auto     n         = input.read_int16();
+        DabValue value(CLASS_INT16, n);
+        register_set(reg_index, value);
+        break;
+    }
     case OP_Q_SET_NUMBER_INT32:
     {
         auto     reg_index = input.read_reg();
@@ -1007,6 +1023,14 @@ bool DabVM::execute_single(Stream &input)
         auto     reg_index = input.read_reg();
         auto     n         = input.read_uint8();
         DabValue value(CLASS_UINT8, n);
+        register_set(reg_index, value);
+        break;
+    }
+    case OP_Q_SET_NUMBER_UINT16:
+    {
+        auto     reg_index = input.read_reg();
+        auto     n         = input.read_uint16();
+        DabValue value(CLASS_UINT16, n);
         register_set(reg_index, value);
         break;
     }

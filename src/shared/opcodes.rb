@@ -111,6 +111,9 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
       {name: 'Q_SET_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
       {name: 'Q_SET_NUMBER_INT64', args: %i{reg int64}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_INT8', args: %i{reg int8}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_INT16', args: %i{reg int16}}, # reg(arg0) = arg1
+      {name: 'Q_SET_NUMBER_UINT16', args: %i{reg uint16}}, # reg(arg0) = arg1
     ],
   },
 ].freeze

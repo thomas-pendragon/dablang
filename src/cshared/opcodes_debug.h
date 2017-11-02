@@ -70,4 +70,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_W_COV_FILE, "W_COV_FILE", {OpcodeArg::ARG_UINT64}},
     {OP_Q_SET_METHOD, "Q_SET_METHOD", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
     {OP_Q_SET_NUMBER_INT64, "Q_SET_NUMBER_INT64", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT64}},
+    {OP_Q_SET_NUMBER_INT8, "Q_SET_NUMBER_INT8", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT8}},
+    {OP_Q_SET_NUMBER_INT16, "Q_SET_NUMBER_INT16", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT16}},
+    {OP_Q_SET_NUMBER_UINT16, "Q_SET_NUMBER_UINT16", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
 };
