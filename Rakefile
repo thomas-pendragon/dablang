@@ -64,7 +64,7 @@ end
 
 $shared_spec_code = Dir.glob('test/shared/*.dab')
 
-file cvm_classes => [opcodes, classes_task] do
+file cvm_classes => [classes_file, classes_task] do
   psystem("ruby #{classes_task} > #{cvm_classes}")
 end
 
