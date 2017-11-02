@@ -246,6 +246,7 @@ void DabVM::define_default_classes()
     DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
 
     CREATE_INT_CLASS(uint8, Uint8, UINT8);
+    CREATE_INT_CLASS(uint16, Uint16, UINT16);
     CREATE_INT_CLASS(uint32, Uint32, UINT32);
     CREATE_INT_CLASS(uint64, Uint64, UINT64);
 

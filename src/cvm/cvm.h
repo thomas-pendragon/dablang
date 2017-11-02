@@ -59,6 +59,7 @@ enum
     TYPE_OBJECT,
     TYPE_ARRAY,
     TYPE_UINT8,
+    TYPE_UINT16,
     TYPE_UINT32,
     TYPE_UINT64,
     TYPE_INT8,
@@ -164,6 +165,7 @@ struct DabValueData
 
     int64_t         fixnum     = 0;
     uint8_t         num_uint8  = 0;
+    uint16_t        num_uint16 = 0;
     uint32_t        num_uint32 = 0;
     uint64_t        num_uint64 = 0;
     int8_t          num_int8   = 0;
@@ -242,6 +244,12 @@ struct DabValue
         assert(class_index == CLASS_UINT8);
         data.type      = TYPE_UINT8;
         data.num_uint8 = value;
+    }
+    DabValue(size_t class_index, uint16_t value)
+    {
+        assert(class_index == CLASS_UINT16);
+        data.type       = TYPE_UINT16;
+        data.num_uint16 = value;
     }
     DabValue(size_t class_index, uint32_t value)
     {

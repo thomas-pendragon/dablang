@@ -3,8 +3,8 @@
 void DabValue::dump(FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS",
-                                  "OBJE", "ARRY", "UIN8", "UI32", "UI64", "INT8", "IN16",
-                                  "IN32", "IN64", "METH", "PTR*", "BYT*"};
+                                  "OBJE", "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8",
+                                  "IN16", "IN32", "IN64", "METH", "PTR*", "BYT*"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -40,6 +40,9 @@ int DabValue::class_index() const
         break;
     case TYPE_UINT8:
         return CLASS_UINT8;
+        break;
+    case TYPE_UINT16:
+        return CLASS_UINT16;
         break;
     case TYPE_UINT32:
         return CLASS_UINT32;
@@ -107,6 +110,9 @@ std::string DabValue::print_value(bool debug) const
         break;
     case TYPE_UINT8:
         snprintf(buffer, sizeof(buffer), "%" PRIu8, data.num_uint8);
+        break;
+    case TYPE_UINT16:
+        snprintf(buffer, sizeof(buffer), "%" PRIu16, data.num_uint16);
         break;
     case TYPE_UINT32:
         snprintf(buffer, sizeof(buffer), "%" PRIu32, data.num_uint32);
