@@ -13,6 +13,7 @@
 - [Uint16](/classes/uint16.html)
 - [Uint32](/classes/uint32.html)
 - [Uint64](/classes/uint64.html)
+- [Int16](/classes/int16.html)
 - [Int32](/classes/int32.html)
 - [Int64](/classes/int64.html)
 - [Method](/classes/method.html)

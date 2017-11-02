@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  var<Int16> a = 4800;
+  var<Int16> b = -20;
+  puts(a * b);
+  puts(a.class);
+}
+
+## OPTIONS
+
+--no-opt
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+-30464
+Int16
