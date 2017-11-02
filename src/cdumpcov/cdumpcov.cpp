@@ -54,24 +54,6 @@ void read_stream(Stream &stream)
     }
 }
 
-void parse_stream(Stream &stream, std::function<void(Op)> func);
-
-void parse_asm(bool raw, std::function<void(Op)> func)
-{
-    if (!raw)
-    {
-        // skip header
-        const auto    header_size = 3 + 4 * 8;
-        unsigned char header[header_size];
-        fread(header, 1, header_size, stdin);
-    }
-
-    Stream stream;
-    read_stream(stream);
-
-    parse_stream(stream, func);
-}
-
 void parse_stream(Stream &stream, std::function<void(Op)> func)
 {
     while (!stream.eof())
