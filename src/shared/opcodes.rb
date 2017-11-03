@@ -30,7 +30,7 @@ OPCODES_ARRAY_BASE = [
     items:
     [
       {name: 'JMP', args: %i{int16}}, # add +arg to PC
-      {name: 'Q_JMP_IF2', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg[arg0]
+      {name: 'Q_JMP_IF2', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg0
     ],
   },
   {
