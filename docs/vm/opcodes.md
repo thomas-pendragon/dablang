@@ -11,85 +11,73 @@ exclude_from_nav: true
 |`00`|`NOP`||
 
 <br>
+## MOV
+
+|Opcode |Name    |Arguments|
+|-------|--------|---------|
+|`01`|`Q_SET_REG`|`reg`, `reg`|
+|`02`|`Q_SET_NIL`|`reg`|
+|`03`|`Q_SET_TRUE`|`reg`|
+|`04`|`Q_SET_FALSE`|`reg`|
+|`05`|`Q_SET_NUMBER_UINT8`|`reg`, `uint8`|
+|`06`|`Q_SET_NUMBER_UINT16`|`reg`, `uint16`|
+|`07`|`Q_SET_NUMBER_UINT32`|`reg`, `uint32`|
+|`08`|`Q_SET_NUMBER_UINT64`|`reg`, `uint64`|
+|`09`|`Q_SET_NUMBER_INT8`|`reg`, `int8`|
+|`0A`|`Q_SET_NUMBER_INT16`|`reg`, `int16`|
+|`0B`|`Q_SET_NUMBER_INT32`|`reg`, `int32`|
+|`0C`|`Q_SET_NUMBER_INT64`|`reg`, `int64`|
+|`0D`|`Q_SET_CLASS`|`reg`, `uint16`|
+|`0E`|`Q_SET_METHOD`|`reg`, `symbol`|
+|`0F`|`Q_SET_REFLECT`|`reg`, `symbol`, `uint16`|
+|`10`|`Q_SET_REFLECT2`|`reg`, `symbol`, `uint16`, `uint16`|
+|`11`|`Q_SET_NUMBER`|`reg`, `uint64`|
+|`12`|`Q_SET_STRING`|`reg`, `uint64`, `uint64`|
+|`13`|`Q_SET_NEW_ARRAY`|`reg`, `reglist`|
+|`14`|`Q_SET_SELF`|`reg`|
+|`15`|`Q_SET_INSTVAR`|`reg`, `symbol`|
+|`16`|`Q_SET_CLOSURE`|`reg`, `uint16`|
+|`17`|`Q_SET_HAS_BLOCK`|`reg`|
+|`18`|`Q_SET_ARG`|`reg`, `uint16`|
+
+<br>
 ## FLOW
 
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
-|`01`|`JMP`|`int16`|
-|`02`|`Q_JMP_IF2`|`reg`, `int16`, `int16`|
-
-<br>
-## COVERAGE
-
-|Opcode |Name    |Arguments|
-|-------|--------|---------|
-|`03`|`COV`|`uint16`, `uint16`|
+|`19`|`JMP`|`int16`|
+|`1A`|`Q_JMP_IF2`|`reg`, `int16`, `int16`|
+|`1B`|`Q_SET_CALL`|`reg`, `symbol`, `reglist`|
+|`1C`|`Q_SET_CALL_BLOCK`|`reg`, `symbol`, `symbol`, `reg`, `reglist`|
+|`1D`|`Q_SET_INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|
+|`1E`|`Q_SET_INSTCALL_BLOCK`|`reg`, `reg`, `symbol`, `symbol`, `reg`, `reglist`|
+|`1F`|`Q_SET_SYSCALL`|`reg`, `uint8`, `reglist`|
+|`20`|`Q_YIELD`|`reg`, `reglist`|
+|`21`|`Q_RETURN`|`reg`|
 
 <br>
 ## OTHER
 
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
-|`04`|`STACK_RESERVE`|`uint16`|
+|`22`|`Q_RETAIN`|`reg`|
+|`23`|`Q_RELEASE`|`reg`|
+|`24`|`Q_CAST`|`reg`, `reg`, `uint16`|
+|`25`|`Q_CHANGE_INSTVAR`|`symbol`, `reg`|
 
 <br>
-## REGISTER-BASED OPCODES - SETTERS
+## SPECIAL
 
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
-|`05`|`Q_SET_NUMBER`|`reg`, `uint64`|
-|`06`|`Q_SET_ARG`|`reg`, `uint16`|
-|`07`|`Q_SET_CLASS`|`reg`, `uint16`|
-|`08`|`Q_SET_CALL`|`reg`, `symbol`, `reglist`|
-|`09`|`Q_SET_SYSCALL`|`reg`, `uint8`, `reglist`|
-|`0A`|`Q_SET_REG`|`reg`, `reg`|
-|`0B`|`Q_SET_CLOSURE`|`reg`, `uint16`|
-|`0C`|`Q_SET_NIL`|`reg`|
-|`0D`|`Q_SET_INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|
-|`0E`|`Q_SET_CALL_BLOCK`|`reg`, `symbol`, `symbol`, `reg`, `reglist`|
-|`0F`|`Q_SET_TRUE`|`reg`|
-|`10`|`Q_SET_FALSE`|`reg`|
-|`11`|`Q_SET_INSTVAR`|`reg`, `symbol`|
-|`12`|`Q_SET_INSTCALL_BLOCK`|`reg`, `reg`, `symbol`, `symbol`, `reg`, `reglist`|
-
-<br>
-## REGISTER-BASED OPCODES - OTHER
-
-|Opcode |Name    |Arguments|
-|-------|--------|---------|
-|`13`|`Q_RELEASE`|`reg`|
-|`14`|`Q_CHANGE_INSTVAR`|`symbol`, `reg`|
-|`15`|`Q_RETURN`|`reg`|
-|`16`|`Q_RETAIN`|`reg`|
-|`17`|`Q_CAST`|`reg`, `reg`, `uint16`|
-
-<br>
-## REGISTER-BASED OPCODES - TYPED NUMBERS
-
-|Opcode |Name    |Arguments|
-|-------|--------|---------|
-|`18`|`Q_SET_NUMBER_INT32`|`reg`, `int32`|
-|`19`|`Q_SET_NUMBER_UINT8`|`reg`, `uint8`|
-|`1A`|`Q_SET_NUMBER_UINT32`|`reg`, `uint32`|
-|`1B`|`Q_SET_NUMBER_UINT64`|`reg`, `uint64`|
+|`26`|`COV`|`uint16`, `uint16`|
+|`27`|`STACK_RESERVE`|`uint16`|
 
 <br>
 ## NEW
 
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
-|`1C`|`Q_SET_HAS_BLOCK`|`reg`|
-|`1D`|`Q_SET_NEW_ARRAY`|`reg`, `reglist`|
-|`1E`|`Q_SET_SELF`|`reg`|
-|`1F`|`Q_YIELD`|`reg`, `reglist`|
-|`20`|`Q_SET_STRING`|`reg`, `uint64`, `uint64`|
-|`21`|`Q_SET_REFLECT`|`reg`, `symbol`, `uint16`|
-|`22`|`Q_SET_REFLECT2`|`reg`, `symbol`, `uint16`, `uint16`|
-|`23`|`Q_SET_METHOD`|`reg`, `symbol`|
-|`24`|`Q_SET_NUMBER_INT64`|`reg`, `int64`|
-|`25`|`Q_SET_NUMBER_INT8`|`reg`, `int8`|
-|`26`|`Q_SET_NUMBER_INT16`|`reg`, `int16`|
-|`27`|`Q_SET_NUMBER_UINT16`|`reg`, `uint16`|
 
 <br>
 ## PSEUDO HEADER OPCODES

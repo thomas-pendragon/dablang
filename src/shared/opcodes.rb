@@ -26,84 +26,83 @@ OPCODES_ARRAY_BASE = [
     ],
   },
   {
+    group: 'MOV',
+    items:
+    [
+      {name: 'Q_SET_REG', args: %i[reg reg]}, # reg0 <- reg(arg1)
+
+      {name: 'Q_SET_NIL', args: %i[reg]}, # reg0 <- nil
+      {name: 'Q_SET_TRUE', args: %i[reg]}, # reg0 <- true
+      {name: 'Q_SET_FALSE', args: %i[reg]}, # reg0 <- false
+
+      {name: 'Q_SET_NUMBER_UINT8', args: %i{reg uint8}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_UINT16', args: %i{reg uint16}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_UINT32', args: %i{reg uint32}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_UINT64', args: %i{reg uint64}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_INT8', args: %i{reg int8}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_INT16', args: %i{reg int16}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_INT32', args: %i{reg int32}}, # reg0 <- arg1
+      {name: 'Q_SET_NUMBER_INT64', args: %i{reg int64}}, # reg0 <- arg1
+
+      {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg0 <- class(arg1)
+      {name: 'Q_SET_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
+      {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16]}, # reg0 <- reflect(sym1) with type arg2
+      {name: 'Q_SET_REFLECT2', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
+
+      {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg0 <- arg1
+      {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg0 <- string(*arg1, length = arg2)
+      {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg0 <- [reg(arg1), reg(arg2), ... reg(argn)]
+
+      {name: 'Q_SET_SELF', args: %i[reg]}, # reg0 <- self
+      {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg0 <- self.@arg1
+      {name: 'Q_SET_CLOSURE', args: %i[reg uint16]}, # reg0 <- closurevar(arg1)
+      {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg0 <- has_block?
+
+      {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg0 <- funarg(arg1)
+    ],
+  },
+  {
     group: 'FLOW',
     items:
     [
       {name: 'JMP', args: %i{int16}}, # add +arg to PC
       {name: 'Q_JMP_IF2', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg0
-    ],
-  },
-  {
-    group: 'COVERAGE',
-    items:
-    [
-      {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
+
+      {name: 'Q_SET_CALL', args: %i[reg symbol reglist]}, # reg0 <- call(symbol(arg1), arg2..argn)
+      {name: 'Q_SET_CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
+
+      {name: 'Q_SET_INSTCALL', args: %i[reg reg symbol reglist]}, # reg0 <- call(symbol(arg2), self: arg1, args: arg3..argn)
+      {name: 'Q_SET_INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)
+
+      {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
+
+      {name: 'Q_YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
+
+      {name: 'Q_RETURN', args: %i[reg]}, # return(reg0)
     ],
   },
   {
     group: 'OTHER',
     items:
     [
-      {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
-    ],
-  },
-  {
-    group: 'REGISTER-BASED OPCODES - SETTERS',
-    items:
-    [
-      {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg(arg0) <- arg1
-      {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg(arg0) <- funarg(arg1)
-      {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg(arg0) <- class(arg1)
-      {name: 'Q_SET_CALL', args: %i[reg symbol reglist]}, # reg(arg0) <- call(symbol(arg1), arg2..argn)
-      {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg(arg0) <- syscall(arg1, arg2...argn)
-      {name: 'Q_SET_REG', args: %i[reg reg]}, # reg(arg0) <- reg(arg1)
-      {name: 'Q_SET_CLOSURE', args: %i[reg uint16]}, # reg(arg0) <- closurevar(arg1)
-      {name: 'Q_SET_NIL', args: %i[reg]}, # reg(arg0) <- nil
-      {name: 'Q_SET_INSTCALL', args: %i[reg reg symbol reglist]}, # reg(arg0) <- call(symbol(arg2), self: arg1, args: arg3..argn)
-      {name: 'Q_SET_CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg(arg0) <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
-      {name: 'Q_SET_TRUE', args: %i[reg]}, # reg(arg0) <- true
-      {name: 'Q_SET_FALSE', args: %i[reg]}, # reg(arg0) <- false
-      {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg(arg0) <- self.@arg1
-      {name: 'Q_SET_INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg(arg0) <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)
-    ],
-  },
-  {
-    group: 'REGISTER-BASED OPCODES - OTHER',
-    items:
-    [
-      {name: 'Q_RELEASE', args: %i{reg}}, # release(reg(arg0))
+      {name: 'Q_RETAIN', args: %i{reg}}, # retain(reg0)
+      {name: 'Q_RELEASE', args: %i{reg}}, # release(reg0)
+      {name: 'Q_CAST', args: %i[reg reg uint16]}, # reg0 <- reg(arg1) as arg2
       {name: 'Q_CHANGE_INSTVAR', args: %i{symbol reg}}, # self.@arg0 <- reg(arg1)
-      {name: 'Q_RETURN', args: %i[reg]}, # return(reg(arg0))
-      {name: 'Q_RETAIN', args: %i{reg}}, # retain(reg(arg0))
-      {name: 'Q_CAST', args: %i[reg reg uint16]}, # reg(arg0) = reg(arg1) as arg2
     ],
   },
   {
-    group: 'REGISTER-BASED OPCODES - TYPED NUMBERS',
+    group: 'SPECIAL',
     items:
     [
-      {name: 'Q_SET_NUMBER_INT32', args: %i{reg int32}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_UINT8', args: %i{reg uint8}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_UINT32', args: %i{reg uint32}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_UINT64', args: %i{reg uint64}}, # reg(arg0) = arg1
+      {name: 'COV', args: %i(uint16 uint16)}, # args: filehash, fileline
+      {name: 'STACK_RESERVE', args: [:uint16]}, # reserve space (for ie. local variables)
     ],
   },
   {
     group: 'NEW',
     items:
     [
-      {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg(arg0) <- has_block?
-      {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg(arg0) <- [reg(arg1), reg(arg2), ... reg(argn)]
-      {name: 'Q_SET_SELF', args: %i[reg]}, # reg(arg0) <- self
-      {name: 'Q_YIELD', args: %i[reg reglist]}, # yield(reg(arg0)..reg(argn))
-      {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg(arg0) <- string(*arg1, length = arg2)
-      {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16]}, # reg0 <- reflect(sym1) with type arg2
-      {name: 'Q_SET_REFLECT2', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
-      {name: 'Q_SET_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
-      {name: 'Q_SET_NUMBER_INT64', args: %i{reg int64}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_INT8', args: %i{reg int8}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_INT16', args: %i{reg int16}}, # reg(arg0) = arg1
-      {name: 'Q_SET_NUMBER_UINT16', args: %i{reg uint16}}, # reg(arg0) = arg1
     ],
   },
   {
