@@ -96,19 +96,9 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg(arg0) <- [reg(arg1), reg(arg2), ... reg(argn)]
       {name: 'Q_SET_SELF', args: %i[reg]}, # reg(arg0) <- self
       {name: 'Q_YIELD', args: %i[reg reglist]}, # yield(reg(arg0)..reg(argn))
-      {name: 'W_HEADER', args: %i[uint16]}, # dump header, version number = arg0
-      {name: 'W_SECTION', args: %i[uint16 string4]}, # header entry, address = arg0, label = arg1
-      {name: 'W_END_HEADER'}, # finish header
-      {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
       {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg(arg0) <- string(*arg1, length = arg2)
-      {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
-      {name: 'W_METHOD', args: %i[symbol uint16 uint64]}, # arg0 = symbol arg1 = class index arg2 = address
-      {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
-      {name: 'W_METHOD_EX', args: %i[symbol uint16 uint64 uint16]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection)
-      {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
       {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16]}, # reg0 <- reflect(sym1) with type arg2
       {name: 'Q_SET_REFLECT2', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
-      {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
       {name: 'Q_SET_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
       {name: 'Q_SET_NUMBER_INT64', args: %i{reg int64}}, # reg(arg0) = arg1
       {name: 'Q_SET_NUMBER_INT8', args: %i{reg int8}}, # reg(arg0) = arg1
@@ -116,11 +106,33 @@ OPCODES_ARRAY_BASE = [
       {name: 'Q_SET_NUMBER_UINT16', args: %i{reg uint16}}, # reg(arg0) = arg1
     ],
   },
+  {
+    group: 'PSEUDO HEADER OPCODES',
+    pseudo: true,
+    items:
+    [
+      {name: 'W_HEADER', args: %i[uint16]}, # dump header, version number = arg0
+      {name: 'W_SECTION', args: %i[uint16 string4]}, # header entry, address = arg0, label = arg1
+      {name: 'W_END_HEADER'}, # finish header
+      {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
+      {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
+      {name: 'W_METHOD', args: %i[symbol uint16 uint64]}, # arg0 = symbol arg1 = class index arg2 = address
+      {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
+      {name: 'W_METHOD_EX', args: %i[symbol uint16 uint64 uint16]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection)
+      {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
+      {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
+    ],
+  },
 ].freeze
 
 OPCODES_ARRAY = OPCODES_ARRAY_BASE.flat_map { |item| item[:items] }
 
+OPCODES_PSEUDO_ARRAY = OPCODES_ARRAY_BASE.flat_map { |item| item[:items].map { |_| item[:pseudo] || false } }
+
+REAL_OPCODES_ARRAY = OPCODES_ARRAY.select.with_index { |_item, index| !OPCODES_PSEUDO_ARRAY[index] }
+
 OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
+REAL_OPCODES = Hash[(0...REAL_OPCODES_ARRAY.size).zip REAL_OPCODES_ARRAY].freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
 
