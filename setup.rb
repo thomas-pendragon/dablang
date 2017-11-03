@@ -7,6 +7,7 @@ require 'shellwords'
 require 'fileutils'
 require 'tempfile'
 require 'yaml'
+require 'digest'
 
 class Object
   def safe_instance_variable_get(name)
