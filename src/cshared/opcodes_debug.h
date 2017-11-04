@@ -3,7 +3,7 @@
 const DabOpcodeInfo g_opcodes[] = {
     {OP_NOP, "NOP", {}},
     {OP_MOV, "MOV", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
-    {OP_Q_SET_NIL, "Q_SET_NIL", {OpcodeArg::ARG_REG}},
+    {OP_LOAD_NIL, "LOAD_NIL", {OpcodeArg::ARG_REG}},
     {OP_Q_SET_TRUE, "Q_SET_TRUE", {OpcodeArg::ARG_REG}},
     {OP_Q_SET_FALSE, "Q_SET_FALSE", {OpcodeArg::ARG_REG}},
     {OP_Q_SET_NUMBER_UINT8, "Q_SET_NUMBER_UINT8", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT8}},

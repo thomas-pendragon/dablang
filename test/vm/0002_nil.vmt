@@ -1,10 +1,10 @@
 ## CODE
 
-Q_SET_NIL R0
+LOAD_NIL R0
 
 ## COMMENT
 
-Last stack element should be NIL.
+Reg 0 should be NIL.
 
 ## OPTIONS
 

@@ -48,7 +48,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
+                                 LOAD_NIL R0
 /* foo          */               Q_SET_CALL R1, S0
                                  Q_JMP_IF2 R1, L1, L2
                    L1:

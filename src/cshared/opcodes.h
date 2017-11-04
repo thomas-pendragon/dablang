@@ -4,7 +4,7 @@ enum
 {
     OP_NOP                  = 0x00,
     OP_MOV                  = 0x01,
-    OP_Q_SET_NIL            = 0x02,
+    OP_LOAD_NIL             = 0x02,
     OP_Q_SET_TRUE           = 0x03,
     OP_Q_SET_FALSE          = 0x04,
     OP_Q_SET_NUMBER_UINT8   = 0x05,

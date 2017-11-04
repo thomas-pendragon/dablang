@@ -4,4 +4,4 @@
 
 ## EXPECT
 
-       0: Q_SET_NIL RNIL
+       0: LOAD_NIL RNIL

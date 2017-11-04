@@ -48,7 +48,7 @@ func tap2()
  
                    Ftap2:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
+                                 LOAD_NIL R0
 /* tap          */               Q_SET_CALL_BLOCK RNIL, S1, S3, R0
                                  Q_RETURN RNIL
  

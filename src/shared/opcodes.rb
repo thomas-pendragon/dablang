@@ -31,7 +31,7 @@ OPCODES_ARRAY_BASE = [
     [
       {name: 'MOV', args: %i[reg reg]}, # reg0 <- reg(arg1)
 
-      {name: 'Q_SET_NIL', args: %i[reg]}, # reg0 <- nil
+      {name: 'LOAD_NIL', args: %i[reg]}, # reg0 <- nil
       {name: 'Q_SET_TRUE', args: %i[reg]}, # reg0 <- true
       {name: 'Q_SET_FALSE', args: %i[reg]}, # reg0 <- false
 

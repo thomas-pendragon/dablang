@@ -2,7 +2,7 @@ require_relative 'node_literal.rb'
 
 class DabNodeLiteralNil < DabNodeLiteral
   def compile_as_ssa(output, output_register)
-    output.printex(self, 'Q_SET_NIL', "R#{output_register}")
+    output.printex(self, 'LOAD_NIL', "R#{output_register}")
   end
 
   def my_type

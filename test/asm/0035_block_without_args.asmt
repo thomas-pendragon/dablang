@@ -46,7 +46,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 Q_SET_NIL R0
+                                 LOAD_NIL R0
 /* foo          */               Q_SET_CALL_BLOCK RNIL, S0, S2, R0
                                  Q_RETURN RNIL
  
