@@ -62,10 +62,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* Foo          */               Q_SET_CLASS R0, 256
+/* Foo          */               LOAD_CLASS R0, 256
 /* new          */               Q_SET_INSTCALL R1, R0, S3
 /* run          */               Q_SET_INSTCALL RNIL, R1, S4
-/* Bar          */               Q_SET_CLASS R2, 257
+/* Bar          */               LOAD_CLASS R2, 257
 /* new          */               Q_SET_INSTCALL R3, R2, S3
 /* run          */               Q_SET_INSTCALL RNIL, R3, S4
                                  Q_RETURN RNIL

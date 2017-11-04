@@ -1072,7 +1072,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, var);
         break;
     }
-    case OP_Q_SET_CLASS:
+    case OP_LOAD_CLASS:
     {
         auto reg_index   = input.read_reg();
         auto klass_index = input.read_uint16();

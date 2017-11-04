@@ -38,7 +38,7 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* "allocated s */               Q_SET_STRING R0, _DATA + 0, 16
-/* String       */               Q_SET_CLASS R1, 1
+/* String       */               LOAD_CLASS R1, 1
 /* new          */               Q_SET_INSTCALL R2, R1, S1, R0
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RELEASE R0

@@ -75,7 +75,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* Foo          */               Q_SET_CLASS R0, 256
+/* Foo          */               LOAD_CLASS R0, 256
 /* new          */               Q_SET_INSTCALL R1, R0, S4
 /* go           */               Q_SET_INSTCALL RNIL, R1, S2
                                  Q_RELEASE R0
@@ -89,7 +89,7 @@ func main()
 /* 1            */               Q_SET_NUMBER R1, 1
 /* "String1"    */               Q_SET_STRING R2, _DATA + 0, 7
 /* "String2"    */               Q_SET_STRING R3, _DATA + 8, 7
-/* String       */               Q_SET_CLASS R4, 1
+/* String       */               LOAD_CLASS R4, 1
 /* new          */               Q_SET_INSTCALL R5, R4, S4, R3
                                  Q_SET_NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
