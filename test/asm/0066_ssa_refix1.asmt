@@ -56,8 +56,8 @@ func main()
 /* -1           */               Q_SET_NUMBER R3, -1
                                  JMP L3
                    L2:
-                                 Q_SET_REG R2, R0
-                                 Q_SET_REG R3, R2
+                                 MOV R2, R0
+                                 MOV R3, R2
                                  JMP L3
                    L3:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2

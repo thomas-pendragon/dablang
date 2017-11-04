@@ -3,7 +3,7 @@
 enum
 {
     OP_NOP                  = 0x00,
-    OP_Q_SET_REG            = 0x01,
+    OP_MOV                  = 0x01,
     OP_Q_SET_NIL            = 0x02,
     OP_Q_SET_TRUE           = 0x03,
     OP_Q_SET_FALSE          = 0x04,
