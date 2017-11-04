@@ -26,7 +26,7 @@ _CODE:
 
                    Ffun1:
                                  STACK_RESERVE 0
-                                 Q_SET_TRUE R0
+                                 LOAD_TRUE R0
                                  Q_RETURN R0
  
                    Fmain:
@@ -56,7 +56,7 @@ quit
 IP = 208
        198: NOP 
        199: STACK_RESERVE 0
-       202: Q_SET_TRUE R0
+       202: LOAD_TRUE R0
        205: Q_RETURN R0
 >      208: STACK_RESERVE 0
        211: Q_SET_CALL R7, S0
@@ -75,7 +75,7 @@ Dump of stack:
 [   7] INVA ?
 IP = 205
        199: STACK_RESERVE 0
-       202: Q_SET_TRUE R0
+       202: LOAD_TRUE R0
 >      205: Q_RETURN R0
        208: STACK_RESERVE 0
        211: Q_SET_CALL R7, S0

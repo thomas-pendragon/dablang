@@ -17,8 +17,8 @@ exclude_from_nav: true
 |-------|--------|---------|
 |`01`|`Q_SET_REG`|`reg`, `reg`|
 |`02`|`Q_SET_NIL`|`reg`|
-|`03`|`Q_SET_TRUE`|`reg`|
-|`04`|`Q_SET_FALSE`|`reg`|
+|`03`|`LOAD_TRUE`|`reg`|
+|`04`|`LOAD_FALSE`|`reg`|
 |`05`|`Q_SET_NUMBER_UINT8`|`reg`, `uint8`|
 |`06`|`Q_SET_NUMBER_UINT16`|`reg`, `uint16`|
 |`07`|`Q_SET_NUMBER_UINT32`|`reg`, `uint32`|

@@ -33,11 +33,11 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_SET_TRUE R0
+                                 LOAD_TRUE R0
 /* foo          */               Q_SET_CALL RNIL, S0, R0
-                                 Q_SET_TRUE R1
+                                 LOAD_TRUE R1
 /* foo          */               Q_SET_CALL RNIL, S0, R1
-                                 Q_SET_FALSE R2
+                                 LOAD_FALSE R2
 /* foo          */               Q_SET_CALL RNIL, S0, R2
                                  Q_RETURN RNIL
  

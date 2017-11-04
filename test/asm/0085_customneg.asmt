@@ -36,7 +36,7 @@ class Foo
  
                    CFoo_F%BANG:
                                  STACK_RESERVE 0
-                                 Q_SET_TRUE R0
+                                 LOAD_TRUE R0
                                  Q_RETURN R0
  
                    _FUNC:

@@ -49,7 +49,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "a"          */               Q_SET_STRING R0, _DATA + 0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
-                                 Q_SET_TRUE R1
+                                 LOAD_TRUE R1
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
 /* "b"          */               Q_SET_STRING R2, _DATA + 2, 1
