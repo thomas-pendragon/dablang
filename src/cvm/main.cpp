@@ -994,7 +994,7 @@ bool DabVM::execute_single(Stream &input)
         reflect(reflection_type, symbol, true, reg_index, has_class, class_index);
         break;
     }
-    case OP_Q_SET_NUMBER_INT8:
+    case OP_LOAD_INT8:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_int8();
@@ -1002,7 +1002,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_INT16:
+    case OP_LOAD_INT16:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_int16();
@@ -1010,7 +1010,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_INT32:
+    case OP_LOAD_INT32:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_int32();
@@ -1018,7 +1018,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_UINT8:
+    case OP_LOAD_UINT8:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_uint8();
@@ -1026,7 +1026,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_UINT16:
+    case OP_LOAD_UINT16:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_uint16();
@@ -1034,7 +1034,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_UINT32:
+    case OP_LOAD_UINT32:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_uint32();
@@ -1042,7 +1042,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_UINT64:
+    case OP_LOAD_UINT64:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_uint64();
@@ -1050,7 +1050,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
-    case OP_Q_SET_NUMBER_INT64:
+    case OP_LOAD_INT64:
     {
         auto     reg_index = input.read_reg();
         auto     n         = input.read_int64();

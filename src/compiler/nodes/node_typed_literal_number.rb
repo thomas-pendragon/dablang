@@ -13,7 +13,7 @@ class DabNodeTypedLiteralNumber < DabNodeLiteral
   end
 
   def compile_as_ssa(output, output_register)
-    output.printex(self, "Q_SET_NUMBER_#{my_type.type_string.upcase}", "R#{output_register}", extra_value)
+    output.printex(self, "LOAD_#{my_type.type_string.upcase}", "R#{output_register}", extra_value)
   end
 
   def extra_value

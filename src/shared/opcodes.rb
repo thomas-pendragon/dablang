@@ -35,14 +35,14 @@ OPCODES_ARRAY_BASE = [
       {name: 'LOAD_TRUE', args: %i[reg]}, # reg0 <- true
       {name: 'LOAD_FALSE', args: %i[reg]}, # reg0 <- false
 
-      {name: 'Q_SET_NUMBER_UINT8', args: %i{reg uint8}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_UINT16', args: %i{reg uint16}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_UINT32', args: %i{reg uint32}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_UINT64', args: %i{reg uint64}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_INT8', args: %i{reg int8}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_INT16', args: %i{reg int16}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_INT32', args: %i{reg int32}}, # reg0 <- arg1
-      {name: 'Q_SET_NUMBER_INT64', args: %i{reg int64}}, # reg0 <- arg1
+      {name: 'LOAD_UINT8', args: %i{reg uint8}}, # reg0 <- arg1
+      {name: 'LOAD_UINT16', args: %i{reg uint16}}, # reg0 <- arg1
+      {name: 'LOAD_UINT32', args: %i{reg uint32}}, # reg0 <- arg1
+      {name: 'LOAD_UINT64', args: %i{reg uint64}}, # reg0 <- arg1
+      {name: 'LOAD_INT8', args: %i{reg int8}}, # reg0 <- arg1
+      {name: 'LOAD_INT16', args: %i{reg int16}}, # reg0 <- arg1
+      {name: 'LOAD_INT32', args: %i{reg int32}}, # reg0 <- arg1
+      {name: 'LOAD_INT64', args: %i{reg int64}}, # reg0 <- arg1
 
       {name: 'Q_SET_CLASS', args: %i[reg uint16]}, # reg0 <- class(arg1)
       {name: 'Q_SET_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
