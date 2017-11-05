@@ -46,7 +46,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'LOAD_CLASS', args: %i[reg uint16]}, # reg0 <- class(arg1)
       {name: 'LOAD_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
-      {name: 'Q_SET_REFLECT', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
+      {name: 'REFLECT', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
 
       {name: 'Q_SET_NUMBER', args: %i[reg uint64]}, # reg0 <- arg1
       {name: 'Q_SET_STRING', args: %i[reg uint64 uint64]}, # reg0 <- string(*arg1, length = arg2)

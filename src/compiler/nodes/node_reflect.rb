@@ -21,6 +21,6 @@ class DabNodeReflect < DabNode
             else
               -1
             end
-    output.print('Q_SET_REFLECT', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type], klass)
+    output.print('REFLECT', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type], klass)
   end
 end
