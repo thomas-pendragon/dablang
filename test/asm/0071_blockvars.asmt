@@ -44,7 +44,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 1            */               Q_SET_NUMBER R0, 1
+/* 1            */               LOAD_NUMBER R0, 1
                                  Q_SET_NEW_ARRAY R1, R0
 /* test         */               Q_SET_CALL_BLOCK RNIL, S3, S1, R1
                                  Q_RETURN RNIL
@@ -62,7 +62,7 @@ func main()
  
                    Ftest:
                                  STACK_RESERVE 0
-/* 1            */               Q_SET_NUMBER R0, 1
+/* 1            */               LOAD_NUMBER R0, 1
                                  Q_YIELD RNIL, R0
                                  Q_RETURN RNIL
  

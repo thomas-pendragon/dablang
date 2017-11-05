@@ -45,10 +45,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 12           */               Q_SET_NUMBER R0, 12
+/* 12           */               LOAD_NUMBER R0, 12
                                  Q_SET_NEW_ARRAY R1, R0
 /* puts         */               Q_SET_CALL RNIL, S2, R1
-/* 123          */               Q_SET_NUMBER R2, 123
+/* 123          */               LOAD_NUMBER R2, 123
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R2
 /* "foo"        */               Q_SET_STRING R3, _DATA + 0, 3
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R3

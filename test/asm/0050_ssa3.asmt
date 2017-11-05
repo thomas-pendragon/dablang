@@ -37,7 +37,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 2            */               Q_SET_NUMBER R0, 2
+/* 2            */               LOAD_NUMBER R0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  

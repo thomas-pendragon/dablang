@@ -46,8 +46,8 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 2            */               Q_SET_NUMBER R0, 2
-/* 3            */               Q_SET_NUMBER R1, 3
+/* 2            */               LOAD_NUMBER R0, 2
+/* 3            */               LOAD_NUMBER R1, 3
 /* +            */               COV 1, 3
                                  Q_SET_INSTCALL R2, R0, S0, R1
 /* "Test"       */               Q_SET_STRING R3, _DATA + 0, 4

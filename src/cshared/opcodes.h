@@ -18,7 +18,7 @@ enum
     OP_LOAD_CLASS           = 0x0D,
     OP_LOAD_METHOD          = 0x0E,
     OP_REFLECT              = 0x0F,
-    OP_Q_SET_NUMBER         = 0x10,
+    OP_LOAD_NUMBER          = 0x10,
     OP_Q_SET_STRING         = 0x11,
     OP_Q_SET_NEW_ARRAY      = 0x12,
     OP_Q_SET_SELF           = 0x13,

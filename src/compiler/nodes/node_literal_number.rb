@@ -17,7 +17,7 @@ class DabNodeLiteralNumber < DabNodeLiteral
 
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
-    output.print('Q_SET_NUMBER', "R#{output_register}", extra_dump)
+    output.print('LOAD_NUMBER', "R#{output_register}", extra_dump)
   end
 
   def extra_value

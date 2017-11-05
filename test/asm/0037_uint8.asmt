@@ -31,7 +31,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 150          */               Q_SET_NUMBER R0, 150
+/* 150          */               LOAD_NUMBER R0, 150
 /* Uint8        */               Q_CAST R1, R0, 6
                                  Q_RETURN RNIL
  

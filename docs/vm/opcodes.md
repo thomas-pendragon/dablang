@@ -30,7 +30,7 @@ exclude_from_nav: true
 |`0D`|`LOAD_CLASS`|`reg`, `uint16`|
 |`0E`|`LOAD_METHOD`|`reg`, `symbol`|
 |`0F`|`REFLECT`|`reg`, `symbol`, `uint16`, `uint16`|
-|`10`|`Q_SET_NUMBER`|`reg`, `uint64`|
+|`10`|`LOAD_NUMBER`|`reg`, `uint64`|
 |`11`|`Q_SET_STRING`|`reg`, `uint64`, `uint64`|
 |`12`|`Q_SET_NEW_ARRAY`|`reg`, `reglist`|
 |`13`|`Q_SET_SELF`|`reg`|

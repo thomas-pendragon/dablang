@@ -39,7 +39,7 @@ func yield1()
                                  STACK_RESERVE 0
                                  Q_YIELD RNIL
                                  Q_YIELD RNIL
-/* 12           */               Q_SET_NUMBER R0, 12
+/* 12           */               LOAD_NUMBER R0, 12
 /* "foo"        */               Q_SET_STRING R1, _DATA + 0, 3
                                  Q_YIELD RNIL, R0, R1
                                  Q_RETURN RNIL

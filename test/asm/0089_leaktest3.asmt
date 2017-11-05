@@ -84,9 +84,9 @@ func main()
  
                    CFoo_Fgo:
                                  STACK_RESERVE 0
-/* 123          */               Q_SET_NUMBER R0, 123
+/* 123          */               LOAD_NUMBER R0, 123
 /* @var=        */               Q_CHANGE_INSTVAR S5, R0
-/* 1            */               Q_SET_NUMBER R1, 1
+/* 1            */               LOAD_NUMBER R1, 1
 /* "String1"    */               Q_SET_STRING R2, _DATA + 0, 7
 /* "String2"    */               Q_SET_STRING R3, _DATA + 8, 7
 /* String       */               LOAD_CLASS R4, 1

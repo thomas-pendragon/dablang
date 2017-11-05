@@ -968,7 +968,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, DabValue(addr != 0));
         break;
     }
-    case OP_Q_SET_NUMBER:
+    case OP_LOAD_NUMBER:
     {
         auto reg_index = input.read_reg();
         auto number    = input.read_uint64();

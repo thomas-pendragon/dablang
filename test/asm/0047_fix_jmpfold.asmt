@@ -36,7 +36,7 @@ func assert_equal(value)
                    Fassert_equal:
                                  STACK_RESERVE 0
 /* value        */               Q_SET_ARG R0, 0
-/* 1            */               Q_SET_NUMBER R1, 1
+/* 1            */               LOAD_NUMBER R1, 1
 /* !=           */               Q_SET_INSTCALL RNIL, R0, S0, R1
                                  Q_RETURN RNIL
  

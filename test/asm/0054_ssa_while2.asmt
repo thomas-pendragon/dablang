@@ -44,13 +44,13 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 5            */               Q_SET_NUMBER R0, 5
+/* 5            */               LOAD_NUMBER R0, 5
                                  JMP L1
                    L1:
 /* foo          */               Q_SET_CALL R1, S0
                                  Q_JMP_IF2 R1, L2, L3
                    L2:
-/* 2            */               Q_SET_NUMBER R0, 2
+/* 2            */               LOAD_NUMBER R0, 2
                                  JMP L1
                    L3:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0

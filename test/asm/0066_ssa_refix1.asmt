@@ -52,8 +52,8 @@ func main()
 /* foo          */               Q_SET_CALL R1, S0
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
-/* 8            */               Q_SET_NUMBER R2, 8
-/* -1           */               Q_SET_NUMBER R3, -1
+/* 8            */               LOAD_NUMBER R2, 8
+/* -1           */               LOAD_NUMBER R3, -1
                                  JMP L3
                    L2:
                                  MOV R2, R0

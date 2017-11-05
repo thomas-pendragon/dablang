@@ -32,10 +32,10 @@ IP = 174
 >      174: STACK_RESERVE 0
        177: LOAD_TRUE R0
        180: Q_JMP_IF2 R0, 7, 28
-       187: Q_SET_NUMBER R1, 1
+       187: LOAD_NUMBER R1, 1
        198: Q_SET_SYSCALL RNIL, 0, R1
        205: JMP 24
-       208: Q_SET_NUMBER R2, 2
+       208: LOAD_NUMBER R2, 2
        219: Q_SET_SYSCALL RNIL, 0, R2
        226: JMP 3
        229: Q_RETURN RNIL

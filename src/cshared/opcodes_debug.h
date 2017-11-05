@@ -19,7 +19,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_REFLECT,
      "REFLECT",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
-    {OP_Q_SET_NUMBER, "Q_SET_NUMBER", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64}},
+    {OP_LOAD_NUMBER, "LOAD_NUMBER", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64}},
     {OP_Q_SET_STRING,
      "Q_SET_STRING",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64, OpcodeArg::ARG_UINT64}},

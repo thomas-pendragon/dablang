@@ -60,9 +60,9 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 1            */               Q_SET_NUMBER R0, 1
+/* 1            */               LOAD_NUMBER R0, 1
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R0
-/* 1            */               Q_SET_NUMBER R1, 1
+/* 1            */               LOAD_NUMBER R1, 1
 /* __spec_Fixnu */               Q_SET_CALL RNIL, S0, R1
 /* "A"          */               Q_SET_STRING R2, _DATA + 0, 1
 /* __spec_Strin */               Q_SET_CALL RNIL, S1, R2

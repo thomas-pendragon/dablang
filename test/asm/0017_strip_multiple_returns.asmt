@@ -33,7 +33,7 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* 12           */               Q_SET_NUMBER R0, 12
+/* 12           */               LOAD_NUMBER R0, 12
                                  Q_RETURN R0
  
                    _FUNC:
