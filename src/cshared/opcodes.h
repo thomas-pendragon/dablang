@@ -16,7 +16,7 @@ enum
     OP_LOAD_INT32           = 0x0B,
     OP_LOAD_INT64           = 0x0C,
     OP_LOAD_CLASS           = 0x0D,
-    OP_Q_SET_METHOD         = 0x0E,
+    OP_LOAD_METHOD          = 0x0E,
     OP_Q_SET_REFLECT        = 0x0F,
     OP_Q_SET_REFLECT2       = 0x10,
     OP_Q_SET_NUMBER         = 0x11,

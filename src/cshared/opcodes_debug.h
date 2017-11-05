@@ -15,7 +15,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_LOAD_INT32, "LOAD_INT32", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT32}},
     {OP_LOAD_INT64, "LOAD_INT64", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT64}},
     {OP_LOAD_CLASS, "LOAD_CLASS", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
-    {OP_Q_SET_METHOD, "Q_SET_METHOD", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
+    {OP_LOAD_METHOD, "LOAD_METHOD", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
     {OP_Q_SET_REFLECT,
      "Q_SET_REFLECT",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_UINT16}},

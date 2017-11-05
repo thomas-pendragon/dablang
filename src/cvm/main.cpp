@@ -823,7 +823,7 @@ bool DabVM::execute_single(Stream &input)
     }
     switch (opcode)
     {
-    case OP_Q_SET_METHOD:
+    case OP_LOAD_METHOD:
     {
         auto out_reg    = input.read_reg();
         auto symbol     = input.read_symbol();

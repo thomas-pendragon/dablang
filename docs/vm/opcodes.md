@@ -28,7 +28,7 @@ exclude_from_nav: true
 |`0B`|`LOAD_INT32`|`reg`, `int32`|
 |`0C`|`LOAD_INT64`|`reg`, `int64`|
 |`0D`|`LOAD_CLASS`|`reg`, `uint16`|
-|`0E`|`Q_SET_METHOD`|`reg`, `symbol`|
+|`0E`|`LOAD_METHOD`|`reg`, `symbol`|
 |`0F`|`Q_SET_REFLECT`|`reg`, `symbol`, `uint16`|
 |`10`|`Q_SET_REFLECT2`|`reg`, `symbol`, `uint16`, `uint16`|
 |`11`|`Q_SET_NUMBER`|`reg`, `uint64`|
