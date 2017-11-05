@@ -37,7 +37,7 @@ func main()
                                  STACK_RESERVE 0
 /* String       */               LOAD_CLASS R0, 1
 /* new          */               Q_SET_INSTCALL R1, R0, S2
-/* "a"          */               Q_SET_STRING R2, _DATA + 0, 1
+/* "a"          */               LOAD_STRING R2, _DATA + 0, 1
 /* ==           */               Q_SET_INSTCALL R3, R1, S0, R2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL

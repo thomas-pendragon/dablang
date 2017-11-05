@@ -61,7 +61,7 @@ func main()
 /* ==           */               Q_SET_INSTCALL R5, R2, S1, R4
                                  Q_JMP_IF2 R5, L1, L2
                    L1:
-/* "yes"        */               Q_SET_STRING R6, _DATA + 0, 3
+/* "yes"        */               LOAD_STRING R6, _DATA + 0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
                                  JMP L2
                    L2:

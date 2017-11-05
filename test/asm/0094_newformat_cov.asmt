@@ -50,7 +50,7 @@ func main()
 /* 3            */               LOAD_NUMBER R1, 3
 /* +            */               COV 1, 3
                                  Q_SET_INSTCALL R2, R0, S0, R1
-/* "Test"       */               Q_SET_STRING R3, _DATA + 0, 4
+/* "Test"       */               LOAD_STRING R3, _DATA + 0, 4
 /* PRINT        */               COV 1, 4
                                  Q_SET_SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL

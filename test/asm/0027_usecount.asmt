@@ -35,7 +35,7 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "abc"        */               Q_SET_STRING R0, _DATA + 0, 3
+/* "abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* USECOUNT     */               Q_SET_SYSCALL RNIL, 2, R0
                                  Q_RETURN RNIL
  

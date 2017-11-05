@@ -47,20 +47,20 @@ func foo()
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* "a"          */               Q_SET_STRING R0, _DATA + 0, 1
+/* "a"          */               LOAD_STRING R0, _DATA + 0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  LOAD_TRUE R1
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
-/* "b"          */               Q_SET_STRING R2, _DATA + 2, 1
+/* "b"          */               LOAD_STRING R2, _DATA + 2, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  JMP L3
                    L2:
-/* "c"          */               Q_SET_STRING R3, _DATA + 4, 1
+/* "c"          */               LOAD_STRING R3, _DATA + 4, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
                                  JMP L3
                    L3:
-/* "d"          */               Q_SET_STRING R4, _DATA + 6, 1
+/* "d"          */               LOAD_STRING R4, _DATA + 6, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R4
                                  Q_RETURN RNIL
  

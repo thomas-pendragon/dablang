@@ -87,8 +87,8 @@ func main()
 /* 123          */               LOAD_NUMBER R0, 123
 /* @var=        */               Q_CHANGE_INSTVAR S5, R0
 /* 1            */               LOAD_NUMBER R1, 1
-/* "String1"    */               Q_SET_STRING R2, _DATA + 0, 7
-/* "String2"    */               Q_SET_STRING R3, _DATA + 8, 7
+/* "String1"    */               LOAD_STRING R2, _DATA + 0, 7
+/* "String2"    */               LOAD_STRING R3, _DATA + 8, 7
 /* String       */               LOAD_CLASS R4, 1
 /* new          */               Q_SET_INSTCALL R5, R4, S4, R3
                                  Q_SET_NEW_ARRAY R6, R1, R2, R5

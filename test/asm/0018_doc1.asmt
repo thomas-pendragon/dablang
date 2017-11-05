@@ -43,13 +43,13 @@ func main()
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "String"     */               Q_SET_STRING R0, _DATA + 0, 6
+/* "String"     */               LOAD_STRING R0, _DATA + 0, 6
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
-/* "hello"      */               Q_SET_STRING R0, _DATA + 7, 5
+/* "hello"      */               LOAD_STRING R0, _DATA + 7, 5
 /* __foo_String */               Q_SET_CALL RNIL, S0, R0
                                  Q_RETURN RNIL
  

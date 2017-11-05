@@ -54,19 +54,19 @@ func bar()
  
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
-/* "got fixnum" */               Q_SET_STRING R0, _DATA + 0, 10
+/* "got fixnum" */               LOAD_STRING R0, _DATA + 0, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    F__foo_String:
                                  STACK_RESERVE 0
-/* "got string" */               Q_SET_STRING R0, _DATA + 11, 10
+/* "got string" */               LOAD_STRING R0, _DATA + 11, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
-/* "str"        */               Q_SET_STRING R0, _DATA + 22, 3
+/* "str"        */               LOAD_STRING R0, _DATA + 22, 3
 /* __foo_String */               Q_SET_CALL RNIL, S1, R0
 /* 12           */               LOAD_NUMBER R1, 12
 /* __foo_Fixnum */               Q_SET_CALL RNIL, S0, R1

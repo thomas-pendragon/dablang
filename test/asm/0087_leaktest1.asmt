@@ -43,8 +43,8 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
-/* "String1"    */               Q_SET_STRING R1, _DATA + 0, 7
-/* "String2"    */               Q_SET_STRING R2, _DATA + 8, 7
+/* "String1"    */               LOAD_STRING R1, _DATA + 0, 7
+/* "String2"    */               LOAD_STRING R2, _DATA + 8, 7
 /* String       */               LOAD_CLASS R3, 1
 /* new          */               Q_SET_INSTCALL R4, R3, S1, R2
                                  Q_SET_NEW_ARRAY R5, R0, R1, R4

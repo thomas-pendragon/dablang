@@ -22,7 +22,7 @@ _CODE:
 
 Fmain:
                                  STACK_RESERVE 0
-/* "hello world */               Q_SET_STRING R0, _DATA, 11
+/* "hello world */               LOAD_STRING R0, _DATA, 11
                                  Q_SET_SYSCALL RNIL, 0, R0
                                  NOP
                                  Q_RETURN RNIL 
@@ -57,7 +57,7 @@ quit
 IP = 186
        185: NOP 
 >      186: STACK_RESERVE 0
-       189: Q_SET_STRING R0, 160, 11
+       189: LOAD_STRING R0, 160, 11
        208: Q_SET_SYSCALL RNIL, 0, R0
        215: NOP 
        216: Q_RETURN RNIL
@@ -65,7 +65,7 @@ debug: break at 189.
 IP = 189
        185: NOP 
        186: STACK_RESERVE 0
->      189: Q_SET_STRING R0, 160, 11
+>      189: LOAD_STRING R0, 160, 11
        208: Q_SET_SYSCALL RNIL, 0, R0
        215: NOP 
 Stack:
@@ -81,7 +81,7 @@ Dump of stack:
 Registers:
 IP = 208
        186: STACK_RESERVE 0
-       189: Q_SET_STRING R0, 160, 11
+       189: LOAD_STRING R0, 160, 11
 >      208: Q_SET_SYSCALL RNIL, 0, R0
        215: NOP 
        216: Q_RETURN RNIL
@@ -98,7 +98,7 @@ Dump of stack:
 Registers:
 R0: STRI "hello world"
 hello worldIP = 215
-       189: Q_SET_STRING R0, 160, 11
+       189: LOAD_STRING R0, 160, 11
        208: Q_SET_SYSCALL RNIL, 0, R0
 >      215: NOP 
        216: Q_RETURN RNIL

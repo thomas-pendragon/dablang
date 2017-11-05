@@ -53,7 +53,7 @@ func another_attribute(method, arg1, arg2)
 /* sample_attri */               Q_SET_CALL RNIL, S3, R0
                                  LOAD_METHOD R1, S2
 /* 14           */               LOAD_NUMBER R2, 14
-/* "foo"        */               Q_SET_STRING R3, _DATA + 0, 3
+/* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* another_attr */               Q_SET_CALL RNIL, S1, R1, R2, R3
                                  Q_RETURN RNIL
  

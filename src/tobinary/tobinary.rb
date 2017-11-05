@@ -374,7 +374,7 @@ class Parser
           @jump_corrections << [pos, line[1].to_s]
           line[1] = 0
         end
-        if line[0] == 'Q_SET_STRING'
+        if line[0] == 'LOAD_STRING'
           line[2] = _process(line[2])
         end
         @output_stream.write(line)

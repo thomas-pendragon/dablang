@@ -61,7 +61,7 @@ func main()
                    L1:
 /* Zomg         */               LOAD_CLASS R0, 256
 /* new          */               Q_SET_INSTCALL R1, R0, S3
-/* "foobar"     */               Q_SET_STRING R2, _DATA + 0, 6
+/* "foobar"     */               LOAD_STRING R2, _DATA + 0, 6
 /* foo          */               Q_SET_INSTCALL RNIL, R1, S1, R2
                                  JMP L1
  
