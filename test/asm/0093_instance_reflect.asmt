@@ -53,7 +53,7 @@ func foo(n)
                    Ffoo:
                                  STACK_RESERVE 0
 /* n            */               Q_SET_ARG R0, 0
-                                 Q_SET_REFLECT2 R1, S5, 2, 256
+                                 Q_SET_REFLECT R1, S5, 2, 256
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  

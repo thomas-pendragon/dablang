@@ -16,11 +16,11 @@ class DabNodeReflect < DabNode
 
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
-    if @klass
-      klass = root.class_index(@klass)
-      output.print('Q_SET_REFLECT2', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type], klass)
-    else
-      output.print('Q_SET_REFLECT', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type])
-    end
+    klass = if @klass
+              root.class_index(@klass)
+            else
+              -1
+            end
+    output.print('Q_SET_REFLECT', "R#{output_register}", "S#{value.symbol_index}", REFLECTION_REV[reflect_type], klass)
   end
 end

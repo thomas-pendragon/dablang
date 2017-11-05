@@ -976,22 +976,15 @@ bool DabVM::execute_single(Stream &input)
         break;
     }
     case OP_Q_SET_REFLECT:
-    case OP_Q_SET_REFLECT2:
     {
         auto reg_index       = input.read_reg();
         auto symbol_index    = input.read_symbol();
         auto reflection_type = input.read_uint16();
         auto symbol          = constants[symbol_index].data.string;
 
-        bool     has_class   = opcode == OP_Q_SET_REFLECT2;
-        uint16_t class_index = 0;
+        uint16_t class_index = input.read_uint16();
 
-        if (has_class)
-        {
-            class_index = input.read_uint16();
-        }
-
-        reflect(reflection_type, symbol, true, reg_index, has_class, class_index);
+        reflect(reflection_type, symbol, true, reg_index, true, class_index);
         break;
     }
     case OP_LOAD_INT8:
