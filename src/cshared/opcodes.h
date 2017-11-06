@@ -24,7 +24,7 @@ enum
     OP_LOAD_SELF            = 0x13,
     OP_GET_INSTVAR          = 0x14,
     OP_LOAD_CLOSURE         = 0x15,
-    OP_Q_SET_HAS_BLOCK      = 0x16,
+    OP_LOAD_HAS_BLOCK       = 0x16,
     OP_Q_SET_ARG            = 0x17,
     OP_JMP                  = 0x18,
     OP_Q_JMP_IF2            = 0x19,
