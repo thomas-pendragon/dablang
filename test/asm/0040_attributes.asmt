@@ -59,9 +59,9 @@ func another_attribute(method, arg1, arg2)
  
                    Fanother_attribute:
                                  STACK_RESERVE 0
-/* arg2         */               LOAD_ARG R0, 2
+/* method       */               LOAD_ARG R0, 0
 /* arg1         */               LOAD_ARG R1, 1
-/* method       */               LOAD_ARG R2, 0
+/* arg2         */               LOAD_ARG R2, 2
                                  Q_RETURN RNIL
  
                    Ffoo:

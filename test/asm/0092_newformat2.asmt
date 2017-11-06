@@ -35,8 +35,8 @@ func foo(a, b<Uint8>)
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* b            */               LOAD_ARG R0, 1
-/* a            */               LOAD_ARG R1, 0
+/* a            */               LOAD_ARG R0, 0
+/* b            */               LOAD_ARG R1, 1
                                  REFLECT R2, S2, 0, -1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL

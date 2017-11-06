@@ -54,9 +54,9 @@ func tap2()
  
                    Ftap2__block1:
                                  STACK_RESERVE 0
-/* b            */               LOAD_ARG R0, 1
-/* a            */               LOAD_ARG R1, 0
-/* +            */               Q_SET_INSTCALL R2, R1, S0, R0
+/* a            */               LOAD_ARG R0, 0
+/* b            */               LOAD_ARG R1, 1
+/* +            */               Q_SET_INSTCALL R2, R0, S0, R1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL
  

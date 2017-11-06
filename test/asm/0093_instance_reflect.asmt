@@ -59,8 +59,8 @@ func foo(n)
  
                    CFoo_Fzomg:
                                  STACK_RESERVE 0
-/* b            */               LOAD_ARG R0, 1
-/* a            */               LOAD_ARG R1, 0
+/* a            */               LOAD_ARG R0, 0
+/* b            */               LOAD_ARG R1, 1
                                  Q_RETURN RNIL
  
                    _FUNC:
