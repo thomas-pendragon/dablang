@@ -919,7 +919,7 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
-    case OP_Q_SET_CLOSURE:
+    case OP_LOAD_CLOSURE:
     {
         auto reg_index     = input.read_reg();
         auto closure_index = input.read_uint16();

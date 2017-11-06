@@ -35,7 +35,7 @@ exclude_from_nav: true
 |`12`|`NEW_ARRAY`|`reg`, `reglist`|
 |`13`|`LOAD_SELF`|`reg`|
 |`14`|`GET_INSTVAR`|`reg`, `symbol`|
-|`15`|`Q_SET_CLOSURE`|`reg`, `uint16`|
+|`15`|`LOAD_CLOSURE`|`reg`, `uint16`|
 |`16`|`Q_SET_HAS_BLOCK`|`reg`|
 |`17`|`Q_SET_ARG`|`reg`, `uint16`|
 

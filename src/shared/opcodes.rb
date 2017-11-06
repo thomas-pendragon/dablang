@@ -54,7 +54,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'LOAD_SELF', args: %i[reg]}, # reg0 <- self
       {name: 'GET_INSTVAR', args: %i[reg symbol]}, # reg0 <- self.@arg1
-      {name: 'Q_SET_CLOSURE', args: %i[reg uint16]}, # reg0 <- closurevar(arg1)
+      {name: 'LOAD_CLOSURE', args: %i[reg uint16]}, # reg0 <- closurevar(arg1)
       {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg0 <- has_block?
 
       {name: 'Q_SET_ARG', args: %i[reg uint16]}, # reg0 <- funarg(arg1)

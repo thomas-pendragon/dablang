@@ -13,6 +13,6 @@ class DabNodeClosureVar < DabNode
   end
 
   def compile_as_ssa(output, output_register)
-    output.print('Q_SET_CLOSURE', "R#{output_register}", index)
+    output.print('LOAD_CLOSURE', "R#{output_register}", index)
   end
 end
