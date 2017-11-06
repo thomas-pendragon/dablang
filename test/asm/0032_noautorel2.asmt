@@ -39,9 +39,9 @@ Instructions should pop return value if not used.
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
 /* 2            */               LOAD_NUMBER R1, 2
-                                 Q_SET_NEW_ARRAY R2, R0, R1
+                                 NEW_ARRAY R2, R0, R1
 /* 3            */               LOAD_NUMBER R3, 3
-                                 Q_SET_NEW_ARRAY R4, R3
+                                 NEW_ARRAY R4, R3
 /* +            */               Q_SET_INSTCALL R5, R2, S0, R4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0

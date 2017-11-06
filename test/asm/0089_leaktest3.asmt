@@ -91,7 +91,7 @@ func main()
 /* "String2"    */               LOAD_STRING R3, _DATA + 8, 7
 /* String       */               LOAD_CLASS R4, 1
 /* new          */               Q_SET_INSTCALL R5, R4, S4, R3
-                                 Q_SET_NEW_ARRAY R6, R1, R2, R5
+                                 NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
 /* functrue     */               Q_SET_CALL R7, S1
                                  Q_JMP_IF2 R7, L1, L2

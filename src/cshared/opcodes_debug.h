@@ -23,7 +23,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_LOAD_STRING,
      "LOAD_STRING",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT64, OpcodeArg::ARG_UINT64}},
-    {OP_Q_SET_NEW_ARRAY, "Q_SET_NEW_ARRAY", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REGLIST}},
+    {OP_NEW_ARRAY, "NEW_ARRAY", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REGLIST}},
     {OP_Q_SET_SELF, "Q_SET_SELF", {OpcodeArg::ARG_REG}},
     {OP_Q_SET_INSTVAR, "Q_SET_INSTVAR", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
     {OP_Q_SET_CLOSURE, "Q_SET_CLOSURE", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},

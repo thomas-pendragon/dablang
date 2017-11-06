@@ -47,7 +47,7 @@ func main()
 /* "String2"    */               LOAD_STRING R2, _DATA + 8, 7
 /* String       */               LOAD_CLASS R3, 1
 /* new          */               Q_SET_INSTCALL R4, R3, S1, R2
-                                 Q_SET_NEW_ARRAY R5, R0, R1, R4
+                                 NEW_ARRAY R5, R0, R1, R4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0
                                  Q_RELEASE R1

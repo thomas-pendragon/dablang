@@ -50,7 +50,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'LOAD_NUMBER', args: %i[reg uint64]}, # reg0 <- arg1
       {name: 'LOAD_STRING', args: %i[reg uint64 uint64]}, # reg0 <- string(*arg1, length = arg2)
-      {name: 'Q_SET_NEW_ARRAY', args: %i[reg reglist]}, # reg0 <- [reg(arg1), reg(arg2), ... reg(argn)]
+      {name: 'NEW_ARRAY', args: %i[reg reglist]}, # reg0 <- [reg(arg1), reg(arg2), ... reg(argn)]
 
       {name: 'Q_SET_SELF', args: %i[reg]}, # reg0 <- self
       {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg0 <- self.@arg1

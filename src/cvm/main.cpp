@@ -833,7 +833,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(out_reg, value);
         break;
     }
-    case OP_Q_SET_NEW_ARRAY:
+    case OP_NEW_ARRAY:
     {
         auto out_reg = input.read_reg();
         auto reglist = input.read_reglist();
