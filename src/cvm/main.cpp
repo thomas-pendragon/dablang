@@ -1145,7 +1145,7 @@ bool DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
         break;
     }
-    case OP_Q_SET_INSTVAR:
+    case OP_GET_INSTVAR:
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();

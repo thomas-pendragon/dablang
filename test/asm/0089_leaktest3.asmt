@@ -97,7 +97,7 @@ func main()
                                  Q_JMP_IF2 R7, L1, L2
                    L1:
                                  Q_RELEASE R6
-/* @var         */               Q_SET_INSTVAR R6, S5
+/* @var         */               GET_INSTVAR R6, S5
                                  JMP L2
                    L2:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
