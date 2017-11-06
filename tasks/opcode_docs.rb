@@ -17,6 +17,8 @@ OPCODES_ARRAY_BASE.each do |group|
   title = group[:group]
   items = group[:items]
 
+  next if items.empty?
+
   puts "## #{title}
 
 |Opcode |Name    |Arguments|
