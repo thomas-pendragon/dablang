@@ -52,7 +52,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'LOAD_STRING', args: %i[reg uint64 uint64]}, # reg0 <- string(*arg1, length = arg2)
       {name: 'NEW_ARRAY', args: %i[reg reglist]}, # reg0 <- [reg(arg1), reg(arg2), ... reg(argn)]
 
-      {name: 'Q_SET_SELF', args: %i[reg]}, # reg0 <- self
+      {name: 'LOAD_SELF', args: %i[reg]}, # reg0 <- self
       {name: 'Q_SET_INSTVAR', args: %i[reg symbol]}, # reg0 <- self.@arg1
       {name: 'Q_SET_CLOSURE', args: %i[reg uint16]}, # reg0 <- closurevar(arg1)
       {name: 'Q_SET_HAS_BLOCK', args: %i[reg]}, # reg0 <- has_block?

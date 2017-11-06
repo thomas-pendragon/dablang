@@ -55,14 +55,14 @@ class Array
                    CArray_Feach_with_index:
                                  STACK_RESERVE 0
 /* 0            */               LOAD_NUMBER R0, 0
-                                 Q_SET_SELF R1
+                                 LOAD_SELF R1
 /* count        */               Q_SET_INSTCALL R2, R1, S4
                                  JMP L1
                    L1:
 /* !=           */               Q_SET_INSTCALL R3, R0, S0, R2
                                  Q_JMP_IF2 R3, L2, L3
                    L2:
-                                 Q_SET_SELF R4
+                                 LOAD_SELF R4
 /* []           */               Q_SET_INSTCALL R5, R4, S3, R0
                                  Q_YIELD RNIL, R5, R0
 /* 1            */               LOAD_NUMBER R6, 1

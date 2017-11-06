@@ -943,7 +943,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, str);
         break;
     }
-    case OP_Q_SET_SELF:
+    case OP_LOAD_SELF:
     {
         auto reg_index = input.read_reg();
         register_set(reg_index, get_self());

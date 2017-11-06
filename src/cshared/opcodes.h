@@ -21,7 +21,7 @@ enum
     OP_LOAD_NUMBER          = 0x10,
     OP_LOAD_STRING          = 0x11,
     OP_NEW_ARRAY            = 0x12,
-    OP_Q_SET_SELF           = 0x13,
+    OP_LOAD_SELF            = 0x13,
     OP_Q_SET_INSTVAR        = 0x14,
     OP_Q_SET_CLOSURE        = 0x15,
     OP_Q_SET_HAS_BLOCK      = 0x16,

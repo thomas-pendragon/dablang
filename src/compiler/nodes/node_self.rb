@@ -6,6 +6,6 @@ class DabNodeSelf < DabNode
   end
 
   def compile_as_ssa(output, output_register)
-    output.print('Q_SET_SELF', "R#{output_register}")
+    output.print('LOAD_SELF', "R#{output_register}")
   end
 end

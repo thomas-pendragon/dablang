@@ -33,7 +33,7 @@ exclude_from_nav: true
 |`10`|`LOAD_NUMBER`|`reg`, `uint64`|
 |`11`|`LOAD_STRING`|`reg`, `uint64`, `uint64`|
 |`12`|`NEW_ARRAY`|`reg`, `reglist`|
-|`13`|`Q_SET_SELF`|`reg`|
+|`13`|`LOAD_SELF`|`reg`|
 |`14`|`Q_SET_INSTVAR`|`reg`, `symbol`|
 |`15`|`Q_SET_CLOSURE`|`reg`, `uint16`|
 |`16`|`Q_SET_HAS_BLOCK`|`reg`|
