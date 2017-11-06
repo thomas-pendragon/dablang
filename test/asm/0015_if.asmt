@@ -47,7 +47,7 @@ func foo(a)
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
+/* a            */               LOAD_ARG R0, 0
 /* "a"          */               LOAD_STRING R1, _DATA + 0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_JMP_IF2 R0, L1, L2

@@ -52,15 +52,15 @@ func foo(n)
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* n            */               Q_SET_ARG R0, 0
+/* n            */               LOAD_ARG R0, 0
                                  REFLECT R1, S5, 2, 256
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    CFoo_Fzomg:
                                  STACK_RESERVE 0
-/* b            */               Q_SET_ARG R0, 1
-/* a            */               Q_SET_ARG R1, 0
+/* b            */               LOAD_ARG R0, 1
+/* a            */               LOAD_ARG R1, 0
                                  Q_RETURN RNIL
  
                    _FUNC:

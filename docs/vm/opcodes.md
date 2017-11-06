@@ -37,7 +37,7 @@ exclude_from_nav: true
 |`14`|`GET_INSTVAR`|`reg`, `symbol`|
 |`15`|`LOAD_CLOSURE`|`reg`, `uint16`|
 |`16`|`LOAD_HAS_BLOCK`|`reg`|
-|`17`|`Q_SET_ARG`|`reg`, `uint16`|
+|`17`|`LOAD_ARG`|`reg`, `uint16`|
 
 <br>
 ## FLOW

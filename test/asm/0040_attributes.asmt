@@ -59,9 +59,9 @@ func another_attribute(method, arg1, arg2)
  
                    Fanother_attribute:
                                  STACK_RESERVE 0
-/* arg2         */               Q_SET_ARG R0, 2
-/* arg1         */               Q_SET_ARG R1, 1
-/* method       */               Q_SET_ARG R2, 0
+/* arg2         */               LOAD_ARG R0, 2
+/* arg1         */               LOAD_ARG R1, 1
+/* method       */               LOAD_ARG R2, 0
                                  Q_RETURN RNIL
  
                    Ffoo:
@@ -70,7 +70,7 @@ func another_attribute(method, arg1, arg2)
  
                    Fsample_attribute:
                                  STACK_RESERVE 0
-/* method       */               Q_SET_ARG R0, 0
+/* method       */               LOAD_ARG R0, 0
                                  Q_RETURN RNIL
  
                    _FUNC:

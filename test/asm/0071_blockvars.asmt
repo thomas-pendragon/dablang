@@ -51,7 +51,7 @@ func main()
  
                    Fmain__block1:
                                  STACK_RESERVE 0
-/* bar          */               Q_SET_ARG R0, 0
+/* bar          */               LOAD_ARG R0, 0
                                  LOAD_CLOSURE R1, 0
 /* qux          */               Q_SET_CALL RNIL, S2, R0, R1
                                  Q_RETURN RNIL

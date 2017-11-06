@@ -57,7 +57,7 @@ func main()
  
                    Fputs:
                                  STACK_RESERVE 0
-/* a            */               Q_SET_ARG R0, 0
+/* a            */               LOAD_ARG R0, 0
                                  Q_RETURN RNIL
  
                    _FUNC:

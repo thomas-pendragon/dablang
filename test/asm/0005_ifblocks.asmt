@@ -59,8 +59,8 @@ func foo(a, b)
  
                    Ffoo:
                                  STACK_RESERVE 0
-/* b            */               Q_SET_ARG R0, 1
-/* a            */               Q_SET_ARG R1, 0
+/* b            */               LOAD_ARG R0, 1
+/* a            */               LOAD_ARG R1, 0
                                  Q_JMP_IF2 R1, L1, L2
                    L1:
                                  Q_JMP_IF2 R0, L3, L4
