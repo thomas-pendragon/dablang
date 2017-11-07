@@ -40,7 +40,7 @@ func main()
 /* 5            */               LOAD_NUMBER R0, 5
                                  JMP L1
                    L1:
-                                 Q_JMP_IF2 R0, L2, L3
+                                 JMP_IF R0, L2, L3
                    L2:
 /* 1            */               LOAD_NUMBER R1, 1
 /* -            */               Q_SET_INSTCALL R0, R0, S0, R1

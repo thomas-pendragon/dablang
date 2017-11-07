@@ -94,7 +94,7 @@ func main()
                                  NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
 /* functrue     */               Q_SET_CALL R7, S1
-                                 Q_JMP_IF2 R7, L1, L2
+                                 JMP_IF R7, L1, L2
                    L1:
                                  Q_RELEASE R6
 /* @var         */               GET_INSTVAR R6, S5

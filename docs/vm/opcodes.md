@@ -45,7 +45,7 @@ exclude_from_nav: true
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
 |`18`|`JMP`|`int16`|
-|`19`|`Q_JMP_IF2`|`reg`, `int16`, `int16`|
+|`19`|`JMP_IF`|`reg`, `int16`, `int16`|
 |`1A`|`Q_SET_CALL`|`reg`, `symbol`, `reglist`|
 |`1B`|`Q_SET_CALL_BLOCK`|`reg`, `symbol`, `symbol`, `reg`, `reglist`|
 |`1C`|`Q_SET_INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|

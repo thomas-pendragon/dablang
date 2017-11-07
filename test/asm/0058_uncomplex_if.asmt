@@ -59,7 +59,7 @@ func main()
 /* 2            */               LOAD_NUMBER R3, 2
 /* *            */               Q_SET_INSTCALL R4, R0, S0, R3
 /* ==           */               Q_SET_INSTCALL R5, R2, S1, R4
-                                 Q_JMP_IF2 R5, L1, L2
+                                 JMP_IF R5, L1, L2
                    L1:
 /* "yes"        */               LOAD_STRING R6, _DATA + 0, 3
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6

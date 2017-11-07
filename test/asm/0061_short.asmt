@@ -84,7 +84,7 @@ func main()
                    Fmain_and:
                                  STACK_RESERVE 0
 /* fun1         */               Q_SET_CALL R0, S0
-                                 Q_JMP_IF2 R0, L1, L2
+                                 JMP_IF R0, L1, L2
                    L1:
 /* fun2         */               Q_SET_CALL R0, S1
                                  JMP L2
@@ -95,7 +95,7 @@ func main()
                    Fmain_or:
                                  STACK_RESERVE 0
 /* fun1         */               Q_SET_CALL R0, S0
-                                 Q_JMP_IF2 R0, L3, L4
+                                 JMP_IF R0, L3, L4
                    L4:
 /* fun2         */               Q_SET_CALL R0, S1
                                  JMP L3

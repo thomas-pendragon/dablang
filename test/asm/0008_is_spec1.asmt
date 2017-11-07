@@ -65,7 +65,7 @@ func bar()
 /* a            */               LOAD_ARG R0, 0
 /* String       */               LOAD_CLASS R1, 1
 /* is           */               Q_SET_INSTCALL R2, R0, S2, R1
-                                 Q_JMP_IF2 R2, L1, L2
+                                 JMP_IF R2, L1, L2
                    L1:
 /* "got string" */               LOAD_STRING R3, _DATA + 11, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
@@ -73,7 +73,7 @@ func bar()
                    L2:
 /* Fixnum       */               LOAD_CLASS R4, 2
 /* is           */               Q_SET_INSTCALL R5, R0, S2, R4
-                                 Q_JMP_IF2 R5, L3, L4
+                                 JMP_IF R5, L3, L4
                    L3:
 /* "got fixnum" */               LOAD_STRING R6, _DATA + 0, 10
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6

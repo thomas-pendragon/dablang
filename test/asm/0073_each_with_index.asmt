@@ -60,7 +60,7 @@ class Array
                                  JMP L1
                    L1:
 /* !=           */               Q_SET_INSTCALL R3, R0, S0, R2
-                                 Q_JMP_IF2 R3, L2, L3
+                                 JMP_IF R3, L2, L3
                    L2:
                                  LOAD_SELF R4
 /* []           */               Q_SET_INSTCALL R5, R4, S3, R0

@@ -1104,7 +1104,7 @@ bool DabVM::execute_single(Stream &input)
         instructions.seek(new_address);
         break;
     }
-    case OP_Q_JMP_IF2:
+    case OP_JMP_IF:
     {
         auto value_reg = input.read_reg();
         auto mod_true  = input.read_int16() - 7;

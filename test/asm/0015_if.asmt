@@ -50,7 +50,7 @@ func foo(a)
 /* a            */               LOAD_ARG R0, 0
 /* "a"          */               LOAD_STRING R1, _DATA + 0, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
-                                 Q_JMP_IF2 R0, L1, L2
+                                 JMP_IF R0, L1, L2
                    L1:
 /* "b"          */               LOAD_STRING R2, _DATA + 2, 1
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2

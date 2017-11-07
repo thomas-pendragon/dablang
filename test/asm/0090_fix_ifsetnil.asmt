@@ -44,7 +44,7 @@ func main()
 /* 2            */               LOAD_NUMBER R0, 2
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
 /* main         */               Q_SET_CALL R1, S0
-                                 Q_JMP_IF2 R1, L2, L3
+                                 JMP_IF R1, L2, L3
                    L2:
                                  LOAD_NIL R0
                                  JMP L3

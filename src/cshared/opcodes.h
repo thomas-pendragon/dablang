@@ -27,7 +27,7 @@ enum
     OP_LOAD_HAS_BLOCK       = 0x16,
     OP_LOAD_ARG             = 0x17,
     OP_JMP                  = 0x18,
-    OP_Q_JMP_IF2            = 0x19,
+    OP_JMP_IF               = 0x19,
     OP_Q_SET_CALL           = 0x1A,
     OP_Q_SET_CALL_BLOCK     = 0x1B,
     OP_Q_SET_INSTCALL       = 0x1C,

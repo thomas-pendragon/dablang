@@ -360,12 +360,7 @@ class Parser
         end
       else
         raise 'header not finished yet' if !raw && newformat && !@header_finished
-        if line[0] == 'JMP_IF2'
-          @jump_corrections << [pos, line[1].to_s]
-          @jump_corrections2 << [pos, line[2].to_s]
-          line[1] = 0
-          line[2] = 0
-        elsif line[0] == 'Q_JMP_IF2'
+        if line[0] == 'JMP_IF'
           @jump_corrections2 << [pos, line[2].to_s]
           @jump_corrections3 << [pos, line[3].to_s]
           line[2] = 0
