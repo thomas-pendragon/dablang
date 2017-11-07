@@ -41,7 +41,7 @@ func main()
                    F__foo_Fixnum:
                                  STACK_RESERVE 0
                                  LOAD_HAS_BLOCK R0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fmain:

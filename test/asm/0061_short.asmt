@@ -64,14 +64,14 @@ func main()
                    Ffun1:
                                  STACK_RESERVE 0
 /* "fun1"       */               LOAD_STRING R0, _DATA + 0, 4
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_FALSE R1
                                  Q_RETURN R1
  
                    Ffun2:
                                  STACK_RESERVE 0
 /* "fun2"       */               LOAD_STRING R0, _DATA + 5, 4
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_TRUE R1
                                  Q_RETURN R1
  
@@ -89,7 +89,7 @@ func main()
 /* fun2         */               CALL R0, S1
                                  JMP L2
                    L2:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    Fmain_or:
@@ -100,7 +100,7 @@ func main()
 /* fun2         */               CALL R0, S1
                                  JMP L3
                    L3:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

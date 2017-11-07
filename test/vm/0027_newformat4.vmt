@@ -25,7 +25,7 @@ CODE:
 
 Fmain:
   CALL R2, S2
-  Q_SET_SYSCALL RNIL, 0, R2
+  SYSCALL RNIL, 0, R2
   Q_RETURN RNIL
 
 Ffoo:

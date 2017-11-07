@@ -32,7 +32,7 @@ func foo()
                    Ffoo:
                                  STACK_RESERVE 0
 /* 3            */               LOAD_NUMBER R0, 3
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

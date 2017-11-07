@@ -38,7 +38,7 @@ func foo(a, b<Uint8>)
 /* a            */               LOAD_ARG R0, 0
 /* b            */               LOAD_ARG R1, 1
                                  REFLECT R2, S2, 0, -1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL
  
                    _FUNC:

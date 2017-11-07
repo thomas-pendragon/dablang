@@ -45,7 +45,7 @@ func main()
                                  STACK_RESERVE 0
 /* "Test"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               COV 1, 3
-                                 Q_SET_SYSCALL RNIL, 0, R0
+                                 SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

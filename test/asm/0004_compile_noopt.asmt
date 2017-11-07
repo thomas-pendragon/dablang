@@ -36,7 +36,7 @@ func foo()
 /* 1            */               LOAD_NUMBER R0, 1
 /* 2            */               LOAD_NUMBER R1, 2
 /* +            */               INSTCALL R2, R0, S0, R1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL
  
                    _FUNC:

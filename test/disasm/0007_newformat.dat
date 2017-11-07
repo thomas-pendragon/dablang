@@ -55,9 +55,9 @@ pbpaste | ruby src/compiler/compiler.rb --with-attributes --with-reflection  | r
      274: Q_RETURN RNIL
      277: STACK_RESERVE 0
      280: REFLECT R0, S4, 0, 65535
-     289: Q_SET_SYSCALL RNIL, 0, R0
+     289: SYSCALL RNIL, 0, R0
      296: LOAD_STRING R1, 192, 1
-     315: Q_SET_SYSCALL RNIL, 0, R1
+     315: SYSCALL RNIL, 0, R1
      322: REFLECT R2, S4, 1, 65535
-     331: Q_SET_SYSCALL RNIL, 0, R2
+     331: SYSCALL RNIL, 0, R2
      338: Q_RETURN RNIL

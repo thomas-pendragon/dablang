@@ -46,7 +46,7 @@ func main()
                                  STACK_RESERVE 0
                                  LOAD_NIL R0
 /* foo          */               CALL_BLOCK R1, S0, S2, R0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    Fmain__block1:

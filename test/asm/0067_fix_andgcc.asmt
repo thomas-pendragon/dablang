@@ -47,7 +47,7 @@ func main()
                                  LOAD_TRUE RNIL
                                  LOAD_TRUE RNIL
 /* "ok"         */               LOAD_STRING R0, _DATA + 0, 2
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

@@ -41,7 +41,7 @@ func foo(a)
 /* 2            */               LOAD_NUMBER R3, 2
 /* *            */               INSTCALL R4, R0, S0, R3
 /* +            */               INSTCALL R5, R2, S1, R4
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
+/* PRINT        */               SYSCALL RNIL, 0, R5
                                  Q_RETURN RNIL
  
                    _FUNC:

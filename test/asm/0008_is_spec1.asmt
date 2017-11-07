@@ -68,7 +68,7 @@ func bar()
                                  JMP_IF R2, L1, L2
                    L1:
 /* "got string" */               LOAD_STRING R3, _DATA + 11, 10
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
+/* PRINT        */               SYSCALL RNIL, 0, R3
                                  JMP L2
                    L2:
 /* Fixnum       */               LOAD_CLASS R4, 2
@@ -76,7 +76,7 @@ func bar()
                                  JMP_IF R5, L3, L4
                    L3:
 /* "got fixnum" */               LOAD_STRING R6, _DATA + 0, 10
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
+/* PRINT        */               SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
                                  Q_RETURN RNIL

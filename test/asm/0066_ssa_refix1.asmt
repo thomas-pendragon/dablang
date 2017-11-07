@@ -60,8 +60,8 @@ func main()
                                  MOV R3, R2
                                  JMP L3
                    L3:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
+/* PRINT        */               SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL
  
                    _FUNC:

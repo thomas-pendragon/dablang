@@ -57,7 +57,7 @@ func main()
 /* 3            */               LOAD_NUMBER R1, 3
                                  JMP L3
                    L3:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    _FUNC:

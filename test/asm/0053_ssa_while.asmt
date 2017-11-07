@@ -43,19 +43,19 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 5            */               LOAD_NUMBER R0, 5
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
 /* 0            */               LOAD_NUMBER R1, 0
                                  JMP L1
                    L1:
 /* >            */               INSTCALL R2, R0, S1, R1
                                  JMP_IF R2, L2, L3
                    L2:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
 /* 1            */               LOAD_NUMBER R3, 1
 /* -            */               INSTCALL R0, R0, S0, R3
                                  JMP L1
                    L3:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

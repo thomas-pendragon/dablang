@@ -35,7 +35,7 @@ func main()
                                  STACK_RESERVE 0
 /* 14           */               LOAD_NUMBER R0, 14
 /* !            */               INSTCALL R1, R0, S0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    _FUNC:

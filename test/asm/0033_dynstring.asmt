@@ -40,7 +40,7 @@ func foo()
 /* "allocated s */               LOAD_STRING R0, _DATA + 0, 16
 /* String       */               LOAD_CLASS R1, 1
 /* new          */               INSTCALL R2, R1, S1, R0
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R2
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2

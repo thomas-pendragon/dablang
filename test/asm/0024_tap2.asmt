@@ -57,7 +57,7 @@ func tap2()
 /* a            */               LOAD_ARG R0, 0
 /* b            */               LOAD_ARG R1, 1
 /* +            */               INSTCALL R2, R0, S0, R1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R2
                                  Q_RETURN RNIL
  
                    _FUNC:

@@ -43,7 +43,7 @@ Instructions should pop return value if not used.
 /* 3            */               LOAD_NUMBER R3, 3
                                  NEW_ARRAY R4, R3
 /* +            */               INSTCALL R5, R2, S0, R4
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
+/* PRINT        */               SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2

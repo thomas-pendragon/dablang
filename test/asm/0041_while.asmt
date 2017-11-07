@@ -43,7 +43,7 @@ func main()
 /* >            */               INSTCALL R2, R0, S1, R1
                                  JMP_IF R2, L2, L3
                    L2:
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R0
 /* 1            */               LOAD_NUMBER R3, 1
 /* -            */               INSTCALL R0, R0, S0, R3
                                  JMP L1

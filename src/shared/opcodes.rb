@@ -73,7 +73,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'INSTCALL', args: %i[reg reg symbol reglist]}, # reg0 <- call(symbol(arg2), self: arg1, args: arg3..argn)
       {name: 'INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)
 
-      {name: 'Q_SET_SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
+      {name: 'SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
 
       {name: 'Q_YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
 

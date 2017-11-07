@@ -39,7 +39,7 @@ func main()
 /* new          */               INSTCALL R1, R0, S2
 /* "a"          */               LOAD_STRING R2, _DATA + 0, 1
 /* ==           */               INSTCALL R3, R1, S0, R2
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
+/* PRINT        */               SYSCALL RNIL, 0, R3
                                  Q_RETURN RNIL
  
                    _FUNC:

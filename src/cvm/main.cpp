@@ -1118,7 +1118,7 @@ bool DabVM::execute_single(Stream &input)
     {
         break;
     }
-    case OP_Q_SET_SYSCALL:
+    case OP_SYSCALL:
     {
         auto reg     = input.read_reg();
         auto call    = input.read_uint8();

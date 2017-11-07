@@ -32,7 +32,7 @@ _CODE:
                    Fmain:
                                  STACK_RESERVE 0
                                  CALL R7, S0
-                                 Q_SET_SYSCALL RNIL, 0, R7
+                                 SYSCALL RNIL, 0, R7
                                  Q_RETURN RNIL
 
 _FUNC:
@@ -60,7 +60,7 @@ IP = 208
        205: Q_RETURN R0
 >      208: STACK_RESERVE 0
        211: CALL R7, S0
-       217: Q_SET_SYSCALL RNIL, 0, R7
+       217: SYSCALL RNIL, 0, R7
        224: Q_RETURN RNIL
 debug: break at 205.
 Stack:

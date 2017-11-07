@@ -52,7 +52,7 @@ func bar()
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* class        */               INSTCALL R1, R0, S1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    _FUNC:

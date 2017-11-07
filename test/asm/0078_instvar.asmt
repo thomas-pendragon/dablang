@@ -42,7 +42,7 @@ func foo()
 /* 12           */               LOAD_NUMBER R0, 12
 /* @a=          */               Q_CHANGE_INSTVAR S1, R0
 /* @a           */               GET_INSTVAR R1, S1
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    _FUNC:

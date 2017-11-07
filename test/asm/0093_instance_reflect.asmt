@@ -54,7 +54,7 @@ func foo(n)
                                  STACK_RESERVE 0
 /* n            */               LOAD_ARG R0, 0
                                  REFLECT R1, S5, 2, 256
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R1
                                  Q_RETURN RNIL
  
                    CFoo_Fzomg:

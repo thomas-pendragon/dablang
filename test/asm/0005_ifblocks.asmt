@@ -66,21 +66,21 @@ func foo(a, b)
                                  JMP_IF R1, L3, L4
                    L3:
 /* "a && b"     */               LOAD_STRING R2, _DATA + 25, 6
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R2
+/* PRINT        */               SYSCALL RNIL, 0, R2
                                  JMP L5
                    L4:
 /* "a && !b"    */               LOAD_STRING R3, _DATA + 17, 7
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R3
+/* PRINT        */               SYSCALL RNIL, 0, R3
                                  JMP L5
                    L2:
                                  JMP_IF R1, L6, L7
                    L6:
 /* "!a && b"    */               LOAD_STRING R4, _DATA + 9, 7
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R4
+/* PRINT        */               SYSCALL RNIL, 0, R4
                                  JMP L5
                    L7:
 /* "!a && !b"   */               LOAD_STRING R5, _DATA + 0, 8
-/* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
+/* PRINT        */               SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:
                                  Q_RETURN RNIL
