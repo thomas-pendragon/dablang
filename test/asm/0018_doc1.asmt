@@ -50,7 +50,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* "hello"      */               LOAD_STRING R0, _DATA + 7, 5
-/* __foo_String */               Q_SET_CALL RNIL, S0, R0
+/* __foo_String */               CALL RNIL, S0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

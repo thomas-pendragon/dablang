@@ -53,7 +53,7 @@ func bar()
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               LOAD_STRING R0, _DATA + 11, 3
-/* __foo_String */               Q_SET_CALL RNIL, S0, R0
+/* __foo_String */               CALL RNIL, S0, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

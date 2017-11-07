@@ -93,7 +93,7 @@ func main()
 /* new          */               Q_SET_INSTCALL R5, R4, S4, R3
                                  NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R6
-/* functrue     */               Q_SET_CALL R7, S1
+/* functrue     */               CALL R7, S1
                                  JMP_IF R7, L1, L2
                    L1:
                                  Q_RELEASE R6

@@ -47,12 +47,12 @@ func main()
                                  STACK_RESERVE 0
 /* 12           */               LOAD_NUMBER R0, 12
                                  NEW_ARRAY R1, R0
-/* puts         */               Q_SET_CALL RNIL, S2, R1
+/* puts         */               CALL RNIL, S2, R1
 /* 123          */               LOAD_NUMBER R2, 123
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R2
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* insert       */               Q_SET_INSTCALL RNIL, R1, S0, R3
-/* puts         */               Q_SET_CALL RNIL, S2, R1
+/* puts         */               CALL RNIL, S2, R1
                                  Q_RETURN RNIL
  
                    Fputs:

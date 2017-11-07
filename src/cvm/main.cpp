@@ -852,7 +852,7 @@ bool DabVM::execute_single(Stream &input)
 
         break;
     }
-    case OP_Q_SET_CALL:
+    case OP_CALL:
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
@@ -861,7 +861,7 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
         break;
     }
-    case OP_Q_SET_CALL_BLOCK:
+    case OP_CALL_BLOCK:
     {
         auto out_reg      = input.read_reg();
         auto symbol       = input.read_symbol();

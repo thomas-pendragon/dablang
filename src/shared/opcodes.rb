@@ -67,8 +67,8 @@ OPCODES_ARRAY_BASE = [
       {name: 'JMP', args: %i{int16}}, # add +arg to PC
       {name: 'JMP_IF', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg0
 
-      {name: 'Q_SET_CALL', args: %i[reg symbol reglist]}, # reg0 <- call(symbol(arg1), arg2..argn)
-      {name: 'Q_SET_CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
+      {name: 'CALL', args: %i[reg symbol reglist]}, # reg0 <- call(symbol(arg1), arg2..argn)
+      {name: 'CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
 
       {name: 'Q_SET_INSTCALL', args: %i[reg reg symbol reglist]}, # reg0 <- call(symbol(arg2), self: arg1, args: arg3..argn)
       {name: 'Q_SET_INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)

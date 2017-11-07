@@ -48,7 +48,7 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* foo          */               Q_SET_CALL R0, S0
+/* foo          */               CALL R0, S0
                                  JMP_IF R0, L1, L2
                    L1:
 /* 2            */               LOAD_NUMBER R1, 2

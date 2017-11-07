@@ -50,11 +50,11 @@ func another_attribute(method, arg1, arg2)
                    F__init:
                                  STACK_RESERVE 0
                                  LOAD_METHOD R0, S2
-/* sample_attri */               Q_SET_CALL RNIL, S3, R0
+/* sample_attri */               CALL RNIL, S3, R0
                                  LOAD_METHOD R1, S2
 /* 14           */               LOAD_NUMBER R2, 14
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
-/* another_attr */               Q_SET_CALL RNIL, S1, R1, R2, R3
+/* another_attr */               CALL RNIL, S1, R1, R2, R3
                                  Q_RETURN RNIL
  
                    Fanother_attribute:

@@ -48,7 +48,7 @@ func main()
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  LOAD_NIL R1
-/* __foo_Fixnum */               Q_SET_CALL_BLOCK RNIL, S0, S2, R1, R0
+/* __foo_Fixnum */               CALL_BLOCK RNIL, S0, S2, R1, R0
                                  Q_RETURN RNIL
  
                    Fmain__block1:

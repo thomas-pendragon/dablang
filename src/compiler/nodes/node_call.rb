@@ -68,7 +68,7 @@ class DabNodeCall < DabNodeExternalBasecall
     ].compact
 
     output.comment(self.real_identifier)
-    output.printex(self, 'Q_SET_CALL' + (has_block? ? '_BLOCK' : ''), *args)
+    output.printex(self, 'CALL' + (has_block? ? '_BLOCK' : ''), *args)
   end
 
   def compile_as_ssa(output, output_register)
