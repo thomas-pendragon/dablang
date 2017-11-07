@@ -875,7 +875,7 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
         break;
     }
-    case OP_Q_SET_INSTCALL_BLOCK:
+    case OP_INSTCALL_BLOCK:
     {
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
@@ -1126,7 +1126,7 @@ bool DabVM::execute_single(Stream &input)
         kernelcall(true, reg, call, true, reglist, true);
         break;
     }
-    case OP_Q_SET_INSTCALL:
+    case OP_INSTCALL:
     {
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();

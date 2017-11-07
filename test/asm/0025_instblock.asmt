@@ -39,7 +39,7 @@ func tap(a)
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
                                  LOAD_NIL R1
-/* fun          */               Q_SET_INSTCALL_BLOCK RNIL, R0, S0, S2, R1
+/* fun          */               INSTCALL_BLOCK RNIL, R0, S0, S2, R1
                                  Q_RETURN RNIL
  
                    Ftap__block1:

@@ -47,12 +47,12 @@ func main()
 /* 0            */               LOAD_NUMBER R1, 0
                                  JMP L1
                    L1:
-/* >            */               Q_SET_INSTCALL R2, R0, S1, R1
+/* >            */               INSTCALL R2, R0, S1, R1
                                  JMP_IF R2, L2, L3
                    L2:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0
 /* 1            */               LOAD_NUMBER R3, 1
-/* -            */               Q_SET_INSTCALL R0, R0, S0, R3
+/* -            */               INSTCALL R0, R0, S0, R3
                                  JMP L1
                    L3:
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R0

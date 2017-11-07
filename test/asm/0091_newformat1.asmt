@@ -60,9 +60,9 @@ func main()
                                  JMP L1
                    L1:
 /* Zomg         */               LOAD_CLASS R0, 256
-/* new          */               Q_SET_INSTCALL R1, R0, S3
+/* new          */               INSTCALL R1, R0, S3
 /* "foobar"     */               LOAD_STRING R2, _DATA + 0, 6
-/* foo          */               Q_SET_INSTCALL RNIL, R1, S1, R2
+/* foo          */               INSTCALL RNIL, R1, S1, R2
                                  JMP L1
  
                    CZomg_Ffoo:

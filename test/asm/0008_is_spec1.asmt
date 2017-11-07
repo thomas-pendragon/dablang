@@ -64,7 +64,7 @@ func bar()
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* String       */               LOAD_CLASS R1, 1
-/* is           */               Q_SET_INSTCALL R2, R0, S2, R1
+/* is           */               INSTCALL R2, R0, S2, R1
                                  JMP_IF R2, L1, L2
                    L1:
 /* "got string" */               LOAD_STRING R3, _DATA + 11, 10
@@ -72,7 +72,7 @@ func bar()
                                  JMP L2
                    L2:
 /* Fixnum       */               LOAD_CLASS R4, 2
-/* is           */               Q_SET_INSTCALL R5, R0, S2, R4
+/* is           */               INSTCALL R5, R0, S2, R4
                                  JMP_IF R5, L3, L4
                    L3:
 /* "got fixnum" */               LOAD_STRING R6, _DATA + 0, 10

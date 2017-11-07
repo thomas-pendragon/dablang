@@ -42,7 +42,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "Abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* "String1"    */               LOAD_STRING R1, _DATA + 4, 7
-/* +            */               Q_SET_INSTCALL R2, R0, S0, R1
+/* +            */               INSTCALL R2, R0, S0, R1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RETURN R2

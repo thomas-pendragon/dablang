@@ -42,7 +42,7 @@ Instructions should pop return value if not used.
                                  NEW_ARRAY R2, R0, R1
 /* 3            */               LOAD_NUMBER R3, 3
                                  NEW_ARRAY R4, R3
-/* +            */               Q_SET_INSTCALL R5, R2, S0, R4
+/* +            */               INSTCALL R5, R2, S0, R4
 /* PRINT        */               Q_SET_SYSCALL RNIL, 0, R5
                                  Q_RELEASE R0
                                  Q_RELEASE R1

@@ -48,8 +48,8 @@ exclude_from_nav: true
 |`19`|`JMP_IF`|`reg`, `int16`, `int16`|
 |`1A`|`CALL`|`reg`, `symbol`, `reglist`|
 |`1B`|`CALL_BLOCK`|`reg`, `symbol`, `symbol`, `reg`, `reglist`|
-|`1C`|`Q_SET_INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|
-|`1D`|`Q_SET_INSTCALL_BLOCK`|`reg`, `reg`, `symbol`, `symbol`, `reg`, `reglist`|
+|`1C`|`INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|
+|`1D`|`INSTCALL_BLOCK`|`reg`, `reg`, `symbol`, `symbol`, `reg`, `reglist`|
 |`1E`|`Q_SET_SYSCALL`|`reg`, `uint8`, `reglist`|
 |`1F`|`Q_YIELD`|`reg`, `reglist`|
 |`20`|`Q_RETURN`|`reg`|

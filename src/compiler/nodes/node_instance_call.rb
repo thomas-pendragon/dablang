@@ -76,7 +76,7 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
       capture_arg,
       list,
     ]
-    output.printex(self, 'Q_SET_INSTCALL' + (has_block? ? '_BLOCK' : ''), *args)
+    output.printex(self, 'INSTCALL' + (has_block? ? '_BLOCK' : ''), *args)
   end
 
   def compile_as_ssa(output, output_register)
