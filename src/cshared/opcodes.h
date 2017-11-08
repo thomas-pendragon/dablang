@@ -37,7 +37,7 @@ enum
     OP_RETURN           = 0x20,
     OP_RETAIN           = 0x21,
     OP_RELEASE          = 0x22,
-    OP_Q_CAST           = 0x23,
+    OP_CAST             = 0x23,
     OP_Q_CHANGE_INSTVAR = 0x24,
     OP_COV              = 0x25,
     OP_STACK_RESERVE    = 0x26,

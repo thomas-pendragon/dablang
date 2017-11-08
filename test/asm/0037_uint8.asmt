@@ -32,7 +32,7 @@ func main()
                    Fmain:
                                  STACK_RESERVE 0
 /* 150          */               LOAD_NUMBER R0, 150
-/* Uint8        */               Q_CAST R1, R0, 6
+/* Uint8        */               CAST R1, R0, 6
                                  RETURN RNIL
  
                    _FUNC:

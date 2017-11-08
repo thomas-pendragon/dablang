@@ -1190,7 +1190,7 @@ bool DabVM::execute_single(Stream &input)
         value.retain();
         break;
     }
-    case OP_Q_CAST:
+    case OP_CAST:
     {
         auto dst_reg     = input.read_reg();
         auto src_reg     = input.read_reg();
