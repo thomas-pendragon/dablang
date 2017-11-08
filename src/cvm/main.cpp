@@ -1175,7 +1175,7 @@ bool DabVM::execute_single(Stream &input)
         coverage.add_line(hash, line);
         break;
     }
-    case OP_Q_RELEASE:
+    case OP_RELEASE:
     {
         auto reg   = input.read_reg();
         auto value = register_get(reg);

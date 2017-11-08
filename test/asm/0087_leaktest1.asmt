@@ -49,12 +49,12 @@ func main()
 /* new          */               INSTCALL R4, R3, S1, R2
                                  NEW_ARRAY R5, R0, R1, R4
 /* PRINT        */               SYSCALL RNIL, 0, R5
-                                 Q_RELEASE R0
-                                 Q_RELEASE R1
-                                 Q_RELEASE R2
-                                 Q_RELEASE R3
-                                 Q_RELEASE R4
-                                 Q_RELEASE R5
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
                                  RETURN RNIL
  
                    _FUNC:

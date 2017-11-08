@@ -78,8 +78,8 @@ func main()
 /* Foo          */               LOAD_CLASS R0, 256
 /* new          */               INSTCALL R1, R0, S4
 /* go           */               INSTCALL RNIL, R1, S2
-                                 Q_RELEASE R0
-                                 Q_RELEASE R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
  
                    CFoo_Fgo:
@@ -96,19 +96,19 @@ func main()
 /* functrue     */               CALL R7, S1
                                  JMP_IF R7, L1, L2
                    L1:
-                                 Q_RELEASE R6
+                                 RELEASE R6
 /* @var         */               GET_INSTVAR R6, S5
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R6
-                                 Q_RELEASE R0
-                                 Q_RELEASE R1
-                                 Q_RELEASE R2
-                                 Q_RELEASE R3
-                                 Q_RELEASE R4
-                                 Q_RELEASE R5
-                                 Q_RELEASE R6
-                                 Q_RELEASE R7
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
+                                 RELEASE R6
+                                 RELEASE R7
                                  RETURN RNIL
  
                    _FUNC:

@@ -43,8 +43,8 @@ func foo()
 /* "Abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* "String1"    */               LOAD_STRING R1, _DATA + 4, 7
 /* +            */               INSTCALL R2, R0, S0, R1
-                                 Q_RELEASE R0
-                                 Q_RELEASE R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN R2
  
                    _FUNC:
