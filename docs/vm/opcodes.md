@@ -62,7 +62,7 @@ exclude_from_nav: true
 |`21`|`RETAIN`|`reg`|
 |`22`|`RELEASE`|`reg`|
 |`23`|`CAST`|`reg`, `reg`, `uint16`|
-|`24`|`Q_CHANGE_INSTVAR`|`symbol`, `reg`|
+|`24`|`SET_INSTVAR`|`symbol`, `reg`|
 
 <br>
 ## SPECIAL

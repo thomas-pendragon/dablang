@@ -87,7 +87,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'RETAIN', args: %i{reg}}, # retain(reg0)
       {name: 'RELEASE', args: %i{reg}}, # release(reg0)
       {name: 'CAST', args: %i[reg reg uint16]}, # reg0 <- reg(arg1) as arg2
-      {name: 'Q_CHANGE_INSTVAR', args: %i{symbol reg}}, # self.@arg0 <- reg(arg1)
+      {name: 'SET_INSTVAR', args: %i{symbol reg}}, # self.@arg0 <- reg(arg1)
     ],
   },
   {

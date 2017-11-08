@@ -1153,7 +1153,7 @@ bool DabVM::execute_single(Stream &input)
         get_instvar(name, true, out_reg);
         break;
     }
-    case OP_Q_CHANGE_INSTVAR:
+    case OP_SET_INSTVAR:
     {
         auto symbol = input.read_symbol();
         auto reg    = input.read_reg();
