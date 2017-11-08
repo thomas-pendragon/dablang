@@ -31,7 +31,7 @@ func yield1()
  
                    Fyield1:
                                  STACK_RESERVE 0
-                                 Q_YIELD RNIL
+                                 YIELD RNIL
                                  Q_RETURN RNIL
  
                    _FUNC:

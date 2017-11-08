@@ -64,7 +64,7 @@ class Array
                    L2:
                                  LOAD_SELF R4
 /* []           */               INSTCALL R5, R4, S3, R0
-                                 Q_YIELD RNIL, R5, R0
+                                 YIELD RNIL, R5, R0
 /* 1            */               LOAD_NUMBER R6, 1
 /* +            */               INSTCALL R0, R0, S1, R6
                                  JMP L1

@@ -33,7 +33,7 @@ enum
     OP_INSTCALL         = 0x1C,
     OP_INSTCALL_BLOCK   = 0x1D,
     OP_SYSCALL          = 0x1E,
-    OP_Q_YIELD          = 0x1F,
+    OP_YIELD            = 0x1F,
     OP_Q_RETURN         = 0x20,
     OP_Q_RETAIN         = 0x21,
     OP_Q_RELEASE        = 0x22,

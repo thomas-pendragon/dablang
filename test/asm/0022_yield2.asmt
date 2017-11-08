@@ -37,11 +37,11 @@ func yield1()
  
                    Fyield1:
                                  STACK_RESERVE 0
-                                 Q_YIELD RNIL
-                                 Q_YIELD RNIL
+                                 YIELD RNIL
+                                 YIELD RNIL
 /* 12           */               LOAD_NUMBER R0, 12
 /* "foo"        */               LOAD_STRING R1, _DATA + 0, 3
-                                 Q_YIELD RNIL, R0, R1
+                                 YIELD RNIL, R0, R1
                                  Q_RETURN RNIL
  
                    _FUNC:

@@ -75,7 +75,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
 
-      {name: 'Q_YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
+      {name: 'YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
 
       {name: 'Q_RETURN', args: %i[reg]}, # return(reg0)
     ],

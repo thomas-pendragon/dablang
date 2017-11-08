@@ -51,7 +51,7 @@ exclude_from_nav: true
 |`1C`|`INSTCALL`|`reg`, `reg`, `symbol`, `reglist`|
 |`1D`|`INSTCALL_BLOCK`|`reg`, `reg`, `symbol`, `symbol`, `reg`, `reglist`|
 |`1E`|`SYSCALL`|`reg`, `uint8`, `reglist`|
-|`1F`|`Q_YIELD`|`reg`, `reglist`|
+|`1F`|`YIELD`|`reg`, `reglist`|
 |`20`|`Q_RETURN`|`reg`|
 
 <br>

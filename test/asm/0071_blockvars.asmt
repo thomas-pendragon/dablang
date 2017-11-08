@@ -63,7 +63,7 @@ func main()
                    Ftest:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
-                                 Q_YIELD RNIL, R0
+                                 YIELD RNIL, R0
                                  Q_RETURN RNIL
  
                    _FUNC:

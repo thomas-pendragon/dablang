@@ -33,7 +33,7 @@ func main(a)
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 Q_YIELD R0
+                                 YIELD R0
 /* 2            */               LOAD_NUMBER R1, 2
 /* *            */               INSTCALL R2, R0, S0, R1
 /* PRINT        */               SYSCALL RNIL, 0, R2

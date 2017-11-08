@@ -6,7 +6,7 @@ class DabNodeYield < DabNodeBasecall
 
   def compile_as_ssa(output, output_register)
     list = args.map(&:register_string)
-    output.printex(self, 'Q_YIELD', output_register ? "R#{output_register}" : 'RNIL', *list)
+    output.printex(self, 'YIELD', output_register ? "R#{output_register}" : 'RNIL', *list)
   end
 
   def formatted_source(options)

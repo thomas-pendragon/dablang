@@ -895,7 +895,7 @@ bool DabVM::execute_single(Stream &input)
         instcall(recv, name, n_args, n_rets, block_name, capture, true, out_reg, reglist);
         break;
     }
-    case OP_Q_YIELD:
+    case OP_YIELD:
     {
         auto out_reg = input.read_reg();
 
