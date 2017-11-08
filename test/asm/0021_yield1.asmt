@@ -32,7 +32,7 @@ func yield1()
                    Fyield1:
                                  STACK_RESERVE 0
                                  YIELD RNIL
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* yield1       */               W_METHOD 0, -1, Fyield1

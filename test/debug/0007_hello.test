@@ -25,7 +25,7 @@ Fmain:
 /* "hello world */               LOAD_STRING R0, _DATA, 11
                                  SYSCALL RNIL, 0, R0
                                  NOP
-                                 Q_RETURN RNIL 
+                                 RETURN RNIL 
 
 _FUNC:
   W_METHOD 0, -1, Fmain
@@ -60,7 +60,7 @@ IP = 186
        189: LOAD_STRING R0, 160, 11
        208: SYSCALL RNIL, 0, R0
        215: NOP 
-       216: Q_RETURN RNIL
+       216: RETURN RNIL
 debug: break at 189.
 IP = 189
        185: NOP 
@@ -84,7 +84,7 @@ IP = 208
        189: LOAD_STRING R0, 160, 11
 >      208: SYSCALL RNIL, 0, R0
        215: NOP 
-       216: Q_RETURN RNIL
+       216: RETURN RNIL
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -101,7 +101,7 @@ hello worldIP = 215
        189: LOAD_STRING R0, 160, 11
        208: SYSCALL RNIL, 0, R0
 >      215: NOP 
-       216: Q_RETURN RNIL
+       216: RETURN RNIL
 Stack:
 Dump of stack:
 [   0] FIXN 0
@@ -117,7 +117,7 @@ R0: STRI "hello world"
 IP = 216
        208: SYSCALL RNIL, 0, R0
        215: NOP 
->      216: Q_RETURN RNIL
+>      216: RETURN RNIL
 Stack:
 Dump of stack:
 [   0] FIXN 0

@@ -40,19 +40,19 @@ func main()
                    Ffoo:
                                  STACK_RESERVE 0
 /* 12           */               LOAD_NUMBER R0, 12
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
                                  LOAD_NIL R0
 /* foo          */               CALL_BLOCK R1, S0, S2, R0
 /* PRINT        */               SYSCALL RNIL, 0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0
 /* 3            */               LOAD_NUMBER R0, 3
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

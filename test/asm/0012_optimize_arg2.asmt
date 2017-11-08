@@ -35,7 +35,7 @@ func foo(a)
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

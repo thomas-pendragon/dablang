@@ -47,24 +47,24 @@ func main()
 /* 1            */               LOAD_NUMBER R0, 1
                                  NEW_ARRAY R1, R0
 /* test         */               CALL_BLOCK RNIL, S3, S1, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0
 /* bar          */               LOAD_ARG R0, 0
                                  LOAD_CLOSURE R1, 0
 /* qux          */               CALL RNIL, S2, R0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fqux:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ftest:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  YIELD RNIL, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 0, -1, Fmain

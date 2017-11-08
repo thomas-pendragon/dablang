@@ -45,7 +45,7 @@ func foo()
 /* +            */               INSTCALL R2, R0, S0, R1
                                  Q_RELEASE R0
                                  Q_RELEASE R1
-                                 Q_RETURN R2
+                                 RETURN R2
  
                    _FUNC:
 /* foo          */               W_METHOD 1, -1, Ffoo

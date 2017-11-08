@@ -32,7 +32,7 @@ func fun0()
                    Ffun0:
                                  STACK_RESERVE 0
 /* 123          */               LOAD_NUMBER R0, 123
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    _FUNC:
 /* fun0         */               W_METHOD 0, -1, Ffun0

@@ -42,7 +42,7 @@ func yield1()
 /* 12           */               LOAD_NUMBER R0, 12
 /* "foo"        */               LOAD_STRING R1, _DATA + 0, 3
                                  YIELD RNIL, R0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* yield1       */               W_METHOD 0, -1, Fyield1

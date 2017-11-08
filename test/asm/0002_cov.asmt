@@ -46,7 +46,7 @@ func main()
 /* "Test"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               COV 1, 3
                                  SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 0, -1, Fmain

@@ -38,4 +38,4 @@ IP = 174
        208: LOAD_NUMBER R2, 2
        219: SYSCALL RNIL, 0, R2
        226: JMP 3
-       229: Q_RETURN RNIL
+       229: RETURN RNIL

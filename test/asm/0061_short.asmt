@@ -66,20 +66,20 @@ func main()
 /* "fun1"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_FALSE R1
-                                 Q_RETURN R1
+                                 RETURN R1
  
                    Ffun2:
                                  STACK_RESERVE 0
 /* "fun2"       */               LOAD_STRING R0, _DATA + 5, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_TRUE R1
-                                 Q_RETURN R1
+                                 RETURN R1
  
                    Fmain:
                                  STACK_RESERVE 0
 /* main_and     */               CALL RNIL, S3
 /* main_or      */               CALL RNIL, S4
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain_and:
                                  STACK_RESERVE 0
@@ -90,7 +90,7 @@ func main()
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain_or:
                                  STACK_RESERVE 0
@@ -101,7 +101,7 @@ func main()
                                  JMP L3
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* fun1         */               W_METHOD 0, -1, Ffun1

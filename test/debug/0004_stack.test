@@ -22,7 +22,7 @@ _CODE:
 
 Fmain:
   STACK_RESERVE 0
-  Q_RETURN RNIL 
+  RETURN RNIL 
 
 _FUNC:
   W_METHOD 0, -1, Fmain
@@ -45,7 +45,7 @@ quit
 IP = 186
        185: NOP 
 >      186: STACK_RESERVE 0
-       189: Q_RETURN RNIL
+       189: RETURN RNIL
 IP = 186
 Stack:
 Dump of stack:

@@ -37,7 +37,7 @@ class Foo
                    CFoo_F%EQ%EQ:
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    _FUNC:
 /* ==           */               W_METHOD 0, 256, CFoo_F%EQ%EQ

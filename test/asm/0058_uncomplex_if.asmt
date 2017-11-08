@@ -66,7 +66,7 @@ func main()
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -74,7 +74,7 @@ func main()
 /* __foo_Fixnum */               CALL RNIL, S2, R0
 /* 2            */               LOAD_NUMBER R1, 2
 /* __foo_Fixnum */               CALL RNIL, S2, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* __foo_Fixnum */               W_METHOD 2, -1, F__foo_Fixnum

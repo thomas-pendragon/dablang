@@ -42,7 +42,7 @@ func foo(a)
 /* *            */               INSTCALL R4, R0, S0, R3
 /* +            */               INSTCALL R5, R2, S1, R4
 /* PRINT        */               SYSCALL RNIL, 0, R5
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 2, -1, Ffoo

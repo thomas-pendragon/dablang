@@ -36,7 +36,7 @@ func addfunc()
 /* 12           */               LOAD_NUMBER R0, 12
 /* 23           */               LOAD_NUMBER R1, 23
 /* +            */               INSTCALL R2, R0, S0, R1
-                                 Q_RETURN R2
+                                 RETURN R2
  
                    _FUNC:
 /* addfunc      */               W_METHOD 1, -1, Faddfunc

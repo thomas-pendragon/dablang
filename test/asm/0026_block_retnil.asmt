@@ -50,19 +50,19 @@ func tap()
 /* tap          */               CALL_BLOCK RNIL, S0, S1, R0
                                  LOAD_NIL R1
 /* tap          */               CALL_BLOCK RNIL, S0, S2, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* "ok"         */               LOAD_STRING R0, _DATA + 0, 2
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ftap__block2:
                                  STACK_RESERVE 0
 /* "ok"         */               LOAD_STRING R0, _DATA + 0, 2
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* tap          */               W_METHOD 0, -1, Ftap

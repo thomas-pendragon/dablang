@@ -44,7 +44,7 @@ func foo()
                                  Q_RELEASE R0
                                  Q_RELEASE R1
                                  Q_RELEASE R2
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

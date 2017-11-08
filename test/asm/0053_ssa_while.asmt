@@ -56,7 +56,7 @@ func main()
                                  JMP L1
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 2, -1, Fmain

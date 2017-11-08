@@ -71,7 +71,7 @@ func main()
                    Ffunctrue:
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -80,7 +80,7 @@ func main()
 /* go           */               INSTCALL RNIL, R1, S2
                                  Q_RELEASE R0
                                  Q_RELEASE R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    CFoo_Fgo:
                                  STACK_RESERVE 0
@@ -109,7 +109,7 @@ func main()
                                  Q_RELEASE R5
                                  Q_RELEASE R6
                                  Q_RELEASE R7
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* functrue     */               W_METHOD 1, -1, Ffunctrue

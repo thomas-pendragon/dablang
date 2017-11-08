@@ -29,7 +29,7 @@ func main()
                                  STACK_RESERVE 0
 /* 666          */               LOAD_NUMBER R0, 666
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 0, -1, Fmain

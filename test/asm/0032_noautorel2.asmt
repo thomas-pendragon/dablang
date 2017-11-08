@@ -50,7 +50,7 @@ Instructions should pop return value if not used.
                                  Q_RELEASE R3
                                  Q_RELEASE R4
                                  Q_RELEASE R5
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 1, -1, Ffoo

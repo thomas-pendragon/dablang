@@ -39,11 +39,11 @@ func main_or()
  
                    Ffun1:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ffun2:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain_or:
                                  STACK_RESERVE 0
@@ -54,7 +54,7 @@ func main_or()
                                  JMP L1
                    L1:
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* fun1         */               W_METHOD 0, -1, Ffun1

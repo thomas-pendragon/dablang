@@ -69,7 +69,7 @@ class Array
 /* +            */               INSTCALL R0, R0, S1, R6
                                  JMP L1
                    L3:
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* each_with_in */               W_METHOD 5, 5, CArray_Feach_with_index

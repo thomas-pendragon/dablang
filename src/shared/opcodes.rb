@@ -77,7 +77,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
 
-      {name: 'Q_RETURN', args: %i[reg]}, # return(reg0)
+      {name: 'RETURN', args: %i[reg]}, # return(reg0)
     ],
   },
   {

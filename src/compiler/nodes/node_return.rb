@@ -22,7 +22,7 @@ class DabNodeReturn < DabNode
         output.printex(self, 'Q_RELEASE', reg) unless reg == value.register_string
       end
     end
-    output.printex(self, 'Q_RETURN', value.register_string)
+    output.printex(self, 'RETURN', value.register_string)
   end
 
   def formatted_source(options)

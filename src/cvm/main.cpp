@@ -1080,7 +1080,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(dst_index, register_get(src_index));
         break;
     }
-    case OP_Q_RETURN:
+    case OP_RETURN:
     {
         auto  reg_index = input.read_reg();
         auto  value     = register_get(reg_index);

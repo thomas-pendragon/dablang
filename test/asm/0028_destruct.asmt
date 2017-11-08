@@ -39,7 +39,7 @@ class Foo
  
                    CFoo_F__destruct:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* __destruct   */               W_METHOD 1, 256, CFoo_F__destruct

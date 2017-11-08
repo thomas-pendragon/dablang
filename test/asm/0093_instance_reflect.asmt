@@ -55,13 +55,13 @@ func foo(n)
 /* n            */               LOAD_ARG R0, 0
                                  REFLECT R1, S5, 2, 256
 /* PRINT        */               SYSCALL RNIL, 0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    CFoo_Fzomg:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* b            */               LOAD_ARG R1, 1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD_EX 3, -1, Ffoo, 1

@@ -56,13 +56,13 @@ func bar()
                                  STACK_RESERVE 0
 /* "got fixnum" */               LOAD_STRING R0, _DATA + 0, 10
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    F__foo_String:
                                  STACK_RESERVE 0
 /* "got string" */               LOAD_STRING R0, _DATA + 11, 10
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fbar:
                                  STACK_RESERVE 0
@@ -70,7 +70,7 @@ func bar()
 /* __foo_String */               CALL RNIL, S1, R0
 /* 12           */               LOAD_NUMBER R1, 12
 /* __foo_Fixnum */               CALL RNIL, S0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum

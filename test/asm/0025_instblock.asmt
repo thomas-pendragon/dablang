@@ -40,13 +40,13 @@ func tap(a)
 /* a            */               LOAD_ARG R0, 0
                                  LOAD_NIL R1
 /* fun          */               INSTCALL_BLOCK RNIL, R0, S0, S2, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ftap__block1:
                                  STACK_RESERVE 0
 /* arg          */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* tap          */               W_METHOD 1, -1, Ftap

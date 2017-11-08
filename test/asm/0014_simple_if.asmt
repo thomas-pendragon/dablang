@@ -62,7 +62,7 @@ func foo()
                    L3:
 /* "d"          */               LOAD_STRING R4, _DATA + 6, 1
 /* PRINT        */               SYSCALL RNIL, 0, R4
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

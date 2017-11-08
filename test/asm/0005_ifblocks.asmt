@@ -83,7 +83,7 @@ func foo(a, b)
 /* PRINT        */               SYSCALL RNIL, 0, R5
                                  JMP L5
                    L5:
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

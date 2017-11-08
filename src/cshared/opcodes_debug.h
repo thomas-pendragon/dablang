@@ -45,7 +45,7 @@ const DabOpcodeInfo g_opcodes[] = {
       OpcodeArg::ARG_REG, OpcodeArg::ARG_REGLIST}},
     {OP_SYSCALL, "SYSCALL", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT8, OpcodeArg::ARG_REGLIST}},
     {OP_YIELD, "YIELD", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REGLIST}},
-    {OP_Q_RETURN, "Q_RETURN", {OpcodeArg::ARG_REG}},
+    {OP_RETURN, "RETURN", {OpcodeArg::ARG_REG}},
     {OP_Q_RETAIN, "Q_RETAIN", {OpcodeArg::ARG_REG}},
     {OP_Q_RELEASE, "Q_RELEASE", {OpcodeArg::ARG_REG}},
     {OP_Q_CAST, "Q_CAST", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},

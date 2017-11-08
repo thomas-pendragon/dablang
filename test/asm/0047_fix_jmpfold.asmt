@@ -38,7 +38,7 @@ func assert_equal(value)
 /* value        */               LOAD_ARG R0, 0
 /* 1            */               LOAD_NUMBER R1, 1
 /* !=           */               INSTCALL RNIL, R0, S0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* assert_equal */               W_METHOD 1, -1, Fassert_equal

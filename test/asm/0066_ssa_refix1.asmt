@@ -44,7 +44,7 @@ func main()
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -62,7 +62,7 @@ func main()
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R2
 /* PRINT        */               SYSCALL RNIL, 0, R3
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

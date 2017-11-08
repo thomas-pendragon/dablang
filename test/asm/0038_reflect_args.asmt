@@ -39,7 +39,7 @@ func foo(a, b<Uint8>)
 /* b            */               LOAD_ARG R1, 1
                                  REFLECT R2, S2, 0, -1
 /* PRINT        */               SYSCALL RNIL, 0, R2
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD_EX 2, -1, Ffoo, 2

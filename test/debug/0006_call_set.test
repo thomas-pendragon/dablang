@@ -27,13 +27,13 @@ _CODE:
                    Ffun1:
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
-                                 Q_RETURN R0
+                                 RETURN R0
  
                    Fmain:
                                  STACK_RESERVE 0
                                  CALL R7, S0
                                  SYSCALL RNIL, 0, R7
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
 
 _FUNC:
   W_METHOD 0, -1, Ffun1
@@ -57,11 +57,11 @@ IP = 208
        198: NOP 
        199: STACK_RESERVE 0
        202: LOAD_TRUE R0
-       205: Q_RETURN R0
+       205: RETURN R0
 >      208: STACK_RESERVE 0
        211: CALL R7, S0
        217: SYSCALL RNIL, 0, R7
-       224: Q_RETURN RNIL
+       224: RETURN RNIL
 debug: break at 205.
 Stack:
 Dump of stack:
@@ -76,7 +76,7 @@ Dump of stack:
 IP = 205
        199: STACK_RESERVE 0
        202: LOAD_TRUE R0
->      205: Q_RETURN R0
+>      205: RETURN R0
        208: STACK_RESERVE 0
        211: CALL R7, S0
 Stack:

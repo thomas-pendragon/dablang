@@ -42,17 +42,17 @@ func main()
                                  STACK_RESERVE 0
                                  LOAD_HAS_BLOCK R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain:
                                  STACK_RESERVE 0
                                  LOAD_NIL R0
 /* foo          */               CALL_BLOCK RNIL, S0, S2, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fmain__block1:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

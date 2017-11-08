@@ -69,7 +69,7 @@ func main()
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 2, -1, Fmain

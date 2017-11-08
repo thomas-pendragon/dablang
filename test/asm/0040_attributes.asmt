@@ -55,23 +55,23 @@ func another_attribute(method, arg1, arg2)
 /* 14           */               LOAD_NUMBER R2, 14
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* another_attr */               CALL RNIL, S1, R1, R2, R3
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fanother_attribute:
                                  STACK_RESERVE 0
 /* method       */               LOAD_ARG R0, 0
 /* arg1         */               LOAD_ARG R1, 1
 /* arg2         */               LOAD_ARG R2, 2
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Ffoo:
                                  STACK_RESERVE 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fsample_attribute:
                                  STACK_RESERVE 0
 /* method       */               LOAD_ARG R0, 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* __init       */               W_METHOD 0, -1, F__init

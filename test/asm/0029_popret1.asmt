@@ -53,12 +53,12 @@ func main()
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* insert       */               INSTCALL RNIL, R1, S0, R3
 /* puts         */               CALL RNIL, S2, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    Fputs:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* main         */               W_METHOD 1, -1, Fmain

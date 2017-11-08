@@ -43,7 +43,7 @@ func foo()
 /* @a=          */               Q_CHANGE_INSTVAR S1, R0
 /* @a           */               GET_INSTVAR R1, S1
 /* PRINT        */               SYSCALL RNIL, 0, R1
-                                 Q_RETURN RNIL
+                                 RETURN RNIL
  
                    _FUNC:
 /* foo          */               W_METHOD 2, 256, CFoo_Ffoo
