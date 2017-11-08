@@ -1183,7 +1183,7 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg, nullptr);
         break;
     }
-    case OP_Q_RETAIN:
+    case OP_RETAIN:
     {
         auto reg   = input.read_reg();
         auto value = register_get(reg);

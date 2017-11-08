@@ -59,7 +59,7 @@ exclude_from_nav: true
 
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
-|`21`|`Q_RETAIN`|`reg`|
+|`21`|`RETAIN`|`reg`|
 |`22`|`Q_RELEASE`|`reg`|
 |`23`|`Q_CAST`|`reg`, `reg`, `uint16`|
 |`24`|`Q_CHANGE_INSTVAR`|`symbol`, `reg`|

@@ -20,7 +20,7 @@ class DabNodeArg < DabNode
     output.comment(function&.arg_name(@index))
     output.print('LOAD_ARG', "R#{output_register}", @index)
     if $no_autorelease
-      output.printex(self, 'Q_RETAIN', "R#{output_register}")
+      output.printex(self, 'RETAIN', "R#{output_register}")
     end
   end
 
