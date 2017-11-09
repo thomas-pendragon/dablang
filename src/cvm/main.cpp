@@ -1334,6 +1334,13 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
         copy.data.legacy_string = (const char *)value.data.intptr;
         return copy;
     }
+    else if (from == CLASS_LITERALSTRING && to == CLASS_STRING)
+    {
+        DabValue copy;
+        copy.data.type          = TYPE_STRING;
+        copy.data.legacy_string = value.string();
+        return copy;
+    }
     else
     {
         char info[256];
