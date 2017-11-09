@@ -228,7 +228,8 @@ std::string DabValue::literal_string() const
 
 std::string DabValue::string() const
 {
-    assert(data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD);
+    bool legacy = data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD;
+    assert(legacy);
     return data.legacy_string;
 }
 
