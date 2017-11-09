@@ -163,18 +163,22 @@ struct DabValueData
 {
     int type = TYPE_INVALID;
 
-    int64_t         fixnum     = 0;
-    uint8_t         num_uint8  = 0;
-    uint16_t        num_uint16 = 0;
-    uint32_t        num_uint32 = 0;
-    uint64_t        num_uint64 = 0;
-    int8_t          num_int8   = 0;
-    int16_t         num_int16  = 0;
-    int32_t         num_int32  = 0;
-    int64_t         num_int64  = 0;
-    bool            boolean    = false;
-    DabObjectProxy *object     = nullptr;
-    void *          intptr     = nullptr;
+    union {
+        uint64_t _initialize = 0;
+
+        int64_t         fixnum;
+        uint8_t         num_uint8;
+        uint16_t        num_uint16;
+        uint32_t        num_uint32;
+        uint64_t        num_uint64;
+        int8_t          num_int8;
+        int16_t         num_int16;
+        int32_t         num_int32;
+        int64_t         num_int64;
+        bool            boolean;
+        DabObjectProxy *object;
+        void *          intptr;
+    };
 
     std::string string;
 
