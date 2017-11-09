@@ -181,7 +181,7 @@ struct DabValueData
         void *          intptr;
     };
 
-    std::string string;
+    std::string legacy_string;
 };
 
 struct DabValue
@@ -219,8 +219,8 @@ struct DabValue
     }
     DabValue(const std::string &value)
     {
-        data.type   = TYPE_STRING;
-        data.string = value;
+        data.type          = TYPE_STRING;
+        data.legacy_string = value;
     }
     DabValue(const DabClass &klass)
     {
@@ -311,8 +311,8 @@ struct DabValue
     DabValue(size_t class_index, const char *value)
     {
         assert(class_index == CLASS_STRING);
-        data.type   = TYPE_STRING;
-        data.string = value;
+        data.type          = TYPE_STRING;
+        data.legacy_string = value;
     }
 
     DabValue(const DabValue &other);
@@ -323,6 +323,9 @@ struct DabValue
     std::vector<DabValue> &array() const;
     std::vector<uint8_t> & bytebuffer() const;
     std::string            literal_string() const;
+
+    std::string  string() const;
+    std::string &mutable_string();
 
     DabValue create_instance() const;
 
@@ -414,7 +417,7 @@ struct Stack
             fprintf(stderr, "VM error: value is not a symbol.\n");
             exit(1);
         }
-        return val.data.string;
+        return val.string();
     }
 
     DabValue &operator[](int64_t offset)
@@ -507,7 +510,7 @@ struct DabVM
             fprintf(stderr, "VM error: value is not a symbol.\n");
             exit(1);
         }
-        return val.data.string;
+        return val.string();
     }
 
     void kernel_print(bool use_out_reg, dab_register_t out_reg, bool use_reglist,

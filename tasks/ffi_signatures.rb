@@ -58,12 +58,12 @@ C_CLASSES = {
 }.freeze
 
 DAB_DATA = {
-  'int32' => 'num_int32',
-  'uint8' => 'num_uint8',
-  'uint32' => 'num_uint32',
-  'uint64' => 'num_uint64',
-  'void*' => 'intptr',
-  'string' => 'string.c_str()',
+  'int32' => 'data.num_int32',
+  'uint8' => 'data.num_uint8',
+  'uint32' => 'data.num_uint32',
+  'uint64' => 'data.num_uint64',
+  'void*' => 'data.intptr',
+  'string' => 'string().c_str()',
 }.freeze
 
 class Hash
@@ -101,7 +101,7 @@ signatures.strip.split("\n").each do |line|
   body += "\n"
 
   args.each_with_index do |arg, index|
-    body += "    auto value#{index}_data = value#{index}.data.#{DAB_DATA.safe_get(arg)};\n"
+    body += "    auto value#{index}_data = value#{index}.#{DAB_DATA.safe_get(arg)};\n"
   end
 
   body += "\n"

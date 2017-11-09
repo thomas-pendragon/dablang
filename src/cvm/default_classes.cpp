@@ -141,16 +141,14 @@ void DabVM::define_default_classes()
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
     string_class.add_simple_function("upcase", [](DabValue self) {
-        auto arg0 = self;
-        assert(arg0.data.type == TYPE_STRING);
-        auto &s = arg0.data.string;
+        auto  arg0 = self;
+        auto &s    = arg0.mutable_string();
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         return arg0;
     });
     string_class.add_simple_function("length", [](DabValue self) {
-        auto arg0 = self;
-        assert(arg0.data.type == TYPE_STRING);
-        auto &   s = arg0.data.string;
+        auto     arg0 = self;
+        auto     s    = arg0.string();
         DabValue ret(CLASS_INT32, (int)s.size());
         return ret;
     });
@@ -161,10 +159,9 @@ void DabVM::define_default_classes()
         auto &stack = $VM->stack;
         auto  arg0  = stack.pop_value();
         auto  arg1  = stack.pop_value();
-        assert(arg0.data.type == TYPE_STRING);
         assert(arg1.data.type == TYPE_FIXNUM);
-        auto &s = arg0.data.string;
-        auto  n = arg1.data.fixnum;
+        auto s = arg0.string();
+        auto n = arg1.data.fixnum;
         stack.push(s.substr(n, 1));
     });
     string_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
@@ -175,8 +172,8 @@ void DabVM::define_default_classes()
         auto  arg0  = stack.pop_value();
         assert(arg0.data.type == TYPE_STRING);
         auto     arg1 = $VM->cast(stack.pop_value(), CLASS_STRING);
-        auto &   s0   = arg0.data.string;
-        auto &   s1   = arg1.data.string;
+        auto     s0   = arg0.string();
+        auto     s1   = arg1.string();
         DabValue ret(s0 + s1);
         stack.push(ret);
     });
@@ -197,20 +194,20 @@ void DabVM::define_default_classes()
             const auto  length = arg2.data.fixnum;
             if (length)
             {
-                ret_value.data.string = std::string((const char *)&buffer[0], length);
+                ret_value.data.legacy_string = std::string((const char *)&buffer[0], length);
             }
         }
         if (n_args == 2)
         {
             auto arg = stack.pop_value();
             assert(arg.data.type == TYPE_STRING);
-            ret_value.data.string = arg.data.string;
+            ret_value.data.legacy_string = arg.string();
         }
         stack.push_value(ret_value);
     });
     string_class.add_simple_function("to_s", [](DabValue self) { return self; });
-    DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .data.string);
-    DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .data.string);
+    DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .data.legacy_string);
+    DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .data.legacy_string);
 
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
@@ -353,14 +350,14 @@ void DabVM::define_default_classes()
                 ret += ", ";
             instcall(a[i], "to_s", 0, 1);
             auto val = stack.pop_value();
-            ret += val.data.string;
+            ret += val.string();
         }
         return ret;
     });
     array_class.add_simple_function("to_s", [this](DabValue self) {
         instcall(self, "join", 0, 1);
         auto inner = stack.pop_value();
-        return std::string("[" + inner.data.string + "]");
+        return std::string("[" + inner.string() + "]");
     });
     array_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(n_args == 2);
@@ -374,7 +371,7 @@ void DabVM::define_default_classes()
 
     auto &method_class = define_builtin_class("Method", CLASS_METHOD);
     method_class.add_simple_function(
-        "to_s", [this](DabValue self) { return std::string("@method(" + self.data.string + ")"); });
+        "to_s", [this](DabValue self) { return std::string("@method(" + self.string() + ")"); });
 
     auto &bytebuffer_class = define_builtin_class("ByteBuffer", CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {

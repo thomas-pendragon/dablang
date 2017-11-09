@@ -376,7 +376,7 @@ void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_l
         auto parent_class_index = input.uint16_data(parent_class_index_address);
         auto symbol             = input.uint16_data(symbol_address);
 
-        auto symbol_str = constants[symbol].data.string;
+        auto symbol_str = constants[symbol].string();
 
         if (verbose)
         {
@@ -407,7 +407,7 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
         auto class_index = input.uint16_data(class_index_address);
         auto address     = input.uint64_data(address_address);
 
-        auto symbol_str = constants[symbol].data.string;
+        auto symbol_str = constants[symbol].string();
 
         if (verbose)
         {
@@ -449,7 +449,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
         auto address     = input.uint64_data(address_address);
         auto arg_count   = input.uint16_data(arg_count_address);
 
-        auto symbol_str = constants[symbol].data.string;
+        auto symbol_str = constants[symbol].string();
 
         if (verbose)
         {
@@ -474,7 +474,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
         for (size_t i = 0; i < arg_count; i++)
         {
             auto klass                    = data[i].class_index;
-            auto name                     = constants[data[i].symbol_index].data.string;
+            auto name                     = constants[data[i].symbol_index].string();
             auto arg_i                    = i;
             reflection.arg_klasses[arg_i] = klass;
             reflection.arg_names[arg_i]   = name;
@@ -746,9 +746,9 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
 {
     if (verbose)
     {
-        fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.data.string.c_str());
+        fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.string().c_str());
     }
-    const auto &function = functions[symbol.data.string];
+    const auto &function = functions[symbol.string()];
 
     auto output_names = reflection_type == REFLECT_METHOD_ARGUMENT_NAMES;
     _reflect(function, out_reg, reg, output_names);
@@ -763,9 +763,9 @@ void DabVM::reflect_instance_method(size_t reflection_type, const DabValue &symb
     if (verbose)
     {
         fprintf(stderr, "vm: reflect %d on %s [%s]\n", (int)reflection_type,
-                symbol.data.string.c_str(), klass.name.c_str());
+                symbol.string().c_str(), klass.name.c_str());
     }
-    const auto &function = klass.get_instance_function(symbol.data.string);
+    const auto &function = klass.get_instance_function(symbol.string());
 
     auto output_names = reflection_type == REFLECT_INSTANCE_METHOD_ARGUMENT_NAMES;
     _reflect(function, out_reg, reg, output_names);
@@ -827,7 +827,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg    = input.read_reg();
         auto symbol     = input.read_symbol();
-        auto symbol_str = constants[symbol].data.string;
+        auto symbol_str = constants[symbol].string();
         push_method(symbol_str);
         auto value = stack.pop_value();
         register_set(out_reg, value);
@@ -856,7 +856,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
-        auto name    = constants[symbol].data.string;
+        auto name    = constants[symbol].string();
         auto reglist = input.read_reglist();
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
         break;
@@ -865,9 +865,9 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg      = input.read_reg();
         auto symbol       = input.read_symbol();
-        auto name         = constants[symbol].data.string;
+        auto name         = constants[symbol].string();
         auto block_symbol = input.read_symbol();
-        auto block_name   = constants[block_symbol].data.string;
+        auto block_name   = constants[block_symbol].string();
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
         auto reglist      = input.read_reglist();
@@ -880,10 +880,10 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = constants[symbol].data.string;
+        auto name     = constants[symbol].string();
 
         auto block_symbol = input.read_symbol();
-        auto block_name   = constants[block_symbol].data.string;
+        auto block_name   = constants[block_symbol].string();
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
 
@@ -980,7 +980,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index       = input.read_reg();
         auto symbol_index    = input.read_symbol();
         auto reflection_type = input.read_uint16();
-        auto symbol          = constants[symbol_index].data.string;
+        auto symbol          = constants[symbol_index].string();
 
         uint16_t class_index = input.read_uint16();
 
@@ -1131,7 +1131,7 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = constants[symbol].data.string;
+        auto name     = constants[symbol].string();
         auto reglist  = input.read_reglist();
         auto n_args   = reglist.size();
         auto n_rets   = 1;
@@ -1149,7 +1149,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
-        auto name    = constants[symbol].data.string;
+        auto name    = constants[symbol].string();
         get_instvar(name, true, out_reg);
         break;
     }
@@ -1157,7 +1157,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto symbol = input.read_symbol();
         auto reg    = input.read_reg();
-        auto name   = constants[symbol].data.string;
+        auto name   = constants[symbol].string();
         auto value  = register_get(reg);
         set_instvar(name, value);
         break;
@@ -1317,7 +1317,7 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     {
         DabValue copy;
         copy.data.type   = TYPE_INTPTR;
-        copy.data.intptr = (void *)value.data.string.c_str();
+        copy.data.intptr = (void *)value.string().c_str();
         return copy;
     }
     else if (from == CLASS_BYTEBUFFER && to == CLASS_INTPTR)
@@ -1330,8 +1330,8 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     else if (from == CLASS_INTPTR && to == CLASS_STRING)
     {
         DabValue copy;
-        copy.data.type   = TYPE_STRING;
-        copy.data.string = (const char *)value.data.intptr;
+        copy.data.type          = TYPE_STRING;
+        copy.data.legacy_string = (const char *)value.data.intptr;
         return copy;
     }
     else
@@ -1476,7 +1476,7 @@ void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool 
         assert(use_out_reg);
 
         auto string_ob = cast(register_get(reglist[0]), CLASS_STRING);
-        auto string    = string_ob.data.string;
+        auto string    = string_ob.string();
 
         auto symbol_index = dyn_get_symbol(string);
 
@@ -1497,7 +1497,7 @@ size_t DabVM::dyn_get_symbol(const std::string &string)
     for (size_t i = 0; i < constants.size(); i++)
     {
         auto &constant = constants[i];
-        if (constant.data.string == string)
+        if (constant.string() == string)
         {
             return i;
         }
@@ -1509,16 +1509,16 @@ size_t DabVM::dyn_get_symbol(const std::string &string)
 void DabVM::push_constant_symbol(const std::string &name)
 {
     DabValue val;
-    val.data.type   = TYPE_SYMBOL;
-    val.data.string = name;
+    val.data.type          = TYPE_SYMBOL;
+    val.data.legacy_string = name;
     push_constant(val);
 }
 
 void DabVM::push_method(const std::string &name)
 {
     DabValue val;
-    val.data.type   = TYPE_METHOD;
-    val.data.string = name;
+    val.data.type          = TYPE_METHOD;
+    val.data.legacy_string = name;
     stack.push_value(val);
 }
 

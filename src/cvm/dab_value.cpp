@@ -138,7 +138,7 @@ std::string DabValue::print_value(bool debug) const
     case TYPE_STRING:
     {
         use_ret = true;
-        ret     = data.string;
+        ret     = string();
         if (debug)
         {
             ret = "\"" + ret + "\"";
@@ -146,7 +146,7 @@ std::string DabValue::print_value(bool debug) const
     }
     break;
     case TYPE_SYMBOL:
-        snprintf(buffer, sizeof(buffer), ":%s", data.string.c_str());
+        snprintf(buffer, sizeof(buffer), ":%s", string().c_str());
         break;
     case TYPE_BOOLEAN:
         snprintf(buffer, sizeof(buffer), "%s", data.boolean ? "true" : "false");
@@ -226,6 +226,18 @@ std::string DabValue::literal_string() const
     return std::string(obj->pointer, obj->length);
 }
 
+std::string DabValue::string() const
+{
+    assert(data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD);
+    return data.legacy_string;
+}
+
+std::string &DabValue::mutable_string()
+{
+    assert(data.type == TYPE_STRING);
+    return data.legacy_string;
+}
+
 bool DabValue::truthy() const
 {
     switch (data.type)
@@ -241,7 +253,7 @@ bool DabValue::truthy() const
     case TYPE_INT32:
         return data.num_int32;
     case TYPE_STRING:
-        return data.string.length();
+        return string().length();
         break;
     case TYPE_BOOLEAN:
         return data.boolean;

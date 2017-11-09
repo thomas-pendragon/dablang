@@ -79,7 +79,7 @@ else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_STRING && ret_klass 
 
     auto value0 = $VM->cast(stack.pop_value(), CLASS_STRING);
 
-    auto value0_data = value0.data.string.c_str();
+    auto value0_data = value0.string().c_str();
 
     auto return_value = (*int_symbol)(value0_data);
 
@@ -167,7 +167,7 @@ else if (arg_klasses.size() == 6 && arg_klasses[0] == CLASS_STRING &&
     auto value1 = $VM->cast(stack.pop_value(), CLASS_INT32);
     auto value0 = $VM->cast(stack.pop_value(), CLASS_STRING);
 
-    auto value0_data = value0.data.string.c_str();
+    auto value0_data = value0.string().c_str();
     auto value1_data = value1.data.num_int32;
     auto value2_data = value2.data.num_int32;
     auto value3_data = value3.data.num_int32;
@@ -302,7 +302,7 @@ else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_STRING && ret_klass 
 
     auto value0 = $VM->cast(stack.pop_value(), CLASS_STRING);
 
-    auto value0_data = value0.data.string.c_str();
+    auto value0_data = value0.string().c_str();
 
     auto return_value = (*int_symbol)(value0_data);
 
@@ -344,7 +344,7 @@ else if (arg_klasses.size() == 2 && arg_klasses[0] == CLASS_INTPTR &&
     auto value0 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
 
     auto value0_data = value0.data.intptr;
-    auto value1_data = value1.data.string.c_str();
+    auto value1_data = value1.string().c_str();
 
     auto return_value = (*int_symbol)(value0_data, value1_data);
 
@@ -360,7 +360,7 @@ else if (arg_klasses.size() == 2 && arg_klasses[0] == CLASS_INTPTR &&
     auto value0 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
 
     auto value0_data = value0.data.intptr;
-    auto value1_data = value1.data.string.c_str();
+    auto value1_data = value1.string().c_str();
 
     auto return_value = (*int_symbol)(value0_data, value1_data);
 
@@ -423,7 +423,7 @@ else if (arg_klasses.size() == 8 && arg_klasses[0] == CLASS_INTPTR &&
     auto value0 = $VM->cast(stack.pop_value(), CLASS_INTPTR);
 
     auto value0_data = value0.data.intptr;
-    auto value1_data = value1.data.string.c_str();
+    auto value1_data = value1.string().c_str();
     auto value2_data = value2.data.num_int32;
     auto value3_data = value3.data.intptr;
     auto value4_data = value4.data.intptr;
