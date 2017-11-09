@@ -70,8 +70,7 @@ void DabVM::define_defaults()
             if (n_args == 2)
             {
                 auto _libc_name = stack.pop_value();
-                assert(_libc_name.class_index() == CLASS_STRING);
-                libc_name = _libc_name.string();
+                libc_name       = _libc_name.string();
             }
             auto method = stack.pop_value();
             assert(method.class_index() == CLASS_METHOD);
