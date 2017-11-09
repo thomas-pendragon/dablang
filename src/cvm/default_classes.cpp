@@ -141,10 +141,9 @@ void DabVM::define_default_classes()
 
     auto &string_class = define_builtin_class("String", CLASS_STRING);
     string_class.add_simple_function("upcase", [](DabValue self) {
-        auto  arg0 = self;
-        auto &s    = arg0.mutable_string();
+        auto s = self.string();
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-        return arg0;
+        return s;
     });
     string_class.add_simple_function("length", [](DabValue self) {
         auto     arg0 = self;
@@ -168,12 +167,11 @@ void DabVM::define_default_classes()
         assert(n_args == 2);
         assert(n_ret == 1);
         assert(blockaddr == 0);
-        auto &stack = $VM->stack;
-        auto  arg0  = stack.pop_value();
-        assert(arg0.data.type == TYPE_STRING);
-        auto     arg1 = $VM->cast(stack.pop_value(), CLASS_STRING);
-        auto     s0   = arg0.string();
-        auto     s1   = arg1.string();
+        auto &   stack = $VM->stack;
+        auto     arg0  = stack.pop_value();
+        auto     arg1  = $VM->cast(stack.pop_value(), CLASS_STRING);
+        auto     s0    = arg0.string();
+        auto     s1    = arg1.string();
         DabValue ret(s0 + s1);
         stack.push(ret);
     });
@@ -199,15 +197,14 @@ void DabVM::define_default_classes()
         }
         if (n_args == 2)
         {
-            auto arg = stack.pop_value();
-            assert(arg.data.type == TYPE_STRING);
+            auto arg                     = stack.pop_value();
             ret_value.data.legacy_string = arg.string();
         }
         stack.push_value(ret_value);
     });
     string_class.add_simple_function("to_s", [](DabValue self) { return self; });
-    DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .data.legacy_string);
-    DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .data.legacy_string);
+    DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .string());
+    DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .string());
 
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
 
