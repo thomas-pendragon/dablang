@@ -172,10 +172,11 @@ struct DabValueData
     int16_t         num_int16  = 0;
     int32_t         num_int32  = 0;
     int64_t         num_int64  = 0;
-    std::string     string;
-    bool            boolean = false;
-    DabObjectProxy *object  = nullptr;
-    void *          intptr  = nullptr;
+    bool            boolean    = false;
+    DabObjectProxy *object     = nullptr;
+    void *          intptr     = nullptr;
+
+    std::string string;
 
     bool is_constant = false;
 };
