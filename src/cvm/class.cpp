@@ -68,6 +68,6 @@ bool DabClass::is_subclass_of(const DabClass &klass) const
     if (index == superclass_index)
         return false;
 
-    auto super = $VM->get_class(superclass_index);
+    auto &super = $VM->get_class(superclass_index);
     return super.is_subclass_of(klass);
 }
