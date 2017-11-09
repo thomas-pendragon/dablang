@@ -181,8 +181,6 @@ struct DabValueData
     };
 
     std::string string;
-
-    bool is_constant = false;
 };
 
 struct DabValue
