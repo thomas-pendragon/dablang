@@ -366,8 +366,8 @@ struct DabByteBuffer : public DabBaseObject
 
 struct DabLiteralString : public DabBaseObject
 {
-    const char *pointer;
-    size_t      length;
+    const char *pointer = nullptr;
+    size_t      length  = 0;
 };
 
 struct Stack
