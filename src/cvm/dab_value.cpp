@@ -228,9 +228,17 @@ std::string DabValue::literal_string() const
 
 std::string DabValue::string() const
 {
-    bool legacy = data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD;
-    assert(legacy);
-    return data.legacy_string;
+    bool legacy  = data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD;
+    bool literal = data.type == TYPE_LITERALSTRING;
+    assert(legacy || literal);
+    if (legacy)
+    {
+        return data.legacy_string;
+    }
+    else
+    {
+        return literal_string();
+    }
 }
 
 std::string &DabValue::mutable_string()
