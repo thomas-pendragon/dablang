@@ -96,7 +96,7 @@ Dump of stack:
 [   6] FIXN 65535
 [   7] INVA ?
 Registers:
-R0: STRI "hello world"
+R0: CSTR "hello world" [1 strong]
 hello worldIP = 215
        189: LOAD_STRING R0, 160, 11
        208: SYSCALL RNIL, 0, R0
@@ -113,7 +113,7 @@ Dump of stack:
 [   6] FIXN 65535
 [   7] INVA ?
 Registers:
-R0: STRI "hello world"
+R0: CSTR "hello world" [2 strong]
 IP = 216
        208: SYSCALL RNIL, 0, R0
        215: NOP 
@@ -129,4 +129,4 @@ Dump of stack:
 [   6] FIXN 65535
 [   7] INVA ?
 Registers:
-R0: STRI "hello world"
+R0: CSTR "hello world" [2 strong]

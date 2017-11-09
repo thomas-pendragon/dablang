@@ -41,7 +41,7 @@ true (Boolean): truthy.
 false (Boolean): falsey.
 1 (Fixnum): truthy.
 0 (Fixnum): falsey.
-foo (String): truthy.
- (String): falsey.
+foo (LiteralString): truthy.
+ (LiteralString): falsey.
 [1, 2, 3] (Array): truthy.
 [] (Array): falsey.

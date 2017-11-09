@@ -939,8 +939,18 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto address   = input.read_uint64();
         auto length    = input.read_uint64();
-        auto str       = instructions.string_data(address, length);
-        register_set(reg_index, str);
+
+        auto &klass        = get_class(CLASS_LITERALSTRING);
+        auto  klass_object = DabValue(klass);
+
+        auto instance = klass_object.create_instance();
+
+        auto data = dynamic_cast<DabLiteralString *>(instance.data.object->object);
+
+        data->pointer = instructions.string_ptr(address);
+        data->length  = length;
+
+        register_set(reg_index, instance);
         break;
     }
     case OP_LOAD_SELF:

@@ -2,7 +2,7 @@
 
 func main()
 {
-    var a = __usecount("abc");
+    var a = __usecount(1);
     print(a);
 }
 

@@ -20,5 +20,5 @@ main
 ## EXPECT OK
 
 arg: 1 [Fixnum]
-arg: foo [String]
+arg: foo [LiteralString]
 arg: true [Boolean]

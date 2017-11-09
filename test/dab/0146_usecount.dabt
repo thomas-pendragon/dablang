@@ -28,7 +28,7 @@ main
 ## EXPECT OK
 
 1: 65535
-foo: 65535
+foo: 4
 true: 65535
 nil: 65535
 [1, 2, 3]: 4

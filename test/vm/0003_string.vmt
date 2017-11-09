@@ -14,7 +14,7 @@ LOAD_STRING R0, STRING, 3
 
 ## COMMENT
 
-Last stack element should be literal string "foo".
+reg[0] should be literal string "foo".
 
 ## TESTCASE
 
@@ -22,4 +22,4 @@ $reg[0]
 
 ## EXPECT
 
-STRI "foo"
+CSTR "foo" [2 strong]

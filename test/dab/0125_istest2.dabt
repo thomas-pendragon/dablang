@@ -57,7 +57,7 @@ main
 
 ## EXPECT OK
 
-123 (String) is a: String Object
+123 (LiteralString) is a: String Object
 foobar (String) is a: String Object
 nil (NilClass) is a: Object
 true (Boolean) is a: Object
