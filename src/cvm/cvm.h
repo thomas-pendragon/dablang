@@ -69,6 +69,7 @@ enum
     TYPE_METHOD,
     TYPE_INTPTR,
     TYPE_BYTEBUFFER,
+    TYPE_LITERALSTRING,
 };
 
 #include "../cshared/classes.h"
@@ -321,6 +322,7 @@ struct DabValue
 
     std::vector<DabValue> &array() const;
     std::vector<uint8_t> & bytebuffer() const;
+    std::string            literal_string() const;
 
     DabValue create_instance() const;
 
@@ -330,7 +332,8 @@ struct DabValue
 
     bool is_object() const
     {
-        return data.type == TYPE_OBJECT || data.type == TYPE_ARRAY || data.type == TYPE_BYTEBUFFER;
+        return data.type == TYPE_OBJECT || data.type == TYPE_ARRAY ||
+               data.type == TYPE_BYTEBUFFER || data.type == TYPE_LITERALSTRING;
     }
 };
 
@@ -356,6 +359,12 @@ struct DabArray : public DabBaseObject
 struct DabByteBuffer : public DabBaseObject
 {
     std::vector<uint8_t> bytebuffer;
+};
+
+struct DabLiteralString : public DabBaseObject
+{
+    const char *pointer;
+    size_t      length;
 };
 
 struct Stack

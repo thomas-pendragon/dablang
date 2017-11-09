@@ -4,7 +4,7 @@ void DabValue::dump(FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS",
                                   "OBJE", "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8",
-                                  "IN16", "IN32", "IN64", "METH", "PTR*", "BYT*"};
+                                  "IN16", "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -70,6 +70,9 @@ int DabValue::class_index() const
         break;
     case TYPE_BYTEBUFFER:
         return CLASS_BYTEBUFFER;
+        break;
+    case TYPE_LITERALSTRING:
+        return CLASS_LITERALSTRING;
         break;
     default:
         fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
@@ -206,6 +209,13 @@ std::vector<uint8_t> &DabValue::bytebuffer() const
     return obj->bytebuffer;
 }
 
+std::string DabValue::literal_string() const
+{
+    assert(data.type == TYPE_LITERALSTRING);
+    auto *obj = (DabLiteralString *)data.object->object;
+    return std::string(obj->pointer, obj->length);
+}
+
 bool DabValue::truthy() const
 {
     switch (data.type)
@@ -231,6 +241,8 @@ bool DabValue::truthy() const
         return false;
     case TYPE_ARRAY:
         return array().size() > 0;
+    case TYPE_LITERALSTRING:
+        return literal_string().length();
     default:
         return true;
     }
@@ -251,6 +263,11 @@ DabValue DabValue::create_instance() const
     {
         object = new DabByteBuffer;
         type   = TYPE_BYTEBUFFER;
+    }
+    else if (data.fixnum == CLASS_LITERALSTRING)
+    {
+        object = new DabLiteralString;
+        type   = TYPE_LITERALSTRING;
     }
     else
     {
@@ -362,6 +379,8 @@ DabValue::~DabValue()
 
 void DabValue::release()
 {
+    // TODO: test ByteBuffer leak
+    // TODO: test LiteralString leak
     if (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
         this->data.object->release(this);
@@ -372,6 +391,8 @@ void DabValue::release()
 
 void DabValue::retain()
 {
+    // TODO: test ByteBuffer leak
+    // TODO: test LiteralString leak
     if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
     {
         data.object->retain(this);
