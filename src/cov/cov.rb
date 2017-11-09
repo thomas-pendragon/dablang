@@ -5,10 +5,8 @@ require_relative '../shared/system.rb'
 
 input = $settings[:input]
 format = $settings[:format] || 'text'
-newformat = true
 
 options = ''
-options = '--newformat' if newformat
 
 if input.end_with? '.dab'
   target = input.gsub(/\.dab$/, '.dabca')

@@ -30,10 +30,7 @@ def run_test(settings)
 
   data = read_test_file(input)
 
-  options = data[:options] || ''
-  newformat = options['--newformat']
   newformat_option = ''
-  newformat_option = '--newformat' if newformat
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info

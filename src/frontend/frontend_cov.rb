@@ -4,9 +4,8 @@ def read_test_file(fname)
   base_read_test_file(fname)
 end
 
-def calculate_coverage(input, output, newformat)
+def calculate_coverage(input, output)
   options = ''
-  options = ' --newformat' if newformat
   run_ruby_part(input, output, 'calculate coverage', 'cov', '--format=plaintext' + options, true)
 end
 
@@ -35,8 +34,7 @@ def run_test(settings)
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
 
   extract_format_source(input, dab)
-  frontend_options = data[:frontend_options] || ''
-  calculate_coverage(dab, cov, frontend_options['--newformat'])
+  calculate_coverage(dab, cov)
 
   test_body = data[:expect]
   actual_body = open(cov).read.strip

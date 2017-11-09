@@ -38,7 +38,7 @@ class DabNodeConstantReference < DabNode
   end
 
   def compile_as_ssa(output, output_register)
-    if $newformat && target.value.is_a?(DabNodeLiteralString)
+    if target.value.is_a?(DabNodeLiteralString)
       output.comment(self.extra_value)
       output.print('LOAD_STRING', "R#{output_register}", "_DATA + #{target.asm_position}", target.asm_length - 1)
       return

@@ -41,16 +41,13 @@ class VMFrontend
     raise 'must specify either --raw, --nomain or --noraw' unless raw || noraw || nomain
 
     noautorelease = options['--noautorelease']
-    newformat = options['--newformat']
 
     assemble_options = ''
     assemble_options += '--raw ' if raw
-    assemble_options += '--newformat ' if newformat
 
     runoptions = ''
     runoptions += '--bare ' if raw
     runoptions += '--raw ' if nomain || raw
-    runoptions += '--newformat ' if newformat
     runoptions += '--noautorelease ' if noautorelease
 
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."

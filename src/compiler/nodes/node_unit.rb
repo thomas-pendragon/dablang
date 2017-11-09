@@ -117,44 +117,7 @@ class DabNodeUnit < DabNode
   end
 
   def symbol_index(node)
-    if $newformat
-      return constant_symbols.index(node)
-    end
-    constant_index(node)
-  end
-
-  def compile_old(output)
-    output.comment('Dab dev')
-    output.print('')
-    output.separate
-
-    if $with_cov
-      register_filename(output)
-      output.separate
-    end
-
-    [@constants, @classes].each do |list|
-      list.each do |node|
-        node.compile(output)
-      end
-      output.separate
-    end
-    @functions.sort_by(&:identifier).each do |function|
-      function.compile(output)
-    end
-    output.separate
-    output.print('BREAK_LOAD')
-    output.separate
-    @functions.sort_by(&:identifier).each do |function|
-      function.compile_body(output)
-      output.separate
-    end
-    @classes.sort_by(&:identifier).each do |klass|
-      klass.functions.sort_by(&:identifier).each do |function|
-        function.compile_body(output)
-        output.separate
-      end
-    end
+    constant_symbols.index(node)
   end
 
   def constant_symbols
@@ -268,11 +231,7 @@ class DabNodeUnit < DabNode
   end
 
   def compile(output)
-    if $newformat
-      compile_new(output)
-    else
-      compile_old(output)
-    end
+    compile_new(output)
   end
 
   def remove_constant_node(node)
