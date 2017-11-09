@@ -16,6 +16,7 @@ STANDARD_CLASSES = %w(
   Method
   IntPtr
   ByteBuffer
+  LiteralString
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

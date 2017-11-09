@@ -20,3 +20,4 @@
 - [Method](/classes/method.html)
 - [IntPtr](/classes/intptr.html)
 - [ByteBuffer](/classes/bytebuffer.html)
+- [LiteralString](/classes/literalstring.html)
