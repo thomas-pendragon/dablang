@@ -11,8 +11,8 @@
         auto &stack = $VM->stack;                                                                  \
         auto  arg0  = stack.pop_value();                                                           \
         auto  arg1  = $VM->cast(stack.pop_value(), cast_to);                                       \
-        auto &v0    = arg0 member;                                                                 \
-        auto &v1    = arg1 member;                                                                 \
+        auto v0     = arg0 member;                                                                 \
+        auto v1     = arg1 member;                                                                 \
                                                                                                    \
         DabValue ret(result_class, (result_type)(v0 operator v1));                                 \
         stack.push(ret);                                                                           \
@@ -29,10 +29,10 @@
         DabValue ret;                                                                              \
         try                                                                                        \
         {                                                                                          \
-            arg1     = $VM->cast(arg1, cast_to);                                                   \
-            auto &v0 = arg0 member;                                                                \
-            auto &v1 = arg1 member;                                                                \
-            ret      = DabValue(result_class, (result_type)(v0 operator v1));                      \
+            arg1    = $VM->cast(arg1, cast_to);                                                    \
+            auto v0 = arg0 member;                                                                 \
+            auto v1 = arg1 member;                                                                 \
+            ret     = DabValue(result_class, (result_type)(v0 operator v1));                       \
         }                                                                                          \
         catch (DabCastError & error)                                                               \
         {                                                                                          \
