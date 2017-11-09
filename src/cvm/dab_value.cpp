@@ -178,6 +178,16 @@ std::string DabValue::print_value(bool debug) const
         ret += "]";
     }
     break;
+    case TYPE_LITERALSTRING:
+    {
+        use_ret = true;
+        ret     = literal_string();
+        if (debug)
+        {
+            ret = "\"" + ret + "\"";
+        }
+    }
+    break;
     default:
         snprintf(buffer, sizeof(buffer), "?");
         break;
