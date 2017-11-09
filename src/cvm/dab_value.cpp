@@ -183,7 +183,7 @@ std::string DabValue::print_value(bool debug) const
     {
         ret = buffer;
     }
-    if (debug && data.object)
+    if (debug && is_object())
     {
         char extra[64] = {0};
         snprintf(extra, sizeof(extra), " [%d strong]", (int)data.object->count_strong);
@@ -425,7 +425,7 @@ void DabObjectProxy::destroy(DabValue *value)
 
 size_t DabValue::use_count() const
 {
-    if (data.object)
+    if (is_object())
     {
         return data.object->count_strong;
     }

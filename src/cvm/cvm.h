@@ -325,6 +325,11 @@ struct DabValue
     size_t use_count() const;
     void   retain();
     void   release();
+
+    bool is_object() const
+    {
+        return data.type == TYPE_OBJECT || data.type == TYPE_ARRAY || data.type == TYPE_BYTEBUFFER;
+    }
 };
 
 struct DabBaseObject
