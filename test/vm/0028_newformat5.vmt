@@ -19,7 +19,7 @@ DATA3:
   W_STRING "Foobar"
 
 CLASS:
-  W_CLASS 17, 0, 4 # Foobar
+  W_CLASS 500, 0, 4 # Foobar
 
 SYMBOLS:
   W_SYMBOL DATA + 0 # notcount
@@ -34,7 +34,7 @@ CODE:
 Fmain:
   LOAD_CLASS R2, 0
   SYSCALL RNIL, 0, R2
-  LOAD_CLASS R2, 17
+  LOAD_CLASS R2, 500
   SYSCALL RNIL, 0, R2
   RETURN RNIL
 
