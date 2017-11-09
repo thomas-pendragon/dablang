@@ -212,6 +212,8 @@ void DabVM::define_default_classes()
     DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .data.string);
     DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .data.string);
 
+    define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
+
     auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
     fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
