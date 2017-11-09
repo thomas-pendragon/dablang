@@ -18,8 +18,12 @@ BinHeader *Stream::peek_header()
 
 std::string Stream::string_data(size_t address, size_t length)
 {
-    auto ptr = buffer.data + address;
-    return std::string((const char *)ptr, length);
+    return std::string(string_ptr(address), length);
+}
+
+const char *Stream::string_ptr(size_t address)
+{
+    return (const char *)(buffer.data + address);
 }
 
 std::string Stream::cstring_data(size_t address)

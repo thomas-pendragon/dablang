@@ -120,6 +120,8 @@ struct Stream
         return buffer.length;
     }
 
+    const char *string_ptr(size_t address);
+
     std::string cstring_data(size_t address);
     std::string string_data(size_t address, size_t length);
     uint16_t uint16_data(size_t address);
