@@ -223,7 +223,7 @@ namespace :format do
 
   task :cpp do
     cpp_check do |file|
-      psystem("clang-format -i #{file}")
+      psystem("(clang-format #{file} | diff #{file} -) || clang-format -i #{file}")
     end
   end
 
