@@ -324,8 +324,7 @@ struct DabValue
     std::vector<uint8_t> & bytebuffer() const;
     std::string            literal_string() const;
 
-    std::string  string() const;
-    std::string &mutable_string();
+    std::string string() const;
 
     DabValue create_instance() const;
 

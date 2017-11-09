@@ -241,12 +241,6 @@ std::string DabValue::string() const
     }
 }
 
-std::string &DabValue::mutable_string()
-{
-    assert(data.type == TYPE_STRING);
-    return data.legacy_string;
-}
-
 bool DabValue::truthy() const
 {
     switch (data.type)
