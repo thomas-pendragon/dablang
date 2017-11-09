@@ -402,9 +402,7 @@ DabValue::~DabValue()
 
 void DabValue::release()
 {
-    // TODO: test ByteBuffer leak
-    // TODO: test LiteralString leak
-    if (this->data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
+    if (is_object())
     {
         this->data.object->release(this);
         this->data.object = nullptr;
@@ -414,9 +412,7 @@ void DabValue::release()
 
 void DabValue::retain()
 {
-    // TODO: test ByteBuffer leak
-    // TODO: test LiteralString leak
-    if (data.type == TYPE_OBJECT || data.type == TYPE_ARRAY)
+    if (is_object())
     {
         data.object->retain(this);
     }

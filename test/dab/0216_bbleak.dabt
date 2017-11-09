@@ -1,0 +1,23 @@
+## CODE
+
+func main()
+{
+  var a = ByteBuffer.new(4);
+  print(a);
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## OPTIONS
+
+--no-autorelease --strip
+
+## RUN OPTIONS
+
+--no-autorelease --leaktest
+
+## EXPECT OK
+
+[0, 0, 0, 0]leaktest: no leaks
