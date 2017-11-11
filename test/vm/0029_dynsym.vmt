@@ -23,4 +23,4 @@ $reg[1]
 
 ## EXPECT
 
-SYMB :foo
+STRI "foo"

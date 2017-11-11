@@ -376,7 +376,7 @@ void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_l
         auto parent_class_index = input.uint16_data(parent_class_index_address);
         auto symbol             = input.uint16_data(symbol_address);
 
-        auto symbol_str = constants[symbol].string();
+        auto symbol_str = get_symbol(symbol);
 
         if (verbose)
         {
@@ -407,7 +407,7 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
         auto class_index = input.uint16_data(class_index_address);
         auto address     = input.uint64_data(address_address);
 
-        auto symbol_str = constants[symbol].string();
+        auto symbol_str = get_symbol(symbol);
 
         if (verbose)
         {
@@ -449,7 +449,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
         auto address     = input.uint64_data(address_address);
         auto arg_count   = input.uint16_data(arg_count_address);
 
-        auto symbol_str = constants[symbol].string();
+        auto symbol_str = get_symbol(symbol);
 
         if (verbose)
         {
@@ -474,7 +474,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
         for (size_t i = 0; i < arg_count; i++)
         {
             auto klass                    = data[i].class_index;
-            auto name                     = constants[data[i].symbol_index].string();
+            auto name                     = get_symbol(data[i].symbol_index);
             auto arg_i                    = i;
             reflection.arg_klasses[arg_i] = klass;
             reflection.arg_names[arg_i]   = name;
@@ -827,7 +827,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg    = input.read_reg();
         auto symbol     = input.read_symbol();
-        auto symbol_str = constants[symbol].string();
+        auto symbol_str = get_symbol(symbol);
         push_method(symbol_str);
         auto value = stack.pop_value();
         register_set(out_reg, value);
@@ -856,7 +856,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
-        auto name    = constants[symbol].string();
+        auto name    = get_symbol(symbol);
         auto reglist = input.read_reglist();
         call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
         break;
@@ -865,9 +865,9 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg      = input.read_reg();
         auto symbol       = input.read_symbol();
-        auto name         = constants[symbol].string();
+        auto name         = get_symbol(symbol);
         auto block_symbol = input.read_symbol();
-        auto block_name   = constants[block_symbol].string();
+        auto block_name   = get_symbol(block_symbol);
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
         auto reglist      = input.read_reglist();
@@ -880,10 +880,10 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = constants[symbol].string();
+        auto name     = get_symbol(symbol);
 
         auto block_symbol = input.read_symbol();
-        auto block_name   = constants[block_symbol].string();
+        auto block_name   = get_symbol(block_symbol);
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
 
@@ -990,7 +990,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index       = input.read_reg();
         auto symbol_index    = input.read_symbol();
         auto reflection_type = input.read_uint16();
-        auto symbol          = constants[symbol_index].string();
+        auto symbol          = get_symbol(symbol_index);
 
         uint16_t class_index = input.read_uint16();
 
@@ -1141,7 +1141,7 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = constants[symbol].string();
+        auto name     = get_symbol(symbol);
         auto reglist  = input.read_reglist();
         auto n_args   = reglist.size();
         auto n_rets   = 1;
@@ -1159,7 +1159,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
-        auto name    = constants[symbol].string();
+        auto name    = get_symbol(symbol);
         get_instvar(name, true, out_reg);
         break;
     }
@@ -1167,7 +1167,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto symbol = input.read_symbol();
         auto reg    = input.read_reg();
-        auto name   = constants[symbol].string();
+        auto name   = get_symbol(symbol);
         auto value  = register_get(reg);
         set_instvar(name, value);
         break;
@@ -1497,7 +1497,7 @@ void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool 
 
         auto symbol_index = dyn_get_symbol(string);
 
-        auto value = constants[symbol_index];
+        auto value = get_symbol(symbol_index);
 
         register_set(out_reg, value);
         break;
