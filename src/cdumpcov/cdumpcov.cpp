@@ -34,11 +34,6 @@ struct Op
     {
         return data[index].fixnum;
     }
-
-    std::string arg_string(size_t index)
-    {
-        return data[index].string;
-    }
 };
 
 void read_stream(Stream &stream)
