@@ -566,8 +566,8 @@ struct DabVM
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);
 
-    void kernelcall(dab_register_t out_reg, int call, bool use_reglist,
-                    std::vector<dab_register_t> reglist, bool output_value);
+    void kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist,
+                    bool output_value);
 
     void push_method(const std::string &name);
 

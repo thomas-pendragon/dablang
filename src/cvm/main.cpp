@@ -1128,7 +1128,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg     = input.read_reg();
         auto call    = input.read_uint8();
         auto reglist = input.read_reglist();
-        kernelcall(reg, call, true, reglist, true);
+        kernelcall(reg, call, reglist, true);
         break;
     }
     case OP_INSTCALL:
@@ -1426,10 +1426,11 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
     }
 }
 
-void DabVM::kernelcall(dab_register_t out_reg, int call, bool use_reglist,
-                       std::vector<dab_register_t> reglist, bool output_value)
+void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist,
+                       bool output_value)
 {
     bool use_out_reg = true;
+    bool use_reglist = true;
 
     switch (call)
     {
