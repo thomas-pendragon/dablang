@@ -49,7 +49,14 @@ void DabVM_debug::print_functions()
 
 void DabVM_debug::print_constants()
 {
-    vm._dump("constants", vm.constants, $VM->dab_output);
+    auto output = $VM->dab_output;
+    fprintf(output, "symbols:\n");
+    size_t i = 0;
+    for (const auto &symbol : $VM->symbols)
+    {
+        fprintf(output, "%d: %s\n", (int)i, symbol.c_str());
+        i++;
+    }
 }
 
 void DabVM_debug::print_stack()

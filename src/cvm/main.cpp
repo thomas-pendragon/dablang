@@ -502,7 +502,7 @@ void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
         auto address = symb_address + i * symbol_len;
         auto ptr     = input.uint64_data(address);
         auto str     = input.cstring_data(ptr);
-        push_constant_symbol(str);
+        symbols.push_back(str);
     }
 }
 
@@ -592,11 +592,6 @@ size_t DabVM::prev_frame_position()
 int DabVM::number_of_args()
 {
     return stack[frame_position + 0].data.fixnum;
-}
-
-void DabVM::push_constant(const DabValue &value)
-{
-    constants.push_back(value);
 }
 
 void DabVM::call(dab_register_t out_reg, const std::string &name, int n_args,
@@ -1497,7 +1492,7 @@ void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool 
 
         auto symbol_index = dyn_get_symbol(string);
 
-        auto value = get_symbol(symbol_index);
+        DabValue value(CLASS_FIXNUM, (uint64_t)symbol_index);
 
         register_set(out_reg, value);
         break;
@@ -1511,24 +1506,16 @@ void DabVM::kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool 
 
 size_t DabVM::dyn_get_symbol(const std::string &string)
 {
-    for (size_t i = 0; i < constants.size(); i++)
+    for (size_t i = 0; i < symbols.size(); i++)
     {
-        auto &constant = constants[i];
-        if (constant.string() == string)
+        auto &symbol = symbols[i];
+        if (symbol == string)
         {
             return i;
         }
     }
-    push_constant_symbol(string);
-    return constants.size() - 1;
-}
-
-void DabVM::push_constant_symbol(const std::string &name)
-{
-    DabValue val;
-    val.data.type          = TYPE_SYMBOL;
-    val.data.legacy_string = name;
-    push_constant(val);
+    symbols.push_back(string);
+    return symbols.size() - 1;
 }
 
 void DabVM::push_method(const std::string &name)
@@ -1792,7 +1779,7 @@ int unsafe_main(int argc, char **argv)
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
 
     auto clear_registers = [&vm]() {
-        vm.constants.resize(0);
+        vm.symbols.resize(0);
         vm._registers.resize(0);
         vm._register_stack.resize(0);
     };

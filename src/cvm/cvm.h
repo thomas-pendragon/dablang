@@ -462,9 +462,11 @@ struct DabVM
 
     Stream instructions;
     std::map<std::string, DabFunction> functions;
-    size_t                frame_position = -1;
-    Stack                 stack;
-    std::vector<DabValue> constants;
+    size_t frame_position = -1;
+    Stack  stack;
+
+    std::vector<std::string> symbols;
+
     std::map<int, DabClass> classes;
 
     std::set<size_t> breakpoints;
@@ -493,14 +495,12 @@ struct DabVM
 
     std::string get_symbol(dab_symbol_t index) const
     {
-        assert(index < constants.size());
-        const auto &val = constants[index];
-        if (val.data.type != TYPE_SYMBOL)
+        if (symbols.size() <= index)
         {
-            fprintf(stderr, "VM error: value is not a symbol.\n");
+            fprintf(stderr, "VM error: symbol %d not found.\n", (int)index);
             exit(1);
         }
-        return val.string();
+        return symbols[index];
     }
 
     void kernel_print(bool use_out_reg, dab_register_t out_reg, bool use_reglist,
@@ -542,8 +542,6 @@ struct DabVM
 
     int number_of_args();
 
-    void push_constant(const DabValue &value);
-
     void call(dab_register_t out_reg, const std::string &name, int n_args,
               const std::string &block_name, const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
@@ -576,8 +574,6 @@ struct DabVM
 
     void kernelcall(bool use_out_reg, dab_register_t out_reg, int call, bool use_reglist,
                     std::vector<dab_register_t> reglist, bool output_value);
-
-    void push_constant_symbol(const std::string &name);
 
     void push_method(const std::string &name);
 

@@ -15,7 +15,7 @@ SYSCALL R1, 3, R0 # TOSYM
 
 ## COMMENT
 
-Last stack element should be symbol :foo
+Last stack element should be symbol index 0 (because we only have one symbol)
 
 ## TESTCASE
 
@@ -23,4 +23,4 @@ $reg[1]
 
 ## EXPECT
 
-STRI "foo"
+FIXN 0
