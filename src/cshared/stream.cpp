@@ -16,11 +16,6 @@ BinHeader *Stream::peek_header()
     return (BinHeader *)buffer.data;
 }
 
-std::string Stream::string_data(size_t address, size_t length)
-{
-    return std::string(string_ptr(address), length);
-}
-
 const char *Stream::string_ptr(size_t address)
 {
     return (const char *)(buffer.data + address);
