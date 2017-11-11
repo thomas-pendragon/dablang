@@ -5,6 +5,8 @@
 
 struct DabValue;
 
+typedef uint16_t dab_symbol_t;
+
 typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
@@ -489,7 +491,7 @@ struct DabVM
     DabVM &operator=(const DabVM &) = delete;
     ~DabVM();
 
-    std::string get_symbol(size_t index) const
+    std::string get_symbol(dab_symbol_t index) const
     {
         assert(index < constants.size());
         const auto &val = constants[index];
