@@ -37,22 +37,11 @@ DabVMReset::~DabVMReset()
 
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-    bool use_out_reg  = true;
-    bool use_reglist  = true;
-    bool output_value = true;
-
     DabValue arg;
-    auto     stack_pos = stack.size();
-    if (!use_reglist)
-    {
-        arg = stack.pop_value();
-    }
-    else
-    {
-        assert(reglist.size() == 1);
-        arg = register_get(reglist[0]);
-        stack_pos += 1;
-    }
+    auto     stack_pos = stack.size() + 1;
+
+    assert(reglist.size() == 1);
+    arg = register_get(reglist[0]);
 
     instcall(arg, "to_s", 0, 1);
     // temporary hack
@@ -74,20 +63,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
         fflush(dab_output);
     }
 
-    if (!output_value)
-        return;
-
-    if (out_reg.nil())
-    {
-        if (!use_out_reg)
-        {
-            stack.push_nil();
-        }
-    }
-    else
-    {
-        register_set(out_reg, nullptr);
-    }
+    register_set(out_reg, nullptr);
 }
 
 bool DabVM::pop_frame(bool regular)
