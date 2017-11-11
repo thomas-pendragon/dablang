@@ -1407,10 +1407,6 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
 
 void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist)
 {
-    bool use_out_reg  = true;
-    bool use_reglist  = true;
-    bool output_value = true;
-
     switch (call)
     {
     case KERNEL_PRINT:
@@ -1421,54 +1417,27 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     case KERNEL_EXIT:
     {
         DabValue value;
-        if (!use_reglist)
-        {
-            auto value = stack.pop_value();
-        }
-        else
-        {
-            assert(reglist.size() == 1);
-            value = register_get(reglist[0]);
-        }
+
+        assert(reglist.size() == 1);
+        value = register_get(reglist[0]);
+
         exit(value.data.fixnum);
         break;
     }
     case KERNEL_USECOUNT:
     {
         DabValue value;
-        if (!use_reglist)
-        {
-            auto value = stack.pop_value();
-        }
-        else
-        {
-            assert(reglist.size() == 1);
-            value = register_get(reglist[0]);
-        }
+
+        assert(reglist.size() == 1);
+        value = register_get(reglist[0]);
 
         auto dab_value = uint64_t(value.use_count());
 
-        if (!output_value)
-            break;
-
-        if (out_reg.nil())
-        {
-            if (!use_out_reg)
-            {
-                stack.push_value(dab_value);
-            }
-        }
-        else
-        {
-            register_set(out_reg, dab_value);
-        }
+        register_set(out_reg, dab_value);
         break;
     }
     case KERNEL_TOSYM:
     {
-        assert(use_reglist);
-        assert(use_out_reg);
-
         auto string_ob = cast(register_get(reglist[0]), CLASS_STRING);
         auto string    = string_ob.string();
 
