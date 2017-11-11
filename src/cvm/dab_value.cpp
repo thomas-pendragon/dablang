@@ -2,9 +2,9 @@
 
 void DabValue::dump(FILE *file) const
 {
-    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "SYMB", "CLAS",
-                                  "OBJE", "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8",
-                                  "IN16", "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR"};
+    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "CLAS", "OBJE",
+                                  "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8", "IN16",
+                                  "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -19,9 +19,6 @@ int DabValue::class_index() const
         break;
     case TYPE_STRING:
         return CLASS_STRING;
-        break;
-    case TYPE_SYMBOL:
-        return CLASS_INT_SYMBOL;
         break;
     case TYPE_BOOLEAN:
         return CLASS_BOOLEAN;
@@ -145,9 +142,6 @@ std::string DabValue::print_value(bool debug) const
         }
     }
     break;
-    case TYPE_SYMBOL:
-        snprintf(buffer, sizeof(buffer), ":%s", string().c_str());
-        break;
     case TYPE_BOOLEAN:
         snprintf(buffer, sizeof(buffer), "%s", data.boolean ? "true" : "false");
         break;
@@ -228,7 +222,7 @@ std::string DabValue::literal_string() const
 
 std::string DabValue::string() const
 {
-    bool legacy  = data.type == TYPE_STRING || data.type == TYPE_SYMBOL || data.type == TYPE_METHOD;
+    bool legacy  = data.type == TYPE_STRING || data.type == TYPE_METHOD;
     bool literal = data.type == TYPE_LITERALSTRING;
     assert(legacy || literal);
     if (legacy)

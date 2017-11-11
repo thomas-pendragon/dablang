@@ -56,7 +56,6 @@ enum
     TYPE_STRING,
     TYPE_BOOLEAN,
     TYPE_NIL,
-    TYPE_SYMBOL,
     TYPE_CLASS,
     TYPE_OBJECT,
     TYPE_ARRAY,
