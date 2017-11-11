@@ -25,7 +25,7 @@ Buffer::~Buffer()
 {
     if (!_dont_delete)
     {
-        delete[] this->data;
+        free(this->data);
     }
 }
 
@@ -48,7 +48,7 @@ void Buffer::resize(size_t new_length)
     {
         memcpy(new_data, this->data, min(this->length, new_length));
     }
-    delete[] this->data;
+    free(this->data);
     this->data   = new_data;
     this->length = new_length;
 }
