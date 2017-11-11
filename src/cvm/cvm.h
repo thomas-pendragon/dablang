@@ -497,8 +497,7 @@ struct DabVM
         return symbols[index];
     }
 
-    void kernel_print(bool use_out_reg, dab_register_t out_reg, bool use_reglist,
-                      std::vector<dab_register_t> reglist, bool output_value);
+    void kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist);
 
     bool pop_frame(bool regular);
 

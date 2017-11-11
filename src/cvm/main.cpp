@@ -35,9 +35,12 @@ DabVMReset::~DabVMReset()
     $VM = nullptr;
 }
 
-void DabVM::kernel_print(bool use_out_reg, dab_register_t out_reg, bool use_reglist,
-                         std::vector<dab_register_t> reglist, bool output_value)
+void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
+    bool use_out_reg  = true;
+    bool use_reglist  = true;
+    bool output_value = true;
+
     DabValue arg;
     auto     stack_pos = stack.size();
     if (!use_reglist)
@@ -1436,7 +1439,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     {
     case KERNEL_PRINT:
     {
-        kernel_print(use_out_reg, out_reg, use_reglist, reglist, output_value);
+        kernel_print(out_reg, reglist);
         break;
     }
     case KERNEL_EXIT:
