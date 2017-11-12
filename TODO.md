@@ -1,3 +1,8 @@
+## PRIORITIES ##
+
+- Ring support (look up java annotation processing)
+- dumping low-level ring code for inspection
+
 ## Parser ##
 
 - alternative syntax (end instead of {})
