@@ -19,7 +19,7 @@ class DabNodeClassDefinition < DabNode
   end
 
   def extract_literal
-    ExtractLiteral.new.run(node_identifier)
+    ExtractLiteral.new.run(node_identifier) unless standard?
   end
 
   def node_identifier
@@ -58,5 +58,9 @@ class DabNodeClassDefinition < DabNode
     ret += _indent(functions.join("\n"))
     ret += "}\n"
     ret
+  end
+
+  def standard?
+    number < USER_CLASSES_OFFSET
   end
 end

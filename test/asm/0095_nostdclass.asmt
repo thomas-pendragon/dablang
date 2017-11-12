@@ -1,0 +1,50 @@
+## CODE
+
+class Foo
+{
+}
+
+class String
+{
+}
+
+func main()
+{
+}
+
+## COMMENT
+
+Should not include standard classes in class section.
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 2
+                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _FUNC, "func"
+                                 W_END_HEADER 
+ 
+                   _SDAT:
+                                 W_STRING "Foo" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* Foo          */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 4 
+ 
+                   _CLAS:
+/* Foo          */               W_CLASS 256, 0, 0
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+ 
+                   _FUNC:
+/* main         */               W_METHOD 1, -1, Fmain

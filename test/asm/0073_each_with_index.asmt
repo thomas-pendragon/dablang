@@ -25,7 +25,6 @@ class Array
                                  W_HEADER 2
                                  W_SECTION _SDAT, "data"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CLAS, "clas"
                                  W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
@@ -33,7 +32,6 @@ class Array
                    _SDAT:
                                  W_STRING "!=" 
                                  W_STRING "+" 
-                                 W_STRING "Array" 
                                  W_STRING "[]" 
                                  W_STRING "count" 
                                  W_STRING "each_with_index" 
@@ -41,13 +39,9 @@ class Array
                    _SYMB:
 /* !=           */               W_SYMBOL _SDAT + 0 
 /* +            */               W_SYMBOL _SDAT + 3 
-/* Array        */               W_SYMBOL _SDAT + 5 
-/* []           */               W_SYMBOL _SDAT + 11 
-/* count        */               W_SYMBOL _SDAT + 14 
-/* each_with_in */               W_SYMBOL _SDAT + 20 
- 
-                   _CLAS:
-/* Array        */               W_CLASS 5, 0, 2
+/* []           */               W_SYMBOL _SDAT + 5 
+/* count        */               W_SYMBOL _SDAT + 8 
+/* each_with_in */               W_SYMBOL _SDAT + 14 
  
                    _CODE:
                                  NOP 
@@ -56,14 +50,14 @@ class Array
                                  STACK_RESERVE 0
 /* 0            */               LOAD_NUMBER R0, 0
                                  LOAD_SELF R1
-/* count        */               INSTCALL R2, R1, S4
+/* count        */               INSTCALL R2, R1, S3
                                  JMP L1
                    L1:
 /* !=           */               INSTCALL R3, R0, S0, R2
                                  JMP_IF R3, L2, L3
                    L2:
                                  LOAD_SELF R4
-/* []           */               INSTCALL R5, R4, S3, R0
+/* []           */               INSTCALL R5, R4, S2, R0
                                  YIELD RNIL, R5, R0
 /* 1            */               LOAD_NUMBER R6, 1
 /* +            */               INSTCALL R0, R0, S1, R6
@@ -72,4 +66,4 @@ class Array
                                  RETURN RNIL
  
                    _FUNC:
-/* each_with_in */               W_METHOD 5, 5, CArray_Feach_with_index
+/* each_with_in */               W_METHOD 4, 5, CArray_Feach_with_index
