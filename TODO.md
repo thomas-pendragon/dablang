@@ -1,5 +1,6 @@
 ## PRIORITIES ##
 
+- register management (remove register stack)
 - Ring support (look up java annotation processing)
 - dumping low-level ring code for inspection
 
@@ -17,7 +18,6 @@
 
 ## Language/VM
 
-- register management (remove register stack)
 - limited number of registers
 - typed registers
 - explicit calls (IP/SP regs management)
@@ -53,7 +53,6 @@
 
 - structures (with C memory mapping)
 - comparing `"abc" > 123`
-- Rings support
 - extra opcodes for void calls
 - class parameters (Foo<String>)
     - typed arrays
@@ -108,6 +107,7 @@
 ## Coverage ##
 
 - measure `if` coverage
+- rewrite coverage to be line-based, not opcode based
 
 ## Misc ##
 
