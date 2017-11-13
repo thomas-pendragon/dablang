@@ -48,7 +48,7 @@ pbpaste | ruby src/compiler/compiler.rb --with-attributes --with-reflection  | r
 
 ## EXPECT
 
-264: NOP 
+     264: NOP 
      265: STACK_RESERVE 0
      268: RETURN RNIL
      271: STACK_RESERVE 0
