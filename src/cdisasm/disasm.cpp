@@ -55,9 +55,32 @@ void read_stream(Stream &stream)
     }
 }
 
+bool parse_bool_arg(int argc, char **argv, const std::string &arg)
+{
+    for (int i = 1; i < argc; i++)
+    {
+        if (arg == argv[i])
+            return true;
+    }
+    return false;
+}
+
+void parse_headers(BinHeader *header)
+{
+    fprintf(output, "/* disasm */\n");
+    fprintf(output, "    W_HEADER 2\n");
+    for (size_t i = 0; i < header->section_count; i++)
+    {
+        auto section = header->sections[i];
+        fprintf(output, "    W_SECTION %d, \"%s\"\n", (int)section.pos, section.name);
+    }
+    fprintf(output, "    W_END_HEADER\n\n");
+}
+
 int main(int argc, char **argv)
 {
-    bool raw = (argc == 2) && (std::string(argv[1]) == "--raw");
+    bool raw          = parse_bool_arg(argc, argv, "--raw");
+    bool with_headers = parse_bool_arg(argc, argv, "--with-headers");
 
     Stream stream;
     read_stream(stream);
@@ -70,6 +93,11 @@ int main(int argc, char **argv)
     {
         auto header = stream.peek_header();
         fprintf(stderr, "cdisasm: %d sections\n", (int)header->section_count);
+        if (with_headers)
+        {
+            parse_headers(header);
+        }
+
         for (size_t i = 0; i < header->section_count; i++)
         {
             auto section = header->sections[i];

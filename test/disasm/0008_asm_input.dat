@@ -33,6 +33,15 @@
 
 ## EXPECT
 
+/* disasm */
+    W_HEADER 2
+    W_SECTION 192, "data"
+    W_SECTION 197, "data"
+    W_SECTION 202, "symb"
+    W_SECTION 210, "code"
+    W_SECTION 243, "func"
+    W_END_HEADER
+
      210: NOP 
      211: STACK_RESERVE 0
      214: LOAD_STRING R0, 192, 4
