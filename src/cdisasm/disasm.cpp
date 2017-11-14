@@ -2,6 +2,8 @@
 #include "../cshared/disasm.h"
 #include "../cshared/stream.h"
 
+FILE *output = stdout;
+
 struct StreamReader : public BaseReader
 {
     Stream &stream;
@@ -34,8 +36,9 @@ void parse_substream(Stream &stream, size_t start)
     DisasmProcessor<StreamReader> processor(reader);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
-    processor.go(
-        [start](size_t pos, std::string info) { printf("%8ld: %s\n", start + pos, info.c_str()); });
+    processor.go([start](size_t pos, std::string info) {
+        fprintf(output, "%8ld: %s\n", start + pos, info.c_str());
+    });
 }
 
 // TODO: move to Stream
