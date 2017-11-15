@@ -38,7 +38,7 @@ def run_test(settings)
   with_headers = options['--with-headers']
   disasm_options = '--raw'
   disasm_options = '' if with_headers
-  disasm_options = '--with-headers' if asm_input
+  disasm_options = '--with-headers --no-numbers' if asm_input
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info

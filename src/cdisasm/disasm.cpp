@@ -29,15 +29,23 @@ struct StreamReader : public BaseReader
     }
 };
 
-void parse_substream(Stream &stream, size_t start)
+void parse_substream(Stream &stream, size_t start, bool no_numbers)
 {
     size_t                        position = 0;
     StreamReader                  reader(stream, position);
     DisasmProcessor<StreamReader> processor(reader);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
-    processor.go([start](size_t pos, std::string info) {
-        fprintf(output, "%8ld: %s\n", start + pos, info.c_str());
+    processor.go([start, no_numbers](size_t pos, std::string info) {
+        if (no_numbers)
+        {
+            fprintf(output, "    ");
+        }
+        else
+        {
+            fprintf(output, "%8ld: ", start + pos);
+        }
+        fprintf(output, "%s\n", info.c_str());
     });
 }
 
@@ -81,13 +89,14 @@ int main(int argc, char **argv)
 {
     bool raw          = parse_bool_arg(argc, argv, "--raw");
     bool with_headers = parse_bool_arg(argc, argv, "--with-headers");
+    bool no_numbers   = parse_bool_arg(argc, argv, "--no-numbers");
 
     Stream stream;
     read_stream(stream);
 
     if (raw)
     {
-        parse_substream(stream, 0);
+        parse_substream(stream, 0, no_numbers);
     }
     else
     {
@@ -106,7 +115,7 @@ int main(int argc, char **argv)
             if (section_name == "code")
             {
                 auto substream = stream.section_stream(i);
-                parse_substream(substream, section.pos);
+                parse_substream(substream, section.pos, no_numbers);
             }
         }
     }
