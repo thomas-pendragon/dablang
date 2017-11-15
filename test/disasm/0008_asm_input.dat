@@ -43,8 +43,18 @@
     W_END_HEADER
 
 _DATA:
+    W_BYTE 84
+    W_BYTE 101
+    W_BYTE 115
+    W_BYTE 116
+    W_BYTE 0
 
 _DATA2:
+    W_BYTE 109
+    W_BYTE 97
+    W_BYTE 105
+    W_BYTE 110
+    W_BYTE 0
 
 _SYMB:
 

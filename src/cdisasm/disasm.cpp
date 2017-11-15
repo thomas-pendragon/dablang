@@ -55,6 +55,27 @@ void parse_substream(Stream &stream, size_t start, bool no_numbers)
     });
 }
 
+void parse_data_substream(Stream &input_stream)
+{
+    size_t       position = 0;
+    StreamReader reader(input_stream, position);
+
+    AsmStream<StreamReader> stream(reader);
+
+    while (true)
+    {
+        try
+        {
+            unsigned char byte = stream.read_uint8();
+            fprintf(output, "    W_BYTE %d\n", (int)byte);
+        }
+        catch (EOFError)
+        {
+            break;
+        }
+    }
+}
+
 // TODO: move to Stream
 void read_stream(Stream &stream)
 {
@@ -140,16 +161,24 @@ int main(int argc, char **argv)
         {
             auto section = header->sections[i];
             fprintf(stderr, "cdisasm: section[%d] '%s'\n", (int)i, section.name);
+
             if (with_headers)
             {
                 fprintf(output, "%s:\n", context.section_labels[i].c_str());
             }
+
             std::string section_name = section.name;
+            auto        substream    = stream.section_stream(i);
+
             if (section_name == "code")
             {
-                auto substream = stream.section_stream(i);
                 parse_substream(substream, section.pos, no_numbers);
             }
+            else if (with_headers && section_name == "data")
+            {
+                parse_data_substream(substream);
+            }
+
             if (with_headers)
             {
                 fprintf(output, "\n");

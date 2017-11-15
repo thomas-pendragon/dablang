@@ -119,6 +119,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_METHOD_EX', args: %i[symbol uint16 uint64 uint16]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection)
       {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
       {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
+      {name: 'W_BYTE', args: %i[uint8]}, # arg0 = byte
     ],
   },
 ].freeze
