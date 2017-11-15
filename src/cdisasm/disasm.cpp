@@ -4,6 +4,12 @@
 
 FILE *output = stdout;
 
+struct DisasmContext
+{
+    std::vector<std::string> section_labels;
+    std::map<int, std::string> labels;
+};
+
 struct StreamReader : public BaseReader
 {
     Stream &stream;
@@ -73,20 +79,43 @@ bool parse_bool_arg(int argc, char **argv, const std::string &arg)
     return false;
 }
 
-void parse_headers(BinHeader *header)
+void parse_headers(DisasmContext &context, BinHeader *header)
 {
     fprintf(output, "/* disasm */\n");
     fprintf(output, "    W_HEADER 2\n");
     for (size_t i = 0; i < header->section_count; i++)
     {
         auto section = header->sections[i];
-        fprintf(output, "    W_SECTION %d, \"%s\"\n", (int)section.pos, section.name);
+
+        std::string label_name = std::string("_") + section.name;
+        std::transform(label_name.begin(), label_name.end(), label_name.begin(), ::toupper);
+
+        auto base_label_name = label_name;
+        int  label_counter   = 2;
+
+        while (true)
+        {
+            if (!std::count(context.section_labels.begin(), context.section_labels.end(),
+                            label_name))
+            {
+                break;
+            }
+            char number[8];
+            sprintf(number, "%d", label_counter++);
+            label_name = base_label_name + number;
+        }
+
+        context.section_labels.push_back(label_name);
+
+        fprintf(output, "    W_SECTION %s, \"%s\"\n", label_name.c_str(), section.name);
     }
     fprintf(output, "    W_END_HEADER\n\n");
 }
 
 int main(int argc, char **argv)
 {
+    DisasmContext context;
+
     bool raw          = parse_bool_arg(argc, argv, "--raw");
     bool with_headers = parse_bool_arg(argc, argv, "--with-headers");
     bool no_numbers   = parse_bool_arg(argc, argv, "--no-numbers");
@@ -104,18 +133,26 @@ int main(int argc, char **argv)
         fprintf(stderr, "cdisasm: %d sections\n", (int)header->section_count);
         if (with_headers)
         {
-            parse_headers(header);
+            parse_headers(context, header);
         }
 
         for (size_t i = 0; i < header->section_count; i++)
         {
             auto section = header->sections[i];
             fprintf(stderr, "cdisasm: section[%d] '%s'\n", (int)i, section.name);
+            if (with_headers)
+            {
+                fprintf(output, "%s:\n", context.section_labels[i].c_str());
+            }
             std::string section_name = section.name;
             if (section_name == "code")
             {
                 auto substream = stream.section_stream(i);
                 parse_substream(substream, section.pos, no_numbers);
+            }
+            if (with_headers)
+            {
+                fprintf(output, "\n");
             }
         }
     }

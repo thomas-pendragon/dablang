@@ -35,15 +35,24 @@
 
 /* disasm */
     W_HEADER 2
-    W_SECTION 192, "data"
-    W_SECTION 197, "data"
-    W_SECTION 202, "symb"
-    W_SECTION 210, "code"
-    W_SECTION 243, "func"
+    W_SECTION _DATA, "data"
+    W_SECTION _DATA2, "data"
+    W_SECTION _SYMB, "symb"
+    W_SECTION _CODE, "code"
+    W_SECTION _FUNC, "func"
     W_END_HEADER
 
+_DATA:
+
+_DATA2:
+
+_SYMB:
+
+_CODE:
     NOP 
     STACK_RESERVE 0
     LOAD_STRING R0, 192, 4
     SYSCALL RNIL, 0, R0
     RETURN RNIL
+
+_FUNC:
