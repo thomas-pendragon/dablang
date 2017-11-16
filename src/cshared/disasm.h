@@ -29,6 +29,11 @@ struct AsmStream
         return _read<uint8_t>();
     }
 
+    uint64_t read_uint64()
+    {
+        return _read<uint64_t>();
+    }
+
     void read_int8(std::string &info)
     {
         auto value = _read<int8_t>();

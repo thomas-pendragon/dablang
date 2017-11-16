@@ -57,6 +57,7 @@ _DATA2:
     W_BYTE 0
 
 _SYMB:
+    W_SYMBOL 197
 
 _CODE:
     NOP 

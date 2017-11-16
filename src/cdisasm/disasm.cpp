@@ -76,6 +76,27 @@ void parse_data_substream(Stream &input_stream)
     }
 }
 
+void parse_symbol_substream(Stream &input_stream)
+{
+    size_t       position = 0;
+    StreamReader reader(input_stream, position);
+
+    AsmStream<StreamReader> stream(reader);
+
+    while (true)
+    {
+        try
+        {
+            auto symbol = stream.read_uint64();
+            fprintf(output, "    W_SYMBOL %" PRIu64 "\n", symbol);
+        }
+        catch (EOFError)
+        {
+            break;
+        }
+    }
+}
+
 // TODO: move to Stream
 void read_stream(Stream &stream)
 {
@@ -177,6 +198,10 @@ int main(int argc, char **argv)
             else if (with_headers && section_name == "data")
             {
                 parse_data_substream(substream);
+            }
+            else if (with_headers && section_name == "symb")
+            {
+                parse_symbol_substream(substream);
             }
 
             if (with_headers)
