@@ -29,6 +29,16 @@ struct AsmStream
         return _read<uint8_t>();
     }
 
+    uint16_t read_uint16()
+    {
+        return _read<uint16_t>();
+    }
+
+    int16_t read_int16()
+    {
+        return _read<int16_t>();
+    }
+
     uint64_t read_uint64()
     {
         return _read<uint64_t>();

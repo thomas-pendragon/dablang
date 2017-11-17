@@ -97,6 +97,30 @@ void parse_symbol_substream(Stream &input_stream)
     }
 }
 
+void parse_func_substream(Stream &input_stream)
+{
+    size_t       position = 0;
+    StreamReader reader(input_stream, position);
+
+    AsmStream<StreamReader> stream(reader);
+
+    while (true)
+    {
+        try
+        {
+            auto symbol      = stream.read_uint16();
+            auto class_index = stream.read_int16();
+            auto address     = stream.read_uint64();
+            fprintf(output, "    W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 "\n", symbol,
+                    class_index, address);
+        }
+        catch (EOFError)
+        {
+            break;
+        }
+    }
+}
+
 // TODO: move to Stream
 void read_stream(Stream &stream)
 {
@@ -202,6 +226,10 @@ int main(int argc, char **argv)
             else if (with_headers && section_name == "symb")
             {
                 parse_symbol_substream(substream);
+            }
+            else if (with_headers && section_name == "func")
+            {
+                parse_func_substream(substream);
             }
 
             if (with_headers)
