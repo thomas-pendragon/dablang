@@ -25,6 +25,15 @@ def disassemble(input, output, disasm_options)
   end
 end
 
+def compare_files(file1, file2)
+  body1 = File.read(file1)
+  body2 = File.read(file2)
+
+  if body1 != body2
+    raise "Files #{file1} and #{file2} differ!"
+  end
+end
+
 def run_test(settings)
   input = settings[:input]
   test_output_dir = settings[:test_output_dir] || '.'
@@ -48,6 +57,7 @@ def run_test(settings)
   asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.asm')).to_s
   bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.bin')).to_s
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
+  post_bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.post.bin')).to_s
   FileUtils.rm(out) if File.exist?(out)
 
   if asm_input
@@ -63,6 +73,11 @@ def run_test(settings)
 
   actual = File.read(asm).strip
   compare_output(info, actual, expected)
+
+  if asm_input
+    assemble(asm, post_bin)
+    compare_files(bin, post_bin)
+  end
 
   File.open(out, 'wb') { |f| f << '1' }
 end

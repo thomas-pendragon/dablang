@@ -340,7 +340,7 @@ class Parser
         when 'W_METHOD'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
-          @output_stream._push_uint64(@label_positions[line[3]])
+          @output_stream._push_uint64(_process(line[3]))
         when 'W_CLASS'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
@@ -355,6 +355,8 @@ class Parser
           @output_stream._push_uint16(line[2])
         when 'W_COV_FILE'
           @output_stream._push_uint64(_process(line[1]))
+        when 'W_BYTE'
+          @output_stream._push_uint8(line[1])
         else
           raise 'unknown W_ op'
         end
