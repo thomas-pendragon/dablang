@@ -469,9 +469,8 @@ struct DabVM
 
     FILE *dab_output = nullptr;
 
-    bool       shutdown        = false;
-    bool       with_attributes = false;
-    bool       bare            = false;
+    bool       shutdown = false;
+    bool       bare     = false;
     DabVMReset reset;
     Coverage   coverage;
     bool       coverage_testing;

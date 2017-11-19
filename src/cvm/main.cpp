@@ -499,7 +499,7 @@ int DabVM::continue_run(Stream &input, bool autorun, bool raw, bool coverage_tes
 
     if (!raw)
     {
-        if (with_attributes)
+        if (options.with_attributes)
         {
             fprintf(stderr, "vm: initialize attributes\n");
             instructions.rewind();
@@ -1702,10 +1702,9 @@ int unsafe_main(int argc, char **argv)
         }
     }
 
-    vm.dab_output      = options.output;
-    vm.with_attributes = options.with_attributes;
-    vm.bare            = options.bare;
-    auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);
+    vm.dab_output  = options.output;
+    vm.bare        = options.bare;
+    auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
 
     auto clear_registers = [&vm]() {
         vm.symbols.resize(0);
