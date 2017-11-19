@@ -73,7 +73,13 @@ class OutputStream
   end
 
   def _push_symbol(arg)
-    val = arg.delete('S').to_i
+    val = if arg == 'S_NOTEQ'
+            11 # hack
+          elsif arg == 'S_EQ'
+            6 # hack
+          else
+            arg.delete('S').to_i
+          end
     _push_uint16(val)
   end
 

@@ -388,7 +388,7 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d)\n", (int)i,
+            fprintf(stderr, "vm/debug: func %d: %d -> '%s' at %p (class %d)\n", (int)i, (int)symbol,
                     symbol_str.c_str(), (void *)address, (int)class_index);
         }
 
@@ -1436,7 +1436,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         auto string_ob = cast(register_get(reglist[0]), CLASS_STRING);
         auto string    = string_ob.string();
 
-        auto symbol_index = dyn_get_symbol(string);
+        auto symbol_index = get_or_create_symbol_index(string);
 
         DabValue value(CLASS_FIXNUM, (uint64_t)symbol_index);
 
@@ -1450,7 +1450,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     }
 }
 
-size_t DabVM::dyn_get_symbol(const std::string &string)
+size_t DabVM::get_or_create_symbol_index(const std::string &string)
 {
     for (size_t i = 0; i < symbols.size(); i++)
     {
@@ -1485,8 +1485,10 @@ DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16
     }
     else
     {
-        get_class(class_index).functions[name] = function;
-        return get_class(class_index).functions[name];
+        auto func_index = get_or_create_symbol_index(name);
+
+        get_class(class_index).functions[func_index] = function;
+        return get_class(class_index).functions[func_index];
     }
 }
 

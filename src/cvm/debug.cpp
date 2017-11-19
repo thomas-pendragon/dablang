@@ -28,11 +28,13 @@ void DabVM_debug::print_classes()
                 it.second.superclass_index);
         for (const auto &fin : it.second.static_functions)
         {
-            fprintf(stderr, "   ::%s [%s]\n", fin.first.c_str(), fin.second.regular ? "Dab" : "C");
+            fprintf(stderr, "   ::%s [%s]\n", $VM->get_symbol(fin.first).c_str(),
+                    fin.second.regular ? "Dab" : "C");
         }
         for (const auto &fin : it.second.functions)
         {
-            fprintf(stderr, "    .%s [%s]\n", fin.first.c_str(), fin.second.regular ? "Dab" : "C");
+            fprintf(stderr, "    .%s [%s]\n", $VM->get_symbol(fin.first).c_str(),
+                    fin.second.regular ? "Dab" : "C");
         }
     }
 }

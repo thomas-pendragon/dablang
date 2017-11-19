@@ -91,8 +91,8 @@ struct DabClass
     std::string name;
     int         index;
     bool        builtin = false;
-    std::map<std::string, DabFunction> functions;
-    std::map<std::string, DabFunction> static_functions;
+    std::map<dab_symbol_t, DabFunction> functions;
+    std::map<dab_symbol_t, DabFunction> static_functions;
     int superclass_index = CLASS_OBJECT;
 
     const DabFunction &get_instance_function(const std::string &name) const;
@@ -516,6 +516,19 @@ struct DabVM
         return symbols[index];
     }
 
+    dab_symbol_t get_symbol_index(const std::string &string) const
+    {
+        for (size_t i = 0; i < symbols.size(); i++)
+        {
+            auto &symbol = symbols[i];
+            if (symbol == string)
+            {
+                return (dab_symbol_t)i;
+            }
+        }
+        throw DabRuntimeError("Unknown symbol :" + string);
+    }
+
     void kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist);
 
     bool pop_frame(bool regular);
@@ -630,7 +643,7 @@ struct DabVM
 
     bool run_leaktest(FILE *output);
 
-    size_t dyn_get_symbol(const std::string &string);
+    size_t get_or_create_symbol_index(const std::string &string);
 };
 
 struct DabVM_debug

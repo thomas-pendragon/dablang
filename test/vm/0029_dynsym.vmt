@@ -17,10 +17,12 @@ SYSCALL R1, 3, R0 # TOSYM
 
 Last stack element should be symbol index 0 (because we only have one symbol)
 
+Actually 0 + number of default symbols, which can vary.
+
 ## TESTCASE
 
 $reg[1]
 
 ## EXPECT
 
-FIXN 0
+FIXN 31

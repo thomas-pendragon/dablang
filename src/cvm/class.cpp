@@ -13,7 +13,8 @@ const DabFunction &DabClass::get_static_function(const std::string &name) const
 const DabFunction &DabClass::_get_function(bool _static, const std::string &func_name) const
 {
     auto &collection = _static ? static_functions : functions;
-    if (!collection.count(func_name))
+    auto  func_index = $VM->get_symbol_index(func_name);
+    if (!collection.count(func_index))
     {
         if (index == superclass_index)
         {
@@ -27,25 +28,31 @@ const DabFunction &DabClass::_get_function(bool _static, const std::string &func
             return superclass._get_function(_static, func_name);
         }
     }
-    return collection.at(func_name);
+    return collection.at(func_index);
 }
 
 void DabClass::add_static_function(const std::string &name, dab_function_t body)
 {
     DabFunction fun;
-    fun.name               = name;
-    fun.regular            = false;
-    fun.extra              = body;
-    static_functions[name] = fun;
+    fun.name    = name;
+    fun.regular = false;
+    fun.extra   = body;
+
+    auto func_index = $VM->get_or_create_symbol_index(name);
+
+    static_functions[func_index] = fun;
 }
 
 void DabClass::add_function(const std::string &name, dab_function_t body)
 {
     DabFunction fun;
-    fun.name        = name;
-    fun.regular     = false;
-    fun.extra       = body;
-    functions[name] = fun;
+    fun.name    = name;
+    fun.regular = false;
+    fun.extra   = body;
+
+    auto func_index = $VM->get_or_create_symbol_index(name);
+
+    functions[func_index] = fun;
 }
 
 void DabClass::add_simple_function(const std::string &name, dab_simple_function_t body)

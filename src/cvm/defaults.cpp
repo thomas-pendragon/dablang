@@ -57,7 +57,11 @@ dab_function_t import_external_function(void *symbol, const DabFunctionReflectio
 
 void DabVM::define_defaults()
 {
+    fprintf(stderr, "vm: define defaults\n");
+
     define_default_classes();
+
+    fprintf(stderr, "vm: define default functions\n");
 
     auto make_import_function = [this](const char *name) {
         return [this, name](size_t n_args, size_t n_ret, void *blockaddr) {

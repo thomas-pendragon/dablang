@@ -84,6 +84,8 @@ DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_inde
 
 void DabVM::predefine_default_classes()
 {
+    fprintf(stderr, "vm: predefine default classes\n");
+
     define_builtin_class("Object", CLASS_OBJECT);
     define_builtin_class("String", CLASS_STRING);
     define_builtin_class("Fixnum", CLASS_FIXNUM);
@@ -106,6 +108,8 @@ void DabVM::predefine_default_classes()
 
 void DabVM::define_default_classes()
 {
+    fprintf(stderr, "vm: define default classes\n");
+
     auto &object_class = get_class(CLASS_OBJECT);
     object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
