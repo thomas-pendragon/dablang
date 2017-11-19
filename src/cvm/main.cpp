@@ -201,7 +201,7 @@ int DabVM::run_newformat(Stream &input, bool autorun, bool raw, bool coverage_te
     instructions.append(input);
     input.seek(0);
 
-    if (!bare)
+    if (!options.bare)
     {
         DabVM::load_newformat(input, autorun, raw, coverage_testing);
     }
@@ -1703,7 +1703,6 @@ int unsafe_main(int argc, char **argv)
     }
 
     vm.dab_output  = options.output;
-    vm.bare        = options.bare;
     auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
 
     auto clear_registers = [&vm]() {
