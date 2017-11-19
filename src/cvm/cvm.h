@@ -446,12 +446,13 @@ struct DabRunOptions
     bool  autorun         = true;
     bool  extract         = false;
     bool  raw             = false;
-    bool  cov             = false;
     bool  autorelease     = true;
     bool  verbose         = false;
     bool  with_attributes = false;
     bool  leaktest        = false;
     bool  bare            = false;
+
+    bool coverage_testing = false;
 
     FILE *output       = stdout;
     bool  close_output = false;
@@ -470,7 +471,6 @@ struct DabVM
     bool       shutdown = false;
     DabVMReset reset;
     Coverage   coverage;
-    bool       coverage_testing;
 
     Stream instructions;
     std::map<std::string, DabFunction> functions;
@@ -529,12 +529,12 @@ struct DabVM
 
     size_t ip() const;
 
-    int run(Stream &input, bool coverage_testing);
+    int run(Stream &input);
 
-    int continue_run(Stream &input, bool coverage_testing);
+    int continue_run(Stream &input);
 
-    int run_newformat(Stream &input, bool coverage_testing);
-    void load_newformat(Stream &input, bool coverage_testing);
+    int run_newformat(Stream &input);
+    void load_newformat(Stream &input);
 
     DabValue &get_arg(int arg_index);
 

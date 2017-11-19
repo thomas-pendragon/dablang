@@ -57,7 +57,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
         arg.print(stderr);
         fprintf(stderr, " ]\n");
     }
-    if (!coverage_testing)
+    if (!options.coverage_testing)
     {
         arg.print(options.output);
         fflush(options.output);
@@ -196,14 +196,14 @@ void DabVM::read_coverage_files(Stream &stream, size_t address, size_t length)
     }
 }
 
-int DabVM::run_newformat(Stream &input, bool coverage_testing)
+int DabVM::run_newformat(Stream &input)
 {
     instructions.append(input);
     input.seek(0);
 
     if (!options.bare)
     {
-        DabVM::load_newformat(input, coverage_testing);
+        DabVM::load_newformat(input);
     }
 
     if (options.raw)
@@ -211,13 +211,11 @@ int DabVM::run_newformat(Stream &input, bool coverage_testing)
         execute(instructions);
     }
 
-    return continue_run(input, coverage_testing);
+    return continue_run(input);
 }
 
-void DabVM::load_newformat(Stream &input, bool coverage_testing)
+void DabVM::load_newformat(Stream &input)
 {
-    (void)coverage_testing;
-
     auto peeked_header = input.peek_header();
 
     auto mark1 = input.read_uint8();
@@ -483,17 +481,14 @@ void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
     }
 }
 
-int DabVM::run(Stream &input, bool coverage_testing)
+int DabVM::run(Stream &input)
 {
-    this->coverage_testing = coverage_testing;
-
-    return run_newformat(input, coverage_testing);
+    return run_newformat(input);
 }
 
-int DabVM::continue_run(Stream &input, bool coverage_testing)
+int DabVM::continue_run(Stream &input)
 {
     (void)input;
-    (void)coverage_testing;
 
     if (!options.raw)
     {
@@ -1663,7 +1658,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
 
     if (flags["--cov"])
     {
-        this->cov = true;
+        this->coverage_testing = true;
     }
 
     if (flags["--noautorelease"] || flags["--no-autorelease"])
@@ -1686,7 +1681,7 @@ int unsafe_main(int argc, char **argv)
     }
     options.parse(args);
     fprintf(stderr, "VM options: autorun %s raw %s cov %s\n", options.autorun ? "yes" : "no",
-            options.raw ? "yes" : "no", options.cov ? "yes" : "no");
+            options.raw ? "yes" : "no", options.coverage_testing ? "yes" : "no");
 
     Stream input;
     byte   buffer[1024];
@@ -1700,7 +1695,7 @@ int unsafe_main(int argc, char **argv)
         }
     }
 
-    auto ret_value = vm.run(input, options.cov);
+    auto ret_value = vm.run(input);
 
     auto clear_registers = [&vm]() {
         vm.symbols.resize(0);
@@ -1724,7 +1719,7 @@ int unsafe_main(int argc, char **argv)
     {
         fclose(stream);
     }
-    if (options.cov)
+    if (options.coverage_testing)
     {
         vm.coverage.dump(stdout);
     }
