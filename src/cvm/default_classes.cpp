@@ -82,9 +82,33 @@ DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_inde
     return classes[class_index];
 }
 
+void DabVM::predefine_default_classes()
+{
+    define_builtin_class("Object", CLASS_OBJECT);
+    define_builtin_class("String", CLASS_STRING);
+    define_builtin_class("Fixnum", CLASS_FIXNUM);
+    define_builtin_class("Boolean", CLASS_BOOLEAN);
+    define_builtin_class("NilClass", CLASS_NILCLASS);
+    define_builtin_class("Array", CLASS_ARRAY);
+    define_builtin_class("Uint8", CLASS_UINT8, CLASS_FIXNUM);
+    define_builtin_class("Uint16", CLASS_UINT16, CLASS_FIXNUM);
+    define_builtin_class("Uint32", CLASS_UINT32, CLASS_FIXNUM);
+    define_builtin_class("Uint64", CLASS_UINT64, CLASS_FIXNUM);
+    define_builtin_class("Int8", CLASS_INT8, CLASS_FIXNUM);
+    define_builtin_class("Int16", CLASS_INT16, CLASS_FIXNUM);
+    define_builtin_class("Int32", CLASS_INT32, CLASS_FIXNUM);
+    define_builtin_class("Int64", CLASS_INT64, CLASS_FIXNUM);
+    define_builtin_class("Method", CLASS_METHOD);
+    define_builtin_class("IntPtr", CLASS_INTPTR);
+    define_builtin_class("ByteBuffer", CLASS_BYTEBUFFER);
+    define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
+}
+
 void DabVM::define_default_classes()
 {
-    auto &object_class = define_builtin_class("Object", CLASS_OBJECT);
+    predefine_default_classes();
+
+    auto &object_class = get_class(CLASS_OBJECT);
     object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1);
@@ -139,7 +163,7 @@ void DabVM::define_default_classes()
         stack.push_value(arg0.data.fixnum == arg1.data.fixnum);
     });
 
-    auto &string_class = define_builtin_class("String", CLASS_STRING);
+    auto &string_class = get_class(CLASS_STRING);
     string_class.add_simple_function("upcase", [](DabValue self) {
         auto s = self.string();
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
@@ -206,9 +230,7 @@ void DabVM::define_default_classes()
     DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .string());
     DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .string());
 
-    define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
-
-    auto &fixnum_class = define_builtin_class("Fixnum", CLASS_FIXNUM);
+    auto &fixnum_class = get_class(CLASS_FIXNUM);
     fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 1 || n_args == 2);
@@ -228,7 +250,7 @@ void DabVM::define_default_classes()
     });
     DAB_MEMBER_NUMERIC_OPERATORS(fixnum_class, CLASS_FIXNUM, uint64_t, .data.fixnum);
 
-    auto &intptr_class = define_builtin_class("IntPtr", CLASS_INTPTR, CLASS_OBJECT);
+    auto &intptr_class = get_class(CLASS_INTPTR);
     intptr_class.add_simple_function("fetch_int32", [](DabValue self) {
         auto     ptr   = self.data.intptr;
         auto     iptr  = (int32_t *)ptr;
@@ -238,7 +260,7 @@ void DabVM::define_default_classes()
     });
 
 #define CREATE_INT_CLASS(small, Title, BIG)                                                        \
-    auto &small##_class = define_builtin_class(STR(Title), CLASS_##BIG, CLASS_FIXNUM);             \
+    auto &small##_class = get_class(CLASS_##BIG);                                                  \
     DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
 
     CREATE_INT_CLASS(uint8, Uint8, UINT8);
@@ -258,12 +280,10 @@ void DabVM::define_default_classes()
         return ret;
     });
 
-    auto &boolean_class = define_builtin_class("Boolean", CLASS_BOOLEAN);
+    auto &boolean_class = get_class(CLASS_BOOLEAN);
     DAB_MEMBER_EQUALS_OPERATORS(boolean_class, CLASS_BOOLEAN, .data.boolean);
 
-    define_builtin_class("NilClass", CLASS_NILCLASS);
-
-    auto &array_class = define_builtin_class("Array", CLASS_ARRAY);
+    auto &array_class = get_class(CLASS_ARRAY);
     array_class.add_simple_function("count", [](DabValue self) {
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
@@ -366,11 +386,11 @@ void DabVM::define_default_classes()
         stack.push($VM->merge_arrays(arg0, arg1));
     });
 
-    auto &method_class = define_builtin_class("Method", CLASS_METHOD);
+    auto &method_class = get_class(CLASS_METHOD);
     method_class.add_simple_function(
         "to_s", [this](DabValue self) { return std::string("@method(" + self.string() + ")"); });
 
-    auto &bytebuffer_class = define_builtin_class("ByteBuffer", CLASS_BYTEBUFFER);
+    auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
         assert(n_args == 2);

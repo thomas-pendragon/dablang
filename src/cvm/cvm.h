@@ -497,6 +497,7 @@ struct DabVM
         }
         return classes[index];
     }
+    void predefine_default_classes();
     void define_default_classes();
     void define_defaults();
 
