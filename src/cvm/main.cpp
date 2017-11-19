@@ -1678,7 +1678,9 @@ int unsafe_main(int argc, char **argv)
 {
     setup_handlers();
 
-    DabRunOptions            options;
+    DabVM          vm;
+    DabRunOptions &options = vm.options;
+
     std::vector<std::string> args;
     for (int i = 1; i < argc; i++)
     {
@@ -1699,7 +1701,7 @@ int unsafe_main(int argc, char **argv)
             input.append(buffer, bytes);
         }
     }
-    DabVM vm;
+
     vm.dab_output      = options.output;
     vm.verbose         = options.verbose;
     vm.autorelease     = options.autorelease;

@@ -463,6 +463,8 @@ struct DabRunOptions
 
 struct DabVM
 {
+    DabRunOptions options;
+
     size_t data_address = 0;
 
     FILE *dab_output = nullptr;
