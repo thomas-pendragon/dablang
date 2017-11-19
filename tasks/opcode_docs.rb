@@ -18,6 +18,7 @@ OPCODES_ARRAY_BASE.each do |group|
   items = group[:items]
 
   next if items.empty?
+  next if group[:pseudo]
 
   puts "## #{title}
 
