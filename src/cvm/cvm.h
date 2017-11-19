@@ -467,8 +467,6 @@ struct DabVM
 
     size_t data_address = 0;
 
-    FILE *dab_output = nullptr;
-
     bool       shutdown = false;
     DabVMReset reset;
     Coverage   coverage;

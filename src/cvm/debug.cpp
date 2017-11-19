@@ -9,7 +9,7 @@ void DabVM_debug::print_registers()
 
 void DabVM_debug::print_ssa_registers()
 {
-    auto err_stream = $VM->dab_output;
+    auto err_stream = $VM->options.output;
     fprintf(err_stream, "Registers:\n");
     size_t index = 0;
     for (const auto &reg : vm._registers)
@@ -49,7 +49,7 @@ void DabVM_debug::print_functions()
 
 void DabVM_debug::print_constants()
 {
-    auto output = $VM->dab_output;
+    auto output = $VM->options.output;
     fprintf(output, "symbols:\n");
     size_t i = 0;
     for (const auto &symbol : $VM->symbols)
@@ -61,7 +61,7 @@ void DabVM_debug::print_constants()
 
 void DabVM_debug::print_stack()
 {
-    auto err_stream = $VM->dab_output;
+    auto err_stream = $VM->options.output;
     fprintf(err_stream, "Stack:\n");
     vm._dump("stack", vm.stack._data, err_stream);
 }
@@ -70,7 +70,7 @@ void DabVM_debug::print_code(bool current_only)
 {
     prepare_disasm();
 
-    auto err_stream = $VM->dab_output;
+    auto err_stream = $VM->options.output;
 
     auto ip = vm.ip();
 
@@ -170,7 +170,7 @@ void DabVM_debug::prepare_disasm()
 
 void DabVM::execute_debug(Stream &input)
 {
-    auto err_stream = dab_output;
+    auto err_stream = options.output;
 
     DabVM_debug debug(*this);
     while (!input.eof())

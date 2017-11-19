@@ -59,8 +59,8 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
     }
     if (!coverage_testing)
     {
-        arg.print(dab_output);
-        fflush(dab_output);
+        arg.print(options.output);
+        fflush(options.output);
     }
 
     register_set(out_reg, nullptr);
@@ -1497,7 +1497,7 @@ DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16
 
 void DabVM::extract(const std::string &name)
 {
-    FILE *output = dab_output;
+    FILE *output = options.output;
 
     if (name == "rip")
     {
@@ -1702,7 +1702,6 @@ int unsafe_main(int argc, char **argv)
         }
     }
 
-    vm.dab_output  = options.output;
     auto ret_value = vm.run(input, options.autorun, options.raw, options.cov);
 
     auto clear_registers = [&vm]() {
