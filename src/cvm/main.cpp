@@ -1704,7 +1704,6 @@ int unsafe_main(int argc, char **argv)
 
     vm.dab_output      = options.output;
     vm.verbose         = options.verbose;
-    vm.autorelease     = options.autorelease;
     vm.with_attributes = options.with_attributes;
     vm.bare            = options.bare;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);

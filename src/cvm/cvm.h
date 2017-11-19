@@ -469,7 +469,6 @@ struct DabVM
 
     FILE *dab_output = nullptr;
 
-    bool       autorelease     = true;
     bool       shutdown        = false;
     bool       verbose         = false;
     bool       with_attributes = false;

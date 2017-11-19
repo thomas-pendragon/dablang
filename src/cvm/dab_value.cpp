@@ -371,7 +371,7 @@ void DabValue::set_instvar(const std::string &name, const DabValue &value)
 void DabValue::set_data(const DabValueData &other_data)
 {
     data = other_data;
-    if ($VM->autorelease)
+    if ($VM->options.autorelease)
     {
         retain();
     }
@@ -390,7 +390,7 @@ DabValue &DabValue::operator=(const DabValue &other)
 
 DabValue::~DabValue()
 {
-    if ($VM->autorelease)
+    if ($VM->options.autorelease)
     {
         release();
     }
