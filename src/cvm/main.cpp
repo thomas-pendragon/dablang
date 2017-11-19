@@ -1573,28 +1573,6 @@ bool DabVM::run_leaktest(FILE *output)
     return error;
 }
 
-struct DabRunOptions
-{
-    FILE *input           = stdin;
-    bool  close_file      = false;
-    bool  autorun         = true;
-    bool  extract         = false;
-    bool  raw             = false;
-    bool  cov             = false;
-    bool  autorelease     = true;
-    bool  verbose         = false;
-    bool  with_attributes = false;
-    bool  leaktest        = false;
-    bool  bare            = false;
-
-    FILE *output       = stdout;
-    bool  close_output = false;
-
-    std::string extract_part;
-
-    void parse(const std::vector<std::string> &args);
-};
-
 void DabRunOptions::parse(const std::vector<std::string> &args)
 {
     std::map<std::string, bool>        flags;

@@ -439,6 +439,28 @@ struct DabVMReset
     ~DabVMReset();
 };
 
+struct DabRunOptions
+{
+    FILE *input           = stdin;
+    bool  close_file      = false;
+    bool  autorun         = true;
+    bool  extract         = false;
+    bool  raw             = false;
+    bool  cov             = false;
+    bool  autorelease     = true;
+    bool  verbose         = false;
+    bool  with_attributes = false;
+    bool  leaktest        = false;
+    bool  bare            = false;
+
+    FILE *output       = stdout;
+    bool  close_output = false;
+
+    std::string extract_part;
+
+    void parse(const std::vector<std::string> &args);
+};
+
 struct DabVM
 {
     size_t data_address = 0;
