@@ -302,7 +302,7 @@ DabValue DabValue::create_instance() const
     ret.data.type   = type;
     ret.data.object = proxy;
 
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %3d): ! created : ", proxy, (int)proxy->count_strong);
         ret.dump(stderr);
@@ -335,7 +335,7 @@ DabValue DabValue::_get_instvar(const std::string &name)
 DabValue DabValue::get_instvar(const std::string &name)
 {
     auto ret = _get_instvar(name);
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
                 (int)this->data.object->count_strong, name.c_str());
@@ -350,7 +350,7 @@ void DabValue::set_instvar(const std::string &name, const DabValue &value)
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
                 (int)this->data.object->count_strong, name.c_str());
@@ -422,7 +422,7 @@ void DabObjectProxy::retain(DabValue *value)
     if (this->destroying)
         return;
     count_strong += 1;
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %3d): + retained: ", this, (int)this->count_strong);
         value->dump(stderr);
@@ -435,7 +435,7 @@ void DabObjectProxy::release(DabValue *value)
     if (this->destroying)
         return;
     count_strong -= 1;
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %3d): - released: ", this, (int)this->count_strong);
         value->dump(stderr);
@@ -451,7 +451,7 @@ void DabObjectProxy::destroy(DabValue *value)
 {
     (void)value;
     this->destroying = true;
-    if ($VM->verbose)
+    if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %3d): X destroy\n", this, (int)this->count_strong);
     }

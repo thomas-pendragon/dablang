@@ -51,7 +51,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
     }
     arg = stack.pop_value();
 
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "[ ");
         arg.print(stderr);
@@ -68,7 +68,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
 
 bool DabVM::pop_frame(bool regular)
 {
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
     }
@@ -93,7 +93,7 @@ bool DabVM::pop_frame(bool regular)
                 stack.push(retval);
             }
         }
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
         }
@@ -105,7 +105,7 @@ bool DabVM::pop_frame(bool regular)
 
     if (!out_reg.nil())
     {
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: set retval at 0x%x\n", out_reg.value());
         }
@@ -114,7 +114,7 @@ bool DabVM::pop_frame(bool regular)
 
     if (prev_pos == (size_t)-1)
     {
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: pop last frame prev_ip = %zu\n", prev_ip);
         }
@@ -357,7 +357,7 @@ void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_l
 
         auto symbol_str = get_symbol(symbol);
 
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm/debug: class %d [parent=%d]: '%s'\n", (int)class_index,
                     (int)parent_class_index, symbol_str.c_str());
@@ -388,7 +388,7 @@ void DabVM::read_functions(Stream &input, size_t func_address, size_t func_lengt
 
         auto symbol_str = get_symbol(symbol);
 
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d)\n", (int)i,
                     symbol_str.c_str(), (void *)address, (int)class_index);
@@ -430,7 +430,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
 
         auto symbol_str = get_symbol(symbol);
 
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d) with %d args\n",
                     (int)fun_index, symbol_str.c_str(), (void *)address, (int)class_index,
@@ -577,7 +577,7 @@ void DabVM::call(dab_register_t out_reg, const std::string &name, int n_args,
                  const std::string &block_name, const DabValue &capture, bool use_reglist,
                  std::vector<dab_register_t> reglist)
 {
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
                 block_name.c_str());
@@ -621,7 +621,7 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
                            const DabValue &capture, bool use_reglist,
                            std::vector<dab_register_t> reglist)
 {
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: call <%s> %sand %d arguments -> 0x%x.\n", fun.name.c_str(),
                 blockaddress ? "with block " : "", n_args, out_reg.value());
@@ -718,7 +718,7 @@ void DabVM::reflect(size_t reflection_type, const DabValue &symbol, bool out_reg
 void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &symbol, bool out_reg,
                                      dab_register_t reg)
 {
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.string().c_str());
     }
@@ -734,7 +734,7 @@ void DabVM::reflect_instance_method(size_t reflection_type, const DabValue &symb
     assert(has_class);
 
     auto &klass = get_class(class_index);
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: reflect %d on %s [%s]\n", (int)reflection_type,
                 symbol.string().c_str(), klass.name.c_str());
@@ -757,7 +757,7 @@ void DabVM::_reflect(const DabFunction &function, bool out_reg, dab_register_t r
     auto &   array       = value.array();
     array.resize(n);
 
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: reflect %d arguments\n", (int)n);
     }
@@ -791,7 +791,7 @@ bool DabVM::execute_single(Stream &input)
 {
     auto pos    = input.position();
     auto opcode = input.read_uint8();
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "@ %d: %d [%s]\n", (int)pos, (int)opcode, g_opcodes[opcode].name.c_str());
     }
@@ -880,7 +880,7 @@ bool DabVM::execute_single(Stream &input)
         auto self = get_self();
         auto addr = get_block_addr();
 
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
             fprintf(stderr, "vm: capture data is ");
@@ -900,7 +900,7 @@ bool DabVM::execute_single(Stream &input)
         auto closure       = get_block_capture();
         assert(closure.data.type == TYPE_ARRAY);
         auto &array = closure.array();
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: get captured var %d (of %lu).\n", closure_index, array.size());
         }
@@ -1080,7 +1080,7 @@ bool DabVM::execute_single(Stream &input)
     {
         auto mod         = input.read_int16() - 3;
         auto new_address = ip() + mod;
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "JMP(%d), new address: %p -> %p\n", mod, (void *)ip(),
                     (void *)new_address);
@@ -1120,7 +1120,7 @@ bool DabVM::execute_single(Stream &input)
         auto n_args   = reglist.size();
         auto n_rets   = 1;
         auto recv     = register_get(self_reg);
-        if (verbose)
+        if (options.verbose)
         {
             fprintf(stderr, "vm: instcall, recv = ");
             recv.dump(stderr);
@@ -1379,7 +1379,7 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
 
     auto self = get_self();
 
-    if (verbose)
+    if (options.verbose)
     {
         fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr,
                 (int)n_args);
@@ -1703,7 +1703,6 @@ int unsafe_main(int argc, char **argv)
     }
 
     vm.dab_output      = options.output;
-    vm.verbose         = options.verbose;
     vm.with_attributes = options.with_attributes;
     vm.bare            = options.bare;
     auto ret_value     = vm.run(input, options.autorun, options.raw, options.cov);

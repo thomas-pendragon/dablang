@@ -470,7 +470,6 @@ struct DabVM
     FILE *dab_output = nullptr;
 
     bool       shutdown        = false;
-    bool       verbose         = false;
     bool       with_attributes = false;
     bool       bare            = false;
     DabVMReset reset;

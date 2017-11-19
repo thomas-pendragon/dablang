@@ -89,7 +89,7 @@ void DabVM::define_defaults()
                 fprintf(stderr, "vm: dlopen error: %s", dlerror());
                 exit(1);
             }
-            if (verbose)
+            if (options.verbose)
             {
                 fprintf(stderr, "vm: dlopen handle: %p\n", handle);
             }
@@ -100,7 +100,7 @@ void DabVM::define_defaults()
                 fprintf(stderr, "vm: dlsym error: %s", dlerror());
                 exit(1);
             }
-            if (verbose)
+            if (options.verbose)
             {
                 fprintf(stderr, "vm: dlsym handle: %p\n", symbol);
             }
