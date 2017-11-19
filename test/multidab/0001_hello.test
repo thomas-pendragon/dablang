@@ -1,0 +1,20 @@
+## LEVEL 0
+
+func level0()
+{
+  dab_define_method("foo") ^()
+  {
+    print("hello world");
+  }
+}
+
+## LEVEL 1
+
+func level1()
+{
+  foo();
+}
+
+## EXPECT
+
+hello world
