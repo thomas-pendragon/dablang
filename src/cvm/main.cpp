@@ -196,27 +196,26 @@ void DabVM::read_coverage_files(Stream &stream, size_t address, size_t length)
     }
 }
 
-int DabVM::run_newformat(Stream &input, bool raw, bool coverage_testing)
+int DabVM::run_newformat(Stream &input, bool coverage_testing)
 {
     instructions.append(input);
     input.seek(0);
 
     if (!options.bare)
     {
-        DabVM::load_newformat(input, raw, coverage_testing);
+        DabVM::load_newformat(input, coverage_testing);
     }
 
-    if (raw)
+    if (options.raw)
     {
         execute(instructions);
     }
 
-    return continue_run(input, raw, coverage_testing);
+    return continue_run(input, coverage_testing);
 }
 
-void DabVM::load_newformat(Stream &input, bool raw, bool coverage_testing)
+void DabVM::load_newformat(Stream &input, bool coverage_testing)
 {
-    (void)raw;
     (void)coverage_testing;
 
     auto peeked_header = input.peek_header();
@@ -484,19 +483,19 @@ void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
     }
 }
 
-int DabVM::run(Stream &input, bool raw, bool coverage_testing)
+int DabVM::run(Stream &input, bool coverage_testing)
 {
     this->coverage_testing = coverage_testing;
 
-    return run_newformat(input, raw, coverage_testing);
+    return run_newformat(input, coverage_testing);
 }
 
-int DabVM::continue_run(Stream &input, bool raw, bool coverage_testing)
+int DabVM::continue_run(Stream &input, bool coverage_testing)
 {
     (void)input;
     (void)coverage_testing;
 
-    if (!raw)
+    if (!options.raw)
     {
         if (options.with_attributes)
         {
@@ -1701,7 +1700,7 @@ int unsafe_main(int argc, char **argv)
         }
     }
 
-    auto ret_value = vm.run(input, options.raw, options.cov);
+    auto ret_value = vm.run(input, options.cov);
 
     auto clear_registers = [&vm]() {
         vm.symbols.resize(0);
