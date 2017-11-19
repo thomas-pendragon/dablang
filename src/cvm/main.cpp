@@ -577,19 +577,21 @@ void DabVM::call(dab_register_t out_reg, const std::string &name, int n_args,
         fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
                 block_name.c_str());
     }
-    if (!functions.count(name))
+    auto func_index = get_or_create_symbol_index(name);
+    if (!functions.count(func_index))
     {
         fprintf(stderr, "vm error: Unknown function <%s>.\n", name.c_str());
         exit(1);
     }
     if (block_name != "")
     {
-        call_function_block(false, out_reg, nullptr, functions[name], n_args, functions[block_name],
-                            capture, use_reglist, reglist);
+        auto func_block_index = get_or_create_symbol_index(block_name);
+        call_function_block(false, out_reg, nullptr, functions[func_index], n_args,
+                            functions[func_block_index], capture, use_reglist, reglist);
     }
     else
     {
-        call_function(false, out_reg, nullptr, functions[name], n_args, use_reglist, reglist);
+        call_function(false, out_reg, nullptr, functions[func_index], n_args, use_reglist, reglist);
     }
 }
 
@@ -717,7 +719,8 @@ void DabVM::reflect_method_arguments(size_t reflection_type, const DabValue &sym
     {
         fprintf(stderr, "vm: reflect %d on %s\n", (int)reflection_type, symbol.string().c_str());
     }
-    const auto &function = functions[symbol.string()];
+    auto        func_index = get_or_create_symbol_index(symbol.string());
+    const auto &function   = functions[func_index];
 
     auto output_names = reflection_type == REFLECT_METHOD_ARGUMENT_NAMES;
     _reflect(function, out_reg, reg, output_names);
@@ -1359,8 +1362,9 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 
     if (block_name != "")
     {
-        call_function_block(true, outreg, recv, fun, 1 + n_args, functions[block_name], capture,
-                            use_reglist, reglist);
+        auto func_block_index = get_or_create_symbol_index(block_name);
+        call_function_block(true, outreg, recv, fun, 1 + n_args, functions[func_block_index],
+                            capture, use_reglist, reglist);
     }
     else
     {
@@ -1478,15 +1482,15 @@ DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16
     DabFunction function;
     function.address = address;
     function.name    = name;
+    auto func_index  = get_or_create_symbol_index(name);
     if (class_index == 0xFFFF)
     {
-        functions[name] = function;
-        return functions[name];
+
+        functions[func_index] = function;
+        return functions[func_index];
     }
     else
     {
-        auto func_index = get_or_create_symbol_index(name);
-
         get_class(class_index).functions[func_index] = function;
         return get_class(class_index).functions[func_index];
     }

@@ -473,7 +473,7 @@ struct DabVM
     Coverage   coverage;
 
     Stream instructions;
-    std::map<std::string, DabFunction> functions;
+    std::map<dab_symbol_t, DabFunction> functions;
     size_t frame_position = -1;
     Stack  stack;
 

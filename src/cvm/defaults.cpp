@@ -109,7 +109,9 @@ void DabVM::define_defaults()
                 fprintf(stderr, "vm: dlsym handle: %p\n", symbol);
             }
 
-            auto &function   = functions[method_name];
+            auto func_index = get_or_create_symbol_index(method_name);
+
+            auto &function   = functions[func_index];
             function.regular = false;
             function.address = -1;
             function.extra   = import_external_function(symbol, function.reflection, this->stack);
@@ -120,26 +122,35 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
-        fun.name                   = "__import_libc";
-        fun.regular                = false;
-        fun.extra                  = make_import_function(DAB_LIBC_NAME);
-        functions["__import_libc"] = fun;
+        fun.name    = "__import_libc";
+        fun.regular = false;
+        fun.extra   = make_import_function(DAB_LIBC_NAME);
+
+        auto func_index = get_or_create_symbol_index("__import_libc");
+
+        functions[func_index] = fun;
     }
 
     {
         DabFunction fun;
-        fun.name                  = "__import_sdl";
-        fun.regular               = false;
-        fun.extra                 = make_import_function("/usr/local/lib/libSDL2.dylib");
-        functions["__import_sdl"] = fun;
+        fun.name    = "__import_sdl";
+        fun.regular = false;
+        fun.extra   = make_import_function("/usr/local/lib/libSDL2.dylib");
+
+        auto func_index = get_or_create_symbol_index("__import_sdl");
+
+        functions[func_index] = fun;
     }
 
     {
         DabFunction fun;
-        fun.name                 = "__import_pq";
-        fun.regular              = false;
-        fun.extra                = make_import_function("/usr/local/lib/libpq.dylib");
-        functions["__import_pq"] = fun;
+        fun.name    = "__import_pq";
+        fun.regular = false;
+        fun.extra   = make_import_function("/usr/local/lib/libpq.dylib");
+
+        auto func_index = get_or_create_symbol_index("__import_pq");
+
+        functions[func_index] = fun;
     }
 
     {
@@ -155,7 +166,10 @@ void DabVM::define_defaults()
             auto arg0 = stack.pop_value();
             stack.push_value(arg0.truthy() ? arg0 : arg1);
         };
-        functions["||"] = fun;
+
+        auto func_index = get_or_create_symbol_index("||");
+
+        functions[func_index] = fun;
     }
 
     {
@@ -171,6 +185,9 @@ void DabVM::define_defaults()
             auto arg0 = stack.pop_value();
             stack.push_value(arg0.truthy() ? arg1 : arg0);
         };
-        functions["&&"] = fun;
+
+        auto func_index = get_or_create_symbol_index("&&");
+
+        functions[func_index] = fun;
     }
 }
