@@ -19,7 +19,7 @@ DabVM::DabVM()
     fprintf(stderr, "vm: creating VM\n");
     assert(!$VM);
     $VM = this;
-    define_defaults();
+    predefine_default_classes();
     fprintf(stderr, "vm: VM created!\n");
 }
 
@@ -205,6 +205,8 @@ int DabVM::run_newformat(Stream &input)
     {
         DabVM::load_newformat(input);
     }
+
+    define_defaults();
 
     if (options.raw)
     {

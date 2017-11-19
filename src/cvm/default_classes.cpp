@@ -106,8 +106,6 @@ void DabVM::predefine_default_classes()
 
 void DabVM::define_default_classes()
 {
-    predefine_default_classes();
-
     auto &object_class = get_class(CLASS_OBJECT);
     object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
