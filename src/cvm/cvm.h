@@ -11,6 +11,7 @@ static const dab_symbol_t DAB_SYMBOL_NIL = 0xFFFF;
 
 typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
+typedef std::function<DabValue(DabValue, std::vector<DabValue>)> dab_function_reg_t;
 
 struct DabRuntimeError : public std::runtime_error
 {
@@ -42,8 +43,9 @@ struct DabFunctionReflection
 
 struct DabFunction
 {
-    bool           regular = true;
-    dab_function_t extra   = nullptr;
+    bool               regular   = true;
+    dab_function_t     extra     = nullptr;
+    dab_function_reg_t extra_reg = nullptr;
 
     size_t      address = -1;
     std::string name;
@@ -105,6 +107,18 @@ struct DabClass
     void add_static_function(const std::string &name, dab_function_t body);
 
     void add_simple_function(const std::string &name, dab_simple_function_t body);
+
+    void _add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body);
+
+    void add_static_reg_function(const std::string &name, dab_function_reg_t body)
+    {
+        _add_reg_function(true, name, body);
+    }
+
+    void add_reg_function(const std::string &name, dab_function_reg_t body)
+    {
+        _add_reg_function(false, name, body);
+    }
 
     bool is_subclass_of(const DabClass &klass) const;
 

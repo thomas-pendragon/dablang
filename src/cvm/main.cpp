@@ -630,6 +630,18 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
                        use_reglist, reglist);
         instructions.seek(fun.address);
     }
+    else if (fun.extra_reg)
+    {
+        assert(use_reglist);
+
+        std::vector<DabValue> value_list;
+        for (auto reg : reglist)
+        {
+            value_list.push_back(register_get(reg));
+        }
+        auto out = fun.extra_reg(use_self ? self : DabValue(nullptr), value_list);
+        register_set(out_reg, out);
+    }
     else
     {
         const auto n_ret = 1;

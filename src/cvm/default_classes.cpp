@@ -132,7 +132,8 @@ void DabVM::define_default_classes()
         stack.pop_value();
         stack.push_value(instance);
     });
-    object_class.add_simple_function("class", [](DabValue self) { return self.get_class(); });
+    object_class.add_reg_function(
+        "class", [](DabValue self, std::vector<DabValue>) { return self.get_class(); });
     object_class.add_simple_function("to_s", [](DabValue self) { return self.print_value(); });
     object_class.add_simple_function("__construct", [](DabValue) { return nullptr; });
     object_class.add_simple_function("__destruct", [](DabValue) { return nullptr; });
