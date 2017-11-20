@@ -111,11 +111,8 @@ void DabVM::define_default_classes()
     fprintf(stderr, "vm: define default classes\n");
 
     auto &object_class = get_class(CLASS_OBJECT);
-    object_class.add_static_function("new", [this](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 1);
-        assert(n_ret == 1);
-        auto arg = stack.pop_value();
+    object_class.add_static_reg_function("new", [this](DabValue self, std::vector<DabValue>) {
+        auto arg = self;
         assert(arg.data.type == TYPE_CLASS);
         auto instance = arg.create_instance();
 
@@ -130,7 +127,7 @@ void DabVM::define_default_classes()
         }
 
         stack.pop_value();
-        stack.push_value(instance);
+        return instance;
     });
     object_class.add_reg_function(
         "class", [](DabValue self, std::vector<DabValue>) { return self.get_class(); });
