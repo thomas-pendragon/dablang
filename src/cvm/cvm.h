@@ -567,7 +567,7 @@ struct DabVM
 
     int number_of_args();
 
-    void call(dab_register_t out_reg, const std::string &name, int n_args,
+    void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args,
               const std::string &block_name, const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
 

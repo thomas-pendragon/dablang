@@ -498,11 +498,11 @@ int DabVM::continue_run(Stream &input)
         {
             fprintf(stderr, "vm: initialize attributes\n");
             instructions.rewind();
-            call(dab_register_t::nilreg(), "__init", 0, "", nullptr);
+            call(dab_register_t::nilreg(), get_symbol_index("__init"), 0, "", nullptr);
             execute(instructions);
         }
         instructions.rewind();
-        call(dab_register_t::nilreg(), "main", 0, "", nullptr);
+        call(dab_register_t::nilreg(), get_symbol_index("main"), 0, "", nullptr);
         if (options.autorun)
         {
             execute(instructions);
@@ -568,30 +568,31 @@ int DabVM::number_of_args()
     return stack[frame_position + 0].data.fixnum;
 }
 
-void DabVM::call(dab_register_t out_reg, const std::string &name, int n_args,
+void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args,
                  const std::string &block_name, const DabValue &capture, bool use_reglist,
                  std::vector<dab_register_t> reglist)
 {
     if (options.verbose)
     {
+        auto name = get_symbol(symbol);
         fprintf(stderr, "vm: call <%s> with %d arguments and <%s> block.\n", name.c_str(), n_args,
                 block_name.c_str());
     }
-    auto func_index = get_or_create_symbol_index(name);
-    if (!functions.count(func_index))
+    if (!functions.count(symbol))
     {
+        auto name = get_symbol(symbol);
         fprintf(stderr, "vm error: Unknown function <%s>.\n", name.c_str());
         exit(1);
     }
     if (block_name != "")
     {
         auto func_block_index = get_or_create_symbol_index(block_name);
-        call_function_block(false, out_reg, nullptr, functions[func_index], n_args,
+        call_function_block(false, out_reg, nullptr, functions[symbol], n_args,
                             functions[func_block_index], capture, use_reglist, reglist);
     }
     else
     {
-        call_function(false, out_reg, nullptr, functions[func_index], n_args, use_reglist, reglist);
+        call_function(false, out_reg, nullptr, functions[symbol], n_args, use_reglist, reglist);
     }
 }
 
@@ -828,23 +829,21 @@ bool DabVM::execute_single(Stream &input)
     {
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
-        auto name    = get_symbol(symbol);
         auto reglist = input.read_reglist();
-        call(out_reg, name, reglist.size(), "", nullptr, true, reglist);
+        call(out_reg, symbol, reglist.size(), "", nullptr, true, reglist);
         break;
     }
     case OP_CALL_BLOCK:
     {
         auto out_reg      = input.read_reg();
         auto symbol       = input.read_symbol();
-        auto name         = get_symbol(symbol);
         auto block_symbol = input.read_symbol();
         auto block_name   = get_symbol(block_symbol);
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
         auto reglist      = input.read_reglist();
 
-        call(out_reg, name, reglist.size(), block_name, capture, true, reglist);
+        call(out_reg, symbol, reglist.size(), block_name, capture, true, reglist);
         break;
     }
     case OP_INSTCALL_BLOCK:
