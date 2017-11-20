@@ -7,6 +7,8 @@ struct DabValue;
 
 typedef uint16_t dab_symbol_t;
 
+static const dab_symbol_t DAB_SYMBOL_NIL = 0xFFFF;
+
 typedef std::function<void(size_t, size_t, void *)> dab_function_t;
 typedef std::function<DabValue(DabValue)> dab_simple_function_t;
 
@@ -508,6 +510,10 @@ struct DabVM
 
     std::string get_symbol(dab_symbol_t index) const
     {
+        if (index == DAB_SYMBOL_NIL)
+        {
+            return "";
+        }
         if (symbols.size() <= index)
         {
             fprintf(stderr, "VM error: symbol %d not found.\n", (int)index);
@@ -567,8 +573,8 @@ struct DabVM
 
     int number_of_args();
 
-    void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args,
-              const std::string &block_name, const DabValue &capture, bool use_reglist = false,
+    void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
+              const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
 
     void call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
