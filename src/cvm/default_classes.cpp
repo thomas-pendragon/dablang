@@ -168,8 +168,7 @@ void DabVM::define_default_classes()
     });
     string_class.add_reg_function("length", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
-        auto     arg0 = self;
-        auto     s    = arg0.string();
+        auto     s = self.string();
         DabValue ret(CLASS_INT32, (int)s.size());
         return ret;
     });
