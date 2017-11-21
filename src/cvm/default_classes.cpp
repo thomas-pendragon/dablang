@@ -172,17 +172,12 @@ void DabVM::define_default_classes()
         DabValue ret(CLASS_INT32, (int)s.size());
         return ret;
     });
-    string_class.add_function("[]", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto &stack = $VM->stack;
-        auto  arg0  = stack.pop_value();
-        auto  arg1  = stack.pop_value();
-        assert(arg1.data.type == TYPE_FIXNUM);
-        auto s = arg0.string();
-        auto n = arg1.data.fixnum;
-        stack.push(s.substr(n, 1));
+    string_class.add_reg_function("[]", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg = $VM->cast(args[0], CLASS_FIXNUM);
+        auto s   = self.string();
+        auto n   = arg.data.fixnum;
+        return DabValue(s.substr(n, 1));
     });
     string_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(n_args == 2);

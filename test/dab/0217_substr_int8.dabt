@@ -1,0 +1,20 @@
+## CODE
+
+func main()
+{
+  var<Int8> a = 4;
+  var<String> b = "AbCdEf";
+  puts(b[a]);
+}
+
+## OPTIONS
+
+--no-opt
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+E
