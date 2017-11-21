@@ -151,16 +151,13 @@ void DabVM::define_default_classes()
         auto  arg   = stack.pop_value();
         stack.push_value(arg.class_name());
     });
-    object_class.add_static_function("==", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto &stack = $VM->stack;
-        auto  arg0  = stack.pop_value();
-        auto  arg1  = stack.pop_value();
+    object_class.add_static_reg_function("==", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg0 = self;
+        auto arg1 = args[0];
         assert(arg0.data.type == TYPE_CLASS);
         assert(arg1.data.type == TYPE_CLASS);
-        stack.push_value(arg0.data.fixnum == arg1.data.fixnum);
+        return DabValue(arg0.data.fixnum == arg1.data.fixnum);
     });
 
     auto &string_class = get_class(CLASS_STRING);
