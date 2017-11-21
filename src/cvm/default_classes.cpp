@@ -161,7 +161,8 @@ void DabVM::define_default_classes()
     });
 
     auto &string_class = get_class(CLASS_STRING);
-    string_class.add_simple_function("upcase", [](DabValue self) {
+    string_class.add_reg_function("upcase", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
         auto s = self.string();
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
         return s;
