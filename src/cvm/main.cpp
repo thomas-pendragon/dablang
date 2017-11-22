@@ -122,9 +122,9 @@ size_t DabVM::stack_position() const
 
 void DabVM::push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
                            dab_register_t out_reg, const DabValue &capture, bool use_reglist,
-                           std::vector<dab_register_t> reglist)
+                           std::vector<dab_register_t> reglist, bool skip_stack_push)
 {
-    if (use_reglist)
+    if (use_reglist && !skip_stack_push)
     {
         for (auto reg : reglist)
         {

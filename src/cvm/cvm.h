@@ -557,7 +557,7 @@ struct DabVM
 
     void push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
                         dab_register_t out_reg, const DabValue &capture, bool use_reglist = false,
-                        std::vector<dab_register_t> reglist = {});
+                        std::vector<dab_register_t> reglist = {}, bool skip_stack_push = false);
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
