@@ -1365,7 +1365,7 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
 {
     auto stack_pos = stack.size() + 1;
 
-    instcall(self, name, 0, 1);
+    instcall(self, name, 0, 1, "", nullptr, false, -1, {}, nullptr, 0);
     // temporary hack
     while (stack.size() != stack_pos)
     {
