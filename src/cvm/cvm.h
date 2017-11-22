@@ -591,17 +591,6 @@ struct DabVM
               const DabValue &capture, bool use_reglist = false,
               std::vector<dab_register_t> reglist = {});
 
-    void call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
-                       const DabFunction &fun, int n_args, bool use_reglist = false,
-                       std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
-                       size_t stack_pos = 0, bool skip_stack_push = false);
-    void call_function_block(bool use_self, dab_register_t out_reg, const DabValue &self,
-                             const DabFunction &fun, int n_args, const DabFunction &blockfun,
-                             const DabValue &capture, bool use_reglist = false,
-                             std::vector<dab_register_t> reglist = {},
-                             DabValue *return_value = nullptr, size_t stack_pos = 0,
-                             bool skip_stack_push = false);
-
     void _call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                         const DabFunction &fun, int n_args, void *blockaddress,
                         const DabValue &capture, bool use_reglist = false,
