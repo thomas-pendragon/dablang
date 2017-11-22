@@ -115,18 +115,7 @@ void DabVM::define_default_classes()
         auto arg = self;
         assert(arg.data.type == TYPE_CLASS);
         auto instance = arg.create_instance();
-
-        auto stack_pos = stack.size() + 1;
-
-        instcall(instance, "__construct", 0);
-
-        // temporary hack
-        while (stack.size() != stack_pos)
-        {
-            execute_single(instructions);
-        }
-
-        stack.pop_value();
+        cinstcall(instance, "__construct");
         return instance;
     });
     object_class.add_reg_function(
