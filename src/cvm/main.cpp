@@ -40,15 +40,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
     assert(reglist.size() == 1);
     DabValue arg = register_get(reglist[0]);
 
-    auto stack_pos = stack.size() + 1;
-
-    instcall(arg, "to_s", 0, 1);
-    // temporary hack
-    while (stack.size() != stack_pos)
-    {
-        execute_single(instructions);
-    }
-    arg = stack.pop_value();
+    arg = cinstcall(arg, "to_s");
 
     if (options.verbose)
     {
@@ -1360,6 +1352,20 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
         klass.superclass_index = parent_index;
         classes[index]         = klass;
     }
+}
+
+DabValue DabVM::cinstcall(DabValue self, const std::string &name)
+{
+    auto stack_pos = stack.size() + 1;
+
+    instcall(self, name, 0, 1);
+    // temporary hack
+    while (stack.size() != stack_pos)
+    {
+        execute_single(instructions);
+    }
+
+    return stack.pop_value();
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
