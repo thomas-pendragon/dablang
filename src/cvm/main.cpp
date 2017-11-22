@@ -1407,10 +1407,11 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 
     if (block_name != "")
     {
-        auto func_block_index = get_or_create_symbol_index(block_name);
-        call_function_block(true, outreg, recv, fun, 1 + n_args, functions[func_block_index],
-                            capture, use_reglist, reglist, return_value, stack_pos,
-                            skip_stack_push);
+        auto  block_symbol = get_or_create_symbol_index(block_name);
+        auto &blockfun     = functions[block_symbol];
+        assert(blockfun.regular);
+        call_function_block(true, outreg, recv, fun, 1 + n_args, blockfun, capture, use_reglist,
+                            reglist, return_value, stack_pos, skip_stack_push);
     }
     else
     {
