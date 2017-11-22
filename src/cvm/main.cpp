@@ -627,6 +627,17 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
         push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture,
                        use_reglist, reglist, skip_stack_push);
         instructions.seek(fun.address);
+
+        if (return_value)
+        {
+            // temporary hack
+            while (stack.size() != stack_pos)
+            {
+                execute_single(instructions);
+            }
+
+            *return_value = stack.pop_value();
+        }
     }
     else if (fun.extra_reg)
     {
@@ -639,6 +650,10 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
         }
         auto out = fun.extra_reg(use_self ? self : DabValue(nullptr), value_list);
         register_set(out_reg, out);
+        if (return_value)
+        {
+            *return_value = out;
+        }
     }
     else
     {
@@ -658,6 +673,10 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
         if (!out_reg.nil())
         {
             register_set(out_reg, stack.pop_value());
+        }
+        if (return_value)
+        {
+            *return_value = stack.pop_value();
         }
     }
 }
@@ -1395,17 +1414,6 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     {
         call_function(true, outreg, recv, fun, 1 + n_args, use_reglist, reglist, return_value,
                       stack_pos, skip_stack_push);
-    }
-
-    if (return_value)
-    {
-        // temporary hack
-        while (stack.size() != stack_pos)
-        {
-            execute_single(instructions);
-        }
-
-        *return_value = stack.pop_value();
     }
 }
 
