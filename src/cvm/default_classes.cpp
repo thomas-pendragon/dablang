@@ -356,8 +356,7 @@ void DabVM::define_default_classes()
         return ret;
     });
     array_class.add_simple_function("to_s", [this](DabValue self) {
-        instcall(self, "join", 0);
-        auto inner = stack.pop_value();
+        auto inner = cinstcall(self, "join");
         return std::string("[" + inner.string() + "]");
     });
     array_class.add_reg_function("+", [](DabValue self, std::vector<DabValue> args) {
