@@ -118,7 +118,7 @@ void DabVM::define_default_classes()
 
         auto stack_pos = stack.size() + 1;
 
-        instcall(instance, "__construct", 0, 1);
+        instcall(instance, "__construct", 0);
 
         // temporary hack
         while (stack.size() != stack_pos)
@@ -349,14 +349,14 @@ void DabVM::define_default_classes()
         {
             if (i)
                 ret += ", ";
-            instcall(a[i], "to_s", 0, 1);
+            instcall(a[i], "to_s", 0);
             auto val = stack.pop_value();
             ret += val.string();
         }
         return ret;
     });
     array_class.add_simple_function("to_s", [this](DabValue self) {
-        instcall(self, "join", 0, 1);
+        instcall(self, "join", 0);
         auto inner = stack.pop_value();
         return std::string("[" + inner.string() + "]");
     });

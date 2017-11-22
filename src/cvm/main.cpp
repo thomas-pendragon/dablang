@@ -869,10 +869,9 @@ bool DabVM::execute_single(Stream &input)
 
         auto reglist = input.read_reglist();
         auto n_args  = reglist.size();
-        auto n_rets  = 1;
         auto recv    = register_get(self_reg);
 
-        instcall(recv, name, n_args, n_rets, block_name, capture, true, out_reg, reglist);
+        instcall(recv, name, n_args, block_name, capture, true, out_reg, reglist);
         break;
     }
     case OP_YIELD:
@@ -1124,7 +1123,6 @@ bool DabVM::execute_single(Stream &input)
         auto name     = get_symbol(symbol);
         auto reglist  = input.read_reglist();
         auto n_args   = reglist.size();
-        auto n_rets   = 1;
         auto recv     = register_get(self_reg);
         if (options.verbose)
         {
@@ -1132,7 +1130,7 @@ bool DabVM::execute_single(Stream &input)
             recv.dump(stderr);
             fprintf(stderr, "\n");
         }
-        instcall(recv, name, n_args, n_rets, "", nullptr, true, out_reg, reglist);
+        instcall(recv, name, n_args, "", nullptr, true, out_reg, reglist);
         break;
     }
     case OP_GET_INSTVAR:
@@ -1367,16 +1365,15 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
     auto stack_pos = stack.size() + 1;
 
     DabValue ret;
-    instcall(self, name, 0, 1, "", nullptr, true, -1, {}, &ret, stack_pos, true);
+    instcall(self, name, 0, "", nullptr, true, -1, {}, &ret, stack_pos, true);
     return ret;
 }
 
-void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
+void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args,
                      const std::string &block_name, const DabValue &capture, bool use_reglist,
                      dab_register_t outreg, std::vector<dab_register_t> reglist,
                      DabValue *return_value, size_t stack_pos, bool skip_stack_push)
 {
-    assert(n_rets == 1);
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
     stack.push_value(recv);

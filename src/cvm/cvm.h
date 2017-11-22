@@ -625,7 +625,7 @@ struct DabVM
 
     void read_symbols(Stream &input, size_t symb_address, size_t symb_length, size_t data_address);
 
-    void instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
+    void instcall(const DabValue &recv, const std::string &name, size_t n_args,
                   const std::string &block_name = "", const DabValue &capture = nullptr,
                   bool use_reglist = false, dab_register_t outreg = -1,
                   std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
