@@ -643,7 +643,7 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
     else
     {
         const auto n_ret = 1;
-        if (use_reglist)
+        if (use_reglist && !skip_stack_push)
         {
             for (auto reg : reglist)
             {
@@ -1365,7 +1365,7 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
 {
     auto stack_pos = stack.size() + 1;
 
-    instcall(self, name, 0, 1, "", nullptr, false, -1, {}, nullptr, 0);
+    instcall(self, name, 0, 1, "", nullptr, true, -1, {}, nullptr, 0, true);
     // temporary hack
     while (stack.size() != stack_pos)
     {
