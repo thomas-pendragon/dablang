@@ -577,8 +577,10 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
     }
     if (block_symbol != DAB_SYMBOL_NIL)
     {
-        call_function_block(false, out_reg, nullptr, functions[symbol], n_args,
-                            functions[block_symbol], capture, use_reglist, reglist);
+        auto &blockfun = functions[block_symbol];
+        assert(blockfun.regular);
+        call_function_block(false, out_reg, nullptr, functions[symbol], n_args, blockfun, capture,
+                            use_reglist, reglist);
     }
     else
     {
