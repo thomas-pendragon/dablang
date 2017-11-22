@@ -360,14 +360,10 @@ void DabVM::define_default_classes()
         auto inner = stack.pop_value();
         return std::string("[" + inner.string() + "]");
     });
-    array_class.add_function("+", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        assert(blockaddr == 0);
-        auto &stack = $VM->stack;
-        auto  arg0  = stack.pop_value();
-        auto  arg1  = $VM->cast(stack.pop_value(), CLASS_ARRAY);
-        stack.push($VM->merge_arrays(arg0, arg1));
+    array_class.add_reg_function("+", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg = $VM->cast(args[0], CLASS_ARRAY);
+        return $VM->merge_arrays(self, arg);
     });
 
     auto &method_class = get_class(CLASS_METHOD);
