@@ -37,11 +37,10 @@ DabVMReset::~DabVMReset()
 
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-    DabValue arg;
-    auto     stack_pos = stack.size() + 1;
-
     assert(reglist.size() == 1);
-    arg = register_get(reglist[0]);
+    DabValue arg = register_get(reglist[0]);
+
+    auto stack_pos = stack.size() + 1;
 
     instcall(arg, "to_s", 0, 1);
     // temporary hack
