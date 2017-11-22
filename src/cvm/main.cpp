@@ -1365,14 +1365,9 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
 {
     auto stack_pos = stack.size() + 1;
 
-    instcall(self, name, 0, 1, "", nullptr, true, -1, {}, nullptr, 0, true);
-    // temporary hack
-    while (stack.size() != stack_pos)
-    {
-        execute_single(instructions);
-    }
-
-    return stack.pop_value();
+    DabValue ret;
+    instcall(self, name, 0, 1, "", nullptr, true, -1, {}, &ret, stack_pos, true);
+    return ret;
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args, size_t n_rets,
@@ -1400,6 +1395,17 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     {
         call_function(true, outreg, recv, fun, 1 + n_args, use_reglist, reglist, return_value,
                       stack_pos, skip_stack_push);
+    }
+
+    if (return_value)
+    {
+        // temporary hack
+        while (stack.size() != stack_pos)
+        {
+            execute_single(instructions);
+        }
+
+        *return_value = stack.pop_value();
     }
 }
 
