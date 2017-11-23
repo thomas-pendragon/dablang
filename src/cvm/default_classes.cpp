@@ -406,7 +406,8 @@ void DabVM::define_default_classes()
         }
         return nullptr;
     });
-    bytebuffer_class.add_simple_function("to_s", [this](DabValue self) {
+    bytebuffer_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
         std::string ret;
         auto &      a = self.bytebuffer();
         for (size_t i = 0; i < a.size(); i++)
