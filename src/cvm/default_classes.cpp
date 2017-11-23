@@ -338,8 +338,7 @@ void DabVM::define_default_classes()
         {
             if (i)
                 ret += ", ";
-            instcall(a[i], "to_s", 0);
-            auto val = stack.pop_value();
+            auto val = cinstcall(a[i], "to_s");
             ret += val.string();
         }
         return ret;
