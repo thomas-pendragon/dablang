@@ -112,8 +112,9 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
+[   8] CSTR "hello world" [3 strong]
 Registers:
-R0: CSTR "hello world" [2 strong]
+R0: CSTR "hello world" [3 strong]
 IP = 216
        208: SYSCALL RNIL, 0, R0
        215: NOP 
@@ -128,5 +129,6 @@ Dump of stack:
 [   5] NIL  nil
 [   6] FIXN 65535
 [   7] INVA ?
+[   8] CSTR "hello world" [3 strong]
 Registers:
-R0: CSTR "hello world" [2 strong]
+R0: CSTR "hello world" [3 strong]
