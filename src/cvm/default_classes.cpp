@@ -390,28 +390,22 @@ void DabVM::define_default_classes()
         else
             return DabValue(CLASS_UINT8, a[n]);
     });
-    bytebuffer_class.add_function("[]=", [this](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 3);
-        assert(n_ret == 1);
-        auto arg0 = stack.pop_value();
-        auto arg2 = stack.pop_value();
-        auto arg1 = stack.pop_value();
+    bytebuffer_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 2);
+        auto arg0 = self;
+        auto arg1 = args[0];
+        auto arg2 = args[1];
         assert(arg0.data.type == TYPE_BYTEBUFFER);
         assert(arg1.data.type == TYPE_FIXNUM);
         auto &a = arg0.bytebuffer();
         auto  n = arg1.data.fixnum;
         if (n < 0)
             n = a.size() + n;
-        if (n < 0 || n >= (int64_t)a.size())
-        {
-            stack.push_value(nullptr);
-        }
-        else
+        if (n >= 0 && n < (int64_t)a.size())
         {
             a[n] = $VM->cast(arg2, CLASS_UINT8).data.num_uint8;
-            stack.push_value(nullptr);
         }
+        return nullptr;
     });
     bytebuffer_class.add_simple_function("to_s", [this](DabValue self) {
         std::string ret;
