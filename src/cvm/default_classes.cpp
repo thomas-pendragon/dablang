@@ -362,20 +362,17 @@ void DabVM::define_default_classes()
         "to_s", [this](DabValue self) { return std::string("@method(" + self.string() + ")"); });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
-    bytebuffer_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto &stack = $VM->stack;
-        auto  klass = stack.pop_value();
+    bytebuffer_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto klass = self;
         assert(klass.data.type == TYPE_CLASS);
 
         auto instance = klass.create_instance();
 
-        auto _size = $VM->cast(stack.pop_value(), CLASS_FIXNUM);
+        auto _size = $VM->cast(args[0], CLASS_FIXNUM);
         auto size  = _size.data.fixnum;
         instance.bytebuffer().resize(size);
-        stack.push_value(instance);
+        return instance;
     });
     bytebuffer_class.add_reg_function("[]", [this](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
