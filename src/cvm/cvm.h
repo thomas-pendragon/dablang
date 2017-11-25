@@ -661,6 +661,8 @@ struct DabVM
     size_t get_or_create_symbol_index(const std::string &string);
 
     DabValue cinstcall(DabValue self, const std::string &name);
+
+    void define_default_classes_int();
 };
 
 struct DabVM_debug

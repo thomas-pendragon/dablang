@@ -1,74 +1,6 @@
 #include "cvm.h"
 
-#define STR2(s) #s
-#define STR(s) STR2(s)
-
-#define DAB_MEMBER_OPERATOR(klass, cast_to, operator, result_class, result_type, member)           \
-    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
-        assert(n_args == 2);                                                                       \
-        assert(n_ret == 1);                                                                        \
-        assert(blockaddr == 0);                                                                    \
-        auto &stack = $VM->stack;                                                                  \
-        auto  arg0  = stack.pop_value();                                                           \
-        auto  arg1  = $VM->cast(stack.pop_value(), cast_to);                                       \
-        auto v0     = arg0 member;                                                                 \
-        auto v1     = arg1 member;                                                                 \
-                                                                                                   \
-        DabValue ret(result_class, (result_type)(v0 operator v1));                                 \
-        stack.push(ret);                                                                           \
-    })
-
-#define DAB_MEMBER_EQ_OPERATOR(klass, cast_to, operator, result_class, result_type, member)        \
-    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
-        assert(n_args == 2);                                                                       \
-        assert(n_ret == 1);                                                                        \
-        assert(blockaddr == 0);                                                                    \
-        auto &   stack = $VM->stack;                                                               \
-        auto     arg0  = stack.pop_value();                                                        \
-        auto     arg1  = stack.pop_value();                                                        \
-        DabValue ret;                                                                              \
-        try                                                                                        \
-        {                                                                                          \
-            arg1    = $VM->cast(arg1, cast_to);                                                    \
-            auto v0 = arg0 member;                                                                 \
-            auto v1 = arg1 member;                                                                 \
-            ret     = DabValue(result_class, (result_type)(v0 operator v1));                       \
-        }                                                                                          \
-        catch (DabCastError & error)                                                               \
-        {                                                                                          \
-            ret = DabValue(result_class, (bool)(true operator false));                             \
-        }                                                                                          \
-        stack.push(ret);                                                                           \
-    })
-
-#define DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member)                                        \
-    DAB_MEMBER_EQ_OPERATOR(klass, cast_to, ==, CLASS_BOOLEAN, bool, member);                       \
-    DAB_MEMBER_EQ_OPERATOR(klass, cast_to, !=, CLASS_BOOLEAN, bool, member)
-
-#define DAB_MEMBER_COMPARE_OPERATORS(klass, cast_to, member)                                       \
-    DAB_MEMBER_OPERATOR(klass, cast_to, >, CLASS_BOOLEAN, bool, member);                           \
-    DAB_MEMBER_OPERATOR(klass, cast_to, >=, CLASS_BOOLEAN, bool, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, <=, CLASS_BOOLEAN, bool, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, <, CLASS_BOOLEAN, bool, member)
-
-#define DAB_MEMBER_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                          \
-    DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member);                                           \
-    DAB_MEMBER_COMPARE_OPERATORS(klass, cast_to, member);                                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, +, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, -, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, *, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, /, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, %, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, <<, cast_to, result_type, member);                         \
-    DAB_MEMBER_OPERATOR(klass, cast_to, >>, cast_to, result_type, member);                         \
-    DAB_MEMBER_OPERATOR(klass, cast_to, |, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, &, cast_to, result_type, member)
-
-static int32_t byteswap(int32_t value)
-{
-    return ((value >> 24) & 0x000000FF) | ((value << 8) & 0x00FF0000) |
-           ((value >> 8) & 0x0000FF00) | ((value << 24) & 0xFF000000);
-}
+#include "defaults_shared.h"
 
 DabClass &DabVM::define_builtin_class(const std::string &name, dab_class_t class_index,
                                       dab_class_t superclass_index)
@@ -226,33 +158,14 @@ void DabVM::define_default_classes()
     });
     DAB_MEMBER_NUMERIC_OPERATORS(fixnum_class, CLASS_FIXNUM, uint64_t, .data.fixnum);
 
+    define_default_classes_int();
+
     auto &intptr_class = get_class(CLASS_INTPTR);
     intptr_class.add_simple_function("fetch_int32", [](DabValue self) {
         auto     ptr   = self.data.intptr;
         auto     iptr  = (int32_t *)ptr;
         auto     value = *iptr;
         DabValue ret(CLASS_INT32, value);
-        return ret;
-    });
-
-#define CREATE_INT_CLASS(small, Title, BIG)                                                        \
-    auto &small##_class = get_class(CLASS_##BIG);                                                  \
-    DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
-
-    CREATE_INT_CLASS(uint8, Uint8, UINT8);
-    CREATE_INT_CLASS(uint16, Uint16, UINT16);
-    CREATE_INT_CLASS(uint32, Uint32, UINT32);
-    CREATE_INT_CLASS(uint64, Uint64, UINT64);
-
-    CREATE_INT_CLASS(int8, Int8, INT8);
-    CREATE_INT_CLASS(int16, Int16, INT16);
-    CREATE_INT_CLASS(int32, Int32, INT32);
-    CREATE_INT_CLASS(int64, Int64, INT64);
-
-    int32_class.add_simple_function("byteswap", [](DabValue self) {
-        auto     value     = self.data.num_int32;
-        auto     new_value = byteswap(value);
-        DabValue ret(CLASS_INT32, new_value);
         return ret;
     });
 
