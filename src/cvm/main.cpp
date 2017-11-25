@@ -64,7 +64,7 @@ bool DabVM::pop_frame(bool regular)
         fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
     }
 
-    int    frame_loc = frame_position;
+    size_t frame_loc = frame_position;
     int    n_args    = number_of_args();
     size_t prev_pos  = prev_frame_position();
     auto   retval    = get_retval();
