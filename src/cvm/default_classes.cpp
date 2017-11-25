@@ -66,14 +66,11 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return nullptr;
     });
-    object_class.add_function("is", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto &stack = $VM->stack;
-        auto  arg0  = stack.pop_value();
-        auto  arg1  = stack.pop_value();
-        stack.push_value(arg0.is_a(arg1.get_class()));
+    object_class.add_reg_function("is", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg0 = self;
+        auto arg1 = args[0];
+        return arg0.is_a(arg1.get_class());
     });
     object_class.add_static_function("to_s", [](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
