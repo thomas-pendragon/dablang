@@ -94,11 +94,11 @@ struct DabValue;
 struct DabClass
 {
     std::string name;
-    int         index;
+    dab_class_t index;
     bool        builtin = false;
     std::map<dab_symbol_t, DabFunction> functions;
     std::map<dab_symbol_t, DabFunction> static_functions;
-    int superclass_index = CLASS_OBJECT;
+    dab_class_t superclass_index = CLASS_OBJECT;
 
     const DabFunction &get_instance_function(const std::string &name) const;
 
@@ -632,8 +632,8 @@ struct DabVM
                   std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
                   size_t stack_pos = 0, bool skip_stack_push = false);
 
-    DabClass &define_builtin_class(const std::string &name, size_t class_index,
-                                   size_t superclass_index = CLASS_OBJECT);
+    DabClass &define_builtin_class(const std::string &name, dab_class_t class_index,
+                                   dab_class_t superclass_index = CLASS_OBJECT);
 
     void get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg);
     void set_instvar(const std::string &name, const DabValue &value);

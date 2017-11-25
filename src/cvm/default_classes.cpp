@@ -70,8 +70,8 @@ static int32_t byteswap(int32_t value)
            ((value >> 8) & 0x0000FF00) | ((value << 24) & 0xFF000000);
 }
 
-DabClass &DabVM::define_builtin_class(const std::string &name, size_t class_index,
-                                      size_t superclass_index)
+DabClass &DabVM::define_builtin_class(const std::string &name, dab_class_t class_index,
+                                      dab_class_t superclass_index)
 {
     DabClass klass;
     klass.index            = class_index;
