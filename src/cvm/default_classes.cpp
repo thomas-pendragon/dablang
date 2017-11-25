@@ -181,7 +181,8 @@ void DabVM::define_default_classes()
     DAB_MEMBER_EQUALS_OPERATORS(boolean_class, CLASS_BOOLEAN, .data.boolean);
 
     auto &array_class = get_class(CLASS_ARRAY);
-    array_class.add_simple_function("count", [](DabValue self) {
+    array_class.add_reg_function("count", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
     });
