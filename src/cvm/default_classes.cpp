@@ -169,7 +169,8 @@ void DabVM::define_default_classes()
     define_default_classes_int();
 
     auto &intptr_class = get_class(CLASS_INTPTR);
-    intptr_class.add_simple_function("fetch_int32", [](DabValue self) {
+    intptr_class.add_reg_function("fetch_int32", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
         auto     ptr   = self.data.intptr;
         auto     iptr  = (int32_t *)ptr;
         auto     value = *iptr;
