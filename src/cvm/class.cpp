@@ -69,18 +69,6 @@ void DabClass::_add_reg_function(bool is_static, const std::string &name, dab_fu
     collection[symbol] = fun;
 }
 
-void DabClass::add_simple_function(const std::string &name, dab_simple_function_t body)
-{
-    add_function(name, [body](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 1);
-        assert(n_ret == 1);
-        auto self = $VM->stack.pop_value();
-        auto ret  = body(self);
-        $VM->stack.push_value(ret);
-    });
-}
-
 bool DabClass::is_subclass_of(const DabClass &klass) const
 {
     if (index == klass.index)

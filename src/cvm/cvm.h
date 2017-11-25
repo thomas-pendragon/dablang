@@ -107,8 +107,6 @@ struct DabClass
     void add_function(const std::string &name, dab_function_t body);
     void add_static_function(const std::string &name, dab_function_t body);
 
-    void add_simple_function(const std::string &name, dab_simple_function_t body);
-
     void _add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body);
 
     void add_static_reg_function(const std::string &name, dab_function_reg_t body)
