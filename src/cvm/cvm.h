@@ -6,6 +6,7 @@
 struct DabValue;
 
 typedef uint16_t dab_symbol_t;
+typedef uint16_t dab_class_t;
 
 static const dab_symbol_t DAB_SYMBOL_NIL = 0xFFFF;
 
@@ -203,7 +204,7 @@ struct DabValue
 
     void dump(FILE *file = stderr) const;
 
-    int         class_index() const;
+    dab_class_t class_index() const;
     std::string class_name() const;
     DabClass &  get_class() const;
 

@@ -10,7 +10,7 @@ void DabValue::dump(FILE *file) const
     print(file, true);
 }
 
-int DabValue::class_index() const
+dab_class_t DabValue::class_index() const
 {
     switch (data.type)
     {
@@ -30,10 +30,10 @@ int DabValue::class_index() const
         return CLASS_ARRAY;
         break;
     case TYPE_CLASS:
-        return data.fixnum;
+        return (dab_class_t)data.fixnum;
         break;
     case TYPE_OBJECT:
-        return this->data.object->object->klass;
+        return (dab_class_t)this->data.object->object->klass;
         break;
     case TYPE_UINT8:
         return CLASS_UINT8;
