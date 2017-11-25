@@ -24,7 +24,8 @@ void DabVM::define_default_classes_int()
     CREATE_INT_CLASS(int32, INT32);
     CREATE_INT_CLASS(int64, INT64);
 
-    int32_class.add_simple_function("byteswap", [](DabValue self) {
+    int32_class.add_reg_function("byteswap", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
         auto     value     = self.data.num_int32;
         auto     new_value = byteswap(value);
         DabValue ret(CLASS_INT32, new_value);
