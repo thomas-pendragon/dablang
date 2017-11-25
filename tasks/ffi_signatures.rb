@@ -1,6 +1,8 @@
 require_relative '../setup.rb'
 require_relative '../src/shared/system.rb'
 
+clang_format_app = ENV['CLANG_FORMAT'] || 'clang-format'
+
 signatures = '
 int32 -> int32
 -> uint64
@@ -126,7 +128,7 @@ signatures.strip.split("\n").each do |line|
 
   format_body = body
 
-  IO.popen('clang-format', 'r+') do |pipe|
+  IO.popen(clang_format_app, 'r+') do |pipe|
     pipe.puts body
     pipe.close_write
     format_body = pipe.read

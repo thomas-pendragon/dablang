@@ -1,4 +1,4 @@
-image: dablang/dablangenv:0.6
+image: dablang/dablangenv:0.8
 
 before_script:
   - bundle install --path=/cache/bundler
@@ -119,6 +119,8 @@ ClangFormat:
   stage: format
   tags:
     - ruby
+  variables:
+    CLANG_FORMAT: clang-format-4.0
   script:
     - bundle exec rake format:cpp_check
 

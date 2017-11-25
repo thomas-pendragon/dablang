@@ -10,6 +10,7 @@ require_relative './src/frontend/frontend_vm.rb'
 
 $sources = Dir.glob('src/**/*.rb')
 
+clang_format_app = ENV['CLANG_FORMAT'] || 'clang-format'
 premake = ENV['PREMAKE'] || 'premake5'
 premake = "#{premake} gmake"
 premake_source = 'premake5.lua'
@@ -82,7 +83,7 @@ file cvm_opcodes => [opcodes, opcode_task] do
 end
 
 file cvm_opcodes_debug => [opcodes, opcode_debug_task] do
-  psystem("ruby #{opcode_debug_task} | clang-format > #{cvm_opcodes_debug}")
+  psystem("ruby #{opcode_debug_task} | #{clang_format_app} > #{cvm_opcodes_debug}")
 end
 
 file makefile => [premake_source] do
@@ -223,13 +224,13 @@ namespace :format do
 
   task :cpp do
     cpp_check do |file|
-      psystem("(clang-format #{file} | diff #{file} -) || clang-format -i #{file}")
+      psystem("(#{clang_format_app} #{file} | diff #{file} -) || #{clang_format_app} -i #{file}")
     end
   end
 
   task :cpp_check do
     cpp_check do |file|
-      psystem("clang-format #{file} | diff #{file} -")
+      psystem("#{clang_format_app} #{file} | diff #{file} -")
     end
   end
 

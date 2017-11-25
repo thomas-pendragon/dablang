@@ -1,5 +1,5 @@
 ---
-image: dablang/dablangenv:0.6
+image: dablang/dablangenv:0.8
 before_script:
 - bundle install --path=/cache/bundler
 stages:
@@ -107,6 +107,8 @@ ClangFormat:
   stage: format
   tags:
   - ruby
+  variables:
+    CLANG_FORMAT: clang-format-4.0
   script:
   - bundle exec rake format:cpp_check
 SortCheck:
@@ -118,9 +120,11 @@ SortCheck:
 ".env_g_4_8":
   variables: &5
     CXX: g++-4.8
+    CLANG_FORMAT: clang-format-4.0
 ".env_clang_3_5":
   variables: &13
     CXX: clang++-3.5
+    CLANG_FORMAT: clang-format-4.0
 Build g++-4.8:
   stage: build
   tags: *2
@@ -133,6 +137,7 @@ Test g++-4.8 spec 0 2:
   script: *6
   variables:
     CXX: g++-4.8
+    CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '0'
     CI_PARALLEL_TOTAL: '2'
   dependencies: &7
@@ -143,6 +148,7 @@ Test g++-4.8 spec 1 2:
   script: *6
   variables:
     CXX: g++-4.8
+    CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '1'
     CI_PARALLEL_TOTAL: '2'
   dependencies: *7
@@ -193,6 +199,7 @@ Test clang++-3.5 spec 0 2:
   script: *6
   variables:
     CXX: clang++-3.5
+    CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '0'
     CI_PARALLEL_TOTAL: '2'
   dependencies: &14
@@ -203,6 +210,7 @@ Test clang++-3.5 spec 1 2:
   script: *6
   variables:
     CXX: clang++-3.5
+    CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '1'
     CI_PARALLEL_TOTAL: '2'
   dependencies: *14

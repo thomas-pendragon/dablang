@@ -26,6 +26,7 @@ compilers.each do |compiler, env|
   data[".#{env}"] = {
     'variables' => {
       'CXX' => compiler,
+      'CLANG_FORMAT' => 'clang-format-4.0',
     },
   }
 end
