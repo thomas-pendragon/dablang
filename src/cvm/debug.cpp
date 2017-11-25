@@ -86,10 +86,10 @@ void DabVM_debug::print_code(bool current_only)
 
     auto index = std::distance(disasm.begin(), it);
 
-    int start = current_only ? (index - 2) : 0;
-    int end   = current_only ? (index + 3) : disasm.size();
+    long start = current_only ? (index - 2) : 0;
+    long end   = current_only ? (index + 3) : disasm.size();
 
-    for (int i = start; i < end; i++)
+    for (long i = start; i < end; i++)
     {
         if (i < 0 || i >= (int)disasm.size())
             continue;
