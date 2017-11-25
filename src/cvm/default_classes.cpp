@@ -282,8 +282,10 @@ void DabVM::define_default_classes()
     });
 
     auto &method_class = get_class(CLASS_METHOD);
-    method_class.add_simple_function(
-        "to_s", [this](DabValue self) { return std::string("@method(" + self.string() + ")"); });
+    method_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
+        return std::string("@method(" + self.string() + ")");
+    });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {
