@@ -1426,7 +1426,7 @@ void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
         stack.push(arg);
     }
 
-    push_new_frame(true, self, n_args, 0, dab_register_t::nilreg(), get_block_capture());
+    push_new_frame(true, self, (int)n_args, 0, dab_register_t::nilreg(), get_block_capture());
     instructions.seek((size_t)block_addr);
 
     // temporary hack
@@ -1452,7 +1452,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         assert(reglist.size() == 1);
         value = register_get(reglist[0]);
 
-        exit(value.data.fixnum);
+        exit((int)value.data.fixnum);
         break;
     }
     case KERNEL_USECOUNT:
