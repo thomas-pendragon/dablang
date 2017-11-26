@@ -218,13 +218,11 @@ void DabVM::define_default_classes()
         else
             return a[n];
     });
-    array_class.add_function("[]=", [this](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 3);
-        assert(n_ret == 1);
-        auto arg0 = stack.pop_value();
-        auto arg2 = stack.pop_value();
-        auto arg1 = stack.pop_value();
+    array_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 2);
+        auto arg0 = self;
+        auto arg1 = args[0];
+        auto arg2 = args[1];
         assert(arg0.data.type == TYPE_ARRAY);
         assert(arg1.data.type == TYPE_FIXNUM);
         auto &a = arg0.array();
@@ -239,8 +237,8 @@ void DabVM::define_default_classes()
         else
         {
             a[n] = arg2;
-            stack.push_value(nullptr);
         }
+        return nullptr;
     });
     array_class.add_reg_function("join", [this](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
