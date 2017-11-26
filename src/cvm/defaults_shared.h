@@ -16,13 +16,10 @@
     })
 
 #define DAB_MEMBER_EQ_OPERATOR(klass, cast_to, operator, result_class, result_type, member)        \
-    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
-        assert(n_args == 2);                                                                       \
-        assert(n_ret == 1);                                                                        \
-        assert(blockaddr == 0);                                                                    \
-        auto &   stack = $VM->stack;                                                               \
-        auto     arg0  = stack.pop_value();                                                        \
-        auto     arg1  = stack.pop_value();                                                        \
+    klass.add_reg_function(STR(operator), [](DabValue self, std::vector<DabValue> args) {          \
+        assert(args.size() == 1);                                                                  \
+        auto     arg0 = self;                                                                      \
+        auto     arg1 = args[0];                                                                   \
         DabValue ret;                                                                              \
         try                                                                                        \
         {                                                                                          \
@@ -35,7 +32,7 @@
         {                                                                                          \
             ret = DabValue(result_class, (bool)(true operator false));                             \
         }                                                                                          \
-        stack.push(ret);                                                                           \
+        return ret;                                                                                \
     })
 
 #define DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member)                                        \
