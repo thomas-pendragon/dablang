@@ -563,7 +563,7 @@ size_t DabVM::prev_frame_position()
 
 int DabVM::number_of_args()
 {
-    return stack[frame_position + 0].data.fixnum;
+    return (int)stack[frame_position + 0].data.fixnum;
 }
 
 void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
@@ -847,7 +847,7 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
         auto reglist = input.read_reglist();
-        call(out_reg, symbol, reglist.size(), DAB_SYMBOL_NIL, nullptr, true, reglist);
+        call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, true, reglist);
         break;
     }
     case OP_CALL_BLOCK:
@@ -859,7 +859,7 @@ bool DabVM::execute_single(Stream &input)
         auto capture      = register_get(capture_reg);
         auto reglist      = input.read_reglist();
 
-        call(out_reg, symbol, reglist.size(), block_symbol, capture, true, reglist);
+        call(out_reg, symbol, (int)reglist.size(), block_symbol, capture, true, reglist);
         break;
     }
     case OP_INSTCALL_BLOCK:
