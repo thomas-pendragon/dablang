@@ -494,7 +494,7 @@ struct DabVM
 
     std::vector<std::string> symbols;
 
-    std::map<int, DabClass> classes;
+    std::map<dab_class_t, DabClass> classes;
 
     std::set<size_t> breakpoints;
 
