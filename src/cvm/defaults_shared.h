@@ -4,18 +4,15 @@
 #define STR(s) STR2(s)
 
 #define DAB_MEMBER_OPERATOR(klass, cast_to, operator, result_class, result_type, member)           \
-    klass.add_function(STR(operator), [](size_t n_args, size_t n_ret, void *blockaddr) {           \
-        assert(n_args == 2);                                                                       \
-        assert(n_ret == 1);                                                                        \
-        assert(blockaddr == 0);                                                                    \
-        auto &stack = $VM->stack;                                                                  \
-        auto  arg0  = stack.pop_value();                                                           \
-        auto  arg1  = $VM->cast(stack.pop_value(), cast_to);                                       \
-        auto v0     = arg0 member;                                                                 \
-        auto v1     = arg1 member;                                                                 \
+    klass.add_reg_function(STR(operator), [](DabValue self, std::vector<DabValue> args) {          \
+        assert(args.size() == 1);                                                                  \
+        auto arg0 = self;                                                                          \
+        auto arg1 = $VM->cast(args[0], cast_to);                                                   \
+        auto v0   = arg0 member;                                                                   \
+        auto v1   = arg1 member;                                                                   \
                                                                                                    \
         DabValue ret(result_class, (result_type)(v0 operator v1));                                 \
-        stack.push(ret);                                                                           \
+        return ret;                                                                                \
     })
 
 #define DAB_MEMBER_EQ_OPERATOR(klass, cast_to, operator, result_class, result_type, member)        \
