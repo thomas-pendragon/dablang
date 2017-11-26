@@ -143,22 +143,19 @@ void DabVM::define_default_classes()
     DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .string());
 
     auto &fixnum_class = get_class(CLASS_FIXNUM);
-    fixnum_class.add_static_function("new", [](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 1 || n_args == 2);
-        assert(n_ret == 1);
-        auto &   stack = $VM->stack;
-        auto     klass = stack.pop_value();
+    fixnum_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() <= 1);
+        auto     klass = self;
         DabValue ret_value;
         ret_value.data.type   = TYPE_FIXNUM;
         ret_value.data.fixnum = 0;
-        if (n_args == 2)
+        if (args.size() == 1)
         {
-            auto arg = stack.pop_value();
+            auto arg = args[0];
             assert(arg.data.type == TYPE_FIXNUM);
             ret_value.data.fixnum = arg.data.fixnum;
         }
-        stack.push_value(ret_value);
+        return ret_value;
     });
     DAB_MEMBER_NUMERIC_OPERATORS(fixnum_class, CLASS_FIXNUM, uint64_t, .data.fixnum);
 
