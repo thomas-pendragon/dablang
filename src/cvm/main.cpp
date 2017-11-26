@@ -436,8 +436,11 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
         reflection.arg_klasses.resize(arg_count);
         reflection.ret_klass = data[arg_count].class_index;
 
-        fprintf(stderr, "vm: describe %s:\n", symbol_str.c_str());
-        fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
+        if (options.verbose)
+        {
+            fprintf(stderr, "vm: describe %s:\n", symbol_str.c_str());
+            fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
+        }
 
         for (size_t i = 0; i < arg_count; i++)
         {
@@ -446,8 +449,12 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
             auto arg_i                    = i;
             reflection.arg_klasses[arg_i] = klass;
             reflection.arg_names[arg_i]   = name;
-            fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
-                    name.c_str());
+
+            if (options.verbose)
+            {
+                fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
+                        name.c_str());
+            }
         }
 
         fun_index++;
