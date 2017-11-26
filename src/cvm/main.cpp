@@ -900,7 +900,7 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, ".\n");
         }
 
-        push_new_frame(false, self, n_args, 0, out_reg, get_block_capture(), true, reglist);
+        push_new_frame(false, self, (int)n_args, 0, out_reg, get_block_capture(), true, reglist);
         instructions.seek(addr);
 
         break;
@@ -1394,13 +1394,13 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
         auto  block_symbol = get_or_create_symbol_index(block_name);
         auto &blockfun     = functions[block_symbol];
         assert(blockfun.regular);
-        _call_function(true, outreg, recv, fun, 1 + n_args, (void *)blockfun.address, capture,
-                       use_reglist, reglist, return_value, stack_pos, skip_stack_push);
+        _call_function(true, outreg, recv, fun, (int)(1 + n_args), (void *)blockfun.address,
+                       capture, use_reglist, reglist, return_value, stack_pos, skip_stack_push);
     }
     else
     {
-        _call_function(true, outreg, recv, fun, 1 + n_args, nullptr, nullptr, use_reglist, reglist,
-                       return_value, stack_pos, skip_stack_push);
+        _call_function(true, outreg, recv, fun, (int)(1 + n_args), nullptr, nullptr, use_reglist,
+                       reglist, return_value, stack_pos, skip_stack_push);
     }
 }
 
