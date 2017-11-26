@@ -195,16 +195,13 @@ void DabVM::define_default_classes()
             return ret;
         }
     });
-    array_class.add_function("insert", [this](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto self = stack.pop_value();
-        auto arg  = stack.pop_value();
+    array_class.add_reg_function("insert", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg = args[0];
         assert(self.data.type == TYPE_ARRAY);
         auto &a = self.array();
         a.push_back(arg);
-        stack.push_value(nullptr);
+        return nullptr;
     });
     array_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
