@@ -203,12 +203,10 @@ void DabVM::define_default_classes()
         a.push_back(arg);
         return nullptr;
     });
-    array_class.add_function("[]", [this](size_t n_args, size_t n_ret, void *blockaddr) {
-        assert(blockaddr == 0);
-        assert(n_args == 2);
-        assert(n_ret == 1);
-        auto arg0 = stack.pop_value();
-        auto arg1 = stack.pop_value();
+    array_class.add_reg_function("[]", [this](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg0 = self;
+        auto arg1 = args[0];
         assert(arg0.data.type == TYPE_ARRAY);
         assert(arg1.data.type == TYPE_FIXNUM);
         auto &a = arg0.array();
@@ -216,9 +214,9 @@ void DabVM::define_default_classes()
         if (n < 0)
             n = a.size() + n;
         if (n < 0 || n >= (int64_t)a.size())
-            stack.push_value(nullptr);
+            return DabValue(nullptr);
         else
-            stack.push_value(a[n]);
+            return a[n];
     });
     array_class.add_function("[]=", [this](size_t n_args, size_t n_ret, void *blockaddr) {
         assert(blockaddr == 0);
