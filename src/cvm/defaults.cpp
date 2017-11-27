@@ -155,16 +155,13 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
-        fun.name    = "||";
-        fun.regular = false;
-        fun.extra   = [this](size_t n_args, size_t n_ret, void *blockaddr) {
-            assert(blockaddr == 0);
-            // dump();
-            assert(n_args == 2);
-            assert(n_ret == 1);
-            auto arg1 = stack.pop_value();
-            auto arg0 = stack.pop_value();
-            stack.push_value(arg0.truthy() ? arg0 : arg1);
+        fun.name      = "||";
+        fun.regular   = false;
+        fun.extra_reg = [this](DabValue, std::vector<DabValue> args) {
+            assert(args.size() == 2);
+            auto arg0 = args[0];
+            auto arg1 = args[1];
+            return arg0.truthy() ? arg0 : arg1;
         };
 
         auto func_index = get_or_create_symbol_index("||");
