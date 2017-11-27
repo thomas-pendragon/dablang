@@ -64,22 +64,20 @@ void DabVM::define_defaults()
     fprintf(stderr, "vm: define default functions\n");
 
     auto make_import_function = [this](const char *name) {
-        return [this, name](size_t n_args, size_t n_ret, void *blockaddr) {
-            assert(blockaddr == 0);
-            assert(n_args == 2 || n_args == 1);
-            assert(n_ret == 1);
+        return [this, name](DabValue, std::vector<DabValue> args) {
+            assert(args.size() <= 2);
 
             std::string libc_name;
 
-            if (n_args == 2)
+            if (args.size() == 2)
             {
-                auto _libc_name = stack.pop_value();
+                auto _libc_name = args[1];
                 libc_name       = _libc_name.string();
             }
-            auto method = stack.pop_value();
+            auto method = args[0];
             assert(method.class_index() == CLASS_METHOD);
             auto method_name = method.string();
-            if (n_args == 1)
+            if (args.size() == 1)
             {
                 libc_name = method_name;
             }
@@ -116,15 +114,15 @@ void DabVM::define_defaults()
             function.address = -1;
             function.extra   = import_external_function(symbol, function.reflection, this->stack);
 
-            stack.push_value(DabValue(nullptr));
+            return DabValue(nullptr);
         };
     };
 
     {
         DabFunction fun;
-        fun.name    = "__import_libc";
-        fun.regular = false;
-        fun.extra   = make_import_function(DAB_LIBC_NAME);
+        fun.name      = "__import_libc";
+        fun.regular   = false;
+        fun.extra_reg = make_import_function(DAB_LIBC_NAME);
 
         auto func_index = get_or_create_symbol_index("__import_libc");
 
@@ -133,9 +131,9 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
-        fun.name    = "__import_sdl";
-        fun.regular = false;
-        fun.extra   = make_import_function("/usr/local/lib/libSDL2.dylib");
+        fun.name      = "__import_sdl";
+        fun.regular   = false;
+        fun.extra_reg = make_import_function("/usr/local/lib/libSDL2.dylib");
 
         auto func_index = get_or_create_symbol_index("__import_sdl");
 
@@ -144,9 +142,9 @@ void DabVM::define_defaults()
 
     {
         DabFunction fun;
-        fun.name    = "__import_pq";
-        fun.regular = false;
-        fun.extra   = make_import_function("/usr/local/lib/libpq.dylib");
+        fun.name      = "__import_pq";
+        fun.regular   = false;
+        fun.extra_reg = make_import_function("/usr/local/lib/libpq.dylib");
 
         auto func_index = get_or_create_symbol_index("__import_pq");
 
