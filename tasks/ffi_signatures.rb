@@ -96,8 +96,8 @@ signatures.strip.split("\n").each do |line|
   body += ");\n"
   body += "    auto int_symbol = (int_fun)symbol;\n\n"
 
-  args.to_enum.with_index.reverse_each do |arg, index|
-    body += "    auto value#{index} = $VM->cast(stack.pop_value(), #{DAB_CLASSES.safe_get(arg)});\n"
+  args.to_enum.with_index.each do |arg, index|
+    body += "    auto value#{index} = $VM->cast(args[#{index}], #{DAB_CLASSES.safe_get(arg)});\n"
   end
 
   body += "\n"
@@ -116,9 +116,9 @@ signatures.strip.split("\n").each do |line|
 
   body += "\n"
 
-  body += '    stack.push_value('
+  body += '    return ('
   body += if voidret
-            'nullptr'
+            'DabValue(nullptr)'
           else
             "DabValue(#{DAB_CLASSES.safe_get(ret)}, return_value)"
           end

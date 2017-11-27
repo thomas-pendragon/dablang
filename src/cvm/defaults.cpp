@@ -32,16 +32,13 @@ DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
     return value;
 }
 
-dab_function_t import_external_function(void *symbol, const DabFunctionReflection &reflection,
-                                        Stack &stack)
+dab_function_reg_t import_external_function(void *symbol, const DabFunctionReflection &reflection)
 {
-    return [symbol, &reflection, &stack](size_t n_args, size_t n_ret, void *blockaddr) {
+    return [symbol, &reflection](DabValue, std::vector<DabValue> args) {
         const auto &arg_klasses = reflection.arg_klasses;
         const auto  ret_klass   = reflection.ret_klass;
 
-        assert(blockaddr == 0);
-        assert(n_args == arg_klasses.size());
-        assert(n_ret == 1);
+        assert(args.size() == arg_klasses.size());
 
         if (false)
         {
@@ -109,10 +106,10 @@ void DabVM::define_defaults()
 
             auto func_index = get_or_create_symbol_index(method_name);
 
-            auto &function   = functions[func_index];
-            function.regular = false;
-            function.address = -1;
-            function.extra   = import_external_function(symbol, function.reflection, this->stack);
+            auto &function     = functions[func_index];
+            function.regular   = false;
+            function.address   = -1;
+            function.extra_reg = import_external_function(symbol, function.reflection);
 
             return DabValue(nullptr);
         };
