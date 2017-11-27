@@ -644,30 +644,6 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
             *return_value = out;
         }
     }
-    else
-    {
-        const auto n_ret = 1;
-        if (use_reglist && !skip_stack_push)
-        {
-            for (auto reg : reglist)
-            {
-                stack.push_value(register_get(reg));
-            }
-            if (use_self)
-            {
-                stack.push_value(self);
-            }
-        }
-        fun.extra(n_args, n_ret, blockaddress);
-        if (!out_reg.nil())
-        {
-            register_set(out_reg, stack.pop_value());
-        }
-        if (return_value)
-        {
-            *return_value = stack.pop_value();
-        }
-    }
 }
 
 void DabVM::execute(Stream &input)
