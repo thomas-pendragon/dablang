@@ -471,6 +471,18 @@ struct DabRunOptions
     void parse(const std::vector<std::string> &args);
 };
 
+struct DabStackFrame
+{
+    uint64_t ip;
+    uint64_t frame_position;
+    uint64_t n_args;
+    DabValue self;
+    uint64_t block_addr;
+    DabValue capture;
+    uint64_t out_reg_index;
+    DabValue retvalue;
+};
+
 struct DabVM
 {
     DabRunOptions options;
