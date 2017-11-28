@@ -567,7 +567,7 @@ int DabVM::number_of_args()
 }
 
 void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
-                 const DabValue &capture, bool use_reglist, std::vector<dab_register_t> reglist)
+                 const DabValue &capture, std::vector<dab_register_t> reglist)
 {
     if (options.verbose)
     {
@@ -587,22 +587,20 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
         auto &blockfun = functions[block_symbol];
         assert(blockfun.regular);
         _call_function(false, out_reg, nullptr, functions[symbol], n_args, (void *)blockfun.address,
-                       capture, use_reglist, reglist);
+                       capture, reglist);
     }
     else
     {
         _call_function(false, out_reg, nullptr, functions[symbol], n_args, nullptr, nullptr,
-                       use_reglist, reglist);
+                       reglist);
     }
 }
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                            const DabFunction &fun, int n_args, void *blockaddress,
-                           const DabValue &capture, bool use_reglist,
-                           std::vector<dab_register_t> reglist, DabValue *return_value,
-                           size_t stack_pos, bool skip_stack_push)
+                           const DabValue &capture, std::vector<dab_register_t> reglist,
+                           DabValue *return_value, size_t stack_pos, bool skip_stack_push)
 {
-    assert(n_args == 0 || use_reglist);
     (void)return_value;
     (void)stack_pos;
 
@@ -614,8 +612,8 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
 
     if (fun.regular)
     {
-        push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture,
-                       use_reglist, reglist, skip_stack_push);
+        push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture, true,
+                       reglist, skip_stack_push);
         instructions.seek(fun.address);
 
         if (return_value)
@@ -631,8 +629,6 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
     }
     else if (fun.extra_reg)
     {
-        assert(use_reglist);
-
         std::vector<DabValue> value_list;
         for (auto reg : reglist)
         {
@@ -824,7 +820,7 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
         auto reglist = input.read_reglist();
-        call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, true, reglist);
+        call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, reglist);
         break;
     }
     case OP_CALL_BLOCK:
@@ -836,7 +832,7 @@ bool DabVM::execute_single(Stream &input)
         auto capture      = register_get(capture_reg);
         auto reglist      = input.read_reglist();
 
-        call(out_reg, symbol, (int)reglist.size(), block_symbol, capture, true, reglist);
+        call(out_reg, symbol, (int)reglist.size(), block_symbol, capture, reglist);
         break;
     }
     case OP_INSTCALL_BLOCK:
@@ -855,7 +851,7 @@ bool DabVM::execute_single(Stream &input)
         auto n_args  = reglist.size();
         auto recv    = register_get(self_reg);
 
-        instcall(recv, name, n_args, block_name, capture, true, out_reg, reglist);
+        instcall(recv, name, n_args, block_name, capture, out_reg, reglist);
         break;
     }
     case OP_YIELD:
@@ -1114,7 +1110,7 @@ bool DabVM::execute_single(Stream &input)
             recv.dump(stderr);
             fprintf(stderr, "\n");
         }
-        instcall(recv, name, n_args, "", nullptr, true, out_reg, reglist);
+        instcall(recv, name, n_args, "", nullptr, out_reg, reglist);
         break;
     }
     case OP_GET_INSTVAR:
@@ -1349,14 +1345,14 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
     auto stack_pos = stack.size() + 1;
 
     DabValue ret;
-    instcall(self, name, 0, "", nullptr, true, -1, {}, &ret, stack_pos, true);
+    instcall(self, name, 0, "", nullptr, -1, {}, &ret, stack_pos, true);
     return ret;
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args,
-                     const std::string &block_name, const DabValue &capture, bool use_reglist,
-                     dab_register_t outreg, std::vector<dab_register_t> reglist,
-                     DabValue *return_value, size_t stack_pos, bool skip_stack_push)
+                     const std::string &block_name, const DabValue &capture, dab_register_t outreg,
+                     std::vector<dab_register_t> reglist, DabValue *return_value, size_t stack_pos,
+                     bool skip_stack_push)
 {
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
@@ -1372,12 +1368,12 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
         auto &blockfun     = functions[block_symbol];
         assert(blockfun.regular);
         _call_function(true, outreg, recv, fun, (int)(1 + n_args), (void *)blockfun.address,
-                       capture, use_reglist, reglist, return_value, stack_pos, skip_stack_push);
+                       capture, reglist, return_value, stack_pos, skip_stack_push);
     }
     else
     {
-        _call_function(true, outreg, recv, fun, (int)(1 + n_args), nullptr, nullptr, use_reglist,
-                       reglist, return_value, stack_pos, skip_stack_push);
+        _call_function(true, outreg, recv, fun, (int)(1 + n_args), nullptr, nullptr, reglist,
+                       return_value, stack_pos, skip_stack_push);
     }
 }
 

@@ -593,14 +593,13 @@ struct DabVM
     int number_of_args();
 
     void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
-              const DabValue &capture, bool use_reglist = false,
-              std::vector<dab_register_t> reglist = {});
+              const DabValue &capture, std::vector<dab_register_t> reglist = {});
 
     void _call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                         const DabFunction &fun, int n_args, void *blockaddress,
-                        const DabValue &capture, bool use_reglist = false,
-                        std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
-                        size_t stack_pos = 0, bool skip_stack_push = false);
+                        const DabValue &capture, std::vector<dab_register_t> reglist = {},
+                        DabValue *return_value = nullptr, size_t stack_pos = 0,
+                        bool skip_stack_push = false);
 
     void execute_debug(Stream &input);
 
@@ -632,9 +631,9 @@ struct DabVM
 
     void instcall(const DabValue &recv, const std::string &name, size_t n_args,
                   const std::string &block_name = "", const DabValue &capture = nullptr,
-                  bool use_reglist = false, dab_register_t outreg = -1,
-                  std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
-                  size_t stack_pos = 0, bool skip_stack_push = false);
+                  dab_register_t outreg = -1, std::vector<dab_register_t> reglist = {},
+                  DabValue *return_value = nullptr, size_t stack_pos = 0,
+                  bool skip_stack_push = false);
 
     DabClass &define_builtin_class(const std::string &name, dab_class_t class_index,
                                    dab_class_t superclass_index = CLASS_OBJECT);
