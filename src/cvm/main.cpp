@@ -602,6 +602,7 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
                            std::vector<dab_register_t> reglist, DabValue *return_value,
                            size_t stack_pos, bool skip_stack_push)
 {
+    assert(n_args == 0 || use_reglist);
     (void)return_value;
     (void)stack_pos;
 
