@@ -1312,18 +1312,15 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
     DabValue ret;
     auto     outreg = 0;
     auto     copy   = register_get(outreg);
-    instcall(self, name, 0, "", nullptr, outreg, {}, &ret, stack_pos, true);
+    instcall(self, name, 0, "", nullptr, outreg, {}, &ret, stack_pos);
     register_set(outreg, copy);
     return ret;
 }
 
 void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args,
                      const std::string &block_name, const DabValue &capture, dab_register_t outreg,
-                     std::vector<dab_register_t> reglist, DabValue *return_value, size_t stack_pos,
-                     bool skip_stack_push)
+                     std::vector<dab_register_t> reglist, DabValue *return_value, size_t stack_pos)
 {
-    (void)skip_stack_push;
-
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
 

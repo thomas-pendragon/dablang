@@ -634,8 +634,7 @@ struct DabVM
     void instcall(const DabValue &recv, const std::string &name, size_t n_args,
                   const std::string &block_name = "", const DabValue &capture = nullptr,
                   dab_register_t outreg = -1, std::vector<dab_register_t> reglist = {},
-                  DabValue *return_value = nullptr, size_t stack_pos = 0,
-                  bool skip_stack_push = false);
+                  DabValue *return_value = nullptr, size_t stack_pos = 0);
 
     DabClass &define_builtin_class(const std::string &name, dab_class_t class_index,
                                    dab_class_t superclass_index = CLASS_OBJECT);
