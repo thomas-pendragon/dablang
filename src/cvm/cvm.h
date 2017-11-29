@@ -563,7 +563,7 @@ struct DabVM
 
     bool pop_frame(bool regular);
 
-    void push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
+    void push_new_frame(const DabValue &self, int n_args, uint64_t block_addr,
                         dab_register_t out_reg, const DabValue &capture,
                         std::vector<dab_register_t> reglist = {}, bool skip_stack_push = false);
 
