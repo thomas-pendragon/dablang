@@ -643,8 +643,6 @@ struct DabVM
 
     void extract(const std::string &name);
 
-    void yield(void *block_addr, const std::vector<DabValue> arguments);
-
     DabValue merge_arrays(const DabValue &array0, const DabValue &array1);
 
     void reflect(size_t reflection_type, const DabValue &symbol, bool out_reg, dab_register_t reg,

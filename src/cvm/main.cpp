@@ -1377,38 +1377,6 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
     }
 }
 
-void DabVM::yield(void *block_addr, const std::vector<DabValue> arguments)
-{
-    auto n_args = arguments.size();
-
-    auto self = get_self();
-
-    if (options.verbose)
-    {
-        fprintf(stderr, "vm: vm api yield to %p with %d arguments.\n", (void *)block_addr,
-                (int)n_args);
-        fprintf(stderr, "vm: capture data is ");
-        get_block_capture().dump(stderr);
-        fprintf(stderr, ".\n");
-    }
-
-    auto stack_pos = stack.size() + 1; // RET 1
-
-    for (auto &arg : arguments)
-    {
-        stack.push(arg);
-    }
-
-    push_new_frame(true, self, (int)n_args, 0, dab_register_t::nilreg(), get_block_capture());
-    instructions.seek((size_t)block_addr);
-
-    // temporary hack
-    while (stack.size() != stack_pos)
-    {
-        execute_single(instructions);
-    }
-}
-
 void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist)
 {
     switch (call)
