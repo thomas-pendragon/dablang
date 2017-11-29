@@ -56,13 +56,11 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return self.print_value();
     });
-    object_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
-        (void)self;
+    object_class.add_reg_function("__construct", [](DabValue, std::vector<DabValue> args) {
         assert(args.size() == 0);
         return nullptr;
     });
-    object_class.add_reg_function("__destruct", [](DabValue self, std::vector<DabValue> args) {
-        (void)self;
+    object_class.add_reg_function("__destruct", [](DabValue, std::vector<DabValue> args) {
         assert(args.size() == 0);
         return nullptr;
     });
