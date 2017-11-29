@@ -783,8 +783,11 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg    = input.read_reg();
         auto symbol     = input.read_symbol();
         auto symbol_str = get_symbol(symbol);
-        push_method(symbol_str);
-        auto value = stack.pop_value();
+
+        DabValue value;
+        value.data.type          = TYPE_METHOD;
+        value.data.legacy_string = symbol_str;
+
         register_set(out_reg, value);
         break;
     }
@@ -1431,14 +1434,6 @@ size_t DabVM::get_or_create_symbol_index(const std::string &string)
     }
     symbols.push_back(string);
     return symbols.size() - 1;
-}
-
-void DabVM::push_method(const std::string &name)
-{
-    DabValue val;
-    val.data.type          = TYPE_METHOD;
-    val.data.legacy_string = name;
-    stack.push_value(val);
 }
 
 DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)

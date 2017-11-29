@@ -616,8 +616,6 @@ struct DabVM
 
     void kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist);
 
-    void push_method(const std::string &name);
-
     DabFunction &add_function(size_t address, const std::string &name, uint16_t class_index);
 
     void read_classes(Stream &input, size_t classes_address, size_t classes_length);
