@@ -690,7 +690,8 @@ void DabVM::reflect_instance_method(size_t reflection_type, const DabValue &symb
         fprintf(stderr, "vm: reflect %d on %s [%s]\n", (int)reflection_type,
                 symbol.string().c_str(), klass.name.c_str());
     }
-    const auto &function = klass.get_instance_function(symbol.string());
+    auto        dab_symbol = get_or_create_symbol_index(symbol.string());
+    const auto &function   = klass.get_instance_function(dab_symbol);
 
     auto output_names = reflection_type == REFLECT_INSTANCE_METHOD_ARGUMENT_NAMES;
     _reflect(function, reg, output_names);
@@ -797,10 +798,8 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = get_symbol(symbol);
 
         auto block_symbol = input.read_symbol();
-        auto block_name   = get_symbol(block_symbol);
         auto capture_reg  = input.read_reg();
         auto capture      = register_get(capture_reg);
 
@@ -808,7 +807,7 @@ bool DabVM::execute_single(Stream &input)
         auto n_args  = reglist.size();
         auto recv    = register_get(self_reg);
 
-        instcall(recv, name, n_args, block_name, capture, out_reg, reglist);
+        instcall(recv, symbol, n_args, block_symbol, capture, out_reg, reglist);
         break;
     }
     case OP_YIELD:
@@ -1057,7 +1056,6 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg  = input.read_reg();
         auto self_reg = input.read_reg();
         auto symbol   = input.read_uint16();
-        auto name     = get_symbol(symbol);
         auto reglist  = input.read_reglist();
         auto n_args   = reglist.size();
         auto recv     = register_get(self_reg);
@@ -1067,7 +1065,7 @@ bool DabVM::execute_single(Stream &input)
             recv.dump(stderr);
             fprintf(stderr, "\n");
         }
-        instcall(recv, name, n_args, "", nullptr, out_reg, reglist);
+        instcall(recv, symbol, n_args, DAB_SYMBOL_NIL, nullptr, out_reg, reglist);
         break;
     }
     case OP_GET_INSTVAR:
@@ -1297,13 +1295,14 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name)
     DabValue ret;
     auto     outreg = 0;
     auto     copy   = register_get(outreg);
-    instcall(self, name, 0, "", nullptr, outreg, {}, &ret, stack_pos);
+    instcall(self, get_or_create_symbol_index(name), 0, DAB_SYMBOL_NIL, nullptr, outreg, {}, &ret,
+             stack_pos);
     register_set(outreg, copy);
     return ret;
 }
 
-void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_args,
-                     const std::string &block_name, const DabValue &capture, dab_register_t outreg,
+void DabVM::instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
+                     dab_symbol_t block_symbol, const DabValue &capture, dab_register_t outreg,
                      std::vector<dab_register_t> reglist, DabValue *return_value, size_t stack_pos)
 {
     auto  class_index = recv.class_index();
@@ -1311,12 +1310,11 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 
     bool  use_static_func = recv.data.type == TYPE_CLASS;
     auto &fun =
-        use_static_func ? klass.get_static_function(name) : klass.get_instance_function(name);
+        use_static_func ? klass.get_static_function(symbol) : klass.get_instance_function(symbol);
 
-    if (block_name != "")
+    if (block_symbol != DAB_SYMBOL_NIL)
     {
-        auto  block_symbol = get_or_create_symbol_index(block_name);
-        auto &blockfun     = functions[block_symbol];
+        auto &blockfun = functions[block_symbol];
         assert(blockfun.regular);
         _call_function(true, outreg, recv, fun, (int)(1 + n_args), (void *)blockfun.address,
                        capture, reglist, return_value, stack_pos);

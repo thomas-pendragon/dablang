@@ -97,9 +97,9 @@ struct DabClass
     std::map<dab_symbol_t, DabFunction> static_functions;
     dab_class_t superclass_index = CLASS_OBJECT;
 
-    const DabFunction &get_instance_function(const std::string &name) const;
+    const DabFunction &get_instance_function(dab_symbol_t symbol) const;
 
-    const DabFunction &get_static_function(const std::string &name) const;
+    const DabFunction &get_static_function(dab_symbol_t symbol) const;
 
     void _add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body);
 
@@ -116,7 +116,7 @@ struct DabClass
     bool is_subclass_of(const DabClass &klass) const;
 
   private:
-    const DabFunction &_get_function(bool _static, const std::string &name) const;
+    const DabFunction &_get_function(bool _static, dab_symbol_t symbol) const;
 };
 
 enum
@@ -623,8 +623,8 @@ struct DabVM
 
     void read_symbols(Stream &input, size_t symb_address, size_t symb_length, size_t data_address);
 
-    void instcall(const DabValue &recv, const std::string &name, size_t n_args,
-                  const std::string &block_name = "", const DabValue &capture = nullptr,
+    void instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
+                  dab_symbol_t block_symbol = DAB_SYMBOL_NIL, const DabValue &capture = nullptr,
                   dab_register_t outreg = -1, std::vector<dab_register_t> reglist = {},
                   DabValue *return_value = nullptr, size_t stack_pos = 0);
 

@@ -1,34 +1,34 @@
 #include "cvm.h"
 
-const DabFunction &DabClass::get_instance_function(const std::string &name) const
+const DabFunction &DabClass::get_instance_function(dab_symbol_t symbol) const
 {
-    return _get_function(false, name);
+    return _get_function(false, symbol);
 }
 
-const DabFunction &DabClass::get_static_function(const std::string &name) const
+const DabFunction &DabClass::get_static_function(dab_symbol_t symbol) const
 {
-    return _get_function(true, name);
+    return _get_function(true, symbol);
 }
 
-const DabFunction &DabClass::_get_function(bool _static, const std::string &func_name) const
+const DabFunction &DabClass::_get_function(bool _static, dab_symbol_t symbol) const
 {
     auto &collection = _static ? static_functions : functions;
-    auto  func_index = $VM->get_symbol_index(func_name);
-    if (!collection.count(func_index))
+
+    if (!collection.count(symbol))
     {
         if (index == superclass_index)
         {
             fprintf(stderr, "VM error: Unknown %sfunction <%s> in <%s>.\n",
-                    _static ? "static " : "", func_name.c_str(), name.c_str());
+                    _static ? "static " : "", $VM->get_symbol(symbol).c_str(), name.c_str());
             exit(1);
         }
         else
         {
             auto &superclass = $VM->get_class(superclass_index);
-            return superclass._get_function(_static, func_name);
+            return superclass._get_function(_static, symbol);
         }
     }
-    return collection.at(func_index);
+    return collection.at(symbol);
 }
 
 void DabClass::_add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body)
