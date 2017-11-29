@@ -64,15 +64,10 @@ bool DabVM::pop_frame(bool regular)
         fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
     }
 
-    size_t frame_loc = frame_position;
-    int    n_args    = number_of_args();
-    size_t prev_pos  = prev_frame_position();
-    auto   retval    = get_retval();
-    auto   prev_ip   = get_prev_ip();
-    auto   out_reg   = get_out_reg();
-
-    (void)n_args;
-    (void)frame_loc;
+    size_t prev_pos = prev_frame_position();
+    auto   retval   = get_retval();
+    auto   prev_ip  = get_prev_ip();
+    auto   out_reg  = get_out_reg();
 
     stackframes.pop_back();
 
