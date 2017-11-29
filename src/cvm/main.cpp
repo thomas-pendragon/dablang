@@ -121,10 +121,10 @@ size_t DabVM::stack_position() const
 }
 
 void DabVM::push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
-                           dab_register_t out_reg, const DabValue &capture, bool use_reglist,
+                           dab_register_t out_reg, const DabValue &capture,
                            std::vector<dab_register_t> reglist, bool skip_stack_push)
 {
-    if (use_reglist && !skip_stack_push)
+    if (!skip_stack_push)
     {
         for (auto reg : reglist)
         {
@@ -612,8 +612,8 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
 
     if (fun.regular)
     {
-        push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture, true,
-                       reglist, skip_stack_push);
+        push_new_frame(use_self, self, n_args, (uint64_t)blockaddress, out_reg, capture, reglist,
+                       skip_stack_push);
         instructions.seek(fun.address);
 
         if (return_value)
@@ -873,7 +873,7 @@ bool DabVM::execute_single(Stream &input)
             fprintf(stderr, ".\n");
         }
 
-        push_new_frame(false, self, (int)n_args, 0, out_reg, get_block_capture(), true, reglist);
+        push_new_frame(false, self, (int)n_args, 0, out_reg, get_block_capture(), reglist);
         instructions.seek(addr);
 
         break;
