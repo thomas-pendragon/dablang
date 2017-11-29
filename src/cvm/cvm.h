@@ -636,7 +636,7 @@ struct DabVM
     DabClass &define_builtin_class(const std::string &name, dab_class_t class_index,
                                    dab_class_t superclass_index = CLASS_OBJECT);
 
-    void get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg);
+    void get_instvar(const std::string &name, dab_register_t out_reg);
     void set_instvar(const std::string &name, const DabValue &value);
 
     void extract(const std::string &name);

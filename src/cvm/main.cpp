@@ -1113,7 +1113,7 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
         auto name    = get_symbol(symbol);
-        get_instvar(name, true, out_reg);
+        get_instvar(name, out_reg);
         break;
     }
     case OP_SET_INSTVAR:
@@ -1174,17 +1174,10 @@ bool DabVM::execute_single(Stream &input)
     return true;
 }
 
-void DabVM::get_instvar(const std::string &name, bool use_out_reg, dab_register_t out_reg)
+void DabVM::get_instvar(const std::string &name, dab_register_t out_reg)
 {
     auto value = get_self().get_instvar(name);
-    if (use_out_reg)
-    {
-        register_set(out_reg, value);
-    }
-    else
-    {
-        stack.push_value(value);
-    }
+    register_set(out_reg, value);
 }
 
 void DabVM::set_instvar(const std::string &name, const DabValue &value)
