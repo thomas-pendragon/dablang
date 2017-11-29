@@ -579,9 +579,6 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
                            const DabValue &capture, std::vector<dab_register_t> reglist,
                            DabValue *return_value, size_t stack_pos)
 {
-    (void)return_value;
-    (void)stack_pos;
-
     if (options.verbose)
     {
         fprintf(stderr, "vm: call <%s> %sand %d arguments -> 0x%x.\n", fun.name.c_str(),
