@@ -63,37 +63,9 @@ IP = 208
        217: SYSCALL RNIL, 0, R7
        224: RETURN RNIL
 debug: break at 205.
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
 IP = 205
        199: STACK_RESERVE 0
        202: LOAD_TRUE R0
 >      205: RETURN R0
        208: STACK_RESERVE 0
        211: CALL R7, S0
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
-[   8] FIXN 217
-[   9] FIXN 2
-[  10] FIXN 0
-[  11] NIL  nil
-[  12] FIXN 0
-[  13] NIL  nil
-[  14] FIXN 7
-[  15] INVA ?

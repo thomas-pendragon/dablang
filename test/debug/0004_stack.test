@@ -47,27 +47,5 @@ IP = 186
 >      186: STACK_RESERVE 0
        189: RETURN RNIL
 IP = 186
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
 IP = 189
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
 IP = 0
-Stack:
-Dump of stack:

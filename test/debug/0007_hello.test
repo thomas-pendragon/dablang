@@ -68,16 +68,6 @@ IP = 189
 >      189: LOAD_STRING R0, 160, 11
        208: SYSCALL RNIL, 0, R0
        215: NOP 
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
 Registers:
 IP = 208
        186: STACK_RESERVE 0
@@ -85,16 +75,6 @@ IP = 208
 >      208: SYSCALL RNIL, 0, R0
        215: NOP 
        216: RETURN RNIL
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
 Registers:
 R0: CSTR "hello world" [1 strong]
 hello worldIP = 215
@@ -102,33 +82,11 @@ hello worldIP = 215
        208: SYSCALL RNIL, 0, R0
 >      215: NOP 
        216: RETURN RNIL
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
-[   8] CSTR "hello world" [3 strong]
 Registers:
-R0: CSTR "hello world" [3 strong]
+R0: CSTR "hello world" [4 strong]
 IP = 216
        208: SYSCALL RNIL, 0, R0
        215: NOP 
 >      216: RETURN RNIL
-Stack:
-Dump of stack:
-[   0] FIXN 0
-[   1] FIXN -1
-[   2] FIXN 0
-[   3] NIL  nil
-[   4] FIXN 0
-[   5] NIL  nil
-[   6] FIXN 65535
-[   7] INVA ?
-[   8] CSTR "hello world" [3 strong]
 Registers:
-R0: CSTR "hello world" [3 strong]
+R0: CSTR "hello world" [4 strong]

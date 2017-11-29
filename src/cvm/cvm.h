@@ -473,14 +473,16 @@ struct DabRunOptions
 
 struct DabStackFrame
 {
-    uint64_t ip;
-    uint64_t frame_position;
+    uint64_t prev_ip;
+    uint64_t prev_frame_position;
     uint64_t n_args;
     DabValue self;
     uint64_t block_addr;
     DabValue capture;
     uint64_t out_reg_index;
     DabValue retvalue;
+
+    std::vector<DabValue> args;
 };
 
 struct DabVM
@@ -496,7 +498,8 @@ struct DabVM
     Stream instructions;
     std::map<dab_symbol_t, DabFunction> functions;
     size_t frame_position = -1;
-    Stack  stack;
+
+    // Stack  stack;
 
     std::vector<std::string> symbols;
 
@@ -506,6 +509,8 @@ struct DabVM
 
     std::vector<DabValue>              _registers;
     std::vector<std::vector<DabValue>> _register_stack;
+
+    std::vector<DabStackFrame> stackframes;
 
     std::vector<BinSection> sections;
 
@@ -558,8 +563,6 @@ struct DabVM
 
     bool pop_frame(bool regular);
 
-    size_t stack_position() const;
-
     void push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
                         dab_register_t out_reg, const DabValue &capture,
                         std::vector<dab_register_t> reglist = {}, bool skip_stack_push = false);
@@ -574,6 +577,8 @@ struct DabVM
 
     int run_newformat(Stream &input);
     void load_newformat(Stream &input);
+
+    DabStackFrame *current_frame();
 
     DabValue &get_arg(int arg_index);
 

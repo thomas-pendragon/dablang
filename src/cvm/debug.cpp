@@ -63,9 +63,6 @@ void DabVM_debug::print_constants()
 
 void DabVM_debug::print_stack()
 {
-    auto err_stream = $VM->options.output;
-    fprintf(err_stream, "Stack:\n");
-    vm._dump("stack", vm.stack._data, err_stream);
 }
 
 void DabVM_debug::print_code(bool current_only)

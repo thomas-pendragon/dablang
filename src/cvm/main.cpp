@@ -71,19 +71,15 @@ bool DabVM::pop_frame(bool regular)
     auto   prev_ip   = get_prev_ip();
     auto   out_reg   = get_out_reg();
 
-    stack.resize(frame_loc - 2 - n_args);
+    (void)n_args;
+    (void)frame_loc;
+
+    stackframes.pop_back();
 
     frame_position = prev_pos;
 
     if (regular)
     {
-        if (prev_pos != (size_t)-1)
-        {
-            if (out_reg.nil())
-            {
-                stack.push(retval);
-            }
-        }
         if (options.verbose)
         {
             fprintf(stderr, "vm: seek ret to %p (%d).\n", (void *)prev_ip, (int)prev_ip);
@@ -115,40 +111,30 @@ bool DabVM::pop_frame(bool regular)
     return true;
 }
 
-size_t DabVM::stack_position() const
-{
-    return stack.size();
-}
-
 void DabVM::push_new_frame(bool use_self, const DabValue &self, int n_args, uint64_t block_addr,
                            dab_register_t out_reg, const DabValue &capture,
                            std::vector<dab_register_t> reglist, bool skip_stack_push)
 {
-    if (!skip_stack_push)
+    (void)use_self;
+    (void)skip_stack_push;
+
+    DabStackFrame stackframe;
+
+    stackframe.self = self;
+    for (auto reg : reglist)
     {
-        for (auto reg : reglist)
-        {
-            stack.push(register_get(reg));
-        }
-        if (use_self)
-        {
-            stack.push_value(self);
-        }
+        stackframe.args.push_back(register_get(reg));
     }
-    stack.push((uint64_t)ip());
-    stack.push((uint64_t)frame_position); // push previous frame
-    frame_position = stack_position();
-    stack.push((uint64_t)n_args); // number of arguments
-    stack.push(self);
-    stack.push(block_addr);
-    stack.push(capture);
-    stack.push((uint64_t)(out_reg.value()));
-    {
-        // push retvalue
-        DabValue val;
-        val.data.type = TYPE_INVALID;
-        stack.push_value(val);
-    }
+    stackframe.prev_ip             = ip();
+    stackframe.prev_frame_position = frame_position;
+    stackframe.n_args              = n_args;
+    stackframe.block_addr          = block_addr;
+    stackframe.capture             = capture;
+    stackframe.out_reg_index       = out_reg.value();
+    frame_position                 = stackframes.size();
+
+    stackframes.push_back(stackframe);
+
     _register_stack.push_back(_registers);
     _registers.resize(0);
 }
@@ -514,56 +500,56 @@ int DabVM::continue_run(Stream &input)
     return 0;
 }
 
+DabStackFrame *DabVM::current_frame()
+{
+    if (stackframes.size() == 0)
+        return nullptr;
+    return &stackframes[stackframes.size() - 1];
+}
+
 DabValue &DabVM::get_arg(int arg_index)
 {
-    auto index = frame_position - number_of_args() - 2 + arg_index;
-    return stack[index];
+    return current_frame()->args[arg_index];
 }
 
 DabValue &DabVM::get_retval()
 {
-    auto index = frame_position + 5;
-    return stack[index];
+    return current_frame()->retvalue;
 }
 
 uint64_t DabVM::get_block_addr()
 {
-    auto index = frame_position + 2;
-    return stack[index].data.fixnum;
+    return current_frame()->block_addr;
 }
 
 DabValue DabVM::get_block_capture()
 {
-    auto index = frame_position + 3;
-    return stack[index];
+    return current_frame()->capture;
 }
 
 dab_register_t DabVM::get_out_reg()
 {
-    auto index = frame_position + 4;
-    auto ret   = stack[index].data.fixnum;
-    return ret;
+    return current_frame()->out_reg_index;
 }
 
 DabValue &DabVM::get_self()
 {
-    auto index = frame_position + 1;
-    return stack[index];
+    return current_frame()->self;
 }
 
 size_t DabVM::get_prev_ip()
 {
-    return stack[frame_position - 2].data.fixnum;
+    return current_frame()->prev_ip;
 }
 
 size_t DabVM::prev_frame_position()
 {
-    return stack[frame_position - 1].data.fixnum;
+    return current_frame()->prev_frame_position;
 }
 
 int DabVM::number_of_args()
 {
-    return (int)stack[frame_position + 0].data.fixnum;
+    return (int)current_frame()->args.size();
 }
 
 void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
@@ -619,12 +605,12 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
         if (return_value)
         {
             // temporary hack
-            while (stack.size() != stack_pos)
+            while (stackframes.size() != stack_pos)
             {
                 execute_single(instructions);
             }
 
-            *return_value = stack.pop_value();
+            *return_value = register_get(out_reg);
         }
     }
     else if (fun.extra_reg)
@@ -1330,10 +1316,13 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
 
 DabValue DabVM::cinstcall(DabValue self, const std::string &name)
 {
-    auto stack_pos = stack.size() + 1;
+    auto stack_pos = stackframes.size();
 
     DabValue ret;
-    instcall(self, name, 0, "", nullptr, -1, {}, &ret, stack_pos, true);
+    auto     outreg = 0;
+    auto     copy   = register_get(outreg);
+    instcall(self, name, 0, "", nullptr, outreg, {}, &ret, stack_pos, true);
+    register_set(outreg, copy);
     return ret;
 }
 
@@ -1344,7 +1333,6 @@ void DabVM::instcall(const DabValue &recv, const std::string &name, size_t n_arg
 {
     auto  class_index = recv.class_index();
     auto &klass       = get_class(class_index);
-    stack.push_value(recv);
 
     bool  use_static_func = recv.data.type == TYPE_CLASS;
     auto &fun =
@@ -1460,15 +1448,6 @@ void DabVM::extract(const std::string &name)
     else if (name == "output")
     {
     }
-    else if (name == "stack[-1]")
-    {
-        if (stack.size() == 0)
-        {
-            fprintf(stderr, "vm: empty stack.\n");
-            exit(1);
-        }
-        stack[stack.size() - 1].dump(output);
-    }
     else if (name == "leaktest")
     {
         run_leaktest(output);
@@ -1491,17 +1470,6 @@ void DabVM::extract(const std::string &name)
 bool DabVM::run_leaktest(FILE *output)
 {
     bool error = false;
-    if (stack.size() > 0)
-    {
-        fprintf(output, "leaktest: %zu items on stack\n", stack.size());
-        for (size_t i = 0; i < stack.size(); i++)
-        {
-            fprintf(output, "%4zu: ", i);
-            stack[i].dump(output);
-            fprintf(output, "\n");
-        }
-        error = true;
-    }
     if (DabMemoryCounter<COUNTER_OBJECT>::counter() > 0)
     {
         fprintf(output, "leaktest: %zu allocated objects remaining\n",
