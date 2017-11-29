@@ -3,8 +3,7 @@
 
 void DabVM_debug::print_registers()
 {
-    fprintf(stderr, "IP = %p (%d) Frame = %d\n", (void *)vm.ip(), (int)vm.ip(),
-            (int)vm.frame_position);
+    fprintf(stderr, "IP = %p (%d)\n", (void *)vm.ip(), (int)vm.ip());
 }
 
 void DabVM_debug::print_ssa_registers()

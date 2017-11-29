@@ -474,8 +474,6 @@ struct DabRunOptions
 struct DabStackFrame
 {
     uint64_t prev_ip;
-    uint64_t prev_frame_position;
-    uint64_t n_args;
     DabValue self;
     uint64_t block_addr;
     DabValue capture;
@@ -497,9 +495,6 @@ struct DabVM
 
     Stream instructions;
     std::map<dab_symbol_t, DabFunction> functions;
-    size_t frame_position = -1;
-
-    // Stack  stack;
 
     std::vector<std::string> symbols;
 
@@ -587,8 +582,6 @@ struct DabVM
     DabValue &get_self();
 
     size_t get_prev_ip();
-
-    size_t prev_frame_position();
 
     uint64_t get_block_addr();
     DabValue get_block_capture();

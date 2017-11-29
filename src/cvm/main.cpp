@@ -64,14 +64,11 @@ bool DabVM::pop_frame(bool regular)
         fprintf(stderr, "vm: pop %sframe\n", regular ? "regular " : "");
     }
 
-    size_t prev_pos = prev_frame_position();
-    auto   retval   = get_retval();
-    auto   prev_ip  = get_prev_ip();
-    auto   out_reg  = get_out_reg();
+    auto retval  = get_retval();
+    auto prev_ip = get_prev_ip();
+    auto out_reg = get_out_reg();
 
     stackframes.pop_back();
-
-    frame_position = prev_pos;
 
     if (regular)
     {
@@ -94,7 +91,7 @@ bool DabVM::pop_frame(bool regular)
         register_set(out_reg, retval);
     }
 
-    if (prev_pos == (size_t)-1)
+    if (stackframes.size() == 0)
     {
         if (options.verbose)
         {
@@ -110,6 +107,8 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
                            dab_register_t out_reg, const DabValue &capture,
                            std::vector<dab_register_t> reglist)
 {
+    (void)n_args;
+
     DabStackFrame stackframe;
 
     stackframe.self = self;
@@ -117,13 +116,10 @@ void DabVM::push_new_frame(const DabValue &self, int n_args, uint64_t block_addr
     {
         stackframe.args.push_back(register_get(reg));
     }
-    stackframe.prev_ip             = ip();
-    stackframe.prev_frame_position = frame_position;
-    stackframe.n_args              = n_args;
-    stackframe.block_addr          = block_addr;
-    stackframe.capture             = capture;
-    stackframe.out_reg_index       = out_reg.value();
-    frame_position                 = stackframes.size();
+    stackframe.prev_ip       = ip();
+    stackframe.block_addr    = block_addr;
+    stackframe.capture       = capture;
+    stackframe.out_reg_index = out_reg.value();
 
     stackframes.push_back(stackframe);
 
@@ -532,11 +528,6 @@ DabValue &DabVM::get_self()
 size_t DabVM::get_prev_ip()
 {
     return current_frame()->prev_ip;
-}
-
-size_t DabVM::prev_frame_position()
-{
-    return current_frame()->prev_frame_position;
 }
 
 int DabVM::number_of_args()
