@@ -743,13 +743,12 @@ bool DabVM::execute_single(Stream &input)
     {
     case OP_LOAD_METHOD:
     {
-        auto out_reg    = input.read_reg();
-        auto symbol     = input.read_symbol();
-        auto symbol_str = get_symbol(symbol);
+        auto out_reg = input.read_reg();
+        auto symbol  = input.read_symbol();
 
         DabValue value;
-        value.data.type          = TYPE_METHOD;
-        value.data.legacy_string = symbol_str;
+        value.data.type   = TYPE_METHOD;
+        value.data.fixnum = symbol;
 
         register_set(out_reg, value);
         break;

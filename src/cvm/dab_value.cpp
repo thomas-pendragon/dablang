@@ -222,10 +222,15 @@ std::string DabValue::literal_string() const
 
 std::string DabValue::string() const
 {
-    bool legacy  = data.type == TYPE_STRING || data.type == TYPE_METHOD;
+    bool legacy  = data.type == TYPE_STRING;
     bool literal = data.type == TYPE_LITERALSTRING;
-    assert(legacy || literal);
-    if (legacy)
+    bool method  = data.type == TYPE_METHOD;
+    assert(legacy || literal || method);
+    if (data.type == TYPE_METHOD)
+    {
+        return $VM->get_symbol(data.fixnum);
+    }
+    else if (legacy)
     {
         return data.legacy_string;
     }
