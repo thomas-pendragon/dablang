@@ -94,7 +94,7 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
   def formatted_source(options)
     val = value.formatted_source(options)
     args = _formatted_arguments(options)
-    ret = if real_identifier == :[]
+    ret = if real_identifier == '[]'
             "#{val}[#{args}]"
           else
             "#{val}.#{real_identifier}(#{args})"

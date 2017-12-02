@@ -59,18 +59,18 @@ describe DabNode do
   end
 
   it 'list previous nodes 1' do
-    expect(@left.previous_nodes(DabNode).map(&:symbol)).to eq %i[top]
+    expect(@left.previous_nodes(DabNode).map(&:symbol)).to eq %w[top]
   end
 
   it 'lists previous nodes 2' do
-    expect(@l2.previous_nodes(DabNode).map(&:symbol)).to eq %i[top left l1 subl1]
+    expect(@l2.previous_nodes(DabNode).map(&:symbol)).to eq %w[top left l1 subl1]
   end
 
   it 'list following nodes 1' do
-    expect(@l2.following_nodes(DabNode).map(&:symbol)).to eq %i[l3]
+    expect(@l2.following_nodes(DabNode).map(&:symbol)).to eq %w[l3]
   end
 
   it 'list following nodes 1 unscoped' do
-    expect(@l2.following_nodes(DabNode, unscoped: true).map(&:symbol)).to eq %i[l3 right r1 r2 r3 subr3]
+    expect(@l2.following_nodes(DabNode, unscoped: true).map(&:symbol)).to eq %w[l3 right r1 r2 r3 subr3]
   end
 end

@@ -1,3 +1,15 @@
+class String
+  def to_stringy
+    self
+  end
+end
+
+class Symbol
+  def to_stringy
+    to_s
+  end
+end
+
 class SourceString < String
   attr_accessor :source_file
   attr_accessor :source_line
