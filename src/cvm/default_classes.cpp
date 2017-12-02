@@ -36,6 +36,7 @@ void DabVM::predefine_default_classes()
     define_builtin_class("IntPtr", CLASS_INTPTR);
     define_builtin_class("ByteBuffer", CLASS_BYTEBUFFER);
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
+    define_builtin_class("DynamicString", CLASS_DYNAMICSTRING, CLASS_STRING);
 }
 
 void DabVM::define_default_classes()

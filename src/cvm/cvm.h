@@ -73,6 +73,7 @@ enum
     TYPE_INTPTR,
     TYPE_BYTEBUFFER,
     TYPE_LITERALSTRING,
+    TYPE_DYNAMICSTRING,
 };
 
 #include "../cshared/classes.h"
@@ -325,9 +326,13 @@ struct DabValue
 
     ~DabValue();
 
+    static DabValue allocate_dynstr(const char *str);
+
     std::vector<DabValue> &array() const;
     std::vector<uint8_t> & bytebuffer() const;
-    std::string            literal_string() const;
+
+    std::string literal_string() const;
+    std::string dynamic_string() const;
 
     std::string string() const;
 
@@ -340,7 +345,8 @@ struct DabValue
     bool is_object() const
     {
         return data.type == TYPE_OBJECT || data.type == TYPE_ARRAY ||
-               data.type == TYPE_BYTEBUFFER || data.type == TYPE_LITERALSTRING;
+               data.type == TYPE_BYTEBUFFER || data.type == TYPE_LITERALSTRING ||
+               data.type == TYPE_DYNAMICSTRING;
     }
 };
 
@@ -372,6 +378,11 @@ struct DabLiteralString : public DabBaseObject
 {
     const char *pointer = nullptr;
     size_t      length  = 0;
+};
+
+struct DabDynamicString : public DabBaseObject
+{
+    std::string value;
 };
 
 struct Stack

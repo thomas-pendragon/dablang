@@ -4,7 +4,7 @@ void DabValue::dump(FILE *file) const
 {
     static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "CLAS", "OBJE",
                                   "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8", "IN16",
-                                  "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR"};
+                                  "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR", "DSTR"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -71,6 +71,9 @@ dab_class_t DabValue::class_index() const
     case TYPE_LITERALSTRING:
         return CLASS_LITERALSTRING;
         break;
+    case TYPE_DYNAMICSTRING:
+        return CLASS_DYNAMICSTRING;
+        break;
     default:
         fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
         assert(false);
@@ -132,16 +135,6 @@ std::string DabValue::print_value(bool debug) const
     case TYPE_INT64:
         snprintf(buffer, sizeof(buffer), "%" PRId64, data.num_int64);
         break;
-    case TYPE_STRING:
-    {
-        use_ret = true;
-        ret     = string();
-        if (debug)
-        {
-            ret = "\"" + ret + "\"";
-        }
-    }
-    break;
     case TYPE_BOOLEAN:
         snprintf(buffer, sizeof(buffer), "%s", data.boolean ? "true" : "false");
         break;
@@ -172,10 +165,12 @@ std::string DabValue::print_value(bool debug) const
         ret += "]";
     }
     break;
+    case TYPE_STRING:
     case TYPE_LITERALSTRING:
+    case TYPE_DYNAMICSTRING:
     {
         use_ret = true;
-        ret     = literal_string();
+        ret     = string();
         if (debug)
         {
             ret = "\"" + ret + "\"";
@@ -218,6 +213,13 @@ std::string DabValue::literal_string() const
     assert(data.type == TYPE_LITERALSTRING);
     auto *obj = (DabLiteralString *)data.object->object;
     return std::string(obj->pointer, obj->length);
+}
+
+std::string DabValue::dynamic_string() const
+{
+    assert(data.type == TYPE_DYNAMICSTRING);
+    auto *obj = (DabDynamicString *)data.object->object;
+    return obj->value;
 }
 
 std::string DabValue::string() const
@@ -267,6 +269,8 @@ bool DabValue::truthy() const
         return array().size() > 0;
     case TYPE_LITERALSTRING:
         return literal_string().length();
+    case TYPE_DYNAMICSTRING:
+        return dynamic_string().length();
     default:
         return true;
     }
@@ -293,6 +297,11 @@ DabValue DabValue::create_instance() const
         object = new DabLiteralString;
         type   = TYPE_LITERALSTRING;
     }
+    else if (data.fixnum == CLASS_DYNAMICSTRING)
+    {
+        object = new DabDynamicString;
+        type   = TYPE_DYNAMICSTRING;
+    }
     else
     {
         object = new DabObject;
@@ -314,6 +323,18 @@ DabValue DabValue::create_instance() const
         fprintf(stderr, "\n");
     }
 
+    return ret;
+}
+
+DabValue DabValue::allocate_dynstr(const char *str)
+{
+    DabValue klass = $VM->get_class(CLASS_DYNAMICSTRING);
+
+    auto ret = klass.create_instance();
+
+    auto *obj = (DabDynamicString *)ret.data.object->object;
+
+    obj->value = str;
     return ret;
 }
 
