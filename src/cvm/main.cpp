@@ -1317,18 +1317,16 @@ void DabVM::instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
     auto &fun =
         use_static_func ? klass.get_static_function(symbol) : klass.get_instance_function(symbol);
 
+    void *block_address = nullptr;
     if (block_symbol != DAB_SYMBOL_NIL)
     {
         auto &blockfun = functions[block_symbol];
         assert(blockfun.regular);
-        _call_function(true, outreg, recv, fun, (int)(1 + n_args), (void *)blockfun.address,
-                       capture, reglist, return_value, stack_pos);
+        block_address = (void *)blockfun.address;
     }
-    else
-    {
-        _call_function(true, outreg, recv, fun, (int)(1 + n_args), nullptr, nullptr, reglist,
-                       return_value, stack_pos);
-    }
+
+    _call_function(true, outreg, recv, fun, (int)(1 + n_args), block_address, capture, reglist,
+                   return_value, stack_pos);
 }
 
 void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist)
