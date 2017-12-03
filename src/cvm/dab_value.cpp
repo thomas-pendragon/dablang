@@ -430,7 +430,8 @@ void DabValue::release()
         this->data.object->release(this);
         this->data.object = nullptr;
     }
-    this->data.type = TYPE_NIL;
+    this->data.type        = TYPE_NIL;
+    this->data._initialize = 0;
 }
 
 void DabValue::retain()
