@@ -54,6 +54,11 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
         fflush(options.output);
     }
 
+    if (!options.autorelease)
+    {
+        arg.release();
+    }
+
     register_set(out_reg, nullptr);
 }
 
