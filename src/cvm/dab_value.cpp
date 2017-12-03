@@ -318,7 +318,8 @@ DabValue DabValue::create_instance() const
 
     if ($VM->options.verbose)
     {
-        fprintf(stderr, "vm: proxy %p (strong %3d): ! created : ", proxy, (int)proxy->count_strong);
+        fprintf(stderr, "vm: proxy %p A (strong %3d): ! created : ", proxy,
+                (int)proxy->count_strong);
         ret.dump(stderr);
         fprintf(stderr, "\n");
     }
@@ -450,7 +451,7 @@ void DabObjectProxy::retain(DabValue *value)
     count_strong += 1;
     if ($VM->options.verbose)
     {
-        fprintf(stderr, "vm: proxy %p (strong %3d): + retained: ", this, (int)this->count_strong);
+        fprintf(stderr, "vm: proxy %p B (strong %3d): + retained: ", this, (int)this->count_strong);
         value->dump(stderr);
         fprintf(stderr, "\n");
     }
@@ -463,7 +464,7 @@ void DabObjectProxy::release(DabValue *value)
     count_strong -= 1;
     if ($VM->options.verbose)
     {
-        fprintf(stderr, "vm: proxy %p (strong %3d): - released: ", this, (int)this->count_strong);
+        fprintf(stderr, "vm: proxy %p B (strong %3d): - released: ", this, (int)this->count_strong);
         value->dump(stderr);
         fprintf(stderr, "\n");
     }
@@ -479,7 +480,7 @@ void DabObjectProxy::destroy(DabValue *value)
     this->destroying = true;
     if ($VM->options.verbose)
     {
-        fprintf(stderr, "vm: proxy %p (strong %3d): X destroy\n", this, (int)this->count_strong);
+        fprintf(stderr, "vm: proxy %p C (strong %3d): X destroy\n", this, (int)this->count_strong);
     }
     delete object;
     delete this;
