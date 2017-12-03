@@ -255,7 +255,12 @@ void DabVM::define_default_classes()
     array_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         auto inner = cinstcall(self, "join");
-        return std::string("[" + inner.string() + "]");
+        auto ret   = std::string("[" + inner.string() + "]");
+        if (!$VM->options.autorelease)
+        {
+            inner.release();
+        }
+        return ret;
     });
     array_class.add_reg_function("+", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
