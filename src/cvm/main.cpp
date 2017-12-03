@@ -1295,12 +1295,13 @@ void DabVM::add_class(const std::string &name, int index, int parent_index)
 DabValue DabVM::cinstcall(DabValue self, const std::string &name)
 {
     auto stack_pos = stackframes.size();
+    auto symbol    = get_or_create_symbol_index(name);
 
     DabValue ret;
     auto     outreg = 0;
     auto     copy   = register_get(outreg);
-    instcall(self, get_or_create_symbol_index(name), 0, DAB_SYMBOL_NIL, nullptr, outreg, {}, &ret,
-             stack_pos);
+
+    instcall(self, symbol, 0, DAB_SYMBOL_NIL, nullptr, outreg, {}, &ret, stack_pos);
     register_set(outreg, copy);
     return ret;
 }
