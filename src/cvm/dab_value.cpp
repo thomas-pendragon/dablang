@@ -356,8 +356,8 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol)
 
 DabValue DabValue::get_instvar(dab_symbol_t symbol)
 {
-    auto name = $VM->get_symbol(symbol);
     auto ret  = _get_instvar(symbol);
+    auto name = $VM->get_symbol(symbol);
     if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
@@ -368,10 +368,12 @@ DabValue DabValue::get_instvar(dab_symbol_t symbol)
     return ret;
 }
 
-void DabValue::set_instvar(const std::string &name, const DabValue &value)
+void DabValue::set_instvar(dab_symbol_t symbol, const DabValue &value)
 {
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
+
+    auto name = $VM->get_symbol(symbol);
 
     if ($VM->options.verbose)
     {

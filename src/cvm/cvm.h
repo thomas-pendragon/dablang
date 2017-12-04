@@ -205,7 +205,7 @@ struct DabValue
     DabValue _get_instvar(dab_symbol_t symbol);
     DabValue get_instvar(dab_symbol_t symbol);
 
-    void set_instvar(const std::string &name, const DabValue &value);
+    void set_instvar(dab_symbol_t symbol, const DabValue &value);
 
     void set_data(const DabValueData &other_data);
 
@@ -639,7 +639,7 @@ struct DabVM
                                    dab_class_t superclass_index = CLASS_OBJECT);
 
     void get_instvar(dab_symbol_t symbol, dab_register_t out_reg);
-    void set_instvar(const std::string &name, const DabValue &value);
+    void set_instvar(dab_symbol_t symbol, const DabValue &value);
 
     void extract(const std::string &name);
 

@@ -1083,9 +1083,8 @@ bool DabVM::execute_single(Stream &input)
     {
         auto symbol = input.read_symbol();
         auto reg    = input.read_reg();
-        auto name   = get_symbol(symbol);
         auto value  = register_get(reg);
-        set_instvar(name, value);
+        set_instvar(symbol, value);
         break;
     }
     case OP_STACK_RESERVE:
@@ -1143,9 +1142,9 @@ void DabVM::get_instvar(dab_symbol_t symbol, dab_register_t out_reg)
     register_set(out_reg, value);
 }
 
-void DabVM::set_instvar(const std::string &name, const DabValue &value)
+void DabVM::set_instvar(dab_symbol_t symbol, const DabValue &value)
 {
-    get_self().set_instvar(name, value);
+    get_self().set_instvar(symbol, value);
 }
 
 DabValue DabVM::cast(const DabValue &value, int klass_index)
