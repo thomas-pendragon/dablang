@@ -357,7 +357,7 @@ struct DabBaseObject
 
 struct DabObject : public DabBaseObject
 {
-    std::map<std::string, DabValue> instvars;
+    std::map<dab_symbol_t, DabValue> instvars;
 };
 
 struct DabArray : public DabBaseObject

@@ -337,8 +337,6 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol)
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
-    auto name = $VM->get_symbol(symbol);
-
     if (!this->data.object->object)
     {
         return DabValue(nullptr);
@@ -347,19 +345,20 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol)
     auto  object   = (DabObject *)this->data.object->object;
     auto &instvars = object->instvars;
 
-    if (!instvars.count(name))
+    if (!instvars.count(symbol))
     {
         return DabValue(nullptr);
     }
-    return instvars[name];
+    return instvars[symbol];
 }
 
 DabValue DabValue::get_instvar(dab_symbol_t symbol)
 {
-    auto ret  = _get_instvar(symbol);
-    auto name = $VM->get_symbol(symbol);
+    auto ret = _get_instvar(symbol);
     if ($VM->options.verbose)
     {
+        auto name = $VM->get_symbol(symbol);
+
         fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
                 (int)this->data.object->count_strong, name.c_str());
         ret.print(stderr);
@@ -373,10 +372,10 @@ void DabValue::set_instvar(dab_symbol_t symbol, const DabValue &value)
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
 
-    auto name = $VM->get_symbol(symbol);
-
     if ($VM->options.verbose)
     {
+        auto name = $VM->get_symbol(symbol);
+
         fprintf(stderr, "vm: proxy %p (strong %d): Set instvar <%s> to ", this->data.object,
                 (int)this->data.object->count_strong, name.c_str());
         value.print(stderr);
@@ -388,9 +387,9 @@ void DabValue::set_instvar(dab_symbol_t symbol, const DabValue &value)
         return;
     }
 
-    auto  object   = (DabObject *)this->data.object->object;
-    auto &instvars = object->instvars;
-    instvars[name] = value;
+    auto  object     = (DabObject *)this->data.object->object;
+    auto &instvars   = object->instvars;
+    instvars[symbol] = value;
 }
 
 void DabValue::set_data(const DabValueData &other_data)
