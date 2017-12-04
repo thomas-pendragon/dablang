@@ -41,6 +41,6 @@ nil: NilClass
 a: String [true]
 true: Boolean [true]
 false: Boolean
-: String
-foo: String [true]
+: DynamicString
+foo: DynamicString [true]
 #MyObject: MyObject [true]

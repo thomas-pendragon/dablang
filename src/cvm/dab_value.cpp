@@ -224,17 +224,19 @@ std::string DabValue::dynamic_string() const
 
 std::string DabValue::string() const
 {
-    bool legacy  = data.type == TYPE_STRING;
+    bool legacy = data.type == TYPE_STRING;
+    assert(!legacy);
+    bool dynamic = data.type == TYPE_DYNAMICSTRING;
     bool literal = data.type == TYPE_LITERALSTRING;
     bool method  = data.type == TYPE_METHOD;
-    assert(legacy || literal || method);
+    assert(literal || method || dynamic);
     if (data.type == TYPE_METHOD)
     {
         return $VM->get_symbol(data.fixnum);
     }
-    else if (legacy)
+    else if (dynamic)
     {
-        return data.legacy_string;
+        return dynamic_string();
     }
     else
     {

@@ -23,7 +23,7 @@ main
 
 ## EXPECT OK
 
-'' (String)
-'allocated string' (String)
+'' (DynamicString)
+'allocated string' (DynamicString)
 '' (String)
 'literal string' (String)

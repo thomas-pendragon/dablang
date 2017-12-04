@@ -1256,17 +1256,11 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
     else if (from == CLASS_INTPTR && to == CLASS_STRING)
     {
-        DabValue copy;
-        copy.data.type          = TYPE_STRING;
-        copy.data.legacy_string = (const char *)value.data.intptr;
-        return copy;
+        return DabValue::allocate_dynstr((const char *)value.data.intptr);
     }
     else if (from == CLASS_LITERALSTRING && to == CLASS_STRING)
     {
-        DabValue copy;
-        copy.data.type          = TYPE_STRING;
-        copy.data.legacy_string = value.string();
-        return copy;
+        return DabValue::allocate_dynstr(value.string().c_str());
     }
     else
     {

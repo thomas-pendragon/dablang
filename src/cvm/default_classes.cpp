@@ -115,8 +115,7 @@ void DabVM::define_default_classes()
     string_class.add_static_reg_function("new", [](DabValue, std::vector<DabValue> args) {
         auto argc = args.size();
         assert(argc <= 2);
-        DabValue ret_value;
-        ret_value.data.type = TYPE_STRING;
+        std::string s;
         if (argc == 2)
         {
             auto        arg1   = $VM->cast(args[0], CLASS_BYTEBUFFER);
@@ -125,14 +124,14 @@ void DabVM::define_default_classes()
             const auto  length = arg2.data.fixnum;
             if (length)
             {
-                ret_value.data.legacy_string = std::string((const char *)&buffer[0], length);
+                s = std::string((const char *)&buffer[0], length);
             }
         }
         else if (argc == 1)
         {
-            ret_value.data.legacy_string = args[0].string();
+            s = args[0].string();
         }
-        return ret_value;
+        return DabValue::allocate_dynstr(s.c_str());
     });
     string_class.add_reg_function("to_s", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);

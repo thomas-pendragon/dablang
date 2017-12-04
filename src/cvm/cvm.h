@@ -186,8 +186,6 @@ struct DabValueData
         DabObjectProxy *object;
         void *          intptr;
     };
-
-    std::string legacy_string;
 };
 
 struct DabValue
@@ -223,10 +221,8 @@ struct DabValue
     {
         data.type = TYPE_NIL;
     }
-    DabValue(const std::string &value)
+    DabValue(const std::string &value) : DabValue(CLASS_DYNAMICSTRING, value.c_str())
     {
-        data.type          = TYPE_STRING;
-        data.legacy_string = value;
     }
     DabValue(const DabClass &klass)
     {
@@ -316,9 +312,10 @@ struct DabValue
     }
     DabValue(size_t class_index, const char *value)
     {
-        assert(class_index == CLASS_STRING);
-        data.type          = TYPE_STRING;
-        data.legacy_string = value;
+        data.type = TYPE_NIL;
+        assert(class_index == CLASS_DYNAMICSTRING);
+        auto obj = allocate_dynstr(value);
+        std::swap(data, obj.data);
     }
 
     DabValue(const DabValue &other);
