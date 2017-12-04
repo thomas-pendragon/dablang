@@ -5,7 +5,6 @@
 - register management (remove register stack)
 - Ring support (look up java annotation processing)
 - dumping low-level ring code for inspection
-- dynamic string class
 
 ## Parser ##
 
