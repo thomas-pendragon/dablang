@@ -2,9 +2,9 @@
 
 void DabValue::dump(FILE *file) const
 {
-    static const char *types[] = {"INVA", "FIXN", "STRI", "BOOL", "NIL ", "CLAS", "OBJE",
-                                  "ARRY", "UIN8", "UI16", "UI32", "UI64", "INT8", "IN16",
-                                  "IN32", "IN64", "METH", "PTR*", "BYT*", "CSTR", "DSTR"};
+    static const char *types[] = {"INVA", "FIXN", "BOOL", "NIL ", "CLAS", "OBJE", "ARRY",
+                                  "UIN8", "UI16", "UI32", "UI64", "INT8", "IN16", "IN32",
+                                  "IN64", "METH", "PTR*", "BYT*", "CSTR", "DSTR"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -16,9 +16,6 @@ dab_class_t DabValue::class_index() const
     {
     case TYPE_FIXNUM:
         return CLASS_FIXNUM;
-        break;
-    case TYPE_STRING:
-        return CLASS_STRING;
         break;
     case TYPE_BOOLEAN:
         return CLASS_BOOLEAN;
@@ -165,7 +162,6 @@ std::string DabValue::print_value(bool debug) const
         ret += "]";
     }
     break;
-    case TYPE_STRING:
     case TYPE_LITERALSTRING:
     case TYPE_DYNAMICSTRING:
     {
@@ -224,8 +220,6 @@ std::string DabValue::dynamic_string() const
 
 std::string DabValue::string() const
 {
-    bool legacy = data.type == TYPE_STRING;
-    assert(!legacy);
     bool dynamic = data.type == TYPE_DYNAMICSTRING;
     bool literal = data.type == TYPE_LITERALSTRING;
     bool method  = data.type == TYPE_METHOD;
@@ -258,9 +252,6 @@ bool DabValue::truthy() const
         return data.num_uint64;
     case TYPE_INT32:
         return data.num_int32;
-    case TYPE_STRING:
-        return string().length();
-        break;
     case TYPE_BOOLEAN:
         return data.boolean;
     case TYPE_INTPTR:

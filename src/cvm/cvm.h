@@ -55,7 +55,6 @@ enum
 {
     TYPE_INVALID = 0,
     TYPE_FIXNUM,
-    TYPE_STRING,
     TYPE_BOOLEAN,
     TYPE_NIL,
     TYPE_CLASS,
