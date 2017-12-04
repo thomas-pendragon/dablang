@@ -230,7 +230,7 @@ std::string DabValue::string() const
     bool literal = data.type == TYPE_LITERALSTRING;
     bool method  = data.type == TYPE_METHOD;
     assert(literal || method || dynamic);
-    if (data.type == TYPE_METHOD)
+    if (method)
     {
         return $VM->get_symbol(data.fixnum);
     }
