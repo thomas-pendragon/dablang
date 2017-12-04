@@ -202,8 +202,8 @@ struct DabValue
 
     bool truthy() const;
 
-    DabValue _get_instvar(const std::string &name);
-    DabValue get_instvar(const std::string &name);
+    DabValue _get_instvar(dab_symbol_t symbol);
+    DabValue get_instvar(dab_symbol_t symbol);
 
     void set_instvar(const std::string &name, const DabValue &value);
 
@@ -638,7 +638,7 @@ struct DabVM
     DabClass &define_builtin_class(const std::string &name, dab_class_t class_index,
                                    dab_class_t superclass_index = CLASS_OBJECT);
 
-    void get_instvar(const std::string &name, dab_register_t out_reg);
+    void get_instvar(dab_symbol_t symbol, dab_register_t out_reg);
     void set_instvar(const std::string &name, const DabValue &value);
 
     void extract(const std::string &name);

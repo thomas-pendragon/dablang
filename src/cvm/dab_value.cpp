@@ -332,10 +332,12 @@ DabValue DabValue::allocate_dynstr(const char *str)
     return ret;
 }
 
-DabValue DabValue::_get_instvar(const std::string &name)
+DabValue DabValue::_get_instvar(dab_symbol_t symbol)
 {
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
+
+    auto name = $VM->get_symbol(symbol);
 
     if (!this->data.object->object)
     {
@@ -352,9 +354,10 @@ DabValue DabValue::_get_instvar(const std::string &name)
     return instvars[name];
 }
 
-DabValue DabValue::get_instvar(const std::string &name)
+DabValue DabValue::get_instvar(dab_symbol_t symbol)
 {
-    auto ret = _get_instvar(name);
+    auto name = $VM->get_symbol(symbol);
+    auto ret  = _get_instvar(symbol);
     if ($VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%s> -> ", this->data.object,
