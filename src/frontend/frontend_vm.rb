@@ -77,9 +77,17 @@ class VMFrontend
     testcase.gsub!(/\$([^\s]+)/) do |_match|
       output = $1
       part = temp_file("part#{index}")
-      index += 1
       extract_vm_part(bin, part, output, runoptions)
-      File.open(part).read.strip
+      chunk = File.open(part).read
+      if output == 'dumpvm'
+        part_bin = temp_file("part#{index}.bin")
+        part_asm = temp_file("part#{index}.asm")
+        File.open(part_bin, 'wb') { |f| f << chunk }
+        disassemble(part_bin, part_asm, '--with-headers --no-numbers')
+        chunk = File.read(part_asm)
+      end
+      index += 1
+      chunk.strip
     end
 
     compare_output(info, testcase, expected)

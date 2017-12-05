@@ -1,0 +1,51 @@
+## DAB CODE
+
+func main()
+{
+  print("foo");
+}
+
+## OPTIONS
+
+--noraw
+
+## TESTCASE
+
+$dumpvm
+
+## EXPECT
+
+/* disasm */
+    W_HEADER 2
+    W_SECTION _DATA, "data"
+    W_SECTION _DATA2, "data"
+    W_SECTION _SYMB, "symb"
+    W_SECTION _CODE, "code"
+    W_SECTION _FUNC, "func"
+    W_END_HEADER
+
+_DATA:
+    W_BYTE 102
+    W_BYTE 111
+    W_BYTE 111
+    W_BYTE 0
+
+_DATA2:
+    W_BYTE 109
+    W_BYTE 97
+    W_BYTE 105
+    W_BYTE 110
+    W_BYTE 0
+
+_SYMB:
+    W_SYMBOL 196
+
+_CODE:
+    NOP 
+    STACK_RESERVE 0
+    LOAD_STRING R0, 192, 3
+    SYSCALL RNIL, 0, R0
+    RETURN RNIL
+
+_FUNC:
+    W_METHOD 0, -1, 210

@@ -664,6 +664,8 @@ struct DabVM
     DabValue cinstcall(DabValue self, const std::string &name);
 
     void define_default_classes_int();
+
+    void dump_vm(FILE *out);
 };
 
 struct DabVM_debug

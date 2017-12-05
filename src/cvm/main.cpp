@@ -48,7 +48,7 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
         arg.print(stderr);
         fprintf(stderr, " ]\n");
     }
-    if (!options.coverage_testing)
+    if (!options.coverage_testing && options.extract_part != "dumpvm")
     {
         arg.print(options.output);
         fflush(options.output);
@@ -1135,6 +1135,10 @@ void DabVM::extract(const std::string &name)
     else if (name == "reg[1]")
     {
         register_get(1).dump(output);
+    }
+    else if (name == "dumpvm")
+    {
+        dump_vm(output);
     }
     else
     {

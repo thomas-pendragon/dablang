@@ -165,7 +165,7 @@ module BaseFrontend
   end
 end
 
-def disassemble(input, output, disasm_options)
+def disassemble(input, output, disasm_options = '')
   describe_action(input, output, 'disassemble') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
