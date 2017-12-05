@@ -76,7 +76,7 @@ class VMFrontend
     index = 0
     testcase.gsub!(/\$([^\s]+)/) do |_match|
       output = $1
-      part = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext(".part#{index}")).to_s
+      part = temp_file("part#{index}")
       index += 1
       extract_vm_part(bin, part, output, runoptions)
       File.open(part).read.strip
