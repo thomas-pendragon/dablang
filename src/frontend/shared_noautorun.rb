@@ -164,3 +164,12 @@ module BaseFrontend
     Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.' + extension)).to_s
   end
 end
+
+def disassemble(input, output, disasm_options)
+  describe_action(input, output, 'disassemble') do
+    input = input.to_s.shellescape
+    output = output.to_s.shellescape
+    cmd = "timeout 10 ./bin/cdisasm #{disasm_options} < #{input} > #{output}"
+    psystem_noecho cmd
+  end
+end

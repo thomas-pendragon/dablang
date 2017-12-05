@@ -16,15 +16,6 @@ def extract_format_source(input, output)
   end
 end
 
-def disassemble(input, output, disasm_options)
-  describe_action(input, output, 'disassemble') do
-    input = input.to_s.shellescape
-    output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cdisasm #{disasm_options} < #{input} > #{output}"
-    psystem_noecho cmd
-  end
-end
-
 def compare_files(file1, file2)
   body1 = File.read(file1)
   body2 = File.read(file2)
