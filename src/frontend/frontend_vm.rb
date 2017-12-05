@@ -9,9 +9,9 @@ class VMFrontend
     base_read_test_file(fname)
   end
 
-  def extract_format_source(input, output)
+  def extract_format_source(input, output, source = :code)
     describe_action(input, output, 'extract source') do
-      text = read_test_file(input)[:code]
+      text = read_test_file(input)[source]
       File.open(output, 'wb') do |file|
         file << text
         file << "\n"
@@ -54,12 +54,20 @@ class VMFrontend
     puts info
     FileUtils.mkdir_p(test_output_dir)
 
+    dab = temp_file('dab')
     asm = temp_file('asm')
     bin = temp_file('bin')
     out = temp_file('out')
     FileUtils.rm(out) if File.exist?(out)
 
-    extract_format_source(input, asm)
+    if data[:dab_code]
+      compile_options = ''
+      extract_format_source(input, dab, :dab_code)
+      compile_dab_to_asm([dab], asm, compile_options)
+    else
+      extract_format_source(input, asm)
+    end
+
     assemble(asm, bin, assemble_options)
 
     testcase = data[:testcase]

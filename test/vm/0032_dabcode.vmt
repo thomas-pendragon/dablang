@@ -1,0 +1,18 @@
+## DAB CODE
+
+func main()
+{
+  print("foo");
+}
+
+## OPTIONS
+
+--noraw
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+foo
