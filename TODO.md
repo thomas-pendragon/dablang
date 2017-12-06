@@ -1,5 +1,6 @@
 ## PRIORITIES ##
 
+- let VM dump its binary image
 - example: generate database model entities from schema
 
 - register management (remove register stack)
