@@ -1,6 +1,7 @@
 ## PRIORITIES ##
 
 - let VM dump its binary image
+- let VM modify its internal functions and classes
 - example: generate database model entities from schema
 
 - register management (remove register stack)
