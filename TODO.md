@@ -2,6 +2,7 @@
 
 - let VM dump its binary image
 - let VM modify its internal functions and classes
+- multi layer example
 - example: generate database model entities from schema
 
 - register management (remove register stack)
