@@ -179,20 +179,6 @@ class OutputStream
     @stream.print(data)
   end
 
-  def finalize(raw)
-    length = @code.length
-    crc = 0
-
-    unless raw
-      _write('DAB')
-      write_uint64(@metadata_source.compiler_version)
-      write_uint64(@metadata_source.vm_version)
-      write_uint64(length)
-      write_uint64(crc)
-    end
-    _write(@code)
-  end
-
   def finalize_newformat(raw, version, sections, labels)
     unless raw
       _write('DAB')
@@ -311,7 +297,7 @@ class Parser
     end
   end
 
-  def run!(newformat, raw)
+  def run!(raw)
     @sections = []
     @header_version = nil
     @header_finished = false
@@ -367,7 +353,7 @@ class Parser
           raise 'unknown W_ op'
         end
       else
-        raise 'header not finished yet' if !raw && newformat && !@header_finished
+        raise 'header not finished yet' if !raw && !@header_finished
         if line[0] == 'JMP_IF'
           @jump_corrections2 << [pos, line[2].to_s]
           @jump_corrections3 << [pos, line[3].to_s]
@@ -386,27 +372,21 @@ class Parser
     @output_stream.fix_jumps(@label_positions, @jump_corrections, 0)
     @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
     @output_stream.fix_jumps(@label_positions, @jump_corrections3, 2)
-    if newformat
-      @output_stream.finalize_newformat(raw, @header_version, @sections, @label_positions)
-    else
-      @output_stream.finalize(raw)
-    end
+    @output_stream.finalize_newformat(raw, @header_version, @sections, @label_positions)
   end
 end
 
-def run_tobinary(input, output, debug, newformat, raw)
+def run_tobinary(input, output, debug, _newformat, raw)
   $debug = debug
   input = InputStream.new(input)
   output = OutputStream.new(output)
   parser = Parser.new(input, output)
-  newformat = true
-  parser.run!(newformat, raw)
+  parser.run!(raw)
 end
 
 if $autorun
   read_args!
   debug = $settings[:debug]
-  newformat = true
   raw = $settings[:raw]
-  run_tobinary(STDIN, STDOUT, debug, newformat, raw)
+  run_tobinary(STDIN, STDOUT, debug, true, raw)
 end
