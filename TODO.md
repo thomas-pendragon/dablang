@@ -1,5 +1,7 @@
 ## PRIORITIES ##
 
+- fix Test CI stage, should not rebuild binaries
+
 1. Ring support (look up java annotation processing)
   - let VM dump its binary image (+ tests)
   - let VM modify its internal functions and classes
