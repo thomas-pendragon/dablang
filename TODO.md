@@ -1,16 +1,17 @@
 ## PRIORITIES ##
 
-- fix Test CI stage, should not rebuild binaries
+1. fix Test CI stage, should not rebuild binaries
 
-1. Ring support (look up java annotation processing)
+2. Ring support (look up java annotation processing)
   - let VM dump its binary image (+ tests)
+    - dynamic dump, recreate segments
   - let VM modify its internal functions and classes
   - multi layer example
 
-- example: generate database model entities from schema
+3. example: generate database model entities from schema
 
-- register management (remove register stack)
-- dumping low-level ring code for inspection
+4. register management (remove register stack)
+5. dumping low-level ring code for inspection
 
 ## Parser ##
 
