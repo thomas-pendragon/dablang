@@ -25,17 +25,10 @@ $dumpvm
     W_END_HEADER
 
 _DATA:
-    W_BYTE 102
-    W_BYTE 111
-    W_BYTE 111
-    W_BYTE 0
+    W_STRING "foo"
 
 _SYMD:
-    W_BYTE 109
-    W_BYTE 97
-    W_BYTE 105
-    W_BYTE 110
-    W_BYTE 0
+    W_STRING "main"
 
 _SYMB:
     W_SYMBOL 196

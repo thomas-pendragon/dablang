@@ -35,6 +35,8 @@
 
 ## Disasm
 
+- test for dumping strings as strings, not bytes
+
 ## new assembly format
 
 - FUNC section should be allowed before actual functions

@@ -62,15 +62,47 @@ void parse_data_substream(Stream &input_stream)
 
     AsmStream<StreamReader> stream(reader);
 
+    std::string string;
+    bool        use_string = false;
+
     while (true)
     {
         try
         {
-            unsigned char byte = stream.read_uint8();
-            fprintf(output, "    W_BYTE %d\n", (int)byte);
+            unsigned char byte  = stream.read_uint8();
+            bool          ascii = byte >= 32 && byte <= 127;
+
+            if (ascii)
+            {
+                use_string = true;
+                string += byte;
+            }
+            else if (use_string)
+            {
+                use_string = false;
+                if (byte == 0)
+                {
+                    fprintf(output, "    W_STRING \"%s\"\n", string.c_str());
+                }
+                else
+                {
+                    for (auto ch : string)
+                    {
+                        fprintf(output, "    W_BYTE %d\n", (int)ch);
+                    }
+
+                    fprintf(output, "    W_BYTE %d\n", (int)byte);
+                }
+                string = "";
+            }
+            else
+            {
+                fprintf(output, "    W_BYTE %d\n", (int)byte);
+            }
         }
         catch (EOFError)
         {
+            assert(!use_string);
             break;
         }
     }
