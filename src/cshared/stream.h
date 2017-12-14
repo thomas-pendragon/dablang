@@ -41,6 +41,15 @@ struct dab_register_t
     }
 };
 
+#pragma pack(push, 1)
+struct BinFunction
+{
+    uint16_t symbol;
+    uint16_t klass;
+    uint64_t address;
+};
+#pragma pack(pop)
+
 struct BinSection
 {
     char     name[4];
