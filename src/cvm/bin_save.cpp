@@ -26,14 +26,20 @@ void DabVM::dump_vm(FILE *out)
     dump_header.size_of_header = sizeof(BinHeader) + dump_sections.size() * sizeof(BinSection);
     dump_header.section_count  = dump_sections.size();
 
+    auto new_pos = dump_header.size_of_header;
+
     for (auto &section : sections)
     {
         auto pos    = section.pos;
         auto length = section.length;
 
+        section.pos = new_pos;
+
         auto ptr = instructions.raw_base_data() + pos;
 
         _twrite(dump_data, (byte *)ptr, length);
+
+        new_pos += length;
     }
 
     dump_header.size_of_data = dump_data.size();
