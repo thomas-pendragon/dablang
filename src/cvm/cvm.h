@@ -494,8 +494,6 @@ struct DabVM
 {
     DabRunOptions options;
 
-    size_t data_address = 0;
-
     bool       shutdown = false;
     DabVMReset reset;
     Coverage   coverage;
@@ -628,7 +626,7 @@ struct DabVM
 
     void read_coverage_files(Stream &stream, size_t address, size_t length);
 
-    void read_symbols(Stream &input, size_t symb_address, size_t symb_length, size_t data_address);
+    void read_symbols(Stream &input, size_t symb_address, size_t symb_length);
 
     void instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
                   dab_symbol_t block_symbol = DAB_SYMBOL_NIL, const DabValue &capture = nullptr,

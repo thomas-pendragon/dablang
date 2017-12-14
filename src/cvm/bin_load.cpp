@@ -68,10 +68,6 @@ void DabVM::load_newformat(Stream &input)
             symb_length  = length;
             has_symbols  = true;
         }
-        if (name == "data")
-        {
-            data_address = address;
-        }
         if (name == "func" || name == "fext")
         {
             func_address  = address;
@@ -94,7 +90,7 @@ void DabVM::load_newformat(Stream &input)
 
     if (has_symbols)
     {
-        read_symbols(instructions, symb_address, symb_length, data_address);
+        read_symbols(instructions, symb_address, symb_length);
     }
 
     if (has_classes)
@@ -254,13 +250,9 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
     }
 }
 
-void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length,
-                         size_t data_address)
+void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length)
 {
-    (void)data_address;
-
-    fprintf(stderr, "symbad=%p symblen=%d data_address=%p\n", (void *)symb_address,
-            (int)symb_length, (void *)data_address);
+    fprintf(stderr, "symbad=%p symblen=%d\n", (void *)symb_address, (int)symb_length);
     const auto symbol_len = sizeof(uint64_t);
 
     auto n_symbols = symb_length / symbol_len;
