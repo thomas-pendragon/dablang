@@ -18,7 +18,7 @@ $dumpvm
 /* disasm */
     W_HEADER 2
     W_SECTION _DATA, "data"
-    W_SECTION _DATA2, "data"
+    W_SECTION _SYMD, "symd"
     W_SECTION _SYMB, "symb"
     W_SECTION _CODE, "code"
     W_SECTION _FUNC, "func"
@@ -30,7 +30,7 @@ _DATA:
     W_BYTE 111
     W_BYTE 0
 
-_DATA2:
+_SYMD:
     W_BYTE 109
     W_BYTE 97
     W_BYTE 105

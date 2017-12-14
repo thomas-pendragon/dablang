@@ -145,7 +145,7 @@ class DabNodeUnit < DabNode
     if constant_strings.count > 0
       output.print('W_SECTION', '_DATA', '"data"')
     end
-    output.print('W_SECTION', '_SDAT', '"data"')
+    output.print('W_SECTION', '_SDAT', '"symd"')
     output.print('W_SECTION', '_SYMB', '"symb"')
 
     custom_classes = @classes.to_a.reject(&:standard?)

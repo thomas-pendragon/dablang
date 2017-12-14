@@ -25,7 +25,7 @@ func main()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
-                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"

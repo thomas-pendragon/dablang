@@ -28,7 +28,7 @@ func main()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
-                                 W_SECTION _SDAT, "data"
+                                 W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _CODE, "code"

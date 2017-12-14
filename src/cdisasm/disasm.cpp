@@ -219,7 +219,7 @@ int main(int argc, char **argv)
             {
                 parse_substream(substream, section.pos, no_numbers);
             }
-            else if (with_headers && section_name == "data")
+            else if (with_headers && (section_name == "data" || section_name == "symd"))
             {
                 parse_data_substream(substream);
             }
