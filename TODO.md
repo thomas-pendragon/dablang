@@ -4,7 +4,8 @@
 
 2. Ring support (look up java annotation processing)
   - let VM dump its binary image (+ tests)
-    - dynamic dump, recreate segments
+    - dump symbols
+    - dump new functions
   - let VM modify its internal functions and classes
   - multi layer example
 
