@@ -19,6 +19,11 @@ struct AsmStream
     {
     }
 
+    size_t position() const
+    {
+        return reader.position();
+    }
+
     bool feof()
     {
         return reader.feof();

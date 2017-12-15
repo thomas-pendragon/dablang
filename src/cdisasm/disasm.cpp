@@ -55,7 +55,7 @@ void parse_substream(Stream &stream, size_t start, bool no_numbers)
     });
 }
 
-void parse_data_substream(Stream &input_stream)
+void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
 {
     size_t       position = 0;
     StreamReader reader(input_stream, position);
@@ -64,16 +64,22 @@ void parse_data_substream(Stream &input_stream)
 
     std::string string;
     bool        use_string = false;
+    size_t      string_pos = 0;
 
     while (true)
     {
         try
         {
+            auto          pos   = stream.position();
             unsigned char byte  = stream.read_uint8();
             bool          ascii = byte >= 32 && byte <= 127;
 
             if (ascii)
             {
+                if (!use_string)
+                {
+                    string_pos = pos;
+                }
                 use_string = true;
                 string += byte;
             }
@@ -82,22 +88,56 @@ void parse_data_substream(Stream &input_stream)
                 use_string = false;
                 if (byte == 0)
                 {
-                    fprintf(output, "    W_STRING \"%s\"\n", string.c_str());
+                    if (!no_numbers)
+                    {
+                        fprintf(output, "%8ld: ", start + string_pos);
+                    }
+                    else
+                    {
+                        fprintf(output, "    ");
+                    }
+                    fprintf(output, "W_STRING \"%s\"\n", string.c_str());
                 }
                 else
                 {
+                    size_t i = 0;
                     for (auto ch : string)
                     {
-                        fprintf(output, "    W_BYTE %d\n", (int)ch);
+                        if (!no_numbers)
+                        {
+                            fprintf(output, "%8ld: ", start + string_pos + i);
+                        }
+                        else
+                        {
+                            fprintf(output, "    ");
+                        }
+                        fprintf(output, "W_BYTE %d\n", (int)ch);
+                        i++;
                     }
 
-                    fprintf(output, "    W_BYTE %d\n", (int)byte);
+                    if (!no_numbers)
+                    {
+                        fprintf(output, "%8ld: ", start + string_pos);
+                    }
+                    else
+                    {
+                        fprintf(output, "    ");
+                    }
+                    fprintf(output, "W_BYTE %d\n", (int)byte);
                 }
                 string = "";
             }
             else
             {
-                fprintf(output, "    W_BYTE %d\n", (int)byte);
+                if (!no_numbers)
+                {
+                    fprintf(output, "%8ld: ", start + pos);
+                }
+                else
+                {
+                    fprintf(output, "    ");
+                }
+                fprintf(output, "W_BYTE %d\n", (int)byte);
             }
         }
         catch (EOFError)
@@ -108,7 +148,7 @@ void parse_data_substream(Stream &input_stream)
     }
 }
 
-void parse_symbol_substream(Stream &input_stream)
+void parse_symbol_substream(Stream &input_stream, size_t start, bool no_numbers)
 {
     size_t       position = 0;
     StreamReader reader(input_stream, position);
@@ -119,8 +159,17 @@ void parse_symbol_substream(Stream &input_stream)
     {
         try
         {
+            auto pos    = stream.position();
             auto symbol = stream.read_uint64();
-            fprintf(output, "    W_SYMBOL %" PRIu64 "\n", symbol);
+            if (!no_numbers)
+            {
+                fprintf(output, "%8ld: ", start + pos);
+            }
+            else
+            {
+                fprintf(output, "    ");
+            }
+            fprintf(output, "W_SYMBOL %" PRIu64 "\n", symbol);
         }
         catch (EOFError)
         {
@@ -253,11 +302,11 @@ int main(int argc, char **argv)
             }
             else if (with_headers && (section_name == "data" || section_name == "symd"))
             {
-                parse_data_substream(substream);
+                parse_data_substream(substream, section.pos, no_numbers);
             }
             else if (with_headers && section_name == "symb")
             {
-                parse_symbol_substream(substream);
+                parse_symbol_substream(substream, section.pos, no_numbers);
             }
             else if (with_headers && section_name == "func")
             {
