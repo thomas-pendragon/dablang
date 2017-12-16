@@ -29,7 +29,7 @@ OPCODES_ARRAY_BASE = [
     group: 'MOV',
     items:
     [
-      {name: 'MOV', args: %i[reg reg]}, # reg0 <- reg(arg1)
+      {name: 'MOV', args: %i[reg reg]}, # reg0 <- reg1
 
       {name: 'LOAD_NIL', args: %i[reg]}, # reg0 <- nil
       {name: 'LOAD_TRUE', args: %i[reg]}, # reg0 <- true
@@ -75,7 +75,7 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
 
-      {name: 'YIELD', args: %i[reg reglist]}, # yield(reg0..reg(argn))
+      {name: 'YIELD', args: %i[reg reglist]}, # reg0 <- yield(reg1..regN)
 
       {name: 'RETURN', args: %i[reg]}, # return(reg0)
     ],
