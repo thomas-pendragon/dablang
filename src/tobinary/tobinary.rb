@@ -359,7 +359,7 @@ class Parser
           @jump_corrections3 << [pos, line[3].to_s]
           line[2] = 0
           line[3] = 0
-        elsif line[0] == 'LOAD_FUNCTION' || line[0].start_with?('JMP')
+        elsif line[0].start_with?('JMP')
           @jump_corrections << [pos, line[1].to_s]
           line[1] = 0
         end
