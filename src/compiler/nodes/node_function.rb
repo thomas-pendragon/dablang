@@ -165,22 +165,6 @@ class DabNodeFunction < DabNode
     end
   end
 
-  def compile(output)
-    safe_identifier = identifier
-    safe_identifier = "\"#{identifier}\"" unless identifier =~ /^[a-zA-Z0-9_]+$/
-    output.printex(self, 'LOAD_FUNCTION', funclabel, safe_identifier, parent_class_index)
-    if $feature_reflection
-      return unless parent_class_index == -1 # TODO
-      arglist.each do |arg|
-        symbol = DabNodeSymbol.new(arg.identifier)
-        symbol.compile(output)
-        compile_function_description(output, arg.my_type)
-      end
-      compile_function_description(output, return_type)
-      output.printex(self, 'DESCRIBE_FUNCTION', identifier, arglist.count)
-    end
-  end
-
   def compile_function_description(output, type)
     identifier = type.type_string
     number = root.class_number(identifier)
