@@ -53,11 +53,11 @@ struct BinFunction
 struct BinSection
 {
     char     name[4];
-    uint32_t zero1;
-    uint32_t zero2;
-    uint32_t zero3;
-    uint64_t pos;
-    uint64_t length;
+    uint32_t zero1         = 0;
+    uint32_t zero2         = 0;
+    uint32_t special_index = 0;
+    uint64_t pos           = 0;
+    uint64_t length        = 0;
 };
 
 struct BinHeader

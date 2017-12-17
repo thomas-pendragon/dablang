@@ -23,17 +23,29 @@ static void _twrite(std::vector<byte> &out, std::vector<T> value)
     }
 }
 
+enum
+{
+    TEMP_REGULAR         = 0,
+    TEMP_FUNC_SECTION    = 1,
+    TEMP_SYMBOLS_SECTION = 2,
+    TEMP_SYMDATA_SECTION = 3,
+};
+
 void DabVM::dump_vm(FILE *out)
 {
     BinHeader               dump_header;
     std::vector<BinSection> dump_sections = sections;
     std::vector<byte>       dump_data;
 
-    dump_sections.erase(
-        std::remove_if(dump_sections.begin(), dump_sections.end(),
-                       [](BinSection section) { return std::string("func") == section.name; }));
+    dump_sections.erase(std::remove_if(dump_sections.begin(), dump_sections.end(),
+                                       [](BinSection section) {
+                                           std::string name = section.name;
+                                           return name == "func" || name == "symb" ||
+                                                  name == "symd";
+                                       }),
+                        dump_sections.end());
 
-    BinSection func_section;
+    BinSection func_section = {};
     memcpy(func_section.name, "func", 4);
     std::vector<BinFunction> dump_functions;
     for (auto it : functions)
@@ -47,11 +59,36 @@ void DabVM::dump_vm(FILE *out)
         bin_func.address = it.second.address;
         dump_functions.push_back(bin_func);
     }
-    func_section.zero1  = 0;
-    func_section.zero2  = 0;
-    func_section.zero3  = 1;
-    func_section.length = dump_functions.size() * sizeof(BinFunction);
+    func_section.special_index = TEMP_FUNC_SECTION;
+    func_section.length        = dump_functions.size() * sizeof(BinFunction);
 
+    BinSection symb_section;
+    memcpy(symb_section.name, "symb", 4);
+
+    BinSection symd_section;
+    memcpy(symd_section.name, "symd", 4);
+
+    std::vector<byte>     symd_data;
+    std::vector<uint64_t> symb_data;
+    for (auto sym : symbols)
+    {
+        auto pos = symd_data.size();
+        symb_data.push_back(pos);
+        for (char ch : sym)
+        {
+            symd_data.push_back(ch);
+        }
+        symd_data.push_back(0);
+    }
+    symb_section.special_index = TEMP_SYMBOLS_SECTION;
+    symb_section.length        = symb_data.size() * sizeof(uint64_t);
+
+    symd_section.special_index = TEMP_SYMDATA_SECTION;
+    symd_section.length        = symd_data.size();
+
+    dump_sections.push_back(symd_section);
+    auto symd_section_index = dump_sections.size() - 1;
+    dump_sections.push_back(symb_section);
     dump_sections.push_back(func_section);
 
     memcpy(dump_header.dab, "DAB\0", 4);
@@ -61,6 +98,12 @@ void DabVM::dump_vm(FILE *out)
 
     auto new_pos = dump_header.size_of_header;
 
+    auto code_offset = new_pos - instructions.peek_header()->size_of_header;
+    for (auto &func : dump_functions)
+    {
+        func.address += code_offset;
+    }
+
     for (auto &section : dump_sections)
     {
         auto pos    = section.pos;
@@ -68,18 +111,30 @@ void DabVM::dump_vm(FILE *out)
 
         section.pos = new_pos;
 
-        if (section.zero3 == 0)
+        if (section.special_index == TEMP_REGULAR)
         {
             auto ptr = instructions.raw_base_data() + pos;
 
             _twrite(dump_data, (byte *)ptr, length);
         }
-        else
+        else if (section.special_index == TEMP_FUNC_SECTION)
         {
             _twrite(dump_data, dump_functions);
         }
+        else if (section.special_index == TEMP_SYMDATA_SECTION)
+        {
+            _twrite(dump_data, symd_data);
+        }
+        else if (section.special_index == TEMP_SYMBOLS_SECTION)
+        {
+            for (auto &symb : symb_data)
+            {
+                symb += dump_sections[symd_section_index].pos;
+            }
+            _twrite(dump_data, symb_data);
+        }
 
-        section.zero3 = 0;
+        section.special_index = 0;
 
         new_pos += length;
     }

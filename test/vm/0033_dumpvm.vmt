@@ -36,9 +36,81 @@ _CODE:
 
 _SYMD:
     W_STRING "main"
+    W_STRING "new"
+    W_STRING "class"
+    W_STRING "to_s"
+    W_STRING "__construct"
+    W_STRING "__destruct"
+    W_STRING "is"
+    W_STRING "=="
+    W_STRING "upcase"
+    W_STRING "length"
+    W_STRING "[]"
+    W_STRING "+"
+    W_STRING "!="
+    W_STRING ">"
+    W_STRING ">="
+    W_STRING "<="
+    W_STRING "<"
+    W_STRING "-"
+    W_STRING "*"
+    W_STRING "/"
+    W_STRING "%"
+    W_STRING "<<"
+    W_STRING ">>"
+    W_STRING "|"
+    W_STRING "&"
+    W_STRING "byteswap"
+    W_STRING "fetch_int32"
+    W_STRING "count"
+    W_STRING "shift"
+    W_STRING "insert"
+    W_STRING "[]="
+    W_STRING "join"
+    W_STRING "__import_libc"
+    W_STRING "__import_sdl"
+    W_STRING "__import_pq"
+    W_STRING "||"
+    W_STRING "&&"
 
 _SYMB:
     W_SYMBOL 229
+    W_SYMBOL 234
+    W_SYMBOL 238
+    W_SYMBOL 244
+    W_SYMBOL 249
+    W_SYMBOL 261
+    W_SYMBOL 272
+    W_SYMBOL 275
+    W_SYMBOL 278
+    W_SYMBOL 285
+    W_SYMBOL 292
+    W_SYMBOL 295
+    W_SYMBOL 297
+    W_SYMBOL 300
+    W_SYMBOL 302
+    W_SYMBOL 305
+    W_SYMBOL 308
+    W_SYMBOL 310
+    W_SYMBOL 312
+    W_SYMBOL 314
+    W_SYMBOL 316
+    W_SYMBOL 318
+    W_SYMBOL 321
+    W_SYMBOL 324
+    W_SYMBOL 326
+    W_SYMBOL 328
+    W_SYMBOL 337
+    W_SYMBOL 349
+    W_SYMBOL 355
+    W_SYMBOL 361
+    W_SYMBOL 368
+    W_SYMBOL 372
+    W_SYMBOL 377
+    W_SYMBOL 391
+    W_SYMBOL 404
+    W_SYMBOL 416
+    W_SYMBOL 419
 
 _FUNC:
     W_METHOD 0, -1, 197
