@@ -15,22 +15,14 @@ func foo()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "allocated string" 
- 
-                   _SDAT:
-                                 W_STRING "foo" 
-                                 W_STRING "new" 
- 
-                   _SYMB:
-/* foo          */               W_SYMBOL _SDAT + 0 
-/* new          */               W_SYMBOL _SDAT + 4 
  
                    _CODE:
                                  NOP 
@@ -45,6 +37,14 @@ func foo()
                                  RELEASE R1
                                  RELEASE R2
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "foo" 
+                                 W_STRING "new" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
+/* new          */               W_SYMBOL _SDAT + 4 
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

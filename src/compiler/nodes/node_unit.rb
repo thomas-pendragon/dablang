@@ -145,15 +145,17 @@ class DabNodeUnit < DabNode
     if constant_strings.count > 0
       output.print('W_SECTION', '_DATA', '"data"')
     end
-    output.print('W_SECTION', '_SDAT', '"symd"')
-    output.print('W_SECTION', '_SYMB', '"symb"')
+
+    output.print('W_SECTION', '_CODE', '"code"')
 
     custom_classes = @classes.to_a.reject(&:standard?)
     unless custom_classes.empty?
       output.print('W_SECTION', '_CLAS', '"clas"')
     end
 
-    output.print('W_SECTION', '_CODE', '"code"')
+    output.print('W_SECTION', '_SDAT', '"symd"')
+    output.print('W_SECTION', '_SYMB', '"symb"')
+
     if $feature_reflection
       output.print('W_SECTION', '_FUNC', '"fext"')
     else
@@ -183,29 +185,6 @@ class DabNodeUnit < DabNode
       output.separate
     end
 
-    output.label('_SDAT')
-    pos = 0
-    constant_symbols.each do |constant|
-      constant.asm_position = pos
-      constant.compile_string(output)
-      pos += constant.asm_length
-    end
-    output.separate
-
-    output.label('_SYMB')
-    constant_symbols.each do |constant|
-      constant.compile_symbol(output)
-    end
-    output.separate
-
-    unless custom_classes.empty?
-      output.label('_CLAS')
-      custom_classes.sort_by(&:number).each do |klass|
-        klass.compile_definition(output)
-      end
-      output.separate
-    end
-
     output.label('_CODE')
     output.print('NOP')
     output.separate
@@ -220,6 +199,29 @@ class DabNodeUnit < DabNode
         output.separate
       end
     end
+
+    unless custom_classes.empty?
+      output.label('_CLAS')
+      custom_classes.sort_by(&:number).each do |klass|
+        klass.compile_definition(output)
+      end
+      output.separate
+    end
+
+    output.label('_SDAT')
+    pos = 0
+    constant_symbols.each do |constant|
+      constant.asm_position = pos
+      constant.compile_string(output)
+      pos += constant.asm_length
+    end
+    output.separate
+
+    output.label('_SYMB')
+    constant_symbols.each do |constant|
+      constant.compile_symbol(output)
+    end
+    output.separate
 
     output.label('_FUNC')
     @functions.sort_by(&:identifier).each do |function|

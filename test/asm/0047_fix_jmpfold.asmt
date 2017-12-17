@@ -16,19 +16,11 @@ func assert_equal(value)
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "!=" 
-                                 W_STRING "assert_equal" 
- 
-                   _SYMB:
-/* !=           */               W_SYMBOL _SDAT + 0 
-/* assert_equal */               W_SYMBOL _SDAT + 3 
  
                    _CODE:
                                  NOP 
@@ -39,6 +31,14 @@ func assert_equal(value)
 /* 1            */               LOAD_NUMBER R1, 1
 /* !=           */               INSTCALL RNIL, R0, S0, R1
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "!=" 
+                                 W_STRING "assert_equal" 
+ 
+                   _SYMB:
+/* !=           */               W_SYMBOL _SDAT + 0 
+/* assert_equal */               W_SYMBOL _SDAT + 3 
  
                    _FUNC:
 /* assert_equal */               W_METHOD 1, -1, Fassert_equal

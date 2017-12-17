@@ -34,29 +34,15 @@ func main()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "fun1" 
                                  W_STRING "fun2" 
- 
-                   _SDAT:
-                                 W_STRING "fun1" 
-                                 W_STRING "fun2" 
-                                 W_STRING "main" 
-                                 W_STRING "main_and" 
-                                 W_STRING "main_or" 
- 
-                   _SYMB:
-/* fun1         */               W_SYMBOL _SDAT + 0 
-/* fun2         */               W_SYMBOL _SDAT + 5 
-/* main         */               W_SYMBOL _SDAT + 10 
-/* main_and     */               W_SYMBOL _SDAT + 15 
-/* main_or      */               W_SYMBOL _SDAT + 24 
  
                    _CODE:
                                  NOP 
@@ -102,6 +88,20 @@ func main()
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "fun1" 
+                                 W_STRING "fun2" 
+                                 W_STRING "main" 
+                                 W_STRING "main_and" 
+                                 W_STRING "main_or" 
+ 
+                   _SYMB:
+/* fun1         */               W_SYMBOL _SDAT + 0 
+/* fun2         */               W_SYMBOL _SDAT + 5 
+/* main         */               W_SYMBOL _SDAT + 10 
+/* main_and     */               W_SYMBOL _SDAT + 15 
+/* main_or      */               W_SYMBOL _SDAT + 24 
  
                    _FUNC:
 /* fun1         */               W_METHOD 0, -1, Ffun1

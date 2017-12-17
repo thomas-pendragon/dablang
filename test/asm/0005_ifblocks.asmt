@@ -36,9 +36,9 @@ func foo(a, b)
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
@@ -47,12 +47,6 @@ func foo(a, b)
                                  W_STRING "!a && b" 
                                  W_STRING "a && !b" 
                                  W_STRING "a && b" 
- 
-                   _SDAT:
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -84,6 +78,12 @@ func foo(a, b)
                                  JMP L5
                    L5:
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

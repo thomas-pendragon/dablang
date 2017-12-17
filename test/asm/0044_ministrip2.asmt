@@ -23,23 +23,15 @@ func bar()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "got string" 
                                  W_STRING "str" 
- 
-                   _SDAT:
-                                 W_STRING "__foo_String" 
-                                 W_STRING "bar" 
- 
-                   _SYMB:
-/* __foo_String */               W_SYMBOL _SDAT + 0 
-/* bar          */               W_SYMBOL _SDAT + 13 
  
                    _CODE:
                                  NOP 
@@ -55,6 +47,14 @@ func bar()
 /* "str"        */               LOAD_STRING R0, _DATA + 11, 3
 /* __foo_String */               CALL RNIL, S0, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "__foo_String" 
+                                 W_STRING "bar" 
+ 
+                   _SYMB:
+/* __foo_String */               W_SYMBOL _SDAT + 0 
+/* bar          */               W_SYMBOL _SDAT + 13 
  
                    _FUNC:
 /* __foo_String */               W_METHOD 0, -1, F__foo_String

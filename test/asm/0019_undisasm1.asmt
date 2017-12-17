@@ -14,17 +14,11 @@ func fun0()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "fun0" 
- 
-                   _SYMB:
-/* fun0         */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -33,6 +27,12 @@ func fun0()
                                  STACK_RESERVE 0
 /* 123          */               LOAD_NUMBER R0, 123
                                  RETURN R0
+ 
+                   _SDAT:
+                                 W_STRING "fun0" 
+ 
+                   _SYMB:
+/* fun0         */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* fun0         */               W_METHOD 0, -1, Ffun0

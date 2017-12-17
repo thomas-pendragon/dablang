@@ -23,25 +23,11 @@ class Array
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "!=" 
-                                 W_STRING "+" 
-                                 W_STRING "[]" 
-                                 W_STRING "count" 
-                                 W_STRING "each_with_index" 
- 
-                   _SYMB:
-/* !=           */               W_SYMBOL _SDAT + 0 
-/* +            */               W_SYMBOL _SDAT + 3 
-/* []           */               W_SYMBOL _SDAT + 5 
-/* count        */               W_SYMBOL _SDAT + 8 
-/* each_with_in */               W_SYMBOL _SDAT + 14 
  
                    _CODE:
                                  NOP 
@@ -64,6 +50,20 @@ class Array
                                  JMP L1
                    L3:
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "!=" 
+                                 W_STRING "+" 
+                                 W_STRING "[]" 
+                                 W_STRING "count" 
+                                 W_STRING "each_with_index" 
+ 
+                   _SYMB:
+/* !=           */               W_SYMBOL _SDAT + 0 
+/* +            */               W_SYMBOL _SDAT + 3 
+/* []           */               W_SYMBOL _SDAT + 5 
+/* count        */               W_SYMBOL _SDAT + 8 
+/* each_with_in */               W_SYMBOL _SDAT + 14 
  
                    _FUNC:
 /* each_with_in */               W_METHOD 4, 5, CArray_Feach_with_index

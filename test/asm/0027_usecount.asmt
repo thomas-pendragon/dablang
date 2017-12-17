@@ -15,20 +15,14 @@ func foo()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "abc" 
- 
-                   _SDAT:
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -38,6 +32,12 @@ func foo()
 /* "abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* USECOUNT     */               SYSCALL RNIL, 2, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

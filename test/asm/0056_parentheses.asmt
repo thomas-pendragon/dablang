@@ -14,17 +14,11 @@ func foo(a)
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -34,6 +28,12 @@ func foo(a)
 /* 4            */               LOAD_NUMBER R0, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo

@@ -14,17 +14,11 @@ func yield1()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "yield1" 
- 
-                   _SYMB:
-/* yield1       */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -33,6 +27,12 @@ func yield1()
                                  STACK_RESERVE 0
                                  YIELD RNIL
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "yield1" 
+ 
+                   _SYMB:
+/* yield1       */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* yield1       */               W_METHOD 0, -1, Fyield1

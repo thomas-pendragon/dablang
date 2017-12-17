@@ -23,26 +23,14 @@ func another_attribute(method, arg1, arg2)
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "foo" 
- 
-                   _SDAT:
-                                 W_STRING "__init" 
-                                 W_STRING "another_attribute" 
-                                 W_STRING "foo" 
-                                 W_STRING "sample_attribute" 
- 
-                   _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* another_attr */               W_SYMBOL _SDAT + 7 
-/* foo          */               W_SYMBOL _SDAT + 25 
-/* sample_attri */               W_SYMBOL _SDAT + 29 
  
                    _CODE:
                                  NOP 
@@ -72,6 +60,18 @@ func another_attribute(method, arg1, arg2)
                                  STACK_RESERVE 0
 /* method       */               LOAD_ARG R0, 0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "another_attribute" 
+                                 W_STRING "foo" 
+                                 W_STRING "sample_attribute" 
+ 
+                   _SYMB:
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* another_attr */               W_SYMBOL _SDAT + 7 
+/* foo          */               W_SYMBOL _SDAT + 25 
+/* sample_attri */               W_SYMBOL _SDAT + 29 
  
                    _FUNC:
 /* __init       */               W_METHOD 0, -1, F__init

@@ -14,19 +14,11 @@ func addfunc()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "+" 
-                                 W_STRING "addfunc" 
- 
-                   _SYMB:
-/* +            */               W_SYMBOL _SDAT + 0 
-/* addfunc      */               W_SYMBOL _SDAT + 2 
  
                    _CODE:
                                  NOP 
@@ -37,6 +29,14 @@ func addfunc()
 /* 23           */               LOAD_NUMBER R1, 23
 /* +            */               INSTCALL R2, R0, S0, R1
                                  RETURN R2
+ 
+                   _SDAT:
+                                 W_STRING "+" 
+                                 W_STRING "addfunc" 
+ 
+                   _SYMB:
+/* +            */               W_SYMBOL _SDAT + 0 
+/* addfunc      */               W_SYMBOL _SDAT + 2 
  
                    _FUNC:
 /* addfunc      */               W_METHOD 1, -1, Faddfunc

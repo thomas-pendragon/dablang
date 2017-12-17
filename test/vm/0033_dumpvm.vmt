@@ -18,20 +18,14 @@ $dumpvm
 /* disasm */
     W_HEADER 2
     W_SECTION _DATA, "data"
+    W_SECTION _CODE, "code"
     W_SECTION _SYMD, "symd"
     W_SECTION _SYMB, "symb"
-    W_SECTION _CODE, "code"
     W_SECTION _FUNC, "func"
     W_END_HEADER
 
 _DATA:
     W_STRING "foo"
-
-_SYMD:
-    W_STRING "main"
-
-_SYMB:
-    W_SYMBOL 196
 
 _CODE:
     NOP 
@@ -40,5 +34,11 @@ _CODE:
     SYSCALL RNIL, 0, R0
     RETURN RNIL
 
+_SYMD:
+    W_STRING "main"
+
+_SYMB:
+    W_SYMBOL 229
+
 _FUNC:
-    W_METHOD 0, -1, 210
+    W_METHOD 0, -1, 197

@@ -18,19 +18,11 @@ Instructions should pop return value if not used.
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "+" 
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* +            */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 2 
  
                    _CODE:
                                  NOP 
@@ -51,6 +43,14 @@ Instructions should pop return value if not used.
                                  RELEASE R4
                                  RELEASE R5
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "+" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* +            */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 2 
  
                    _FUNC:
 /* foo          */               W_METHOD 1, -1, Ffoo

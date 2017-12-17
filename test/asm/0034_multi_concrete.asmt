@@ -22,9 +22,9 @@ func foo()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
@@ -32,16 +32,6 @@ func foo()
                                  W_STRING "A" 
                                  W_STRING "Fixnum" 
                                  W_STRING "String" 
- 
-                   _SDAT:
-                                 W_STRING "__spec_Fixnum" 
-                                 W_STRING "__spec_String" 
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* __spec_Fixnu */               W_SYMBOL _SDAT + 0 
-/* __spec_Strin */               W_SYMBOL _SDAT + 14 
-/* foo          */               W_SYMBOL _SDAT + 28 
  
                    _CODE:
                                  NOP 
@@ -67,6 +57,16 @@ func foo()
 /* "A"          */               LOAD_STRING R2, _DATA + 0, 1
 /* __spec_Strin */               CALL RNIL, S1, R2
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "__spec_Fixnum" 
+                                 W_STRING "__spec_String" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* __spec_Fixnu */               W_SYMBOL _SDAT + 0 
+/* __spec_Strin */               W_SYMBOL _SDAT + 14 
+/* foo          */               W_SYMBOL _SDAT + 28 
  
                    _FUNC:
 /* __spec_Fixnu */               W_METHOD 0, -1, F__spec_Fixnum

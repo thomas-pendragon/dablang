@@ -21,23 +21,11 @@ func tap2()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "+" 
-                                 W_STRING "tap" 
-                                 W_STRING "tap2" 
-                                 W_STRING "tap2__block1" 
- 
-                   _SYMB:
-/* +            */               W_SYMBOL _SDAT + 0 
-/* tap          */               W_SYMBOL _SDAT + 2 
-/* tap2         */               W_SYMBOL _SDAT + 6 
-/* tap2__block1 */               W_SYMBOL _SDAT + 11 
  
                    _CODE:
                                  NOP 
@@ -59,6 +47,18 @@ func tap2()
 /* +            */               INSTCALL R2, R0, S0, R1
 /* PRINT        */               SYSCALL RNIL, 0, R2
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "+" 
+                                 W_STRING "tap" 
+                                 W_STRING "tap2" 
+                                 W_STRING "tap2__block1" 
+ 
+                   _SYMB:
+/* +            */               W_SYMBOL _SDAT + 0 
+/* tap          */               W_SYMBOL _SDAT + 2 
+/* tap2         */               W_SYMBOL _SDAT + 6 
+/* tap2__block1 */               W_SYMBOL _SDAT + 11 
  
                    _FUNC:
 /* tap          */               W_METHOD 1, -1, Ftap

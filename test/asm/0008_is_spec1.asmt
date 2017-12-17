@@ -28,9 +28,9 @@ func bar()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
@@ -38,16 +38,6 @@ func bar()
                                  W_STRING "got fixnum" 
                                  W_STRING "got string" 
                                  W_STRING "str" 
- 
-                   _SDAT:
-                                 W_STRING "bar" 
-                                 W_STRING "foo" 
-                                 W_STRING "is" 
- 
-                   _SYMB:
-/* bar          */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 4 
-/* is           */               W_SYMBOL _SDAT + 8 
  
                    _CODE:
                                  NOP 
@@ -80,6 +70,16 @@ func bar()
                                  JMP L4
                    L4:
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "bar" 
+                                 W_STRING "foo" 
+                                 W_STRING "is" 
+ 
+                   _SYMB:
+/* bar          */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 4 
+/* is           */               W_SYMBOL _SDAT + 8 
  
                    _FUNC:
 /* bar          */               W_METHOD 0, -1, Fbar

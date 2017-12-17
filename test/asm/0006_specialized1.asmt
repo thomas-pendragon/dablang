@@ -20,24 +20,14 @@ func bar()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "str" 
- 
-                   _SDAT:
-                                 W_STRING "bar" 
-                                 W_STRING "class" 
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* bar          */               W_SYMBOL _SDAT + 0 
-/* class        */               W_SYMBOL _SDAT + 4 
-/* foo          */               W_SYMBOL _SDAT + 10 
  
                    _CODE:
                                  NOP 
@@ -54,6 +44,16 @@ func bar()
 /* class        */               INSTCALL R1, R0, S1
 /* PRINT        */               SYSCALL RNIL, 0, R1
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "bar" 
+                                 W_STRING "class" 
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* bar          */               W_SYMBOL _SDAT + 0 
+/* class        */               W_SYMBOL _SDAT + 4 
+/* foo          */               W_SYMBOL _SDAT + 10 
  
                    _FUNC:
 /* bar          */               W_METHOD 0, -1, Fbar

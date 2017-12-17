@@ -18,21 +18,11 @@ func main_or()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "fun1" 
-                                 W_STRING "fun2" 
-                                 W_STRING "main_or" 
- 
-                   _SYMB:
-/* fun1         */               W_SYMBOL _SDAT + 0 
-/* fun2         */               W_SYMBOL _SDAT + 5 
-/* main_or      */               W_SYMBOL _SDAT + 10 
  
                    _CODE:
                                  NOP 
@@ -55,6 +45,16 @@ func main_or()
                    L1:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "fun1" 
+                                 W_STRING "fun2" 
+                                 W_STRING "main_or" 
+ 
+                   _SYMB:
+/* fun1         */               W_SYMBOL _SDAT + 0 
+/* fun2         */               W_SYMBOL _SDAT + 5 
+/* main_or      */               W_SYMBOL _SDAT + 10 
  
                    _FUNC:
 /* fun1         */               W_METHOD 0, -1, Ffun1

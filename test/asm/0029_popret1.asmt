@@ -21,24 +21,14 @@ func main()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "foo" 
- 
-                   _SDAT:
-                                 W_STRING "insert" 
-                                 W_STRING "main" 
-                                 W_STRING "puts" 
- 
-                   _SYMB:
-/* insert       */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 7 
-/* puts         */               W_SYMBOL _SDAT + 12 
  
                    _CODE:
                                  NOP 
@@ -59,6 +49,16 @@ func main()
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "insert" 
+                                 W_STRING "main" 
+                                 W_STRING "puts" 
+ 
+                   _SYMB:
+/* insert       */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 7 
+/* puts         */               W_SYMBOL _SDAT + 12 
  
                    _FUNC:
 /* main         */               W_METHOD 1, -1, Fmain

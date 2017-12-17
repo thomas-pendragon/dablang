@@ -14,19 +14,11 @@ func main(a)
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "*" 
-                                 W_STRING "main" 
- 
-                   _SYMB:
-/* *            */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 2 
  
                    _CODE:
                                  NOP 
@@ -38,6 +30,14 @@ func main(a)
 /* *            */               INSTCALL R2, R0, S0, R1
 /* PRINT        */               SYSCALL RNIL, 0, R2
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "*" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* *            */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 2 
  
                    _FUNC:
 /* main         */               W_METHOD 1, -1, Fmain

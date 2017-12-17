@@ -27,30 +27,15 @@ func main()
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CLAS, "clas"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "foobar" 
- 
-                   _SDAT:
-                                 W_STRING "Zomg" 
-                                 W_STRING "foo" 
-                                 W_STRING "main" 
-                                 W_STRING "new" 
- 
-                   _SYMB:
-/* Zomg         */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 5 
-/* main         */               W_SYMBOL _SDAT + 9 
-/* new          */               W_SYMBOL _SDAT + 14 
- 
-                   _CLAS:
-/* Zomg         */               W_CLASS 256, 0, 0
  
                    _CODE:
                                  NOP 
@@ -70,6 +55,21 @@ func main()
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+ 
+                   _CLAS:
+/* Zomg         */               W_CLASS 256, 0, 0
+ 
+                   _SDAT:
+                                 W_STRING "Zomg" 
+                                 W_STRING "foo" 
+                                 W_STRING "main" 
+                                 W_STRING "new" 
+ 
+                   _SYMB:
+/* Zomg         */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 5 
+/* main         */               W_SYMBOL _SDAT + 9 
+/* new          */               W_SYMBOL _SDAT + 14 
  
                    _FUNC:
 /* main         */               W_METHOD 2, -1, Fmain

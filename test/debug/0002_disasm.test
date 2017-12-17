@@ -15,14 +15,14 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 174
-       173: NOP 
->      174: STACK_RESERVE 0
-       177: LOAD_NUMBER R0, 12
-       188: SYSCALL RNIL, 0, R0
-IP = 177
-       173: NOP 
-       174: STACK_RESERVE 0
->      177: LOAD_NUMBER R0, 12
-       188: SYSCALL RNIL, 0, R0
-       195: RETURN RNIL
+IP = 161
+       160: NOP 
+>      161: STACK_RESERVE 0
+       164: LOAD_NUMBER R0, 12
+       175: SYSCALL RNIL, 0, R0
+IP = 164
+       160: NOP 
+       161: STACK_RESERVE 0
+>      164: LOAD_NUMBER R0, 12
+       175: SYSCALL RNIL, 0, R0
+       182: RETURN RNIL

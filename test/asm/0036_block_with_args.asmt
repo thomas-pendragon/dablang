@@ -19,21 +19,11 @@ func main()
 /* Dab dev 2    */                
  
                                  W_HEADER 2
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
- 
-                   _SDAT:
-                                 W_STRING "__foo_Fixnum" 
-                                 W_STRING "main" 
-                                 W_STRING "main__block1" 
- 
-                   _SYMB:
-/* __foo_Fixnum */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 13 
-/* main__block1 */               W_SYMBOL _SDAT + 18 
  
                    _CODE:
                                  NOP 
@@ -54,6 +44,16 @@ func main()
                    Fmain__block1:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "__foo_Fixnum" 
+                                 W_STRING "main" 
+                                 W_STRING "main__block1" 
+ 
+                   _SYMB:
+/* __foo_Fixnum */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 13 
+/* main__block1 */               W_SYMBOL _SDAT + 18 
  
                    _FUNC:
 /* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum

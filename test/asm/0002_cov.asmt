@@ -17,9 +17,9 @@ func main()
                                  W_SECTION _COVD, "data"
                                  W_SECTION _COVE, "cove"
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
@@ -32,12 +32,6 @@ func main()
                    _DATA:
                                  W_STRING "Test" 
  
-                   _SDAT:
-                                 W_STRING "main" 
- 
-                   _SYMB:
-/* main         */               W_SYMBOL _SDAT + 0 
- 
                    _CODE:
                                  NOP 
  
@@ -47,6 +41,12 @@ func main()
 /* PRINT        */               COV 1, 3
                                  SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* main         */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* main         */               W_METHOD 0, -1, Fmain

@@ -19,20 +19,14 @@ Instructions should pop return value if not used.
  
                                  W_HEADER 2
                                  W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _CODE, "code"
                                  W_SECTION _FUNC, "func"
                                  W_END_HEADER 
  
                    _DATA:
                                  W_STRING "foo" 
- 
-                   _SDAT:
-                                 W_STRING "foo" 
- 
-                   _SYMB:
-/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _CODE:
                                  NOP 
@@ -43,6 +37,12 @@ Instructions should pop return value if not used.
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RELEASE R0
                                  RETURN RNIL
+ 
+                   _SDAT:
+                                 W_STRING "foo" 
+ 
+                   _SYMB:
+/* foo          */               W_SYMBOL _SDAT + 0 
  
                    _FUNC:
 /* foo          */               W_METHOD 0, -1, Ffoo
