@@ -2,11 +2,10 @@
 
 func level0()
 {
-}
-
-func foo()
-{
-  print("hello world");
+  dab_define_method("foo") ^()
+  {
+    print("hello world");
+  }
 }
 
 ## LEVEL 1
