@@ -184,7 +184,7 @@ int DabVM::continue_run(Stream &input)
             execute(instructions);
         }
         instructions.rewind();
-        call(dab_register_t::nilreg(), get_symbol_index("main"), 0, DAB_SYMBOL_NIL, nullptr);
+        call(dab_register_t::nilreg(), get_symbol_index(options.entry), 0, DAB_SYMBOL_NIL, nullptr);
         if (options.autorun)
         {
             execute(instructions);
@@ -1202,6 +1202,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         {
             others.push_back(arg);
         }
+    }
+
+    if (options.count("--entry"))
+    {
+        this->entry = options["--entry"];
     }
 
     if (others.size() > 1)

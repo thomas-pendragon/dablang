@@ -475,6 +475,8 @@ struct DabRunOptions
 
     std::string extract_part;
 
+    std::string entry = "main";
+
     void parse(const std::vector<std::string> &args);
 };
 
