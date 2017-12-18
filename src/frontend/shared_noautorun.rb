@@ -48,7 +48,7 @@ module BaseFrontend
       end
     end
     ret.map do |k, v|
-      k = k.downcase.gsub(/[^a-z]+/, '_').to_sym
+      k = k.downcase.gsub(/[^a-z0-9]+/, '_').to_sym
       v = v.join("\n").strip
       [k, v]
     end.to_h
