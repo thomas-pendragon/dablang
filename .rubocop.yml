@@ -165,3 +165,6 @@ Style/SafeNavigation:
 
 Metrics/BlockLength:
   Enabled: false
+
+Lint/Loop:
+  Enabled: false
