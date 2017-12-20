@@ -26,4 +26,22 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'parses section' do
+    section = parse_bin('63 6f 64 65 00 00 00 00  00 00 00 00 00 00 00 00
+                         c2 00 00 00 00 00 00 00  2c 03 00 00 00 00 00 00')
+
+    result = DabBinReader.new.parse_section(section)
+
+    expected = {
+      name: 'code',
+      zero1: 0,
+      zero2: 0,
+      zero3: 0,
+      address: 194,
+      length: 812,
+    }
+
+    expect(result).to eq(expected)
+  end
 end
