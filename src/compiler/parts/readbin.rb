@@ -22,4 +22,13 @@ class DabBinReader
     header[:sections] = sections
     header
   end
+
+  def parse_symbols(symd, symd_start, symb)
+    count = symb.length / 8
+    addresses = symb.unpack("Q<#{count}")
+    addresses.map do |address|
+      offset = address - symd_start
+      symd.unpack("@#{offset}Z*").first
+    end
+  end
 end

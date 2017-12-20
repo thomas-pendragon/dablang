@@ -79,4 +79,30 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'parses symbols' do
+    symd = parse_bin('21 00 21 3d 00 2b 00 2d  00 3d 3d 00 5b 5d 00 63
+                      6f 75 6e 74 00 65 61 63  68 00 65 61 63 68 5f 77
+                      69 74 68 5f 69 6e 64 65  78 00 66 69 72 73 74 00
+                      69 73 00 6c 61 73 74 00  6c 65 6e 67 74 68 00 6d
+                      61 69 6e 00 70 75 74 73  00 74 6f 5f 62 6f 6f 6c
+                      00 7c 00                                        ')
+
+    symb = parse_bin('ee 03 00 00 00 00 00 00  f0 03 00 00 00 00 00 00
+                      f3 03 00 00 00 00 00 00  f5 03 00 00 00 00 00 00
+                      f7 03 00 00 00 00 00 00  fa 03 00 00 00 00 00 00
+                      fd 03 00 00 00 00 00 00  03 04 00 00 00 00 00 00
+                      08 04 00 00 00 00 00 00  18 04 00 00 00 00 00 00
+                      1e 04 00 00 00 00 00 00  21 04 00 00 00 00 00 00
+                      26 04 00 00 00 00 00 00  2d 04 00 00 00 00 00 00
+                      32 04 00 00 00 00 00 00  37 04 00 00 00 00 00 00
+                      3f 04 00 00 00 00 00 00                          ')
+
+    result = DabBinReader.new.parse_symbols(symd, 1006, symb)
+
+    expected = ['!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index',
+                'first', 'is', 'last', 'length', 'main', 'puts', 'to_bool', '|']
+
+    expect(result).to eq(expected)
+  end
 end
