@@ -1,8 +1,12 @@
 ## PRIORITIES ##
 
-1. fix Test CI stage, should not rebuild binaries
+1. fix Test CI stage, should not rebuild binaries (?)
 
-2. Ring support (look up java annotation processing)
+2a. Compiler ring support
+  - read binary images
+  - calculate new functions offset
+
+2b. Ring support (look up java annotation processing)
   - let VM dump its binary image (+ tests)
     - dump new functions
     - dump class functions
