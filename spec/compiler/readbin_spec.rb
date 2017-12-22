@@ -10,7 +10,9 @@ end
 
 describe DabBinReader, readbin: true do
   it 'parses header' do
-    header = parse_bin('44 41 42 00 02 00 00 00  c0 00 00 00 00 00 00 00
+    header = parse_bin('44 41 42 00 03 00 00 00
+                        ff 00 00 00 00 00 00 00
+                        c0 00 00 00 00 00 00 00
                         bd 04 00 00 00 00 00 00  05 00 00 00 00 00 00 00')
 
     result = DabBinReader.new.parse_header(header)
@@ -18,7 +20,8 @@ describe DabBinReader, readbin: true do
     expected = {
       dab: 'DAB',
       zero: 0,
-      version: 2,
+      offset: 255,
+      version: 3,
       size_of_header: 192,
       size_of_data: 1213,
       sections_count: 5,
@@ -46,7 +49,9 @@ describe DabBinReader, readbin: true do
   end
 
   it 'parses whole header' do
-    header = parse_bin('44 41 42 00 02 00 00 00  c0 00 00 00 00 00 00 00
+    header = parse_bin('44 41 42 00 03 00 00 00
+                        00 00 00 00 00 00 00 00
+                        c0 00 00 00 00 00 00 00
                         bd 04 00 00 00 00 00 00  05 00 00 00 00 00 00 00
                         64 61 74 61 00 00 00 00  00 00 00 00 00 00 00 00
                         c0 00 00 00 00 00 00 00  02 00 00 00 00 00 00 00
@@ -64,7 +69,8 @@ describe DabBinReader, readbin: true do
     expected = {
       dab: 'DAB',
       zero: 0,
-      version: 2,
+      version: 3,
+      offset: 0,
       size_of_header: 192,
       size_of_data: 1213,
       sections_count: 5,

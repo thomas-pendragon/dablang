@@ -1,7 +1,7 @@
 class DabBinReader
   def parse_header(string)
-    data = string.unpack('a3CL<Q<Q<Q<')
-    %i[dab zero version size_of_header size_of_data sections_count].zip(data).to_h
+    data = string.unpack('a3CL<Q<Q<Q<Q<')
+    %i[dab zero version offset size_of_header size_of_data sections_count].zip(data).to_h
   end
 
   def parse_section(string)
@@ -10,12 +10,12 @@ class DabBinReader
   end
 
   def parse_whole_header(string)
-    header = parse_header(string[0..32])
+    header = parse_header(string[0..40])
     sections = []
     sections_count = header[:sections_count]
     sections_count.times do |i|
       offset = i * 32
-      range = ((32 + offset)..(64 + offset))
+      range = ((40 + offset)..(72 + offset))
       data = string[range]
       sections << parse_section(data)
     end
