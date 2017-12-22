@@ -50,6 +50,7 @@ struct BinFunction
 };
 #pragma pack(pop)
 
+#pragma pack(push, 1)
 struct BinSection
 {
     char     name[4];
@@ -59,7 +60,9 @@ struct BinSection
     uint64_t pos           = 0;
     uint64_t length        = 0;
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 struct BinHeader
 {
     char       dab[4];
@@ -70,6 +73,7 @@ struct BinHeader
     uint64_t   section_count;
     BinSection sections[0];
 };
+#pragma pack(pop)
 
 struct Stream
 {
