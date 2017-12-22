@@ -18,7 +18,10 @@ void DabVM::load_newformat(Stream &input)
     assert(zero_byte == 0);
 
     auto version = input.read_uint32();
-    assert(version == 2);
+    assert(version == 3);
+
+    auto offset = input.read_uint64();
+    (void)offset;
 
     auto size_of_header     = input.read_uint64();
     auto size_of_data       = input.read_uint64();

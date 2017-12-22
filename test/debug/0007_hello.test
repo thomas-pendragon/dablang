@@ -1,6 +1,6 @@
 ## ASM CODE
  
-W_HEADER 2
+W_HEADER 3
 W_SECTION _DATA, "data"
 W_SECTION _SYMB, "symb"
 W_SECTION _CODE, "code"
@@ -33,7 +33,7 @@ _FUNC:
 ## INPUT
 
 allcode
-break 189
+break 197
 run
 code
 stack
@@ -54,39 +54,39 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 186
-       185: NOP 
->      186: STACK_RESERVE 0
-       189: LOAD_STRING R0, 160, 11
-       208: SYSCALL RNIL, 0, R0
-       215: NOP 
-       216: RETURN RNIL
-debug: break at 189.
-IP = 189
-       185: NOP 
-       186: STACK_RESERVE 0
->      189: LOAD_STRING R0, 160, 11
-       208: SYSCALL RNIL, 0, R0
-       215: NOP 
+IP = 194
+       193: NOP 
+>      194: STACK_RESERVE 0
+       197: LOAD_STRING R0, 168, 11
+       216: SYSCALL RNIL, 0, R0
+       223: NOP 
+       224: RETURN RNIL
+debug: break at 197.
+IP = 197
+       193: NOP 
+       194: STACK_RESERVE 0
+>      197: LOAD_STRING R0, 168, 11
+       216: SYSCALL RNIL, 0, R0
+       223: NOP 
 Registers:
-IP = 208
-       186: STACK_RESERVE 0
-       189: LOAD_STRING R0, 160, 11
->      208: SYSCALL RNIL, 0, R0
-       215: NOP 
-       216: RETURN RNIL
+IP = 216
+       194: STACK_RESERVE 0
+       197: LOAD_STRING R0, 168, 11
+>      216: SYSCALL RNIL, 0, R0
+       223: NOP 
+       224: RETURN RNIL
 Registers:
 R0: CSTR "hello world" [1 strong]
-hello worldIP = 215
-       189: LOAD_STRING R0, 160, 11
-       208: SYSCALL RNIL, 0, R0
->      215: NOP 
-       216: RETURN RNIL
+hello worldIP = 223
+       197: LOAD_STRING R0, 168, 11
+       216: SYSCALL RNIL, 0, R0
+>      223: NOP 
+       224: RETURN RNIL
 Registers:
 R0: CSTR "hello world" [4 strong]
-IP = 216
-       208: SYSCALL RNIL, 0, R0
-       215: NOP 
->      216: RETURN RNIL
+IP = 224
+       216: SYSCALL RNIL, 0, R0
+       223: NOP 
+>      224: RETURN RNIL
 Registers:
 R0: CSTR "hello world" [4 strong]

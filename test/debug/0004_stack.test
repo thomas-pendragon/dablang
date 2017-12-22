@@ -1,6 +1,6 @@
 ## ASM CODE
 
-W_HEADER 2
+W_HEADER 3
 W_SECTION _DATA, "data"
 W_SECTION _SYMB, "symb"
 W_SECTION _CODE, "code"
@@ -42,10 +42,10 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 186
-       185: NOP 
->      186: STACK_RESERVE 0
-       189: RETURN RNIL
-IP = 186
-IP = 189
+IP = 194
+       193: NOP 
+>      194: STACK_RESERVE 0
+       197: RETURN RNIL
+IP = 194
+IP = 197
 IP = 0

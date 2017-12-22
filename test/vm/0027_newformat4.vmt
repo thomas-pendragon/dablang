@@ -1,6 +1,6 @@
 ## CODE
 
-  W_HEADER 2
+  W_HEADER 3
   W_SECTION DATA, "data"
   W_SECTION SYMBOLS, "symb"
   W_SECTION CODE, "code"

@@ -2,7 +2,7 @@
 
 /* Dab dev 2    */                
  
-                                 W_HEADER 2
+                                 W_HEADER 3
                                  W_SECTION _DATA, "data"
                                  W_SECTION _SDAT, "data"
                                  W_SECTION _SYMB, "symb"
@@ -34,7 +34,8 @@
 ## EXPECT
 
 /* disasm */
-    W_HEADER 2
+    W_HEADER 3
+    W_OFFSET 0
     W_SECTION _DATA, "data"
     W_SECTION _DATA2, "data"
     W_SECTION _SYMB, "symb"
@@ -49,14 +50,14 @@ _DATA2:
     W_STRING "main"
 
 _SYMB:
-    W_SYMBOL 197
+    W_SYMBOL 205
 
 _CODE:
     NOP 
     STACK_RESERVE 0
-    LOAD_STRING R0, 192, 4
+    LOAD_STRING R0, 200, 4
     SYSCALL RNIL, 0, R0
     RETURN RNIL
 
 _FUNC:
-    W_METHOD 0, -1, 211
+    W_METHOD 0, -1, 219

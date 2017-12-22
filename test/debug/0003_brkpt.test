@@ -1,6 +1,6 @@
 ## ASM CODE
 
-W_HEADER 2
+W_HEADER 3
 W_SECTION _DATA, "data"
 W_SECTION _SYMB, "symb"
 W_SECTION _CODE, "code"
@@ -34,17 +34,17 @@ _FUNC:
 
 ## INPUT
 
-break 243
+break 251
 run
 code
 quit
 
 ## EXPECT STDOUT
 
-debug: break at 243.
+debug: break at 251.
 foo
-IP = 243
-       217: SYSCALL RNIL, 0, R0
-       224: LOAD_STRING R0, 176, 4
->      243: SYSCALL RNIL, 0, R0
-       250: RETURN RNIL
+IP = 251
+       225: SYSCALL RNIL, 0, R0
+       232: LOAD_STRING R0, 184, 4
+>      251: SYSCALL RNIL, 0, R0
+       258: RETURN RNIL

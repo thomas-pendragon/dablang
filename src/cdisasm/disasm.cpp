@@ -229,7 +229,8 @@ bool parse_bool_arg(int argc, char **argv, const std::string &arg)
 void parse_headers(DisasmContext &context, BinHeader *header)
 {
     fprintf(output, "/* disasm */\n");
-    fprintf(output, "    W_HEADER 2\n");
+    fprintf(output, "    W_HEADER %d\n", (int)header->version);
+    fprintf(output, "    W_OFFSET %" PRIu64 "\n", (uint64_t)header->offset);
     for (size_t i = 0; i < header->section_count; i++)
     {
         auto section = header->sections[i];

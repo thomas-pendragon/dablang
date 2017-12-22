@@ -179,14 +179,16 @@ class OutputStream
     @stream.print(data)
   end
 
-  def finalize_newformat(raw, version, sections, labels)
+  def finalize_newformat(raw, version, offset, sections, labels)
     unless raw
       _write('DAB')
       write_uint8(0)
 
       write_uint32(version)
 
-      size_of_header = 4 + 4 + 8 + 8 + 8 + sections.count * 32
+      write_uint64(offset)
+
+      size_of_header = 4 + 4 + 8 + 8 + 8 + 8 + sections.count * 32
       size_of_data = @code.length - size_of_header
 
       write_uint64(size_of_header)
@@ -277,7 +279,7 @@ class Parser
   end
 
   def print_temp_header!(sections_count)
-    header_length = 32 + 32 * sections_count
+    header_length = 40 + 32 * sections_count
     @output_stream.push_header(header_length)
   end
 
@@ -301,6 +303,7 @@ class Parser
     @sections = []
     @header_version = nil
     @header_finished = false
+    @header_offset = 0
 
     @label_positions = {}
     @jump_corrections = []
@@ -320,6 +323,8 @@ class Parser
         case line[0]
         when 'W_HEADER'
           @header_version = line[1].to_i
+        when 'W_OFFSET'
+          @header_offset = line[1].to_i
         when 'W_SECTION'
           @sections << {name: line[2].to_s, label: line[1].to_s}
         when 'W_END_HEADER'
@@ -372,7 +377,7 @@ class Parser
     @output_stream.fix_jumps(@label_positions, @jump_corrections, 0)
     @output_stream.fix_jumps(@label_positions, @jump_corrections2, 1)
     @output_stream.fix_jumps(@label_positions, @jump_corrections3, 2)
-    @output_stream.finalize_newformat(raw, @header_version, @sections, @label_positions)
+    @output_stream.finalize_newformat(raw, @header_version, @header_offset, @sections, @label_positions)
   end
 end
 

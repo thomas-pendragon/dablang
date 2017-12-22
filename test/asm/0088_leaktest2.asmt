@@ -15,7 +15,8 @@ func foo()
 
 /* Dab dev 2    */                
  
-                                 W_HEADER 2
+                                 W_HEADER 3
+                                 W_OFFSET 0
                                  W_SECTION _DATA, "data"
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"

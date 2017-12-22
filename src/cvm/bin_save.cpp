@@ -92,7 +92,8 @@ void DabVM::dump_vm(FILE *out)
     dump_sections.push_back(func_section);
 
     memcpy(dump_header.dab, "DAB\0", 4);
-    dump_header.version        = 2;
+    dump_header.version        = 3;
+    dump_header.offset         = 0;
     dump_header.section_count  = dump_sections.size();
     dump_header.size_of_header = sizeof(BinHeader) + dump_header.section_count * sizeof(BinSection);
 

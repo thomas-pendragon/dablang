@@ -1,6 +1,6 @@
 ## ASM CODE
 
-W_HEADER 2
+W_HEADER 3
 W_SECTION _DATA, "data"
 W_SECTION _SYMB, "symb"
 W_SECTION _CODE, "code"
@@ -42,7 +42,7 @@ _FUNC:
 ## INPUT
 
 allcode
-break 205
+break 213
 stack
 registers
 run
@@ -53,19 +53,19 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 208
-       198: NOP 
-       199: STACK_RESERVE 0
-       202: LOAD_TRUE R0
-       205: RETURN R0
->      208: STACK_RESERVE 0
-       211: CALL R7, S0
-       217: SYSCALL RNIL, 0, R7
-       224: RETURN RNIL
-debug: break at 205.
-IP = 205
-       199: STACK_RESERVE 0
-       202: LOAD_TRUE R0
->      205: RETURN R0
-       208: STACK_RESERVE 0
-       211: CALL R7, S0
+IP = 216
+       206: NOP 
+       207: STACK_RESERVE 0
+       210: LOAD_TRUE R0
+       213: RETURN R0
+>      216: STACK_RESERVE 0
+       219: CALL R7, S0
+       225: SYSCALL RNIL, 0, R7
+       232: RETURN RNIL
+debug: break at 213.
+IP = 213
+       207: STACK_RESERVE 0
+       210: LOAD_TRUE R0
+>      213: RETURN R0
+       216: STACK_RESERVE 0
+       219: CALL R7, S0

@@ -64,6 +64,7 @@ struct BinHeader
 {
     char       dab[4];
     uint32_t   version;
+    uint64_t   offset;
     uint64_t   size_of_header;
     uint64_t   size_of_data;
     uint64_t   section_count;

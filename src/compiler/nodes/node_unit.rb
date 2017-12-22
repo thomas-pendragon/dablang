@@ -137,7 +137,8 @@ class DabNodeUnit < DabNode
     output.print('')
     output.separate
 
-    output.print('W_HEADER', 2)
+    output.print('W_HEADER', 3)
+    output.print('W_OFFSET', 0)
     if $with_cov
       output.print('W_SECTION', '_COVD', '"data"')
       output.print('W_SECTION', '_COVE', '"cove"')
