@@ -153,7 +153,7 @@ end
 
 setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
-setup_tests('vm', 'vmt', 'frontend_vm', [cvm], nil, VMFrontend)
+setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm', [], nil, AsmSpec)
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
