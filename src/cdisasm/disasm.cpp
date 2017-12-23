@@ -49,7 +49,7 @@ void parse_substream(Stream &stream, size_t start, bool no_numbers)
         }
         else
         {
-            fprintf(output, "%8ld: ", start + pos);
+            fprintf(output, "%8" PRIu64 ": ", start + pos);
         }
         fprintf(output, "%s\n", info.c_str());
     });
@@ -90,7 +90,7 @@ void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
                 {
                     if (!no_numbers)
                     {
-                        fprintf(output, "%8ld: ", start + string_pos);
+                        fprintf(output, "%8" PRIu64 ": ", start + string_pos);
                     }
                     else
                     {
@@ -105,7 +105,7 @@ void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
                     {
                         if (!no_numbers)
                         {
-                            fprintf(output, "%8ld: ", start + string_pos + i);
+                            fprintf(output, "%8" PRIu64 ": ", start + string_pos + i);
                         }
                         else
                         {
@@ -117,7 +117,7 @@ void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
 
                     if (!no_numbers)
                     {
-                        fprintf(output, "%8ld: ", start + string_pos);
+                        fprintf(output, "%8" PRIu64 ": ", start + string_pos);
                     }
                     else
                     {
@@ -131,7 +131,7 @@ void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
             {
                 if (!no_numbers)
                 {
-                    fprintf(output, "%8ld: ", start + pos);
+                    fprintf(output, "%8" PRIu64 ": ", start + pos);
                 }
                 else
                 {
@@ -163,7 +163,7 @@ void parse_symbol_substream(Stream &input_stream, size_t start, bool no_numbers)
             auto symbol = stream.read_uint64();
             if (!no_numbers)
             {
-                fprintf(output, "%8ld: ", start + pos);
+                fprintf(output, "%8" PRIu64 ": ", start + pos);
             }
             else
             {
