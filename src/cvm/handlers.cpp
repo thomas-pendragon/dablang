@@ -1,3 +1,5 @@
+#ifndef __MINGW32__
+
 #include <stdio.h>
 #include <execinfo.h>
 #include <signal.h>
@@ -19,3 +21,11 @@ void setup_handlers()
 {
     signal(SIGSEGV, handler);
 }
+
+#else
+
+void setup_handlers()
+{
+}
+
+#endif
