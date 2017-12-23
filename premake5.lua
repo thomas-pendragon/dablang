@@ -15,10 +15,6 @@ function dab_common_setup(name)
     files { "src/cshared/**.h", "src/cshared/**.cpp" }
     files { "src/"..name.."/**.h", "src/"..name.."/**.cpp" }
 
-    links { "dl" }
-
-    linkoptions { "-rdynamic" }
-
     filter "configurations:Debug"
       defines { "DEBUG" } 
       symbols "On"
@@ -32,6 +28,10 @@ function dab_common_setup(name)
 
     filter "action:xcode4"
       buildoptions "-std=c++11"
+
+    filter "system:not windows"
+      links "dl"
+      linkoptions "-rdynamic"
 end
 
 dab_common_setup("cvm")
