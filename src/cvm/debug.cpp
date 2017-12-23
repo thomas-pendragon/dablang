@@ -91,7 +91,7 @@ void DabVM_debug::print_code(bool current_only)
             continue;
 
         const auto &line = disasm[i];
-        fprintf(err_stream, "%c %8ld: %s\n", line.first == ip ? '>' : ' ', line.first,
+        fprintf(err_stream, "%c %8" PRIu64 ": %s\n", line.first == ip ? '>' : ' ', line.first,
                 line.second.c_str());
     }
 }
