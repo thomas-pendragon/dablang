@@ -1,5 +1,8 @@
 #include "cvm.h"
+
+#ifndef __MINGW32__
 #include <dlfcn.h>
+#endif
 
 #define STR2(s) #s
 #define STR(s) STR2(s)
@@ -62,6 +65,7 @@ void DabVM::define_defaults()
 
     auto make_import_function = [this](const char *name) {
         return [this, name](DabValue, std::vector<DabValue> args) {
+#ifndef __MINGW32__
             assert(args.size() <= 2);
 
             std::string libc_name;
@@ -112,6 +116,11 @@ void DabVM::define_defaults()
             function.extra_reg = import_external_function(symbol, function.reflection);
 
             return DabValue(nullptr);
+#else
+            (void)args;
+            throw DabRuntimeError("function import not supported on windows yet");
+            return DabValue(nullptr);
+#endif
         };
     };
 
