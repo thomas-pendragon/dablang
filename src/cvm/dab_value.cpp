@@ -72,9 +72,9 @@ dab_class_t DabValue::class_index() const
         return CLASS_DYNAMICSTRING;
         break;
     default:
-        fprintf(stderr, "Unknown data.type %d.\n", (int)data.type);
-        assert(false);
-        break;
+        char description[256];
+        sprintf(description, "Unknown data.type %d.\n", (int)data.type);
+        throw DabRuntimeError(description);
     }
 }
 
