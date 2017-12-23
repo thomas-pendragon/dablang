@@ -9,7 +9,7 @@ gem 'diffy'
 gem 'ffi'
 gem 'json'
 gem 'pry'
-gem 'pry-byebug'
+gem 'pry-byebug', platforms: :ruby
 gem 'rake'
 gem 'random-word', require: false
 gem 'rspec', require: false
