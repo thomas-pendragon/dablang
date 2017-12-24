@@ -419,6 +419,9 @@ struct DabRunOptions
 
     std::string entry = "main";
 
+    FILE *console       = stderr;
+    bool  close_console = false;
+
     void parse(const std::vector<std::string> &args);
 };
 

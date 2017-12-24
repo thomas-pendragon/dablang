@@ -1257,6 +1257,12 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->close_output = true;
     }
 
+    if (options.count("--$VM->options.console"))
+    {
+        this->console       = fopen(options["--$VM->options.console"].c_str(), "wb");
+        this->close_console = true;
+    }
+
     if (others.size() == 1)
     {
         auto filename = others[0].c_str();
