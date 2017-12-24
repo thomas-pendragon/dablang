@@ -476,19 +476,7 @@ struct DabVM
     DabVM &operator=(const DabVM &) = delete;
     ~DabVM();
 
-    std::string get_symbol(dab_symbol_t index) const
-    {
-        if (index == DAB_SYMBOL_NIL)
-        {
-            return "";
-        }
-        if (symbols.size() <= index)
-        {
-            fprintf(stderr, "VM error: symbol %d not found.\n", (int)index);
-            exit(1);
-        }
-        return symbols[index];
-    }
+    std::string get_symbol(dab_symbol_t index) const;
 
     dab_symbol_t get_symbol_index(const std::string &string) const
     {

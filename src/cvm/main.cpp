@@ -35,6 +35,20 @@ DabVMReset::~DabVMReset()
     $VM = nullptr;
 }
 
+std::string DabVM::get_symbol(dab_symbol_t index) const
+{
+    if (index == DAB_SYMBOL_NIL)
+    {
+        return "";
+    }
+    if (symbols.size() <= index)
+    {
+        fprintf(stderr, "VM error: symbol %d not found.\n", (int)index);
+        exit(1);
+    }
+    return symbols[index];
+}
+
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() == 1);
