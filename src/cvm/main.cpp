@@ -1316,7 +1316,8 @@ int unsafe_main(int argc, char **argv)
 {
     setup_handlers();
 
-    DabVM          vm;
+    DabVM vm;
+    assert($VM);
     DabRunOptions &options = vm.options;
 
     std::vector<std::string> args;
