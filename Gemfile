@@ -8,6 +8,7 @@ gem 'colorize'
 gem 'diffy'
 gem 'ffi'
 gem 'json'
+gem 'os'
 gem 'pry'
 gem 'pry-byebug', platforms: :ruby
 gem 'rake'
