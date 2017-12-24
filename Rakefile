@@ -228,6 +228,12 @@ namespace :format do
     end
   end
 
+  task :cpp_force do
+    cpp_check do |file|
+      psystem_ignore("#{clang_format_app} -i #{file}")
+    end
+  end
+
   task :cpp_check do
     cpp_check do |file|
       psystem("#{clang_format_app} #{file} | diff #{file} -")

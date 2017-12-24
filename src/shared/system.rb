@@ -7,6 +7,11 @@ class SystemCommandError < RuntimeError
   end
 end
 
+def psystem_ignore(cmd)
+  STDERR.puts " > #{cmd.yellow}"
+  system(cmd)
+end
+
 def psystem(cmd, capture_stderr = false)
   STDERR.puts " > #{cmd.yellow}"
   tempfile = nil
