@@ -1310,12 +1310,8 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     }
 }
 
-int unsafe_main(int argc, char **argv)
+int unsafe_main(DabVM &vm, int argc, char **argv)
 {
-    setup_handlers();
-
-    DabVM vm;
-    assert($VM);
     DabRunOptions &options = vm.options;
 
     std::vector<std::string> args;
@@ -1384,9 +1380,14 @@ int unsafe_main(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+    setup_handlers();
+
+    DabVM vm;
+    assert($VM);
+
     try
     {
-        return unsafe_main(argc, argv);
+        return unsafe_main(vm, argc, argv);
     }
     catch (DabRuntimeError &error)
     {
