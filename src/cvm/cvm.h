@@ -483,7 +483,7 @@ struct DabVM
                 return (dab_symbol_t)i;
             }
         }
-        throw DabRuntimeError("Unknown symbol :" + string);
+        throw DabRuntimeError("Unknown symbol: " + string);
     }
 
     void kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist);
