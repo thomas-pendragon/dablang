@@ -381,64 +381,6 @@ struct DabDynamicString : public DabBaseObject
     std::string value;
 };
 
-struct Stack
-{
-    void push(DabValue value)
-    {
-        push_value(value);
-    }
-
-    void push_nil()
-    {
-        push(nullptr);
-    }
-
-    DabValue pop_value()
-    {
-        if (!size())
-        {
-            fprintf(stderr, "VM error: empty stack.\n");
-            exit(1);
-        }
-        auto ret = _data[_data.size() - 1];
-        _data.pop_back();
-        return ret;
-    }
-
-    void push_value(DabValue value)
-    {
-        _data.push_back(value);
-    }
-
-    void resize(size_t size)
-    {
-        _data.resize(size);
-    }
-
-    size_t size() const
-    {
-        return _data.size();
-    }
-
-    DabValue &operator[](int64_t offset)
-    {
-        if (offset < 0)
-        {
-            offset = size() + offset;
-        }
-        if (offset >= (int64_t)size())
-        {
-            assert(false);
-        }
-        return _data[offset];
-    }
-
-  private:
-    std::vector<DabValue> _data;
-    friend struct DabVM;
-    friend struct DabVM_debug;
-};
-
 struct Coverage
 {
     void add_file(uint64_t hash, const std::string &filename);
