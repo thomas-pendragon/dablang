@@ -2,6 +2,11 @@
 
 void DabValue::dump(FILE *file) const
 {
+    if (!file)
+    {
+        file = $VM->options.console;
+    }
+
     static const char *types[] = {"INVA", "FIXN", "BOOL", "NIL ", "CLAS", "OBJE", "ARRY",
                                   "UIN8", "UI16", "UI32", "UI64", "INT8", "IN16", "IN32",
                                   "IN64", "METH", "PTR*", "BYT*", "CSTR", "DSTR"};
