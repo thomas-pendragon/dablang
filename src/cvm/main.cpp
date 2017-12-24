@@ -1226,6 +1226,12 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         }
     }
 
+    if (options.count("--stderr"))
+    {
+        this->console       = fopen(options["--$VM->options.console"].c_str(), "wb");
+        this->close_console = true;
+    }
+
     if (options.count("--entry"))
     {
         this->entry = options["--entry"];
@@ -1252,12 +1258,6 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     {
         this->output       = fopen(options["--out"].c_str(), "wb");
         this->close_output = true;
-    }
-
-    if (options.count("--$VM->options.console"))
-    {
-        this->console       = fopen(options["--$VM->options.console"].c_str(), "wb");
-        this->close_console = true;
     }
 
     if (others.size() == 1)
