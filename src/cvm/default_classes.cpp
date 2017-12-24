@@ -233,8 +233,7 @@ void DabVM::define_default_classes()
             n = a.size() + n;
         if (n < 0 || n >= (int64_t)a.size())
         {
-            fprintf(stderr, "vm: index outside of array bounds.\n");
-            exit(1);
+            throw DabRuntimeError("vm: index outside of array bounds.");
         }
         else
         {
