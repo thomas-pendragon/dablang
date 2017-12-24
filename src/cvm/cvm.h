@@ -458,15 +458,7 @@ struct DabVM
 
     std::vector<BinSection> sections;
 
-    DabClass &get_class(int index)
-    {
-        if (!classes.count(index))
-        {
-            fprintf(stderr, "VM error: unknown class with index <0x%04x>.\n", index);
-            exit(1);
-        }
-        return classes[index];
-    }
+    DabClass &get_class(int index);
     void predefine_default_classes();
     void define_default_classes();
     void define_defaults();

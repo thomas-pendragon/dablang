@@ -49,6 +49,16 @@ std::string DabVM::get_symbol(dab_symbol_t index) const
     return symbols[index];
 }
 
+DabClass &DabVM::get_class(int index)
+{
+    if (!classes.count(index))
+    {
+        fprintf(stderr, "VM error: unknown class with index <0x%04x>.\n", index);
+        exit(1);
+    }
+    return classes[index];
+}
+
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() == 1);
