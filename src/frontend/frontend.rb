@@ -43,9 +43,9 @@ class DabSpec
       input = input.to_s.shellescape
       output = output.to_s.shellescape
       run_options = run_options.presence
-      cmd = "timeout 10 ./bin/cvm #{run_options} #{input} --out=#{output}"
+      cmd = "./bin/cvm #{run_options} #{input} --out=#{output}"
       begin
-        psystem_noecho cmd
+        psystem_noecho_timeout(cmd, 10)
       rescue SystemCommandError => e
         STDERR.puts
         STDERR.puts e.stderr

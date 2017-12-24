@@ -28,3 +28,8 @@ end
 def psystem_noecho(cmd)
   psystem(cmd, true)
 end
+
+def psystem_noecho_timeout(cmd, timeout = 10)
+  cmd = "timeout #{timeout} #{cmd}"
+  psystem_noecho(cmd)
+end
