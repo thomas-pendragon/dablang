@@ -280,8 +280,7 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
     if (!functions.count(symbol))
     {
         auto name = get_symbol(symbol);
-        fprintf(stderr, "vm error: Unknown function <%s>.\n", name.c_str());
-        exit(1);
+        throw DabRuntimeError("vm error: Unknown function <" + name + ">.");
     }
     if (block_symbol != DAB_SYMBOL_NIL)
     {
