@@ -9,6 +9,11 @@ require 'tempfile'
 require 'yaml'
 require 'digest'
 
+if OS.windows?
+  String.disable_colorization = true
+  STDOUT.sync = true
+end
+
 class Object
   def safe_instance_variable_get(name)
     instance_variable_defined?(name) ? instance_variable_get(name) : nil
