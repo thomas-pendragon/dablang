@@ -16,11 +16,9 @@ enum
 
 DabVM::DabVM()
 {
-    fprintf(stderr, "vm: creating VM\n");
     assert(!$VM);
     $VM = this;
     predefine_default_classes();
-    fprintf(stderr, "vm: VM created!\n");
 }
 
 DabVM::~DabVM()
