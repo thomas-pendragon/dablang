@@ -50,7 +50,7 @@ class DabSpec
         STDERR.puts
         STDERR.puts e.stderr
         STDERR.puts
-        e.stdout = open(output).read
+        e.stdout = File.read(output)
         FileUtils.rm(output)
         raise
       end
