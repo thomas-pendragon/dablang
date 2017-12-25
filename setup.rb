@@ -8,6 +8,7 @@ require 'fileutils'
 require 'tempfile'
 require 'yaml'
 require 'digest'
+require 'open3'
 
 if OS.windows?
   String.disable_colorization = true
