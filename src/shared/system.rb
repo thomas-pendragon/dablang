@@ -59,10 +59,10 @@ def system_with_progress(cmd)
     ready = IO.select(fdlist)[0]
     ready.each do |fd|
       command.try_update(fd) do |line, is_stderr|
-        print line
         if is_stderr
           stderr += line
         else
+          print line
           stdout += line
         end
       end
