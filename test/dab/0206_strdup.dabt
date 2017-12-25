@@ -22,6 +22,10 @@ func main()
 
 --with-attributes --with-reflection
 
+## SKIP
+
+windows
+
 ## EXPECT OK
 
 foobar

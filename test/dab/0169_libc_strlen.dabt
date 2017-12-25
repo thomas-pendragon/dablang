@@ -18,6 +18,10 @@ func main()
 
 --with-attributes
 
+## SKIP
+
+windows
+
 ## EXPECT OK
 
 6

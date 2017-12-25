@@ -35,6 +35,7 @@ class DabSpec
       options: base[:options] || '',
       run_options: base[:run_options] || '',
       frontend_options: base[:frontend_options] || '',
+      skip: base[:skip]&.strip || '',
     }
   end
 
@@ -67,6 +68,11 @@ class DabSpec
 
   def run(_settings)
     data = read_test_file(input)
+
+    if data[:skip] == 'windows' && OS.windows?
+      puts "Skipping test  #{input.blue.bold} because Windows"
+      return
+    end
 
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
     puts info
