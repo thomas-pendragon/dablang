@@ -1214,7 +1214,6 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
                 auto argname     = arg.substr(0, pos);
                 auto argvalue    = arg.substr(pos + 1);
                 options[argname] = argvalue;
-                fprintf(stderr, "[%s]=[%s]\n", argname.c_str(), argvalue.c_str());
             }
             else
             {
