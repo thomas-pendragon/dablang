@@ -18,8 +18,13 @@ class SystemRunCommand
     @exit_code && @exit_code != 0
   end
 
-  def open_process!
+  def open_process!(input_file = nil)
     @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
+    if input_file
+      text = File.read(input_file)
+      len = @stdin.write(text)
+      raise 'mismatch' unless len == text.length
+    end
     @stdin.close
   end
 
@@ -47,9 +52,9 @@ class SystemRunCommand
   end
 end
 
-def system_with_progress(cmd)
+def system_with_progress(cmd, input_file: nil)
   command = SystemRunCommand.new(cmd)
-  command.open_process!
+  command.open_process!(input_file)
   fdlist = command.streams
   stdout = ''
   stderr = ''
