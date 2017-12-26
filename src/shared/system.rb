@@ -62,6 +62,7 @@ def system_with_progress(cmd, input_file: nil)
     fdlist.reject!(&:closed?)
     break if fdlist.empty?
     ready = IO.select(fdlist)[0]
+    data = false
     ready.each do |fd|
       command.try_update(fd) do |line, is_stderr|
         if is_stderr
@@ -70,8 +71,10 @@ def system_with_progress(cmd, input_file: nil)
           print line
           stdout += line
         end
+        data = true
       end
     end
+    next if data
     break if command.finished?
   end
   {
