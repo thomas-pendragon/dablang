@@ -104,14 +104,14 @@ struct DabClass
 
     void _add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body);
 
-    void add_static_reg_function(const std::string &name, dab_function_reg_t body)
+    void add_static_reg_function(const std::string &func_name, dab_function_reg_t body)
     {
-        _add_reg_function(true, name, body);
+        _add_reg_function(true, func_name, body);
     }
 
-    void add_reg_function(const std::string &name, dab_function_reg_t body)
+    void add_reg_function(const std::string &func_name, dab_function_reg_t body)
     {
-        _add_reg_function(false, name, body);
+        _add_reg_function(false, func_name, body);
     }
 
     bool is_subclass_of(const DabClass &klass) const;
