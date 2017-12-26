@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../cshared/dab.h"
 #include "../cshared/shared.h"
 #include "../cshared/stream.h"
 

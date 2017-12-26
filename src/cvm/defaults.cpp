@@ -1,6 +1,6 @@
 #include "cvm.h"
 
-#ifndef __MINGW32__
+#ifndef DAB_PLATFORM_WINDOWS
 #include <dlfcn.h>
 #endif
 
@@ -65,7 +65,7 @@ void DabVM::define_defaults()
 
     auto make_import_function = [this](const char *name) {
         return [this, name](DabValue, std::vector<DabValue> args) {
-#ifndef __MINGW32__
+#ifndef DAB_PLATFORM_WINDOWS
             assert(args.size() <= 2);
 
             std::string libc_name;

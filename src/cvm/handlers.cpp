@@ -1,4 +1,6 @@
-#ifndef __MINGW32__
+#include "../cshared/dab.h"
+
+#ifndef DAB_PLATFORM_WINDOWS
 
 #include <stdio.h>
 #include <execinfo.h>
