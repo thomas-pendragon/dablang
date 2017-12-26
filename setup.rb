@@ -11,7 +11,6 @@ require 'digest'
 require 'open3'
 
 if OS.windows?
-  String.disable_colorization = true
   STDOUT.sync = true
 end
 
