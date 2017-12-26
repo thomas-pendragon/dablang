@@ -21,11 +21,11 @@ class VMFrontend
 
   def extract_vm_part(input, output, part, flags)
     describe_action(input, output, 'VM') do
-      input = input.to_s.shellescape
-      output = output.to_s.shellescape
-      part = part.to_s.shellescape
-      cmd = "timeout 10 ./bin/cvm #{flags} --output=#{part} < #{input} > #{output}"
-      psystem_noecho cmd
+      input = input.to_s
+      output = output.to_s
+      part = part.to_s
+      cmd = "./bin/cvm #{flags} --output=#{part}"
+      qsystem(cmd, input_file: input, output_file: output, timeout: 10)
     end
   end
 
