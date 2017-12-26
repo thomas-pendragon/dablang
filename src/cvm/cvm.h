@@ -462,7 +462,7 @@ struct DabVM
 
     std::vector<BinSection> sections;
 
-    DabClass &get_class(int index);
+    DabClass &get_class(dab_class_t index);
     void predefine_default_classes();
     void define_default_classes();
     void define_defaults();

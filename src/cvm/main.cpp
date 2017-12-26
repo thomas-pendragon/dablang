@@ -48,7 +48,7 @@ std::string DabVM::get_symbol(dab_symbol_t index) const
     return symbols[index];
 }
 
-DabClass &DabVM::get_class(int index)
+DabClass &DabVM::get_class(dab_class_t index)
 {
     if (!classes.count(index))
     {
