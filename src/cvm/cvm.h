@@ -46,7 +46,7 @@ struct DabFunction
     bool               regular   = true;
     dab_function_reg_t extra_reg = nullptr;
 
-    size_t      address = -1;
+    size_t      address = 0;
     std::string name;
 
     DabFunctionReflection reflection;
