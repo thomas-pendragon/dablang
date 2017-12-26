@@ -28,7 +28,7 @@ struct dab_register_t
     }
     bool nil() const
     {
-        return _value == 0xFFFF;
+        return _value == _nil_value;
     }
 
     dab_register_t(uint16_t _value) : _value(_value)
@@ -37,8 +37,10 @@ struct dab_register_t
 
     static dab_register_t nilreg()
     {
-        return dab_register_t(0xFFFF);
+        return dab_register_t(_nil_value);
     }
+
+    static const uint16_t _nil_value = 0xFFFF;
 };
 
 #pragma pack(push, 1)
