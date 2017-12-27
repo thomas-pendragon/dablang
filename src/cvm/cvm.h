@@ -513,7 +513,7 @@ struct DabVM
 
     DabValue &get_self();
 
-    size_t get_prev_ip();
+    uint64_t get_prev_ip();
 
     uint64_t get_block_addr();
     DabValue get_block_capture();

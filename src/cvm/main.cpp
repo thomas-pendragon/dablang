@@ -258,7 +258,7 @@ DabValue &DabVM::get_self()
     return current_frame()->self;
 }
 
-size_t DabVM::get_prev_ip()
+uint64_t DabVM::get_prev_ip()
 {
     return current_frame()->prev_ip;
 }
