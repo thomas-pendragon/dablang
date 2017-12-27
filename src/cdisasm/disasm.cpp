@@ -249,7 +249,7 @@ void parse_headers(DisasmContext &context, BinHeader *header)
                 break;
             }
             char number[8];
-            sprintf(number, "%d", label_counter++);
+            snprintf(number, sizeof(number), "%d", label_counter++);
             label_name = base_label_name + number;
         }
 

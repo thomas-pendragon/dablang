@@ -42,7 +42,7 @@ std::string DabVM::get_symbol(dab_symbol_t index) const
     if (symbols.size() <= index)
     {
         char index_string[32];
-        sprintf(index_string, "%d", (int)index);
+        snprintf(index_string, sizeof(index_string), "%d", (int)index);
         throw DabRuntimeError(std::string("symbol ") + index_string + " not found.");
     }
     return symbols[index];

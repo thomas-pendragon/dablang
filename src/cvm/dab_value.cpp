@@ -78,7 +78,7 @@ dab_class_t DabValue::class_index() const
         break;
     default:
         char description[256];
-        sprintf(description, "Unknown data.type %d.\n", (int)data.type);
+        snprintf(description, sizeof(description), "Unknown data.type %d.\n", (int)data.type);
         throw DabRuntimeError(description);
     }
 }

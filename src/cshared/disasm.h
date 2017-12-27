@@ -53,7 +53,7 @@ struct AsmStream
     {
         auto value = _read<int8_t>();
         char output[32];
-        sprintf(output, "%d", value);
+        snprintf(output, sizeof(output), "%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -63,7 +63,7 @@ struct AsmStream
     {
         auto value = _read<uint8_t>();
         char output[32];
-        sprintf(output, "%d", value);
+        snprintf(output, sizeof(output), "%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -73,7 +73,7 @@ struct AsmStream
     {
         auto value = _read<int16_t>();
         char output[32];
-        sprintf(output, "%d", value);
+        snprintf(output, sizeof(output), "%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -83,7 +83,7 @@ struct AsmStream
     {
         auto value = _read<int32_t>();
         char output[32];
-        sprintf(output, "%d", value);
+        snprintf(output, sizeof(output), "%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -93,7 +93,7 @@ struct AsmStream
     {
         auto value = _read<uint32_t>();
         char output[32];
-        sprintf(output, "%" PRIu32, value);
+        snprintf(output, sizeof(output), "%" PRIu32, value);
         if (info.length())
             info += ", ";
         info += output;
@@ -105,11 +105,11 @@ struct AsmStream
         char output[32];
         if (value == 0xFFFF)
         {
-            sprintf(output, "RNIL");
+            snprintf(output, sizeof(output), "RNIL");
         }
         else
         {
-            sprintf(output, "R%d", (int)value);
+            snprintf(output, sizeof(output), "R%d", (int)value);
         }
         if (info.length())
             info += ", ";
@@ -129,7 +129,7 @@ struct AsmStream
     {
         auto value = _read<uint16_t>();
         char output[32];
-        sprintf(output, "%d", value);
+        snprintf(output, sizeof(output), "%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -139,7 +139,7 @@ struct AsmStream
     {
         auto value = _read<uint16_t>();
         char output[32];
-        sprintf(output, "S%d", value);
+        snprintf(output, sizeof(output), "S%d", value);
         if (info.length())
             info += ", ";
         info += output;
@@ -149,7 +149,7 @@ struct AsmStream
     {
         auto value = _read<uint64_t>();
         char output[32];
-        sprintf(output, "%" PRIu64, value);
+        snprintf(output, sizeof(output), "%" PRIu64, value);
         if (info.length())
             info += ", ";
         info += output;
@@ -159,7 +159,7 @@ struct AsmStream
     {
         auto value = _read<int64_t>();
         char output[32];
-        sprintf(output, "%" PRId64, value);
+        snprintf(output, sizeof(output), "%" PRId64, value);
         if (info.length())
             info += ", ";
         info += output;

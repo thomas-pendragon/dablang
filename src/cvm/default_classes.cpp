@@ -334,7 +334,7 @@ void DabVM::define_default_classes()
             if (i)
                 ret += ", ";
             char string[32];
-            sprintf(string, "%d", (int)a[i]);
+            snprintf(string, sizeof(string), "%d", (int)a[i]);
             ret += string;
         }
         return "[" + ret + "]";
