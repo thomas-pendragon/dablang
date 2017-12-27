@@ -538,7 +538,7 @@ struct DabVM
 
     DabValue cast(const DabValue &value, int klass_index);
 
-    void add_class(const std::string &name, int index, int parent_index);
+    void add_class(const std::string &name, dab_class_t index, dab_class_t parent_index);
 
     void call_static_instance(const DabClass &klass, const std::string &name,
                               const DabValue &object);

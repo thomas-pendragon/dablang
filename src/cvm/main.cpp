@@ -1000,7 +1000,7 @@ DabValue DabVM::cast(const DabValue &value, int klass_index)
     }
 }
 
-void DabVM::add_class(const std::string &name, int index, int parent_index)
+void DabVM::add_class(const std::string &name, dab_class_t index, dab_class_t parent_index)
 {
     if (!classes.count(index))
     {
