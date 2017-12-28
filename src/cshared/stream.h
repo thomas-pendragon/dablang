@@ -31,6 +31,10 @@ struct dab_register_t
         return _value == _nil_value;
     }
 
+    dab_register_t() : _value(_nil_value)
+    {
+    }
+
     dab_register_t(uint16_t _value) : _value(_value)
     {
     }
