@@ -30,19 +30,19 @@ void DabVM::load_newformat(Stream &input)
     fprintf(stderr, "vm: newformat: h: %d, d: %d, s: %d\n", (int)size_of_header, (int)size_of_data,
             (int)number_of_sections);
 
-    size_t code_address = 0;
-    size_t symb_address = 0;
-    size_t symb_length  = 0;
-    bool   has_symbols  = false;
+    uint64_t code_address = 0;
+    uint64_t symb_address = 0;
+    uint64_t symb_length  = 0;
+    bool     has_symbols  = false;
 
-    size_t func_address  = 0;
-    size_t func_length   = 0;
-    bool   has_functions = false;
-    bool   functions_ex  = false;
+    uint64_t func_address  = 0;
+    uint64_t func_length   = 0;
+    bool     has_functions = false;
+    bool     functions_ex  = false;
 
-    size_t classes_address = 0;
-    size_t classes_length  = 0;
-    bool   has_classes     = false;
+    uint64_t classes_address = 0;
+    uint64_t classes_length  = 0;
+    bool     has_classes     = false;
 
     for (uint32_t index = 0; index < number_of_sections; index++)
     {
