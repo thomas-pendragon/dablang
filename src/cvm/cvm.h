@@ -428,12 +428,12 @@ struct DabRunOptions
 
 struct DabStackFrame
 {
-    uint64_t prev_ip;
-    DabValue self;
-    uint64_t block_addr;
-    DabValue capture;
-    uint64_t out_reg_index;
-    DabValue retvalue;
+    uint64_t       prev_ip;
+    DabValue       self;
+    uint64_t       block_addr;
+    DabValue       capture;
+    dab_register_t out_reg;
+    DabValue       retvalue;
 
     std::vector<DabValue> args;
 };

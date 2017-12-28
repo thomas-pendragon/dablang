@@ -141,10 +141,10 @@ void DabVM::push_new_frame(const DabValue &self, uint64_t block_addr, dab_regist
     {
         stackframe.args.push_back(register_get(reg));
     }
-    stackframe.prev_ip       = ip();
-    stackframe.block_addr    = block_addr;
-    stackframe.capture       = capture;
-    stackframe.out_reg_index = out_reg.value();
+    stackframe.prev_ip    = ip();
+    stackframe.block_addr = block_addr;
+    stackframe.capture    = capture;
+    stackframe.out_reg    = out_reg;
 
     stackframes.push_back(stackframe);
 
@@ -250,7 +250,7 @@ DabValue DabVM::get_block_capture()
 
 dab_register_t DabVM::get_out_reg()
 {
-    return current_frame()->out_reg_index;
+    return current_frame()->out_reg;
 }
 
 DabValue &DabVM::get_self()
