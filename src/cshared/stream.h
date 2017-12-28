@@ -4,18 +4,18 @@
 
 struct Buffer
 {
-    byte * data   = nullptr;
-    size_t length = 0;
+    byte *   data   = nullptr;
+    uint64_t length = 0;
 
     bool _dont_delete = false;
 
     Buffer();
     Buffer(const Buffer &other);
-    Buffer(const Buffer &other, size_t start, size_t length); // nocopy
+    Buffer(const Buffer &other, uint64_t start, uint64_t length); // nocopy
     ~Buffer();
     Buffer &operator=(const Buffer &other);
-    void resize(size_t new_length);
-    void append(const byte *data, size_t data_length);
+    void resize(uint64_t new_length);
+    void append(const byte *data, uint64_t data_length);
 };
 
 struct dab_register_t
