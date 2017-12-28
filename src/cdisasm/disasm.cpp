@@ -35,7 +35,7 @@ struct StreamReader : public BaseReader
     }
 };
 
-void parse_substream(Stream &stream, size_t start, bool no_numbers)
+void parse_substream(Stream &stream, uint64_t start, bool no_numbers)
 {
     size_t                        position = 0;
     StreamReader                  reader(stream, position);
@@ -55,7 +55,7 @@ void parse_substream(Stream &stream, size_t start, bool no_numbers)
     });
 }
 
-void parse_data_substream(Stream &input_stream, size_t start, bool no_numbers)
+void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
     size_t       position = 0;
     StreamReader reader(input_stream, position);
