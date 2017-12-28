@@ -123,7 +123,7 @@ bool DabVM::pop_frame(bool regular)
     {
         if (options.verbose)
         {
-            fprintf(stderr, "vm: pop last frame prev_ip = %zu\n", prev_ip);
+            fprintf(stderr, "vm: pop last frame prev_ip = %" PRIu64 "\n", prev_ip);
         }
         return false;
     }
