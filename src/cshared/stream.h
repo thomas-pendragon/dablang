@@ -116,9 +116,9 @@ struct Stream
 
     void seek(size_t position);
 
-    size_t length() const;
-    size_t position() const;
-    bool   eof() const;
+    uint64_t length() const;
+    uint64_t position() const;
+    bool     eof() const;
 
     void rewind()
     {
@@ -143,8 +143,8 @@ struct Stream
     uint64_t uint64_data(size_t address);
 
   private:
-    Buffer buffer;
-    size_t _position = 0;
+    Buffer   buffer;
+    uint64_t _position = 0;
 
     byte *data() const;
 

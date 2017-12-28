@@ -153,12 +153,12 @@ void Stream::seek(size_t position)
     _position = position;
 }
 
-size_t Stream::length() const
+uint64_t Stream::length() const
 {
     return buffer.length;
 }
 
-size_t Stream::position() const
+uint64_t Stream::position() const
 {
     return _position;
 }

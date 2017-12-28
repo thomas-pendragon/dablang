@@ -163,7 +163,7 @@ void DabVM::_dump(const char *name, const std::vector<DabValue> &data, FILE *out
     }
 }
 
-size_t DabVM::ip() const
+uint64_t DabVM::ip() const
 {
     return instructions.position();
 }

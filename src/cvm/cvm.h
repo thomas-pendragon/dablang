@@ -496,7 +496,7 @@ struct DabVM
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
-    size_t ip() const;
+    uint64_t ip() const;
 
     int run(Stream &input);
 
