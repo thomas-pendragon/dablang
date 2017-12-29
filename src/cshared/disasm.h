@@ -52,68 +52,68 @@ struct AsmStream
     void read_int8(std::string &info)
     {
         auto value = _read<int8_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_uint8(std::string &info)
     {
         auto value = _read<uint8_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_int16(std::string &info)
     {
         auto value = _read<int16_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_int32(std::string &info)
     {
         auto value = _read<int32_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_uint32(std::string &info)
     {
         auto value = _read<uint32_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%" PRIu32, value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%" PRIu32, value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_reg(std::string &info)
     {
         auto value = _read<uint16_t>();
-        char output[32];
+        char expression[32];
         if (value == 0xFFFF)
         {
-            snprintf(output, sizeof(output), "RNIL");
+            snprintf(expression, sizeof(expression), "RNIL");
         }
         else
         {
-            snprintf(output, sizeof(output), "R%d", (int)value);
+            snprintf(expression, sizeof(expression), "R%d", (int)value);
         }
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_reglist(std::string &info)
@@ -128,41 +128,41 @@ struct AsmStream
     void read_uint16(std::string &info)
     {
         auto value = _read<uint16_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_symbol(std::string &info)
     {
         auto value = _read<uint16_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "S%d", value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "S%d", value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_uint64(std::string &info)
     {
         auto value = _read<uint64_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%" PRIu64, value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%" PRIu64, value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_int64(std::string &info)
     {
         auto value = _read<int64_t>();
-        char output[32];
-        snprintf(output, sizeof(output), "%" PRId64, value);
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%" PRId64, value);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_vlc(std::string &info)
@@ -173,37 +173,37 @@ struct AsmStream
             length = _read<uint64_t>();
         }
         auto        ptr = read(length);
-        std::string output((const char *)ptr, length);
+        std::string expression((const char *)ptr, length);
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_string4(std::string &info)
     {
-        std::string output;
+        std::string expression;
         for (int i = 0; i < 4; i++)
-            output += _read<char>();
+            expression += _read<char>();
 
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     void read_cstring(std::string &info)
     {
-        std::string output;
+        std::string expression;
         while (true)
         {
             auto c = _read<char>();
             if (c == 0)
                 break;
-            output += c;
+            expression += c;
         }
 
         if (info.length())
             info += ", ";
-        info += output;
+        info += expression;
     }
 
     unsigned char operator[](size_t index) const
