@@ -135,7 +135,7 @@ std::string Stream::read_cstring()
     return ret;
 }
 
-void Stream::append(const byte *data, size_t length)
+void Stream::append(const byte *data, uint64_t length)
 {
     buffer.append(data, length);
 }

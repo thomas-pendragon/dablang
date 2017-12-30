@@ -110,7 +110,7 @@ struct Stream
     std::string read_string4();
     std::string read_cstring();
 
-    void append(const byte *data, size_t length);
+    void append(const byte *data, uint64_t length);
 
     void append(Stream &stream)
     {
