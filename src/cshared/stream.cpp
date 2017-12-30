@@ -147,7 +147,7 @@ void Stream::append(Stream &stream, uint64_t length)
     stream._position += length;
 }
 
-void Stream::seek(size_t position)
+void Stream::seek(uint64_t position)
 {
     assert(position < length());
     _position = position;
