@@ -369,7 +369,7 @@ struct DabByteBuffer : public DabBaseObject
 struct DabLiteralString : public DabBaseObject
 {
     const char *pointer = nullptr;
-    size_t      length  = 0;
+    uint64_t    length  = 0;
 };
 
 struct DabDynamicString : public DabBaseObject
