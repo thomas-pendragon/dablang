@@ -101,7 +101,7 @@ struct InstructionsReader : public BaseReader
     DabVM &vm;
 
     const byte *_data;
-    size_t      _length;
+    uint64_t    _length;
 
     uint64_t start_position = 0;
 
