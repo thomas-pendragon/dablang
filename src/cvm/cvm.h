@@ -448,7 +448,7 @@ struct DabVM
 
     std::map<dab_class_t, DabClass> classes;
 
-    std::set<size_t> breakpoints;
+    std::set<uint64_t> breakpoints;
 
     std::vector<DabValue>              _registers;
     std::vector<std::vector<DabValue>> _register_stack;
