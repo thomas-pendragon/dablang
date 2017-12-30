@@ -59,5 +59,5 @@ void Buffer::append(const byte *data, uint64_t data_length)
     const uint64_t new_length = old_length + data_length;
     assert(new_length > old_length);
     resize(new_length);
-    memcpy(this->data + old_length, data, data_length);
+    memcpy(this->data + old_length, data, (size_t)data_length);
 }
