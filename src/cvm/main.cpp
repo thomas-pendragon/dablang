@@ -578,7 +578,7 @@ bool DabVM::execute_single(Stream &input)
         if (options.verbose)
         {
             fprintf(stderr, "vm: get captured var %d (of %" PRIu64 ").\n", closure_index,
-                    array.size());
+                    (uint64_t)array.size());
         }
         auto value = array[closure_index];
         register_set(reg_index, value);
