@@ -105,7 +105,7 @@ struct InstructionsReader : public BaseReader
 
     uint64_t start_position = 0;
 
-    InstructionsReader(DabVM &vm, size_t &position) : BaseReader(position), vm(vm)
+    InstructionsReader(DabVM &vm, uint64_t &position) : BaseReader(position), vm(vm)
     {
         _data   = vm.instructions.raw_base_data();
         _length = vm.instructions.raw_base_length();
@@ -157,7 +157,7 @@ void DabVM_debug::prepare_disasm()
 
     has_disasm = true;
 
-    size_t                              position = 0;
+    uint64_t                            position = 0;
     InstructionsReader                  reader(vm, position);
     DisasmProcessor<InstructionsReader> processor(reader);
 

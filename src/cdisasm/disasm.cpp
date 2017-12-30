@@ -13,7 +13,7 @@ struct DisasmContext
 struct StreamReader : public BaseReader
 {
     Stream &stream;
-    StreamReader(Stream &stream, size_t &position) : BaseReader(position), stream(stream)
+    StreamReader(Stream &stream, uint64_t &position) : BaseReader(position), stream(stream)
     {
     }
 
@@ -37,7 +37,7 @@ struct StreamReader : public BaseReader
 
 void parse_substream(Stream &stream, uint64_t start, bool no_numbers)
 {
-    size_t                        position = 0;
+    uint64_t                      position = 0;
     StreamReader                  reader(stream, position);
     DisasmProcessor<StreamReader> processor(reader);
 
@@ -57,7 +57,7 @@ void parse_substream(Stream &stream, uint64_t start, bool no_numbers)
 
 void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
-    size_t       position = 0;
+    uint64_t     position = 0;
     StreamReader reader(input_stream, position);
 
     AsmStream<StreamReader> stream(reader);
@@ -150,7 +150,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 
 void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
-    size_t       position = 0;
+    uint64_t     position = 0;
     StreamReader reader(input_stream, position);
 
     AsmStream<StreamReader> stream(reader);
@@ -180,7 +180,7 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
 
 void parse_func_substream(Stream &input_stream)
 {
-    size_t       position = 0;
+    uint64_t     position = 0;
     StreamReader reader(input_stream, position);
 
     AsmStream<StreamReader> stream(reader);

@@ -3,9 +3,9 @@
 struct BaseReader
 {
     std::vector<unsigned char> data;
-    size_t &                   _position;
+    uint64_t &                 _position;
 
-    BaseReader(size_t &position) : _position(position)
+    BaseReader(uint64_t &position) : _position(position)
     {
     }
 
@@ -36,7 +36,7 @@ struct BaseReader
 
 struct StdinReader : public BaseReader
 {
-    StdinReader(size_t &position) : BaseReader(position)
+    StdinReader(uint64_t &position) : BaseReader(position)
     {
     }
 
