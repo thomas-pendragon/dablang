@@ -9,7 +9,7 @@ struct BaseReader
     {
     }
 
-    size_t position() const
+    uint64_t position() const
     {
         return _position;
     }
