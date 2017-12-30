@@ -103,7 +103,7 @@ struct InstructionsReader : public BaseReader
     const byte *_data;
     size_t      _length;
 
-    size_t start_position = 0;
+    uint64_t start_position = 0;
 
     InstructionsReader(DabVM &vm, size_t &position) : BaseReader(position), vm(vm)
     {
