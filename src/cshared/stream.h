@@ -118,7 +118,7 @@ struct Stream
     }
     void append(Stream &stream, uint64_t length);
 
-    void seek(size_t position);
+    void seek(uint64_t position);
 
     uint64_t length() const;
     uint64_t position() const;
@@ -140,11 +140,11 @@ struct Stream
         return buffer.length;
     }
 
-    const char *string_ptr(size_t address);
+    const char *string_ptr(uint64_t address);
 
-    std::string cstring_data(size_t address);
-    uint16_t uint16_data(size_t address);
-    uint64_t uint64_data(size_t address);
+    std::string cstring_data(uint64_t address);
+    uint16_t uint16_data(uint64_t address);
+    uint64_t uint64_data(uint64_t address);
 
   private:
     Buffer   buffer;

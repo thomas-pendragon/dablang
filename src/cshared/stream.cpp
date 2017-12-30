@@ -16,25 +16,25 @@ BinHeader *Stream::peek_header()
     return (BinHeader *)buffer.data;
 }
 
-const char *Stream::string_ptr(size_t address)
+const char *Stream::string_ptr(uint64_t address)
 {
     return (const char *)(buffer.data + address);
 }
 
-std::string Stream::cstring_data(size_t address)
+std::string Stream::cstring_data(uint64_t address)
 {
     auto ptr = buffer.data + address;
     return std::string((const char *)ptr);
 }
 
-uint64_t Stream::uint64_data(size_t address)
+uint64_t Stream::uint64_data(uint64_t address)
 {
     auto ptr = buffer.data + address;
     auto ret = *(uint64_t *)ptr;
     return ret;
 }
 
-uint16_t Stream::uint16_data(size_t address)
+uint16_t Stream::uint16_data(uint64_t address)
 {
     auto ptr = buffer.data + address;
     auto ret = *(uint16_t *)ptr;
