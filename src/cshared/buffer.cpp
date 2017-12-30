@@ -43,7 +43,7 @@ Buffer &Buffer::operator=(const Buffer &other)
 
 void Buffer::resize(uint64_t new_length)
 {
-    byte *new_data = (byte *)malloc(new_length);
+    byte *new_data = (byte *)malloc((size_t)new_length);
     if (data)
     {
         memcpy(new_data, this->data, min(this->length, new_length));
