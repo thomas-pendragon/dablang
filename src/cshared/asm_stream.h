@@ -42,7 +42,7 @@ struct StdinReader : public BaseReader
 
     virtual uint64_t raw_read(void *buffer, uint64_t size) override
     {
-        return fread(buffer, 1, size, stdin);
+        return fread(buffer, 1, (size_t)size, stdin);
     }
 
     bool feof()
