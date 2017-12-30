@@ -55,7 +55,7 @@ void DabVM::dump_vm(FILE *out)
 
         BinFunction bin_func;
         bin_func.symbol  = it.first;
-        bin_func.klass   = -1;
+        bin_func.klass   = DAB_CLASS_NIL;
         bin_func.address = it.second.address;
         dump_functions.push_back(bin_func);
     }
