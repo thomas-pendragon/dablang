@@ -100,7 +100,7 @@ std::vector<dab_register_t> Stream::read_reglist()
 
 std::string Stream::read_vlc_string()
 {
-    size_t len = read_uint8();
+    uint64_t len = read_uint8();
     if (len == 255)
     {
         len = read_uint64();
