@@ -213,7 +213,7 @@ std::string DabValue::literal_string() const
 {
     assert(data.type == TYPE_LITERALSTRING);
     auto *obj = (DabLiteralString *)data.object->object;
-    return std::string(obj->pointer, obj->length);
+    return std::string(obj->pointer, (size_t)obj->length);
 }
 
 std::string DabValue::dynamic_string() const
