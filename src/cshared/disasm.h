@@ -167,7 +167,7 @@ struct AsmStream
 
     void read_vlc(std::string &info)
     {
-        size_t length = _read<uint8_t>();
+        uint64_t length = _read<uint8_t>();
         if (length == 256)
         {
             length = _read<uint64_t>();
