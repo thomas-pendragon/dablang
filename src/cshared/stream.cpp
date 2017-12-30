@@ -106,7 +106,7 @@ std::string Stream::read_vlc_string()
         len = read_uint64();
     }
     assert(len <= remaining());
-    std::string ret((const char *)data(), len);
+    std::string ret((const char *)data(), (size_t)len);
     _position += len;
     return ret;
 }
