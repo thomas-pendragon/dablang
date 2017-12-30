@@ -50,9 +50,9 @@ struct dab_register_t
 #pragma pack(push, 1)
 struct BinFunction
 {
-    uint16_t    symbol;
-    dab_class_t klass;
-    uint64_t    address;
+    dab_symbol_t symbol;
+    dab_class_t  klass;
+    uint64_t     address;
 };
 #pragma pack(pop)
 
