@@ -32,7 +32,7 @@ struct Op
 
     uint16_t arg_uint16(size_t index)
     {
-        return data[index].fixnum;
+        return (uint16_t)data[index].fixnum;
     }
 };
 
