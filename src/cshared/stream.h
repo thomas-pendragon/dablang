@@ -135,7 +135,7 @@ struct Stream
     {
         return buffer.data;
     }
-    size_t raw_base_length() const
+    uint64_t raw_base_length() const
     {
         return buffer.length;
     }
