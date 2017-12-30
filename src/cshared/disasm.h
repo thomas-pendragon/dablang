@@ -234,7 +234,7 @@ struct DisasmProcessor
     {
     }
 
-    void go(std::function<void(size_t, std::string)> yield)
+    void go(std::function<void(uint64_t, std::string)> yield)
     {
         AsmStream<TReader> stream(reader);
         while (!stream.feof())
