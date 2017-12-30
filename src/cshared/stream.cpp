@@ -173,7 +173,7 @@ byte *Stream::data() const
     return buffer.data + _position;
 }
 
-size_t Stream::remaining() const
+uint64_t Stream::remaining() const
 {
     if (buffer.length <= _position)
         return 0;

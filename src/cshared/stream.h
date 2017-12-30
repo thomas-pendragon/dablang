@@ -129,7 +129,7 @@ struct Stream
         seek(0);
     }
 
-    size_t remaining() const;
+    uint64_t remaining() const;
 
     const byte *raw_base_data() const
     {
