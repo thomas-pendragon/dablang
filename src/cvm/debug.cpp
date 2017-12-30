@@ -222,7 +222,7 @@ void DabVM::execute_debug(Stream &input)
         }
         else if (cmd == "ip")
         {
-            fprintf(err_stream, "IP = %zu\n", ip());
+            fprintf(err_stream, "IP = %" PRIu64 "\n", ip());
         }
         else if (cmd == "code")
         {
