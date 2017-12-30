@@ -116,7 +116,7 @@ struct Stream
     {
         append(stream, stream.remaining());
     }
-    void append(Stream &stream, size_t length);
+    void append(Stream &stream, uint64_t length);
 
     void seek(size_t position);
 

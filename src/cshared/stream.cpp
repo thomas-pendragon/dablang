@@ -140,7 +140,7 @@ void Stream::append(const byte *data, size_t length)
     buffer.append(data, length);
 }
 
-void Stream::append(Stream &stream, size_t length)
+void Stream::append(Stream &stream, uint64_t length)
 {
     assert(stream.remaining() >= length);
     append(stream.data(), length);
