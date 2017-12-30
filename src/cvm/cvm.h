@@ -6,11 +6,6 @@
 
 struct DabValue;
 
-typedef uint16_t dab_symbol_t;
-typedef uint16_t dab_class_t;
-
-static const dab_symbol_t DAB_SYMBOL_NIL = 0xFFFF;
-
 typedef std::function<DabValue(DabValue, std::vector<DabValue>)> dab_function_reg_t;
 
 struct DabRuntimeError : public std::runtime_error
