@@ -19,7 +19,7 @@ struct AsmStream
     {
     }
 
-    size_t position() const
+    uint64_t position() const
     {
         return reader.position();
     }
