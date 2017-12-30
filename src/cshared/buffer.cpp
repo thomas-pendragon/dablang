@@ -35,8 +35,8 @@ Buffer &Buffer::operator=(const Buffer &other)
     this->length = other.length;
     if (other.data)
     {
-        this->data = (byte *)malloc(this->length);
-        memcpy(this->data, other.data, this->length);
+        this->data = (byte *)malloc((size_t)this->length);
+        memcpy(this->data, other.data, (size_t)this->length);
     }
     return *this;
 }
