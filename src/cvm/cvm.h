@@ -605,7 +605,7 @@ struct DabVM_debug
     void print_ssa_registers();
 
   private:
-    typedef std::vector<std::pair<size_t, std::string>> disasm_map_t;
+    typedef std::vector<std::pair<uint64_t, std::string>> disasm_map_t;
     disasm_map_t disasm;
     bool         has_disasm = false;
     void         prepare_disasm();
