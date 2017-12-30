@@ -173,7 +173,7 @@ struct AsmStream
             length = _read<uint64_t>();
         }
         auto        ptr = read(length);
-        std::string expression((const char *)ptr, length);
+        std::string expression((const char *)ptr, (size_t)length);
         if (info.length())
             info += ", ";
         info += expression;
