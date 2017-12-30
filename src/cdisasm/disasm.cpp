@@ -17,7 +17,7 @@ struct StreamReader : public BaseReader
     {
     }
 
-    virtual size_t raw_read(void *buffer, uint64_t size) override
+    virtual uint64_t raw_read(void *buffer, uint64_t size) override
     {
         auto data       = stream.raw_base_data();
         auto length     = stream.raw_base_length();

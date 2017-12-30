@@ -31,7 +31,7 @@ struct BaseReader
         return data[index];
     }
 
-    virtual size_t raw_read(void *buffer, uint64_t size) = 0;
+    virtual uint64_t raw_read(void *buffer, uint64_t size) = 0;
 };
 
 struct StdinReader : public BaseReader
@@ -40,7 +40,7 @@ struct StdinReader : public BaseReader
     {
     }
 
-    virtual size_t raw_read(void *buffer, uint64_t size) override
+    virtual uint64_t raw_read(void *buffer, uint64_t size) override
     {
         return fread(buffer, 1, size, stdin);
     }

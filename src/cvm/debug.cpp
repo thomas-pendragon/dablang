@@ -132,7 +132,7 @@ struct InstructionsReader : public BaseReader
         _length = code_section.length;
     }
 
-    virtual size_t raw_read(void *buffer, uint64_t size) override
+    virtual uint64_t raw_read(void *buffer, uint64_t size) override
     {
         auto data       = _data;
         auto length     = _length;
