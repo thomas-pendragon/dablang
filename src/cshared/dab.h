@@ -9,3 +9,5 @@
 #define DAB_PLATFORM_WINDOWS 1
 
 #endif
+
+#define _CRT_SECURE_NO_DEPRECATE
