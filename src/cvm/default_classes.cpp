@@ -88,7 +88,7 @@ void DabVM::define_default_classes()
     string_class.add_reg_function("upcase", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         auto s = self.string();
-        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+        std::transform(s.begin(), s.end(), s.begin(), [](char c) { return (char)toupper(c); });
         return s;
     });
     string_class.add_reg_function("length", [](DabValue self, std::vector<DabValue> args) {
