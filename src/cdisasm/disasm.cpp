@@ -64,7 +64,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 
     std::string string;
     bool        use_string = false;
-    size_t      string_pos = 0;
+    uint64_t    string_pos = 0;
 
     while (true)
     {
