@@ -1113,7 +1113,7 @@ dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
         }
     }
     symbols.push_back(string);
-    return symbols.size() - 1;
+    return (dab_symbol_t)(symbols.size() - 1);
 }
 
 DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
