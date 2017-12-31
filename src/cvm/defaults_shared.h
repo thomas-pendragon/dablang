@@ -28,7 +28,7 @@
             auto v1 = arg1 member;                                                                 \
             ret     = DabValue(result_class, (result_type)(v0 operator v1));                       \
         }                                                                                          \
-        catch (DabCastError & error)                                                               \
+        catch (DabCastError &)                                                                     \
         {                                                                                          \
             ret = DabValue(result_class, (bool)(true operator false));                             \
         }                                                                                          \
