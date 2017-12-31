@@ -546,7 +546,7 @@ struct DabVM
 
     void read_coverage_files(Stream &stream, uint64_t address, uint64_t length);
 
-    void read_symbols(Stream &input, size_t symb_address, size_t symb_length);
+    void read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length);
 
     void instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
                   dab_symbol_t block_symbol = DAB_SYMBOL_NIL, const DabValue &capture = nullptr,

@@ -253,7 +253,7 @@ void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_le
     }
 }
 
-void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length)
+void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length)
 {
     fprintf(stderr, "symbad=%p symblen=%d\n", (void *)symb_address, (int)symb_length);
     const auto symbol_len = sizeof(uint64_t);
