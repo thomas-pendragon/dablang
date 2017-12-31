@@ -31,16 +31,17 @@ const DabFunction &DabClass::_get_function(bool _static, dab_symbol_t symbol) co
     return collection.at(symbol);
 }
 
-void DabClass::_add_reg_function(bool is_static, const std::string &name, dab_function_reg_t body)
+void DabClass::_add_reg_function(bool is_static, const std::string &func_name,
+                                 dab_function_reg_t body)
 {
     auto &collection = is_static ? static_functions : functions;
 
     DabFunction fun;
-    fun.name      = name;
+    fun.name      = func_name;
     fun.regular   = false;
     fun.extra_reg = body;
 
-    auto symbol = $VM->get_or_create_symbol_index(name);
+    auto symbol = $VM->get_or_create_symbol_index(func_name);
 
     collection[symbol] = fun;
 }
