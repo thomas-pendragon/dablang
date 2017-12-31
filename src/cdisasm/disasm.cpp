@@ -236,7 +236,7 @@ void parse_headers(DisasmContext &context, BinHeader *header)
         auto section = header->sections[i];
 
         std::string label_name = std::string("_") + section.name;
-        std::transform(label_name.begin(), label_name.end(), label_name.begin(), ::toupper);
+        std::transform(label_name.begin(), label_name.end(), label_name.begin(), ::toupperc);
 
         auto base_label_name = label_name;
         int  label_counter   = 2;
