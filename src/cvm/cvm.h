@@ -535,9 +535,6 @@ struct DabVM
 
     void add_class(const std::string &name, dab_class_t index, dab_class_t parent_index);
 
-    void call_static_instance(const DabClass &klass, const std::string &name,
-                              const DabValue &object);
-
     void kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist);
 
     DabFunction &add_function(size_t address, const std::string &name, uint16_t class_index);
