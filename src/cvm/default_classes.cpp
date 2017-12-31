@@ -218,7 +218,7 @@ void DabVM::define_default_classes()
         if (n < 0 || n >= (int64_t)a.size())
             return DabValue(nullptr);
         else
-            return a[n];
+            return a[(size_t)n];
     });
     array_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 2);
@@ -237,7 +237,7 @@ void DabVM::define_default_classes()
         }
         else
         {
-            a[n] = arg2;
+            a[(size_t)n] = arg2;
         }
         return nullptr;
     });
@@ -290,7 +290,7 @@ void DabVM::define_default_classes()
 
         auto _size = $VM->cast(args[0], CLASS_FIXNUM);
         auto size  = _size.data.fixnum;
-        instance.bytebuffer().resize(size);
+        instance.bytebuffer().resize((size_t)size);
         return instance;
     });
     bytebuffer_class.add_reg_function("[]", [this](DabValue self, std::vector<DabValue> args) {
@@ -306,7 +306,7 @@ void DabVM::define_default_classes()
         if (n < 0 || n >= (int64_t)a.size())
             return DabValue(nullptr);
         else
-            return DabValue(CLASS_UINT8, a[n]);
+            return DabValue(CLASS_UINT8, a[(size_t)n]);
     });
     bytebuffer_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 2);
@@ -321,7 +321,7 @@ void DabVM::define_default_classes()
             n = a.size() + n;
         if (n >= 0 && n < (int64_t)a.size())
         {
-            a[n] = $VM->cast(arg2, CLASS_UINT8).data.num_uint8;
+            a[(size_t)n] = $VM->cast(arg2, CLASS_UINT8).data.num_uint8;
         }
         return nullptr;
     });
