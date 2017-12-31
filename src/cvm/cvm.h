@@ -33,7 +33,7 @@ struct DabFunctionReflection
 {
     std::vector<std::string> arg_names;
     std::vector<dab_class_t> arg_klasses;
-    size_t                   ret_klass;
+    dab_class_t              ret_klass;
 };
 
 struct DabFunction
