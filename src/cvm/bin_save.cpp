@@ -116,7 +116,7 @@ void DabVM::dump_vm(FILE *out)
         {
             auto ptr = instructions.raw_base_data() + pos;
 
-            _twrite(dump_data, (byte *)ptr, length);
+            _twrite(dump_data, (byte *)ptr, (size_t)length);
         }
         else if (section.special_index == TEMP_FUNC_SECTION)
         {
