@@ -74,8 +74,9 @@ void DabVM_debug::print_code(bool current_only)
 
     fprintf(err_stream, "IP = %d\n", (int)ip);
 
-    auto it = find_if(disasm.begin(), disasm.end(),
-                      [ip](const std::pair<size_t, std::string> &obj) { return obj.first == ip; });
+    auto it =
+        find_if(disasm.begin(), disasm.end(),
+                [ip](const std::pair<uint64_t, std::string> &obj) { return obj.first == ip; });
 
     if (it == disasm.end())
         return;
