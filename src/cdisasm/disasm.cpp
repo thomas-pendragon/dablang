@@ -19,12 +19,12 @@ struct StreamReader : public BaseReader
 
     virtual uint64_t raw_read(void *buffer, uint64_t size) override
     {
-        auto data       = stream.raw_base_data();
+        auto raw_data   = stream.raw_base_data();
         auto length     = stream.raw_base_length();
         auto offset     = position();
         auto max_length = std::min(size, length - offset);
 
-        memcpy(buffer, data + offset, (size_t)max_length);
+        memcpy(buffer, raw_data + offset, (size_t)max_length);
 
         return max_length;
     }
