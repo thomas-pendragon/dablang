@@ -102,7 +102,7 @@ void DabVM::define_default_classes()
         auto arg = $VM->cast(args[0], CLASS_FIXNUM);
         auto s   = self.string();
         auto n   = arg.data.fixnum;
-        return DabValue(s.substr(n, 1));
+        return DabValue(s.substr((size_t)n, 1));
     });
     string_class.add_reg_function("+", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
