@@ -69,15 +69,22 @@ struct BinSection
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+struct BinDabHeader
+{
+    char     dab[4];
+    uint32_t version;
+    uint64_t offset;
+    uint64_t size_of_header;
+    uint64_t size_of_data;
+    uint64_t section_count;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 struct BinHeader
 {
-    char       dab[4];
-    uint32_t   version;
-    uint64_t   offset;
-    uint64_t   size_of_header;
-    uint64_t   size_of_data;
-    uint64_t   section_count;
-    BinSection sections[0];
+    BinDabHeader header;
+    BinSection   sections[0];
 };
 #pragma pack(pop)
 

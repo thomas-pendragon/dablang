@@ -226,14 +226,17 @@ bool parse_bool_arg(int argc, char **argv, const std::string &arg)
     return false;
 }
 
-void parse_headers(DisasmContext &context, BinHeader *header)
+void parse_headers(DisasmContext &context, BinHeader *base_header)
 {
+    auto *header   = &base_header->header;
+    auto *sections = base_header->sections;
+
     fprintf(output, "/* disasm */\n");
     fprintf(output, "    W_HEADER %d\n", (int)header->version);
     fprintf(output, "    W_OFFSET %" PRIu64 "\n", (uint64_t)header->offset);
     for (size_t i = 0; i < header->section_count; i++)
     {
-        auto section = header->sections[i];
+        auto section = sections[i];
 
         std::string label_name = std::string("_") + section.name;
         std::transform(label_name.begin(), label_name.end(), label_name.begin(), ::toupperc);
@@ -277,16 +280,19 @@ int main(int argc, char **argv)
     }
     else
     {
-        auto header = stream.peek_header();
+        auto base_header = stream.peek_header();
+        auto header      = &base_header->header;
+        auto sections    = base_header->sections;
+
         fprintf(stderr, "cdisasm: %d sections\n", (int)header->section_count);
         if (with_headers)
         {
-            parse_headers(context, header);
+            parse_headers(context, base_header);
         }
 
         for (size_t i = 0; i < header->section_count; i++)
         {
-            auto section = header->sections[i];
+            auto section = sections[i];
             fprintf(stderr, "cdisasm: section[%d] '%s'\n", (int)i, section.name);
 
             if (with_headers)

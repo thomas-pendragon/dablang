@@ -117,11 +117,15 @@ int main()
 
     Stream stream;
     read_stream(stream);
-    auto header = stream.peek_header();
+
+    auto base_header = stream.peek_header();
+    auto header      = &base_header->header;
+    auto sections    = base_header->sections;
+
     fprintf(stderr, "cdumpcov: %d sections\n", (int)header->section_count);
     for (size_t i = 0; i < header->section_count; i++)
     {
-        auto section = header->sections[i];
+        auto section = sections[i];
         fprintf(stderr, "cdumpcov: section[%d] '%s'\n", (int)i, section.name);
         std::string section_name = section.name;
         if (section_name == "cove")

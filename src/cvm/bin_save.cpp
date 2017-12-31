@@ -33,7 +33,7 @@ enum
 
 void DabVM::dump_vm(FILE *out)
 {
-    BinHeader               dump_header;
+    BinDabHeader            dump_header;
     std::vector<BinSection> dump_sections = sections;
     std::vector<byte>       dump_data;
 
@@ -99,7 +99,7 @@ void DabVM::dump_vm(FILE *out)
 
     auto new_pos = dump_header.size_of_header;
 
-    auto code_offset = new_pos - instructions.peek_header()->size_of_header;
+    auto code_offset = new_pos - instructions.peek_header()->header.size_of_header;
     for (auto &func : dump_functions)
     {
         func.address += code_offset;
