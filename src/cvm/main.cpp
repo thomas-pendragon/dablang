@@ -1116,7 +1116,7 @@ dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
     return (dab_symbol_t)(symbols.size() - 1);
 }
 
-DabFunction &DabVM::add_function(size_t address, const std::string &name, uint16_t class_index)
+DabFunction &DabVM::add_function(uint64_t address, const std::string &name, uint16_t class_index)
 {
     fprintf(stderr, "vm: add function <%s>.\n", name.c_str());
     DabFunction function;
