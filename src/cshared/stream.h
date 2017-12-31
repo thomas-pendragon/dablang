@@ -15,7 +15,7 @@ struct Buffer
     ~Buffer();
     Buffer &operator=(const Buffer &other);
     void resize(uint64_t new_length);
-    void append(const byte *data, uint64_t data_length);
+    void append(const byte *new_data, uint64_t new_data_length);
 };
 
 struct dab_register_t
