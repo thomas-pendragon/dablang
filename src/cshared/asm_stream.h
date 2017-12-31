@@ -14,7 +14,7 @@ struct BaseReader
         return _position;
     }
 
-    void *read(size_t size = 1)
+    void *read(uint64_t size = 1)
     {
         auto old_size = data.size();
         data.resize(old_size + size);
