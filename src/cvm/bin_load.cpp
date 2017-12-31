@@ -148,7 +148,7 @@ void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t class
     }
 }
 
-void DabVM::read_functions(Stream &input, size_t func_address, size_t func_length)
+void DabVM::read_functions(Stream &input, uint64_t func_address, uint64_t func_length)
 {
     auto fun_len = 2 + 2 + 8; // uint16 + uint16 + uint64
 
@@ -185,7 +185,7 @@ struct MethodArgData
     uint16_t class_index;
 };
 
-void DabVM::read_functions_ex(Stream &input, size_t func_address, size_t func_length)
+void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length)
 {
     auto fun_len = 2 + 2 + 8 + 2; // uint16 + uint16 + uint64 + uint16
     auto arg_len = 2 + 2;         // uint16 + uint16
