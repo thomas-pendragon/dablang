@@ -878,7 +878,7 @@ void DabVM::set_instvar(dab_symbol_t symbol, const DabValue &value)
     get_self().set_instvar(symbol, value);
 }
 
-DabValue DabVM::cast(const DabValue &value, int klass_index)
+DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
 {
     auto from = value.class_index();
     auto to   = klass_index;

@@ -531,7 +531,7 @@ struct DabVM
 
     bool execute_single(Stream &input);
 
-    DabValue cast(const DabValue &value, int klass_index);
+    DabValue cast(const DabValue &value, dab_class_t klass_index);
 
     void add_class(const std::string &name, dab_class_t index, dab_class_t parent_index);
 
