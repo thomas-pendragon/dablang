@@ -211,7 +211,7 @@ struct AsmStream
         return reader[index];
     }
 
-    void *read(size_t size = 1)
+    void *read(uint64_t size = 1)
     {
         return reader.read(size);
     }
