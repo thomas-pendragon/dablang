@@ -544,7 +544,7 @@ struct DabVM
     void read_functions(Stream &input, size_t func_address, size_t func_length);
     void read_functions_ex(Stream &input, size_t func_address, size_t func_length);
 
-    void read_coverage_files(Stream &stream, size_t address, size_t length);
+    void read_coverage_files(Stream &stream, uint64_t address, uint64_t length);
 
     void read_symbols(Stream &input, size_t symb_address, size_t symb_length);
 

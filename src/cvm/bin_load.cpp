@@ -269,7 +269,7 @@ void DabVM::read_symbols(Stream &input, size_t symb_address, size_t symb_length)
     }
 }
 
-void DabVM::read_coverage_files(Stream &stream, size_t address, size_t length)
+void DabVM::read_coverage_files(Stream &stream, uint64_t address, uint64_t length)
 {
     auto size_of_cov_file    = sizeof(uint64_t);
     auto number_of_cov_files = length / size_of_cov_file;
