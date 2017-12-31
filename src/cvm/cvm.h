@@ -32,7 +32,7 @@ struct DabCastError : public DabRuntimeError
 struct DabFunctionReflection
 {
     std::vector<std::string> arg_names;
-    std::vector<size_t>      arg_klasses;
+    std::vector<dab_class_t> arg_klasses;
     size_t                   ret_klass;
 };
 
