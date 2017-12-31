@@ -539,7 +539,7 @@ struct DabVM
 
     DabFunction &add_function(size_t address, const std::string &name, uint16_t class_index);
 
-    void read_classes(Stream &input, size_t classes_address, size_t classes_length);
+    void read_classes(Stream &input, uint64_t classes_address, uint64_t classes_length);
 
     void read_functions(Stream &input, size_t func_address, size_t func_length);
     void read_functions_ex(Stream &input, size_t func_address, size_t func_length);

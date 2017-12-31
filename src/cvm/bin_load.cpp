@@ -117,7 +117,7 @@ void DabVM::load_newformat(Stream &input)
     instructions.seek(code_address);
 }
 
-void DabVM::read_classes(Stream &input, size_t classes_address, size_t classes_length)
+void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t classes_length)
 {
     auto class_len = 2 + 2 + 2; // uint16 + uint16 + uint16
 
