@@ -139,7 +139,7 @@ struct InstructionsReader : public BaseReader
         auto offset     = position();
         auto max_length = std::min(size, length - offset);
 
-        memcpy(buffer, data + offset, max_length);
+        memcpy(buffer, data + offset, (size_t)max_length);
 
         return max_length;
     }
