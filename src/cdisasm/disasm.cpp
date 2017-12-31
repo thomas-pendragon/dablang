@@ -42,7 +42,7 @@ void parse_substream(Stream &stream, uint64_t start, bool no_numbers)
     DisasmProcessor<StreamReader> processor(reader);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
-    processor.go([start, no_numbers](size_t pos, std::string info) {
+    processor.go([start, no_numbers](uint64_t pos, std::string info) {
         if (no_numbers)
         {
             fprintf(output, "    ");
