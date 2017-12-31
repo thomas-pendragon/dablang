@@ -450,17 +450,17 @@ void DabVM::_reflect(const DabFunction &function, dab_register_t reg, bool outpu
 
     for (size_t i = 0; i < n; i++)
     {
-        DabValue value;
+        DabValue arg_value;
         if (output_names)
         {
-            value = DabValue(reflection.arg_names[i]);
+            arg_value = DabValue(reflection.arg_names[i]);
         }
         else
         {
             auto index = reflection.arg_klasses[i];
-            value      = DabValue(classes[index]);
+            arg_value  = DabValue(classes[index]);
         }
-        array[i] = value;
+        array[i] = arg_value;
     }
 
     register_set(reg, value);
