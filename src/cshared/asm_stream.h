@@ -17,7 +17,7 @@ struct BaseReader
     void *read(uint64_t size = 1)
     {
         auto old_size = data.size();
-        data.resize(old_size + size);
+        data.resize((size_t)(old_size + size));
         auto buffer    = &data[old_size];
         auto real_size = raw_read(buffer, size);
         if (!real_size)
