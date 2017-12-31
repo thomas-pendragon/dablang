@@ -1,6 +1,12 @@
 #include "cvm.h"
 #include "../cshared/disasm.h"
 
+#ifdef _MSC_VER
+#define SSCANF sscanf_s
+#else
+#define SSCANF sscanf
+#endif
+
 void DabVM_debug::print_registers()
 {
     fprintf(stderr, "IP = %p (%d)\n", (void *)vm.ip(), (int)vm.ip());
@@ -244,7 +250,7 @@ void DabVM::execute_debug(Stream &input)
         else if (cmd.substr(0, 6) == "break ")
         {
             int ip  = 0;
-            int ret = sscanf(cmd.c_str(), "break %d", &ip);
+            int ret = SSCANF(cmd.c_str(), "break %d", &ip);
             assert(ret == 1);
             fprintf(err_stream, "debug: break at %d.\n", ip);
             breakpoints.insert(ip);
