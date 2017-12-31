@@ -581,7 +581,7 @@ struct DabVM
 
     bool run_leaktest(FILE *output);
 
-    size_t get_or_create_symbol_index(const std::string &string);
+    dab_symbol_t get_or_create_symbol_index(const std::string &string);
 
     DabValue cinstcall(DabValue self, const std::string &name);
 

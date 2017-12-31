@@ -1102,9 +1102,9 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     }
 }
 
-size_t DabVM::get_or_create_symbol_index(const std::string &string)
+dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
 {
-    for (size_t i = 0; i < symbols.size(); i++)
+    for (dab_symbol_t i = 0; i < (dab_symbol_t)symbols.size(); i++)
     {
         auto &symbol = symbols[i];
         if (symbol == string)
