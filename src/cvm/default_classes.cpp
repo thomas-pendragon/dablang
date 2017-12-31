@@ -124,7 +124,7 @@ void DabVM::define_default_classes()
             const auto  length = arg2.data.fixnum;
             if (length)
             {
-                s = std::string((const char *)&buffer[0], length);
+                s = std::string((const char *)&buffer[0], (size_t)length);
             }
         }
         else if (argc == 1)
