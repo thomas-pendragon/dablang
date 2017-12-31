@@ -118,7 +118,10 @@ void DabVM::define_defaults()
             return DabValue(nullptr);
 #else
             (void)args;
-            throw DabRuntimeError("function import not supported on windows yet");
+            if (true)
+            {
+                throw DabRuntimeError("function import not supported on windows yet");
+            }
             return DabValue(nullptr);
 #endif
         };
