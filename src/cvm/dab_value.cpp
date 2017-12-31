@@ -231,7 +231,7 @@ std::string DabValue::string() const
     assert(literal || method || dynamic);
     if (method)
     {
-        return $VM->get_symbol(data.fixnum);
+        return $VM->get_symbol((dab_symbol_t)data.fixnum);
     }
     else if (dynamic)
     {
