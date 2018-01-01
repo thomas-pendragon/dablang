@@ -128,9 +128,10 @@ void DabVM::dump_vm(FILE *out)
         }
         else if (section.special_index == TEMP_SYMBOLS_SECTION)
         {
+            auto offset = dump_sections[symd_section_index].pos;
             for (auto &symb : symb_data)
             {
-                symb += dump_sections[symd_section_index].pos;
+                symb += offset;
             }
             _twrite(dump_data, symb_data);
         }
