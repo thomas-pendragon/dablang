@@ -291,6 +291,12 @@ int main(int argc, char **argv)
         {
             input       = fopen(arg, "rb");
             close_input = true;
+
+            if (!input)
+            {
+                fprintf(stderr, "disasm: error: cannot open file <%s> for reading.\n", arg);
+                exit(1);
+            }
         }
     }
 
