@@ -284,6 +284,16 @@ int main(int argc, char **argv)
     FILE *input       = stdin;
     bool  close_input = false;
 
+    for (int argn = 1; argn < argc; argn++)
+    {
+        auto arg = argv[argn];
+        if (strstr(arg, "--") == NULL)
+        {
+            input       = fopen(arg, "rb");
+            close_input = true;
+        }
+    }
+
     Stream stream;
     read_stream(stream, input, close_input);
 
