@@ -205,6 +205,9 @@ void parse_func_substream(Stream &input_stream)
 // TODO: move to Stream
 void read_stream(Stream &stream)
 {
+#ifdef DAB_PLATFORM_WINDOWS
+    freopen(NULL, "rb", stdin);
+#endif
     byte buffer[1024];
     while (!feof(stdin))
     {
