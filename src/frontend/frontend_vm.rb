@@ -24,8 +24,8 @@ class VMFrontend
       input = input.to_s
       output = output.to_s
       part = part.to_s
-      cmd = "./bin/cvm #{flags} --output=#{part}"
-      qsystem(cmd, input_file: input, output_file: output, timeout: 10)
+      cmd = "./bin/cvm #{flags} --output=#{part} --out=#{output}"
+      qsystem(cmd, input_file: input, timeout: 10)
     end
   end
 
