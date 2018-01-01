@@ -1142,7 +1142,7 @@ void DabVM::extract(const std::string &name)
 
     if (name == "rip")
     {
-        printf("%" PRIu64, ip());
+        fprintf(output, "%" PRIu64, ip());
     }
     else if (name == "output")
     {
