@@ -7,7 +7,7 @@ function dab_common_setup(name)
     kind "ConsoleApp"
     language "C++"
     targetdir "bin/"
-    flags "C++11"
+    cppdialect "C++11"
 
     warnings "Extra"
     flags "FatalCompileWarnings"
