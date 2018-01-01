@@ -78,7 +78,7 @@ class VMFrontend
       output = $1
       part = temp_file("part#{index}")
       extract_vm_part(bin, part, output, runoptions)
-      chunk = File.open(part).read
+      chunk = File.binread(part)
       if output == 'dumpvm'
         part_bin = temp_file("part#{index}.bin")
         part_asm = temp_file("part#{index}.asm")
