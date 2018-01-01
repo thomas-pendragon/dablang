@@ -281,8 +281,11 @@ int main(int argc, char **argv)
     bool with_headers = parse_bool_arg(argc, argv, "--with-headers");
     bool no_numbers   = parse_bool_arg(argc, argv, "--no-numbers");
 
+    FILE *input       = stdin;
+    bool  close_input = false;
+
     Stream stream;
-    read_stream(stream);
+    read_stream(stream, input, close_input);
 
     if (raw)
     {
