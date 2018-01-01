@@ -266,6 +266,11 @@ void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_len
         auto ptr     = input.uint64_data(address);
         auto str     = input.cstring_data(ptr);
         symbols.push_back(str);
+
+        if (options.verbose)
+        {
+            fprintf(stderr, "vm/debug: read symbol %d: '%s'\n", (int)i, str.c_str());
+        }
     }
 }
 
