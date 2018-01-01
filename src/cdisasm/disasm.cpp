@@ -203,19 +203,26 @@ void parse_func_substream(Stream &input_stream)
 }
 
 // TODO: move to Stream
-void read_stream(Stream &stream)
+void read_stream(Stream &stream, FILE *input = stdin, bool close_input = false)
 {
 #ifdef DAB_PLATFORM_WINDOWS
-    freopen(NULL, "rb", stdin);
+    if (input == stdin)
+    {
+        freopen(NULL, "rb", input);
+    }
 #endif
     byte buffer[1024];
-    while (!feof(stdin))
+    while (!feof(input))
     {
-        size_t bytes = fread(buffer, 1, 1024, stdin);
+        size_t bytes = fread(buffer, 1, 1024, input);
         if (bytes)
         {
             stream.append(buffer, bytes);
         }
+    }
+    if (close_input)
+    {
+        fclose(input);
     }
 }
 
