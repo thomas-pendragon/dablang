@@ -1,5 +1,5 @@
 ---
-image: dablang/dablangenv:0.8
+image: dablang2/dablangenv:0.9
 before_script:
 - bundle install --path=/cache/bundler
 stages:
