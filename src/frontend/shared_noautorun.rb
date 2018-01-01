@@ -169,7 +169,7 @@ def disassemble(input, output, disasm_options = '')
   describe_action(input, output, 'disassemble') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cdisasm #{disasm_options} < #{input} > #{output}"
+    cmd = "timeout 10 ./bin/cdisasm #{disasm_options} #{input} > #{output}"
     psystem_noecho cmd
   end
 end
