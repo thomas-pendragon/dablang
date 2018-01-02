@@ -10,13 +10,13 @@ options = ''
 
 if input.end_with? '.dab'
   target = input.gsub(/\.dab$/, '.dabca')
-  psystem "ruby ./src/compiler/compiler.rb #{input} #{options} --with-cov > #{target} 2> /dev/null"
+  psystem "ruby ./src/compiler/compiler.rb #{input} #{options} --with-cov > #{target}"
   input = target
 end
 
 if input.end_with? '.dabca'
   target = input.gsub(/\.dabca$/, '.dabcb')
-  psystem "ruby ./src/tobinary/tobinary.rb #{options} < #{input} > #{target} 2> /dev/null"
+  psystem "ruby ./src/tobinary/tobinary.rb #{options} < #{input} > #{target}"
   input = target
 end
 
