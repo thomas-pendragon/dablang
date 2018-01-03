@@ -3,6 +3,19 @@ require_relative '../shared/debug_output.rb'
 require_relative '../shared/args.rb'
 require_relative '../shared/system.rb'
 
+class String
+  def covformat(format, methods)
+    methods = [methods] unless methods.is_a? Array
+    ret = self
+    if format == 'text'
+      methods.each do |method|
+        ret = ret.send(method)
+      end
+    end
+    ret
+  end
+end
+
 input = $settings[:input]
 format = $settings[:format] || 'text'
 
@@ -34,19 +47,6 @@ dump = JSON.parse(File.read(dump_cov_target))
 vm = JSON.parse(File.read(vm_cov_target))
 
 files = dump.map { |item| item['file'] }
-
-class String
-  def covformat(format, methods)
-    methods = [methods] unless methods.is_a? Array
-    ret = self
-    if format == 'text'
-      methods.each do |method|
-        ret = ret.send(method)
-      end
-    end
-    ret
-  end
-end
 
 if %w[plaintext text].include?(format)
   files.each do |file|
