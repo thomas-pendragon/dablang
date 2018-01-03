@@ -2,6 +2,7 @@ require_relative '../../setup.rb'
 require_relative '../shared/debug_output.rb'
 require_relative '../shared/args.rb'
 require_relative '../shared/system.rb'
+require_relative '../frontend/shared_noautorun.rb'
 
 class String
   def covformat(format, methods)
@@ -16,61 +17,65 @@ class String
   end
 end
 
-def run(input, format, options)
-  if input.end_with? '.dab'
-    target = input.gsub(/\.dab$/, '.dabca')
-    psystem "ruby ./src/compiler/compiler.rb #{input} #{options} --with-cov > #{target}"
-    input = target
-  end
+class CovFrontend
+  include BaseFrontend
 
-  if input.end_with? '.dabca'
-    target = input.gsub(/\.dabca$/, '.dabcb')
-    psystem "ruby ./src/tobinary/tobinary.rb #{options} < #{input} > #{target}"
-    input = target
-  end
+  def run(input, format, options)
+    if input.end_with? '.dab'
+      target = input.gsub(/\.dab$/, '.dabca')
+      compile_dab_to_asm(input, target, "#{options} --with-cov")
+      input = target
+    end
 
-  unless input.end_with? '.dabcb'
-    raise 'expected .dabcb file'
-  end
+    if input.end_with? '.dabca'
+      target = input.gsub(/\.dabca$/, '.dabcb')
+      assemble(input, target, options)
+      input = target
+    end
 
-  vm_cov_target = input.gsub(/\.dabcb$/, '.vm_cov')
-  psystem "./bin/cvm #{options} --cov #{input} > #{vm_cov_target}"
+    unless input.end_with? '.dabcb'
+      raise 'expected .dabcb file'
+    end
 
-  dump_cov_target = input.gsub(/\.dabcb$/, '.dump_cov')
-  psystem "./bin/cdumpcov #{options} < #{input} > #{dump_cov_target}"
+    vm_cov_target = input.gsub(/\.dabcb$/, '.vm_cov')
+    psystem "./bin/cvm #{options} --cov #{input} > #{vm_cov_target}"
 
-  dump = JSON.parse(File.read(dump_cov_target))
-  vm = JSON.parse(File.read(vm_cov_target))
+    dump_cov_target = input.gsub(/\.dabcb$/, '.dump_cov')
+    psystem "./bin/cdumpcov #{options} < #{input} > #{dump_cov_target}"
 
-  files = dump.map { |item| item['file'] }
+    dump = JSON.parse(File.read(dump_cov_target))
+    vm = JSON.parse(File.read(vm_cov_target))
 
-  if %w[plaintext text].include?(format)
-    files.each do |file|
-      data = vm.detect { |item| item['file'] == file }
-      raise "no data for #{file}" unless data
-      data = data['hits']
-      data = data.map { |item| [item['line'], item['hits']] }.to_h
+    files = dump.map { |item| item['file'] }
 
-      set = dump.detect { |item| item['file'] == file }['lines']
+    if %w[plaintext text].include?(format)
+      files.each do |file|
+        data = vm.detect { |item| item['file'] == file }
+        raise "no data for #{file}" unless data
+        data = data['hits']
+        data = data.map { |item| [item['line'], item['hits']] }.to_h
 
-      puts file.covformat(format, :bold)
-      puts
-      lines = File.read(file).lines
-      lines.each_with_index do |line, index|
-        index += 1
-        included = set.include?(index)
-        str = sprintf('%5d: %s', index, line)
-        hits = data[index] || 0
-        str = if included && hits > 0
-                str = sprintf('%5d hit%s ', hits, hits > 1 ? 's' : ' ') + str
-                str.covformat(format, %i(green bold))
-              elsif included
-                str = '     miss  ' + str
-                str.covformat(format, %i(red bold))
-              else
-                ' ' * 11 + str.covformat(format, :white)
-              end
-        print str
+        set = dump.detect { |item| item['file'] == file }['lines']
+
+        puts file.covformat(format, :bold)
+        puts
+        lines = File.read(file).lines
+        lines.each_with_index do |line, index|
+          index += 1
+          included = set.include?(index)
+          str = sprintf('%5d: %s', index, line)
+          hits = data[index] || 0
+          str = if included && hits > 0
+                  str = sprintf('%5d hit%s ', hits, hits > 1 ? 's' : ' ') + str
+                  str.covformat(format, %i(green bold))
+                elsif included
+                  str = '     miss  ' + str
+                  str.covformat(format, %i(red bold))
+                else
+                  ' ' * 11 + str.covformat(format, :white)
+                end
+          print str
+        end
       end
     end
   end
@@ -80,4 +85,4 @@ input = $settings[:input]
 format = $settings[:format] || 'text'
 options = ''
 
-run(input, format, options)
+CovFrontend.new.run(input, format, options)
