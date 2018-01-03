@@ -56,14 +56,14 @@ module BaseFrontend
 
   def describe_action(input, output, action)
     info = " * #{action}: #{input.to_s.blue.bold} -> #{output.blue.bold}..."
-    puts info.white
+    STDERR.puts info.white
     yield
-    puts "#{info.white} #{'[OK]'.green}"
+    STDERR.puts "#{info.white} #{'[OK]'.green}"
   end
 
   def describe_action_with_replacement(input, output, action, replacement)
     describe_action(input, output, action) do
-      puts "~> #{replacement.yellow}"
+      STDERR.puts "~> #{replacement.yellow}"
       yield
     end
   end
