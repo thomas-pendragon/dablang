@@ -31,4 +31,16 @@ class DabBinReader
       symd.unpack("@#{offset}Z*").first
     end
   end
+
+  def parse_functions(func, symbols)
+    fun_length = 2 + 2 + 8
+    count = func.length / fun_length
+    Array.new(count) do |n|
+      offset = n * fun_length
+      data = func.unpack("@#{offset}S<S<Q<")
+      fun = %i[symbol klass address].zip(data).to_h
+      fun[:symbol] = symbols[fun[:symbol]]
+      fun
+    end
+  end
 end

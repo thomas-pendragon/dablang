@@ -111,4 +111,44 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'parses functions' do
+    symbols = ['!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index',
+               'first', 'is', 'last', 'length', 'main', 'puts', 'to_bool']
+
+    func = parse_bin('0d 00 ff ff d0 00 00 00  00 00 00 00 0e 00 ff ff
+                      02 01 00 00 00 00 00 00  04 00 05 00 2e 01 00 00
+                      00 00 00 00 07 00 05 00  03 02 00 00 00 00 00 00
+                      08 00 05 00 5e 02 00 00  00 00 00 00 09 00 05 00
+                      bb 02 00 00 00 00 00 00  0b 00 05 00 d9 02 00 00
+                      00 00 00 00 0f 00 05 00  3d 03 00 00 00 00 00 00
+                      0f 00 03 00 63 03 00 00  00 00 00 00 0f 00 02 00
+                      6c 03 00 00 00 00 00 00  0f 00 04 00 8a 03 00 00
+                      00 00 00 00 00 00 00 00  93 03 00 00 00 00 00 00
+                      01 00 00 00 b1 03 00 00  00 00 00 00 0f 00 00 00
+                      d1 03 00 00 00 00 00 00  0f 00 01 00 da 03 00 00
+                      00 00 00 00                                     ')
+
+    result = DabBinReader.new.parse_functions(func, symbols)
+
+    expected = [
+      {symbol: 'main', klass: 65535, address: 208},
+      {symbol: 'puts', klass: 65535, address: 258},
+      {symbol: '==', klass: 5, address: 302},
+      {symbol: 'each', klass: 5, address: 515},
+      {symbol: 'each_with_index', klass: 5, address: 606},
+      {symbol: 'first', klass: 5, address: 699},
+      {symbol: 'last', klass: 5, address: 729},
+      {symbol: 'to_bool', klass: 5, address: 829},
+      {symbol: 'to_bool', klass: 3, address: 867},
+      {symbol: 'to_bool', klass: 2, address: 876},
+      {symbol: 'to_bool', klass: 4, address: 906},
+      {symbol: '!', klass: 0, address: 915},
+      {symbol: '!=', klass: 0, address: 945},
+      {symbol: 'to_bool', klass: 0, address: 977},
+      {symbol: 'to_bool', klass: 1, address: 986},
+    ]
+
+    expect(result).to eq(expected)
+  end
 end

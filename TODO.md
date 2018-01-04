@@ -4,6 +4,10 @@
 
 2a. Compiler ring support
   - read binary images
+    - read classes
+    - read funext
+    - use classes in reading functions
+  - create program based on image
   - calculate new functions offset
 
 2b. Ring support (look up java annotation processing)
