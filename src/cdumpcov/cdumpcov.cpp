@@ -36,16 +36,20 @@ struct Op
     }
 };
 
-void read_stream(Stream &stream)
+void read_stream(Stream &stream, FILE *input, bool close_input)
 {
     byte buffer[1024];
-    while (!feof(stdin))
+    while (!feof(input))
     {
-        size_t bytes = fread(buffer, 1, 1024, stdin);
+        size_t bytes = fread(buffer, 1, 1024, input);
         if (bytes)
         {
             stream.append(buffer, bytes);
         }
+    }
+    if (close_input)
+    {
+        fclose(input);
     }
 }
 
@@ -110,13 +114,32 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
     }
 };
 
-int main()
+int main(int argc, char **argv)
 {
     std::map<uint64_t, std::string>        files;
     std::map<uint64_t, std::set<uint64_t>> lines;
 
+    FILE *input       = stdin;
+    bool  close_input = false;
+
+    for (int argn = 1; argn < argc; argn++)
+    {
+        auto arg = argv[argn];
+        if (strstr(arg, "--") == NULL)
+        {
+            input       = fopen(arg, "rb");
+            close_input = true;
+
+            if (!input)
+            {
+                fprintf(stderr, "disasm: error: cannot open file <%s> for reading.\n", arg);
+                exit(1);
+            }
+        }
+    }
+
     Stream stream;
-    read_stream(stream);
+    read_stream(stream, input, close_input);
 
     auto base_header = stream.peek_header();
     auto header      = &base_header->header;

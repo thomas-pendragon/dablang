@@ -38,10 +38,10 @@ class CovFrontend
     end
 
     vm_cov_target = input.gsub(/\.dabcb$/, '.vm_cov')
-    psystem "./bin/cvm #{options} --cov #{input} > #{vm_cov_target}"
+    qsystem("./bin/cvm #{options} --cov #{input}", output_file: vm_cov_target)
 
     dump_cov_target = input.gsub(/\.dabcb$/, '.dump_cov')
-    psystem "./bin/cdumpcov #{options} < #{input} > #{dump_cov_target}"
+    qsystem("./bin/cdumpcov #{options} #{input}", output_file: dump_cov_target)
 
     dump = JSON.parse(File.read(dump_cov_target))
     vm = JSON.parse(File.read(vm_cov_target))
