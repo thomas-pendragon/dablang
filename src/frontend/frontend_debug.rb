@@ -16,14 +16,10 @@ def execute(input, extra_input, output, error_output)
   describe_action(input, output, 'VM') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cvm --debug #{input} < #{extra_input} > #{output} 2> #{error_output}"
     begin
-      psystem_noecho cmd
-    rescue SystemCommandError => e
-      STDERR.puts
-      STDERR.puts e.stderr
-      STDERR.puts
-      FileUtils.rm(output)
+      qsystem("./bin/cvm --debug #{input}", timeout: 10, input_file: extra_input, output_file: output, error_file: error_output)
+    rescue SystemCommandError
+      FileUtils.rm(output) if File.exist?(output)
       raise
     end
   end
