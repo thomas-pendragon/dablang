@@ -116,7 +116,7 @@ def psystem_noecho_timeout(cmd, timeout = 10)
   psystem_noecho(cmd)
 end
 
-def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil)
+def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil, error_file: nil)
   STDERR.print ' >> '.yellow
   STDERR.print "timeout #{timeout} ".white if timeout
   STDERR.print cmd.yellow
@@ -128,8 +128,7 @@ def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil)
     STDERR.puts ret[:stderr].to_s.red
     raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
   end
-  if output_file
-    File.open(output_file, 'wb') { |file| file << ret[:stdout] }
-  end
+  File.open(output_file, 'wb') { |file| file << ret[:stdout] } if output_file
+  File.open(error_file, 'wb') { |file| file << ret[:stderr] } if error_file
   ret
 end
