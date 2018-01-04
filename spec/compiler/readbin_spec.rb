@@ -151,4 +151,24 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'parses klasses' do
+    symbols = ['!', '!=', '%', '&', '*', '+', '-', '/', '<', '==', '>', '>>', 'SDL_CreateRenderer',
+               'SDL_CreateWindow', 'SDL_Delay', 'SDL_GetPerformanceCounter', 'SDL_GetPerformanceFrequency',
+               'SDL_Init', 'SDL_PollEvent', 'SDL_RenderClear', 'SDL_RenderDrawLine', 'SDL_RenderPresent',
+               'SDL_SetRenderDrawColor', 'SnakeGame', 'SnakePoint', 'SnakeRandom']
+
+    clas = parse_bin('00 01 00 00 18 00 01 01  00 00 19 00 02 01 00 00
+                      17 00                                           ')
+
+    result = DabBinReader.new.parse_klasses(clas, symbols)
+
+    expected = [
+      {index: 256, parent_index: 0, symbol: 'SnakePoint'},
+      {index: 257, parent_index: 0, symbol: 'SnakeRandom'},
+      {index: 258, parent_index: 0, symbol: 'SnakeGame'},
+    ]
+
+    expect(result).to eq(expected)
+  end
 end

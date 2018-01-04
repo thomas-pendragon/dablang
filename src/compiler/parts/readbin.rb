@@ -47,6 +47,18 @@ class DabBinReader
     end
   end
 
+  def parse_klasses(clas, symbols)
+    klass_length = 2 + 2 + 2
+    count = clas.length / klass_length
+    Array.new(count) do |n|
+      offset = n * klass_length
+      data = clas.unpack("@#{offset}S<S<S<")
+      klass = %i[index parent_index symbol].zip(data).to_h
+      klass[:symbol] = symbols[klass[:symbol]]
+      klass
+    end
+  end
+
   def lookup_klass(klass)
     return nil if klass == 65535
     raise NotImplementedError.new('no user class lookup yet') if klass >= USER_CLASSES_OFFSET
