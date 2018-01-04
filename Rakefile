@@ -7,6 +7,7 @@ require_relative './src/frontend/frontend.rb'
 require_relative './src/frontend/frontend_asm.rb'
 require_relative './src/frontend/frontend_format.rb'
 require_relative './src/frontend/frontend_vm.rb'
+require_relative './src/frontend/frontend_debug.rb'
 
 $sources = Dir.glob('src/**/*.rb')
 
@@ -190,7 +191,7 @@ setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
 setup_tests('asm', 'asmt', 'frontend_asm', [], nil, AsmSpec)
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
-setup_tests('debug', 'test', 'frontend_debug', [cvm])
+setup_tests('debug', 'test', 'frontend_debug', [cvm], nil, DebugSpec)
 setup_tests('decompile')
 setup_tests('compiler_performance')
 setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_spec')
