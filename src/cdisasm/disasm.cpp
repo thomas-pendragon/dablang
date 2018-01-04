@@ -322,7 +322,8 @@ int main(int argc, char **argv)
         for (size_t i = 0; i < header->section_count; i++)
         {
             auto section = sections[i];
-            fprintf(stderr, "cdisasm: section[%d] '%s'\n", (int)i, section.name);
+            fprintf(stderr, "cdisasm: section[%d] '%s' [address %" PRIu64 " length %" PRIu64 "]\n",
+                    (int)i, section.name, section.pos, section.length);
 
             if (with_headers)
             {
