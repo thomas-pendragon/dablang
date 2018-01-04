@@ -10,14 +10,6 @@ class DebugSpec
     base_read_test_file(fname)
   end
 
-  def compile_to_asm(input, output, options)
-    run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)
-  end
-
-  def assemble(input, output)
-    run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
-  end
-
   def execute(input, extra_input, output, error_output)
     describe_action(input, output, 'VM') do
       input = input.to_s.shellescape
@@ -73,7 +65,7 @@ class DebugSpec
 
       stdlib_files = [] unless frontend_options['--with-stdlib']
 
-      compile_to_asm(([dab] + stdlib_files).compact, asm, options)
+      compile_dab_to_asm(([dab] + stdlib_files).compact, asm, options)
     elsif data[:asm_code].present?
       extract_source(input, asm, data[:asm_code])
     else
