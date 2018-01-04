@@ -39,8 +39,17 @@ class DabBinReader
       offset = n * fun_length
       data = func.unpack("@#{offset}S<S<Q<")
       fun = %i[symbol klass address].zip(data).to_h
-      fun[:symbol] = symbols[fun[:symbol]]
-      fun
+      {
+        symbol: symbols[fun[:symbol]],
+        klass: lookup_klass(fun[:klass]),
+        address: fun[:address],
+      }
     end
+  end
+
+  def lookup_klass(klass)
+    return nil if klass == 65535
+    raise NotImplementedError.new('no user class lookup yet') if klass >= USER_CLASSES_OFFSET
+    STANDARD_CLASSES[klass]
   end
 end

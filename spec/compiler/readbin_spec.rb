@@ -132,21 +132,21 @@ describe DabBinReader, readbin: true do
     result = DabBinReader.new.parse_functions(func, symbols)
 
     expected = [
-      {symbol: 'main', klass: 65535, address: 208},
-      {symbol: 'puts', klass: 65535, address: 258},
-      {symbol: '==', klass: 5, address: 302},
-      {symbol: 'each', klass: 5, address: 515},
-      {symbol: 'each_with_index', klass: 5, address: 606},
-      {symbol: 'first', klass: 5, address: 699},
-      {symbol: 'last', klass: 5, address: 729},
-      {symbol: 'to_bool', klass: 5, address: 829},
-      {symbol: 'to_bool', klass: 3, address: 867},
-      {symbol: 'to_bool', klass: 2, address: 876},
-      {symbol: 'to_bool', klass: 4, address: 906},
-      {symbol: '!', klass: 0, address: 915},
-      {symbol: '!=', klass: 0, address: 945},
-      {symbol: 'to_bool', klass: 0, address: 977},
-      {symbol: 'to_bool', klass: 1, address: 986},
+      {symbol: 'main', klass: nil, address: 208},
+      {symbol: 'puts', klass: nil, address: 258},
+      {symbol: '==', klass: 'Array', address: 302},
+      {symbol: 'each', klass: 'Array', address: 515},
+      {symbol: 'each_with_index', klass: 'Array', address: 606},
+      {symbol: 'first', klass: 'Array', address: 699},
+      {symbol: 'last', klass: 'Array', address: 729},
+      {symbol: 'to_bool', klass: 'Array', address: 829},
+      {symbol: 'to_bool', klass: 'Boolean', address: 867},
+      {symbol: 'to_bool', klass: 'Fixnum', address: 876},
+      {symbol: 'to_bool', klass: 'NilClass', address: 906},
+      {symbol: '!', klass: 'Object', address: 915},
+      {symbol: '!=', klass: 'Object', address: 945},
+      {symbol: 'to_bool', klass: 'Object', address: 977},
+      {symbol: 'to_bool', klass: 'String', address: 986},
     ]
 
     expect(result).to eq(expected)
