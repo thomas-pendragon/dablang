@@ -68,7 +68,7 @@ def system_with_progress(cmd, input_file: nil)
         if is_stderr
           stderr += line
         else
-          print line
+          STDERR.print line
           stdout += line
         end
         data = true
