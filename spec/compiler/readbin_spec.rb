@@ -171,4 +171,155 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'parses extended functions' do
+    fext = parse_bin('0c 00 ff ff cb 00 00 00  00 00 00 00 02 00 06 00
+                      01 00 07 00 06 00 ff ff  00 00 10 00 ff ff db 00
+                      00 00 00 00 00 00 00 00  ff ff 00 00 12 00 ff ff
+                      f1 00 00 00 00 00 00 00  01 00 13 00 00 00 ff ff
+                      00 00 04 00 05 00 1d 01  00 00 00 00 00 00 01 00
+                      11 00 00 00 ff ff 00 00  09 00 05 00 f2 01 00 00
+                      00 00 00 00 00 00 ff ff  00 00 0a 00 05 00 4d 02
+                      00 00 00 00 00 00 00 00  ff ff 00 00 0b 00 05 00
+                      aa 02 00 00 00 00 00 00  00 00 ff ff 00 00 0e 00
+                      05 00 c8 02 00 00 00 00  00 00 00 00 ff ff 00 00
+                      14 00 05 00 2c 03 00 00  00 00 00 00 00 00 ff ff
+                      00 00 14 00 03 00 52 03  00 00 00 00 00 00 00 00
+                      ff ff 00 00 14 00 02 00  5b 03 00 00 00 00 00 00
+                      00 00 ff ff 00 00 14 00  04 00 79 03 00 00 00 00
+                      00 00 00 00 ff ff 00 00  00 00 00 00 82 03 00 00
+                      00 00 00 00 00 00 ff ff  00 00 01 00 00 00 a0 03
+                      00 00 00 00 00 00 01 00  11 00 00 00 ff ff 00 00
+                      14 00 00 00 c0 03 00 00  00 00 00 00 00 00 ff ff
+                      00 00 14 00 01 00 c9 03  00 00 00 00 00 00 00 00
+                      ff ff 00 00                                     ')
+
+    result = DabBinReader.new.parse_extended_functions(fext)
+
+    expected = [
+      {
+        symbol: 12,
+        klass: 65535,
+        address: 203,
+        args: [
+          {symbol: 6, klass: 1},
+          {symbol: 7, klass: 6},
+        ],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 16,
+        klass: 65535,
+        address: 219,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 18,
+        klass: 65535,
+        address: 241,
+        args: [
+          {symbol: 19, klass: 0},
+        ],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 4,
+        klass: 5,
+        address: 285,
+        args: [
+          {symbol: 17, klass: 0},
+        ],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 9,
+        klass: 5,
+        address: 498,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 10,
+        klass: 5,
+        address: 589,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 11,
+        klass: 5,
+        address: 682,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 14,
+        klass: 5,
+        address: 712,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 5,
+        address: 812,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 3,
+        address: 850,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 2,
+        address: 859,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 4,
+        address: 889,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 0,
+        klass: 0,
+        address: 898,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 1,
+        klass: 0,
+        address: 928,
+        args: [
+          {symbol: 17, klass: 0},
+        ],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 0,
+        address: 960,
+        args: [],
+        ret: {klass: 0},
+      },
+      {
+        symbol: 20,
+        klass: 1,
+        address: 969,
+        args: [],
+        ret: {klass: 0},
+      },
+    ]
+
+    expect(result).to eq(expected)
+  end
 end

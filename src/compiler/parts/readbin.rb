@@ -59,6 +59,31 @@ class DabBinReader
     end
   end
 
+  def parse_extended_functions(fext)
+    length = fext.length
+    pos = 0
+
+    ret = []
+
+    while pos < length
+      data = fext.unpack("@#{pos}S<S<Q<S<")
+      fun = %i[symbol klass address arg_count].zip(data).to_h
+      pos += 2 + 2 + 8 + 2
+      fun[:args] = Array.new((fun[:arg_count] + 1)) do
+        data2 = fext.unpack("@#{pos}S<S<")
+        pos += 4
+        arg = %i[symbol klass].zip(data2).to_h
+        arg
+      end
+      fun.delete(:arg_count)
+      fun[:ret] = fun[:args].pop
+      fun[:ret].delete(:symbol)
+      ret << fun
+    end
+
+    ret
+  end
+
   def lookup_klass(klass)
     return nil if klass == 65535
     raise NotImplementedError.new('no user class lookup yet') if klass >= USER_CLASSES_OFFSET
