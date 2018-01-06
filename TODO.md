@@ -4,7 +4,6 @@
 
 2a. Compiler ring support
   - read binary images
-    - read classes
     - add user class lookup
   - create program based on image
   - calculate new functions offset
