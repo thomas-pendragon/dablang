@@ -68,11 +68,13 @@ class DabBinReader
     while pos < length
       data = fext.unpack("@#{pos}S<S<Q<S<")
       fun = %i[symbol klass address arg_count].zip(data).to_h
+      fun[:klass] = lookup_klass(fun[:klass])
       pos += 2 + 2 + 8 + 2
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
         pos += 4
         arg = %i[symbol klass].zip(data2).to_h
+        arg[:klass] = lookup_klass(arg[:klass])
         arg
       end
       fun.delete(:arg_count)
