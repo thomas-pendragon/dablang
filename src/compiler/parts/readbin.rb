@@ -59,7 +59,7 @@ class DabBinReader
     end
   end
 
-  def parse_extended_functions(fext)
+  def parse_extended_functions(fext, symbols)
     length = fext.length
     pos = 0
 
@@ -69,12 +69,14 @@ class DabBinReader
       data = fext.unpack("@#{pos}S<S<Q<S<")
       fun = %i[symbol klass address arg_count].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
+      fun[:symbol] = symbols[fun[:symbol]]
       pos += 2 + 2 + 8 + 2
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
         pos += 4
         arg = %i[symbol klass].zip(data2).to_h
         arg[:klass] = lookup_klass(arg[:klass])
+        arg[:symbol] = symbols[arg[:symbol]]
         arg
       end
       fun.delete(:arg_count)

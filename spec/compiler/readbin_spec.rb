@@ -173,6 +173,9 @@ describe DabBinReader, readbin: true do
   end
 
   it 'parses extended functions' do
+    symbols = ['!', '!=', '+', '-', '==', '[]', 'a', 'b', 'count', 'each', 'each_with_index', 'first',
+               'foo', 'is', 'last', 'length', 'main', 'other', 'puts', 'string', 'to_bool']
+
     fext = parse_bin('0c 00 ff ff cb 00 00 00  00 00 00 00 02 00 06 00
                       01 00 07 00 06 00 ff ff  00 00 10 00 ff ff db 00
                       00 00 00 00 00 00 00 00  ff ff 00 00 12 00 ff ff
@@ -194,125 +197,125 @@ describe DabBinReader, readbin: true do
                       00 00 14 00 01 00 c9 03  00 00 00 00 00 00 00 00
                       ff ff 00 00                                     ')
 
-    result = DabBinReader.new.parse_extended_functions(fext)
+    result = DabBinReader.new.parse_extended_functions(fext, symbols)
 
     expected = [
       {
-        symbol: 12,
+        symbol: 'foo',
         klass: nil,
         address: 203,
         args: [
-          {symbol: 6, klass: 'String'},
-          {symbol: 7, klass: 'Uint8'},
+          {symbol: 'a', klass: 'String'},
+          {symbol: 'b', klass: 'Uint8'},
         ],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 16,
+        symbol: 'main',
         klass: nil,
         address: 219,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 18,
+        symbol: 'puts',
         klass: nil,
         address: 241,
         args: [
-          {symbol: 19, klass: 'Object'},
+          {symbol: 'string', klass: 'Object'},
         ],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 4,
+        symbol: '==',
         klass: 'Array',
         address: 285,
         args: [
-          {symbol: 17, klass: 'Object'},
+          {symbol: 'other', klass: 'Object'},
         ],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 9,
+        symbol: 'each',
         klass: 'Array',
         address: 498,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 10,
+        symbol: 'each_with_index',
         klass: 'Array',
         address: 589,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 11,
+        symbol: 'first',
         klass: 'Array',
         address: 682,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 14,
+        symbol: 'last',
         klass: 'Array',
         address: 712,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'Array',
         address: 812,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'Boolean',
         address: 850,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'Fixnum',
         address: 859,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'NilClass',
         address: 889,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 0,
+        symbol: '!',
         klass: 'Object',
         address: 898,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 1,
+        symbol: '!=',
         klass: 'Object',
         address: 928,
         args: [
-          {symbol: 17, klass: 'Object'},
+          {symbol: 'other', klass: 'Object'},
         ],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'Object',
         address: 960,
         args: [],
         ret: {klass: 'Object'},
       },
       {
-        symbol: 20,
+        symbol: 'to_bool',
         klass: 'String',
         address: 969,
         args: [],
