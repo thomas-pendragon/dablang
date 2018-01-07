@@ -88,6 +88,26 @@ class DabBinReader
     ret
   end
 
+  def get_section(binary, header, section_name)
+    header[:sections].each do |section|
+      next unless section[:name] == section_name
+      a = section[:address]
+      b = a + section[:length]
+      return binary[a..b]
+    end
+    nil
+  end
+
+  def parse_dab_binary(binary)
+    header = parse_whole_header(binary)
+    symb = get_section(binary, header, 'symb')
+    symbols = parse_symbols(binary, 0, symb)
+    {
+      header: header,
+      symbols: symbols,
+    }
+  end
+
   def lookup_klass(klass)
     return nil if klass == 65535
     raise NotImplementedError.new('no user class lookup yet') if klass >= USER_CLASSES_OFFSET
