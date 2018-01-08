@@ -439,6 +439,23 @@ describe DabBinReader, readbin: true do
         '!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index', 'first',
         'is', 'last', 'length', 'main', 'puts', 'to_bool'
       ],
+      functions: [
+        {symbol: 'main', klass: nil, address: 215},
+        {symbol: 'puts', klass: nil, address: 247},
+        {symbol: '==', klass: 'Array', address: 291},
+        {symbol: 'each', klass: 'Array', address: 504},
+        {symbol: 'each_with_index', klass: 'Array', address: 595},
+        {symbol: 'first', klass: 'Array', address: 688},
+        {symbol: 'last', klass: 'Array', address: 718},
+        {symbol: 'to_bool', klass: 'Array', address: 818},
+        {symbol: 'to_bool', klass: 'Boolean', address: 856},
+        {symbol: 'to_bool', klass: 'Fixnum', address: 865},
+        {symbol: 'to_bool', klass: 'NilClass', address: 895},
+        {symbol: '!', klass: 'Object', address: 904},
+        {symbol: '!=', klass: 'Object', address: 934},
+        {symbol: 'to_bool', klass: 'Object', address: 966},
+        {symbol: 'to_bool', klass: 'String', address: 975},
+      ],
     }
 
     expect(result).to eq(expected)

@@ -100,11 +100,19 @@ class DabBinReader
 
   def parse_dab_binary(binary)
     header = parse_whole_header(binary)
+
     symb = get_section(binary, header, 'symb')
+    func = get_section(binary, header, 'func')
+    fext = get_section(binary, header, 'fext')
+
     symbols = parse_symbols(binary, 0, symb)
+    functions = parse_functions(func, symbols) if func
+    functions = parse_extended_functions(fext, symbols) if fext
+
     {
       header: header,
       symbols: symbols,
+      functions: functions,
     }
   end
 
