@@ -85,7 +85,7 @@ def build_project(makefile, project)
     psystem("make -f ../#{makefile} #{project} verbose=1")
   when 'vs2017'
     # devenv SolutionName {/build|/clean|/rebuild|/deploy} SolnConfigName    [/project ProjName] [/projectconfig ProjConfigName]
-    psystem("'#{$devenv}' /rebuild ../#{makefile} /project #{project}")
+    psystem("'#{$devenv}' ../#{makefile} /rebuild Release /project #{project}")
   end
 end
 
