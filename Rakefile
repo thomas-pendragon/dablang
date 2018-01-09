@@ -69,14 +69,14 @@ filelist_body_new = csources.join("\n")
 original_makefile = case $toolset
                     when 'gmake'
                       'build/Makefile'
-                    when 'vs2017'
+                    when /vs\d+/
                       'build/Dab.sln'
                     end
 
 makefile = case $toolset
            when 'gmake'
              'build/Makefile.' + Digest::SHA256.hexdigest(filelist_body_new)
-           when 'vs2017'
+           when /vs\d+/
              'build/Dab.' + Digest::SHA256.hexdigest(filelist_body_new) + '.sln'
            end
 
@@ -84,8 +84,8 @@ def build_project(makefile, project)
   case $toolset
   when 'gmake'
     psystem("make -f ../#{makefile} #{project} verbose=1")
-  when 'vs2017'
-    psystem("#{$msbuild} #{project}.vcxproj /p:Configuration=Release /t:Build")
+  when /vs\d+/
+    psystem("#{$msbuild} #{project}.vcxproj /p:Configuration=Release /p:Platform=x86 /t:Build")
   end
 end
 
