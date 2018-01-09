@@ -46,7 +46,7 @@ class DabSpec
       run_options = run_options.presence
       cmd = "./bin/cvm #{run_options} #{input} --out=#{output}"
       begin
-        psystem_noecho_timeout(cmd, 10)
+        qsystem(cmd, timeout: 10)
       rescue SystemCommandError => e
         STDERR.puts
         STDERR.puts e.stderr
