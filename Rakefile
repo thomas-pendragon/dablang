@@ -22,6 +22,7 @@ end
 clang_format_app = ENV['CLANG_FORMAT'] || 'clang-format'
 premake = ENV['PREMAKE'] || 'premake5'
 $devenv = ENV['DEVENV'] || 'devenv'
+$msbuild = ENV['MSBUILD'] || 'msbuild'
 
 premake = "#{premake} #{$toolset}"
 premake_source = 'premake5.lua'
@@ -84,8 +85,7 @@ def build_project(makefile, project)
   when 'gmake'
     psystem("make -f ../#{makefile} #{project} verbose=1")
   when 'vs2017'
-    # devenv SolutionName {/build|/clean|/rebuild|/deploy} SolnConfigName    [/project ProjName] [/projectconfig ProjConfigName]
-    psystem("'#{$devenv}' ../#{makefile} /rebuild Release /project #{project}")
+    psystem("#{$msbuild} #{project}.vcxproj /p:Configuration=Release /t:Build")
   end
 end
 
