@@ -1,0 +1,54 @@
+version: "{build}"
+
+# os: Visual Studio 2015
+
+clone_depth: 50
+
+cache:
+  - premake-5.0.0-alpha12-windows.zip
+
+environment:
+  PREMAKE: ./premake5.exe
+  # APPVEYOR_RDP_PASSWORD: debugDEBUG123!@#
+
+  matrix:
+    # Visual Studio 2017 64bit
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      visualcpp: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat
+      machine: amd64
+      TOOLSET: vs2017
+
+    # Visual Studio 2015 64bit
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      visualcpp: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+      machine: amd64
+      TOOLSET: vs2015
+
+    # # Visual Studio 2013 64bit
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #   visualcpp: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
+    #   machine: amd64
+    #   TOOLSET: vs2013
+    # 
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #   TOOLSET: gmake
+    #   visualcpp: echo
+    #   machine: gnu
+
+init:
+  # - dir "C:\Program Files (x86)"
+  - call "%visualcpp%" %machine%
+  - set PATH=C:\Ruby24-x64\bin;%PATH%
+  - ruby --version
+  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+install:
+  - if not exist premake-5.0.0-alpha12-windows.zip appveyor DownloadFile "https://github.com/premake/premake-core/releases/download/v5.0.0-alpha12/premake-5.0.0-alpha12-windows.zip"
+  - 7z x -y -o. premake-5.0.0-alpha12-windows.zip > nul
+
+build_script:
+  - bundle install --jobs=32
+  - rake
+
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
