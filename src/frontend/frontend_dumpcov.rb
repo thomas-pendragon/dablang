@@ -18,8 +18,8 @@ def dumpcov(input, output, options)
   describe_action(input, output, 'dumpcov') do
     input = input.to_s.shellescape
     output = output.to_s.shellescape
-    cmd = "timeout 10 ./bin/cdumpcov #{options} < #{input} > #{output}"
-    psystem_noecho cmd
+    cmd = "./bin/cdumpcov #{options}"
+    qsystem(cmd, input_file: input, output_file: output, timeout: 10)
   end
 end
 
