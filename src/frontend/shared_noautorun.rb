@@ -80,9 +80,9 @@ module BaseFrontend
       options = options.presence
       options = options.to_s if options
       input_part = input_as_arg ? ' ' : '<'
-      cmd = "timeout 30 ruby src/#{tool}/#{tool}.rb #{options} #{input_part} #{input} > #{output}"
+      cmd = "ruby src/#{tool}/#{tool}.rb #{options} #{input_part} #{input}"
       begin
-        psystem_noecho cmd
+        qsystem(cmd, timeout: 30, output_file: output)
       rescue SystemCommandError => e
         STDERR.puts
         STDERR.puts e.stderr
