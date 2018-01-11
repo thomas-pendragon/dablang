@@ -20,6 +20,8 @@
 4. register management (remove register stack)
 5. dumping low-level ring code for inspection
 
+6. VS 2013- compatibility
+
 ## Parser ##
 
 - alternative syntax (end instead of {})
