@@ -1,4 +1,26 @@
 class DabBinReader
+  def parse_ring(filename)
+    text = File.read(filename)
+
+    data = parse_dab_binary(text)
+
+    unit = DabNodeUnit.new
+
+    data[:symbols].each do |symbol|
+      node = DabNodeSymbol.new(symbol)
+      unit.add_constant(node)
+    end
+
+    data[:functions].each do |function|
+      name = function[:symbol]
+      arglist = nil
+      node = DabNodeFunctionStub.new(name, arglist)
+      unit.add_function(node)
+    end
+
+    unit
+  end
+
   def parse_header(string)
     data = string.unpack('a3CL<Q<Q<Q<Q<')
     %i[dab zero version offset size_of_header size_of_data sections_count].zip(data).to_h

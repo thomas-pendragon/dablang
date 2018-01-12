@@ -17,6 +17,14 @@ class DabCompilerFrontend
   def run(settings, context)
     @settings = settings
 
+    ring_base = settings[:ring_base]
+
+    program = nil
+
+    if ring_base
+      program = DabBinReader.new.parse_ring(ring_base)
+    end
+
     $debug_code_dump = settings[:debug_code_dump]
 
     $dab_benchmark_enabled = settings[:benchmark]
@@ -39,7 +47,6 @@ class DabCompilerFrontend
 
       inputs = settings[:inputs] || [:stdin]
 
-      program = nil
       streams = {}
       dab_benchmark('parse') do
         inputs.each do |input|
