@@ -6,6 +6,8 @@ class DabBinReader
 
     unit = DabNodeUnit.new
 
+    unit.start_offset = text.length
+
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
       unit.add_constant(node)

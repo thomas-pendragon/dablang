@@ -30,6 +30,7 @@ class DabNodeUnit < DabNode
   attr_reader :constants
   attr_reader :functions
   attr_reader :classes
+  attr_accessor :start_offset
 
   after_init CreateAttributes
 
@@ -45,6 +46,7 @@ class DabNodeUnit < DabNode
     @labels = 0
     @constant_table = {}
     rebuild_available_functions!
+    @start_offset = 0
   end
 
   def children_info
@@ -138,7 +140,7 @@ class DabNodeUnit < DabNode
     output.separate
 
     output.print('W_HEADER', 3)
-    output.print('W_OFFSET', 0)
+    output.print('W_OFFSET', start_offset)
     if $with_cov
       output.print('W_SECTION', '_COVD', '"data"')
       output.print('W_SECTION', '_COVE', '"cove"')
