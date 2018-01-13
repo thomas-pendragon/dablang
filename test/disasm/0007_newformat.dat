@@ -48,6 +48,21 @@ pbpaste | ruby src/compiler/compiler.rb --with-attributes --with-reflection  | r
 
 ## EXPECT
 
+/* disasm */
+    W_HEADER 3
+    W_OFFSET 0
+    W_SECTION _DATA, "data"
+    W_SECTION _CODE, "code"
+    W_SECTION _SYMD, "symd"
+    W_SECTION _SYMB, "symb"
+    W_SECTION _FEXT, "fext"
+    W_END_HEADER
+
+_DATA:
+     200: W_BYTE 10
+     201: W_BYTE 0
+
+_CODE:
      202: NOP 
      203: STACK_RESERVE 0
      206: RETURN RNIL
@@ -61,3 +76,21 @@ pbpaste | ruby src/compiler/compiler.rb --with-attributes --with-reflection  | r
      260: REFLECT R2, S4, 1, 65535
      269: SYSCALL RNIL, 0, R2
      276: RETURN RNIL
+
+_SYMD:
+     279: W_STRING "__init"
+     286: W_STRING "a"
+     288: W_STRING "b"
+     290: W_STRING "c"
+     292: W_STRING "foo"
+     296: W_STRING "main"
+
+_SYMB:
+     301: W_SYMBOL 279
+     309: W_SYMBOL 286
+     317: W_SYMBOL 288
+     325: W_SYMBOL 290
+     333: W_SYMBOL 292
+     341: W_SYMBOL 296
+
+_FEXT:
