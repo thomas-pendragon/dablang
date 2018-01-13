@@ -319,6 +319,8 @@ int main(int argc, char **argv)
             parse_headers(context, base_header);
         }
 
+        auto offset = header->offset;
+
         for (size_t i = 0; i < header->section_count; i++)
         {
             auto section = sections[i];
@@ -333,17 +335,19 @@ int main(int argc, char **argv)
             std::string section_name = section.name;
             auto        substream    = stream.section_stream(i);
 
+            auto start_pos = section.pos + offset;
+
             if (section_name == "code")
             {
-                parse_substream(substream, section.pos, no_numbers);
+                parse_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && (section_name == "data" || section_name == "symd"))
             {
-                parse_data_substream(substream, section.pos, no_numbers);
+                parse_data_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "symb")
             {
-                parse_symbol_substream(substream, section.pos, no_numbers);
+                parse_symbol_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "func")
             {
