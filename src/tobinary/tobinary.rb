@@ -299,6 +299,10 @@ class Parser
     end
   end
 
+  def _process_address(item)
+    @header_offset + _process(item)
+  end
+
   def run!(raw)
     @sections = []
     @header_version = nil
@@ -337,7 +341,7 @@ class Parser
         when 'W_METHOD'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
-          @output_stream._push_uint64(_process(line[3]))
+          @output_stream._push_uint64(_process_address(line[3]))
         when 'W_CLASS'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
@@ -345,7 +349,7 @@ class Parser
         when 'W_METHOD_EX'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
-          @output_stream._push_uint64(@label_positions[line[3]])
+          @output_stream._push_uint64(_process_address(line[3]))
           @output_stream._push_uint16(line[4])
         when 'W_METHOD_ARG'
           @output_stream._push_uint16(line[1])
