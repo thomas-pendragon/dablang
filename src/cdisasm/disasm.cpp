@@ -178,7 +178,7 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
     }
 }
 
-void parse_func_substream(Stream &input_stream)
+void parse_func_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
     uint64_t     position = 0;
     StreamReader reader(input_stream, position);
@@ -189,11 +189,20 @@ void parse_func_substream(Stream &input_stream)
     {
         try
         {
+            auto pos         = stream.position();
             auto symbol      = stream.read_uint16();
             auto class_index = stream.read_int16();
             auto address     = stream.read_uint64();
-            fprintf(output, "    W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 "\n", symbol,
-                    class_index, address);
+            if (!no_numbers)
+            {
+                fprintf(output, "%8" PRIu64 ": ", start + pos);
+            }
+            else
+            {
+                fprintf(output, "    ");
+            }
+            fprintf(output, "W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 "\n", symbol, class_index,
+                    address);
         }
         catch (EOFError)
         {
@@ -351,7 +360,7 @@ int main(int argc, char **argv)
             }
             else if (with_headers && section_name == "func")
             {
-                parse_func_substream(substream);
+                parse_func_substream(substream, start_pos, no_numbers);
             }
 
             if (with_headers)
