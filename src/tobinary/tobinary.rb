@@ -283,15 +283,15 @@ class Parser
     @output_stream.push_header(header_length)
   end
 
-  def _process(item)
+  def _process(item, offset = 0)
     case item
     when Hash
-      left = _process(item[:left])
-      right = _process(item[:right])
+      left = _process(item[:left], offset)
+      right = _process(item[:right], offset)
       raise '?' unless item[:op] == '+'
       left + right
     when String
-      @label_positions[item]
+      @label_positions[item] + offset
     when Fixnum
       item
     else
@@ -300,7 +300,7 @@ class Parser
   end
 
   def _process_address(item)
-    @header_offset + _process(item)
+    _process(item, @header_offset)
   end
 
   def run!(raw)
@@ -337,7 +337,7 @@ class Parser
         when 'W_STRING'
           @output_stream._push_cstring(line[1])
         when 'W_SYMBOL'
-          @output_stream._push_uint64(_process(line[1]))
+          @output_stream._push_uint64(_process_address(line[1]))
         when 'W_METHOD'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
@@ -373,7 +373,7 @@ class Parser
           line[1] = 0
         end
         if line[0] == 'LOAD_STRING'
-          line[2] = _process(line[2])
+          line[2] = _process_address(line[2])
         end
         @output_stream.write(line)
       end
