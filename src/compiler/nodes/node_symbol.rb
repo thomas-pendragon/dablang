@@ -3,6 +3,7 @@ require_relative 'node_extractable_literal.rb'
 class DabNodeSymbol < DabNodeExtractableLiteral
   attr_reader :symbol
   attr_accessor :source_ring
+  attr_accessor :source_ring_index
 
   def initialize(symbol)
     raise "empty symbol (#{symbol})" if symbol.to_s.empty?

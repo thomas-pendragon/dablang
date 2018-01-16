@@ -12,4 +12,8 @@ class DabNodeLiteral < DabNode
   def upper_ring?
     false
   end
+
+  def source_ring_index
+    0
+  end
 end

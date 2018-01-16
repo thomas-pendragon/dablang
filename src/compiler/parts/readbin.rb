@@ -8,9 +8,13 @@ class DabBinReader
 
     unit.start_offset = text.length
 
+    index = 0
+
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
       node.source_ring = filename
+      node.source_ring_index = index
+      index += 1
       unit.add_constant(node)
     end
 

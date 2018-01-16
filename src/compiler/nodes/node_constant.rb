@@ -93,4 +93,8 @@ class DabNodeConstant < DabNode
   def upper_ring?
     value.upper_ring?
   end
+
+  def source_ring_index
+    value.source_ring_index
+  end
 end
