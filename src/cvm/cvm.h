@@ -395,16 +395,17 @@ struct DabVMReset
 
 struct DabRunOptions
 {
-    FILE *input           = stdin;
-    bool  close_file      = false;
-    bool  autorun         = true;
-    bool  extract         = false;
-    bool  raw             = false;
-    bool  autorelease     = true;
-    bool  verbose         = false;
-    bool  with_attributes = false;
-    bool  leaktest        = false;
-    bool  bare            = false;
+    std::vector<FILE *> inputs = {stdin};
+
+    bool close_file      = false;
+    bool autorun         = true;
+    bool extract         = false;
+    bool raw             = false;
+    bool autorelease     = true;
+    bool verbose         = false;
+    bool with_attributes = false;
+    bool leaktest        = false;
+    bool bare            = false;
 
     bool coverage_testing = false;
 
@@ -493,7 +494,7 @@ struct DabVM
 
     uint64_t ip() const;
 
-    int run(Stream &input);
+    int run(std::vector<Stream> &inputs);
 
     void load_newformat(Stream &input);
 

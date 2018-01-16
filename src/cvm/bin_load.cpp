@@ -21,7 +21,6 @@ void DabVM::load_newformat(Stream &input)
     assert(version == 3);
 
     auto offset = input.read_uint64();
-    (void)offset;
 
     auto size_of_header     = input.read_uint64();
     auto size_of_data       = input.read_uint64();
@@ -55,7 +54,7 @@ void DabVM::load_newformat(Stream &input)
         assert(zero == 0);
         zero = input.read_uint32();
         assert(zero == 0);
-        auto address = input.read_uint64();
+        auto address = input.read_uint64() + offset;
         auto length  = input.read_uint64();
 
         fprintf(stderr, "vm: newformat: section %d: name '%s' address %p/%d length %d\n", index,
@@ -256,6 +255,8 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length)
 {
     fprintf(stderr, "symbad=%p symblen=%d\n", (void *)symb_address, (int)symb_length);
+    fprintf(stderr, "intructions length %" PRIu64 " input %" PRIu64 "\n", instructions.length(),
+            input.length());
     const auto symbol_len = sizeof(uint64_t);
 
     auto n_symbols = symb_length / symbol_len;
@@ -269,7 +270,8 @@ void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_len
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/debug: read symbol %d: '%s'\n", (int)i, str.c_str());
+            fprintf(stderr, "vm/debug: read symbol %d [%d]: %" PRIu64 " -> %" PRIu64 " -> '%s'\n",
+                    (int)i, (int)symbols.size() - 1, (uint64_t)address, ptr, str.c_str());
         }
     }
 }

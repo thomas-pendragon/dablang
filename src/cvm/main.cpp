@@ -168,14 +168,26 @@ uint64_t DabVM::ip() const
     return instructions.position();
 }
 
-int DabVM::run(Stream &input)
+int DabVM::run(std::vector<Stream> &inputs)
 {
-    instructions.append(input);
-    input.seek(0);
+    for (auto &stream : inputs)
+    {
+        instructions.append(stream);
+        stream.seek(0);
+        if (options.verbose)
+        {
+            fprintf(stderr,
+                    "vm: append %" PRIu64 " bytes to instrucitons stream, now %" PRIu64 "\n",
+                    stream.length(), instructions.length());
+        }
+    }
 
     if (!options.bare)
     {
-        DabVM::load_newformat(input);
+        for (auto &stream : inputs)
+        {
+            DabVM::load_newformat(stream);
+        }
     }
 
     define_defaults();
@@ -1224,12 +1236,6 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->entry = options["--entry"];
     }
 
-    if (others.size() > 1)
-    {
-        fprintf(stderr, "vm: too many file arguments.\n");
-        exit(1);
-    }
-
     if (flags.count("--leaktest"))
     {
         this->leaktest = true;
@@ -1247,17 +1253,21 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->close_output = true;
     }
 
-    if (others.size() == 1)
+    if (others.size() >= 1)
     {
-        auto filename = others[0].c_str();
-        auto file     = fopen(filename, "rb");
-        if (!file)
+        this->inputs.clear();
+        for (const auto &other : others)
         {
-            fprintf(stderr, "vm: cannot open file <%s> for reading!\n", filename);
-            exit(1);
+            auto filename = other.c_str();
+            auto file     = fopen(filename, "rb");
+            if (!file)
+            {
+                fprintf(stderr, "vm: cannot open file <%s> for reading!\n", filename);
+                exit(1);
+            }
+            this->inputs.push_back(file);
+            this->close_file = true;
         }
-        this->input      = file;
-        this->close_file = true;
     }
 
     if (flags["--with-attributes"])
@@ -1309,19 +1319,24 @@ int unsafe_main(DabVM &vm, int argc, char **argv)
     fprintf(stderr, "VM options: autorun %s raw %s cov %s\n", options.autorun ? "yes" : "no",
             options.raw ? "yes" : "no", options.coverage_testing ? "yes" : "no");
 
-    Stream input;
-    byte   buffer[1024];
-    auto   stream = options.input;
-    while (!feof(stream))
+    std::vector<Stream> streams;
+
+    for (auto file : options.inputs)
     {
-        size_t bytes = fread(buffer, 1, 1024, stream);
-        if (bytes)
+        Stream stream;
+        byte   buffer[1024];
+        while (!feof(file))
         {
-            input.append(buffer, bytes);
+            size_t bytes = fread(buffer, 1, 1024, file);
+            if (bytes)
+            {
+                stream.append(buffer, bytes);
+            }
         }
+        streams.push_back(stream);
     }
 
-    auto ret_value = vm.run(input);
+    auto ret_value = vm.run(streams);
 
     auto clear_registers = [&vm]() {
         vm.symbols.resize(0);
@@ -1343,7 +1358,10 @@ int unsafe_main(DabVM &vm, int argc, char **argv)
     }
     if (options.close_file)
     {
-        fclose(stream);
+        for (auto file : options.inputs)
+        {
+            fclose(file);
+        }
     }
     if (options.coverage_testing)
     {
