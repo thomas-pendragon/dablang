@@ -168,7 +168,7 @@ uint64_t DabVM::ip() const
     return instructions.position();
 }
 
-int DabVM::run_newformat(Stream &input)
+int DabVM::run(Stream &input)
 {
     instructions.append(input);
     input.seek(0);
@@ -186,11 +186,6 @@ int DabVM::run_newformat(Stream &input)
     }
 
     return continue_run(input);
-}
-
-int DabVM::run(Stream &input)
-{
-    return run_newformat(input);
 }
 
 int DabVM::continue_run(Stream &input)
