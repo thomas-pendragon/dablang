@@ -386,6 +386,19 @@ class DabNode
     @children.sort_by!(&block)
   end
 
+  def sort!(&block)
+    mark_children_cache_dirty!
+    @children.sort!(&block)
+  end
+
+  def sort_by_array!
+    sort! do |a, b|
+      a_value = yield(a)
+      b_value = yield(b)
+      a_value <=> b_value
+    end
+  end
+
   def to_a
     self[0..-1]
   end
