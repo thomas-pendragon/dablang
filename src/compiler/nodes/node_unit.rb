@@ -82,12 +82,17 @@ class DabNodeUnit < DabNode
       DabNodeSymbol => 0,
       DabNodeLiteralString => 1,
     }
-    @constants.sort_by! do |node|
+    @constants.sort_by_array! do |node|
       raise 'invalid node' unless node.is_a?(DabNodeConstant)
       class_order_name = node.value.class
       class_order = sort_order[class_order_name]
       raise "unknown '#{class_order_name}'" unless class_order
-      class_order.to_s + node.extra_value.to_s
+      text = class_order.to_s + node.extra_value.to_s
+      [
+        node.upper_ring? ? 0 : 1,
+        node.source_ring_index || 0,
+        text,
+      ]
     end
     @constant_table[literal.extra_value] = const
     const
