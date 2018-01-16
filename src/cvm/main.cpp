@@ -184,13 +184,7 @@ int DabVM::run(Stream &input)
     {
         execute(instructions);
     }
-
-    return continue_run();
-}
-
-int DabVM::continue_run()
-{
-    if (!options.raw)
+    else
     {
         if (options.with_attributes)
         {

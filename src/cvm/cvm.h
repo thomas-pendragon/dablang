@@ -495,8 +495,6 @@ struct DabVM
 
     int run(Stream &input);
 
-    int continue_run();
-
     void load_newformat(Stream &input);
 
     DabStackFrame *current_frame();
