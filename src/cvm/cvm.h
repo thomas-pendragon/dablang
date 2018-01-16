@@ -495,7 +495,7 @@ struct DabVM
 
     int run(Stream &input);
 
-    int continue_run(Stream &input);
+    int continue_run();
 
     void load_newformat(Stream &input);
 
