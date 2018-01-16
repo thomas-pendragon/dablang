@@ -214,14 +214,17 @@ class DabNodeUnit < DabNode
     output.label('_SDAT')
     pos = 0
     constant_symbols.each do |constant|
+      next if constant.upper_ring?
       constant.asm_position = pos
       constant.compile_string(output)
       pos += constant.asm_length
     end
     output.separate
 
+    # TODO: handle when all symbols are from upper ring
     output.label('_SYMB')
     constant_symbols.each do |constant|
+      next if constant.upper_ring?
       constant.compile_symbol(output)
     end
     output.separate

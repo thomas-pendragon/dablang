@@ -10,6 +10,7 @@ class DabBinReader
 
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
+      node.source_ring = filename
       unit.add_constant(node)
     end
 

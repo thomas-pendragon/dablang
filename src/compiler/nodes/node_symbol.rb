@@ -2,6 +2,8 @@ require_relative 'node_extractable_literal.rb'
 
 class DabNodeSymbol < DabNodeExtractableLiteral
   attr_reader :symbol
+  attr_accessor :source_ring
+
   def initialize(symbol)
     raise "empty symbol (#{symbol})" if symbol.to_s.empty?
     super()
@@ -10,7 +12,9 @@ class DabNodeSymbol < DabNodeExtractableLiteral
   end
 
   def extra_dump
-    ":#{symbol}"
+    ret = ":#{symbol}"
+    ret += " {{#{source_ring}}" if source_ring
+    ret
   end
 
   def extra_value
@@ -41,11 +45,11 @@ class DabNodeSymbol < DabNodeExtractableLiteral
     DabTypeSymbol.new
   end
 
-  def compile(output)
-    output.print('PUSH_SYMBOL', escaped_symbol)
-  end
-
   def formatted_source(_options)
     extra_dump
+  end
+
+  def upper_ring?
+    !!source_ring
   end
 end

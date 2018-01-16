@@ -8,4 +8,8 @@ class DabNodeLiteral < DabNode
   def no_side_effects?
     true
   end
+
+  def upper_ring?
+    false
+  end
 end
