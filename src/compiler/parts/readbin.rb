@@ -1,6 +1,6 @@
 class DabBinReader
   def parse_ring(filename)
-    text = File.read(filename)
+    text = File.binread(filename)
 
     data = parse_dab_binary(text)
 
