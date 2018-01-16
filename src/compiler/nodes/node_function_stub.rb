@@ -19,4 +19,8 @@ class DabNodeFunctionStub < DabNode
   def extra_dump
     identifier
   end
+
+  def return_type
+    DabType.parse(nil)
+  end
 end
