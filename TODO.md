@@ -3,10 +3,8 @@
 1. fix Test CI stage, should not rebuild binaries (?)
 
 2a. Compiler ring support
-  - read binary images
-    - add user class lookup
-  - create program based on image
-  - calculate new functions offset
+  - add user class lookup
+  - 3 layers
 
 2b. Ring support (look up java annotation processing)
   - let VM dump its binary image (+ tests)
