@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.3.0)
-    awesome_print (1.7.0)
+    awesome_print (1.8.0)
     byebug (9.0.6)
     clipboard (1.1.1)
     coderay (1.1.1)
