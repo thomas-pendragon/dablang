@@ -24,7 +24,7 @@ Style/ClassAndModuleChildren:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: false
 
 Metrics/LineLength:
@@ -106,7 +106,7 @@ Style/ClassVars:
 Style/MultilineBlockChain:
   Enabled: false
 
-Style/PredicateName:
+Naming/PredicateName:
   Enabled: false
 
 Style/DoubleNegation:
@@ -124,7 +124,7 @@ Style/NumericPredicate:
 Style/TernaryParentheses:
   Enabled: false
 
-Style/FileName:
+Naming/FileName:
   Enabled: false
 
 Style/IfUnlessModifier:
@@ -136,7 +136,7 @@ Style/RedundantSelf:
 Lint/AssignmentInCondition:
   Enabled: false
 
-Lint/LiteralInCondition:
+Lint/LiteralAsCondition:
   Enabled: false
 
 Style/For:
@@ -167,4 +167,13 @@ Metrics/BlockLength:
   Enabled: false
 
 Lint/Loop:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/DateTime:
+  Enabled: false
+
+Style/MixinUsage:
   Enabled: false

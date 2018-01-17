@@ -10,7 +10,6 @@ classes_data << "---
   layout: page
   title: Classes
 ---
-
 "
 
 STANDARD_CLASSES.each_with_index do |klass, index|
@@ -23,7 +22,6 @@ STANDARD_CLASSES.each_with_index do |klass, index|
   title: #{klass}
   exclude_from_nav: true
 ---
-
   "
 
   data << "VM index: `#{index}`\n\n"

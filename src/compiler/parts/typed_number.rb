@@ -26,7 +26,8 @@ class TypedNumber
     end
   end
 
-  def _fix! # TODO: signed support
+  # TODO: signed support
+  def _fix!
     max = 2**@length
     @value %= max
   end

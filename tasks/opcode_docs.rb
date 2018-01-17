@@ -8,7 +8,6 @@ layout: page
 title: VM opcodes
 exclude_from_nav: true
 ---
-
 "
 
 index = 0
@@ -21,7 +20,6 @@ OPCODES_ARRAY_BASE.each do |group|
   next if group[:pseudo]
 
   puts "## #{title}
-
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
 "

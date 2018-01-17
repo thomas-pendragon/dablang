@@ -100,9 +100,7 @@ OPCODES_ARRAY_BASE = [
   },
   {
     group: 'NEW',
-    items:
-    [
-    ],
+    items: [],
   },
   {
     group: 'PSEUDO HEADER OPCODES',
