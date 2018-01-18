@@ -11,7 +11,7 @@ GEM
     diffy (3.2.0)
     ffi (1.9.18)
     ffi (1.9.18-x64-mingw32)
-    json (2.0.2)
+    json (2.1.0)
     method_source (0.8.2)
     os (1.0.0)
     parallel (1.12.1)
