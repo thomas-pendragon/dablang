@@ -107,10 +107,6 @@ def psystem(cmd, capture_stderr = false)
   end
 end
 
-def psystem_noecho(cmd)
-  psystem(cmd, true)
-end
-
 def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil, error_file: nil)
   STDERR.print ' >> '.yellow
   STDERR.print "timeout #{timeout} ".white if timeout
