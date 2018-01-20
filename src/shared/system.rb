@@ -89,14 +89,6 @@ def psystem_ignore(cmd)
   system(cmd)
 end
 
-def psystem_capture(cmd)
-  STDERR.puts " > #{cmd.yellow}"
-  ret = system_with_progress(cmd)
-  unless ret[:exit_code] == 0
-    raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
-  end
-end
-
 def psystem(cmd)
   STDERR.puts " > #{cmd.yellow}"
   unless system cmd
