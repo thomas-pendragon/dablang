@@ -98,10 +98,6 @@ def psystem_capture(cmd)
 end
 
 def psystem(cmd)
-  capture_stderr = false
-  if capture_stderr
-    return psystem_capture(cmd)
-  end
   STDERR.puts " > #{cmd.yellow}"
   unless system cmd
     raise SystemCommandError.new("Error during executing #{cmd}", nil)
