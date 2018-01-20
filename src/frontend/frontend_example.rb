@@ -14,18 +14,7 @@ def execute(input, run_options)
     run_options = run_options
     cmd = "./bin/cvm #{run_options} < #{input}"
 
-    if true
-      psystem cmd
-    else
-      begin
-        psystem_noecho cmd
-      rescue SystemCommandError => e
-        STDERR.puts
-        STDERR.puts e.stderr
-        STDERR.puts
-        raise
-      end
-    end
+    psystem cmd
   end
 end
 
