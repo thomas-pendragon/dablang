@@ -97,7 +97,8 @@ def psystem_capture(cmd)
   end
 end
 
-def psystem(cmd, capture_stderr = false)
+def psystem(cmd)
+  capture_stderr = false
   if capture_stderr
     return psystem_capture(cmd)
   end
