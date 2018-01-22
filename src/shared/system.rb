@@ -52,7 +52,7 @@ class SystemRunCommand
   end
 end
 
-def system_with_progress(cmd, input_file: nil)
+def system_with_progress(cmd, input_file: nil, show_stderr: true, show_stdout: true)
   command = SystemRunCommand.new(cmd)
   command.open_process!(input_file)
   fdlist = command.streams
@@ -66,9 +66,10 @@ def system_with_progress(cmd, input_file: nil)
     ready.each do |fd|
       command.try_update(fd) do |line, is_stderr|
         if is_stderr
+          STDERR.print line if show_stderr
           stderr += line
         else
-          STDERR.print line
+          STDERR.print line if show_stdout
           stdout += line
         end
         data = true
@@ -103,7 +104,7 @@ def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil, error_file: ni
   STDERR.print " < #{input_file}".white if input_file
   STDERR.print " > #{output_file}".white if output_file
   STDERR.print "\n"
-  ret = system_with_progress(cmd, input_file: input_file)
+  ret = system_with_progress(cmd, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file)
   unless ret[:exit_code] == 0
     STDERR.puts ret[:stderr].to_s.red
     raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
