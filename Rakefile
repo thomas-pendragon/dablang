@@ -231,7 +231,7 @@ file ffi_file => [ffi_task] do
 end
 
 task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
-               :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :build_examples_spec] do
+               :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :build_examples_spec] do
 end
 
 task :clean do
