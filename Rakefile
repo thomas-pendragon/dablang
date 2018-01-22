@@ -1,3 +1,7 @@
+require 'simplecov'
+SimpleCov.start
+SimpleCov.command_name 'Rakefile'
+
 require_relative 'setup.rb'
 require_relative 'src/shared/system.rb'
 

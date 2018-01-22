@@ -13,3 +13,4 @@ gem 'rake'
 gem 'random-word', require: false
 gem 'rspec', require: false
 gem 'rubocop', require: false
+gem 'simplecov', require: false
