@@ -33,7 +33,7 @@ end
 
 stage_jobs = {
   'Build' => [''],
-  'Test' => %w(spec vm_spec disasm_spec dumpcov_spec cov_spec debug_spec),
+  'Test' => %w(spec vm_spec disasm_spec dumpcov_spec cov_spec debug_spec multidab_spec),
 }
 
 split = {

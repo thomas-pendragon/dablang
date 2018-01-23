@@ -35,6 +35,11 @@ stages:
   tags: *1
   script: &8
   - bundle exec rake vm_spec
+".test_base_multidab_spec":
+  stage: test
+  tags: *1
+  script: &13
+  - bundle exec rake multidab_spec
 ".test_base_disasm_spec":
   stage: test
   tags: *1
@@ -122,7 +127,7 @@ SortCheck:
     CXX: g++-4.8
     CLANG_FORMAT: clang-format-4.0
 ".env_clang_3_5":
-  variables: &13
+  variables: &14
     CXX: clang++-3.5
     CLANG_FORMAT: clang-format-4.0
 Build g++-4.8:
@@ -187,12 +192,19 @@ Test g++-4.8 debug_spec:
   variables: *5
   dependencies:
   - Build g++-4.8
+Test g++-4.8 multidab_spec:
+  stage: test
+  tags: *1
+  script: *13
+  variables: *5
+  dependencies:
+  - Build g++-4.8
 Build clang++-3.5:
   stage: build
   tags: *2
   script: *3
   artifacts: *4
-  variables: *13
+  variables: *14
 Test clang++-3.5 spec 0 2:
   stage: test
   tags: *1
@@ -202,7 +214,7 @@ Test clang++-3.5 spec 0 2:
     CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '0'
     CI_PARALLEL_TOTAL: '2'
-  dependencies: &14
+  dependencies: &15
   - Build clang++-3.5
 Test clang++-3.5 spec 1 2:
   stage: test
@@ -213,39 +225,46 @@ Test clang++-3.5 spec 1 2:
     CLANG_FORMAT: clang-format-4.0
     CI_PARALLEL_INDEX: '1'
     CI_PARALLEL_TOTAL: '2'
-  dependencies: *14
+  dependencies: *15
 Test clang++-3.5 vm_spec:
   stage: test
   tags: *1
   script: *8
-  variables: *13
+  variables: *14
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 disasm_spec:
   stage: test
   tags: *1
   script: *9
-  variables: *13
+  variables: *14
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 dumpcov_spec:
   stage: test
   tags: *1
   script: *10
-  variables: *13
+  variables: *14
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 cov_spec:
   stage: test
   tags: *1
   script: *11
-  variables: *13
+  variables: *14
   dependencies:
   - Build clang++-3.5
 Test clang++-3.5 debug_spec:
   stage: test
   tags: *1
   script: *12
-  variables: *13
+  variables: *14
+  dependencies:
+  - Build clang++-3.5
+Test clang++-3.5 multidab_spec:
+  stage: test
+  tags: *1
+  script: *13
+  variables: *14
   dependencies:
   - Build clang++-3.5

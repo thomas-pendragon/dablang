@@ -39,6 +39,11 @@ stages:
   script:
     - bundle exec rake vm_spec
 
+.test_base_multidab_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake multidab_spec
+
 .test_base_disasm_spec:
   <<: *test_base
   script:
