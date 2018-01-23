@@ -53,6 +53,11 @@ void DabVM::dump_vm(FILE *out)
         if (!it.second.regular)
             continue;
 
+        if (options.verbose)
+        {
+            fprintf(stderr, "vm/binsave: will save function '%s'\n", get_symbol(it.first).c_str());
+        }
+
         BinFunction bin_func;
         bin_func.symbol  = it.first;
         bin_func.klass   = DAB_CLASS_NIL;
