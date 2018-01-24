@@ -36,9 +36,11 @@ def run_test(settings)
 
   options = data[:options] || ''
   with_headers = options['--with-headers']
+  with_numbers = options['--with-numbers']
   disasm_options = '--raw'
   disasm_options = '--with-headers' if with_headers
   disasm_options = '--with-headers --no-numbers' if asm_input
+  disasm_options = '--with-headers' if asm_input && with_numbers
 
   info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
   puts info
