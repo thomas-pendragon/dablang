@@ -59,38 +59,38 @@ pbpaste | ruby src/compiler/compiler.rb --with-attributes --with-reflection  | r
     W_END_HEADER
 
 _DATA:
-     200: W_BYTE 10
-     201: W_BYTE 0
+/*      200: */ W_BYTE 10
+/*      201: */ W_BYTE 0
 
 _CODE:
-     202: NOP 
-     203: STACK_RESERVE 0
-     206: RETURN RNIL
-     209: STACK_RESERVE 0
-     212: RETURN RNIL
-     215: STACK_RESERVE 0
-     218: REFLECT R0, S4, 0, 65535
-     227: SYSCALL RNIL, 0, R0
-     234: LOAD_STRING R1, 200, 1
-     253: SYSCALL RNIL, 0, R1
-     260: REFLECT R2, S4, 1, 65535
-     269: SYSCALL RNIL, 0, R2
-     276: RETURN RNIL
+/*      202: */ NOP 
+/*      203: */ STACK_RESERVE 0
+/*      206: */ RETURN RNIL
+/*      209: */ STACK_RESERVE 0
+/*      212: */ RETURN RNIL
+/*      215: */ STACK_RESERVE 0
+/*      218: */ REFLECT R0, S4, 0, 65535
+/*      227: */ SYSCALL RNIL, 0, R0
+/*      234: */ LOAD_STRING R1, 200, 1
+/*      253: */ SYSCALL RNIL, 0, R1
+/*      260: */ REFLECT R2, S4, 1, 65535
+/*      269: */ SYSCALL RNIL, 0, R2
+/*      276: */ RETURN RNIL
 
 _SYMD:
-     279: W_STRING "__init"
-     286: W_STRING "a"
-     288: W_STRING "b"
-     290: W_STRING "c"
-     292: W_STRING "foo"
-     296: W_STRING "main"
+/*      279: */ W_STRING "__init"
+/*      286: */ W_STRING "a"
+/*      288: */ W_STRING "b"
+/*      290: */ W_STRING "c"
+/*      292: */ W_STRING "foo"
+/*      296: */ W_STRING "main"
 
 _SYMB:
-     301: W_SYMBOL 279
-     309: W_SYMBOL 286
-     317: W_SYMBOL 288
-     325: W_SYMBOL 290
-     333: W_SYMBOL 292
-     341: W_SYMBOL 296
+/*      301: */ W_SYMBOL 279
+/*      309: */ W_SYMBOL 286
+/*      317: */ W_SYMBOL 288
+/*      325: */ W_SYMBOL 290
+/*      333: */ W_SYMBOL 292
+/*      341: */ W_SYMBOL 296
 
 _FEXT:

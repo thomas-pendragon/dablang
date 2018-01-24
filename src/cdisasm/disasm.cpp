@@ -35,21 +35,24 @@ struct StreamReader : public BaseReader
     }
 };
 
-void parse_substream(Stream &stream, uint64_t start, bool no_numbers)
+static const char *LINEINFO_FORMAT        = "/* %8" PRIu64 ": */ ";
+static const char *LEGACY_LINEINFO_FORMAT = "%8" PRIu64 ": ";
+
+void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legacy_numbers = false)
 {
     uint64_t                      position = 0;
     StreamReader                  reader(stream, position);
     DisasmProcessor<StreamReader> processor(reader);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
-    processor.go([start, no_numbers](uint64_t pos, std::string info) {
+    processor.go([start, no_numbers, legacy_numbers](uint64_t pos, std::string info) {
         if (no_numbers)
         {
             fprintf(output, "    ");
         }
         else
         {
-            fprintf(output, "%8" PRIu64 ": ", start + pos);
+            fprintf(output, legacy_numbers ? LEGACY_LINEINFO_FORMAT : LINEINFO_FORMAT, start + pos);
         }
         fprintf(output, "%s\n", info.c_str());
     });
@@ -90,7 +93,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                 {
                     if (!no_numbers)
                     {
-                        fprintf(output, "%8" PRIu64 ": ", start + string_pos);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos);
                     }
                     else
                     {
@@ -105,7 +108,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                     {
                         if (!no_numbers)
                         {
-                            fprintf(output, "%8" PRIu64 ": ", start + string_pos + i);
+                            fprintf(output, LINEINFO_FORMAT, start + string_pos + i);
                         }
                         else
                         {
@@ -117,7 +120,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 
                     if (!no_numbers)
                     {
-                        fprintf(output, "%8" PRIu64 ": ", start + string_pos);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos);
                     }
                     else
                     {
@@ -131,7 +134,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
             {
                 if (!no_numbers)
                 {
-                    fprintf(output, "%8" PRIu64 ": ", start + pos);
+                    fprintf(output, LINEINFO_FORMAT, start + pos);
                 }
                 else
                 {
@@ -149,7 +152,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                 {
                     if (!no_numbers)
                     {
-                        fprintf(output, "%8" PRIu64 ": ", start + string_pos + i);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos + i);
                     }
                     else
                     {
@@ -179,7 +182,7 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
             auto symbol = stream.read_uint64();
             if (!no_numbers)
             {
-                fprintf(output, "%8" PRIu64 ": ", start + pos);
+                fprintf(output, LINEINFO_FORMAT, start + pos);
             }
             else
             {
@@ -211,7 +214,7 @@ void parse_func_substream(Stream &input_stream, uint64_t start, bool no_numbers)
             auto address     = stream.read_uint64();
             if (!no_numbers)
             {
-                fprintf(output, "%8" PRIu64 ": ", start + pos);
+                fprintf(output, LINEINFO_FORMAT, start + pos);
             }
             else
             {
@@ -330,7 +333,7 @@ int main(int argc, char **argv)
 
     if (raw)
     {
-        parse_substream(stream, 0, no_numbers);
+        parse_substream(stream, 0, no_numbers, true);
     }
     else
     {
