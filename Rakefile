@@ -1,6 +1,8 @@
-require 'simplecov'
-SimpleCov.start
-SimpleCov.command_name 'Rakefile'
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start
+  SimpleCov.command_name 'Rakefile'
+end
 
 require_relative 'setup.rb'
 require_relative 'src/shared/system.rb'
