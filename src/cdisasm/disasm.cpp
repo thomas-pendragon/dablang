@@ -142,7 +142,23 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
         }
         catch (EOFError)
         {
-            assert(!use_string);
+            if (use_string)
+            {
+                size_t i = 0;
+                for (auto ch : string)
+                {
+                    if (!no_numbers)
+                    {
+                        fprintf(output, "%8" PRIu64 ": ", start + string_pos + i);
+                    }
+                    else
+                    {
+                        fprintf(output, "    ");
+                    }
+                    fprintf(output, "W_BYTE %d\n", (int)ch);
+                    i++;
+                }
+            }
             break;
         }
     }
