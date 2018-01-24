@@ -199,7 +199,7 @@ setup_tests('debug', 'test', 'frontend_debug', [cvm], nil, DebugSpec)
 setup_tests('decompile')
 setup_tests('compiler_performance')
 setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_spec')
-setup_tests('multidab', 'test', nil, [cvm])
+setup_tests('multidab', 'test', nil, [cvm, cdisasm])
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'
