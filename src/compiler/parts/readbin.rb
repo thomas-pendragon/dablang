@@ -52,11 +52,11 @@ class DabBinReader
     header
   end
 
-  def parse_symbols(symd, symd_start, symb)
+  def parse_symbols(symd, symd_start, symb, base_offset)
     count = symb.length / 8
     addresses = symb.unpack("Q<#{count}")
     addresses.map do |address|
-      offset = address - symd_start
+      offset = address - symd_start - base_offset
       symd.unpack("@#{offset}Z*").first
     end
   end
@@ -142,7 +142,9 @@ class DabBinReader
     func = get_section(binary, header, 'func')
     fext = get_section(binary, header, 'fext')
 
-    symbols = parse_symbols(binary, 0, symb)
+    base_offset = header[:offset]
+
+    symbols = parse_symbols(binary, 0, symb, base_offset)
     functions = parse_functions(func, symbols) if func
     functions = parse_extended_functions(fext, symbols) if fext
 
