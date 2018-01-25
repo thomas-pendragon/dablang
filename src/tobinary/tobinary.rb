@@ -218,7 +218,7 @@ class OutputStream
         write_uint32(0)
         write_uint32(0)
         write_uint32(0)
-        write_uint64(section[:address])
+        write_uint64(section[:address] + section[:offset])
         write_uint64(section[:length])
       end
     end
@@ -330,7 +330,7 @@ class Parser
         when 'W_OFFSET'
           @header_offset = line[1].to_i
         when 'W_SECTION'
-          @sections << {name: line[2].to_s, label: line[1].to_s}
+          @sections << {name: line[2].to_s, label: line[1].to_s, offset: @header_offset}
         when 'W_END_HEADER'
           @header_finished = true
           print_temp_header!(@sections.count)

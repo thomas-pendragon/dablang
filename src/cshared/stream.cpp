@@ -5,7 +5,7 @@ Stream Stream::section_stream(uint64_t section_index)
     Stream ret;
     auto   header  = peek_header();
     auto   section = header->sections[section_index];
-    auto   start   = section.pos;
+    auto   start   = section.pos - header->header.offset;
     auto   length  = section.length;
     ret.buffer     = Buffer(this->buffer, start, length);
     return ret;

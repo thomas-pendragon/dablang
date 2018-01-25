@@ -45,17 +45,70 @@ void DabVM::dump_vm(FILE *out)
                                        }),
                         dump_sections.end());
 
+    auto last_code_index = -1;
+    auto last_data_index = -1;
+
+    for (int i = 0; i < (int)dump_sections.size(); i++)
+    {
+        auto &      section = dump_sections[i];
+        std::string name    = section.name;
+
+        if (name == "code")
+            last_code_index = std::max(last_code_index, i);
+
+        if (name == "data")
+            last_data_index = std::max(last_data_index, i);
+    }
+
+    fprintf(stderr, "vm/binsave: last code = %d last data = %d\n", last_code_index,
+            last_data_index);
+
+    for (int i = 0, section_index = 0; i < (int)dump_sections.size(); i++, section_index++)
+    {
+        auto &      section = dump_sections[i];
+        std::string name    = section.name;
+
+        bool previous_code = name == "code" && section_index != last_code_index;
+        bool previous_data = name == "data" && section_index != last_data_index;
+        bool remove        = previous_code || previous_data;
+
+        if (remove)
+        {
+            fprintf(stderr, "vm/binsave: remove previous section %d '%s'\n", section_index,
+                    name.c_str());
+            dump_sections.erase(dump_sections.begin() + i);
+            i--;
+        }
+    }
+
+    (void)last_code_index;
+    (void)last_data_index;
+
     BinSection func_section = {};
     memcpy(func_section.name, "func", 4);
     std::vector<BinFunction> dump_functions;
     for (auto it : functions)
     {
-        if (!it.second.regular)
+        const auto &fun = it.second;
+
+        if (!fun.regular)
             continue;
+
+        if (fun.source_ring < this->last_ring_offset)
+        {
+            if (options.verbose)
+            {
+                fprintf(stderr, "vm/binsave: will skip function '%s' (ring source: %" PRIu64
+                                ", last ring offset: %" PRIu64 ")\n",
+                        get_symbol(it.first).c_str(), fun.source_ring, this->last_ring_offset);
+            }
+            continue;
+        }
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/binsave: will save function '%s'\n", get_symbol(it.first).c_str());
+            fprintf(stderr, "vm/binsave: will save function '%s' (ring source: %" PRId64 ")\n",
+                    get_symbol(it.first).c_str(), fun.source_ring);
         }
 
         BinFunction bin_func;
@@ -98,7 +151,7 @@ void DabVM::dump_vm(FILE *out)
 
     memcpy(dump_header.dab, "DAB\0", 4);
     dump_header.version        = 3;
-    dump_header.offset         = 0;
+    dump_header.offset         = last_ring_offset;
     dump_header.section_count  = dump_sections.size();
     dump_header.size_of_header = sizeof(BinHeader) + dump_header.section_count * sizeof(BinSection);
 
@@ -115,7 +168,7 @@ void DabVM::dump_vm(FILE *out)
         auto pos    = section.pos;
         auto length = section.length;
 
-        section.pos = new_pos;
+        section.pos = new_pos + this->last_ring_offset;
 
         if (section.special_index == TEMP_REGULAR)
         {
@@ -151,6 +204,12 @@ void DabVM::dump_vm(FILE *out)
     fwrite(&dump_header, sizeof(BinHeader), 1, out);
     for (auto &section : dump_sections)
     {
+        if (options.verbose)
+        {
+            fprintf(stderr,
+                    "vm/binsave: write section '%s' pos = %" PRIu64 " length = %" PRIu64 "\n",
+                    section.name, section.pos, section.length);
+        }
         fwrite(&section, sizeof(BinSection), 1, out);
     }
     fwrite(&dump_data[0], 1, dump_data.size(), out);

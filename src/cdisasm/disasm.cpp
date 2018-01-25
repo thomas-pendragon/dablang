@@ -347,8 +347,6 @@ int main(int argc, char **argv)
             parse_headers(context, base_header);
         }
 
-        auto offset = header->offset;
-
         for (size_t i = 0; i < header->section_count; i++)
         {
             auto section = sections[i];
@@ -363,7 +361,7 @@ int main(int argc, char **argv)
             std::string section_name = section.name;
             auto        substream    = stream.section_stream(i);
 
-            auto start_pos = section.pos + offset;
+            auto start_pos = section.pos;
 
             if (section_name == "code")
             {

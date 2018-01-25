@@ -54,7 +54,7 @@ void DabVM::load_newformat(Stream &input)
         assert(zero == 0);
         zero = input.read_uint32();
         assert(zero == 0);
-        auto address = input.read_uint64() + offset;
+        auto address = input.read_uint64();
         auto length  = input.read_uint64();
 
         fprintf(stderr, "vm: newformat: section %d: name '%s' address %p/%d length %d\n", index,
@@ -108,9 +108,11 @@ void DabVM::load_newformat(Stream &input)
         }
         else
         {
-            read_functions(instructions, func_address, func_length);
+            read_functions(instructions, func_address, func_length, offset);
         }
     }
+
+    this->last_ring_offset = offset;
 
     fprintf(stderr, "vm: seek initial code pointer to %d\n", (int)code_address);
     instructions.seek(code_address);
@@ -147,7 +149,8 @@ void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t class
     }
 }
 
-void DabVM::read_functions(Stream &input, uint64_t func_address, uint64_t func_length)
+void DabVM::read_functions(Stream &input, uint64_t func_address, uint64_t func_length,
+                           uint64_t offset)
 {
     auto fun_len = 2 + 2 + 8; // uint16 + uint16 + uint64
 
@@ -174,7 +177,8 @@ void DabVM::read_functions(Stream &input, uint64_t func_address, uint64_t func_l
                     symbol_str.c_str(), (void *)address, (int)class_index);
         }
 
-        add_function(address, symbol_str, class_index);
+        auto &fun       = add_function(address, symbol_str, class_index);
+        fun.source_ring = offset;
     }
 }
 
