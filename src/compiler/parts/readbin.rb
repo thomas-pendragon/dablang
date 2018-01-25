@@ -127,8 +127,16 @@ class DabBinReader
     nil
   end
 
+  def parse_whole_header_with_offset(binary)
+    data = parse_whole_header(binary)
+    data[:sections].each do |section|
+      section[:address] -= data[:offset]
+    end
+    data
+  end
+
   def parse_dab_binary(binary)
-    header = parse_whole_header(binary)
+    header = parse_whole_header_with_offset(binary)
 
     symb = get_section(binary, header, 'symb')
     func = get_section(binary, header, 'func')

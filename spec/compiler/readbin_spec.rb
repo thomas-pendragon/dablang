@@ -416,4 +416,41 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'should parse whole header with offsets' do
+    header = parse_bin('44 41 42 00 03 00 00 00  04 03 00 00 00 00 00 00
+                        c8 00 00 00 00 00 00 00  79 02 00 00 00 00 00 00
+                        05 00 00 00 00 00 00 00  64 61 74 61 00 00 00 00
+                        00 00 00 00 00 00 00 00  cc 03 00 00 00 00 00 00
+                        0e 00 00 00 00 00 00 00  63 6f 64 65 00 00 00 00
+                        00 00 00 00 00 00 00 00  da 03 00 00 00 00 00 00
+                        41 00 00 00 00 00 00 00  73 79 6d 64 00 00 00 00
+                        00 00 00 00 00 00 00 00  1b 04 00 00 00 00 00 00
+                        d2 00 00 00 00 00 00 00  73 79 6d 62 00 00 00 00
+                        00 00 00 00 00 00 00 00  ed 04 00 00 00 00 00 00
+                        40 01 00 00 00 00 00 00  66 75 6e 63 00 00 00 00
+                        00 00 00 00 00 00 00 00  2d 06 00 00 00 00 00 00
+                        18 00 00 00 00 00 00 00 ')
+
+    result = DabBinReader.new.parse_whole_header_with_offset(header)
+
+    expected = {
+      dab: 'DAB',
+      zero: 0,
+      version: 3,
+      offset: 772,
+      size_of_header: 200,
+      size_of_data: 633,
+      sections_count: 5,
+      sections: [
+        {name: 'data', zero1: 0, zero2: 0, zero3: 0, address: 972 - 772, length: 14},
+        {name: 'code', zero1: 0, zero2: 0, zero3: 0, address: 986 - 772, length: 65},
+        {name: 'symd', zero1: 0, zero2: 0, zero3: 0, address: 1051 - 772, length: 210},
+        {name: 'symb', zero1: 0, zero2: 0, zero3: 0, address: 1261 - 772, length: 320},
+        {name: 'func', zero1: 0, zero2: 0, zero3: 0, address: 1581 - 772, length: 24},
+      ],
+    }
+
+    expect(result).to eq(expected)
+  end
 end
