@@ -61,6 +61,7 @@ class DabMultiSpec
       dab = temp_file(lfile + '.dab')
       asm = temp_file(lfile + '.dabca')
       bin = temp_file(lfile + '.dabcb')
+      bin_asm = temp_file(lfile + '.dabcb.dabca')
       vmo = temp_file(lfile + '.vm')
       vmoa = temp_file(lfile + '.vm.dabca')
 
@@ -72,6 +73,7 @@ class DabMultiSpec
       compile_dab_to_asm(dab, asm, compile_options)
       assemble_options = ''
       assemble(asm, bin, assemble_options)
+      disassemble(bin, bin_asm, '--with-headers')
       run_options = "--entry=level#{level}"
       unless is_final
         run_options += ' --output=dumpvm'
