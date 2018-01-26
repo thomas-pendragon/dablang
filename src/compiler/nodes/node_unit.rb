@@ -281,6 +281,8 @@ class DabNodeUnit < DabNode
     another_program.clear!
     rebuild_constant_table!
     rebuild_available_functions!
+    new_offset = [self.start_offset, another_program.start_offset].max
+    self.start_offset = new_offset
   end
 
   def rebuild_constant_table!
