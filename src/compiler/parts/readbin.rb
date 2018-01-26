@@ -1,19 +1,19 @@
 class DabBinReader
-  def parse_ring(filename)
+  def parse_ring(filename, symbols, extra_offset = 0)
     text = File.binread(filename)
 
-    data = parse_dab_binary(text)
+    data = parse_dab_binary(text, symbols)
 
     unit = DabNodeUnit.new
 
-    unit.start_offset = text.length
+    unit.start_offset = text.length + extra_offset
 
     index = 0
 
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
       node.source_ring = filename
-      node.source_ring_index = index
+      node.source_ring_index = index + symbols.count
       index += 1
       unit.add_constant(node)
     end
@@ -25,7 +25,7 @@ class DabBinReader
       unit.add_function(node)
     end
 
-    unit
+    [unit, data[:symbols]]
   end
 
   def parse_header(string)

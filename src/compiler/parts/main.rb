@@ -21,8 +21,12 @@ class DabCompilerFrontend
 
     program = nil
 
+    symbols = []
+    extra_offset = 0
+
     ring_base&.each do |base|
-      new_program = DabBinReader.new.parse_ring(base)
+      new_program, symbols = DabBinReader.new.parse_ring(base, symbols, extra_offset)
+      extra_offset = new_program.start_offset
 
       if program
         program.merge!(new_program)
