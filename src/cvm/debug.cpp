@@ -61,7 +61,7 @@ void DabVM_debug::print_constants()
     size_t i = 0;
     for (const auto &symbol : $VM->symbols)
     {
-        fprintf(output, "%d: %s\n", (int)i, symbol.c_str());
+        fprintf(output, "%d: %s\n", (int)i, symbol.value.c_str());
         i++;
     }
 }

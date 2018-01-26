@@ -92,7 +92,7 @@ void DabVM::load_newformat(Stream &input)
 
     if (has_symbols)
     {
-        read_symbols(instructions, symb_address, symb_length);
+        read_symbols(instructions, symb_address, symb_length, offset);
     }
 
     if (has_classes)
@@ -256,21 +256,34 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
     }
 }
 
-void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length)
+void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length,
+                         uint64_t offset)
 {
-    fprintf(stderr, "symbad=%p symblen=%d\n", (void *)symb_address, (int)symb_length);
-    fprintf(stderr, "intructions length %" PRIu64 " input %" PRIu64 "\n", instructions.length(),
+    fprintf(stderr, "Q intructions length %" PRIu64 " input %" PRIu64 "\n", instructions.length(),
             input.length());
+
+    fprintf(stderr, "readbin: symbad=%p (%" PRIu64 ") symblen=%d\n", (void *)symb_address,
+            symb_address, (int)symb_length);
+
     const auto symbol_len = sizeof(uint64_t);
 
     auto n_symbols = symb_length / symbol_len;
 
-    for (size_t i = 0; i < n_symbols; i++)
+    fprintf(stderr, "readbin: %" PRIu64 " symbol(s) to read\n", n_symbols);
+
+    for (uint64_t i = 0; i < n_symbols; i++)
     {
         auto address = symb_address + i * symbol_len;
-        auto ptr     = input.uint64_data(address);
-        auto str     = input.cstring_data(ptr);
-        symbols.push_back(str);
+        fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> address = %" PRIu64 "\n", i, address);
+        auto ptr = input.uint64_data(address);
+        fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> ptr     = %" PRIu64 "\n", i, ptr);
+        auto str = input.cstring_data(ptr);
+
+        DabSymbol symbol;
+        symbol.source_ring = offset;
+        symbol.value       = str;
+
+        symbols.push_back(symbol);
 
         if (options.verbose)
         {

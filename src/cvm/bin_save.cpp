@@ -131,8 +131,27 @@ void DabVM::dump_vm(FILE *out)
     for (auto sym : symbols)
     {
         auto pos = symd_data.size();
+
+        if (sym.source_ring < this->last_ring_offset)
+        {
+            if (options.verbose)
+            {
+                fprintf(stderr, "vm/binsave: will skip symbol '%s' (ring source: %" PRIu64
+                                ", last ring offset: %" PRIu64 ")\n",
+                        sym.value.c_str(), sym.source_ring, this->last_ring_offset);
+            }
+            continue;
+        }
+
+        if (options.verbose)
+        {
+            fprintf(stderr, "vm/binsave: write symbol '%s' (ring source: %" PRIu64
+                            ", last ring offset: %" PRIu64 ")\n",
+                    sym.value.c_str(), sym.source_ring, this->last_ring_offset);
+        }
+
         symb_data.push_back(pos);
-        for (char ch : sym)
+        for (char ch : sym.value)
         {
             symd_data.push_back(ch);
         }

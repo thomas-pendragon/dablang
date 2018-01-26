@@ -436,6 +436,12 @@ struct DabStackFrame
     std::vector<DabValue> args;
 };
 
+struct DabSymbol
+{
+    std::string value;
+    uint64_t    source_ring;
+};
+
 struct DabVM
 {
     DabRunOptions options;
@@ -449,7 +455,7 @@ struct DabVM
     Stream instructions;
     std::map<dab_symbol_t, DabFunction> functions;
 
-    std::vector<std::string> symbols;
+    std::vector<DabSymbol> symbols;
 
     std::map<dab_class_t, DabClass> classes;
 
@@ -479,7 +485,7 @@ struct DabVM
         for (size_t i = 0; i < symbols.size(); i++)
         {
             auto &symbol = symbols[i];
-            if (symbol == string)
+            if (symbol.value == string)
             {
                 return (dab_symbol_t)i;
             }
@@ -549,7 +555,7 @@ struct DabVM
 
     void read_coverage_files(Stream &stream, uint64_t address, uint64_t length);
 
-    void read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length);
+    void read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length, uint64_t offset);
 
     void instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
                   dab_symbol_t block_symbol = DAB_SYMBOL_NIL, const DabValue &capture = nullptr,

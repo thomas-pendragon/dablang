@@ -45,7 +45,7 @@ std::string DabVM::get_symbol(dab_symbol_t index) const
         snprintf(index_string, sizeof(index_string), "%d", (int)index);
         throw DabRuntimeError(std::string("symbol ") + index_string + " not found.");
     }
-    return symbols[index];
+    return symbols[index].value;
 }
 
 DabClass &DabVM::get_class(dab_class_t index)
@@ -186,7 +186,7 @@ int DabVM::run(std::vector<Stream> &inputs)
     {
         for (auto &stream : inputs)
         {
-            DabVM::load_newformat(stream);
+            load_newformat(stream);
         }
     }
 
@@ -1106,12 +1106,15 @@ dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
     for (dab_symbol_t i = 0; i < (dab_symbol_t)symbols.size(); i++)
     {
         auto &symbol = symbols[i];
-        if (symbol == string)
+        if (symbol.value == string)
         {
             return i;
         }
     }
-    symbols.push_back(string);
+    DabSymbol symbol;
+    symbol.value       = string;
+    symbol.source_ring = 0;
+    symbols.push_back(symbol);
     return (dab_symbol_t)(symbols.size() - 1);
 }
 
