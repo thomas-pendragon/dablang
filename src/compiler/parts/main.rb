@@ -21,8 +21,14 @@ class DabCompilerFrontend
 
     program = nil
 
-    if ring_base
-      program = DabBinReader.new.parse_ring(ring_base)
+    ring_base&.each do |base|
+      new_program = DabBinReader.new.parse_ring(base)
+
+      if program
+        program.merge!(new_program)
+      else
+        program = new_program
+      end
     end
 
     $debug_code_dump = settings[:debug_code_dump]

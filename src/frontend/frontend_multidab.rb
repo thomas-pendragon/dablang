@@ -54,7 +54,6 @@ class DabMultiSpec
     begin
       sym = "level_#{level}".to_sym
       next_sym = "level_#{level + 1}".to_sym
-      is_first = level == 0
       is_final = !data[next_sym]
 
       lfile = "level#{level}"
@@ -67,8 +66,8 @@ class DabMultiSpec
 
       extract_source(input, dab, data[sym])
       compile_options = ''
-      unless is_first
-        compile_options += " --ring-base=#{last_vmo}"
+      all_bin.each do |base|
+        compile_options += " --ring-base[]=#{base}"
       end
       compile_dab_to_asm(dab, asm, compile_options)
       assemble_options = ''
