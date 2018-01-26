@@ -13,8 +13,16 @@ def read_args!(input = nil)
       if flag['=']
         flag, value = flag.split('=', 2)
       end
-      flag = flag.tr('-', '_').to_sym
-      settings[flag] = value
+      flag = flag.tr('-', '_')
+      if flag['[]']
+        flag['[]'] = ''
+        flag = flag.to_sym
+        settings[flag] ||= []
+        settings[flag] << value
+      else
+        flag = flag.to_sym
+        settings[flag] = value
+      end
     else
       settings[:input] = arg
       settings[:inputs] ||= []
