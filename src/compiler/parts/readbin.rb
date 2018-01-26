@@ -135,7 +135,7 @@ class DabBinReader
     data
   end
 
-  def parse_dab_binary(binary)
+  def parse_dab_binary(binary, start_symbols = [])
     header = parse_whole_header_with_offset(binary)
 
     symb = get_section(binary, header, 'symb')
@@ -145,13 +145,17 @@ class DabBinReader
     base_offset = header[:offset]
 
     symbols = parse_symbols(binary, 0, symb, base_offset)
-    functions = parse_functions(func, symbols) if func
-    functions = parse_extended_functions(fext, symbols) if fext
+
+    all_symbols = start_symbols + symbols
+
+    functions = parse_functions(func, all_symbols) if func
+    functions = parse_extended_functions(fext, all_symbols) if fext
 
     {
       header: header,
       symbols: symbols,
       functions: functions,
+      all_symbols: all_symbols,
     }
   end
 

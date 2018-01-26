@@ -395,6 +395,10 @@ describe DabBinReader, readbin: true do
         '!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index', 'first',
         'is', 'last', 'length', 'main', 'puts', 'to_bool'
       ],
+      all_symbols: [
+        '!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index', 'first',
+        'is', 'last', 'length', 'main', 'puts', 'to_bool'
+      ],
       functions: [
         {symbol: 'main', klass: nil, address: 215},
         {symbol: 'puts', klass: nil, address: 247},
@@ -503,6 +507,11 @@ describe DabBinReader, readbin: true do
         ],
       },
       symbols: [
+        'foo', 'level0', 'new', 'class', 'to_s', '__construct', '__destruct', 'is', '==', 'upcase', 'length', '[]', '+',
+        '!=', '>', '>=', '<=', '<', '-', '*', '/', '%', '<<', '>>', '|', '&', 'byteswap', 'fetch_int32', 'count', 'shift',
+        'insert', '[]=', 'join', '__import_libc', '__import_sdl', '__import_pq', '||', '&&', 'bar', 'level1'
+      ],
+      all_symbols: [
         'foo', 'level0', 'new', 'class', 'to_s', '__construct', '__destruct', 'is', '==', 'upcase', 'length', '[]', '+',
         '!=', '>', '>=', '<=', '<', '-', '*', '/', '%', '<<', '>>', '|', '&', 'byteswap', 'fetch_int32', 'count', 'shift',
         'insert', '[]=', 'join', '__import_libc', '__import_sdl', '__import_pq', '||', '&&', 'bar', 'level1'
