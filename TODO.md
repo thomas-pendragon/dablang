@@ -1,17 +1,12 @@
 ## PRIORITIES ##
 
-1. fix Test CI stage, should not rebuild binaries (?)
-
-2a. Compiler ring support
+1. Compiler ring support
   - add user class lookup
-  - 3 layers
+  - use extended function section
 
-2b. Ring support (look up java annotation processing)
-  - let VM dump its binary image (+ tests)
-    - dump new functions
-    - dump class functions
+2. Ring support (look up java annotation processing)
+  - binsave: dump class functions
   - let VM modify its internal functions and classes
-  - multi layer example
 
 3. example: generate database model entities from schema
 
