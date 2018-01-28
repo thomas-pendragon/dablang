@@ -1,5 +1,11 @@
 ## PRIORITIES ##
 
+0.
+ - simple dynamic method (copy block)
+ - passing arguments to dynamic methods
+ - proper closure support (read/write)
+ - closure support for dynamic methods
+
 1. Compiler ring support
   - add user class lookup
   - use extended function section
@@ -105,7 +111,6 @@
 ## Assembler ##
 
 - COV should not steal opcode labels
-- reorganize and rename opcodes
 
 ## Testing ##
 
