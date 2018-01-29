@@ -2,6 +2,7 @@
 
 0.
  - simple dynamic method (copy block)
+   - implement HARDCALL?
  - passing arguments to dynamic methods
  - proper closure support (read/write)
  - closure support for dynamic methods
