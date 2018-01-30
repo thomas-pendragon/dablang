@@ -1,5 +1,7 @@
 ## PRIORITIES ##
 
+~ rewrite C-based stdlib to syscalls
+
 0.
  - simple dynamic method (copy block)
    - implement HARDCALL?
