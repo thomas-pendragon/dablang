@@ -1,6 +1,7 @@
 ## PRIORITIES ##
 
 ~ rewrite C-based stdlib to syscalls
+~ DLL imports on windows
 
 0.
  - simple dynamic method (copy block)
