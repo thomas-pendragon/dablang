@@ -10,6 +10,7 @@
  - passing arguments to dynamic methods
  - proper closure support (read/write)
  - closure support for dynamic methods
+ - reoptimize step for dynamic methods
 
 1. Compiler ring support
   - add user class lookup
