@@ -11,6 +11,7 @@
  - proper closure support (read/write)
  - closure support for dynamic methods
  - reoptimize step for dynamic methods
+ - decompile step for dynamic methods?
 
 1. Compiler ring support
   - add user class lookup
