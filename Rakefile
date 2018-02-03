@@ -198,10 +198,10 @@ setup_tests('asm', 'asmt', 'frontend_asm', [], nil, AsmSpec)
 setup_tests('dumpcov', 'test', 'frontend_dumpcov', [cdumpcov])
 setup_tests('cov', 'test', 'frontend_cov', [cvm, cdumpcov])
 setup_tests('debug', 'test', 'frontend_debug', [cvm], nil, DebugSpec)
-setup_tests('decompile')
 setup_tests('compiler_performance')
 setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_spec')
 setup_tests('multidab', 'test', nil, [cvm, cdisasm])
+setup_tests('decompile', 'test', nil, [cdisasm])
 
 gitlab = '.gitlab-ci.yml'
 gitlab_base = 'gitlab_base.rb'

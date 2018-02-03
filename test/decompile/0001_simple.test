@@ -1,14 +1,14 @@
-## INPUT
+## DAB INPUT
 
-       0: LOAD_FUNCTION 11, simplefun, 65535
-      10: BREAK_LOAD 
-      11: STACK_RESERVE 0
-      14: PUSH_NUMBER 123
-      23: RETURN 
-
-## OUTPUT
-
-func simplefun()
+func foo()
 {
-  return 123;
+  return 2;
+}
+
+## EXPECTED
+
+func foo()
+{
+  var R0 = 2;
+  return R0;
 }

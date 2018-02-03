@@ -4,6 +4,7 @@ require_relative '../shared/opcodes.rb'
 require_relative '../shared/parser.rb'
 require_relative '../shared/asm_context.rb'
 require_relative '../shared/args.rb'
+require_relative '../shared/system.rb'
 require_relative '../compiler/_requires.rb'
 
 $debug = $settings[:debug]
@@ -11,8 +12,8 @@ $debug = $settings[:debug]
 class InputStream
   attr_reader :lines
 
-  def initialize(input = STDIN)
-    @stream = DabParser.new(input.read, false)
+  def initialize(input)
+    @stream = DabParser.new(input, false)
     @context = DabAsmContext.new(@stream, numeric_labels: true)
     @lines = @context.read_program
   end
@@ -23,50 +24,44 @@ class InputStream
 end
 
 class DecompiledFunction
-  def initialize(input)
-    info = input[:info]
-    @name = info[1]
-    @data = input[:data]
+  def initialize(func, funcbody)
+    @name = func[:symbol]
     @body = DabNodeTreeBlock.new
     @fun = DabNodeFunction.new(@name, @body, DabNode.new, false)
-    @stack = []
+
+    cmd = './bin/cdisasm --raw'
+    ret = qsystem(cmd, input: funcbody, timeout: 10)[:stdout]
+
+    @stream = InputStream.new(ret)
   end
 
   def process(line)
-    errap ['stack', @stack, 'line', line]
+    errap ['line', line]
     args = line[:arglist]
-    case line[:op]
-    when 'PUSH_NUMBER'
-      @stack << DabNodeLiteralNumber.new(args[0])
-    when 'PUSH_STRING'
-      @stack << DabNodeLiteralString.new(args[0])
-    when 'PUSH_NIL'
-      @stack << DabNodeLiteralNil.new
+    op = line[:op]
+
+    case op
+    when 'STACK_RESERVE'
+      # empty
+    when 'LOAD_NUMBER'
+      id = args[0]
+      value = args[1]
+      value = DabNodeLiteralNumber.new(value)
+      @body << DabNodeDefineLocalVar.new(id, value)
     when 'RETURN'
-      @body << DabNodeReturn.new(@stack.pop)
-    when 'PUSH_SYMBOL'
-      @stack << args[0]
-    when 'CALL'
-      nargs = args[0]
-      id = @stack.pop
-      arglist = @stack.pop(nargs)
-      @stack << if %w{+}.include?(id)
-                  DabNodeOperator.new(arglist[0], arglist[1], id)
-                else
-                  DabNodeCall.new(id, arglist)
-                end
-    when 'YIELD'
-      nargs = args[0]
-      arglist = @stack.pop(nargs)
-      @body << DabNodeYield.new(arglist)
+      id = args[0]
+      var = DabNodeLocalVar.new(id)
+      @body << DabNodeReturn.new(var)
     else
       errap line
-      raise 'unknown op'
+      raise "unknown op #{op}"
     end
   end
 
   def run!(output)
-    process(@data.shift) until @data.empty?
+    @stream.each do |line|
+      process(line)
+    end
     options = {}
     @fun.dump
     output << @fun.formatted_source(options)
@@ -82,28 +77,30 @@ class Decompiler
   end
 
   def run!
-    @input.each do |line|
-      if line[:op] == 'LOAD_FUNCTION'
-        func = line[:arglist]
-        @functions << {info: func, pos: func[0], data: []}
-      elsif line[:op] == 'BREAK_LOAD'
-      elsif line[:op] == 'STACK_RESERVE'
-        @func = @functions.detect { |f| f[:pos] == line[:label] }
-      else
-        @func[:data] << line
-      end
-    end
-    @functions.each do |fun|
-      process_function!(fun)
+    body = @input.read
+    program = DabBinReader.new.parse_dab_binary(body)
+
+    code = program[:header][:sections].detect { |section| section[:name] == 'code' }
+
+    min_func = code[:address]
+    max_func = min_func + code[:length]
+
+    # codebody = body[min_func...max_func]
+
+    program[:functions].each do |func|
+      address = func[:address]
+      funcbody = body[address...max_func]
+
+      process_function!(func, funcbody)
     end
   end
 
-  def process_function!(fun)
-    DecompiledFunction.new(fun).run!(@output)
+  def process_function!(func, funcbody)
+    DecompiledFunction.new(func, funcbody).run!(@output)
   end
 end
 
-input = InputStream.new
+input = STDIN
 output = STDOUT
 parser = Decompiler.new(input, output)
 parser.run!

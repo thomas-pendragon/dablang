@@ -6,7 +6,7 @@ end
 
 def extract_format_source(input, output)
   describe_action(input, output, 'extract input') do
-    text = read_test_file(input)[:input]
+    text = read_test_file(input)[:dab_input]
     File.open(output, 'wb') do |file|
       file << text << "\n"
     end
@@ -30,15 +30,19 @@ def run_test(settings)
   puts info
   FileUtils.mkdir_p(test_output_dir)
 
+  inp = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.inp')).to_s
   asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.asm')).to_s
+  bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.bin')).to_s
   dab = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dab')).to_s
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
   FileUtils.rm(out) if File.exist?(out)
 
-  extract_format_source(input, asm)
-  decompile(asm, dab, options)
+  extract_format_source(input, inp)
+  compile_dab_to_asm(inp, asm, '')
+  assemble(asm, bin)
+  decompile(bin, dab, options)
 
-  expected = data[:output].strip
+  expected = data[:expected].strip
 
   actual = File.read(dab).strip
   compare_output(info, actual, expected)

@@ -18,12 +18,15 @@ class SystemRunCommand
     @exit_code && @exit_code != 0
   end
 
-  def open_process!(input_file = nil)
+  def open_process!(input: nil, input_file: nil)
     @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
+    raise 'cannot have both input and input_file' if input && input_file
     if input_file
-      text = File.read(input_file)
-      len = @stdin.write(text)
-      raise 'mismatch' unless len == text.length
+      input = File.read(input_file)
+    end
+    if input
+      len = @stdin.write(input)
+      raise 'mismatch' unless len == input.length
     end
     @stdin.close
   end
@@ -52,9 +55,9 @@ class SystemRunCommand
   end
 end
 
-def system_with_progress(cmd, input_file: nil, show_stderr: true, show_stdout: true)
+def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, show_stdout: true)
   command = SystemRunCommand.new(cmd)
-  command.open_process!(input_file)
+  command.open_process!(input: input, input_file: input_file)
   fdlist = command.streams
   stdout = ''
   stderr = ''
@@ -97,14 +100,14 @@ def psystem(cmd)
   end
 end
 
-def qsystem(cmd, input_file: nil, output_file: nil, timeout: nil, error_file: nil)
+def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, error_file: nil)
   STDERR.print ' >> '.yellow
   STDERR.print "timeout #{timeout} ".white if timeout
   STDERR.print cmd.yellow
   STDERR.print " < #{input_file}".white if input_file
   STDERR.print " > #{output_file}".white if output_file
   STDERR.print "\n"
-  ret = system_with_progress(cmd, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file)
+  ret = system_with_progress(cmd, input: input, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file)
   unless ret[:exit_code] == 0
     STDERR.puts ret[:stderr].to_s.red
     raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
