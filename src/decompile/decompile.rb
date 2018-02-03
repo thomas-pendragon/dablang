@@ -66,6 +66,13 @@ class DecompiledFunction
       id = args[0]
       value = DabNodeLiteralBoolean.new(false)
       @body << DabNodeDefineLocalVar.new(id, value)
+    when 'NEW_ARRAY'
+      id = args[0]
+      values = args[1..-1].map do |reg|
+        DabNodeLocalVar.new(reg)
+      end
+      value = DabNodeLiteralArray.new(values)
+      @body << DabNodeDefineLocalVar.new(id, value)
     when 'RETURN'
       id = args[0]
       var = if id == 'RNIL'
