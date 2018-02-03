@@ -24,7 +24,7 @@ class InputStream
 end
 
 class DecompiledFunction
-  def initialize(func, funcbody)
+  def initialize(func, funcbody, dabbody)
     @name = func[:symbol]
     @body = DabNodeTreeBlock.new
     @fun = DabNodeFunction.new(@name, @body, DabNode.new, false)
@@ -33,6 +33,11 @@ class DecompiledFunction
     ret = qsystem(cmd, input: funcbody, timeout: 10)[:stdout]
 
     @stream = InputStream.new(ret)
+    @dabbody = dabbody
+  end
+
+  def _get_data(address, length)
+    @dabbody[address...(address + length)]
   end
 
   def process(line)
@@ -47,6 +52,11 @@ class DecompiledFunction
       id = args[0]
       value = args[1]
       value = DabNodeLiteralNumber.new(value)
+      @body << DabNodeDefineLocalVar.new(id, value)
+    when 'LOAD_STRING'
+      id = args[0]
+      value = _get_data(args[1], args[2])
+      value = DabNodeLiteralString.new(value)
       @body << DabNodeDefineLocalVar.new(id, value)
     when 'RETURN'
       id = args[0]
@@ -91,12 +101,12 @@ class Decompiler
       address = func[:address]
       funcbody = body[address...max_func]
 
-      process_function!(func, funcbody)
+      process_function!(func, funcbody, body)
     end
   end
 
-  def process_function!(func, funcbody)
-    DecompiledFunction.new(func, funcbody).run!(@output)
+  def process_function!(func, funcbody, body)
+    DecompiledFunction.new(func, funcbody, body).run!(@output)
   end
 end
 
