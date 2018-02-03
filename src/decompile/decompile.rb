@@ -58,6 +58,10 @@ class DecompiledFunction
       value = _get_data(args[1], args[2])
       value = DabNodeLiteralString.new(value)
       @body << DabNodeDefineLocalVar.new(id, value)
+    when 'LOAD_TRUE'
+      id = args[0]
+      value = DabNodeLiteralBoolean.new(true)
+      @body << DabNodeDefineLocalVar.new(id, value)
     when 'RETURN'
       id = args[0]
       var = DabNodeLocalVar.new(id)

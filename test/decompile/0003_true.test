@@ -1,0 +1,14 @@
+## DAB INPUT
+
+func foo()
+{
+  return true;
+}
+
+## EXPECTED
+
+func foo()
+{
+  var R0 = true;
+  return R0;
+}
