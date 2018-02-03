@@ -1,0 +1,13 @@
+## DAB INPUT
+
+func foo()
+{
+  return nil;
+}
+
+## EXPECTED
+
+func foo()
+{
+  return nil;
+}

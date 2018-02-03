@@ -68,7 +68,11 @@ class DecompiledFunction
       @body << DabNodeDefineLocalVar.new(id, value)
     when 'RETURN'
       id = args[0]
-      var = DabNodeLocalVar.new(id)
+      var = if id == 'RNIL'
+              DabNodeLiteralNil.new
+            else
+              DabNodeLocalVar.new(id)
+            end
       @body << DabNodeReturn.new(var)
     else
       errap line
