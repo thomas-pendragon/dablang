@@ -177,3 +177,6 @@ Style/DateTime:
 
 Style/MixinUsage:
   Enabled: false
+
+Lint/EmptyWhen:
+  Enabled: false
