@@ -49,30 +49,25 @@ class DecompiledFunction
     when 'STACK_RESERVE'
       # empty
     when 'LOAD_NUMBER'
-      id = args[0]
       value = args[1]
       value = DabNodeLiteralNumber.new(value)
-      @body << DabNodeDefineLocalVar.new(id, value)
+      _define_var(args[0], value)
     when 'LOAD_STRING'
-      id = args[0]
       value = _get_data(args[1], args[2])
       value = DabNodeLiteralString.new(value)
-      @body << DabNodeDefineLocalVar.new(id, value)
+      _define_var(args[0], value)
     when 'LOAD_TRUE'
-      id = args[0]
       value = DabNodeLiteralBoolean.new(true)
-      @body << DabNodeDefineLocalVar.new(id, value)
+      _define_var(args[0], value)
     when 'LOAD_FALSE'
-      id = args[0]
       value = DabNodeLiteralBoolean.new(false)
-      @body << DabNodeDefineLocalVar.new(id, value)
+      _define_var(args[0], value)
     when 'NEW_ARRAY'
-      id = args[0]
       values = args[1..-1].map do |reg|
         DabNodeLocalVar.new(reg)
       end
       value = DabNodeLiteralArray.new(values)
-      @body << DabNodeDefineLocalVar.new(id, value)
+      _define_var(args[0], value)
     when 'RETURN'
       id = args[0]
       var = if id == 'RNIL'
@@ -85,6 +80,10 @@ class DecompiledFunction
       errap line
       raise "unknown op #{op}"
     end
+  end
+
+  def _define_var(id, value)
+    @body << DabNodeDefineLocalVar.new(id, value)
   end
 
   def run!(output)
