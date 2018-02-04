@@ -109,6 +109,7 @@ class DabNodeCall < DabNodeExternalBasecall
   def extra_dump
     return '[??]' if target_function.nil?
     return '[builtin]' if target_function == true
+    return '[builtin??]' if target_function == false
     target_function.concreteified? ? '[hardcall]' : ''
   end
 end
