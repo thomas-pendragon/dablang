@@ -24,7 +24,7 @@ class InputStream
 end
 
 class DecompiledFunction
-  def initialize(func, funcbody, dabbody)
+  def initialize(func, funcbody, dabbody, dab)
     @name = func[:symbol]
     @body = DabNodeTreeBlock.new
     @fun = DabNodeFunction.new(@name, @body, DabNode.new, false)
@@ -34,6 +34,7 @@ class DecompiledFunction
 
     @stream = InputStream.new(ret)
     @dabbody = dabbody
+    @dab = dab
   end
 
   def _get_data(address, length)
@@ -126,12 +127,12 @@ class Decompiler
       end_address = func[:end_address]
       funcbody = body[address...end_address]
 
-      process_function!(func, funcbody, body)
+      process_function!(func, funcbody, body, program)
     end
   end
 
-  def process_function!(func, funcbody, body)
-    DecompiledFunction.new(func, funcbody, body).run!(@output)
+  def process_function!(func, funcbody, body, program)
+    DecompiledFunction.new(func, funcbody, body, program).run!(@output)
   end
 end
 
