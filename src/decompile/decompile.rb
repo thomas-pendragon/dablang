@@ -77,10 +77,19 @@ class DecompiledFunction
               DabNodeLocalVar.new(id)
             end
       @body << DabNodeReturn.new(var)
+    when 'CALL'
+      symbol = _symbol(args[1])
+      call = DabNodeCall.new(symbol, [], nil)
+      _define_var(args[0], call)
     else
       errap line
       raise "unknown op #{op}"
     end
+  end
+
+  def _symbol(s)
+    s = s.delete('S').to_i
+    @dab[:symbols][s]
   end
 
   def _define_var(id, value)
