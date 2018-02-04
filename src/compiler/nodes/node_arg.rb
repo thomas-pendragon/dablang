@@ -27,4 +27,8 @@ class DabNodeArg < DabNode
   def no_side_effects?
     true
   end
+
+  def formatted_source(_options)
+    function.arglist[index].identifier
+  end
 end

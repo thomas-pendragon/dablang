@@ -27,7 +27,8 @@ class DecompiledFunction
   def initialize(func, funcbody, dabbody, dab)
     @name = func[:symbol]
     @body = DabNodeTreeBlock.new
-    @fun = DabNodeFunction.new(@name, @body, DabNode.new, false)
+    @arglist = DabNode.new
+    @fun = DabNodeFunction.new(@name, @body, @arglist, false)
 
     cmd = './bin/cdisasm --raw'
     ret = qsystem(cmd, input: funcbody, timeout: 10)[:stdout]
@@ -69,6 +70,11 @@ class DecompiledFunction
       end
       value = DabNodeLiteralArray.new(values)
       _define_var(args[0], value)
+    when 'LOAD_ARG'
+      index = args[1]
+      _bump_args(index + 1)
+      value = DabNodeArg.new(index)
+      _define_var(args[0], value)
     when 'RETURN'
       id = args[0]
       var = if id == 'RNIL'
@@ -84,6 +90,13 @@ class DecompiledFunction
     else
       errap line
       raise "unknown op #{op}"
+    end
+  end
+
+  def _bump_args(count)
+    while @arglist.count < count
+      index = @arglist.count
+      @arglist << DabNodeArgDefinition.new(index, "arg#{index}", nil)
     end
   end
 
