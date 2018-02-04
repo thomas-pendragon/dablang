@@ -94,6 +94,7 @@ class DecompiledFunction
     options = {}
     @fun.dump
     output << @fun.formatted_source(options)
+    output << "\n"
   end
 end
 
@@ -114,11 +115,17 @@ class Decompiler
     min_func = code[:address]
     max_func = min_func + code[:length]
 
-    # codebody = body[min_func...max_func]
+    functions = program[:functions].sort_by { |func| func[:address] }
+
+    functions.each_with_index do |func, index|
+      next_func = functions[index + 1]
+      func[:end_address] = next_func&.[](:address) || max_func
+    end
 
     program[:functions].each do |func|
       address = func[:address]
-      funcbody = body[address...max_func]
+      end_address = func[:end_address]
+      funcbody = body[address...end_address]
 
       process_function!(func, funcbody, body)
     end
