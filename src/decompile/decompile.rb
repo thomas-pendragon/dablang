@@ -93,7 +93,10 @@ class DecompiledFunction
     when 'INSTCALL'
       symbol = _symbol(args[2])
       value = DabNodeLocalVar.new(args[1])
-      call = DabNodeInstanceCall.new(value, symbol, nil, nil)
+      callargs = args[3..-1].map do |arg|
+        DabNodeLocalVar.new(arg)
+      end
+      call = DabNodeInstanceCall.new(value, symbol, callargs, nil)
       _define_var(args[0], call)
     else
       errap line

@@ -1,0 +1,15 @@
+## DAB INPUT
+
+func foo(arg)
+{
+  return arg.foo(123, 456);
+}
+
+## EXPECTED
+
+func foo(arg0)
+{
+  var R0 = arg0;
+  var R1 = R0.foo(123,456);
+  return R1;
+}
