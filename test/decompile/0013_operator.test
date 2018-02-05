@@ -1,0 +1,18 @@
+## DAB INPUT
+
+func foo(arg)
+{
+  return arg * 2 + 3;
+}
+
+## EXPECTED
+
+func foo(arg0)
+{
+  var R0 = arg0;
+  var R1 = 2;
+  var R2 = R0 * R1;
+  var R3 = 3;
+  var R4 = R2 + R3;
+  return R4;
+}

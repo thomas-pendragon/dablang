@@ -96,7 +96,11 @@ class DecompiledFunction
       callargs = args[3..-1].map do |arg|
         DabNodeLocalVar.new(arg)
       end
-      call = DabNodeInstanceCall.new(value, symbol, callargs, nil)
+      call = if ['+', '-', '*', '/'].include?(symbol) && (callargs.count == 1)
+               DabNodeOperator.new(value, callargs[0], symbol)
+             else
+               DabNodeInstanceCall.new(value, symbol, callargs, nil)
+             end
       _define_var(args[0], call)
     else
       errap line
