@@ -85,7 +85,10 @@ class DecompiledFunction
       @body << DabNodeReturn.new(var)
     when 'CALL'
       symbol = _symbol(args[1])
-      call = DabNodeCall.new(symbol, [], nil)
+      callargs = args[2..-1].map do |arg|
+        DabNodeLocalVar.new(arg)
+      end
+      call = DabNodeCall.new(symbol, callargs, nil)
       _define_var(args[0], call)
     when 'INSTCALL'
       symbol = _symbol(args[2])

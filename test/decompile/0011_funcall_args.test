@@ -1,0 +1,28 @@
+## DAB INPUT
+
+func foo(a, b) {}
+
+func bar()
+{
+  return foo(123, 456);
+}
+
+## EXPECTED
+
+func __foo_Fixnum_Fixnum()
+{
+  return nil;
+}
+
+func bar()
+{
+  var R0 = 123;
+  var R1 = 456;
+  var R2 = __foo_Fixnum_Fixnum(R0, R1);
+  return R2;
+}
+
+func foo()
+{
+  return nil;
+}
