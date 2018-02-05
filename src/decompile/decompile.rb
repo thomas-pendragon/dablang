@@ -87,6 +87,11 @@ class DecompiledFunction
       symbol = _symbol(args[1])
       call = DabNodeCall.new(symbol, [], nil)
       _define_var(args[0], call)
+    when 'INSTCALL'
+      symbol = _symbol(args[2])
+      value = DabNodeLocalVar.new(args[1])
+      call = DabNodeInstanceCall.new(value, symbol, nil, nil)
+      _define_var(args[0], call)
     else
       errap line
       raise "unknown op #{op}"
