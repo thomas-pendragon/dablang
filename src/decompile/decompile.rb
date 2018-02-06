@@ -85,17 +85,13 @@ class DecompiledFunction
       @body << DabNodeReturn.new(var)
     when 'CALL'
       symbol = _symbol(args[1])
-      callargs = args[2..-1].map do |arg|
-        DabNodeLocalVar.new(arg)
-      end
+      callargs = _get_args(args[2..-1])
       call = DabNodeCall.new(symbol, callargs, nil)
       _define_var(args[0], call)
     when 'INSTCALL'
       symbol = _symbol(args[2])
       value = DabNodeLocalVar.new(args[1])
-      callargs = args[3..-1].map do |arg|
-        DabNodeLocalVar.new(arg)
-      end
+      callargs = _get_args(args[3..-1])
       call = if ['+', '-', '*', '/'].include?(symbol) && (callargs.count == 1)
                DabNodeOperator.new(value, callargs[0], symbol)
              else
@@ -105,6 +101,12 @@ class DecompiledFunction
     else
       errap line
       raise "unknown op #{op}"
+    end
+  end
+
+  def _get_args(args)
+    args.map do |arg|
+      DabNodeLocalVar.new(arg)
     end
   end
 
