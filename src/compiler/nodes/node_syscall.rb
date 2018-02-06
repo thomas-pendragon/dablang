@@ -47,7 +47,15 @@ class DabNodeSyscall < DabNodeBasecall
     arg.register?
   end
 
+  def funname
+    map = {
+      0 => 'print',
+      1 => 'exit',
+    }
+    map[@call] || "sys_#{real_identifier}"
+  end
+
   def formatted_source(options)
-    "sys_#{real_identifier}(" + _formatted_arguments(options) + ')' + formatted_block(options)
+    "#{funname}(" + _formatted_arguments(options) + ')' + formatted_block(options)
   end
 end
