@@ -31,7 +31,7 @@ class DecompiledFunction
     @fun = DabNodeFunction.new(@name, @body, @arglist, false)
 
     cmd = './bin/cdisasm --raw'
-    ret = qsystem(cmd, input: funcbody, timeout: 10)[:stdout]
+    ret = qsystem(cmd, input: funcbody, timeout: 10, binmode: true)[:stdout]
 
     @stream = InputStream.new(ret)
     @dabbody = dabbody
