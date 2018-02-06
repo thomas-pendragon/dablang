@@ -123,7 +123,11 @@ class DecompiledFunction
   end
 
   def _define_var(id, value)
-    @body << DabNodeDefineLocalVar.new(id, value)
+    @body << if id == 'RNIL'
+               value
+             else
+               DabNodeDefineLocalVar.new(id, value)
+             end
   end
 
   def run!(output)
