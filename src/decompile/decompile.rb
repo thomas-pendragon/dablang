@@ -98,6 +98,11 @@ class DecompiledFunction
                DabNodeInstanceCall.new(value, symbol, callargs, nil)
              end
       _define_var(args[0], call)
+    when 'SYSCALL'
+      syscall = args[1]
+      callargs = _get_args(args[2..-1])
+      syscall = DabNodeSyscall.new(syscall, callargs)
+      _define_var(args[0], syscall)
     else
       errap line
       raise "unknown op #{op}"
