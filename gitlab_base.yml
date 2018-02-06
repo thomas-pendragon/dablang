@@ -64,6 +64,11 @@ stages:
   script:
     - bundle exec rake debug_spec
 
+.test_base_decompile_spec:
+  <<: *test_base
+  script:
+    - bundle exec rake decompile_spec
+
 StdlibFormatCheck:
   stage: format
   tags:
