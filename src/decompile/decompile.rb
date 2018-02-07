@@ -26,9 +26,9 @@ end
 class DecompiledFunction
   def initialize(func, funcbody, dabbody, dab)
     @name = func[:symbol]
-    @body = DabNodeTreeBlock.new
+    @real_body = DabNodeTreeBlock.new
     @arglist = DabNode.new
-    @fun = DabNodeFunction.new(@name, @body, @arglist, false)
+    @fun = DabNodeFunction.new(@name, @real_body, @arglist, false)
 
     cmd = './bin/cdisasm --raw'
     ret = qsystem(cmd, input: funcbody, timeout: 10, binmode: true)[:stdout]
@@ -46,6 +46,7 @@ class DecompiledFunction
     errap ['line', line]
     args = line[:arglist]
     op = line[:op]
+    @body = @blocks[line[:label]]
 
     case op
     when 'STACK_RESERVE'
@@ -136,10 +137,22 @@ class DecompiledFunction
   end
 
   def run!(output)
+    @blocks = {}
+    @stream.each do |line|
+      node = DabNodeBasicBlock.new
+      @blocks[line[:label]] = node
+      @real_body << node
+    end
+
     @stream.each do |line|
       process(line)
     end
-    options = {}
+
+    @blocks.each_value do |value|
+      value.remove! if value.empty?
+    end
+
+    options = {skip_unused_labels: true}
     @fun.dump
     output << @fun.formatted_source(options)
     output << "\n"

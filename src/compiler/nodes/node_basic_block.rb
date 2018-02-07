@@ -78,9 +78,23 @@ class DabNodeBasicBlock < DabNode
     sources.empty?
   end
 
+  def internally_unreachable?
+    internal_sources.empty?
+  end
+
   def formatted_source(options)
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
     return '' unless lines.count > 0
-    'B' + block_index.to_s + ":\n" + lines.join("\n") + "\n"
+    label = 'B' + block_index.to_s + ":\n"
+    post = "\n"
+    if options[:skip_unused_labels] && internally_unreachable?
+      label = ''
+      post = ''
+    end
+    label + lines.join("\n") + post
+  end
+
+  def formatted_skip_semicolon?
+    true
   end
 end
