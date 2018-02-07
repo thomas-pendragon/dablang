@@ -93,7 +93,7 @@ class DecompiledFunction
       symbol = _symbol(args[2])
       value = DabNodeLocalVar.new(args[1])
       callargs = _get_args(args[3..-1])
-      call = if ['+', '-', '*', '/'].include?(symbol) && (callargs.count == 1)
+      call = if ['+', '-', '*', '/', '=='].include?(symbol) && (callargs.count == 1)
                DabNodeOperator.new(value, callargs[0], symbol)
              else
                DabNodeInstanceCall.new(value, symbol, callargs, nil)
@@ -104,6 +104,14 @@ class DecompiledFunction
       callargs = _get_args(args[2..-1])
       syscall = DabNodeSyscall.new(syscall, callargs)
       _define_var(args[0], syscall)
+    when 'JMP_IF'
+      reg = DabNodeLocalVar.new(args[0])
+      pos1 = args[1] + line[:label]
+      pos2 = args[2] + line[:label]
+      @body << DabNodeConditionalJump.new(reg, @blocks[pos1], @blocks[pos2])
+    when 'JMP'
+      pos = args[0] + line[:label]
+      @body << DabNodeJump.new(@blocks[pos])
     else
       errap line
       raise "unknown op #{op}"

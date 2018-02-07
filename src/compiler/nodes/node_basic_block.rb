@@ -87,8 +87,8 @@ class DabNodeBasicBlock < DabNode
     return '' unless lines.count > 0
     label = 'B' + block_index.to_s + ":\n"
     post = "\n"
-    if options[:skip_unused_labels] && internally_unreachable?
-      label = ''
+    if options[:skip_unused_labels]
+      label = '' if internally_unreachable?
       post = ''
     end
     label + lines.join("\n") + post
