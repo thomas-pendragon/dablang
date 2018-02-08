@@ -245,7 +245,7 @@ void read_stream(Stream &stream, FILE *input = stdin, bool close_input = false)
     if (input == stdin)
     {
         freopen(NULL, "rb", input);
-        SET_BINARY_MODE(fileno(input));
+        SET_BINARY_MODE(_fileno(input));
     }
 #endif
     byte buffer[1024];
