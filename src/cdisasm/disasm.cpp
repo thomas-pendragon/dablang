@@ -5,7 +5,7 @@
 #ifdef _WIN32
 #include <io.h>
 #include <fcntl.h>
-#define SET_BINARY_MODE(handle) setmode(handle, O_BINARY)
+#define SET_BINARY_MODE(handle) _setmode(handle, O_BINARY)
 #else
 #define SET_BINARY_MODE(handle) ((void)0)
 #endif
