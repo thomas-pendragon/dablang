@@ -2,6 +2,14 @@
 #include "../cshared/disasm.h"
 #include "../cshared/stream.h"
 
+#ifdef _WIN32
+#include <io.h>
+#include <fcntl.h>
+#define SET_BINARY_MODE(handle) setmode(handle, O_BINARY)
+#else
+#define SET_BINARY_MODE(handle) ((void)0)
+#endif
+
 FILE *output = stdout;
 
 struct DisasmContext
@@ -237,6 +245,7 @@ void read_stream(Stream &stream, FILE *input = stdin, bool close_input = false)
     if (input == stdin)
     {
         freopen(NULL, "rb", input);
+        SET_BINARY_MODE(fileno(input));
     }
 #endif
     byte buffer[1024];
