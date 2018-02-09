@@ -161,9 +161,19 @@ class DecompiledFunction
     end
 
     options = {skip_unused_labels: true}
+
+    postprocess!(@fun)
+
     @fun.dump
     output << @fun.formatted_source(options)
     output << "\n"
+  end
+
+  def postprocess!(fun)
+    while true
+      next if DecompileIfs.new.run(fun)
+      break
+    end
   end
 end
 

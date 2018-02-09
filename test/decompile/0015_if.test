@@ -15,11 +15,10 @@ func foo(arg0)
   var R0 = arg0;
   var R1 = 1;
   var R2 = R0 == R1;
-  jmp R2 ? B4 : B7;
-  B4:
-  var R3 = "Foo";
-  print(R3);
-  jmp B7;
-  B7:
+  if (R2)
+  {
+    var R3 = "Foo";
+    print(R3);
+  }
   return nil;
 }
