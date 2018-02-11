@@ -1,5 +1,6 @@
 ## PRIORITIES ##
 
+~ decompiler: nested ifs
 ~ unified look of disasm output
 ~ rewrite C-based stdlib to syscalls
 ~ DLL imports on windows
