@@ -162,6 +162,8 @@ class DecompiledFunction
 
     options = {skip_unused_labels: true}
 
+    @fun.dump
+
     postprocess!(@fun)
 
     @fun.dump
