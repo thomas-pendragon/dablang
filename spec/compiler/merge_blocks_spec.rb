@@ -131,7 +131,37 @@ describe MergeBlocks, decompile: true do
 
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
 
-    # RemoveEmptyBlocks
+    RemoveEmptyBlocks.new.run(fun)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '            DabNodeJump [->1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [3]',
+      '          DabNodeBasicBlock [1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [4]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [6]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+
     # RemoveUnreachable
   end
 
