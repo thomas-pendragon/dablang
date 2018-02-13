@@ -193,6 +193,10 @@ class DabNode
     @children[index]
   end
 
+  def last
+    (count > 0) ? self[count - 1] : nil
+  end
+
   def real_value
     self
   end

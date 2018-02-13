@@ -3,6 +3,101 @@ require 'spec_helper'
 require_relative '../../src/compiler/_requires.rb'
 
 describe MergeBlocks, decompile: true do
+  it 'should remove jumps when multiple children' do
+    top_block = DabNodeFlatBlock.new
+
+    block0 = DabNodeBasicBlock.new
+    block1 = DabNodeBasicBlock.new
+
+    block0 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
+    block0 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(1))
+    block0 << DabNodeJump.new(block1)
+    block1 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(2))
+    block1 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(3))
+
+    top_block << block0
+    top_block << block1
+
+    root = DabNodeUnit.new
+    fun = DabNodeFunction.new('foo', top_block, DabNode.new, false)
+    root.add_function(fun)
+
+    RemoveNextJumps.new.run(fun)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '          DabNodeBasicBlock [1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [2]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [3]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+  end
+
+  it 'should merge blocks with multiple children' do
+    top_block = DabNodeFlatBlock.new
+
+    block0 = DabNodeBasicBlock.new
+    block1 = DabNodeBasicBlock.new
+
+    block0 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
+    block0 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(1))
+    block1 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(2))
+    block1 << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(3))
+
+    top_block << block0
+    top_block << block1
+
+    root = DabNodeUnit.new
+    fun = DabNodeFunction.new('foo', top_block, DabNode.new, false)
+    root.add_function(fun)
+
+    MergeBlocks.new.run(fun)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [2]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [3]',
+      '          DabNodeBasicBlock [1]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+  end
+
   it 'should merge blocks with simple jumps' do
     top_block = DabNodeFlatBlock.new
 
@@ -85,6 +180,7 @@ describe MergeBlocks, decompile: true do
       '            DabNodeSyscall [#0 PRINT]',
       '              DabNodeLiteralNumber [4]',
       '          DabNodeBasicBlock [5]',
+      '          DabNodeBasicBlock [6]',
       '            DabNodeSyscall [#0 PRINT]',
       '              DabNodeLiteralNumber [6]',
       '      DabNode []',
@@ -122,6 +218,7 @@ describe MergeBlocks, decompile: true do
       '            DabNodeSyscall [#0 PRINT]',
       '              DabNodeLiteralNumber [6]',
       '          DabNodeBasicBlock [5]',
+      '          DabNodeBasicBlock [6]',
       '      DabNode []',
       '      DabNodeLiteralNil []',
       '      DabNodeSymbol [:foo]',
@@ -229,8 +326,6 @@ describe MergeBlocks, decompile: true do
       '              DabNodeLiteralNumber [0]',
       '            DabNodeSyscall [#0 PRINT]',
       '              DabNodeLiteralNumber [1]',
-      '            DabNodeJump [->1]',
-      '          DabNodeBasicBlock [1]',
       '            DabNodeSyscall [#0 PRINT]',
       '              DabNodeLiteralNumber [4]',
       '            DabNodeSyscall [#0 PRINT]',

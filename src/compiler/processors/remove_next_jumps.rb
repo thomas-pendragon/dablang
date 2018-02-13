@@ -1,21 +1,20 @@
 class RemoveNextJumps
   def run(node)
-    ret = false
+    flat = node.blocks[0]
 
-    while true
-      next_jump = node.blocks.all_nodes(DabNodeJump).detect do |jump|
+    flat.each do |block|
+      next_jump = [block.last].compact.detect do |jump|
         block = jump.parent
-        next false if block.count != 1
 
-        jump.target.block_index == block.block_index + 1
+        jump.is_a?(DabNodeJump) && (jump.target.block_index == block.block_index + 1)
       end
 
-      break unless next_jump
+      next unless next_jump
 
-      next_jump.parent.remove!
-      ret = true
+      next_jump.remove!
+      return true
     end
 
-    ret
+    false
   end
 end

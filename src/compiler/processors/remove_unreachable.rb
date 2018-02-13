@@ -1,5 +1,7 @@
 class RemoveUnreachable
   def run(node)
+    removed = false
+
     flat = node.blocks[0]
 
     flat.each do |block|
@@ -11,9 +13,12 @@ class RemoveUnreachable
         skip ||= instr.is_a?(DabNodeReturn)
       end
 
-      remove.each(&:remove!)
+      remove.each do |instr|
+        removed = true
+        instr.remove!
+      end
     end
 
-    # TODO: status
+    removed
   end
 end

@@ -9,6 +9,6 @@ class RemoveEmptyBlocks
 
     remove.each(&:remove!)
 
-    # TODO: return status
+    remove.count > 0
   end
 end
