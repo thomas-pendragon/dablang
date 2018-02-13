@@ -192,6 +192,59 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
+  it 'should run decompile postprocess' do
+    top_block = DabNodeFlatBlock.new
+
+    block0 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
+    block1 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(1))
+    block3 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(3))
+    block4 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(4))
+    block2 = DabNodeBasicBlock.new << DabNodeJump.new(block4)
+    block6 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(6))
+    block5 = DabNodeBasicBlock.new << DabNodeJump.new(block6)
+
+    top_block << block0
+    top_block << block1
+    top_block << block2
+    top_block << block3
+    top_block << block4
+    top_block << block5
+    top_block << block6
+
+    root = DabNodeUnit.new
+    fun = DabNodeFunction.new('foo', top_block, DabNode.new, false)
+    root.add_function(fun)
+
+    PostprocessDecompiled.new.run(fun)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '            DabNodeJump [->1]',
+      '          DabNodeBasicBlock [1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [4]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [6]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
+  end
+
   xit 'should merge blocks with conditional jumps' do
     top_block = DabNodeFlatBlock.new
 
