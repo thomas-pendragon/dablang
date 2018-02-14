@@ -71,6 +71,7 @@ describe DecompileIfs, decompile: true do
     ]
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
 
+    PostprocessDecompiled.new.run(fun)
     DecompileIfs.new.run(fun)
 
     post_array = [
@@ -84,16 +85,14 @@ describe DecompileIfs, decompile: true do
       '          DabNodeBasicBlock [0]',
       '            DabNodeDefineLocalVar [<R0> [0]]',
       '              DabNodeArg [$0]',
-      '          DabNodeBasicBlock [1]',
       '            DabNodeDefineLocalVar [<R1> [1]]',
       '              DabNodeLiteralNumber [1]',
-      '          DabNodeBasicBlock [2]',
       '            DabNodeDefineLocalVar [<R2> [2]]',
       '              DabNodeOperator []',
       '                DabNodeSymbol [:==]',
       '                DabNodeLocalVar [<R0> [0]]',
       '                DabNodeLocalVar [<R1> [1]]',
-      '          DabNodeBasicBlock [3]',
+      '          DabNodeBasicBlock [1]',
       '            DabNodeIf []',
       '              DabNodeLocalVar [<R2> [2]]',
       '              DabNodeTreeBlock []',
@@ -101,7 +100,7 @@ describe DecompileIfs, decompile: true do
       '                  DabNodeLiteralString ["Foo"]',
       '                DabNodeSyscall [#0 PRINT]',
       '                  DabNodeLocalVar [<R3> [3]]',
-      '          DabNodeBasicBlock [4]',
+      '          DabNodeBasicBlock [2]',
       '            DabNodeReturn []',
       '              DabNodeLiteralNil []',
       '      DabNode []',

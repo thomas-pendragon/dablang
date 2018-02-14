@@ -173,6 +173,7 @@ class DecompiledFunction
 
   def postprocess!(fun)
     while true
+      next if PostprocessDecompiled.new.run(fun)
       next if DecompileIfs.new.run(fun)
       break
     end
