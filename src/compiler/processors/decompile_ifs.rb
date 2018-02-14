@@ -18,10 +18,8 @@ class DecompileIfs
       next unless jump_index + 2 == if_false_index
 
       if_true_count = if_true.internal_sources.count
-      if_false_count = if_false.internal_sources.count
 
       next unless if_true_count == 1
-      next unless if_false_count == 1
 
       next unless if_true.all_nodes(DabNodeBaseJump).empty?
 

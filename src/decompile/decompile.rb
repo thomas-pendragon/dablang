@@ -93,7 +93,7 @@ class DecompiledFunction
       symbol = _symbol(args[2])
       value = DabNodeLocalVar.new(args[1])
       callargs = _get_args(args[3..-1])
-      call = if ['+', '-', '*', '/', '=='].include?(symbol) && (callargs.count == 1)
+      call = if ['+', '-', '*', '/', '==', '>', '<', '>=', '<=', '!='].include?(symbol) && (callargs.count == 1)
                DabNodeOperator.new(value, callargs[0], symbol)
              else
                DabNodeInstanceCall.new(value, symbol, callargs, nil)
