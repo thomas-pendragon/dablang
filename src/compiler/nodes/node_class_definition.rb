@@ -31,7 +31,7 @@ class DabNodeClassDefinition < DabNode
   end
 
   def extra_dump
-    identifier
+    "#{identifier} [n= #{@number}]"
   end
 
   def compile_definition(output)

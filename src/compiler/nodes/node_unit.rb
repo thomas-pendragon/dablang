@@ -65,7 +65,12 @@ class DabNodeUnit < DabNode
   end
 
   def class_number(id)
-    @class_numbers[id]
+    ret = @class_numbers[id]
+    unless ret
+      errap @class_numbers
+      raise "class '#{id}' (#{id.class}) not found"
+    end
+    ret
   end
 
   def add_constant(literal)
@@ -268,6 +273,8 @@ class DabNodeUnit < DabNode
     ret.join("\n")
   end
 
+  attr_reader :class_numbers
+
   def merge!(another_program)
     another_program.functions.each do |fun|
       @functions.insert(fun)
@@ -282,6 +289,9 @@ class DabNodeUnit < DabNode
     rebuild_constant_table!
     rebuild_available_functions!
     new_offset = [self.start_offset, another_program.start_offset].max
+    another_program.class_numbers.each do |klass, number|
+      @class_numbers[klass] = number
+    end
     self.start_offset = new_offset
   end
 
