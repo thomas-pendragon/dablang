@@ -1,0 +1,31 @@
+## DAB INPUT
+
+func foo(a)
+{
+  if (a)
+  {
+    print("1");
+  }
+  else
+  {
+    print("2");
+  }
+}
+
+## EXPECTED
+
+func foo(arg0)
+{
+  var R0 = arg0;
+  if (R0)
+  {
+    var R1 = "1";
+    print(R1);
+  }
+  else
+  {
+    var R2 = "2";
+    print(R2);
+  }
+  return nil;
+}

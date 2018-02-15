@@ -175,6 +175,7 @@ class DecompiledFunction
     while true
       next if PostprocessDecompiled.new.run(fun)
       next if DecompileIfs.new.run(fun)
+      next if DecompileElseIfs.new.run(fun)
       break
     end
   end

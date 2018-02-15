@@ -340,7 +340,7 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  xit 'should merge blocks with conditional jumps' do
+  it 'should merge blocks with conditional jumps' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
@@ -366,10 +366,84 @@ describe MergeBlocks, decompile: true do
     fun = DabNodeFunction.new('foo', top_block, DabNode.new, false)
     root.add_function(fun)
 
-    array = [] # ...
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '          DabNodeBasicBlock [1]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '          DabNodeBasicBlock [2]',
+      '            DabNodeConditionalJump [-> true: 3 | false: 6]',
+      '              DabNodeLiteralBoolean [true]',
+      '          DabNodeBasicBlock [3]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [3]',
+      '          DabNodeBasicBlock [4]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [4]',
+      '          DabNodeBasicBlock [5]',
+      '            DabNodeJump [->6]',
+      '          DabNodeBasicBlock [6]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [6]',
+      '          DabNodeBasicBlock [7]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [7]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
 
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
 
-    # MergeBlocks.new.run(fun)
+    MergeBlocks.new.run(fun)
+
+    array = [
+      'DabNodeUnit []',
+      '  DabNode []',
+      '    DabNodeFunction [foo]',
+      '      DabNode []',
+      '      DabNodeBlockNode []',
+      '        DabNodeFlatBlock []',
+      '          DabNodeBasicBlock [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [0]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [1]',
+      '            DabNodeConditionalJump [-> true: 3 | false: 6]',
+      '              DabNodeLiteralBoolean [true]',
+      '          DabNodeBasicBlock [1]',
+      '          DabNodeBasicBlock [2]',
+      '          DabNodeBasicBlock [3]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [3]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [4]',
+      '            DabNodeJump [->6]',
+      '          DabNodeBasicBlock [4]',
+      '          DabNodeBasicBlock [5]',
+      '          DabNodeBasicBlock [6]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [6]',
+      '            DabNodeSyscall [#0 PRINT]',
+      '              DabNodeLiteralNumber [7]',
+      '          DabNodeBasicBlock [7]',
+      '      DabNode []',
+      '      DabNodeLiteralNil []',
+      '      DabNodeSymbol [:foo]',
+      '  DabNode []',
+      '  DabNode []',
+    ]
+
+    expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 end
