@@ -1,0 +1,70 @@
+## DAB INPUT
+
+func foo(a)
+{
+  print("foo");
+  if (a)
+  {
+    print("1");
+    if (a)
+    {
+      print("x");
+    }
+    print("z");
+  }
+  else
+  {
+    print("pre");
+    if (a)
+    {
+      print("foo");
+    }
+    else
+    {
+      print("bar");
+    }
+    print("post");
+  }
+  print("xxxyyy");
+}
+
+## EXPECTED
+
+func foo(arg0)
+{
+  var R0 = arg0;
+  var R1 = "foo";
+  print(R1);
+  if (R0)
+  {
+    var R2 = "1";
+    print(R2);
+    if (R0)
+    {
+      var R3 = "x";
+      print(R3);
+    }
+    var R4 = "z";
+    print(R4);
+  }
+  else
+  {
+    var R5 = "pre";
+    print(R5);
+    if (R0)
+    {
+      var R6 = "foo";
+      print(R6);
+    }
+    else
+    {
+      var R7 = "bar";
+      print(R7);
+    }
+    var R8 = "post";
+    print(R8);
+  }
+  var R9 = "xxxyyy";
+  print(R9);
+  return nil;
+}
