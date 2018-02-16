@@ -316,4 +316,8 @@ class DabNodeUnit < DabNode
   def all_functions
     all_nodes(DabNodeFunction)
   end
+
+  def class_names
+    @classes.map { |node| node.identifier._to_s }
+  end
 end

@@ -2,10 +2,18 @@ class String
   def to_stringy
     self
   end
+
+  def _to_s
+    self
+  end
 end
 
 class Symbol
   def to_stringy
+    to_s
+  end
+
+  def _to_s
     to_s
   end
 end
@@ -18,6 +26,7 @@ class SourceString < String
 
   def initialize(source, file, line, cstart, cend)
     super(source)
+    @source = source
     @source_file = file
     @source_line = line
     @source_cstart = cstart
@@ -35,6 +44,10 @@ class SourceString < String
 
   def source_inspect
     "#{self} (#{source_file}:#{source_line} [#{source_cstart}..#{source_cend}])"
+  end
+
+  def _to_s
+    @source
   end
 end
 

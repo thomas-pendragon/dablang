@@ -34,7 +34,7 @@ class DabContext < DabBaseContext
 
   def add_class(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
-    @classes << id
+    @classes |= [id]
   end
 
   def raise_unknown_token!

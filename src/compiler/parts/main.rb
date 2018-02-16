@@ -69,7 +69,9 @@ class DabCompilerFrontend
           stream = DabProgramStream.new(file.read, true, filename)
           compiler = DabCompiler.new(stream)
           streams[filename] = stream
-          new_program = compiler.program
+          classes = []
+          classes = program.class_names if program
+          new_program = compiler.program(classes)
           if new_program.has_errors?
             program = new_program
             break
