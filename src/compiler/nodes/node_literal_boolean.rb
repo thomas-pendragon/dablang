@@ -1,6 +1,6 @@
-require_relative 'node.rb'
+require_relative 'node_literal.rb'
 
-class DabNodeLiteralBoolean < DabNode
+class DabNodeLiteralBoolean < DabNodeLiteral
   attr_reader :boolean
   def initialize(boolean)
     super()

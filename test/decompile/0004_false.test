@@ -9,6 +9,5 @@ func foo()
 
 func foo()
 {
-  var R0 = false;
-  return R0;
+  return false;
 }

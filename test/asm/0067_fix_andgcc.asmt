@@ -39,8 +39,6 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_TRUE RNIL
-                                 LOAD_TRUE RNIL
 /* "ok"         */               LOAD_STRING R0, _DATA + 0, 2
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
