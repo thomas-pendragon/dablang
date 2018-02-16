@@ -9,7 +9,7 @@ class DabNodeArgDefinition < DabNode
     super()
     @index = index
     @identifier = identifier
-    @my_type = (type || DabNodeType.new(nil)).dab_type
+    @my_type = type&.dab_type || DabTypeObject.new
   end
 
   def extra_dump
