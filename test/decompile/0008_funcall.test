@@ -20,6 +20,5 @@ func bar()
 
 func foo()
 {
-  var R0 = 15;
-  return R0;
+  return 15;
 }

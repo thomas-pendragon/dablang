@@ -32,39 +32,29 @@ func foo(a)
 
 func foo(arg0)
 {
-  var R0 = arg0;
-  var R1 = "foo";
-  print(R1);
-  if (R0)
+  print("foo");
+  if (arg0)
   {
-    var R2 = "1";
-    print(R2);
-    if (R0)
+    print("1");
+    if (arg0)
     {
-      var R3 = "x";
-      print(R3);
+      print("x");
     }
-    var R4 = "z";
-    print(R4);
+    print("z");
   }
   else
   {
-    var R5 = "pre";
-    print(R5);
-    if (R0)
+    print("pre");
+    if (arg0)
     {
-      var R6 = "foo";
-      print(R6);
+      print("foo");
     }
     else
     {
-      var R7 = "bar";
-      print(R7);
+      print("bar");
     }
-    var R8 = "post";
-    print(R8);
+    print("post");
   }
-  var R9 = "xxxyyy";
-  print(R9);
+  print("xxxyyy");
   return nil;
 }

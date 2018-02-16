@@ -9,9 +9,6 @@ func foo()
 
 func foo()
 {
-  var R0 = 1;
-  var R1 = 2;
-  var R2 = 3;
-  var R3 = @[R0, R1, R2];
+  var R3 = @[1, 2, 3];
   return R3;
 }

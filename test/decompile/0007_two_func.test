@@ -14,12 +14,10 @@ func bar()
 
 func bar()
 {
-  var R0 = 16;
-  return R0;
+  return 16;
 }
 
 func foo()
 {
-  var R0 = 15;
-  return R0;
+  return 15;
 }

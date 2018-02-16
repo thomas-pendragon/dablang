@@ -16,9 +16,7 @@ func __foo_Fixnum_Fixnum()
 
 func bar()
 {
-  var R0 = 123;
-  var R1 = 456;
-  var R2 = __foo_Fixnum_Fixnum(R0, R1);
+  var R2 = __foo_Fixnum_Fixnum(123, 456);
   return R2;
 }
 

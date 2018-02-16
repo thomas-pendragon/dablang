@@ -9,6 +9,5 @@ func foo(arg)
 
 func foo(arg0)
 {
-  var R0 = arg0;
-  return R0;
+  return arg0;
 }

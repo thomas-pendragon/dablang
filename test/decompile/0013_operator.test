@@ -9,10 +9,7 @@ func foo(arg)
 
 func foo(arg0)
 {
-  var R0 = arg0;
-  var R1 = 2;
-  var R2 = R0 * R1;
-  var R3 = 3;
-  var R4 = R2 + R3;
+  var R2 = arg0 * 2;
+  var R4 = R2 + 3;
   return R4;
 }

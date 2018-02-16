@@ -45,7 +45,14 @@ def run_test(settings)
   expected = data[:expected].strip
 
   actual = File.read(dab).strip
-  compare_output(info, actual, expected)
+  begin
+    compare_output(info, actual, expected)
+  rescue DabCompareError
+    raise unless $autofix
+    new_data = data.dup
+    new_data[:expected] = actual.strip
+    write_new_testspec(input, new_data)
+  end
 
   File.open(out, 'wb') { |f| f << '1' }
 end

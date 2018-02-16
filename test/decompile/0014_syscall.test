@@ -9,7 +9,6 @@ func foo()
 
 func foo()
 {
-  var R0 = "Foo";
-  print(R0);
+  print("Foo");
   return nil;
 }

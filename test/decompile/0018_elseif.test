@@ -16,16 +16,13 @@ func foo(a)
 
 func foo(arg0)
 {
-  var R0 = arg0;
-  if (R0)
+  if (arg0)
   {
-    var R1 = "1";
-    print(R1);
+    print("1");
   }
   else
   {
-    var R2 = "2";
-    print(R2);
+    print("2");
   }
   return nil;
 }

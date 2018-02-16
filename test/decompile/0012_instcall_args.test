@@ -9,9 +9,6 @@ func foo(arg)
 
 func foo(arg0)
 {
-  var R0 = arg0;
-  var R1 = 123;
-  var R2 = 456;
-  var R3 = R0.foo(R1, R2);
+  var R3 = arg0.foo(123, 456);
   return R3;
 }
