@@ -163,6 +163,21 @@ module BaseFrontend
   def temp_file(extension)
     Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.' + extension)).to_s
   end
+
+  def write_new_testspec(filename, data)
+    string = ''
+    data.each do |key, value|
+      string += "## #{key.to_s.tr('_', ' ').upcase}\n"
+      string += "\n"
+      string += value
+      string += "\n"
+      string += "\n"
+    end
+    File.open(filename, 'wb') do |file|
+      file << string.strip
+      file << "\n"
+    end
+  end
 end
 
 def disassemble(input, output, disasm_options = '')

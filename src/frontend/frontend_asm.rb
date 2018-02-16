@@ -23,21 +23,6 @@ class AsmSpec
     compile_dab_to_asm(input, output, options)
   end
 
-  def write_new_testspec(filename, data)
-    string = ''
-    data.each do |key, value|
-      string += "## #{key.upcase}\n"
-      string += "\n"
-      string += value
-      string += "\n"
-      string += "\n"
-    end
-    File.open(filename, 'wb') do |file|
-      file << string.strip
-      file << "\n"
-    end
-  end
-
   def run_test(settings)
     input = settings[:input]
     test_output_dir = settings[:test_output_dir] || '.'
