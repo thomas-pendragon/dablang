@@ -71,6 +71,7 @@ enum
     TYPE_BYTEBUFFER,
     TYPE_LITERALSTRING,
     TYPE_DYNAMICSTRING,
+    TYPE_FLOAT,
 };
 
 #include "../cshared/classes.h"
@@ -183,6 +184,7 @@ struct DabValueData
         bool            boolean;
         DabObjectProxy *object;
         void *          intptr;
+        float           floatval;
     };
 };
 
@@ -307,6 +309,12 @@ struct DabValue
         assert(class_index == CLASS_INTPTR);
         data.type   = TYPE_INTPTR;
         data.intptr = value;
+    }
+    DabValue(size_t class_index, float value)
+    {
+        assert(class_index == CLASS_FLOAT);
+        data.type     = TYPE_FLOAT;
+        data.floatval = value;
     }
     DabValue(size_t class_index, const char *value)
     {

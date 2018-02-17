@@ -86,6 +86,11 @@ uint64_t Stream::read_uint64()
     return _read<uint64_t>();
 }
 
+float Stream::read_float()
+{
+    return _read<float>();
+}
+
 std::vector<dab_register_t> Stream::read_reglist()
 {
     auto count = read_uint8();

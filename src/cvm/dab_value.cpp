@@ -76,6 +76,8 @@ dab_class_t DabValue::class_index() const
     case TYPE_DYNAMICSTRING:
         return CLASS_DYNAMICSTRING;
         break;
+    case TYPE_FLOAT:
+        return CLASS_FLOAT;
     default:
         char description[256];
         snprintf(description, sizeof(description), "Unknown data.type %d.\n", (int)data.type);
@@ -151,6 +153,9 @@ std::string DabValue::print_value(bool debug) const
         break;
     case TYPE_INTPTR:
         snprintf(buffer, sizeof(buffer), "%p", data.intptr);
+        break;
+    case TYPE_FLOAT:
+        snprintf(buffer, sizeof(buffer), "%f", data.floatval);
         break;
     case TYPE_ARRAY:
     {
@@ -269,6 +274,8 @@ bool DabValue::truthy() const
         return literal_string().length();
     case TYPE_DYNAMICSTRING:
         return dynamic_string().length();
+    case TYPE_FLOAT:
+        return data.floatval != 0.0f;
     default:
         return true;
     }

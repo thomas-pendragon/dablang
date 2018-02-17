@@ -82,8 +82,15 @@ class DabAsmContext < DabBaseContext
     end
   end
 
+  def read_floatnum
+    on_subcontext do |subcontext|
+      next unless str = subcontext.read_float
+      str.to_f
+    end
+  end
+
   def read_arg_base
-    read_identifier_fname || read_fixnum || read_string
+    read_identifier_fname || read_floatnum || read_fixnum || read_string
   end
 
   def read_arg

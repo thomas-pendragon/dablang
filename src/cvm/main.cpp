@@ -710,6 +710,14 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, value);
         break;
     }
+    case OP_LOAD_FLOAT:
+    {
+        auto     reg_index = input.read_reg();
+        auto     n         = input.read_float();
+        DabValue value(CLASS_FLOAT, n);
+        register_set(reg_index, value);
+        break;
+    }
     case OP_LOAD_NIL:
     {
         auto reg_index = input.read_reg();

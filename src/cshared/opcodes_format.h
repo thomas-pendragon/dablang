@@ -19,6 +19,7 @@ enum class OpcodeArg
     ARG_REGLIST,
     ARG_STRING4,
     ARG_CSTRING,
+    ARG_FLOAT
 };
 
 struct DabOpcodeInfo

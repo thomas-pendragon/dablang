@@ -100,7 +100,9 @@ OPCODES_ARRAY_BASE = [
   },
   {
     group: 'NEW',
-    items: [],
+    items: [
+      {name: 'LOAD_FLOAT', args: %i{reg float}}, # reg0 <- arg1
+    ],
   },
   {
     group: 'PSEUDO HEADER OPCODES',

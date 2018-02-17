@@ -31,4 +31,7 @@ void DabVM::define_default_classes_int()
         DabValue ret(CLASS_INT32, new_value);
         return ret;
     });
+
+    auto &float_class = get_class(CLASS_FLOAT);
+    DAB_MEMBER_BASE_NUMERIC_OPERATORS(float_class, CLASS_FLOAT, float, .data.floatval);
 }

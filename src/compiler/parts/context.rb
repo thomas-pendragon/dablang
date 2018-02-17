@@ -573,6 +573,16 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_literal_float
+    on_subcontext do |subcontext|
+      str = subcontext.read_float
+      next unless str
+      ret = DabNodeLiteralFloat.new(str.to_f)
+      ret.add_source_part(str)
+      ret
+    end
+  end
+
   def read_literal_number
     on_subcontext do |subcontext|
       str = subcontext.read_number
@@ -637,6 +647,7 @@ class DabContext < DabBaseContext
     read_extended_literal ||
       read_literal_string ||
       read_literal_binary_number ||
+      read_literal_float ||
       read_literal_number ||
       read_literal_boolean ||
       read_literal_nil

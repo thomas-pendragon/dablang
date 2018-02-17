@@ -18,6 +18,7 @@ STANDARD_CLASSES = %w(
   ByteBuffer
   LiteralString
   DynamicString
+  Float
 ).freeze
 
 STANDARD_CLASSES_REV = STANDARD_CLASSES.each_with_index.map { |item, index| [item, index] }.to_h

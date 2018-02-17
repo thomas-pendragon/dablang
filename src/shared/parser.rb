@@ -245,6 +245,34 @@ class DabParser
     _return_source(ret, start_pos)
   end
 
+  def read_float
+    skip_whitespace
+    start_pos = @position
+    debug('float ?')
+    return false unless current_char_digit_start?
+    ret = ''
+    if current_char == '-'
+      ret += current_char
+      advance!
+    end
+    while current_char_digit?
+      break unless current_char
+      ret += current_char
+      advance!
+    end
+    return false unless current_char == '.'
+    ret += current_char
+    advance!
+    return false unless current_char_digit?
+    while current_char_digit?
+      break unless current_char
+      ret += current_char
+      advance!
+    end
+    debug('float ok')
+    _return_source(ret, start_pos)
+  end
+
   def read_number
     skip_whitespace
     start_pos = @position

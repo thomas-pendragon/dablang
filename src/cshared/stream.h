@@ -103,6 +103,8 @@ struct Stream
     uint32_t read_uint32();
     uint64_t read_uint64();
 
+    float read_float();
+
     dab_register_t read_reg();
 
     uint16_t read_symbol()

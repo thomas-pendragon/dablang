@@ -21,4 +21,5 @@ enum
     CLASS_BYTEBUFFER    = 16,
     CLASS_LITERALSTRING = 17,
     CLASS_DYNAMICSTRING = 18,
+    CLASS_FLOAT         = 19,
 };

@@ -13,6 +13,7 @@ class DabType
     return DabTypeInt.new(64) if typename == 'Int64'
     return DabTypeIntPtr.new if typename == 'IntPtr'
     return DabTypeNil.new if typename == 'NilClass'
+    return DabTypeFloat.new if typename == 'Float'
     raise "Unknown type #{typename}"
   end
 
@@ -88,6 +89,18 @@ end
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'
+  end
+
+  def has_function?(identifier)
+    operators = %w[+ - * / == != < <= >= > | & % >> << !]
+    return true if operators.include?(identifier)
+    super
+  end
+end
+
+class DabTypeFloat < DabType
+  def type_string
+    'Float'
   end
 
   def has_function?(identifier)

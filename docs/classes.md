@@ -22,3 +22,4 @@
 - [ByteBuffer](/classes/bytebuffer.html)
 - [LiteralString](/classes/literalstring.html)
 - [DynamicString](/classes/dynamicstring.html)
+- [Float](/classes/float.html)

@@ -65,6 +65,10 @@ class OutputStream
     _push_int16(val)
   end
 
+  def _push_float(arg)
+    _push([arg].pack('e'))
+  end
+
   def _push_reglist(args)
     _push_uint8(args.count)
     args.each do |arg|

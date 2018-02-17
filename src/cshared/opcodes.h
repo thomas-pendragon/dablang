@@ -41,4 +41,5 @@ enum
     OP_SET_INSTVAR    = 0x24,
     OP_COV            = 0x25,
     OP_STACK_RESERVE  = 0x26,
+    OP_LOAD_FLOAT     = 0x27,
 };

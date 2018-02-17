@@ -108,6 +108,9 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
             case OpcodeArg::ARG_CSTRING:
                 op.data.push_back(stream.read_cstring());
                 break;
+            case OpcodeArg::ARG_FLOAT:
+                op.data.push_back(stream.read_float());
+                break;
             }
         }
         func(op);

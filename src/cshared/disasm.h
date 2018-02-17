@@ -145,6 +145,16 @@ struct AsmStream
         info += expression;
     }
 
+    void read_float(std::string &info)
+    {
+        auto value = _read<float>();
+        char expression[32];
+        snprintf(expression, sizeof(expression), "%f", value);
+        if (info.length())
+            info += ", ";
+        info += expression;
+    }
+
     void read_uint64(std::string &info)
     {
         auto value = _read<uint64_t>();
@@ -291,6 +301,9 @@ struct DisasmProcessor
                         break;
                     case OpcodeArg::ARG_CSTRING:
                         stream.read_cstring(info);
+                        break;
+                    case OpcodeArg::ARG_FLOAT:
+                        stream.read_float(info);
                         break;
                     }
                 }
