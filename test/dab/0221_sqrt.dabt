@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+  puts(16.0.sqrt);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+4.000000

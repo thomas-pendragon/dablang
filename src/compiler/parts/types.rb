@@ -104,7 +104,7 @@ class DabTypeFloat < DabType
   end
 
   def has_function?(identifier)
-    operators = %w[+ - * / == != < <= >= > | & % >> << !]
+    operators = %w[+ - * / == != < <= >= > | & % >> << ! sqrt]
     return true if operators.include?(identifier)
     super
   end
