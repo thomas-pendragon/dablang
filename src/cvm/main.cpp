@@ -990,6 +990,10 @@ DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
     {
         return DabValue::allocate_dynstr(value.string().c_str());
     }
+    else if (from == CLASS_DYNAMICSTRING && to == CLASS_STRING)
+    {
+        return value;
+    }
     else
     {
         char info[256];
