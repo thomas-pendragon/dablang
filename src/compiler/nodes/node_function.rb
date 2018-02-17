@@ -126,7 +126,7 @@ class DabNodeFunction < DabNode
   end
 
   def funclabel
-    ret = 'F' + identifier.gsub('=', '%EQ').gsub('!', '%BANG')
+    ret = 'F' + identifier.gsub('=', '%EQ').gsub('!', '%BANG').gsub('[]', '%INDEX')
     if member_function?
       ret = 'C' + parent_class.identifier + '_' + ret
     end

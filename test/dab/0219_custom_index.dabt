@@ -1,0 +1,36 @@
+## CODE
+
+class Foo
+{
+  func [](index)
+  {
+    return index * 2;
+  }
+
+  func []=(index, value)
+  {
+    @state = index - value;
+  }
+
+  func state()
+  {
+    return @state;
+  }
+}
+
+func main()
+{
+  var foo = Foo.new;
+  puts(foo[11]);
+  foo[5] = 3;
+  puts(foo.state);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+22
+2

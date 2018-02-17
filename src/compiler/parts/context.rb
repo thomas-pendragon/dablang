@@ -250,7 +250,7 @@ class DabContext < DabBaseContext
   end
 
   def read_identifier_fname_op
-    read_any_operator(['==', '!=', '!'])
+    read_any_operator(['==', '!=', '!', '[]=', '[]'])
   end
 
   def read_identifier_fname_regular
