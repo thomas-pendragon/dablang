@@ -2,15 +2,16 @@
 
 const DabFunction &DabClass::get_instance_function(dab_symbol_t symbol) const
 {
-    return _get_function(false, symbol);
+    return _get_function(false, symbol, *this);
 }
 
 const DabFunction &DabClass::get_static_function(dab_symbol_t symbol) const
 {
-    return _get_function(true, symbol);
+    return _get_function(true, symbol, *this);
 }
 
-const DabFunction &DabClass::_get_function(bool _static, dab_symbol_t symbol) const
+const DabFunction &DabClass::_get_function(bool _static, dab_symbol_t symbol,
+                                           const DabClass &base_class) const
 {
     auto &collection = _static ? static_functions : functions;
 
@@ -19,13 +20,14 @@ const DabFunction &DabClass::_get_function(bool _static, dab_symbol_t symbol) co
         if (index == superclass_index)
         {
             fprintf(stderr, "VM error: Unknown %sfunction <%s> in <%s>.\n",
-                    _static ? "static " : "", $VM->get_symbol(symbol).c_str(), name.c_str());
+                    _static ? "static " : "", $VM->get_symbol(symbol).c_str(),
+                    base_class.name.c_str());
             exit(1);
         }
         else
         {
             auto &superclass = $VM->get_class(superclass_index);
-            return superclass._get_function(_static, symbol);
+            return superclass._get_function(_static, symbol, base_class);
         }
     }
     return collection.at(symbol);

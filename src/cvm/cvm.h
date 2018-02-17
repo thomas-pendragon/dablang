@@ -114,7 +114,8 @@ struct DabClass
     bool is_subclass_of(const DabClass &klass) const;
 
   private:
-    const DabFunction &_get_function(bool _static, dab_symbol_t symbol) const;
+    const DabFunction &_get_function(bool _static, dab_symbol_t symbol,
+                                     const DabClass &base_class) const;
 };
 
 enum
