@@ -45,13 +45,16 @@
     DAB_MEMBER_OPERATOR(klass, cast_to, <=, CLASS_BOOLEAN, bool, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, <, CLASS_BOOLEAN, bool, member)
 
-#define DAB_MEMBER_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                          \
+#define DAB_MEMBER_BASE_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                     \
     DAB_MEMBER_EQUALS_OPERATORS(klass, cast_to, member);                                           \
     DAB_MEMBER_COMPARE_OPERATORS(klass, cast_to, member);                                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, +, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, -, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, *, cast_to, result_type, member);                          \
-    DAB_MEMBER_OPERATOR(klass, cast_to, /, cast_to, result_type, member);                          \
+    DAB_MEMBER_OPERATOR(klass, cast_to, /, cast_to, result_type, member);
+
+#define DAB_MEMBER_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                          \
+    DAB_MEMBER_BASE_NUMERIC_OPERATORS(klass, cast_to, result_type, member)                         \
     DAB_MEMBER_OPERATOR(klass, cast_to, %, cast_to, result_type, member);                          \
     DAB_MEMBER_OPERATOR(klass, cast_to, <<, cast_to, result_type, member);                         \
     DAB_MEMBER_OPERATOR(klass, cast_to, >>, cast_to, result_type, member);                         \
