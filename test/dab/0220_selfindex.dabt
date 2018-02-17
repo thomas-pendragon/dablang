@@ -1,0 +1,28 @@
+## CODE
+
+class Foo
+{
+  func []=(index, value)
+  {
+    @state = index * (value - 1);
+  }
+
+  func test()
+  {
+    self[5] = 11;
+    return @state;
+  }
+}
+
+func main()
+{
+  puts(Foo.new.test);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+50
