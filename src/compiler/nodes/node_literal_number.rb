@@ -17,7 +17,11 @@ class DabNodeLiteralNumber < DabNodeLiteral
 
   def compile_as_ssa(output, output_register)
     output.comment(self.extra_value)
-    output.print('LOAD_NUMBER', "R#{output_register}", extra_dump)
+    if number.is_a?(Float)
+      output.print('LOAD_FLOAT', "R#{output_register}", extra_dump)
+    else
+      output.print('LOAD_NUMBER', "R#{output_register}", extra_dump)
+    end
   end
 
   def extra_value
