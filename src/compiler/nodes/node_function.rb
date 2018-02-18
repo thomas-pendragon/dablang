@@ -126,7 +126,20 @@ class DabNodeFunction < DabNode
   end
 
   def funclabel
-    ret = 'F' + identifier.gsub('=', '%EQ').gsub('!', '%BANG').gsub('[]', '%INDEX')
+    mapping = {
+      '=' => 'EQ',
+      '!' => 'BANG',
+      '[]' => 'INDEX',
+      '+' => 'PLUS',
+      '-' => 'MINUS',
+      '*' => 'MUL',
+      '/' => 'DIV',
+    }
+    mangled_identifier = identifier
+    mapping.each do |key, value|
+      mangled_identifier = mangled_identifier.gsub(key, "%#{value}")
+    end
+    ret = 'F' + mangled_identifier
     if member_function?
       ret = 'C' + parent_class.identifier + '_' + ret
     end

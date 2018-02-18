@@ -1,0 +1,23 @@
+## CODE
+
+class Foo
+{
+  func *(other)
+  {
+    return other + 2;
+  }
+}
+
+func main()
+{
+  var foo = Foo.new;
+  puts(foo * 5);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+7
