@@ -6,7 +6,7 @@ describe DecompileIfs, decompile: true do
   it 'should decompile if' do
     top_block = DabNodeTreeBlock.new
 
-    block0 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R0', DabNodeArg.new(0))
+    block0 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R0', DabNodeArg.new(0, nil))
     block1 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R1', DabNodeLiteralNumber.new(1))
     block2 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R2', DabNodeOperator.new(DabNodeLocalVar.new('R0'), DabNodeLocalVar.new('R1'), '=='))
     block4 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R3', DabNodeLiteralString.new('Foo'))
@@ -25,7 +25,7 @@ describe DecompileIfs, decompile: true do
     top_block << block7
 
     root = DabNodeUnit.new
-    arg0 = DabNodeArgDefinition.new(0, 'arg0', nil)
+    arg0 = DabNodeArgDefinition.new(0, 'arg0', nil, nil)
     fun = DabNodeFunction.new('foo', top_block, DabNode.new << arg0, false)
     root.add_function(fun)
 

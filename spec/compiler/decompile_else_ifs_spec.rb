@@ -25,7 +25,7 @@ describe DecompileElseIfs, decompile: true do
     top_block << block9
 
     root = DabNodeUnit.new
-    arg0 = DabNodeArgDefinition.new(0, 'arg0', nil)
+    arg0 = DabNodeArgDefinition.new(0, 'arg0', nil, nil)
     fun = DabNodeFunction.new('foo', top_block, DabNode.new << arg0, false)
     root.add_function(fun)
 

@@ -519,6 +519,7 @@ struct DabVM
 
     DabStackFrame *current_frame();
 
+    bool has_arg(int arg_index);
     DabValue &get_arg(int arg_index);
 
     DabValue &get_retval();

@@ -46,11 +46,11 @@ describe DabNode do
 
   it 'ssaifies captured variable' do
     arglist = DabNode.new
-    arglist << DabNodeArgDefinition.new(0, 'bar', nil)
+    arglist << DabNodeArgDefinition.new(0, 'bar', nil, nil)
 
     tree = DabNodeTreeBlock.new
 
-    tree << DabNodeDefineLocalVar.new('bar', DabNodeArg.new(0))
+    tree << DabNodeDefineLocalVar.new('bar', DabNodeArg.new(0, nil))
     closure_var_def = DabNodeDefineLocalVar.new('other#1', DabNodeClosureVar.new(0))
     tree << (DabNodeTreeBlock.new << closure_var_def)
     var1 = DabNodeLocalVar.new('bar')
@@ -101,14 +101,14 @@ describe DabNode do
 
   it 'should ssaify var inside if inside while' do
     arglist = DabNode.new
-    arglist << DabNodeArgDefinition.new(0, 'bar', nil)
+    arglist << DabNodeArgDefinition.new(0, 'bar', nil, nil)
 
     tree = DabNodeTreeBlock.new
 
-    tree << DabNodeDefineLocalVar.new('foo', DabNodeArg.new(0))
+    tree << DabNodeDefineLocalVar.new('foo', DabNodeArg.new(0, nil))
 
     nif = DabNodeTreeBlock.new
-    nif << DabNodeSetLocalVar.new('foo', DabNodeArg.new(1))
+    nif << DabNodeSetLocalVar.new('foo', DabNodeArg.new(1, nil))
     tree << DabNodeIf.new(DabNodeLiteralBoolean.new(true), nif, nil)
 
     nwhile = DabNodeWhile.new(DabNodeLiteralBoolean.new(true), tree)

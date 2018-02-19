@@ -227,6 +227,11 @@ DabStackFrame *DabVM::current_frame()
     return &stackframes[stackframes.size() - 1];
 }
 
+bool DabVM::has_arg(int arg_index)
+{
+    return current_frame()->args.size() > (size_t)arg_index;
+}
+
 DabValue &DabVM::get_arg(int arg_index)
 {
     return current_frame()->args[arg_index];
@@ -729,6 +734,24 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto arg_index = input.read_uint16();
         auto var       = get_arg(arg_index);
+        register_set(reg_index, var);
+        break;
+    }
+    case OP_LOAD_ARG_DEFAULT:
+    {
+        auto reg_index = input.read_reg();
+        auto arg_index = input.read_uint16();
+        auto def_index = input.read_reg();
+
+        DabValue var;
+        if (has_arg(arg_index))
+        {
+            var = get_arg(arg_index);
+        }
+        else
+        {
+            var = register_get(def_index);
+        }
         register_set(reg_index, var);
         break;
     }

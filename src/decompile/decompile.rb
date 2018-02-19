@@ -74,7 +74,7 @@ class DecompiledFunction
     when 'LOAD_ARG'
       index = args[1]
       _bump_args(index + 1)
-      value = DabNodeArg.new(index)
+      value = DabNodeArg.new(index, nil)
       _define_var(args[0], value)
     when 'RETURN'
       id = args[0]
@@ -127,7 +127,7 @@ class DecompiledFunction
   def _bump_args(count)
     while @arglist.count < count
       index = @arglist.count
-      @arglist << DabNodeArgDefinition.new(index, "arg#{index}", nil)
+      @arglist << DabNodeArgDefinition.new(index, "arg#{index}", nil, nil)
     end
   end
 

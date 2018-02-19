@@ -53,4 +53,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_COV, "COV", {OpcodeArg::ARG_UINT16, OpcodeArg::ARG_UINT16}},
     {OP_STACK_RESERVE, "STACK_RESERVE", {OpcodeArg::ARG_UINT16}},
     {OP_LOAD_FLOAT, "LOAD_FLOAT", {OpcodeArg::ARG_REG, OpcodeArg::ARG_FLOAT}},
+    {OP_LOAD_ARG_DEFAULT,
+     "LOAD_ARG_DEFAULT",
+     {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_REG}},
 };

@@ -310,4 +310,16 @@ class DabNodeFunction < DabNode
     @did_unssa = true
     true
   end
+
+  def nondefault_args
+    arglist.map { |x| x }.select { |arg| arg.default_value.nil? }
+  end
+
+  def min_argc
+    nondefault_args.count
+  end
+
+  def max_argc
+    arglist.count
+  end
 end

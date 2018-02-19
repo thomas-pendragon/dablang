@@ -101,8 +101,12 @@ class DabContext < DabBaseContext
         next unless type = subcontext.read_type
         next unless rbrace = subcontext.read_operator('>')
       end
+      eq = subcontext.read_operator('=')
+      if eq
+        next unless defvalue = subcontext.read_value
+      end
 
-      ret = DabNodeArgDefinition.new(-1, id, type)
+      ret = DabNodeArgDefinition.new(-1, id, type, defvalue)
       ret.add_source_part(id)
       ret.add_source_part(lbrace)
       ret.add_source_part(type)

@@ -1,0 +1,19 @@
+## CODE
+
+func foo(a, b = 15)
+{
+}
+
+func main()
+{
+  foo();
+}
+
+## RUN
+
+main 
+
+## EXPECT COMPILE ERROR
+
+   7:   foo();
+./tmp/test_dab_0224_checkargc.dab:7: error E0005: Incorrect number of arguments in <foo> call; got 0, expected 1..2.

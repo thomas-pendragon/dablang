@@ -8,7 +8,7 @@ describe DabNodeCallBlock do
     @outer_var = outer_var = DabNodeDefineLocalVar.new('outer', DabNodeLiteralNumber.new(123))
     tree << outer_var
     block_body = DabNodeTreeBlock.new
-    block_arg = DabNodeArgDefinition.new(0, 'blockarg', nil)
+    block_arg = DabNodeArgDefinition.new(0, 'blockarg', nil, nil)
     @block = block = DabNodeCallBlock.new(block_body, DabNode.new << block_arg)
     @call = DabNodeCall.new('foo', DabNode.new, block)
     tree << @call

@@ -102,6 +102,7 @@ OPCODES_ARRAY_BASE = [
     group: 'NEW',
     items: [
       {name: 'LOAD_FLOAT', args: %i{reg float}}, # reg0 <- arg1
+      {name: 'LOAD_ARG_DEFAULT', args: %i[reg uint16 reg]}, # reg0 <- funarg(arg1) || arg2
     ],
   },
   {

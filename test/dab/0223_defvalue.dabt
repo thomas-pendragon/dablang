@@ -1,0 +1,23 @@
+## CODE
+
+func foo(a = 15)
+{
+  puts("a = " + a.to_s);
+}
+
+func main()
+{
+  foo();
+  foo(9);
+  foo(nil);
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+a = 15
+a = 9
+a = nil
