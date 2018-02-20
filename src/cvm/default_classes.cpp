@@ -45,11 +45,11 @@ void DabVM::define_default_classes()
     fprintf(stderr, "vm: define default classes\n");
 
     auto &object_class = get_class(CLASS_OBJECT);
-    object_class.add_static_reg_function("new", [this](DabValue self, std::vector<DabValue>) {
+    object_class.add_static_reg_function("new", [this](DabValue self, std::vector<DabValue> args) {
         auto arg = self;
         assert(arg.data.type == TYPE_CLASS);
         auto instance = arg.create_instance();
-        cinstcall(instance, "__construct");
+        cinstcall(instance, "__construct", args);
         return instance;
     });
     object_class.add_reg_function(
