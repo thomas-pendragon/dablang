@@ -1025,6 +1025,10 @@ DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
     {
         return value;
     }
+    else if (from == CLASS_FIXNUM && to == CLASS_FLOAT)
+    {
+        return DabValue(CLASS_FLOAT, (float)value.data.fixnum);
+    }
     else
     {
         char info[256];
