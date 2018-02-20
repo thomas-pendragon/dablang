@@ -229,9 +229,15 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless keyw = subcontext.read_keyword('construct')
       next unless op1 = subcontext.read_operator('(')
+      if arglist = subcontext.read_arglist
+        arglist.each do |arg|
+          symbol = arg.identifier
+          subcontext.add_local_var(symbol)
+        end
+      end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
-      ret = DabNodeFunction.new('__construct', code, nil, false)
+      ret = DabNodeFunction.new('__construct', code, arglist, false)
       ret.add_source_parts(keyw, op1, op2)
       ret
     end

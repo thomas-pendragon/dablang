@@ -1,0 +1,29 @@
+## CODE
+
+class Foo
+{
+  construct(a)
+  {
+    @state = a;
+  }
+  func get()
+  {
+    return @state;
+  }
+}
+
+func main()
+{
+  var ob = Foo.new(11);
+  puts(ob);
+  puts(ob.get());
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+#Foo
+11
