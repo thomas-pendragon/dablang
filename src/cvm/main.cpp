@@ -1049,17 +1049,38 @@ void DabVM::add_class(const std::string &name, dab_class_t index, dab_class_t pa
     }
 }
 
-DabValue DabVM::cinstcall(DabValue self, const std::string &name)
+DabValue DabVM::cinstcall(DabValue self, const std::string &name, std::vector<DabValue> args)
 {
     auto stack_pos = stackframes.size();
     auto symbol    = get_or_create_symbol_index(name);
 
-    DabValue       ret;
-    dab_register_t outreg = 0;
-    auto           copy   = register_get(outreg);
+    std::vector<DabValue> reg_copy;
+    reg_copy.resize(args.size() + 1);
 
-    instcall(self, symbol, 0, DAB_SYMBOL_NIL, nullptr, outreg, {}, &ret, stack_pos);
-    register_set(outreg, copy);
+    DabValue                    ret;
+    dab_register_t              outreg = 0;
+    std::vector<dab_register_t> argregs;
+
+    for (size_t i = 0; i < reg_copy.size(); i++)
+    {
+        reg_copy[i] = register_get(i);
+
+        if (i > 0)
+        {
+            argregs.push_back(dab_register_t(i));
+            register_set(i, args[i - 1]);
+        }
+    }
+
+    assert(argregs.size() == args.size());
+
+    instcall(self, symbol, args.size(), DAB_SYMBOL_NIL, nullptr, outreg, argregs, &ret, stack_pos);
+
+    for (size_t i = 0; i < reg_copy.size(); i++)
+    {
+        register_set(i, reg_copy[i]);
+    }
+
     return ret;
 }
 

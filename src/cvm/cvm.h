@@ -599,7 +599,7 @@ struct DabVM
 
     dab_symbol_t get_or_create_symbol_index(const std::string &string);
 
-    DabValue cinstcall(DabValue self, const std::string &name);
+    DabValue cinstcall(DabValue self, const std::string &name, std::vector<DabValue> args = {});
 
     void define_default_classes_int();
 
