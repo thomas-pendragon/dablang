@@ -21,7 +21,11 @@ class DabNodeArgDefinition < DabNode
     "##{@index}[#{identifier}]"
   end
 
-  def formatted_source(_options)
-    @identifier
+  def formatted_source(options)
+    ret = @identifier
+    if default_value
+      ret += ' = ' + default_value.formatted_source(options)
+    end
+    ret
   end
 end
