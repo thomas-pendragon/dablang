@@ -1,0 +1,13 @@
+## DAB INPUT
+
+func foo(arg = 15)
+{
+  return arg;
+}
+
+## EXPECTED
+
+func foo(arg0 = 15)
+{
+  return arg0;
+}

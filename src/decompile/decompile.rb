@@ -76,6 +76,18 @@ class DecompiledFunction
       _bump_args(index + 1)
       value = DabNodeArg.new(index, nil)
       _define_var(args[0], value)
+    when 'LOAD_ARG_DEFAULT'
+      index = args[1]
+      defvalue = args[2]
+      setter = @blocks
+               .values
+               .flat_map { |block| block.all_nodes(DabNodeDefineLocalVar) }
+               .detect { |node| node.identifier == defvalue }
+      raise 'no setter' unless setter
+      _bump_args(index + 1, setter.value)
+      setter.remove!
+      value = DabNodeArg.new(index, nil)
+      _define_var(args[0], value)
     when 'RETURN'
       id = args[0]
       var = if id == 'RNIL'
@@ -124,10 +136,10 @@ class DecompiledFunction
     end
   end
 
-  def _bump_args(count)
+  def _bump_args(count, def_value = nil)
     while @arglist.count < count
       index = @arglist.count
-      @arglist << DabNodeArgDefinition.new(index, "arg#{index}", nil, nil)
+      @arglist << DabNodeArgDefinition.new(index, "arg#{index}", nil, def_value)
     end
   end
 
