@@ -1,0 +1,12 @@
+## INPUT
+
+func foo(
+q = 15
+){print(q);}
+
+## OUTPUT
+
+func foo(q = 15)
+{
+  print(q);
+}
