@@ -9,8 +9,33 @@ struct Arg
 {
     uint64_t    fixnum = 0;
     std::string string;
+    float       floatnum = 0.0f;
 
+    Arg(int8_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(int16_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(int32_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(int64_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(uint8_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(uint16_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
+    Arg(uint32_t fixnum) : fixnum((uint64_t)fixnum)
+    {
+    }
     Arg(uint64_t fixnum) : fixnum(fixnum)
+    {
+    }
+    Arg(float floatnum) : floatnum(floatnum)
     {
     }
     Arg(dab_register_t reg) : fixnum(reg.value())
