@@ -1,0 +1,40 @@
+## DAB INPUT
+
+class Foo
+{
+func bar()
+{
+  print("foobar");
+}
+}
+
+class Bar
+{
+  func main()
+  {
+  print(Foo.new.bar);
+  }
+}
+
+## EXPECTED
+
+class Bar
+{
+  func main()
+  {
+    var R0 = Foo;
+    var R1 = R0.new();
+    var R2 = R1.bar();
+    print(R2);
+    return nil;
+  }
+}
+
+class Foo
+{
+  func bar()
+  {
+    print("foobar");
+    return nil;
+  }
+}

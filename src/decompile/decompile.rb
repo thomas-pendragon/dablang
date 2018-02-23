@@ -24,7 +24,7 @@ class InputStream
 end
 
 class DecompiledFunction
-  def initialize(func, funcbody, dabbody, dab)
+  def initialize(func, funcbody, dabbody, dab, klass)
     @name = func[:symbol]
     @real_body = DabNodeTreeBlock.new
     @arglist = DabNode.new
@@ -36,6 +36,7 @@ class DecompiledFunction
     @stream = InputStream.new(ret)
     @dabbody = dabbody
     @dab = dab
+    @klass = klass
   end
 
   def _get_data(address, length)
@@ -64,6 +65,10 @@ class DecompiledFunction
       _define_var(args[0], value)
     when 'LOAD_FALSE'
       value = DabNodeLiteralBoolean.new(false)
+      _define_var(args[0], value)
+    when 'LOAD_CLASS'
+      id = _klass(args[1])
+      value = DabNodeClass.new(id)
       _define_var(args[0], value)
     when 'NEW_ARRAY'
       values = args[1..-1].map do |reg|
@@ -148,6 +153,14 @@ class DecompiledFunction
     @dab[:symbols][s]
   end
 
+  def _klass(klass)
+    return nil if klass == 65535
+    if klass >= USER_CLASSES_OFFSET
+      return @dab[:klasses].detect { |data| data[:index] == klass }[:symbol]
+    end
+    STANDARD_CLASSES[klass]
+  end
+
   def _define_var(id, value)
     @body << if id == 'RNIL'
                value
@@ -179,6 +192,12 @@ class DecompiledFunction
     postprocess!(@fun)
 
     @fun.dump
+
+    if @klass
+      # TODO: parent classes
+      @fun = DabNodeClassDefinition.new(@klass, nil, [@fun])
+    end
+
     output << @fun.formatted_source(options)
     output << "\n"
   end
@@ -219,16 +238,18 @@ class Decompiler
     end
 
     program[:functions].each do |func|
+      klass = func[:klass]
+
       address = func[:address]
       end_address = func[:end_address]
       funcbody = body[address...end_address]
 
-      process_function!(func, funcbody, body, program)
+      process_function!(func, funcbody, body, program, klass)
     end
   end
 
-  def process_function!(func, funcbody, body, program)
-    DecompiledFunction.new(func, funcbody, body, program).run!(@output)
+  def process_function!(*args)
+    DecompiledFunction.new(*args).run!(@output)
   end
 end
 
