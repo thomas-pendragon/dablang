@@ -524,4 +524,67 @@ describe DabBinReader, readbin: true do
 
     expect(result).to eq(expected)
   end
+
+  it 'reads classes' do
+    binary = parse_bin('44 41 42 00 03 00 00 00 00 00 00 00 00 00 00 00
+                        e8 00 00 00 00 00 00 00 ab 00 00 00 00 00 00 00
+                        06 00 00 00 00 00 00 00 64 61 74 61 00 00 00 00
+                        00 00 00 00 00 00 00 00 e8 00 00 00 00 00 00 00
+                        07 00 00 00 00 00 00 00 63 6f 64 65 00 00 00 00
+                        00 00 00 00 00 00 00 00 ef 00 00 00 00 00 00 00
+                        43 00 00 00 00 00 00 00 63 6c 61 73 00 00 00 00
+                        00 00 00 00 00 00 00 00 32 01 00 00 00 00 00 00
+                        0c 00 00 00 00 00 00 00 73 79 6d 64 00 00 00 00
+                        00 00 00 00 00 00 00 00 3e 01 00 00 00 00 00 00
+                        15 00 00 00 00 00 00 00 73 79 6d 62 00 00 00 00
+                        00 00 00 00 00 00 00 00 53 01 00 00 00 00 00 00
+                        28 00 00 00 00 00 00 00 66 75 6e 63 00 00 00 00
+                        00 00 00 00 00 00 00 00 7b 01 00 00 00 00 00 00
+                        18 00 00 00 00 00 00 00 66 6f 6f 62 61 72 00 00
+                        26 00 00 0d 00 00 00 01 1c 01 00 00 00 04 00 00
+                        1c 02 00 01 00 02 00 00 1e ff ff 00 01 02 00 20
+                        ff ff 26 00 00 11 00 00 e8 00 00 00 00 00 00 00
+                        06 00 00 00 00 00 00 00 1e ff ff 00 01 00 00 20
+                        ff ff 00 01 00 00 01 00 01 01 00 00 00 00 42 61
+                        72 00 46 6f 6f 00 62 61 72 00 6d 61 69 6e 00 6e
+                        65 77 00 3e 01 00 00 00 00 00 00 42 01 00 00 00
+                        00 00 00 46 01 00 00 00 00 00 00 4a 01 00 00 00
+                        00 00 00 4f 01 00 00 00 00 00 00 03 00 01 01 f0
+                        00 00 00 00 00 00 00 02 00 00 01 12 01 00 00 00
+                        00 00 00                                       ')
+
+    result = DabBinReader.new.parse_dab_binary(binary)
+
+    expected = {
+      header: {
+        dab: 'DAB',
+        zero: 0,
+        version: 3,
+        offset: 0,
+        size_of_header: 232,
+        size_of_data: 171,
+        sections_count: 6,
+        sections: [
+          {name: 'data', zero1: 0, zero2: 0, zero3: 0, address: 232, length: 7},
+          {name: 'code', zero1: 0, zero2: 0, zero3: 0, address: 239, length: 67},
+          {name: 'clas', zero1: 0, zero2: 0, zero3: 0, address: 306, length: 12},
+          {name: 'symd', zero1: 0, zero2: 0, zero3: 0, address: 318, length: 21},
+          {name: 'symb', zero1: 0, zero2: 0, zero3: 0, address: 339, length: 40},
+          {name: 'func', zero1: 0, zero2: 0, zero3: 0, address: 379, length: 24},
+        ],
+      },
+      symbols: %w[Bar Foo bar main new],
+      functions: [
+        {symbol: 'main', klass: 'Bar', address: 240},
+        {symbol: 'bar', klass: 'Foo', address: 274},
+      ],
+      all_symbols: %w[Bar Foo bar main new],
+      klasses: [
+        {index: 256, parent_index: 0, symbol: 'Foo'},
+        {index: 257, parent_index: 0, symbol: 'Bar'},
+      ],
+    }
+
+    expect(result).to eq(expected)
+  end
 end

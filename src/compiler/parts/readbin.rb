@@ -1,4 +1,8 @@
 class DabBinReader
+  def initialize
+    @klasses = nil
+  end
+
   def parse_ring(filename, symbols, extra_offset = 0)
     text = File.binread(filename)
 
@@ -148,6 +152,9 @@ class DabBinReader
 
     all_symbols = start_symbols + symbols
 
+    clas = get_section(binary, header, 'clas')
+    @klasses = parse_klasses(clas, all_symbols) if clas
+
     functions = parse_functions(func, all_symbols) if func
     functions = parse_extended_functions(fext, all_symbols) if fext
 
@@ -156,12 +163,16 @@ class DabBinReader
       symbols: symbols,
       functions: functions,
       all_symbols: all_symbols,
-    }
+      klasses: @klasses,
+    }.reject { |_, value| value.nil? }
   end
 
   def lookup_klass(klass)
     return nil if klass == 65535
-    raise NotImplementedError.new('no user class lookup yet') if klass >= USER_CLASSES_OFFSET
+    if klass >= USER_CLASSES_OFFSET
+      raise NotImplementedError.new('no user classes loaded') unless @klasses
+      return @klasses.detect { |data| data[:index] == klass }[:symbol]
+    end
     STANDARD_CLASSES[klass]
   end
 end
