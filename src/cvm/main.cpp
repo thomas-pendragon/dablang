@@ -1084,7 +1084,9 @@ DabValue DabVM::cinstcall(DabValue self, const std::string &name, std::vector<Da
 
     for (size_t i = 0; i < reg_copy.size(); i++)
     {
-        register_set(i, reg_copy[i]);
+        dab_register_t reg = (uint16_t)i;
+
+        register_set(reg, reg_copy[i]);
     }
 
     return ret;
