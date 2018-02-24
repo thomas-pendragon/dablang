@@ -35,7 +35,14 @@ class DabNodeOperator < DabNode
   end
 
   def formatted_source(options)
-    left.formatted_source(options) + " #{identifier.extra_value} " + right.formatted_source(options)
+    s_left = left.formatted_source(options)
+    s_op = " #{identifier.extra_value} "
+    s_right = right.formatted_source(options)
+
+    s_left = "(#{s_left})" if left.is_a?(DabNodeOperator)
+    s_right = "(#{s_right})" if right.is_a?(DabNodeOperator)
+
+    s_left + s_op + s_right
   end
 
   def accepts?(arg)
