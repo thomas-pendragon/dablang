@@ -15,7 +15,6 @@
  - decompile step for dynamic methods?
 
 1. Compiler ring support
-  - add user class lookup
   - use extended function section
 
 2. Ring support (look up java annotation processing)
