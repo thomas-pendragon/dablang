@@ -29,6 +29,8 @@ class SystemRunCommand
                 File.read(input_file)
               end
     end
+    @stdin.binmode if binmode
+    raise "expected binmode=#{binmode}, got #{@stdin.binmode?}" unless binmode == @stdin.binmode?
     if input
       len = @stdin.write(input)
       raise 'mismatch' unless len == input.length
