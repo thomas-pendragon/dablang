@@ -222,6 +222,7 @@ class Decompiler
   end
 
   def run!
+    @input.binmode
     body = @input.read
     program = DabBinReader.new.parse_dab_binary(body)
 
