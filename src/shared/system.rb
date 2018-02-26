@@ -20,8 +20,8 @@ class SystemRunCommand
 
   def open_process!(input: nil, input_file: nil, binmode: false)
     @binmode = binmode
-    @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
     raise 'cannot have both input and input_file' if input && input_file
+    @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
     if input_file
       input = if binmode
                 File.binread(input_file)
