@@ -23,7 +23,11 @@ class SystemRunCommand
     @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
     raise 'cannot have both input and input_file' if input && input_file
     if input_file
-      input = File.read(input_file)
+      input = if binmode
+                File.binread(input_file)
+              else
+                File.read(input_file)
+              end
     end
     if input
       len = @stdin.write(input)
