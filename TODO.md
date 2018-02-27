@@ -1,5 +1,6 @@
 ## PRIORITIES ##
 
+- order independent compilation (use class before it is defined)
 ~ unified look of disasm output
 ~ rewrite C-based stdlib to syscalls
 ~ DLL imports on windows
