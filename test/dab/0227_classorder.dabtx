@@ -1,0 +1,30 @@
+## CODE
+
+class Foo
+{
+  func a()
+  {
+    Bar.new.b;
+  }
+}
+
+class Bar
+{
+  func b()
+  {
+    print("foo");
+  }
+}
+
+func main()
+{
+  Foo.new.a;
+}
+
+## RUN
+
+main 
+
+## EXPECT OK
+
+foo
