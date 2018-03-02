@@ -11,6 +11,10 @@ class DabBaseContext
     @stream.read_identifier(*args)
   end
 
+  def read_class_identifier(*args)
+    @stream.read_class_identifier(*args)
+  end
+
   def read_operator(*args)
     @stream.read_operator(*args)
   end

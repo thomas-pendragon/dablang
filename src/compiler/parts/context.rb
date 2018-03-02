@@ -480,6 +480,16 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_unknown_class
+    on_subcontext do |subcontext|
+      id = subcontext.read_class_identifier
+      next unless id
+      ret = DabNodeClass.new(id)
+      ret.add_source_parts(id)
+      ret
+    end
+  end
+
   def read_define_var
     on_subcontext do |subcontext|
       next unless keyw = subcontext.read_keyword('var')
@@ -684,7 +694,9 @@ class DabContext < DabBaseContext
       read_literal_value ||
       read_local_var ||
       read_call ||
-      read_yield
+      read_yield ||
+      # false
+      read_unknown_class
   end
 
   def read_simple_value_group

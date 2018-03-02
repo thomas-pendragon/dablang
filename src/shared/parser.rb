@@ -162,6 +162,21 @@ class DabParser
     end
   end
 
+  def read_class_identifier
+    skip_whitespace
+    start_pos = @position
+    debug('classid ?')
+    ret = ''
+    return nil unless current_char_class_start?
+    debug('classid !')
+    while current_char_identifier?
+      ret += current_char
+      advance!
+    end
+    debug('classid ok')
+    _return_source(ret, start_pos)
+  end
+
   def read_classvar
     skip_whitespace
     start_pos = @position
@@ -395,6 +410,11 @@ class DabParser
 
   def current_char_identifier_start?(n = 0, _options = nil)
     current_char(n) =~ /[a-zA-Z_]/
+  end
+
+  def current_char_class_start?
+    debug("current_char.. '#{current_char}' - matches '#{current_char =~ /[A-Z]/}'")
+    current_char =~ /[A-Z]/
   end
 
   def current_char_identifier?(options = nil)
