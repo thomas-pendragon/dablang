@@ -695,7 +695,6 @@ class DabContext < DabBaseContext
       read_local_var ||
       read_call ||
       read_yield ||
-      # false
       read_unknown_class
   end
 
