@@ -1,0 +1,30 @@
+## CODE
+
+  W_HEADER 3
+  W_SECTION DATA, "data"
+  W_SECTION CODE, "code"
+  W_END_HEADER
+
+DATA:
+
+  W_STRING "test"
+
+CODE:
+  LOAD_STRING R0, DATA, 4
+  SYSCALL RNIL, 0, R0
+
+## OPTIONS
+
+--nomain --newformat
+
+## COMMENT
+
+should allow extra whitespace after a label
+
+## TESTCASE
+
+$output
+
+## EXPECT
+
+test
