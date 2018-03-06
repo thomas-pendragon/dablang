@@ -83,7 +83,6 @@
 - nullables (`String?`) and checking if regular types (`String`) are not nil
 - final type checks (`String!`)
 - constructors/destructors should call whole chain
-- constructors with parameters
 - subclassing: final functions
 - subclassing: final classes
 - subclassing: check if inheriting from the same class on duplicates
