@@ -1,13 +1,11 @@
 ## PRIORITIES ##
 
-~ unified look of disasm output (line numbers)
-~ rewrite C-based stdlib to syscalls
-~ DLL imports on windows
-- better handling of parse errors
-
-0.
+ - unified look of disasm output
+ - rewrite C-based stdlib to syscalls
+ - DLL imports on windows
+ - better handling of parse errors
  - simple dynamic method (copy block)
-   - implement HARDCALL?
+ - implement HARDCALL
  - passing arguments to dynamic methods
  - proper closure support (read/write)
  - closure support for dynamic methods
@@ -83,6 +81,7 @@
 - nullables (`String?`) and checking if regular types (`String`) are not nil
 - final type checks (`String!`)
 - constructors/destructors should call whole chain
+- constructors with parameters
 - subclassing: final functions
 - subclassing: final classes
 - subclassing: check if inheriting from the same class on duplicates
@@ -142,7 +141,7 @@
 - typed instance variables
 - weak instance variables
 - automatic reference counting
-	- weak pointers
-		- weak arrays
+  - weak pointers
+    - weak arrays
 - native compilation
 - lexer: pass actual EOF mark to compiler (see 59)
