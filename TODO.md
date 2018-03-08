@@ -11,20 +11,15 @@
  - closure support for dynamic methods
  - reoptimize step for dynamic methods
  - decompile step for dynamic methods?
-
-1. Compiler ring support
-  - use extended function section
-
-2. Ring support (look up java annotation processing)
-  - binsave: dump class functions
-  - let VM modify its internal functions and classes
-
-3. example: generate database model entities from schema
-
-4. register management (remove register stack)
-5. dumping low-level ring code for inspection
-
-6. VS 2013- compatibility
+ - Compiler ring support
+ - binsave: use extended function section
+ - Ring support (look up java annotation processing)
+ - binsave: dump class functions
+ - let VM modify its internal functions and classes
+ - example: generate database model entities from schema
+ - register management (remove register stack)
+ - dumping low-level ring code for inspection
+ - VS 2013 compatibility
 
 ## Parser ##
 
