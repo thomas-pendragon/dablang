@@ -1,53 +1,36 @@
 ## PRIORITIES ##
 
- - unified look of disasm output
- - rewrite C-based stdlib to syscalls
- - DLL imports on windows
- - better handling of parse errors
- - simple dynamic method (copy block)
- - implement HARDCALL
- - passing arguments to dynamic methods
- - proper closure support (read/write)
- - closure support for dynamic methods
- - reoptimize step for dynamic methods
- - decompile step for dynamic methods?
- - Compiler ring support
- - binsave: use extended function section
- - Ring support (look up java annotation processing)
- - binsave: dump class functions
- - let VM modify its internal functions and classes
- - example: generate database model entities from schema
- - register management (remove register stack)
- - dumping low-level ring code for inspection
- - VS 2013 compatibility
-
-## Parser ##
-
-- alternative syntax (end instead of {})
-- optional semicolons
-- keep comments (for formatter)
-
-## Compiler
-
-- unified cache invalidation
-- change all `"S#{node_identifier.symbol_index}"` to `.asm_operand`
-
-## Language/VM
-
-- allow to define static functions
-- limited number of registers
-- typed registers
-- explicit calls (IP/SP regs management)
-
-## Formatter
-
-## Disasm
-
-- test for dumping strings as strings, not bytes
-
-## new assembly format
-
-- FUNC section should be allowed before actual functions
+- disasm: test for dumping strings as strings, not bytes
+- unified look of disasm output
+- rewrite C-based stdlib to syscalls
+- DLL imports on windows
+- better handling of parse errors
+- simple dynamic method (copy block)
+- implement HARDCALL
+- passing arguments to dynamic methods
+- proper closure support (read/write)
+- closure support for dynamic methods
+- reoptimize step for dynamic methods
+- decompile step for dynamic methods?
+- Compiler ring support
+- binsave: use extended function section
+- Ring support (look up java annotation processing)
+- binsave: dump class functions
+- let VM modify its internal functions and classes
+- example: generate database model entities from schema
+- register management (remove register stack)
+- dumping low-level ring code for inspection
+- VS 2013 compatibility
+- parser: alternative syntax (end instead of {})
+- parser: optional semicolons
+- parser: keep comments (for formatter)
+- compiler: unified cache invalidation
+- compiler: change all `"S#{node_identifier.symbol_index}"` to `.asm_operand`
+- language: allow to define static functions
+- vm: limited number of registers
+- vm: typed registers
+- compiler/vm: explicit calls (IP/SP regs management)
+- tobinary: FUNC section should be allowed before actual functions
 
 ## Performance
 
