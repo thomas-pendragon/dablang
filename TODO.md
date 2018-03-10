@@ -1,10 +1,13 @@
-## PRIORITIES ##
+## TODO ##
 
 - disasm: test for dumping strings as strings, not bytes
-- unified look of disasm output
 - rewrite C-based stdlib to syscalls
-- DLL imports on windows
+- language: nullables (`String?`) and checking if regular types (`String`) are not nil
+- unified look of disasm output
+- automatic reference counting
+- language: exceptions
 - better handling of parse errors
+- DLL imports on windows
 - simple dynamic method (copy block)
 - implement HARDCALL
 - passing arguments to dynamic methods
@@ -31,85 +34,49 @@
 - vm: typed registers
 - compiler/vm: explicit calls (IP/SP regs management)
 - tobinary: FUNC section should be allowed before actual functions
-
-## Performance
-
-- runtime performance specs
-- optimize type lookup
-- optimize SSA nodes
-
-## New tools ##
-
-- IDE
-- package management
-- web demo
-- separate debugging app
-    - ncurses
-    - disassembler support
+- performance: runtime performance specs
+- performance: optimize type lookup
+- performance: optimize SSA nodes
+- new tool: IDE
+- new tool: package management
+- new tool: separate debugging app
+- debugger: ncurses
 - automated OpenGL import
 - automated libc import
-
-## Language ##
-
-- structures (with C memory mapping)
-- comparing `"abc" > 123`
-- extra opcodes for void calls
-- class parameters (Foo<String>)
-    - typed arrays
-- nullables (`String?`) and checking if regular types (`String`) are not nil
-- final type checks (`String!`)
-- constructors/destructors should call whole chain
-- constructors with parameters
-- subclassing: final functions
-- subclassing: final classes
-- subclassing: check if inheriting from the same class on duplicates
-- default arguments
-- exceptions
-  - yield without block should throw
-- keyword arguments
-- namespaces
-- syntax for functions with required block
-- common syntax for vars and arguments: `func foo(a<String>); var a<String>;`
-- coroutines
-
-## Standard library ##
-
-- type: hash
-- type: set
-- type: range
-- type: regexp
-- Array.sort
-- Array.max
-- Array.min
-- Array.join should take parameter
-
-## VM ##
-
-- code-based breakpoints (`__break()`)
-- use exceptions
-- debug: disasm should respect function boundary
-- debug: should disasm single function at a time
-
-## Assembler ##
-
-- COV should not steal opcode labels
-
-## Testing ##
-
+- language: structures (with C memory mapping)
+- language: comparing `"abc" > 123`
+- language: class parameters (Foo<String>)
+- language: typed arrays
+- language: final type checks (`String!`)
+- language: constructors/destructors should call whole chain
+- language: constructors with parameters
+- language: subclassing: final functions
+- language: subclassing: final classes
+- language: subclassing: check if inheriting from the same class on duplicates
+- language: default arguments
+- language: yield without block should throw
+- language: keyword arguments
+- language: namespaces
+- language: syntax for functions with required block
+- language: common syntax for vars and arguments: `func foo(a<String>); var a<String>;`
+- language: coroutines
+- stdlib: type: hash
+- stdlib: type: set
+- stdlib: type: range
+- stdlib: type: regexp
+- stdlib: Array.sort
+- stdlib: Array.max
+- stdlib: Array.min
+- stdlib: Array.join should take parameter
+- vm: code-based breakpoints (`__break()`)
+- vm: use exceptions
+- vm: debug: disasm should respect function boundary
+- vm: debug: should disasm single function at a time
+- assembler: COV should not steal opcode labels
 - test frontend: don't show errors on should-fail test cases (eg. 59)
-
-## CI ##
-
-- prebuild/pretest tasks in gitlab.yml (early fail)
-- new step: precompile examples
-
-## Coverage ##
-
-- measure `if` coverage
-- rewrite coverage to be line-based, not opcode based
-
-## Misc ##
-
+- ci: prebuild/pretest tasks in gitlab.yml (early fail)
+- coverage: measure `if` coverage
+- coverage: rewrite coverage to be line-based, not opcode based
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
 - autogenerate kernel C enums
@@ -118,8 +85,7 @@
 - offset-based instance variables
 - typed instance variables
 - weak instance variables
-- automatic reference counting
-  - weak pointers
-    - weak arrays
+- weak pointers
+- weak arrays
 - native compilation
 - lexer: pass actual EOF mark to compiler (see 59)
