@@ -8,10 +8,11 @@ DabVM *$VM = nullptr;
 
 enum
 {
-    KERNEL_PRINT    = 0x00,
-    KERNEL_EXIT     = 0x01,
-    KERNEL_USECOUNT = 0x02,
-    KERNEL_TOSYM    = 0x03,
+    KERNEL_PRINT       = 0x00,
+    KERNEL_EXIT        = 0x01,
+    KERNEL_USECOUNT    = 0x02,
+    KERNEL_TOSYM       = 0x03,
+    KERNEL_FETCH_INT32 = 0x04,
 };
 
 DabVM::DabVM()
@@ -1156,6 +1157,19 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         DabValue value(CLASS_FIXNUM, (uint64_t)symbol_index);
 
         register_set(out_reg, value);
+        break;
+    }
+    case KERNEL_FETCH_INT32:
+    {
+        assert(reglist.size() == 1);
+        auto self = register_get(reglist[0]);
+
+        auto     ptr   = self.data.intptr;
+        auto     iptr  = (int32_t *)ptr;
+        auto     value = *iptr;
+        DabValue ret(CLASS_INT32, value);
+
+        register_set(out_reg, ret);
         break;
     }
     default:

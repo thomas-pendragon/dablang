@@ -8,6 +8,7 @@ BUILTINS = %w[
   __import_libc
   __import_sdl
   __import_pq
+  __fetch_int32
   +
   -
   *

@@ -1,0 +1,7 @@
+class IntPtr
+{
+  func fetch_int32()
+  {
+    return __fetch_int32(self);
+  }
+}

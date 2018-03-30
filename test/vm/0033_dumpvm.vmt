@@ -63,7 +63,6 @@ _SYMD:
     W_STRING "&"
     W_STRING "byteswap"
     W_STRING "sqrt"
-    W_STRING "fetch_int32"
     W_STRING "count"
     W_STRING "shift"
     W_STRING "insert"
@@ -104,16 +103,15 @@ _SYMB:
     W_SYMBOL 336
     W_SYMBOL 345
     W_SYMBOL 350
+    W_SYMBOL 356
     W_SYMBOL 362
-    W_SYMBOL 368
-    W_SYMBOL 374
-    W_SYMBOL 381
-    W_SYMBOL 385
-    W_SYMBOL 390
-    W_SYMBOL 404
+    W_SYMBOL 369
+    W_SYMBOL 373
+    W_SYMBOL 378
+    W_SYMBOL 392
+    W_SYMBOL 405
     W_SYMBOL 417
-    W_SYMBOL 429
-    W_SYMBOL 432
+    W_SYMBOL 420
 
 _FUNC:
     W_METHOD 0, -1, 205
