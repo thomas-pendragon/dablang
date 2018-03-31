@@ -79,7 +79,6 @@
 - coverage: rewrite coverage to be line-based, not opcode based
 - endianness in cvm/main.cpp
 - return values should be reserved on stack
-- autogenerate kernel C enums
 - property getters/instance calls as instructions
 - specs for locating line/column for parsed nodes
 - offset-based instance variables

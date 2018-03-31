@@ -6,14 +6,7 @@
 
 DabVM *$VM = nullptr;
 
-enum
-{
-    KERNEL_PRINT       = 0x00,
-    KERNEL_EXIT        = 0x01,
-    KERNEL_USECOUNT    = 0x02,
-    KERNEL_TOSYM       = 0x03,
-    KERNEL_FETCH_INT32 = 0x04,
-};
+#include "../cshared/opcodes_syscalls.h"
 
 DabVM::DabVM()
 {
@@ -1147,7 +1140,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         register_set(out_reg, dab_value);
         break;
     }
-    case KERNEL_TOSYM:
+    case KERNEL_TO_SYM:
     {
         auto string_ob = cast(register_get(reglist[0]), CLASS_STRING);
         auto string    = string_ob.string();
