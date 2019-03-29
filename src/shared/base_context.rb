@@ -80,17 +80,20 @@ class DabBaseContext
       ret = init_value
 
       next unless arg = subcontext.send(item_method)
+
       yield(ret, arg)
 
       while true
         if accept_extra_separator
           break unless sep = subcontext.read_any_operator(separator)
           break unless next_arg = subcontext.send(item_method)
+
           yield(ret, next_arg, sep)
         else
           next_item = subcontext.on_subcontext do |subsubcontext|
             next unless sep = subsubcontext.read_any_operator(separator)
             next unless next_arg = subsubcontext.send(item_method)
+
             yield(ret, next_arg, sep)
           end
           break unless next_item

@@ -34,8 +34,10 @@ class DabAsmContext < DabBaseContext
       subcontext.read_newline
       while subcontext.read_newline do end
       next unless op = subcontext.read_identifier
+
       arglist = subcontext.read_arglist
       next unless subcontext.read_newline
+
       {
         op: op,
         arglist: arglist,
@@ -47,6 +49,7 @@ class DabAsmContext < DabBaseContext
   def read_identifier_fname
     on_subcontext do |subcontext|
       next unless ident = subcontext.read_identifier(:extended)
+
       if subcontext.read_operator('=')
         ident += '='
       end
@@ -60,6 +63,7 @@ class DabAsmContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless identifier = subcontext.read_identifier(:extended)
       next unless subcontext.read_operator(':')
+
       identifier
     end
   end
@@ -68,6 +72,7 @@ class DabAsmContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless identifier = subcontext.read_fixnum
       next unless subcontext.read_operator(':')
+
       identifier
     end
   end
@@ -79,6 +84,7 @@ class DabAsmContext < DabBaseContext
   def read_fixnum
     on_subcontext do |subcontext|
       next unless str = subcontext.read_number
+
       str.to_i
     end
   end
@@ -86,6 +92,7 @@ class DabAsmContext < DabBaseContext
   def read_floatnum
     on_subcontext do |subcontext|
       next unless str = subcontext.read_float
+
       str.to_f
     end
   end
@@ -107,6 +114,7 @@ class DabAsmContext < DabBaseContext
   def _read_list_or_single(method, separator)
     list = _read_list(method, separator)
     return list unless list
+
     ret = list[0]
     (list.count - 1).times do |n|
       i = n + 1

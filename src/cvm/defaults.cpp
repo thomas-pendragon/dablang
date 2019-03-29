@@ -164,7 +164,7 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name      = "||";
         fun.regular   = false;
-        fun.extra_reg = [this](DabValue, std::vector<DabValue> args) {
+        fun.extra_reg = [](DabValue, std::vector<DabValue> args) {
             assert(args.size() == 2);
             auto arg0 = args[0];
             auto arg1 = args[1];
@@ -180,7 +180,7 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name      = "&&";
         fun.regular   = false;
-        fun.extra_reg = [this](DabValue, std::vector<DabValue> args) {
+        fun.extra_reg = [](DabValue, std::vector<DabValue> args) {
             assert(args.size() == 2);
             auto arg0 = args[0];
             auto arg1 = args[1];

@@ -1,6 +1,7 @@
 class Uncomplexify
   def run(node)
     return unless complex_arg = node.uncomplexify_args.detect { |arg| !node.accepts?(arg) }
+
     id = node.function.allocate_tempvar
     arg_dup = complex_arg.dup
     reg = node.function.allocate_ssa

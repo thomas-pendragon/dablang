@@ -99,6 +99,7 @@ end
 if $autorun
   read_args!
   raise 'no vmt' unless $settings[:input].downcase.end_with?('.vmt')
+
   test = VMFrontend.new
   test.run_test($settings)
 end

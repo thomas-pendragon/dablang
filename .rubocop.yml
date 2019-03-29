@@ -37,7 +37,10 @@ Layout/IndentHash:
 Layout/IndentationConsistency:
   Enabled: true
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/NumericLiterals:
@@ -70,10 +73,10 @@ Style/PerlBackrefs:
 Style/RegexpLiteral:
   Enabled: false
 
-Lint/EndAlignment:
+Layout/EndAlignment:
   AutoCorrect: true
 
-Lint/DefEndAlignment:
+Layout/DefEndAlignment:
   AutoCorrect: true
 
 Style/RaiseArgs:
@@ -179,4 +182,10 @@ Style/MixinUsage:
   Enabled: false
 
 Lint/EmptyWhen:
+  Enabled: false
+
+Security/Open:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
   Enabled: false

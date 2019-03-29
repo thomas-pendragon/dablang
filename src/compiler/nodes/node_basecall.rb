@@ -24,15 +24,16 @@ class DabNodeBasecall < DabNode
 
   def formatted_block(options)
     return '' unless has_block?
+
     block.formatted_source(options)
   end
 
   def target_function
-    @target_function_cache ||= root.has_function?(real_identifier)
+    @target_function ||= root.has_function?(real_identifier)
   end
 
   def mutate!
     super
-    @target_function_cache = nil
+    @target_function = nil
   end
 end

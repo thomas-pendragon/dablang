@@ -70,6 +70,7 @@ class DabNodeFunction < DabNode
   def rettype
     ret = self[3]
     return nil if ret.is_a? DabNodeLiteralNil
+
     ret
   end
 
@@ -86,6 +87,7 @@ class DabNodeFunction < DabNode
   def parent_class
     c = parent.parent
     return c if c.is_a? DabNodeClassDefinition
+
     nil
   end
 
@@ -235,8 +237,10 @@ class DabNodeFunction < DabNode
 
   def concreteify(types)
     return self if @concrete
+
     new_name = "__#{identifier}_#{types.map(&:base_type).map(&:type_string).join('_')}"
     return new_name if root.has_function?(new_name)
+
     ret = DabNodeFunction.new(new_name, self.original_body.dup, arglist.dup, inline, attrlist.dup, rettype&.dup)
     ret.arglist.each_with_index do |argdef, index|
       argdef.my_type = types[index]
@@ -292,6 +296,7 @@ class DabNodeFunction < DabNode
     while true
       name = self.identifier + "__block#{num}"
       return name unless self.root.has_function?(name)
+
       num += 1
     end
   end
@@ -302,8 +307,9 @@ class DabNodeFunction < DabNode
 
   def unssa!
     return false if @did_unssa
+
     registers = all_nodes(DabNodeRegisterSet).map(&:output_register)
-    registers.sort.uniq.reverse.each do |reg|
+    registers.sort.uniq.reverse_each do |reg|
       node = DabNodeDefineLocalVar.new("r#{reg}", DabNodeLiteralNil.new)
       blocks[0].pre_insert(node)
     end

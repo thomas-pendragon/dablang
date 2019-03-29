@@ -194,6 +194,7 @@ module DabNodeModuleProcessors
     ret = false
     all_nodes.each do |child|
       next if dirty_only && !child.dirty?
+
       test = child.sub_run_all_processors!(type)
       child.dirty = false if dirty_only && !test
       ret ||= test
@@ -208,6 +209,7 @@ module DabNodeModuleProcessors
     return true if dab_benchmark('check') do
       self.run_check_callbacks!
     end
+
     self.has_errors?
   end
 end

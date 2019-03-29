@@ -117,6 +117,7 @@ class DabSpec
     if data[:expected_status] == :compile_error
       raise "Expected compiler error in #{input}"
     end
+
     assemble(asm, bin, assemble_options)
 
     begin
@@ -150,6 +151,7 @@ end
 if $autorun
   read_args!
   raise 'no dabt' unless $settings[:input].downcase.end_with?('.dabt')
+
   test = DabSpec.new
   test.run_test($settings)
 end

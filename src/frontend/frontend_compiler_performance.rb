@@ -47,6 +47,7 @@ def run_test(settings)
   unless output =~ /Total running time: (\d+\.\d+)s/
     raise DabCompareError.new('no benchmark result')
   end
+
   benchmark_time = $1.to_f
   printf("Clock time: %.2fs\n", clock_time)
   printf("Bench time: %.2fs\n", benchmark_time)

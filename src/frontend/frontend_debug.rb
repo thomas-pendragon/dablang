@@ -99,6 +99,7 @@ end
 if $autorun
   read_args!
   raise 'no test' unless $settings[:input].downcase.end_with?('.test')
+
   test = DebugSpec.new
   test.run_test($settings)
 end

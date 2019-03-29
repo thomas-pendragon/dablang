@@ -52,6 +52,7 @@ class CovFrontend
       files.each do |file|
         data = vm.detect { |item| item['file'] == file }
         raise "no data for #{file}" unless data
+
         data = data['hits']
         data = data.map { |item| [item['line'], item['hits']] }.to_h
 

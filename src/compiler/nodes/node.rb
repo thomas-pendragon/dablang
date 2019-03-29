@@ -106,6 +106,7 @@ class DabNode
       if old_list && (new_list != old_list)
         raise 'mismatch'
       end
+
       @children_cache_new ||= new_list
     else
       @children_cache_new ||= _children_tree
@@ -141,6 +142,7 @@ class DabNode
   def all_nodes(klass = nil)
     ret = _get_children_cache
     return ret unless klass
+
     @children_cache_new_class[klass] ||= ret.select do |child|
       child.is_any_of?(klass)
     end
@@ -166,6 +168,7 @@ class DabNode
     if self.respond_to?(:compile_as_ssa)
       return compile_as_ssa(output, nil)
     end
+
     compile(output)
     raise "#{self.class} should not return value here" if returns_value?
   end
@@ -174,6 +177,7 @@ class DabNode
     if self.respond_to?(:compile_as_ssa)
       return compile_as_ssa(output, nil)
     end
+
     err '!'.red * 80
     root.dump
     err '~'.red * 80
@@ -182,6 +186,7 @@ class DabNode
 
   def function
     return self if self.is_a? DabNodeFunction
+
     parent&.function
   end
 
@@ -297,6 +302,7 @@ class DabNode
     unless index = @children.index(from)
       raise 'replace_child: source not found'
     end
+
     from.remove!
     to = to.map { |item| claim(item) }
     @children.insert(index, to)
@@ -429,6 +435,7 @@ class DabNode
     ret = []
     all_nodes.each do |node|
       break if block_given? && (!klasses || node.is_any_of?(klasses)) && yield(node)
+
       ret << node
     end
     ret = ret.select { |node| node.is_any_of?(klasses) } if klasses
@@ -438,6 +445,7 @@ class DabNode
   def function_parent
     return nil if parent.is_a? DabNodeFunction
     return nil if parent.is_a? DabNodeBlockNode
+
     parent
   end
 
@@ -447,11 +455,13 @@ class DabNode
 
   def all_parents
     return [] unless parent
+
     [parent] + parent.all_parents
   end
 
   def previous_nodes(klass, sender = self)
     return [] unless function_parent
+
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.each_previous_scope_with_index(sender) do |node, index|
@@ -472,11 +482,13 @@ class DabNode
 
   def following_nodes(klasses, unscoped: false, &block)
     return [] unless function_parent
+
     self_index = function_parent.node_index(self)
     ret = []
     function_parent.each_with_index do |node, index|
       next unless index > self_index
       break if block_given? && (!klasses || node.is_any_of?(klasses)) && yield(node)
+
       ret += node.all_ordered_nodes(klasses, &block)
     end
     ret += function_parent.following_nodes(klasses, unscoped: unscoped, &block) if unscoped
@@ -497,6 +509,7 @@ class DabNode
     if parent.is_kind_of_any?([DabNodeBasicBlock, DabNodeTreeBlock])
       index = parent.index(self)
       raise 'no index' unless index
+
       parent.insert_at(index, node)
     else
       parent._insert_before(node)

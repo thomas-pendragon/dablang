@@ -63,6 +63,7 @@ class AsmSpec
       compare_output(info, actual, expected)
     rescue DabCompareError
       raise unless $autofix
+
       new_data = data.dup
       new_data[:expect] = actual.strip
       write_new_testspec(input, new_data)
@@ -75,6 +76,7 @@ end
 if $autorun
   read_args!
   raise 'no asmt' unless $settings[:input].downcase.end_with?('.asmt')
+
   test = AsmSpec.new
   test.run_test($settings)
 end

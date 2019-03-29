@@ -4,12 +4,14 @@ class FoldConstant
     right = node.right
     identifier = node.identifier
     return unless left.constant? && right.constant?
+
     id = identifier.extra_value
     lv = left.constant_value
     rv = right.constant_value
     numeric = (lv.is_a? Numeric) && (rv.is_a? Numeric)
     typed_numeric = (lv.is_a? TypedNumber) && (rv.is_a? TypedNumber)
     return if id == 'is'
+
     if id == '||'
       node.replace_with!((lv.nil? || lv == 0 || lv == '' || lv == false) ? right : left)
       return true

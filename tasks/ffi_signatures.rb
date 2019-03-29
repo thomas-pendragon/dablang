@@ -71,6 +71,7 @@ DAB_DATA = {
 class Hash
   def safe_get(key)
     raise "no #{key}" unless key?(key)
+
     self[key]
   end
 end

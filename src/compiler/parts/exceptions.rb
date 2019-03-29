@@ -15,6 +15,7 @@ class DabCompilerError
   def annotated_source(stream)
     return '' unless source.source_line
     return '' unless source.source_line >= 0
+
     stream.annotated_node(source)
   end
 end

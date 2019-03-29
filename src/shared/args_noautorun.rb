@@ -7,6 +7,7 @@ def read_args!(input = nil)
   while args.count > 0
     arg = args.shift.strip
     next if arg.empty?
+
     if arg.start_with? '--'
       flag = arg[2..-1]
       value = true

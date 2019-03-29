@@ -45,6 +45,7 @@ class DabOutput
   def get_filename(filename)
     ret = @filenames[filename]
     raise "unregistered filename <#{filename}>" unless ret
+
     ret
   end
 
@@ -52,6 +53,7 @@ class DabOutput
     if @last_p == " \n" && t == " \n"
       return
     end
+
     @last_p = t
     # errn t
     @context.stdout.print t
@@ -109,6 +111,7 @@ class DabOutput
     if item.is_a? String
       return item.gsub("\n", '\\n')
     end
+
     item
   end
 

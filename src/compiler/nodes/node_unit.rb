@@ -90,9 +90,11 @@ class DabNodeUnit < DabNode
     }
     @constants.sort_by_array! do |node|
       raise 'invalid node' unless node.is_a?(DabNodeConstant)
+
       class_order_name = node.value.class
       class_order = sort_order[class_order_name]
       raise "unknown '#{class_order_name}'" unless class_order
+
       text = class_order.to_s + node.extra_value.to_s
       [
         node.upper_ring? ? 0 : 1,
@@ -226,6 +228,7 @@ class DabNodeUnit < DabNode
     pos = 0
     constant_symbols.each do |constant|
       next if constant.upper_ring?
+
       constant.asm_position = pos
       constant.compile_string(output)
       pos += constant.asm_length
@@ -236,6 +239,7 @@ class DabNodeUnit < DabNode
     output.label('_SYMB')
     constant_symbols.each do |constant|
       next if constant.upper_ring?
+
       constant.compile_symbol(output)
     end
     output.separate

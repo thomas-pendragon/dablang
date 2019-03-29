@@ -28,6 +28,7 @@ module DabNodeModuleDump
 
   def dump(show_ids = false, level = 0, background_colors = {}, skip_output: false)
     return code_dump if $debug_code_dump
+
     text = sprintf('%s - %s', '  ' * level, to_s(show_ids))
     text = text.green if constant?
     if has_errors?
@@ -51,6 +52,7 @@ module DabNodeModuleDump
         if child.parent != self
           raise "child #{child} is broken, parent is '#{child.parent}', should be '#{self}'"
         end
+
         child.dump(show_ids, level + 1, background_colors, skip_output: skip_output)
       else
         err('%s ~ %s', '  ' * (level + 1), child.to_s) unless skip_output

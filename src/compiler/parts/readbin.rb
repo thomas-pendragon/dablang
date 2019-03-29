@@ -124,6 +124,7 @@ class DabBinReader
   def get_section(binary, header, section_name)
     header[:sections].each do |section|
       next unless section[:name] == section_name
+
       a = section[:address]
       b = a + section[:length]
       return binary[a..b]
@@ -169,8 +170,10 @@ class DabBinReader
 
   def lookup_klass(klass)
     return nil if klass == 65535
+
     if klass >= USER_CLASSES_OFFSET
       raise NotImplementedError.new('no user classes loaded') unless @klasses
+
       return @klasses.detect { |data| data[:index] == klass }[:symbol]
     end
     STANDARD_CLASSES[klass]

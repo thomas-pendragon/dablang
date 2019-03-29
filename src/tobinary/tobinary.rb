@@ -116,6 +116,7 @@ class OutputStream
               line[index + 1]
             end
       raise "line = #{line} - No arg#{index}" unless arg
+
       send("_push_#{kind}", arg)
       break if reglist
     end
@@ -123,6 +124,7 @@ class OutputStream
 
   def _push_fixnum(value, spec)
     raise TypeError.new("expected Integer, got #{value} (#{value.class})") unless value.is_a? Integer
+
     @code += [value].pack(spec)
   end
 
@@ -293,6 +295,7 @@ class Parser
       left = _process(item[:left], offset)
       right = _process(item[:right], offset)
       raise '?' unless item[:op] == '+'
+
       left + right
     when String
       @label_positions[item] + offset
@@ -327,6 +330,7 @@ class Parser
         @label_positions[label.to_s] = pos
       end
       next if line[0] == '' || line[0].nil?
+
       if line[0].start_with?('W_')
         case line[0]
         when 'W_HEADER'
@@ -367,6 +371,7 @@ class Parser
         end
       else
         raise 'header not finished yet' if !raw && !@header_finished
+
         if line[0] == 'JMP_IF'
           @jump_corrections2 << [pos, line[2].to_s]
           @jump_corrections3 << [pos, line[3].to_s]

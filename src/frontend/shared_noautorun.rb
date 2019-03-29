@@ -72,6 +72,7 @@ module BaseFrontend
     describe_action(input, output, action) do
       if input.is_a? Array
         raise 'must input as arg' unless input_as_arg
+
         input = input.map(&:to_s).map(&:shellescape).join(' ')
       else
         input = input.to_s.shellescape

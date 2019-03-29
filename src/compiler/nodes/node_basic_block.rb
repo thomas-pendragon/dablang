@@ -57,11 +57,13 @@ class DabNodeBasicBlock < DabNode
   def ends_with_jump?
     ret = @children.last
     return false unless ret.is_a? DabNodeJump
+
     ret
   end
 
   def next_block
     return nil unless block_index
+
     parent[block_index + 1]
   end
 
@@ -85,6 +87,7 @@ class DabNodeBasicBlock < DabNode
   def formatted_source(options)
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
     return '' unless lines.count > 0
+
     label = 'B' + block_index.to_s + ":\n"
     post = "\n"
     if options[:skip_unused_labels]

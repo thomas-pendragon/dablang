@@ -7,6 +7,7 @@ class PostprocessDecompiled
       next if MergeBlocks.new.run(fun)
       next if RemoveEmptyBlocks.new.run(fun)
       next if RemoveUnreachable.new.run(fun)
+
       break
     end
     counter != 1

@@ -21,6 +21,7 @@ class SystemRunCommand
   def open_process!(input: nil, input_file: nil, binmode: false)
     @binmode = binmode
     raise 'cannot have both input and input_file' if input && input_file
+
     @stdin, @stdout, @stderr, @wait_thr = Open3.popen3(@command)
     if input_file
       input = if binmode
@@ -31,6 +32,7 @@ class SystemRunCommand
     end
     @stdin.binmode if binmode
     raise "expected binmode=#{binmode}, got #{@stdin.binmode?}" unless binmode == @stdin.binmode?
+
     if input
       len = @stdin.write(input)
       raise 'mismatch' unless len == input.length
@@ -44,6 +46,7 @@ class SystemRunCommand
 
   def try_update(fd)
     return unless streams.include?(fd)
+
     line = if @binmode
              fd.read(1024)
            else
@@ -54,6 +57,7 @@ class SystemRunCommand
 
   def finished?
     return false unless @wait_thr
+
     ret = !@wait_thr.alive?
     if ret && !@exit_code
       @exit_code = @wait_thr.value
@@ -75,6 +79,7 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
   while true
     fdlist.reject!(&:closed?)
     break if fdlist.empty?
+
     ready = IO.select(fdlist)[0]
     data = false
     ready.each do |fd|

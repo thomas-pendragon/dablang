@@ -2,6 +2,7 @@ class ReorderRegistersIncr
   def run(function)
     nodes = function.all_nodes(DabNodeRegisterSet)
     return if nodes.empty?
+
     registers = nodes.map(&:output_register)
     list = []
     registers.each do |reg|
@@ -12,6 +13,7 @@ class ReorderRegistersIncr
       mapping[reg] = mapping.count
     end
     return if mapping.all? { |key, value| key == value }
+
     nodes.each do |node|
       node.output_register = mapping[node.output_register]
     end

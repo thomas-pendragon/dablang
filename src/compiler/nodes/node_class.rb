@@ -18,6 +18,7 @@ class DabNodeClass < DabNode
 
   def compile_as_ssa(output, output_register)
     raise "no class for <#{@identifier}>" unless number
+
     output.comment(@identifier)
     output.print('LOAD_CLASS', "R#{output_register}", number)
   end

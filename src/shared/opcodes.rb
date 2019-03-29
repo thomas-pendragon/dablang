@@ -22,7 +22,7 @@ OPCODES_ARRAY_BASE = [
     group: 'NOP',
     items:
     [
-      {name: 'NOP'}, #
+      {name: 'NOP'},
     ],
   },
   {

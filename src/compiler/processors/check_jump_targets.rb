@@ -3,6 +3,7 @@ class CheckJumpTargets
     all_targets = node.function.all_nodes(DabNodeBasicBlock)
     node.targets.each do |target|
       next if all_targets.include?(target)
+
       node.function.dump
       err '--~' * 50
       node.dump

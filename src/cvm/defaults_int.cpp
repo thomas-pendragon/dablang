@@ -37,7 +37,7 @@ void DabVM::define_default_classes_int()
     auto &float_class = get_class(CLASS_FLOAT);
     DAB_MEMBER_BASE_NUMERIC_OPERATORS(float_class, CLASS_FLOAT, float, .data.floatval);
 
-    float_class.add_reg_function("sqrt", [this](DabValue self, std::vector<DabValue> args) {
+    float_class.add_reg_function("sqrt", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         float ret = sqrt(self.data.floatval);
         return DabValue(CLASS_FLOAT, ret);

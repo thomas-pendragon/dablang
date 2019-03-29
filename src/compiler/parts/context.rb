@@ -29,11 +29,13 @@ class DabContext < DabBaseContext
 
   def add_local_var(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
+
     @local_vars << id
   end
 
   def add_class(id)
     raise "id must be string, is #{id.class}" unless id.is_a? String
+
     @classes |= [id]
   end
 
@@ -76,6 +78,7 @@ class DabContext < DabBaseContext
   def _read_simple_list(item_method, separator = ',', accept_extra_separator: false)
     list = _read_list(item_method, separator, accept_extra_separator: accept_extra_separator)
     return nil unless list
+
     ret = DabNode.new
     list.map(&:value).each { |item| ret.insert(item) }
     ret
@@ -84,6 +87,7 @@ class DabContext < DabBaseContext
   def _read_list_or_single(method, separator, klass)
     list = _read_list(method, separator)
     return list unless list
+
     ret = list[0].value
     (list.count - 1).times do |n|
       i = n + 1
@@ -96,6 +100,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next unless id
+
       lbrace = subcontext.read_operator('<')
       if lbrace
         next unless type = subcontext.read_type
@@ -127,6 +132,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       typename = subcontext.read_identifier
       next unless typename
+
       DabNodeType.new(typename)
     end
   end
@@ -135,6 +141,7 @@ class DabContext < DabBaseContext
     on_subcontext(new_context: :instance) do |subcontext|
       next unless keyword = subcontext.read_keyword('class')
       next unless ident = subcontext.read_identifier
+
       if op = subcontext.read_operator(':')
         next unless parent = subcontext.read_identifier
       end
@@ -157,6 +164,7 @@ class DabContext < DabBaseContext
       end
 
       next unless subcontext.read_operator('}')
+
       subcontext.add_class(ident)
       ret = DabNodeClassDefinition.new(ident, parent, functions)
       ret.add_source_parts(keyword, ident, op, parent)
@@ -169,6 +177,7 @@ class DabContext < DabBaseContext
       next unless subcontext.read_keyword('var')
       next unless id = subcontext.read_classvar
       next unless subcontext.read_operator(';')
+
       DabNodeClassVarDefinition.new(id)
     end
   end
@@ -180,6 +189,7 @@ class DabContext < DabBaseContext
   def read_attribute
     on_subcontext do |subcontext|
       next unless id = subcontext.read_identifier
+
       if lparen = subcontext.read_operator('(')
         next unless list = subcontext._read_simple_list(:read_attribute_value)
         next unless rparen = subcontext.read_operator(')')
@@ -195,6 +205,7 @@ class DabContext < DabBaseContext
       next unless lparen = subcontext.read_operator('[')
       next unless list = subcontext._read_simple_list(:read_attribute)
       next unless rparen = subcontext.read_operator(']')
+
       list.add_source_parts(lparen, rparen)
       list
     end
@@ -206,11 +217,13 @@ class DabContext < DabBaseContext
       inline = subcontext.read_keyword('inline')
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
+
       if lp = subcontext.read_operator('<')
         next unless rettype = subcontext.read_type
         next unless rp = subcontext.read_operator('>')
       end
       next unless op1 = subcontext.read_operator('(')
+
       if arglist = subcontext.read_arglist
         arglist.each do |arg|
           symbol = arg.identifier
@@ -219,6 +232,7 @@ class DabContext < DabBaseContext
       end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
+
       ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist, rettype)
       ret.add_source_parts(inline, keyw, ident, op1, op2, lp, rettype, rp)
       ret
@@ -229,6 +243,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless keyw = subcontext.read_keyword('construct')
       next unless op1 = subcontext.read_operator('(')
+
       if arglist = subcontext.read_arglist
         arglist.each do |arg|
           symbol = arg.identifier
@@ -237,6 +252,7 @@ class DabContext < DabBaseContext
       end
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
+
       ret = DabNodeFunction.new('__construct', code, arglist, false)
       ret.add_source_parts(keyw, op1, op2)
       ret
@@ -249,6 +265,7 @@ class DabContext < DabBaseContext
       next unless op1 = subcontext.read_operator('(')
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
+
       ret = DabNodeFunction.new('__destruct', code, nil, false)
       ret.add_source_parts(keyw, op1, op2)
       ret
@@ -266,6 +283,7 @@ class DabContext < DabBaseContext
   def read_identifier_fname_regular
     on_subcontext do |subcontext|
       next unless ident = subcontext.read_identifier
+
       if op = subcontext.read_operator('=')
         ident += op
       end
@@ -285,6 +303,7 @@ class DabContext < DabBaseContext
   def read_has_block
     on_subcontext do |subcontext|
       next unless kw = subcontext.read_operator('has_block?')
+
       ret = DabNodeHasBlock.new
       ret.add_source_parts(kw)
       ret
@@ -311,6 +330,7 @@ class DabContext < DabBaseContext
       next unless kw = subcontext.read_operator(key)
 
       next unless lparen = subcontext.read_operator('(')
+
       if read_klass
         next unless klass = subcontext.read_identifier
         next unless comma = subcontext.read_operator(',')
@@ -361,6 +381,7 @@ class DabContext < DabBaseContext
       next unless var = subcontext.read_complex_reference
       next unless eq = subcontext.read_operator('=')
       next unless value = subcontext.read_value
+
       ret = DabNodeSetter.new(var, value)
       ret.add_source_parts(var, eq, value)
       ret
@@ -374,6 +395,7 @@ class DabContext < DabBaseContext
   def read_complex_reference
     on_subcontext do |subcontext|
       next unless ref = subcontext.read_simple_reference
+
       while true
         if postfix = subcontext.read_postfix_reference(ref)
           ref = postfix
@@ -390,6 +412,7 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('[')
       next unless index = subcontext.read_value
       next unless subcontext.read_operator(']')
+
       DabNodeReferenceIndex.new(base, index)
     end
   end
@@ -398,6 +421,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('.')
       next unless member = subcontext.read_identifier
+
       DabNodeReferenceMember.new(base, member)
     end
   end
@@ -410,6 +434,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
       next unless @local_vars.include?(id)
+
       DabNodeReferenceLocalVar.new(id)
     end
   end
@@ -417,6 +442,7 @@ class DabContext < DabBaseContext
   def read_self_reference
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('self')
+
       DabNodeReferenceSelf.new
     end
   end
@@ -424,6 +450,7 @@ class DabContext < DabBaseContext
   def read_instvar_reference
     on_subcontext do |subcontext|
       next unless id = subcontext.read_classvar
+
       DabNodeReferenceInstVar.new(id)
     end
   end
@@ -447,6 +474,7 @@ class DabContext < DabBaseContext
       next unless condition = subcontext.read_value
       next unless subcontext.read_operator(')')
       next unless if_true = subcontext.read_codeblock
+
       elsek = subcontext.read_keyword('else')
       if elsek
         next unless if_false = subcontext.read_codeblock
@@ -484,6 +512,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       id = subcontext.read_class_identifier
       next unless id
+
       ret = DabNodeClass.new(id)
       ret.add_source_parts(id)
       ret
@@ -493,12 +522,14 @@ class DabContext < DabBaseContext
   def read_define_var
     on_subcontext do |subcontext|
       next unless keyw = subcontext.read_keyword('var')
+
       lbrace = subcontext.read_operator('<')
       if lbrace
         next unless type = subcontext.read_type
         next unless rbrace = subcontext.read_operator('>')
       end
       next unless id = subcontext.read_identifier
+
       if eq = subcontext.read_operator('=')
         next unless value = subcontext.read_value
       end
@@ -522,8 +553,10 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless id = subcontext.read_identifier
       next unless op1 = subcontext.read_operator('(')
+
       valuelist = subcontext.read_optional_valuelist
       next unless op2 = subcontext.read_operator(')')
+
       block = subcontext.read_block
 
       ret = DabNodeCall.new(id, valuelist, block)
@@ -538,6 +571,7 @@ class DabContext < DabBaseContext
   def read_block
     on_subcontext do |subcontext|
       next unless op = subcontext.read_operator('^')
+
       if lparen = subcontext.read_operator('(')
         if arglist = subcontext.read_arglist
           arglist.each do |arg|
@@ -548,6 +582,7 @@ class DabContext < DabBaseContext
         next unless rparen = subcontext.read_operator(')')
       end
       next unless block = subcontext.read_codeblock
+
       ret = DabNodeCallBlock.new(block, arglist)
       ret.add_source_parts(op, lparen, rparen)
       ret
@@ -557,16 +592,19 @@ class DabContext < DabBaseContext
   def read_codeblock
     on_subcontext(merge_local_vars: false) do |subcontext|
       next unless subcontext.read_operator('{')
+
       ret = DabNodeTreeBlock.new
       while true
         while subcontext.read_separator
         end
         break unless instr = subcontext.read_instruction_line
+
         while subcontext.read_separator
         end
         ret.insert(instr)
       end
       next unless subcontext.read_operator('}')
+
       ret
     end
   end
@@ -586,6 +624,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless instr = subcontext.read_instruction
       raise 'expected ;' unless subcontext.read_separator
+
       instr
     end
   end
@@ -594,6 +633,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       str = subcontext.read_string
       next unless str
+
       ret = DabNodeLiteralString.new(str)
       ret.add_source_parts(str)
       ret
@@ -604,6 +644,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       str = subcontext.read_float
       next unless str
+
       ret = DabNodeLiteralFloat.new(str.to_f)
       ret.add_source_part(str)
       ret
@@ -614,6 +655,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       str = subcontext.read_number
       next unless str
+
       ret = DabNodeLiteralNumber.new(str.to_i)
       ret.add_source_part(str)
       ret
@@ -624,6 +666,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       str = subcontext.read_binary_number
       next unless str
+
       ret = DabNodeLiteralNumber.new_binary(str)
       ret.add_source_part(str)
       ret
@@ -633,6 +676,7 @@ class DabContext < DabBaseContext
   def read_literal_boolean
     on_subcontext do |subcontext|
       next unless keyword = subcontext.read_any_operator(%w(true false))
+
       DabNodeLiteralBoolean.new(keyword == 'true')
     end
   end
@@ -640,6 +684,7 @@ class DabContext < DabBaseContext
   def read_literal_nil
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('nil')
+
       DabNodeLiteralNil.new
     end
   end
@@ -660,8 +705,10 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('@')
       next unless subcontext.read_operator('[')
+
       values = subcontext.read_valuelist
       next unless subcontext.read_operator(']')
+
       DabNodeLiteralArray.new(values)
     end
   end
@@ -683,6 +730,7 @@ class DabContext < DabBaseContext
   def read_instvar
     on_subcontext do |subcontext|
       next unless id = subcontext.read_classvar
+
       DabNodeInstanceVar.new(id)
     end
   end
@@ -709,6 +757,7 @@ class DabContext < DabBaseContext
         end
       end
       next unless value = subcontext.read_simple_value_group_with_prefix
+
       value = prefix_value.fixup(value) if prefix_value
       value
     end
@@ -718,6 +767,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       value = subcontext.read_base_value
       next unless value
+
       while true
         if postfix = subcontext.read_postfix(value)
           value = postfix
@@ -731,8 +781,10 @@ class DabContext < DabBaseContext
   def read_parentheses_value
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('(')
+
       value = subcontext.read_value
       next unless subcontext.read_operator(')')
+
       value
     end
   end
@@ -745,14 +797,18 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       dot = subcontext.read_operator('.')
       next unless dot
+
       prop_name = subcontext.read_identifier
       next unless prop_name
+
       lparen = subcontext.read_operator('(')
       if lparen
         arglist = subcontext.read_optional_valuelist
         next unless arglist
+
         rparen = subcontext.read_operator(')')
         next unless rparen
+
         block = subcontext.read_block
         next DabNodeInstanceCall.new(base_value, prop_name, arglist, block)
       else
@@ -766,6 +822,7 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('[')
       next unless value = subcontext.read_value
       next unless subcontext.read_operator(']')
+
       next DabNodeInstanceCall.new(base_value, :[], [value], nil)
     end
   end
@@ -773,6 +830,7 @@ class DabContext < DabBaseContext
   def read_prefix(base_prefix)
     on_subcontext do |subcontext|
       next unless op = subcontext.read_operator('!')
+
       next DabNodePrefixNode.new(op, base_prefix)
     end
   end

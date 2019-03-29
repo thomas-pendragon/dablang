@@ -66,6 +66,7 @@ class DabNodeRegisterSet < DabNode
   def prune_nil!
     return unless value.is_a? DabNodeLiteralNil
     return if users.count > 0
+
     remove!
     true
   end

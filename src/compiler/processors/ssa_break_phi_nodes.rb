@@ -8,6 +8,7 @@ class SSABreakPhiNodes
     while true
       phi_nodes = function.all_nodes(DabNodeSSAPhi)
       break if phi_nodes.empty?
+
       phi_node = phi_nodes.last
 
       phi_setter = phi_node.parent

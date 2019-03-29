@@ -21,11 +21,13 @@ class Object
 
   def is_any_of?(list)
     return self.is_a?(list) if list.is_a?(Class)
+
     list.any? { |item| self.is_a?(item) }
   end
 
   def is_kind_of_any?(list)
     return self.class == list if list.is_a?(Class)
+
     list.any? { |item| self.class == item }
   end
 

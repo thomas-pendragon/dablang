@@ -104,6 +104,7 @@ end
 if $autorun
   read_args!
   raise 'no test' unless $settings[:input].downcase.end_with?('.test')
+
   test = DabMultiSpec.new
   test.run_test($settings)
 end

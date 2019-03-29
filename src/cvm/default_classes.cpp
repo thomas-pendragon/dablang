@@ -173,7 +173,7 @@ void DabVM::define_default_classes()
         assert(self.data.type == TYPE_ARRAY);
         return (uint64_t)self.array().size();
     });
-    array_class.add_reg_function("shift", [this](DabValue self, std::vector<DabValue> args) {
+    array_class.add_reg_function("shift", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         assert(self.data.type == TYPE_ARRAY);
         auto &a = self.array();
@@ -188,7 +188,7 @@ void DabVM::define_default_classes()
             return ret;
         }
     });
-    array_class.add_reg_function("insert", [this](DabValue self, std::vector<DabValue> args) {
+    array_class.add_reg_function("insert", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
         auto arg = args[0];
         assert(self.data.type == TYPE_ARRAY);
@@ -196,7 +196,7 @@ void DabVM::define_default_classes()
         a.push_back(arg);
         return nullptr;
     });
-    array_class.add_reg_function("[]", [this](DabValue self, std::vector<DabValue> args) {
+    array_class.add_reg_function("[]", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
         auto arg0 = self;
         auto arg1 = args[0];
@@ -211,7 +211,7 @@ void DabVM::define_default_classes()
         else
             return a[(size_t)n];
     });
-    array_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
+    array_class.add_reg_function("[]=", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 2);
         auto arg0 = self;
         auto arg1 = args[0];
@@ -266,7 +266,7 @@ void DabVM::define_default_classes()
     });
 
     auto &method_class = get_class(CLASS_METHOD);
-    method_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
+    method_class.add_reg_function("to_s", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         return std::string("@method(" + self.string() + ")");
     });
@@ -284,7 +284,7 @@ void DabVM::define_default_classes()
         instance.bytebuffer().resize((size_t)size);
         return instance;
     });
-    bytebuffer_class.add_reg_function("[]", [this](DabValue self, std::vector<DabValue> args) {
+    bytebuffer_class.add_reg_function("[]", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
         auto arg0 = self;
         auto arg1 = args[0];
@@ -299,7 +299,7 @@ void DabVM::define_default_classes()
         else
             return DabValue(CLASS_UINT8, a[(size_t)n]);
     });
-    bytebuffer_class.add_reg_function("[]=", [this](DabValue self, std::vector<DabValue> args) {
+    bytebuffer_class.add_reg_function("[]=", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 2);
         auto arg0 = self;
         auto arg1 = args[0];
@@ -316,7 +316,7 @@ void DabVM::define_default_classes()
         }
         return nullptr;
     });
-    bytebuffer_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
+    bytebuffer_class.add_reg_function("to_s", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         std::string ret;
         auto &      a = self.bytebuffer();

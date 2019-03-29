@@ -136,8 +136,10 @@ class DabParser
     start_pos = @position
     debug("keyword #{keyword} ?")
     return false unless input_match(keyword)
+
     advance!(keyword.length)
     return false unless current_char_whitespace_or_symbol?
+
     debug("keyword #{keyword} ok")
     _return_source(keyword, start_pos)
   end
@@ -152,6 +154,7 @@ class DabParser
     debug('identifier ?')
     ret = ''
     return nil unless current_char_identifier_start?(0, options)
+
     while current_char_identifier?(options)
       ret += current_char
       advance!
@@ -168,6 +171,7 @@ class DabParser
     debug('classid ?')
     ret = ''
     return nil unless current_char_class_start?
+
     debug('classid !')
     while current_char_identifier?
       ret += current_char
@@ -184,6 +188,7 @@ class DabParser
     ret = ''
     return nil unless current_char == '@'
     return nil unless current_char_identifier_start?(1)
+
     ret += current_char
     advance!
     while current_char_identifier?
@@ -206,6 +211,7 @@ class DabParser
     start_pos = @position
     debug("operator #{operator} ?")
     return false unless op = input_match_any(operator)
+
     advance!(op.length)
     debug("operator #{operator} - #{op} ok")
     _return_source(op, start_pos)
@@ -215,6 +221,7 @@ class DabParser
     skip_whitespace
     debug('newline ?')
     return false unless input_match("\n")
+
     ret = current_char
     advance!
     debug('newline ok')
@@ -226,14 +233,17 @@ class DabParser
     start_pos = @position
     debug('string ?')
     return false unless input_match('"')
+
     advance!
     ret = ''
     until input_match('"')
       break unless current_char
+
       ret += current_char
       advance!
     end
     return false unless input_match('"')
+
     advance!
     debug('string ok')
     ret = _parse_string(ret)
@@ -249,6 +259,7 @@ class DabParser
     start_pos = @position
     debug('binary ?')
     return false unless input_match_any(%w[0b0 0b1])
+
     advance!
     advance!
     ret = ''
@@ -265,6 +276,7 @@ class DabParser
     start_pos = @position
     debug('float ?')
     return false unless current_char_digit_start?
+
     ret = ''
     if current_char == '-'
       ret += current_char
@@ -272,15 +284,19 @@ class DabParser
     end
     while current_char_digit?
       break unless current_char
+
       ret += current_char
       advance!
     end
     return false unless current_char == '.'
+
     ret += current_char
     advance!
     return false unless current_char_digit?
+
     while current_char_digit?
       break unless current_char
+
       ret += current_char
       advance!
     end
@@ -293,6 +309,7 @@ class DabParser
     start_pos = @position
     debug('number ?')
     return false unless current_char_digit_start?
+
     ret = ''
     if current_char == '-'
       ret += current_char
@@ -300,6 +317,7 @@ class DabParser
     end
     while current_char_digit?
       break unless current_char
+
       ret += current_char
       advance!
     end
@@ -374,6 +392,7 @@ class DabParser
     if test_and_skip_any_comment
       return ' '
     end
+
     ret = current_char
     advance!
     ret
@@ -431,6 +450,7 @@ class DabParser
 
   def advance!(length = 1)
     raise DabEndOfStreamError.new if eof? || (@position + length) > @length
+
     @position += length
   end
 end

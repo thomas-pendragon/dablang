@@ -61,6 +61,7 @@ end
 if $autorun
   read_args!
   raise 'no dabft' unless $settings[:input].downcase.end_with?('.dabft')
+
   test = FormatSpec.new
   test.run_test($settings)
 end

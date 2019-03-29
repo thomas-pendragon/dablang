@@ -9,11 +9,7 @@ format = "    {OP_%s, \"%s\", {%s}},\n"
 
 REAL_OPCODES.each_value do |opcode|
   name = opcode[:name]
-  args = if opcode[:args]
-           opcode[:args]
-         else
-           [opcode[:arg]].compact
-         end
+  args = opcode[:args] || [opcode[:arg]].compact
   args = args.map { |arg| "OpcodeArg::ARG_#{arg.upcase}" }
   args = args.join(', ')
   printf(format, name, name, args)

@@ -101,6 +101,7 @@ class DabCompilerFrontend
 
           new_functions = all_functions - last_functions
           break if new_functions.count == 0
+
           last_functions = all_functions
 
           new_functions.each do |node|
@@ -164,6 +165,7 @@ class DabCompilerFrontend
           program.dump
         end
         next if program.run_unssa_processors!
+
         break
       end
 
@@ -224,6 +226,7 @@ class DabCompilerFrontend
       next if do_flatten && dab_benchmark('flatten') do
         program.run_flatten_processors!
       end
+
       break
     end
   end

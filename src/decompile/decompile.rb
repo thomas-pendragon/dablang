@@ -89,6 +89,7 @@ class DecompiledFunction
                .flat_map { |block| block.all_nodes(DabNodeDefineLocalVar) }
                .detect { |node| node.identifier == defvalue }
       raise 'no setter' unless setter
+
       _bump_args(index + 1, setter.value)
       setter.remove!
       value = DabNodeArg.new(index, nil)
@@ -148,9 +149,9 @@ class DecompiledFunction
     end
   end
 
-  def _symbol(s)
-    s = s.delete('S').to_i
-    @dab[:symbols][s]
+  def _symbol(symbol)
+    symbol = symbol.delete('S').to_i
+    @dab[:symbols][symbol]
   end
 
   def _klass(klass)
@@ -158,6 +159,7 @@ class DecompiledFunction
     if klass >= USER_CLASSES_OFFSET
       return @dab[:klasses].detect { |data| data[:index] == klass }[:symbol]
     end
+
     STANDARD_CLASSES[klass]
   end
 
@@ -208,6 +210,7 @@ class DecompiledFunction
       next if DecompileIfs.new.run(fun)
       next if DecompileElseIfs.new.run(fun)
       next if ReplaceSingleUse.new.run(fun)
+
       break
     end
   end

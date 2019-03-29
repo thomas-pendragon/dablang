@@ -7,6 +7,7 @@ class DabNodeSymbol < DabNodeExtractableLiteral
 
   def initialize(symbol)
     raise "empty symbol (#{symbol})" if symbol.to_s.empty?
+
     super()
     @symbol = symbol.to_stringy
     add_source_parts(symbol)

@@ -2,6 +2,7 @@ class SSAify
   def run(node)
     vars = node.variables
     return if vars.empty?
+
     vars.each do |var|
       ssaify_variable(node, var)
     end

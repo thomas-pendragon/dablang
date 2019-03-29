@@ -20,16 +20,19 @@ class DabNodeSSAGet < DabNode
 
   def constant?
     return false if setters.count > 1
+
     setters.first&.constant_value?
   end
 
   def constant_value
     raise 'no constant value' unless constant?
+
     setters.first.value.constant_value
   end
 
   def my_type
     raise 'multiple setters for ssa value' if setters.count > 1
+
     setters.first.value.my_type
   end
 

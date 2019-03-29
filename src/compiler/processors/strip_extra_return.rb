@@ -1,6 +1,7 @@
 class StripExtraReturn
   def run(node)
     return unless node.multiple_returns?
+
     ret = false
     node.each do |child|
       if ret

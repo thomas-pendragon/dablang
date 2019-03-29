@@ -14,6 +14,7 @@ class DabType
     return DabTypeIntPtr.new if typename == 'IntPtr'
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
+
     raise "Unknown type #{typename}"
   end
 
@@ -37,6 +38,7 @@ class DabType
     return true if identifier == 'class'
     return true if identifier == 'to_s'
     return true if identifier == 'is'
+
     false
   end
 
@@ -70,18 +72,21 @@ class DabTypeString < DabType
 
   def can_assign_from?(other_type)
     return true if other_type.is_a? DabTypeIntPtr
+
     super
   end
 
   def requires_cast?(other_type)
     return true if other_type.is_a? DabTypeIntPtr
     return true if other_type.is_a? DabTypeObject
+
     super
   end
 
   def has_function?(identifier)
     identifiers = %w[+ [] upcase length > >= <= <]
     return true if identifiers.include?(identifier)
+
     super
   end
 end
@@ -94,6 +99,7 @@ class DabTypeFixnum < DabType
   def has_function?(identifier)
     operators = %w[+ - * / == != < <= >= > | & % >> << !]
     return true if operators.include?(identifier)
+
     super
   end
 end
@@ -106,6 +112,7 @@ class DabTypeFloat < DabType
   def has_function?(identifier)
     operators = %w[+ - * / == != < <= >= > | & % >> << ! sqrt]
     return true if operators.include?(identifier)
+
     super
   end
 end
@@ -126,6 +133,7 @@ class DabTypeClass < DabType
   def has_function?(identifier)
     return true if identifier == 'new'
     return true if identifier == '=='
+
     super
   end
 end
@@ -141,6 +149,7 @@ class DabTypeIntPtr < DabType
 
   def has_function?(identifier)
     return true if identifier == 'fetch_int32'
+
     super
   end
 
@@ -190,6 +199,7 @@ class DabTypeInt < DabTypeFixnum
 
   def has_function?(identifier)
     return true if identifier == 'byteswap'
+
     super
   end
 
