@@ -56,14 +56,14 @@ module BaseFrontend
 
   def describe_action(input, output, action)
     info = " * #{action}: #{input.to_s.blue.bold} -> #{output.blue.bold}..."
-    STDERR.puts info.white
+    warn info.white
     yield
-    STDERR.puts "#{info.white} #{'[OK]'.green}"
+    warn "#{info.white} #{'[OK]'.green}"
   end
 
   def describe_action_with_replacement(input, output, action, replacement)
     describe_action(input, output, action) do
-      STDERR.puts "~> #{replacement.yellow}"
+      warn "~> #{replacement.yellow}"
       yield
     end
   end
@@ -86,7 +86,7 @@ module BaseFrontend
         qsystem(cmd, timeout: 30, output_file: output)
       rescue SystemCommandError => e
         STDERR.puts
-        STDERR.puts e.stderr
+        warn e.stderr
         STDERR.puts
         raise
       end

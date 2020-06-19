@@ -545,14 +545,14 @@ class DabNode
     setters = (possible_setters + [last_setter]).compact.uniq
 
     if setters.count == 1
-      return setters.first
+      setters.first
     elsif setters.count > 1
       phi = DabNodeSSAPhiBase.new(setters)
       phi_setter = DabNodeSetLocalVar.new(variable.identifier, phi)
       self.append_in_parent(phi_setter)
-      return phi_setter
+      phi_setter
     else
-      return last_setter
+      last_setter
     end
   end
 

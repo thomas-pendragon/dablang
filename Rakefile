@@ -162,7 +162,7 @@ def ci_parallel(inputs)
   ci_total = ENV['CI_PARALLEL_TOTAL']&.to_i
   return inputs unless ci_index && ci_total
 
-  per_instance = (inputs.count.to_f / ci_total.to_f).ceil.to_i
+  per_instance = (inputs.count.to_f / ci_total).ceil.to_i
   istart = ci_index * per_instance
   iend = (ci_index + 1) * per_instance
   inputs[istart...iend] || []

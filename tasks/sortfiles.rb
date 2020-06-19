@@ -17,7 +17,7 @@ directories.each do |directory|
       new_item = item.gsub(/^\d+_/, start)
       old_path = File.join(directory, item)
       new_path = File.join(directory, new_item)
-      STDERR.puts "Correct: #{old_path} -> #{new_path}".red
+      warn "Correct: #{old_path} -> #{new_path}".red
       File.rename(old_path, new_path)
       next
     end
@@ -26,7 +26,7 @@ directories.each do |directory|
 
       STDERR.printf("  %s %s\n", preview_index == index ? '>' : ' ', preview_item)
     end
-    STDERR.puts "#{directory}/#{item} is incorrect! (expected to start with #{start})."
+    warn "#{directory}/#{item} is incorrect! (expected to start with #{start})."
     exit 1
   end
 end

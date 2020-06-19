@@ -7,7 +7,7 @@ class ConvertSetValue
     if var_type.requires_cast?(value_type)
       cast_value = DabNodeCast.new(node.value.dup, var_type)
       node.value.replace_with!(cast_value)
-      return true
+      true
     end
   end
 end
