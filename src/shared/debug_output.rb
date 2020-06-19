@@ -10,5 +10,5 @@ def err(str, *args)
 end
 
 def errap(arg)
-  STDERR.puts arg.ai
+  warn arg.ai
 end

@@ -2,9 +2,6 @@ AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
 
-Rails:
-  Enabled: false
-
 Style/SymbolArray:
   Enabled: true
 
@@ -27,10 +24,10 @@ Layout/SpaceInsideHashLiteralBraces:
 Naming/AccessorMethodName:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 
-Layout/IndentHash:
+Layout/FirstHashElementIndentation:
   Enabled: false
   EnforcedStyle: align_braces
 
@@ -52,7 +49,7 @@ Lint/Void:
 Style/Documentation:
   Enabled: false
 
-AccessModifierIndentation:
+Layout/AccessModifierIndentation:
   EnforcedStyle: outdent
 
 Metrics/MethodLength:
@@ -92,9 +89,6 @@ Style/Lambda:
   Enabled: false
 
 Metrics/ModuleLength:
-  Enabled: false
-
-Rails/HasAndBelongsToMany:
   Enabled: false
 
 Style/EachWithObject:
@@ -187,5 +181,20 @@ Lint/EmptyWhen:
 Security/Open:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true

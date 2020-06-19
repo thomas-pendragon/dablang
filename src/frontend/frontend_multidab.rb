@@ -20,7 +20,7 @@ class DabMultiSpec
         qsystem(cmd, timeout: 10)
       rescue SystemCommandError => e
         STDERR.puts
-        STDERR.puts e.stderr
+        warn e.stderr
         STDERR.puts
         e.stdout = open(output).read
         FileUtils.rm(output)

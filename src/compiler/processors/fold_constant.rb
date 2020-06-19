@@ -28,20 +28,20 @@ class FoldConstant
     end
     if numeric && %w(+ - * / % | & >> <<).include?(id)
       node.replace_with! DabNodeLiteralNumber.new(lv.send(id, rv))
-      return true
+      true
     elsif numeric && %w(> >= < <=).include?(id)
       node.replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
-      return true
+      true
     elsif %w(== !=).include?(id)
       if (lv.is_a? DabType) && (rv.is_a? DabType)
         lv = lv.class
         rv = rv.class
       end
       node.replace_with! DabNodeLiteralBoolean.new(lv.send(id, rv))
-      return true
+      true
     elsif typed_numeric && %w(+ - * / % |).include?(id)
       node.replace_with! DabNodeTypedLiteralNumber.new(lv.send(id, rv), left.my_type)
-      return true
+      true
     else
       raise "don't know how to fold #{lv.class} #{id} #{rv.class}"
     end

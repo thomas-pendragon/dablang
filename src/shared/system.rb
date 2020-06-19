@@ -105,12 +105,12 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
 end
 
 def psystem_ignore(cmd)
-  STDERR.puts " > #{cmd.yellow}"
+  warn " > #{cmd.yellow}"
   system(cmd)
 end
 
 def psystem(cmd)
-  STDERR.puts " > #{cmd.yellow}"
+  warn " > #{cmd.yellow}"
   unless system cmd
     raise SystemCommandError.new("Error during executing #{cmd}", nil)
   end
@@ -125,7 +125,7 @@ def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, er
   STDERR.print "\n"
   ret = system_with_progress(cmd, input: input, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file, binmode: binmode)
   unless ret[:exit_code] == 0
-    STDERR.puts ret[:stderr].to_s.red
+    warn ret[:stderr].to_s.red
     raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
   end
   File.open(output_file, 'wb') { |file| file << ret[:stdout] } if output_file
