@@ -19,6 +19,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #define countof(x) (sizeof(x) / sizeof(x[0]))
 
