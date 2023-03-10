@@ -20,6 +20,7 @@ OPCODES_ARRAY_BASE.each do |group|
   next if group[:pseudo]
 
   puts "## #{title}
+  
 |Opcode |Name    |Arguments|
 |-------|--------|---------|
 "
