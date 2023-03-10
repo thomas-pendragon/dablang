@@ -34,5 +34,9 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: download premake
+      run: wget https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
+    - name: install premake
+      run: tar xf premake-5.0.0-beta2-linux.tar.gz
     - name: Run tests
       run: bundle exec rake
