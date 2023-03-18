@@ -9,6 +9,7 @@ BUILTINS = %w[
   __import_sdl
   __import_pq
   __fetch_int32
+  define_method
   +
   -
   *

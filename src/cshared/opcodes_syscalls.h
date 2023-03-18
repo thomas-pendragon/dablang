@@ -2,9 +2,10 @@
 
 enum
 {
-    KERNEL_PRINT       = 0x0,
-    KERNEL_EXIT        = 0x1,
-    KERNEL_USECOUNT    = 0x2,
-    KERNEL_TO_SYM      = 0x3,
-    KERNEL_FETCH_INT32 = 0x4,
+    KERNEL_PRINT         = 0x0,
+    KERNEL_EXIT          = 0x1,
+    KERNEL_USECOUNT      = 0x2,
+    KERNEL_TO_SYM        = 0x3,
+    KERNEL_FETCH_INT32   = 0x4,
+    KERNEL_DEFINE_METHOD = 0x5,
 };

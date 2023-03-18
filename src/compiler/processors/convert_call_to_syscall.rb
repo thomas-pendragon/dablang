@@ -1,6 +1,6 @@
 class ConvertCallToSyscall
   def run(node)
-    return unless %w(print exit __usecount __fetch_int32).include? node.real_identifier
+    return unless %w(print exit __usecount __fetch_int32 define_method).include? node.real_identifier
 
     syscall = KERNELCODES_REV[node.real_identifier.upcase.gsub('__', '')]
     syscall = DabNodeSyscall.new(syscall, node.args.map(&:dup))
