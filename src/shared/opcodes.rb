@@ -58,8 +58,6 @@ OPCODES_ARRAY_BASE = [
       {name: 'LOAD_HAS_BLOCK', args: %i[reg]}, # reg0 <- has_block?
 
       {name: 'LOAD_ARG', args: %i[reg uint16]}, # reg0 <- funarg(arg1)
-
-      {name: 'LOAD_BLOCK', args: %i[reg symbol]},
     ],
   },
   {

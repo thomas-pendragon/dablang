@@ -29,7 +29,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_LOAD_CLOSURE, "LOAD_CLOSURE", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
     {OP_LOAD_HAS_BLOCK, "LOAD_HAS_BLOCK", {OpcodeArg::ARG_REG}},
     {OP_LOAD_ARG, "LOAD_ARG", {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16}},
-    {OP_LOAD_BLOCK, "LOAD_BLOCK", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
     {OP_JMP, "JMP", {OpcodeArg::ARG_INT16}},
     {OP_JMP_IF, "JMP_IF", {OpcodeArg::ARG_REG, OpcodeArg::ARG_INT16, OpcodeArg::ARG_INT16}},
     {OP_CALL, "CALL", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REGLIST}},
