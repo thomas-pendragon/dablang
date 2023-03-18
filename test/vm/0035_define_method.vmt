@@ -2,9 +2,10 @@
 
 func main()
 {
-    define_method("foo") ^ {
+    var block = ^ {
       print("foo");
     };
+    define_method("foo", block);
 }
 
 ## OPTIONS

@@ -52,6 +52,13 @@ DabClass &DabVM::get_class(dab_class_t index)
     return classes[index];
 }
 
+void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
+{
+    (void)reglist;
+
+    register_set(out_reg, nullptr);
+}
+
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() == 1);
@@ -1191,6 +1198,11 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         DabValue ret(CLASS_INT32, value);
 
         register_set(out_reg, ret);
+        break;
+    }
+    case KERNEL_DEFINE_METHOD:
+    {
+        kernel_define_method(out_reg, reglist);        
         break;
     }
     default:
