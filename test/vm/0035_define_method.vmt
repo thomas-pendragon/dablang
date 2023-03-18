@@ -1,0 +1,20 @@
+## DAB CODE
+
+func main()
+{
+    define_method("foo") ^ {
+      print("foo");
+    };
+}
+
+## OPTIONS
+
+--noraw
+
+## TESTCASE
+
+$dumpvm
+
+## EXPECT
+
+xxx
