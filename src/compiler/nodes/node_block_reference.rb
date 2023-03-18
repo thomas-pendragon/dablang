@@ -14,4 +14,8 @@ class DabNodeBlockReference < DabNode
   def real_identifier
     identifier.extra_value
   end
+
+  def compile_as_ssa(output, output_register)
+    output.printex(self, 'LOAD_BLOCK', "R#{output_register}", identifier.symbol_arg)
+  end
 end
