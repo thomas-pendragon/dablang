@@ -872,9 +872,31 @@ class DabContext < DabBaseContext
   end
 
   def read_value
-    read_has_block ||
+    read_varblock ||
+      read_has_block ||
       read_reflect ||
       _read_list_or_single(:read_bor_value, ['is'], DabNodeOperator)
+  end
+
+  def read_varblock
+    on_subcontext do |subcontext|
+      next unless op = subcontext.read_operator('^')
+
+      if lparen = subcontext.read_operator('(')
+        if arglist = subcontext.read_arglist
+          arglist.each do |arg|
+            symbol = arg.identifier
+            subcontext.add_local_var(symbol)
+          end
+        end
+        next unless rparen = subcontext.read_operator(')')
+      end
+      next unless block = subcontext.read_codeblock
+
+      ret = DabNodeVarBlock.new(block, arglist)
+      ret.add_source_parts(op, lparen, rparen)
+      ret
+    end
   end
 
   def clone(new_context)
