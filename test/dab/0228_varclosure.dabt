@@ -5,7 +5,7 @@ func main()
   var func = ^ {
     print("ok");
   };
-  func();
+  func.call();
 }
 
 ## EXPECT OK

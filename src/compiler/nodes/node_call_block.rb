@@ -1,6 +1,6 @@
-require_relative 'node_var_block.rb'
+require_relative 'node_base_block.rb'
 
-class DabNodeCallBlock < DabNodeVarBlock
+class DabNodeCallBlock < DabNodeBaseBlock
   def initialize(body, arglist = nil)
     super(body, arglist)
   end
