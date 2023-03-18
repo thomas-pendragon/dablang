@@ -197,12 +197,14 @@ int main(int argc, char **argv)
         if (section_name == "code")
         {
             auto substream = stream.section_stream(i);
-            parse_stream(substream, [&lines](Op op) {
-                if (op.code == OP_COV)
-                {
-                    lines[op.arg_uint16(0)].insert(op.arg_uint16(1));
-                }
-            });
+            parse_stream(substream,
+                         [&lines](Op op)
+                         {
+                             if (op.code == OP_COV)
+                             {
+                                 lines[op.arg_uint16(0)].insert(op.arg_uint16(1));
+                             }
+                         });
         }
     }
 

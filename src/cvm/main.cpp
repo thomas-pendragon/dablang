@@ -54,34 +54,34 @@ DabClass &DabVM::get_class(dab_class_t index)
 
 void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-//                                  LOAD_METHOD R0, S1
-// /* "foo"        */               LOAD_STRING R1, _DATA + 0, 3
-// /* DEFINE_METHO */               SYSCALL RNIL, 5, R1, R0
-
+    //                                  LOAD_METHOD R0, S1
+    // /* "foo"        */               LOAD_STRING R1, _DATA + 0, 3
+    // /* DEFINE_METHO */               SYSCALL RNIL, 5, R1, R0
 
     assert(reglist.size() == 2);
 
-    auto name = register_get(reglist[0]);
+    auto name   = register_get(reglist[0]);
     auto method = register_get(reglist[1]);
 
     fprintf(stderr, "VM: define_method\n");
-    fprintf(stderr, "VM: method: "); 
+    fprintf(stderr, "VM: method: ");
     method.dump(stderr);
     fprintf(stderr, "\n");
-    fprintf(stderr, "VM: name:   "); 
+    fprintf(stderr, "VM: name:   ");
     name.dump(stderr);
     fprintf(stderr, "\n");
 
-
-    fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d)\n", method.data.type, TYPE_METHOD);
+    fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d)\n", method.data.type,
+            TYPE_METHOD);
 
     assert(method.data.type == TYPE_METHOD);
     assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
 
     auto method_symbol = method.data.fixnum;
-    auto method_name = name.string();
+    auto method_name   = name.string();
 
-    fprintf(stderr, "VM: define_method %x (%p) as '%s'\n", (int)method_symbol, (void*)method_symbol, method_name.c_str());
+    fprintf(stderr, "VM: define_method %x (%p) as '%s'\n", (int)method_symbol,
+            (void *)method_symbol, method_name.c_str());
 
     register_set(out_reg, nullptr);
 }
@@ -331,30 +331,30 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
 
 DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
 {
-        (void)self;
-        assert(args.size() == 0); // TODO!
-        /*
-        auto out_reg = input.read_reg();
-        auto symbol  = input.read_symbol();
-        auto reglist = input.read_reglist();
-        call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, reglist);
-        */
-        /*
-        void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
-                           const DabFunction &fun, int n_args, void *blockaddress,
-                           const DabValue &capture, std::vector<dab_register_t> reglist,
-                           DabValue *return_value, size_t stack_pos)
-        */
-        auto symbol = self.data.fixnum;
-        auto reg = dab_register_t::nilreg();
-        DabValue out;
-        DabValue fake_self; // ?
-        auto fun = $VM->functions[symbol];
-        std::vector<dab_register_t> reglist;
+    (void)self;
+    assert(args.size() == 0); // TODO!
+    /*
+    auto out_reg = input.read_reg();
+    auto symbol  = input.read_symbol();
+    auto reglist = input.read_reglist();
+    call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, reglist);
+    */
+    /*
+    void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
+                       const DabFunction &fun, int n_args, void *blockaddress,
+                       const DabValue &capture, std::vector<dab_register_t> reglist,
+                       DabValue *return_value, size_t stack_pos)
+    */
+    auto                        symbol = self.data.fixnum;
+    auto                        reg    = dab_register_t::nilreg();
+    DabValue                    out;
+    DabValue                    fake_self; // ?
+    auto                        fun = $VM->functions[symbol];
+    std::vector<dab_register_t> reglist;
 
-        _call_function(false, reg, fake_self, fun, 0, nullptr, nullptr, reglist);
+    _call_function(false, reg, fake_self, fun, 0, nullptr, nullptr, reglist);
 
-        return out;
+    return out;
 }
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
@@ -500,7 +500,7 @@ void DabVM::_reflect(const DabFunction &function, dab_register_t reg, bool outpu
 
     DabValue array_class = classes[CLASS_ARRAY];
     DabValue value       = array_class.create_instance();
-    auto &   array       = value.array();
+    auto    &array       = value.array();
     array.resize(n);
 
     if (options.verbose)
@@ -557,7 +557,7 @@ bool DabVM::execute_single(Stream &input)
 
         DabValue array_class = classes[CLASS_ARRAY];
         DabValue value       = array_class.create_instance();
-        auto &   array       = value.array();
+        auto    &array       = value.array();
         array.resize(n);
         for (size_t i = 0; i < n; i++)
         {
@@ -1229,7 +1229,7 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     }
     case KERNEL_DEFINE_METHOD:
     {
-        kernel_define_method(out_reg, reglist);        
+        kernel_define_method(out_reg, reglist);
         break;
     }
     default:
@@ -1342,7 +1342,7 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
 {
     std::map<std::string, bool>        flags;
     std::map<std::string, std::string> options;
-    std::vector<std::string> others;
+    std::vector<std::string>           others;
 
     for (auto &arg : args)
     {
@@ -1479,7 +1479,8 @@ int unsafe_main(DabVM &vm, int argc, char **argv)
 
     auto ret_value = vm.run(streams);
 
-    auto clear_registers = [&vm]() {
+    auto clear_registers = [&vm]()
+    {
         vm.symbols.resize(0);
         vm._registers.resize(0);
         vm._register_stack.resize(0);

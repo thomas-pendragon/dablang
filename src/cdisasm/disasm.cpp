@@ -14,7 +14,7 @@ FILE *output = stdout;
 
 struct DisasmContext
 {
-    std::vector<std::string> section_labels;
+    std::vector<std::string>   section_labels;
     std::map<int, std::string> labels;
 };
 
@@ -53,17 +53,20 @@ void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legac
     DisasmProcessor<StreamReader> processor(reader);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
-    processor.go([start, no_numbers, legacy_numbers](uint64_t pos, std::string info) {
-        if (no_numbers)
+    processor.go(
+        [start, no_numbers, legacy_numbers](uint64_t pos, std::string info)
         {
-            fprintf(output, "    ");
-        }
-        else
-        {
-            fprintf(output, legacy_numbers ? LEGACY_LINEINFO_FORMAT : LINEINFO_FORMAT, start + pos);
-        }
-        fprintf(output, "%s\n", info.c_str());
-    });
+            if (no_numbers)
+            {
+                fprintf(output, "    ");
+            }
+            else
+            {
+                fprintf(output, legacy_numbers ? LEGACY_LINEINFO_FORMAT : LINEINFO_FORMAT,
+                        start + pos);
+            }
+            fprintf(output, "%s\n", info.c_str());
+        });
 }
 
 void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)

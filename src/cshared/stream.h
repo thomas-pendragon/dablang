@@ -4,7 +4,7 @@
 
 struct Buffer
 {
-    byte *   data   = nullptr;
+    byte    *data   = nullptr;
     uint64_t length = 0;
 
     bool _dont_delete = false;
@@ -14,8 +14,8 @@ struct Buffer
     Buffer(const Buffer &other, uint64_t start, uint64_t length); // nocopy
     ~Buffer();
     Buffer &operator=(const Buffer &other);
-    void resize(uint64_t new_length);
-    void append(const byte *new_data, uint64_t new_data_length);
+    void    resize(uint64_t new_length);
+    void    append(const byte *new_data, uint64_t new_data_length);
 };
 
 struct dab_register_t
@@ -152,8 +152,8 @@ struct Stream
     const char *string_ptr(uint64_t address);
 
     std::string cstring_data(uint64_t address);
-    uint16_t uint16_data(uint64_t address);
-    uint64_t uint64_data(uint64_t address);
+    uint16_t    uint16_data(uint64_t address);
+    uint64_t    uint64_data(uint64_t address);
 
   private:
     Buffer   buffer;

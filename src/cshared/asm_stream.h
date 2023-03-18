@@ -3,7 +3,7 @@
 struct BaseReader
 {
     std::vector<unsigned char> data;
-    uint64_t &                 _position;
+    uint64_t                  &_position;
 
     BaseReader(uint64_t &position) : _position(position)
     {

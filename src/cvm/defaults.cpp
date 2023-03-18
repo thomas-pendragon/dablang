@@ -15,11 +15,11 @@
 
 DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
 {
-    auto &   a0          = arg0.array();
-    auto &   a1          = arg1.array();
+    auto    &a0          = arg0.array();
+    auto    &a1          = arg1.array();
     DabValue array_class = classes[CLASS_ARRAY];
     DabValue value       = array_class.create_instance();
-    auto &   array       = value.array();
+    auto    &array       = value.array();
     array.resize(a0.size() + a1.size());
     fprintf(stderr, "vm: merge %d and %d items into new %d-sized array\n", (int)a0.size(),
             (int)a1.size(), (int)array.size());
@@ -37,7 +37,8 @@ DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
 
 dab_function_reg_t import_external_function(void *symbol, const DabFunctionReflection &reflection)
 {
-    return [symbol, &reflection](DabValue, std::vector<DabValue> args) {
+    return [symbol, &reflection](DabValue, std::vector<DabValue> args)
+    {
         const auto &arg_klasses = reflection.arg_klasses;
         const auto  ret_klass   = reflection.ret_klass;
 
@@ -63,8 +64,10 @@ void DabVM::define_defaults()
 
     fprintf(stderr, "vm: define default functions\n");
 
-    auto make_import_function = [this](const char *name) {
-        return [this, name](DabValue, std::vector<DabValue> args) {
+    auto make_import_function = [this](const char *name)
+    {
+        return [this, name](DabValue, std::vector<DabValue> args)
+        {
 #ifndef DAB_PLATFORM_WINDOWS
             assert(args.size() <= 2);
 
@@ -164,7 +167,8 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name      = "||";
         fun.regular   = false;
-        fun.extra_reg = [](DabValue, std::vector<DabValue> args) {
+        fun.extra_reg = [](DabValue, std::vector<DabValue> args)
+        {
             assert(args.size() == 2);
             auto arg0 = args[0];
             auto arg1 = args[1];
@@ -180,7 +184,8 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name      = "&&";
         fun.regular   = false;
-        fun.extra_reg = [](DabValue, std::vector<DabValue> args) {
+        fun.extra_reg = [](DabValue, std::vector<DabValue> args)
+        {
             assert(args.size() == 2);
             auto arg0 = args[0];
             auto arg1 = args[1];

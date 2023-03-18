@@ -21,7 +21,7 @@ void Coverage::dump(FILE *out) const
         if (i++ > 0)
             fprintf(out, ",\n");
         fprintf(out, "{\"file\": \"%s\", \"hits\": [", file.second.c_str());
-        auto & data = lines.at(file.first);
+        auto  &data = lines.at(file.first);
         size_t j    = 0;
         for (auto &line : data)
         {

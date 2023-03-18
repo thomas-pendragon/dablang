@@ -38,7 +38,8 @@ void DabVM::dump_vm(FILE *out)
     std::vector<byte>       dump_data;
 
     dump_sections.erase(std::remove_if(dump_sections.begin(), dump_sections.end(),
-                                       [](BinSection section) {
+                                       [](BinSection section)
+                                       {
                                            std::string name = section.name;
                                            return name == "func" || name == "symb" ||
                                                   name == "symd";
@@ -50,7 +51,7 @@ void DabVM::dump_vm(FILE *out)
 
     for (int i = 0; i < (int)dump_sections.size(); i++)
     {
-        auto &      section = dump_sections[i];
+        auto       &section = dump_sections[i];
         std::string name    = section.name;
 
         if (name == "code")
@@ -65,7 +66,7 @@ void DabVM::dump_vm(FILE *out)
 
     for (int i = 0, section_index = 0; i < (int)dump_sections.size(); i++, section_index++)
     {
-        auto &      section = dump_sections[i];
+        auto       &section = dump_sections[i];
         std::string name    = section.name;
 
         bool previous_code = name == "code" && section_index != last_code_index;
@@ -98,8 +99,9 @@ void DabVM::dump_vm(FILE *out)
         {
             if (options.verbose)
             {
-                fprintf(stderr, "vm/binsave: will skip function '%s' (ring source: %" PRIu64
-                                ", last ring offset: %" PRIu64 ")\n",
+                fprintf(stderr,
+                        "vm/binsave: will skip function '%s' (ring source: %" PRIu64
+                        ", last ring offset: %" PRIu64 ")\n",
                         get_symbol(it.first).c_str(), fun.source_ring, this->last_ring_offset);
             }
             continue;
@@ -136,8 +138,9 @@ void DabVM::dump_vm(FILE *out)
         {
             if (options.verbose)
             {
-                fprintf(stderr, "vm/binsave: will skip symbol '%s' (ring source: %" PRIu64
-                                ", last ring offset: %" PRIu64 ")\n",
+                fprintf(stderr,
+                        "vm/binsave: will skip symbol '%s' (ring source: %" PRIu64
+                        ", last ring offset: %" PRIu64 ")\n",
                         sym.value.c_str(), sym.source_ring, this->last_ring_offset);
             }
             continue;
@@ -145,8 +148,9 @@ void DabVM::dump_vm(FILE *out)
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/binsave: write symbol '%s' (ring source: %" PRIu64
-                            ", last ring offset: %" PRIu64 ")\n",
+            fprintf(stderr,
+                    "vm/binsave: write symbol '%s' (ring source: %" PRIu64
+                    ", last ring offset: %" PRIu64 ")\n",
                     sym.value.c_str(), sym.source_ring, this->last_ring_offset);
         }
 

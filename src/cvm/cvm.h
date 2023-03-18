@@ -51,27 +51,27 @@ struct DabFunction
 
 enum
 {
-    TYPE_INVALID = 0,
-    TYPE_FIXNUM = 1,
-    TYPE_BOOLEAN = 2,
-    TYPE_NIL = 3,
-    TYPE_CLASS = 4,
-    TYPE_OBJECT = 5,
-    TYPE_ARRAY = 6,
-    TYPE_UINT8 = 7,
-    TYPE_UINT16 = 8,
-    TYPE_UINT32 = 9,
-    TYPE_UINT64 = 10,
-    TYPE_INT8 = 11,
-    TYPE_INT16 = 12,
-    TYPE_INT32 = 13,
-    TYPE_INT64 = 14,
-    TYPE_METHOD = 15,
-    TYPE_INTPTR = 16,
-    TYPE_BYTEBUFFER = 17,
+    TYPE_INVALID       = 0,
+    TYPE_FIXNUM        = 1,
+    TYPE_BOOLEAN       = 2,
+    TYPE_NIL           = 3,
+    TYPE_CLASS         = 4,
+    TYPE_OBJECT        = 5,
+    TYPE_ARRAY         = 6,
+    TYPE_UINT8         = 7,
+    TYPE_UINT16        = 8,
+    TYPE_UINT32        = 9,
+    TYPE_UINT64        = 10,
+    TYPE_INT8          = 11,
+    TYPE_INT16         = 12,
+    TYPE_INT32         = 13,
+    TYPE_INT64         = 14,
+    TYPE_METHOD        = 15,
+    TYPE_INTPTR        = 16,
+    TYPE_BYTEBUFFER    = 17,
     TYPE_LITERALSTRING = 18,
     TYPE_DYNAMICSTRING = 19,
-    TYPE_FLOAT = 20,
+    TYPE_FLOAT         = 20,
 };
 
 #include "../cshared/classes.h"
@@ -89,12 +89,12 @@ struct DabValue;
 
 struct DabClass
 {
-    std::string name;
-    dab_class_t index;
-    bool        builtin = false;
+    std::string                         name;
+    dab_class_t                         index;
+    bool                                builtin = false;
     std::map<dab_symbol_t, DabFunction> functions;
     std::map<dab_symbol_t, DabFunction> static_functions;
-    dab_class_t superclass_index = CLASS_OBJECT;
+    dab_class_t                         superclass_index = CLASS_OBJECT;
 
     const DabFunction &get_instance_function(dab_symbol_t symbol) const;
 
@@ -169,7 +169,8 @@ struct DabValueData
 {
     int type = TYPE_INVALID;
 
-    union {
+    union
+    {
         uint64_t _initialize = 0;
 
         int64_t         fixnum;
@@ -183,7 +184,7 @@ struct DabValueData
         int64_t         num_int64;
         bool            boolean;
         DabObjectProxy *object;
-        void *          intptr;
+        void           *intptr;
         float           floatval;
     };
 };
@@ -197,7 +198,7 @@ struct DabValue
 
     dab_class_t class_index() const;
     std::string class_name() const;
-    DabClass &  get_class() const;
+    DabClass   &get_class() const;
 
     void print(FILE *out, bool debug = false) const;
 
@@ -332,7 +333,7 @@ struct DabValue
     static DabValue allocate_dynstr(const char *str);
 
     std::vector<DabValue> &array() const;
-    std::vector<uint8_t> & bytebuffer() const;
+    std::vector<uint8_t>  &bytebuffer() const;
 
     std::string literal_string() const;
     std::string dynamic_string() const;
@@ -395,7 +396,7 @@ struct Coverage
     void dump(FILE *out = stdout) const;
 
   private:
-    std::map<uint64_t, std::string> files;
+    std::map<uint64_t, std::string>                  files;
     std::map<uint64_t, std::map<uint64_t, uint64_t>> lines;
 };
 
@@ -461,7 +462,7 @@ struct DabVM
     DabVMReset reset;
     Coverage   coverage;
 
-    Stream instructions;
+    Stream                              instructions;
     std::map<dab_symbol_t, DabFunction> functions;
 
     std::vector<DabSymbol> symbols;
@@ -478,12 +479,12 @@ struct DabVM
     std::vector<BinSection> sections;
 
     DabClass &get_class(dab_class_t index);
-    void predefine_default_classes();
-    void define_default_classes();
-    void define_defaults();
+    void      predefine_default_classes();
+    void      define_default_classes();
+    void      define_defaults();
 
     DabVM();
-    DabVM(const DabVM &) = delete;
+    DabVM(const DabVM &)            = delete;
     DabVM &operator=(const DabVM &) = delete;
     ~DabVM();
 
@@ -520,7 +521,7 @@ struct DabVM
 
     DabStackFrame *current_frame();
 
-    bool has_arg(int arg_index);
+    bool      has_arg(int arg_index);
     DabValue &get_arg(int arg_index);
 
     DabValue &get_retval();
@@ -596,7 +597,7 @@ struct DabVM
     void _reflect(const DabFunction &function, dab_register_t reg, bool output_names);
 
     DabValue register_get(dab_register_t reg_index);
-    void register_set(dab_register_t reg_index, const DabValue &value);
+    void     register_set(dab_register_t reg_index, const DabValue &value);
 
     bool run_leaktest(FILE *output);
 
@@ -625,9 +626,9 @@ struct DabVM_debug
 
   private:
     typedef std::vector<std::pair<uint64_t, std::string>> disasm_map_t;
-    disasm_map_t disasm;
-    bool         has_disasm = false;
-    void         prepare_disasm();
+    disasm_map_t                                          disasm;
+    bool                                                  has_disasm = false;
+    void                                                  prepare_disasm();
 };
 
 #if defined(__GNUC__) && !defined(__clang__)

@@ -26,20 +26,24 @@ void DabVM::define_default_classes_int()
     CREATE_INT_CLASS(int32, INT32);
     CREATE_INT_CLASS(int64, INT64);
 
-    int32_class.add_reg_function("byteswap", [](DabValue self, std::vector<DabValue> args) {
-        assert(args.size() == 0);
-        auto     value     = self.data.num_int32;
-        auto     new_value = byteswap(value);
-        DabValue ret(CLASS_INT32, new_value);
-        return ret;
-    });
+    int32_class.add_reg_function("byteswap",
+                                 [](DabValue self, std::vector<DabValue> args)
+                                 {
+                                     assert(args.size() == 0);
+                                     auto     value     = self.data.num_int32;
+                                     auto     new_value = byteswap(value);
+                                     DabValue ret(CLASS_INT32, new_value);
+                                     return ret;
+                                 });
 
     auto &float_class = get_class(CLASS_FLOAT);
     DAB_MEMBER_BASE_NUMERIC_OPERATORS(float_class, CLASS_FLOAT, float, .data.floatval);
 
-    float_class.add_reg_function("sqrt", [](DabValue self, std::vector<DabValue> args) {
-        assert(args.size() == 0);
-        float ret = sqrt(self.data.floatval);
-        return DabValue(CLASS_FLOAT, ret);
-    });
+    float_class.add_reg_function("sqrt",
+                                 [](DabValue self, std::vector<DabValue> args)
+                                 {
+                                     assert(args.size() == 0);
+                                     float ret = sqrt(self.data.floatval);
+                                     return DabValue(CLASS_FLOAT, ret);
+                                 });
 }
