@@ -295,6 +295,34 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
     }
 }
 
+DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
+{
+        (void)self;
+        assert(args.size() == 0); // TODO!
+        /*
+        auto out_reg = input.read_reg();
+        auto symbol  = input.read_symbol();
+        auto reglist = input.read_reglist();
+        call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, reglist);
+        */
+        /*
+        void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
+                           const DabFunction &fun, int n_args, void *blockaddress,
+                           const DabValue &capture, std::vector<dab_register_t> reglist,
+                           DabValue *return_value, size_t stack_pos)
+        */
+        auto symbol = self.data.fixnum;
+        auto reg = dab_register_t::nilreg();
+        DabValue out;
+        DabValue fake_self; // ?
+        auto fun = $VM->functions[symbol];
+        std::vector<dab_register_t> reglist;
+
+        _call_function(false, reg, fake_self, fun, 0, nullptr, nullptr, reglist);
+
+        return out;
+}
+
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                            const DabFunction &fun, int n_args, void *blockaddress,
                            const DabValue &capture, std::vector<dab_register_t> reglist,

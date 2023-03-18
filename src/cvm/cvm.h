@@ -538,6 +538,8 @@ struct DabVM
     void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
               const DabValue &capture, std::vector<dab_register_t> reglist = {});
 
+    DabValue call_block(const DabValue &self, std::vector<DabValue> args);
+
     void _call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                         const DabFunction &fun, int n_args, void *blockaddress,
                         const DabValue &capture, std::vector<dab_register_t> reglist = {},

@@ -270,6 +270,9 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return std::string("@method(" + self.string() + ")");
     });
+    method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
+        return $VM->call_block(self, args);
+    });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {
