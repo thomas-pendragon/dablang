@@ -1,0 +1,13 @@
+## CODE
+
+func main()
+{
+  var func = ^ {
+    print("ok");
+  };
+  func();
+}
+
+## EXPECT OK
+
+ok
