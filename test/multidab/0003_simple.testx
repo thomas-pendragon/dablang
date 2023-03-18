@@ -2,10 +2,10 @@
 
 func level0()
 {
-  dab_define_method("foo") ^()
+  define_method("foo") ^
   {
     print("hello world");
-  }
+  };
 }
 
 ## LEVEL 1
