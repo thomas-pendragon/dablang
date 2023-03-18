@@ -166,6 +166,7 @@ class DabNodeFunction < DabNode
       output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
     else
       output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
+      output.print('W_METHOD_LEN', 0)
       arglist.each_with_index do |arg, index|
         klass_name = arg.my_type.type_string
         klass = root.class_number(klass_name)

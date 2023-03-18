@@ -362,6 +362,8 @@ class Parser
         when 'W_METHOD_ARG'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
+        when 'W_METHOD_LEN'
+          @output_stream._push_uint64(line[1])
         when 'W_COV_FILE'
           @output_stream._push_uint64(_process(line[1]))
         when 'W_BYTE'

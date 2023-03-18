@@ -50,6 +50,8 @@ class VMFrontend
     runoptions += '--raw ' if nomain || raw
     runoptions += '--noautorelease ' if noautorelease
 
+    reflect = options['--with_reflection']
+
     info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
     puts info
     FileUtils.mkdir_p(test_output_dir)
@@ -62,6 +64,7 @@ class VMFrontend
 
     if data[:dab_code]
       compile_options = ''
+      compile_options = '--with_reflection' if reflect
       extract_format_source(input, dab, :dab_code)
       compile_dab_to_asm([dab], asm, compile_options)
     else

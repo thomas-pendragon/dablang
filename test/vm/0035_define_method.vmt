@@ -10,7 +10,7 @@ func main()
 
 ## OPTIONS
 
---noraw
+--noraw --with_reflection
 
 ## TESTCASE
 

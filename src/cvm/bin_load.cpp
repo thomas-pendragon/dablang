@@ -190,7 +190,7 @@ struct MethodArgData
 
 void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length)
 {
-    auto fun_len = 2 + 2 + 8 + 2; // uint16 + uint16 + uint64 + uint16
+    auto fun_len = 2 + 2 + 8 + 2 + 8; // uint16 + uint16 + uint64 + uint16 + uint64
     auto arg_len = 2 + 2;         // uint16 + uint16
 
     auto ptr     = func_address;
@@ -204,6 +204,7 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
         auto class_index_address = symbol_address + 2;
         auto address_address     = class_index_address + 2;
         auto arg_count_address   = address_address + 8;
+        auto method_length_address = arg_count_address + 2;
 
         ptr += fun_len;
 
@@ -211,13 +212,15 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
         auto class_index = input.uint16_data(class_index_address);
         auto address     = input.uint64_data(address_address);
         auto arg_count   = input.uint16_data(arg_count_address);
+        auto method_length = input.uint64_data(method_length_address);
 
         auto symbol_str = get_symbol(symbol);
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d) with %d args\n",
+            fprintf(stderr, "vm/debug: func %d: '%s' at %p (class %d) (length %d) with %d args\n",
                     (int)fun_index, symbol_str.c_str(), (void *)address, (int)class_index,
+                    (int)method_length,
                     (int)arg_count);
         }
         auto data = (MethodArgData *)(input.raw_base_data() + ptr);

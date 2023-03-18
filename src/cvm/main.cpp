@@ -61,8 +61,8 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
 
     assert(reglist.size() == 2);
 
-    auto method = register_get(reglist[0]);
-    auto name = register_get(reglist[1]);
+    auto name = register_get(reglist[0]);
+    auto method = register_get(reglist[1]);
 
     fprintf(stderr, "VM: define_method\n");
     fprintf(stderr, "VM: method: "); 
@@ -71,6 +71,9 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(stderr, "VM: name:   "); 
     name.dump(stderr);
     fprintf(stderr, "\n");
+
+
+    fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d)\n", method.data.type, TYPE_METHOD);
 
     assert(method.data.type == TYPE_METHOD);
     assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
