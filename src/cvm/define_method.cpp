@@ -31,12 +31,15 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     auto fun = functions[method_symbol];
     auto method_address = fun.address;
 
+    auto method_length = fun.length;
+    assert(method_length > 0);
+
     fprintf(stderr, "VM: define_method %x (%p, len = %d) as '%s'\n", (int)method_address,
-            (void *)method_address, (int)fun.length, method_name.c_str());
+            (void *)method_address, (int)method_length, method_name.c_str());
 
     auto data = instructions.raw_base_data() + method_symbol;
     auto new_address = instructions.length();
-    instructions.append(data, fun.length);
+    instructions.append(data, method_length);
 
     DabFunction function;
     function.address = new_address;

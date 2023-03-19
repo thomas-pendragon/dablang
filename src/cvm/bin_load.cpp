@@ -228,6 +228,8 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         auto &function = add_function(address, symbol_str, class_index);
 
+        function.length = method_length;
+
         auto &reflection = function.reflection;
         reflection.arg_names.resize(arg_count);
         reflection.arg_klasses.resize(arg_count);
