@@ -217,6 +217,9 @@ Style/OptionalBooleanParameter:
 Style/CombinableLoops:
   Enabled: false
 
+Lint/EmptyConditionalBody:
+  Enabled: false
+
 # to be re-enabled
 Style/ClassEqualityComparison:
   Enabled: false
@@ -225,8 +228,4 @@ Style/ExplicitBlockArgument:
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
 Lint/MissingSuper:
-  Enabled: false
-Lint/EmptyConditionalBody:
-  Enabled: false
-Lint/SelfAssignment:
   Enabled: false

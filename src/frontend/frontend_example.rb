@@ -11,7 +11,6 @@ end
 def execute(input, run_options)
   describe_action(input, '-', 'VM') do
     input = input.to_s.shellescape
-    run_options = run_options
     cmd = "./bin/cvm #{run_options}"
 
     qsystem(cmd, input_file: input)
