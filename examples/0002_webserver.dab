@@ -85,6 +85,8 @@ func main()
   var buffer = ByteBuffer.new(10240);
   var buffer_length = ByteBuffer.new(8);
 
+  var favicon = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAz9JREFUWEft12tM12UUB/DPHy9cwswJhLdInLemZnZDM21oaxC5lK7rYrXepKtW1tZaF5utF61sy0VbbbrVcmoXnTVIMWJzXhaNZVY4IMxM8ILI0BQk+bdfj8nw9hJ8wfPq9zs7zznf8z3f5zl7YvHFEoz2MhZgiO5ZDShS461Y/DOvYEn35D0ny6sRgPpurPxsBA0RgHgPVf9f2l4AvQz0MnAJMtA3lez5DMkjKZ2/9/DHSv5ad/7rIvtxxiwklkDNh9R+HPxifRj5CCMKScrg5BH2l1L9Aadaz8TqysCgycxcT1tTcD5RT+Zshuaz6z0qn+8KYtIbTHiN4/tIziQW4+txHKtjxroAan8Z8fYAJGMGe1az5YELAEgdRfwUWfezdy1Hq6NSmLWJK3Mpvpbmn8PmjNuYXcb2J6lbzpR3GLeIzfOoLyFlBH0SueYltj5M3xTubQnxVyVeAEBkvuxq5tSy4SaaKoPjmKe54X0qF7FrabDd8QNthynPC///AyidzqEtwRax2dHO5kIS0yg8SPOvFE+8CIBJSxj/Ap8PpONkcMx+jJwV/PImdSsY+SgTX6dxW2Ak8hs2h8TBfJFGR1tIOK+B394m68HQomhtyOlk8byzoKAqaKD0ls5+T1wcEh74ntSR9B9Ev4FBmB2nSBlGWg67P2Hb/LDvqvuYvpryAlqquHwsM78JMcpu5/QM7CrC5KHM3Uf1Mn58JgSK9aNgJwPGUjKZIzuYUxNatSop9HTcc0xZyne5HNpKUhpjn2X8i6wdzol9IdZd1QwYTcl1HPkphD8zjkcvIO3mQG/FQmqKSEjkxiJGPUF9MeV3hurvaaL1AF+dpnXGWobfHdo2bSUHykifFpS/Ojkcu1hf5u4lKZONU2ncfhaA/oOZ9ilD88KG43tDH6OEhysoz6etkSsmkL+TY7tZnx0qy91E5qwAKhJu846g/ngHFU/RfjTcCVHsKFYEIGLuHA2kDOf6ZbTWkzyM9mYaNrJnDfF/QrKo97d+Se1H/Lkm2DJmBqFGovx9efCN2Mx6iPSpoZDWgzR8S9W7tLdc5BR0Sq9bvi7BWdAtdXcm6WWgl4FLgoEef5r18OO0h5/n/wJQoFIUf+T1TgAAAABJRU5ErkJggg==";
+
   while (true)
   {
     request_id = request_id + 1;
@@ -96,7 +98,8 @@ func main()
 
     var data = read(client_fd, buffer, 10240);
     puts("DabServer: read " + data.to_s + " bytes.\nREQUEST:");
-    puts(String.new(buffer, data));
+    var request = String.new(buffer, data);
+    puts(request);
     
     var response = "HTTP/1.1 200 OK\r\n" + 
       "Content-Type: text/html; charset=UTF-8\r\n" + 
@@ -105,9 +108,18 @@ func main()
       request_id.to_s + 
       " says hello!\r\n";
 
+    if (request.substring(0, 16) == "GET /favicon.ico") {
+      puts("RETURN FAVICON");
+      response = "HTTP/1.1 200 OK\r\n" + 
+      "Content-Type: image/png\r\n" +
+      "Content-Length: 901\r\n\r\n" +
+      favicon.base64_decode();
+    }
+    else {
     puts("\nRESPONSE:");
     puts(response);
-    
+    }
+
     var length = response.length;
     var ret4 = write(client_fd, response, length);
     puts("DabServer: wrote " + ret4.to_s + " bytes.");

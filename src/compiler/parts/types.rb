@@ -84,7 +84,7 @@ class DabTypeString < DabType
   end
 
   def has_function?(identifier)
-    identifiers = %w[+ [] upcase length > >= <= <]
+    identifiers = %w[+ [] upcase length > >= <= < substring base64_decode] # TODO: should not require funs from stdlib
     return true if identifiers.include?(identifier)
 
     super

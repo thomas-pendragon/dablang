@@ -4,4 +4,15 @@ class String
   {
     return self.length != 0;
   }
+
+  func substring(start, length)
+  {
+    var ret = "";
+    var i = 0;
+    while (i < length) {
+      ret = ret + self[start + i];
+      i = i + 1;
+    }
+    return ret;
+  }
 }

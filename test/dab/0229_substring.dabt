@@ -1,0 +1,10 @@
+## CODE
+
+func main()
+{
+  print("this is fun!".substring(8, 3));
+}
+
+## EXPECT OK
+
+fun
