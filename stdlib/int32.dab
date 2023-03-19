@@ -1,0 +1,7 @@
+class Int32
+{
+  func byteswap()
+  {
+    return __byteswap32(self);
+  }
+}

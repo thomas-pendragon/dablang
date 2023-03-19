@@ -144,9 +144,12 @@ KERNELCODES = {
   0x03 => 'TO_SYM',
   0x04 => 'FETCH_INT32',
   0x05 => 'DEFINE_METHOD',
+  0x06 => 'BYTESWAP32'
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
+
+SYSCALLS = KERNELCODES.values.map { "__" + _1.downcase }
 
 require_relative './classes.rb'
 

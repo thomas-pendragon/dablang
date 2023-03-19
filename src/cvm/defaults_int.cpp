@@ -8,11 +8,11 @@
     auto &small##_class = get_class(CLASS_##BIG);                                                  \
     DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
 
-static int32_t byteswap(int32_t value)
-{
-    return ((value >> 24) & 0x000000FF) | ((value << 8) & 0x00FF0000) |
-           ((value >> 8) & 0x0000FF00) | ((value << 24) & 0xFF000000);
-}
+// static int32_t byteswap(int32_t value)
+// {
+//     return ((value >> 24) & 0x000000FF) | ((value << 8) & 0x00FF0000) |
+//            ((value >> 8) & 0x0000FF00) | ((value << 24) & 0xFF000000);
+// }
 
 void DabVM::define_default_classes_int()
 {
@@ -26,15 +26,15 @@ void DabVM::define_default_classes_int()
     CREATE_INT_CLASS(int32, INT32);
     CREATE_INT_CLASS(int64, INT64);
 
-    int32_class.add_reg_function("byteswap",
-                                 [](DabValue self, std::vector<DabValue> args)
-                                 {
-                                     assert(args.size() == 0);
-                                     auto     value     = self.data.num_int32;
-                                     auto     new_value = byteswap(value);
-                                     DabValue ret(CLASS_INT32, new_value);
-                                     return ret;
-                                 });
+    // int32_class.add_reg_function("byteswap",
+    //                              [](DabValue self, std::vector<DabValue> args)
+    //                              {
+    //                                  assert(args.size() == 0);
+    //                                  auto     value     = self.data.num_int32;
+    //                                  auto     new_value = byteswap(value);
+    //                                  DabValue ret(CLASS_INT32, new_value);
+    //                                  return ret;
+    //                              });
 
     auto &float_class = get_class(CLASS_FLOAT);
     DAB_MEMBER_BASE_NUMERIC_OPERATORS(float_class, CLASS_FLOAT, float, .data.floatval);

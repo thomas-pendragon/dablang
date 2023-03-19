@@ -1,14 +1,9 @@
 require_relative 'node.rb'
 require_relative '../processors/create_attributes.rb'
 
-BUILTINS = %w[
+BUILTINS = SYSCALLS + %w[
   print
   exit
-  __usecount
-  __import_libc
-  __import_sdl
-  __import_pq
-  __fetch_int32
   define_method
   +
   -
