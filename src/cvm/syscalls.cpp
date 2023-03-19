@@ -11,11 +11,11 @@ static int32_t byteswap(int32_t value)
 void DabVM::kernel_byteswap32(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() == 1);
-    DabValue arg = register_get(reglist[0]);
-                                 auto     value     = arg.data.num_int32;
-                                 auto     new_value = byteswap(value);
-                                 DabValue ret(CLASS_INT32, new_value);
-                                 register_set(out_reg, ret);
+    DabValue arg       = register_get(reglist[0]);
+    auto     value     = arg.data.num_int32;
+    auto     new_value = byteswap(value);
+    DabValue ret(CLASS_INT32, new_value);
+    register_set(out_reg, ret);
 }
 
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)

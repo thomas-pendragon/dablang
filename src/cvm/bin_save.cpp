@@ -13,7 +13,8 @@ static void _ttwrite(std::vector<byte> &out, const byte *data, size_t size)
     for (size_t i = 0; i < size; i++)
     {
         fprintf(stderr, "%02x ", data[i]);
-        if (i % 16 == 15) {
+        if (i % 16 == 15)
+        {
             fprintf(stderr, "\n");
         }
         out.push_back(data[i]);
@@ -132,7 +133,8 @@ void DabVM::dump_vm(FILE *out)
         bin_func.symbol  = it.first;
         bin_func.klass   = DAB_CLASS_NIL;
         bin_func.address = it.second.address;
-        if (fun.new_method) {
+        if (fun.new_method)
+        {
             bin_func.address += code_section.pos + code_section.length;
         }
         dump_functions.push_back(bin_func);
@@ -217,8 +219,10 @@ void DabVM::dump_vm(FILE *out)
 
             _twrite(dump_data, (byte *)ptr, (size_t)length);
 
-            if (std::string(section.name) == "code") {
-                fprintf(stderr, "vm/binsave: inject %d bytes of new code\n", (int)new_instructions.length);
+            if (std::string(section.name) == "code")
+            {
+                fprintf(stderr, "vm/binsave: inject %d bytes of new code\n",
+                        (int)new_instructions.length);
                 _ttwrite(dump_data, new_instructions.data, new_instructions.length);
                 length += new_instructions.length;
                 section.length += new_instructions.length;

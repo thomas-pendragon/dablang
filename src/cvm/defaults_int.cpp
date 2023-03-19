@@ -8,8 +8,6 @@
     auto &small##_class = get_class(CLASS_##BIG);                                                  \
     DAB_MEMBER_NUMERIC_OPERATORS(small##_class, CLASS_##BIG, small##_t, .data.num_##small);
 
-
-
 void DabVM::define_default_classes_int()
 {
     CREATE_INT_CLASS(uint8, UINT8);
