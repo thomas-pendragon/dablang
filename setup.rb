@@ -26,9 +26,9 @@ class Object
   end
 
   def is_kind_of_any?(list)
-    return self.class == list if list.is_a?(Class)
+    return self.instance_of?(list) if list.is_a?(Class)
 
-    list.any? { |item| self.class == item }
+    list.any? { |item| self.instance_of?(item) }
   end
 
   def present?

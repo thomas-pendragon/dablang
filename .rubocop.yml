@@ -221,8 +221,6 @@ Lint/EmptyConditionalBody:
   Enabled: false
 
 # to be re-enabled
-Style/ClassEqualityComparison:
-  Enabled: false
 Style/ExplicitBlockArgument:
   Enabled: false
 Lint/MissingSuper:
