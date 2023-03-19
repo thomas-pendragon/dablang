@@ -166,9 +166,7 @@ class DabNodeFunction < DabNode
 
   def compile_definition(output)
     output.comment(identifier)
-    if !$feature_reflection
-      output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
-    else
+    if $feature_reflection
       output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
       output.print('W_METHOD_LEN', "#{funclabel_end} - #{funclabel}")
       arglist.each_with_index do |arg, index|
@@ -182,6 +180,8 @@ class DabNodeFunction < DabNode
       klass = root.class_number(klass_name)
       output.comment("$ret<#{klass_name}>")
       output.print('W_METHOD_ARG', -1, klass)
+    else
+      output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
     end
   end
 
