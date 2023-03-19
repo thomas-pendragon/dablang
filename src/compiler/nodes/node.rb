@@ -250,8 +250,7 @@ class DabNode
 
   def source_parts
     ret = @self_source_parts + @children.flat_map(&:source_parts)
-    ret = ret.select { |item| item.is_a? SourceString }
-    ret
+    ret.select { |item| item.is_a? SourceString }
   end
 
   def first_source_part
@@ -468,8 +467,7 @@ class DabNode
       ret += node.all_ordered_nodes(klass) if index < self_index
     end
     ret = function_parent.previous_nodes(klass, sender) + [function_parent] + ret
-    ret = ret.select { |node| node.is_a? klass }
-    ret
+    ret.select { |node| node.is_a? klass }
   end
 
   def each_previous_scope_with_index(_sender, &block)

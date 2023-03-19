@@ -107,7 +107,7 @@ signatures.strip.split("\n").each do |line|
     if arg == 'string'
       body += "    auto value#{index}_store = value#{index}.#{DAB_DATA.safe_get(arg)};\n"
       body += "    auto value#{index}_data = value#{index}_store.c_str();\n"
-    else 
+    else
       body += "    auto value#{index}_data = value#{index}.#{DAB_DATA.safe_get(arg)};\n"
     end
   end

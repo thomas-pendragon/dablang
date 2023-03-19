@@ -213,8 +213,6 @@ Style/ClassEqualityComparison:
   Enabled: false
 Style/ExplicitBlockArgument:
   Enabled: false
-Style/RedundantAssignment:
-  Enabled: false
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
 Lint/MissingSuper:

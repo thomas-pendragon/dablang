@@ -57,8 +57,7 @@ class DabBaseContext
 
   def clone(new_context = nil)
     substream = @stream.clone
-    ret = self.class.new(substream, new_context)
-    ret
+    self.class.new(substream, new_context)
   end
 
   def merge!(other_context, _ = nil)
