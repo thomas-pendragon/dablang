@@ -214,6 +214,9 @@ Style/SoleNestedConditional:
 Style/OptionalBooleanParameter:
   Enabled: false # TODO!
 
+Style/CombinableLoops:
+  Enabled: false
+
 # to be re-enabled
 Style/ClassEqualityComparison:
   Enabled: false
@@ -223,12 +226,7 @@ Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
 Lint/MissingSuper:
   Enabled: false
-Style/CaseLikeIf:
-  Enabled: false
 Lint/UselessMethodDefinition:
-  Enabled: false
-
-Style/CombinableLoops:
   Enabled: false
 Lint/EmptyConditionalBody:
   Enabled: false
