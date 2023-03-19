@@ -2,6 +2,7 @@ require_relative 'node_literal'
 
 class DabNodeTypedLiteralNumber < DabNodeLiteral
   attr_reader :number
+
   def initialize(number, type)
     super()
     @number = number

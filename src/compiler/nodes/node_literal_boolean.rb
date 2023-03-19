@@ -2,6 +2,7 @@ require_relative 'node_literal'
 
 class DabNodeLiteralBoolean < DabNodeLiteral
   attr_reader :boolean
+
   def initialize(boolean)
     super()
     @boolean = boolean

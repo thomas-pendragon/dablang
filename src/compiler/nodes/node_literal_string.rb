@@ -2,6 +2,7 @@ require_relative 'node_extractable_literal'
 
 class DabNodeLiteralString < DabNodeExtractableLiteral
   attr_reader :string
+
   def initialize(string)
     super()
     @string = string

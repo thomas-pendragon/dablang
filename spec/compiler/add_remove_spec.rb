@@ -6,6 +6,7 @@ describe DabNode do
   let(:test_object) do
     test_class = Class.new(DabNode) do
       attr_accessor :counter
+
       def initialize
         super
         self.counter = 0

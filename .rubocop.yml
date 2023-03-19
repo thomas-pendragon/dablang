@@ -225,7 +225,5 @@ Style/ClassEqualityComparison:
   Enabled: false
 Style/ExplicitBlockArgument:
   Enabled: false
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: false
 Lint/MissingSuper:
   Enabled: false

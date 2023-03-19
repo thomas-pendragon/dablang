@@ -1,6 +1,7 @@
 class SystemCommandError < RuntimeError
   attr_accessor :stderr
   attr_accessor :stdout
+
   def initialize(message, stderr)
     super(message)
     @stderr = stderr

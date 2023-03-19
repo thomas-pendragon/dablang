@@ -2,6 +2,7 @@ require_relative 'node_base_jump'
 
 class DabNodeJump < DabNodeBaseJump
   attr_reader :target
+
   def initialize(target)
     super()
     @target = target

@@ -2,6 +2,7 @@ class DabCompilerError
   attr_reader :message
   attr_reader :source
   attr_reader :source_infos
+
   def initialize(message, source)
     @message = message
     @source = source

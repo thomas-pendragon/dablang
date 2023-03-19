@@ -2,6 +2,7 @@ require_relative '../../shared/base_context'
 
 class UnknownTokenException < RuntimeError
   attr_reader :pos
+
   def initialize(text, pos)
     super(text)
     @pos = pos
@@ -10,6 +11,7 @@ end
 
 class SelfOutsideException < RuntimeError
   attr_reader :node
+
   def initialize(node)
     super()
     @node = node
