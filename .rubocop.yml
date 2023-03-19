@@ -223,5 +223,3 @@ Lint/EmptyConditionalBody:
 # to be re-enabled
 Style/ExplicitBlockArgument:
   Enabled: false
-Lint/MissingSuper:
-  Enabled: false

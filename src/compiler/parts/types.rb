@@ -160,6 +160,7 @@ end
 
 class DabTypeUint < DabTypeFixnum
   def initialize(size)
+    super()
     @size = size
   end
 
@@ -182,6 +183,7 @@ end
 
 class DabTypeInt < DabTypeFixnum
   def initialize(size)
+    super()
     @size = size
   end
 
@@ -244,6 +246,7 @@ end
 
 class DabConcreteType < DabType
   def initialize(base)
+    super()
     @base = base
   end
 
