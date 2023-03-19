@@ -1,7 +1,7 @@
 require_relative 'node.rb'
 require_relative '../processors/create_attributes.rb'
 
-BUILTINS = SYSCALLS + %w[
+BUILTINS = SYSCALLS + EXTRA_STD_CALLS + %w[
   print
   exit
   define_method

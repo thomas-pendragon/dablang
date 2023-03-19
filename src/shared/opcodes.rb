@@ -147,6 +147,8 @@ KERNELCODES = {
   0x06 => 'BYTESWAP32'
 }.freeze
 
+EXTRA_STD_CALLS = ['__import_libc', '__import_sdl', '__import_pq']
+
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
 SYSCALLS = KERNELCODES.values.map { "__" + _1.downcase }
