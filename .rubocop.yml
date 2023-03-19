@@ -226,8 +226,6 @@ Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
 Lint/MissingSuper:
   Enabled: false
-Lint/UselessMethodDefinition:
-  Enabled: false
 Lint/EmptyConditionalBody:
   Enabled: false
 Lint/SelfAssignment:
