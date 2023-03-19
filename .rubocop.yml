@@ -391,6 +391,6 @@ Lint/AmbiguousOperatorPrecedence: # new in 1.21
 Lint/NonAtomicFileOperation: # new in 1.31
   Enabled: false
 Style/HashConversion: # new in 1.10
-  Enabled: false
+  Enabled: true
 Style/NegatedIfElseCondition: # new in 1.2
   Enabled: true

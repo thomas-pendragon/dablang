@@ -132,8 +132,8 @@ OPCODES_PSEUDO_ARRAY = OPCODES_ARRAY_BASE.flat_map { |item| item[:items].map { |
 
 REAL_OPCODES_ARRAY = OPCODES_ARRAY.select.with_index { |_item, index| !OPCODES_PSEUDO_ARRAY[index] }
 
-OPCODES = Hash[(0...OPCODES_ARRAY.size).zip OPCODES_ARRAY].freeze
-REAL_OPCODES = Hash[(0...REAL_OPCODES_ARRAY.size).zip REAL_OPCODES_ARRAY].freeze
+OPCODES = ((0...OPCODES_ARRAY.size).zip OPCODES_ARRAY).to_h.freeze
+REAL_OPCODES = ((0...REAL_OPCODES_ARRAY.size).zip REAL_OPCODES_ARRAY).to_h.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
 
