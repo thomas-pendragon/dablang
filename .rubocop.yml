@@ -211,6 +211,9 @@ Naming/VariableNumber:
 Style/SoleNestedConditional:
   Enabled: false
 
+Style/OptionalBooleanParameter:
+  Enabled: false # TODO!
+
 # to be re-enabled
 Style/ClassEqualityComparison:
   Enabled: false
@@ -224,13 +227,10 @@ Style/CaseLikeIf:
   Enabled: false
 Lint/UselessMethodDefinition:
   Enabled: false
-Lint/ElseLayout:
-  Enabled: false
+
 Style/CombinableLoops:
   Enabled: false
 Lint/EmptyConditionalBody:
-  Enabled: false
-Style/OptionalBooleanParameter:
   Enabled: false
 Lint/SelfAssignment:
   Enabled: false

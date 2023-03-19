@@ -771,7 +771,8 @@ class DabContext < DabBaseContext
       while true
         if postfix = subcontext.read_postfix(value)
           value = postfix
-        else break
+        else
+          break
         end
       end
       next value
