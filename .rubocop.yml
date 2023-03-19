@@ -220,6 +220,5 @@ Style/CombinableLoops:
 Lint/EmptyConditionalBody:
   Enabled: false
 
-# to be re-enabled
 Style/ExplicitBlockArgument:
   Enabled: false
