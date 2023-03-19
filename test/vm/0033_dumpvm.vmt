@@ -61,7 +61,6 @@ _SYMD:
     W_STRING ">>"
     W_STRING "|"
     W_STRING "&"
-    W_STRING "byteswap"
     W_STRING "sqrt"
     W_STRING "count"
     W_STRING "shift"
@@ -102,19 +101,17 @@ _SYMB:
     W_SYMBOL 332
     W_SYMBOL 334
     W_SYMBOL 336
-    W_SYMBOL 345
-    W_SYMBOL 350
-    W_SYMBOL 356
-    W_SYMBOL 362
+    W_SYMBOL 341
+    W_SYMBOL 347
+    W_SYMBOL 353
+    W_SYMBOL 360
+    W_SYMBOL 364
     W_SYMBOL 369
-    W_SYMBOL 373
-    W_SYMBOL 378
-    W_SYMBOL 383
-    W_SYMBOL 397
-    W_SYMBOL 410
-    W_SYMBOL 422
-    W_SYMBOL 425
+    W_SYMBOL 374
+    W_SYMBOL 388
+    W_SYMBOL 401
+    W_SYMBOL 413
+    W_SYMBOL 416
 
 _FUNC:
     W_METHOD 0, -1, 205
-
