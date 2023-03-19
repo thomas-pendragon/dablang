@@ -198,3 +198,44 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+Style/GlobalStdStream:
+  Enabled: false
+
+Style/AccessorGrouping:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+# to be re-enabled
+Style/RedundantFileExtensionInRequire:
+  Enabled: false
+Style/StringConcatenation:
+  Enabled: false
+Style/ClassEqualityComparison:
+  Enabled: false
+Style/ExplicitBlockArgument:
+  Enabled: false
+Style/RedundantAssignment:
+  Enabled: false
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: false
+Lint/MissingSuper:
+  Enabled: false
+Style/CaseLikeIf:
+  Enabled: false
+Lint/UselessMethodDefinition:
+  Enabled: false
+Lint/ElseLayout:
+  Enabled: false
+Style/SoleNestedConditional:
+  Enabled: false
+Style/CombinableLoops:
+  Enabled: false
+Lint/EmptyConditionalBody:
+  Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
+Lint/SelfAssignment:
+  Enabled: false

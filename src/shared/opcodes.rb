@@ -144,14 +144,14 @@ KERNELCODES = {
   0x03 => 'TO_SYM',
   0x04 => 'FETCH_INT32',
   0x05 => 'DEFINE_METHOD',
-  0x06 => 'BYTESWAP32'
+  0x06 => 'BYTESWAP32',
 }.freeze
 
-EXTRA_STD_CALLS = ['__import_libc', '__import_sdl', '__import_pq']
+EXTRA_STD_CALLS = %w[__import_libc __import_sdl __import_pq].freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
-SYSCALLS = KERNELCODES.values.map { "__" + _1.downcase }
+SYSCALLS = KERNELCODES.values.map { '__' + _1.downcase }
 
 require_relative './classes.rb'
 
