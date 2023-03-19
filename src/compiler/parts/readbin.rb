@@ -165,7 +165,7 @@ class DabBinReader
       functions: functions,
       all_symbols: all_symbols,
       klasses: @klasses,
-    }.reject { |_, value| value.nil? }
+    }.compact
   end
 
   def lookup_klass(klass)

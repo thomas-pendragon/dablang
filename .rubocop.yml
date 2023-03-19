@@ -383,10 +383,10 @@ Lint/EmptyBlock: # new in 1.1
 
 Style/RedundantArgument: # new in 1.4
   Enabled: true
+Style/CollectionCompact: # new in 1.2
+  Enabled: true
 
 Lint/NonAtomicFileOperation: # new in 1.31
-  Enabled: false
-Style/CollectionCompact: # new in 1.2
   Enabled: false
 Lint/AmbiguousOperatorPrecedence: # new in 1.21
   Enabled: false
