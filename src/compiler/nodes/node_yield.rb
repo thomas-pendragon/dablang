@@ -11,11 +11,11 @@ class DabNodeYield < DabNodeBasecall
 
   def formatted_source(options)
     argstxt = if args.count > 0
-                '(' + _formatted_arguments(options) + ')'
+                "(#{_formatted_arguments(options)})"
               else
                 ''
               end
-    'yield' + argstxt
+    "yield#{argstxt}"
   end
 
   def uncomplexify_args

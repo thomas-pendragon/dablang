@@ -88,7 +88,7 @@ class DabNodeBasicBlock < DabNode
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
     return '' unless lines.count > 0
 
-    label = 'B' + block_index.to_s + ":\n"
+    label = "B#{block_index}:\n"
     post = "\n"
     if options[:skip_unused_labels]
       label = '' if internally_unreachable?

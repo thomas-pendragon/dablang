@@ -16,6 +16,6 @@ class DabNodeReferenceIndex < DabNodeReference
   end
 
   def formatted_source(options)
-    base.formatted_source(options) + '[' + index.formatted_source(options) + ']'
+    "#{base.formatted_source(options)}[#{index.formatted_source(options)}]"
   end
 end

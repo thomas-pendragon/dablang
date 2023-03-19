@@ -32,7 +32,7 @@ class DabNodeBaseBlock < DabNode
     ret += ' {'
     ret += "\n"
     ret += _indent(body.formatted_source(options))
-    ret + '}'
+    "#{ret}}"
   end
 
   def captured_variables

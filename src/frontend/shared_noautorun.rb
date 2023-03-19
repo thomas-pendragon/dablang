@@ -109,7 +109,7 @@ module BaseFrontend
       puts 'Expected:'.bold
       puts expected
       puts 'Diff:'.bold
-      puts Diffy::Diff.new(expected + "\n", actual + "\n").to_s(:color)
+      puts Diffy::Diff.new("#{expected}\n", "#{actual}\n").to_s(:color)
       puts "#{info}... ERROR!".red.bold
       raise DabCompareError.new('test error')
     end
@@ -162,7 +162,7 @@ module BaseFrontend
   end
 
   def temp_file(extension)
-    Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.' + extension)).to_s
+    Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext(".#{extension}")).to_s
   end
 
   def write_new_testspec(filename, data)

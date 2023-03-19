@@ -32,7 +32,7 @@ class DabNodeIf < DabNodeTreeBlock
   end
 
   def formatted_source(options)
-    ret = 'if (' + condition.formatted_source(options) + ")\n"
+    ret = "if (#{condition.formatted_source(options)})\n"
     ret += "{\n"
     ret += _indent(if_true.formatted_source(options))
     ret += '}'

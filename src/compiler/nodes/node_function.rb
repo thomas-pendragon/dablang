@@ -141,15 +141,15 @@ class DabNodeFunction < DabNode
     mapping.each do |key, value|
       mangled_identifier = mangled_identifier.gsub(key, "%#{value}")
     end
-    ret = 'F' + mangled_identifier
+    ret = "F#{mangled_identifier}"
     if member_function?
-      ret = 'C' + parent_class.identifier + '_' + ret
+      ret = "C#{parent_class.identifier}_#{ret}"
     end
     ret
   end
 
   def funclabel_end
-    '__' + funclabel + '_END'
+    "__#{funclabel}_END"
   end
 
   def create_attribute_init(body)
@@ -170,7 +170,7 @@ class DabNodeFunction < DabNode
       output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
     else
       output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
-      output.print('W_METHOD_LEN', funclabel_end + ' - ' + funclabel)
+      output.print('W_METHOD_LEN', "#{funclabel_end} - #{funclabel}")
       arglist.each_with_index do |arg, index|
         klass_name = arg.my_type.type_string
         klass = root.class_number(klass_name)
@@ -227,7 +227,8 @@ class DabNodeFunction < DabNode
     ret += "}\n"
     ret = "inline #{ret}" if inline
     if attrlist && attrlist.count > 0
-      ret = '[' + attrlist.map { |attr| attr.formatted_source(options) }.join(', ') + "]\n#{ret}"
+      list = attrlist.map { |attr| attr.formatted_source(options) }.join(', ')
+      ret = "[#{list}]\n#{ret}"
     end
     ret
   end

@@ -70,7 +70,7 @@ class CovFrontend
                   str = sprintf('%5d hit%s ', hits, hits > 1 ? 's' : ' ') + str
                   str.covformat(format, %i(green bold))
                 elsif included
-                  str = '     miss  ' + str
+                  str = "     miss  #{str}"
                   str.covformat(format, %i(red bold))
                 else
                   ' ' * 11 + str.covformat(format, :white)

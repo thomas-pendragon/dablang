@@ -28,6 +28,6 @@ class DabNodePropertyGet < DabNode
   end
 
   def formatted_source(options)
-    value.formatted_source(options) + '.' + real_identifier
+    "#{value.formatted_source(options)}.#{real_identifier}"
   end
 end

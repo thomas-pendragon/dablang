@@ -151,7 +151,7 @@ EXTRA_STD_CALLS = %w[__import_libc __import_sdl __import_pq].freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
-SYSCALLS = KERNELCODES.values.map { '__' + _1.downcase }
+SYSCALLS = KERNELCODES.values.map { "__#{_1.downcase}" }
 
 require_relative './classes'
 

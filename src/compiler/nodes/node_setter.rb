@@ -22,7 +22,7 @@ class DabNodeSetter < DabNode
     ref = reference&.formatted_source(options) || '_no_reference'
     val = value&.formatted_source(options) || '_no_value'
 
-    ref + ' = ' + val
+    "#{ref} = #{val}"
   end
 
   def returns_value?

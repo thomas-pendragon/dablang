@@ -6,6 +6,6 @@ class DabNodeCallBlock < DabNodeBaseBlock
   end
 
   def formatted_source(options)
-    ' ' + super(options)
+    " #{super(options)}"
   end
 end

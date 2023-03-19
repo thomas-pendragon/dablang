@@ -21,7 +21,7 @@ class FunctionContext
 
   def generate
     ret = []
-    ret << "func #{@name}(" + @args.join(', ') + ')'
+    ret << "func #{@name}(#{@args.join(', ')})"
     ret << '{'
     $length.times do
       ret += generate_random_instruction.map { |str| "  #{str}" }
@@ -46,13 +46,13 @@ class FunctionContext
   end
 
   def generate_random_vardef
-    ret = 'var ' + generate_random_word + ' = ' + generate_random_value + ';'
+    ret = "var #{generate_random_word} = #{generate_random_value};"
     [ret]
   end
 
   def generate_random_if
     ret = []
-    ret << 'if (' + generate_random_value + ')'
+    ret << "if (#{generate_random_value})"
     ret << '{'
     5.times do
       ret += generate_random_simple_instruction.map { |str| "  #{str}" }
@@ -62,7 +62,7 @@ class FunctionContext
   end
 
   def generate_random_call
-    $function_names.sample + '(' + generate_random_value + ', ' + generate_random_value + ');'
+    "#{$function_names.sample}(#{generate_random_value}, #{generate_random_value});"
   end
 
   def generate_random_value
@@ -70,7 +70,7 @@ class FunctionContext
     when 0...40
       rand(200).to_s
     when 40...80
-      '"' + generate_random_word + '"'
+      "\"#{generate_random_word}\""
     else
       @args.sample
     end

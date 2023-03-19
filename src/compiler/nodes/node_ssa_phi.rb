@@ -21,6 +21,7 @@ class DabNodeSSAPhi < DabNode
   end
 
   def formatted_source(_options)
-    '__phi(' + input_registers.map { |reg| "SR#{reg}" }.join(', ') + ')'
+    list = input_registers.map { |reg| "SR#{reg}" }.join(', ')
+    "__phi(#{list})"
   end
 end

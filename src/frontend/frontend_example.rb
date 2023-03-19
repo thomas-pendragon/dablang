@@ -32,8 +32,8 @@ def run_test(settings)
   bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabcb')).to_s
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
 
-  stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
-  stdlib_glob = stdlib_path + '/*.dab'
+  stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
+  stdlib_glob = "#{stdlib_path}/*.dab"
   stdlib_files = Dir.glob(stdlib_glob)
 
   options = '--with-attributes --with-reflection'

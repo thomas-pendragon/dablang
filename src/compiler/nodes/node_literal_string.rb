@@ -16,7 +16,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def compile_string(output)
-    output.print('W_STRING "' + string + '"')
+    output.print("W_STRING \"#{string}\"")
   end
 
   def asm_length
@@ -32,7 +32,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def formatted_source(_options)
-    '"' + string.gsub("\n", '\\n') + '"'
+    "\"#{string.gsub("\n", '\\n')}\""
   end
 
   def constant_value

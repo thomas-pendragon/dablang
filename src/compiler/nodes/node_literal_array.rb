@@ -36,7 +36,8 @@ class DabNodeLiteralArray < DabNode
   end
 
   def formatted_source(options)
-    '@[' + items.map { |item| item.formatted_source(options) }.join(', ') + ']'
+    list = items.map { |item| item.formatted_source(options) }.join(', ')
+    "@[#{list}]"
   end
 
   def uncomplexify_args

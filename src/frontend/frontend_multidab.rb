@@ -57,12 +57,12 @@ class DabMultiSpec
       is_final = !data[next_sym]
 
       lfile = "level#{level}"
-      dab = temp_file(lfile + '.dab')
-      asm = temp_file(lfile + '.dabca')
-      bin = temp_file(lfile + '.dabcb')
-      bin_asm = temp_file(lfile + '.dabcb.dabca')
-      vmo = temp_file(lfile + '.vm')
-      vmoa = temp_file(lfile + '.vm.dabca')
+      dab = temp_file("#{lfile}.dab")
+      asm = temp_file("#{lfile}.dabca")
+      bin = temp_file("#{lfile}.dabcb")
+      bin_asm = temp_file("#{lfile}.dabcb.dabca")
+      vmo = temp_file("#{lfile}.vm")
+      vmoa = temp_file("#{lfile}.vm.dabca")
 
       extract_source(input, dab, data[sym])
       compile_options = ''

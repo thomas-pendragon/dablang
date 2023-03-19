@@ -23,17 +23,17 @@ class DabNodeSetInstVar < DabNode
   end
 
   def identifier
-    '@' + node_identifier.extra_value
+    "@#{node_identifier.extra_value}"
   end
 
   def compile(output)
     reg = value.input_register
-    output.comment(identifier + '=')
+    output.comment("#{identifier}=")
     output.printex(self, 'SET_INSTVAR', node_identifier.symbol_arg, "R#{reg}")
   end
 
   def formatted_source(options)
-    identifier + ' = ' + value.formatted_source(options)
+    "#{identifier} = #{value.formatted_source(options)}"
   end
 
   def returns_value?

@@ -87,7 +87,7 @@ class DabNodeConstant < DabNode
   end
 
   def formatted_source(options)
-    'const[' + value.formatted_source(options) + ']'
+    "const[#{value.formatted_source(options)}]"
   end
 
   def upper_ring?

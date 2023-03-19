@@ -84,9 +84,9 @@ original_makefile = case $toolset
 
 makefile = case $toolset
            when 'gmake'
-             'build/Makefile.' + Digest::SHA256.hexdigest(filelist_body_new)
+             "build/Makefile.#{Digest::SHA256.hexdigest(filelist_body_new)}"
            when /vs\d+/
-             'build/Dab.' + Digest::SHA256.hexdigest(filelist_body_new) + '.sln'
+             "build/Dab.#{Digest::SHA256.hexdigest(filelist_body_new)}.sln"
            end
 
 def build_project(makefile, project)
@@ -171,14 +171,14 @@ end
 def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil, direct_run = nil)
   test_name ||= "#{directory}_spec"
   frontend_type ||= "frontend_#{directory}"
-  base_path = 'test/' + directory
-  path = base_path + '/*.' + extension
-  test_file_name = 'test_' + test_name + '_'
+  base_path = "test/#{directory}"
+  path = "#{base_path}/*.#{extension}"
+  test_file_name = "test_#{test_name}_"
   inputs = Dir.glob(path).sort.reverse
   inputs = ci_parallel(inputs)
   outputs = []
   inputs.each do |input_test_file|
-    output_output_file = input_test_file.gsub(base_path + '/', 'tmp/' + test_file_name).gsub('.' + extension, '.out')
+    output_output_file = input_test_file.gsub("#{base_path}/", "tmp/#{test_file_name}").gsub(".#{extension}", '.out')
     outputs << output_output_file
     file_inputs = $sources + [input_test_file] + $shared_spec_code + extras
     file output_output_file => file_inputs do

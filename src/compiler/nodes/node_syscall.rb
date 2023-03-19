@@ -56,6 +56,6 @@ class DabNodeSyscall < DabNodeBasecall
   end
 
   def formatted_source(options)
-    "#{funname}(" + _formatted_arguments(options) + ')' + formatted_block(options)
+    "#{funname}(#{_formatted_arguments(options)})#{formatted_block(options)}"
   end
 end

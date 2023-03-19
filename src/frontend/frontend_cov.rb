@@ -6,7 +6,7 @@ end
 
 def calculate_coverage(input, output)
   options = ''
-  run_ruby_part(input, output, 'calculate coverage', 'cov', '--format=plaintext' + options, true)
+  run_ruby_part(input, output, 'calculate coverage', 'cov', "--format=plaintext#{options}", true)
 end
 
 def extract_format_source(input, output)

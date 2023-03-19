@@ -6,7 +6,7 @@ def errn(str, *args)
 end
 
 def err(str, *args)
-  errn(str.to_s + "\n", *args)
+  errn("#{str}\n", *args)
 end
 
 def errap(arg)

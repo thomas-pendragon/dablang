@@ -104,9 +104,11 @@ class DabParser
       char
     end.join
 
-    text.lines.each_with_index.map do |line, index|
+    list = text.lines.each_with_index.map do |line, index|
       sprintf('%4d: ', sline + index).white + line
-    end.join("\n") + "\n"
+    end.join("\n")
+
+    "#{list}\n"
   end
 
   def eof?

@@ -91,7 +91,7 @@ class DabOutput
               .select(&:present?)
               .join(', ')
 
-    t = args[0] + ' ' + argsmap
+    t = "#{args[0]} #{argsmap}"
 
     _print(t)
     _print("\n")

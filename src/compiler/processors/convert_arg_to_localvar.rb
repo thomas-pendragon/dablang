@@ -5,7 +5,7 @@ class ConvertArgToLocalvar
       index = list.index(arg)
       default_value = arg.default_value&.dup
       if default_value
-        defid = arg.identifier + '_def'
+        defid = "#{arg.identifier}_def"
         define_var_def = DabNodeDefineLocalVar.new(defid, default_value)
         getter = DabNodeLocalVar.new(defid)
       end

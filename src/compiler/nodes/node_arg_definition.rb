@@ -24,7 +24,7 @@ class DabNodeArgDefinition < DabNode
   def formatted_source(options)
     ret = @identifier
     if default_value
-      ret += ' = ' + default_value.formatted_source(options)
+      ret += " = #{default_value.formatted_source(options)}"
     end
     ret
   end

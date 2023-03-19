@@ -7,7 +7,7 @@ directories = Dir['./test/*']
 directories.each do |directory|
   next if directory.end_with?('/shared')
 
-  list = Dir[directory + '/*']
+  list = Dir["#{directory}/*"]
   list = list.map { |item| File.basename(item) }.sort
   list.each_with_index do |item, index|
     start = sprintf('%04d_', index + 1)

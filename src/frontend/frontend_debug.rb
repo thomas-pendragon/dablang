@@ -59,8 +59,8 @@ class DebugSpec
     if data[:code].present?
       extract_source(input, dab, data[:code])
 
-      stdlib_path = File.expand_path(File.dirname(__FILE__) + '/../../stdlib/')
-      stdlib_glob = stdlib_path + '/*.dab'
+      stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
+      stdlib_glob = "#{stdlib_path}/*.dab"
       stdlib_files = Dir.glob(stdlib_glob)
 
       stdlib_files = [] unless frontend_options['--with-stdlib']

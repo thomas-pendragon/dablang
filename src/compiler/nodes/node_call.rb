@@ -68,7 +68,7 @@ class DabNodeCall < DabNodeExternalBasecall
     ].compact
 
     output.comment(self.real_identifier)
-    output.printex(self, 'CALL' + (has_block? ? '_BLOCK' : ''), *args)
+    output.printex(self, "CALL#{has_block? ? '_BLOCK' : ''}", *args)
   end
 
   def compile_as_ssa(output, output_register)
@@ -88,7 +88,7 @@ class DabNodeCall < DabNodeExternalBasecall
   end
 
   def formatted_source(options)
-    real_identifier + '(' + _formatted_arguments(options) + ')' + formatted_block(options)
+    "#{real_identifier}(#{_formatted_arguments(options)})#{formatted_block(options)}"
   end
 
   def my_type

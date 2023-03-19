@@ -23,7 +23,7 @@ class DabNodeWhile < DabNodeTreeBlock
   end
 
   def formatted_source(options)
-    ret = 'while (' + condition.formatted_source(options) + ")\n"
+    ret = "while (#{condition.formatted_source(options)})\n"
     ret += "{\n"
     ret += _indent(on_block.formatted_source(options))
     ret += '}'

@@ -20,6 +20,6 @@ class DabNodeReferenceMember < DabNodeReference
   end
 
   def formatted_source(options)
-    base.formatted_source(options) + '.' + name
+    "#{base.formatted_source(options)}.#{name}"
   end
 end

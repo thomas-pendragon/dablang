@@ -256,7 +256,7 @@ class DabConcreteType < DabType
   end
 
   def real_type_string
-    type_string + '!'
+    "#{type_string}!"
   end
 
   def can_assign_from?(other_type)

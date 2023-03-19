@@ -24,7 +24,7 @@ class DabNodeTreeBlock < DabNode
     lines = @children.map { |item| item.formatted_source(options) + (item.formatted_skip_semicolon? ? '' : ';') }
     return '' unless lines.count > 0
 
-    lines.join("\n") + "\n"
+    "#{lines.join("\n")}\n"
   end
 
   def last_node
