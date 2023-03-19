@@ -38,7 +38,7 @@ end
 def _dab_benchmark_print(file, level, list, subtotal, total)
   list = list.values.sort_by { |item| -item[:time] }
   list.each do |item|
-    len = 120 - level * 2
+    len = 120 - (level * 2)
     file.printf("%9d | %s%-#{len}s | %8.4fs |  %6.2f%% | %6.2f%%\n", item[:calls], ' ' * (level * 2),
                 item[:name], item[:time], 100.0 * item[:time] / subtotal, 100.0 * item[:time] / total)
     sublist = item[:children]

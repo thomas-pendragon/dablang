@@ -194,7 +194,7 @@ class OutputStream
 
       write_uint64(offset)
 
-      size_of_header = 4 + 4 + 8 + 8 + 8 + 8 + sections.count * 32
+      size_of_header = 4 + 4 + 8 + 8 + 8 + 8 + (sections.count * 32)
       size_of_data = @code.length - size_of_header
 
       write_uint64(size_of_header)
@@ -250,7 +250,7 @@ class OutputStream
       jump_pos = jump[0]
       jump_label = jump[1]
 
-      _rewind(jump_pos + 1 + offset * 2) # opcode is 1 byte
+      _rewind(jump_pos + 1 + (offset * 2)) # opcode is 1 byte
       diff = labels[jump_label] - jump_pos
       _rewrite_int16(diff)
     end
@@ -285,7 +285,7 @@ class Parser
   end
 
   def print_temp_header!(sections_count)
-    header_length = 40 + 32 * sections_count
+    header_length = 40 + (32 * sections_count)
     @output_stream.push_header(header_length)
   end
 

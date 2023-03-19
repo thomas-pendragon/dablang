@@ -385,10 +385,10 @@ Style/RedundantArgument: # new in 1.4
   Enabled: true
 Style/CollectionCompact: # new in 1.2
   Enabled: true
+Lint/AmbiguousOperatorPrecedence: # new in 1.21
+  Enabled: true
 
 Lint/NonAtomicFileOperation: # new in 1.31
-  Enabled: false
-Lint/AmbiguousOperatorPrecedence: # new in 1.21
   Enabled: false
 Style/HashConversion: # new in 1.10
   Enabled: false

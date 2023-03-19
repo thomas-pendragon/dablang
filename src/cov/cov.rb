@@ -73,7 +73,7 @@ class CovFrontend
                   str = "     miss  #{str}"
                   str.covformat(format, %i(red bold))
                 else
-                  ' ' * 11 + str.covformat(format, :white)
+                  (' ' * 11) + str.covformat(format, :white)
                 end
           print str
         end
