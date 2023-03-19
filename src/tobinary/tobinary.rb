@@ -294,9 +294,12 @@ class Parser
     when Hash
       left = _process(item[:left], offset)
       right = _process(item[:right], offset)
-      raise '?' unless item[:op] == '+'
+      op = item[:op]
 
-      left + right
+      return left + right if op == '+'
+      return left - right if op == '-'
+
+      raise "unknown op #{op}"
     when String
       @label_positions[item] + offset
     when Fixnum
@@ -363,7 +366,7 @@ class Parser
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
         when 'W_METHOD_LEN'
-          @output_stream._push_uint64(line[1])
+          @output_stream._push_uint64(_process_address(line[1]))
         when 'W_COV_FILE'
           @output_stream._push_uint64(_process(line[1]))
         when 'W_BYTE'

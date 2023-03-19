@@ -42,6 +42,7 @@ struct DabFunction
     dab_function_reg_t extra_reg = nullptr;
 
     uint64_t    address = 0;
+    uint64_t    length  = 0;
     std::string name;
 
     DabFunctionReflection reflection;

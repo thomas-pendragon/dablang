@@ -148,6 +148,10 @@ class DabNodeFunction < DabNode
     ret
   end
 
+  def funclabel_end
+    '__' + funclabel + '_END'
+  end
+
   def create_attribute_init(body)
     attrlist&.each do |attribute|
       arglist = DabNode.new
@@ -166,7 +170,7 @@ class DabNodeFunction < DabNode
       output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
     else
       output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
-      output.print('W_METHOD_LEN', 0)
+      output.print('W_METHOD_LEN', funclabel_end + ' - ' + funclabel)
       arglist.each_with_index do |arg, index|
         klass_name = arg.my_type.type_string
         klass = root.class_number(klass_name)
@@ -192,6 +196,10 @@ class DabNodeFunction < DabNode
     output.print('STACK_RESERVE', n_local_vars)
     blocks.each do |block|
       block.compile(output)
+    end
+    if $feature_reflection
+      output.label(funclabel_end)
+      output.print('NOP')
     end
   end
 

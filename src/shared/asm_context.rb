@@ -101,8 +101,12 @@ class DabAsmContext < DabBaseContext
     read_identifier_fname || read_floatnum || read_fixnum || read_string
   end
 
-  def read_arg
+  def read_arg_minus
     _read_list_or_single(:read_arg_base, ['+'])
+  end
+
+  def read_arg
+    _read_list_or_single(:read_arg_minus, ['-'])
   end
 
   def _read_list(item_method, separator = ',')
