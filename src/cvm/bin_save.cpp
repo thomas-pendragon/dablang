@@ -8,6 +8,19 @@ static void _twrite(std::vector<byte> &out, const byte *data, size_t size)
     }
 }
 
+static void _ttwrite(std::vector<byte> &out, const byte *data, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        fprintf(stderr, "%02x ", data[i]);
+        if (i % 16 == 15) {
+            fprintf(stderr, "\n");
+        }
+        out.push_back(data[i]);
+    }
+    fprintf(stderr, "\n");
+}
+
 template <typename T>
 static void _twrite(std::vector<byte> &out, T value)
 {
@@ -85,6 +98,8 @@ void DabVM::dump_vm(FILE *out)
     (void)last_code_index;
     (void)last_data_index;
 
+    auto &code_section = sections[last_code_index];
+
     BinSection func_section = {};
     memcpy(func_section.name, "func", 4);
     std::vector<BinFunction> dump_functions;
@@ -117,6 +132,9 @@ void DabVM::dump_vm(FILE *out)
         bin_func.symbol  = it.first;
         bin_func.klass   = DAB_CLASS_NIL;
         bin_func.address = it.second.address;
+        if (fun.new_method) {
+            bin_func.address += code_section.pos + code_section.length;
+        }
         dump_functions.push_back(bin_func);
     }
     func_section.special_index = TEMP_FUNC_SECTION;
@@ -198,6 +216,13 @@ void DabVM::dump_vm(FILE *out)
             auto ptr = instructions.raw_base_data() + pos;
 
             _twrite(dump_data, (byte *)ptr, (size_t)length);
+
+            if (std::string(section.name) == "code") {
+                fprintf(stderr, "vm/binsave: inject %d bytes of new code\n", (int)new_instructions.length);
+                _ttwrite(dump_data, new_instructions.data, new_instructions.length);
+                length += new_instructions.length;
+                section.length += new_instructions.length;
+            }
         }
         else if (section.special_index == TEMP_FUNC_SECTION)
         {

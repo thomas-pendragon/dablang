@@ -38,7 +38,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(stderr, "VM: define_method %x (%p, len = %d) as '%s'\n", (int)method_address,
             (void *)method_address, (int)method_length, method_name.c_str());
 
-    auto data        = instructions.raw_base_data() + method_symbol;
+    auto data        = instructions.raw_base_data() + method_address;
     auto new_address = new_instructions.length;
     new_instructions.append(data, method_length);
 
