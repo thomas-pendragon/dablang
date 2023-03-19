@@ -84,7 +84,7 @@ class DabSpec
     vmo = temp_file('vm')
     out = temp_file('out')
 
-    FileUtils.rm(out) if File.exist?(out)
+    FileUtils.rm_f(out)
 
     extract_source(input, dab, data[:code])
 

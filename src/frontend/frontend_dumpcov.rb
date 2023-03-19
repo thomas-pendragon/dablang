@@ -40,7 +40,7 @@ def run_test(settings)
   bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.bin')).to_s
   cov = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.cov')).to_s
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
-  FileUtils.rm(out) if File.exist?(out)
+  FileUtils.rm_f(out)
 
   extract_format_source(input, asm)
   assemble(asm, bin, newformat_option)

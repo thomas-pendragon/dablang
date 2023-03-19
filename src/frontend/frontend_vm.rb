@@ -60,7 +60,7 @@ class VMFrontend
     asm = temp_file('asm')
     bin = temp_file('bin')
     out = temp_file('out')
-    FileUtils.rm(out) if File.exist?(out)
+    FileUtils.rm_f(out)
 
     if data[:dab_code]
       compile_options = ''

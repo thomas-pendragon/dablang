@@ -17,7 +17,7 @@ class DebugSpec
       begin
         qsystem("./bin/cvm --debug #{input}", timeout: 10, input_file: extra_input, output_file: output, error_file: error_output)
       rescue SystemCommandError
-        FileUtils.rm(output) if File.exist?(output)
+        FileUtils.rm_f(output)
         raise
       end
     end
@@ -53,7 +53,7 @@ class DebugSpec
     vme = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.vme')).to_s
     out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
 
-    FileUtils.rm(out) if File.exist?(out)
+    FileUtils.rm_f(out)
 
     extract_source(input, inp, data[:input])
     if data[:code].present?

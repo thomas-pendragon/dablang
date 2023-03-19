@@ -51,7 +51,7 @@ def run_test(settings)
   bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.bin')).to_s
   out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
   post_bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.post.bin')).to_s
-  FileUtils.rm(out) if File.exist?(out)
+  FileUtils.rm_f(out)
 
   if asm_input
     File.open(in_asm, 'wb') { |f| f << data[:asm_input] << "\n" }

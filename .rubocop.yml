@@ -373,6 +373,18 @@ Style/MultilineInPatternThen: # new in 1.16
   Enabled: true
 Style/NestedFileDirname: # new in 1.26
   Enabled: true
+Style/RedundantArgument: # new in 1.4
+  Enabled: true
+Style/CollectionCompact: # new in 1.2
+  Enabled: true
+Lint/AmbiguousOperatorPrecedence: # new in 1.21
+  Enabled: true
+Lint/NonAtomicFileOperation: # new in 1.31
+  Enabled: true
+Style/HashConversion: # new in 1.10
+  Enabled: true
+Style/NegatedIfElseCondition: # new in 1.2
+  Enabled: true
 
 Lint/UselessRescue: # new in 1.43
   Enabled: false
@@ -381,16 +393,3 @@ Lint/DuplicateBranch:
 Lint/EmptyBlock: # new in 1.1
   Enabled: false
 
-Style/RedundantArgument: # new in 1.4
-  Enabled: true
-Style/CollectionCompact: # new in 1.2
-  Enabled: true
-Lint/AmbiguousOperatorPrecedence: # new in 1.21
-  Enabled: true
-
-Lint/NonAtomicFileOperation: # new in 1.31
-  Enabled: false
-Style/HashConversion: # new in 1.10
-  Enabled: true
-Style/NegatedIfElseCondition: # new in 1.2
-  Enabled: true

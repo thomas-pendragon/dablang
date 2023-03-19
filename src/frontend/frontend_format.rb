@@ -52,7 +52,7 @@ class FormatSpec
       compare_output(info, actual_body, test_body)
       File.open(out, 'wb') { |f| f << '1' }
     rescue DabCompareError
-      FileUtils.rm(out) if File.exist?(out)
+      FileUtils.rm_f(out)
       raise
     end
   end
