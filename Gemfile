@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'awesome_print'
+gem 'amazing_print'
 gem 'clipboard'
 gem 'colorize'
 gem 'diffy'
