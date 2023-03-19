@@ -7,7 +7,7 @@ end
 def extract_format_source(input, output)
   describe_action(input, output, 'extract source') do
     text = read_test_file(input)[:code]
-    text = text.split(' ').map do |char|
+    text = text.split.map do |char|
       [char.to_i(16)].pack('C')
     end.join
     File.open(output, 'wb') do |file|

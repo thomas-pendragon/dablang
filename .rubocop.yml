@@ -378,11 +378,12 @@ Lint/UselessRescue: # new in 1.43
   Enabled: false
 Lint/DuplicateBranch:
   Enabled: false
-
-Style/RedundantArgument: # new in 1.4
-  Enabled: false
 Lint/EmptyBlock: # new in 1.1
   Enabled: false
+
+Style/RedundantArgument: # new in 1.4
+  Enabled: true
+
 Lint/NonAtomicFileOperation: # new in 1.31
   Enabled: false
 Style/CollectionCompact: # new in 1.2

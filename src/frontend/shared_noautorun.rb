@@ -121,7 +121,7 @@ module BaseFrontend
     context = InlineCompilerContext.new
     cmd_replacement = "ruby src/compiler/compiler.rb #{input.join(' ')} #{options}"
     describe_action_with_replacement(input, output, 'compile', cmd_replacement) do
-      settings = options.split(' ') + input
+      settings = options.split + input
       settings = read_args!(settings)
       run_dab_compiler(settings, context)
       File.open(output, 'wb') { |f| f << context.stdout.string }
@@ -136,7 +136,7 @@ module BaseFrontend
     describe_action_with_replacement(input, output, 'assemble', cmd_replacement) do
       input = File.open(input, 'r')
       output = File.open(output, 'wb')
-      options = read_args!(assemble_options.split(' '))
+      options = read_args!(assemble_options.split)
       raw = options[:raw]
       run_tobinary(input, output, false, true, raw)
       input.close
