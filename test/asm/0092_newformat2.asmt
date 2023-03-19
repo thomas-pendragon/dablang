@@ -31,6 +31,8 @@ func foo(a, b<Uint8>)
                                  REFLECT R2, S2, 0, -1
 /* PRINT        */               SYSCALL RNIL, 0, R2
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "a" 
@@ -44,6 +46,7 @@ func foo(a, b<Uint8>)
  
                    _FUNC:
 /* foo          */               W_METHOD_EX 2, -1, Ffoo, 2
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
 /* a<Object>    */               W_METHOD_ARG 0, 0
 /* b<Uint8>     */               W_METHOD_ARG 1, 6
 /* $ret<Object> */               W_METHOD_ARG -1, 0

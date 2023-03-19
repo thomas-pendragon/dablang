@@ -38,12 +38,16 @@ func foo(n)
                                  REFLECT R1, S5, 2, 256
 /* PRINT        */               SYSCALL RNIL, 0, R1
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    CFoo_Fzomg:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* b            */               LOAD_ARG R1, 1
                                  RETURN RNIL
+                   __CFoo_Fzomg_END:
+                                 NOP 
  
                    _CLAS:
 /* Foo          */               W_CLASS 256, 0, 0
@@ -66,9 +70,11 @@ func foo(n)
  
                    _FUNC:
 /* foo          */               W_METHOD_EX 3, -1, Ffoo, 1
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
 /* n<Object>    */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* zomg         */               W_METHOD_EX 5, 256, CFoo_Fzomg, 2
+                                 W_METHOD_LEN __CFoo_Fzomg_END - CFoo_Fzomg
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* b<Uint8>     */               W_METHOD_ARG 2, 6
 /* $ret<Object> */               W_METHOD_ARG -1, 0
