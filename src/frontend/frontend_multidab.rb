@@ -1,4 +1,4 @@
-require_relative './shared_noautorun.rb'
+require_relative './shared_noautorun'
 
 $autorun = true if $autorun.nil?
 

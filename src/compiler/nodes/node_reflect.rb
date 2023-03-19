@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeReflect < DabNode
   attr_reader :reflect_type

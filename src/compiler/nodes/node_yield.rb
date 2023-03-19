@@ -1,5 +1,5 @@
-require_relative 'node_basecall.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node_basecall'
+require_relative '../processors/uncomplexify'
 
 class DabNodeYield < DabNodeBasecall
   lower_with Uncomplexify

@@ -1,5 +1,5 @@
-require_relative 'node_set_local_var.rb'
-require_relative '../processors/add_localvar_postfix.rb'
+require_relative 'node_set_local_var'
+require_relative '../processors/add_localvar_postfix'
 
 class DabNodeDefineLocalVar < DabNodeSetLocalVar
   after_init AddLocalvarPostfix

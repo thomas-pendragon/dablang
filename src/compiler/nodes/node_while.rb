@@ -1,4 +1,4 @@
-require_relative 'node_tree_block.rb'
+require_relative 'node_tree_block'
 
 class DabNodeWhile < DabNodeTreeBlock
   def initialize(condition, on_block)

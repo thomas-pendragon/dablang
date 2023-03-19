@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeAttribute < DabNode
   def initialize(name, arglist)

@@ -1,5 +1,5 @@
-require_relative './common_tools.rb'
-require_relative '../src/shared/opcodes.rb'
+require_relative './common_tools'
+require_relative '../src/shared/opcodes'
 
 source = 'src/shared/opcodes.rb'
 

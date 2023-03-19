@@ -1,2 +1,2 @@
-require_relative './args_noautorun.rb'
+require_relative './args_noautorun'
 read_args!

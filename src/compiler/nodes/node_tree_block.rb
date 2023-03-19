@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/flatten_tree_block.rb'
+require_relative 'node'
+require_relative '../processors/flatten_tree_block'
 
 class DabNodeTreeBlock < DabNode
   flatten_with FlattenTreeBlock

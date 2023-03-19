@@ -209,8 +209,6 @@ Naming/VariableNumber:
   Enabled: false
 
 # to be re-enabled
-Style/RedundantFileExtensionInRequire:
-  Enabled: false
 Style/StringConcatenation:
   Enabled: false
 Style/ClassEqualityComparison:

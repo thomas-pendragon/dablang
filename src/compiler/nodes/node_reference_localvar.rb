@@ -1,4 +1,4 @@
-require_relative 'node_reference.rb'
+require_relative 'node_reference'
 
 class DabNodeReferenceLocalVar < DabNodeReference
   attr_reader :name

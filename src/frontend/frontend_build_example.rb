@@ -1,2 +1,2 @@
 $dont_run_example = true
-require_relative './frontend_example.rb'
+require_relative './frontend_example'

@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodePrefixNode < DabNode
   def initialize(operator, parent_prefix_node)

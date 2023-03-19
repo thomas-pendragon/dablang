@@ -1,9 +1,9 @@
-require_relative 'node.rb'
-require_relative '../processors/strip_unused_values.rb'
-require_relative '../processors/strip_extra_return.rb'
-require_relative '../processors/optimize_block_jump_next.rb'
-require_relative '../processors/remove_unreachable_block.rb'
-require_relative '../processors/optimize_block_jump.rb'
+require_relative 'node'
+require_relative '../processors/strip_unused_values'
+require_relative '../processors/strip_extra_return'
+require_relative '../processors/optimize_block_jump_next'
+require_relative '../processors/remove_unreachable_block'
+require_relative '../processors/optimize_block_jump'
 
 class DabNodeBasicBlock < DabNode
   lower_with StripUnusedValues

@@ -1,6 +1,6 @@
-require_relative 'node.rb'
-require_relative '../processors/fold_constant_cast.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node'
+require_relative '../processors/fold_constant_cast'
+require_relative '../processors/uncomplexify'
 
 class DabNodeCast < DabNode
   optimize_with FoldConstantCast

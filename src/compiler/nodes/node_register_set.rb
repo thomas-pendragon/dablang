@@ -1,6 +1,6 @@
-require_relative 'node.rb'
-require_relative '../concerns/register_setter_concern.rb'
-require_relative '../processors/ssa_prune_unused_setter.rb'
+require_relative 'node'
+require_relative '../concerns/register_setter_concern'
+require_relative '../processors/ssa_prune_unused_setter'
 
 class DabNodeRegisterSet < DabNode
   include RegisterSetterConcern

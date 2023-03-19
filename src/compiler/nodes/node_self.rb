@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeSelf < DabNode
   def formatted_source(_options)

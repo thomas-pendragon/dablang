@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require_relative '../../src/compiler/_requires.rb'
+require_relative '../../src/compiler/_requires'
 
 describe DecompileElseIfs, decompile: true do
   it 'should decompile if+else' do

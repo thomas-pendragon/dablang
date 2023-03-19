@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require_relative '../../src/compiler/_requires.rb'
+require_relative '../../src/compiler/_requires'
 
 describe DabNode, cache: true do
   it 'rebuilds cache' do

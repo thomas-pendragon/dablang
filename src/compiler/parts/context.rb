@@ -1,4 +1,4 @@
-require_relative '../../shared/base_context.rb'
+require_relative '../../shared/base_context'
 
 class UnknownTokenException < RuntimeError
   attr_reader :pos

@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeHasBlock < DabNode
   def compile_as_ssa(output, output_register)

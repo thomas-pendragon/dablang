@@ -1,5 +1,5 @@
-require_relative '../../setup.rb'
-require_relative '../compiler/_requires.rb'
+require_relative '../../setup'
+require_relative '../compiler/_requires'
 
 stream = DabProgramStream.new(STDIN.read)
 compiler = DabCompiler.new(stream)

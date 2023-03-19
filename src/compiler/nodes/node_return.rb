@@ -1,6 +1,6 @@
-require_relative 'node.rb'
-require_relative '../processors/check_return_type.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node'
+require_relative '../processors/check_return_type'
+require_relative '../processors/uncomplexify'
 
 class DabNodeReturn < DabNode
   check_with CheckReturnType

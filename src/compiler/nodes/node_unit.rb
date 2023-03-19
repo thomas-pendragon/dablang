@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/create_attributes.rb'
+require_relative 'node'
+require_relative '../processors/create_attributes'
 
 BUILTINS = SYSCALLS + EXTRA_STD_CALLS + %w[
   print

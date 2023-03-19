@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeSSAGet < DabNode
   attr_accessor :input_register

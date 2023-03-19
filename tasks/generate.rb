@@ -1,5 +1,5 @@
-require_relative '../setup.rb'
-require_relative '../src/shared/args.rb'
+require_relative '../setup'
+require_relative '../src/shared/args'
 require 'random-word'
 
 $scope = $settings[:scope] || 'basic'

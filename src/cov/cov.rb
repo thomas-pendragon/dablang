@@ -1,8 +1,8 @@
-require_relative '../../setup.rb'
-require_relative '../shared/debug_output.rb'
-require_relative '../shared/args.rb'
-require_relative '../shared/system.rb'
-require_relative '../frontend/shared_noautorun.rb'
+require_relative '../../setup'
+require_relative '../shared/debug_output'
+require_relative '../shared/args'
+require_relative '../shared/system'
+require_relative '../frontend/shared_noautorun'
 
 class String
   def covformat(format, methods)

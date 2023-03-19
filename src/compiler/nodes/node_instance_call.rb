@@ -1,7 +1,7 @@
-require_relative 'node_external_basecall.rb'
-require_relative '../processors/simplify_class_property.rb'
-require_relative '../processors/check_instance_function_existence.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node_external_basecall'
+require_relative '../processors/simplify_class_property'
+require_relative '../processors/check_instance_function_existence'
+require_relative '../processors/uncomplexify'
 
 class DabNodeInstanceCall < DabNodeExternalBasecall
   optimize_with SimplifyClassProperty

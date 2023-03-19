@@ -1,3 +1,3 @@
-require_relative '../../setup.rb'
-require_relative '_requires.rb'
-require_relative '../shared/benchmark.rb'
+require_relative '../../setup'
+require_relative '_requires'
+require_relative '../shared/benchmark'

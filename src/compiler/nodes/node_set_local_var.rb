@@ -1,7 +1,7 @@
-require_relative 'node.rb'
-require_relative '../processors/check_assign_type.rb'
-require_relative '../concerns/localvar_definition_concern.rb'
-require_relative '../processors/convert_set_value.rb'
+require_relative 'node'
+require_relative '../processors/check_assign_type'
+require_relative '../concerns/localvar_definition_concern'
+require_relative '../processors/convert_set_value'
 
 class DabNodeSetLocalVar < DabNode
   include LocalvarDefinitionConcern

@@ -1,9 +1,9 @@
-require_relative '../../setup.rb'
-require_relative '../shared/debug_output.rb'
-require_relative '../shared/opcodes.rb'
-require_relative '../shared/parser.rb'
-require_relative '../shared/asm_context.rb'
-require_relative '../shared/args_noautorun.rb'
+require_relative '../../setup'
+require_relative '../shared/debug_output'
+require_relative '../shared/opcodes'
+require_relative '../shared/parser'
+require_relative '../shared/asm_context'
+require_relative '../shared/args_noautorun'
 
 $autorun = true if $autorun.nil?
 

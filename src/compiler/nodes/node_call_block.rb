@@ -1,4 +1,4 @@
-require_relative 'node_base_block.rb'
+require_relative 'node_base_block'
 
 class DabNodeCallBlock < DabNodeBaseBlock
   def initialize(body, arglist = nil)

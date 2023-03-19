@@ -1,4 +1,4 @@
-require_relative 'node_literal.rb'
+require_relative 'node_literal'
 
 class DabNodeLiteralNil < DabNodeLiteral
   def compile_as_ssa(output, output_register)

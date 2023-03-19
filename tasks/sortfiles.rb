@@ -1,4 +1,4 @@
-require_relative '../setup.rb'
+require_relative '../setup'
 
 autofix = ENV['AUTOFIX']&.to_i == 1
 

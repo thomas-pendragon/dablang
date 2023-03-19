@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodePropertyGet < DabNode
   lower_with :convert_to_call

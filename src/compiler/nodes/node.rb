@@ -1,5 +1,5 @@
-require_relative '../parts/module_dump.rb'
-require_relative '../parts/module_processors.rb'
+require_relative '../parts/module_dump'
+require_relative '../parts/module_processors'
 
 class DabNode
   include DabNodeModuleDump

@@ -1,4 +1,4 @@
-require_relative 'node_literal.rb'
+require_relative 'node_literal'
 
 class DabNodeLiteralNumber < DabNodeLiteral
   attr_reader :number

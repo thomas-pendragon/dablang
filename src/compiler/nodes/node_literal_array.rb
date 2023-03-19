@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node'
+require_relative '../processors/uncomplexify'
 
 class DabNodeLiteralArray < DabNode
   lower_with Uncomplexify

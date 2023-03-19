@@ -1,4 +1,4 @@
-require_relative 'node_extractable_literal.rb'
+require_relative 'node_extractable_literal'
 
 class DabNodeSymbol < DabNodeExtractableLiteral
   attr_reader :symbol

@@ -1,5 +1,5 @@
-require_relative '../setup.rb'
-require_relative '../src/shared/system.rb'
+require_relative '../setup'
+require_relative '../src/shared/system'
 
 FILES = ['./src/compiler/_requires.rb'].freeze
 

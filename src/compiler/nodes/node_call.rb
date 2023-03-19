@@ -1,11 +1,11 @@
-require_relative 'node_external_basecall.rb'
-require_relative '../../shared/opcodes.rb'
-require_relative '../processors/check_call_args_count.rb'
-require_relative '../processors/check_call_args_types.rb'
-require_relative '../processors/check_function_existence.rb'
-require_relative '../processors/concreteify_call.rb'
-require_relative '../processors/convert_call_to_syscall.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node_external_basecall'
+require_relative '../../shared/opcodes'
+require_relative '../processors/check_call_args_count'
+require_relative '../processors/check_call_args_types'
+require_relative '../processors/check_function_existence'
+require_relative '../processors/concreteify_call'
+require_relative '../processors/convert_call_to_syscall'
+require_relative '../processors/uncomplexify'
 
 class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckFunctionExistence

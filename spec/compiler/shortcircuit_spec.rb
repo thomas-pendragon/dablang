@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require_relative '../../src/compiler/_requires.rb'
+require_relative '../../src/compiler/_requires'
 
 describe FixShortcircuit, uint8: true do
   it 'provides a proper evaluation of ||' do

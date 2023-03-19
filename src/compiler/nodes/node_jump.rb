@@ -1,4 +1,4 @@
-require_relative 'node_base_jump.rb'
+require_relative 'node_base_jump'
 
 class DabNodeJump < DabNodeBaseJump
   attr_reader :target

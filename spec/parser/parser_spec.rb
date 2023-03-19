@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require_relative '../../src/shared/parser.rb'
+require_relative '../../src/shared/parser'
 
 describe DabParser do
   describe 'comments' do

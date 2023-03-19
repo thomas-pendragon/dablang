@@ -1,5 +1,5 @@
-require_relative './common_tools.rb'
-require_relative '../src/shared/classes.rb'
+require_relative './common_tools'
+require_relative '../src/shared/classes'
 
 source = 'src/shared/classes.rb'
 date_source = source

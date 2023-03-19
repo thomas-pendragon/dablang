@@ -1,5 +1,5 @@
-require_relative 'node_tree_block.rb'
-require_relative '../processors/optimize_constant_if.rb'
+require_relative 'node_tree_block'
+require_relative '../processors/optimize_constant_if'
 
 class DabNodeIf < DabNodeTreeBlock
   optimize_with OptimizeConstantIf

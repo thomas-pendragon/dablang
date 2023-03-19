@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/lower_setter.rb'
+require_relative 'node'
+require_relative '../processors/lower_setter'
 
 class DabNodeSetter < DabNode
   after_init LowerSetter

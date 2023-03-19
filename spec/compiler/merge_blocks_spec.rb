@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require_relative '../../src/compiler/_requires.rb'
+require_relative '../../src/compiler/_requires'
 
 describe MergeBlocks, decompile: true do
   it 'should remove jumps when multiple children' do

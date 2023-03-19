@@ -1,5 +1,5 @@
-require_relative './shared_noautorun.rb'
-require_relative '../compiler/_requires.rb'
+require_relative './shared_noautorun'
+require_relative '../compiler/_requires'
 
 $autorun = true if $autorun.nil?
 

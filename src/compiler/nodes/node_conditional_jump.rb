@@ -1,6 +1,6 @@
-require_relative 'node_base_jump.rb'
-require_relative '../processors/flatten_conditional_jump.rb'
-require_relative '../processors/uncomplexify.rb'
+require_relative 'node_base_jump'
+require_relative '../processors/flatten_conditional_jump'
+require_relative '../processors/uncomplexify'
 
 class DabNodeConditionalJump < DabNodeBaseJump
   attr_reader :target

@@ -1,12 +1,12 @@
-require_relative 'node.rb'
-require_relative '../processors/convert_arg_to_localvar.rb'
-require_relative '../processors/optimize_first_block.rb'
-require_relative '../processors/strip_unused_function.rb'
-require_relative '../processors/add_missing_return.rb'
-require_relative '../processors/ssaify.rb'
-require_relative '../processors/ssa_break_phi_nodes.rb'
-require_relative '../processors/reorder_registers.rb'
-require_relative '../processors/reorder_registers_incr.rb'
+require_relative 'node'
+require_relative '../processors/convert_arg_to_localvar'
+require_relative '../processors/optimize_first_block'
+require_relative '../processors/strip_unused_function'
+require_relative '../processors/add_missing_return'
+require_relative '../processors/ssaify'
+require_relative '../processors/ssa_break_phi_nodes'
+require_relative '../processors/reorder_registers'
+require_relative '../processors/reorder_registers_incr'
 
 class DabNodeFunction < DabNode
   attr_accessor :identifier

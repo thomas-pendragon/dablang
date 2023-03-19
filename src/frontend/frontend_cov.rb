@@ -1,4 +1,4 @@
-require_relative './shared.rb'
+require_relative './shared'
 
 def read_test_file(fname)
   base_read_test_file(fname)

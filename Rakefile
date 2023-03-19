@@ -4,16 +4,16 @@ if ENV['COVERAGE']
   SimpleCov.command_name 'Rakefile'
 end
 
-require_relative 'setup.rb'
-require_relative 'src/shared/system.rb'
+require_relative 'setup'
+require_relative 'src/shared/system'
 
 $autorun = false
 
-require_relative './src/frontend/frontend.rb'
-require_relative './src/frontend/frontend_asm.rb'
-require_relative './src/frontend/frontend_format.rb'
-require_relative './src/frontend/frontend_vm.rb'
-require_relative './src/frontend/frontend_debug.rb'
+require_relative './src/frontend/frontend'
+require_relative './src/frontend/frontend_asm'
+require_relative './src/frontend/frontend_format'
+require_relative './src/frontend/frontend_vm'
+require_relative './src/frontend/frontend_debug'
 
 $sources = Dir.glob('src/**/*.rb')
 

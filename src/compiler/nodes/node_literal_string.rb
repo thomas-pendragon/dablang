@@ -1,4 +1,4 @@
-require_relative 'node_extractable_literal.rb'
+require_relative 'node_extractable_literal'
 
 class DabNodeLiteralString < DabNodeExtractableLiteral
   attr_reader :string

@@ -1,4 +1,4 @@
-require_relative '../setup.rb'
+require_relative '../setup'
 
 def dab_benchmark(*_args)
   yield

@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../concerns/localvar_definition_concern.rb'
+require_relative 'node'
+require_relative '../concerns/localvar_definition_concern'
 
 class DabNodeLocalVar < DabNode
   include LocalvarDefinitionConcern

@@ -1,4 +1,4 @@
-require_relative 'node.rb'
+require_relative 'node'
 
 class DabNodeSSAPhiBase < DabNode
   attr_accessor :input_nodes

@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/check_jump_targets.rb'
+require_relative 'node'
+require_relative '../processors/check_jump_targets'
 
 class DabNodeBaseJump < DabNode
   check_with CheckJumpTargets

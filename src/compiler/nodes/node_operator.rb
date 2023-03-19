@@ -1,8 +1,8 @@
-require_relative 'node.rb'
-require_relative '../processors/fold_constant.rb'
-require_relative '../processors/fold_is_test.rb'
-require_relative '../processors/uncomplexify.rb'
-require_relative '../processors/fix_shortcircuit.rb'
+require_relative 'node'
+require_relative '../processors/fold_constant'
+require_relative '../processors/fold_is_test'
+require_relative '../processors/uncomplexify'
+require_relative '../processors/fix_shortcircuit'
 
 class DabNodeOperator < DabNode
   optimize_with FoldConstant

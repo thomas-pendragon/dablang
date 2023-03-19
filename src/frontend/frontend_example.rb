@@ -1,4 +1,4 @@
-require_relative './shared.rb'
+require_relative './shared'
 
 def compile_to_asm(input, output, options)
   run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)

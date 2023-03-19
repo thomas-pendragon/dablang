@@ -1,5 +1,5 @@
-require_relative 'node.rb'
-require_relative '../processors/strip_unused_constant.rb'
+require_relative 'node'
+require_relative '../processors/strip_unused_constant'
 
 class DabNodeConstant < DabNode
   strip_with StripUnusedConstant

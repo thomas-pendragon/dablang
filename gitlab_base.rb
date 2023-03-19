@@ -1,4 +1,4 @@
-require_relative 'setup.rb'
+require_relative 'setup'
 
 base_path = 'gitlab_base.yml'
 

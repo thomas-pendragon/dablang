@@ -1,5 +1,5 @@
-require_relative 'node_external_basecall.rb'
-require_relative '../../shared/opcodes.rb'
+require_relative 'node_external_basecall'
+require_relative '../../shared/opcodes'
 
 class DabNodeHardcall < DabNodeExternalBasecall
   def initialize(identifier, args, block, block_capture)
