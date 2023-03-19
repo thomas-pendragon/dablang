@@ -208,6 +208,9 @@ Style/AccessorGrouping:
 Naming/VariableNumber:
   Enabled: false
 
+Style/SoleNestedConditional:
+  Enabled: false
+
 # to be re-enabled
 Style/ClassEqualityComparison:
   Enabled: false
@@ -222,8 +225,6 @@ Style/CaseLikeIf:
 Lint/UselessMethodDefinition:
   Enabled: false
 Lint/ElseLayout:
-  Enabled: false
-Style/SoleNestedConditional:
   Enabled: false
 Style/CombinableLoops:
   Enabled: false
