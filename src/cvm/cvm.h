@@ -48,6 +48,8 @@ struct DabFunction
     DabFunctionReflection reflection;
 
     uint64_t source_ring = 0;
+
+    bool new_method = false;
 };
 
 enum
@@ -463,7 +465,9 @@ struct DabVM
     DabVMReset reset;
     Coverage   coverage;
 
-    Stream                              instructions;
+    Stream instructions;
+    Buffer new_instructions;
+
     std::map<dab_symbol_t, DabFunction> functions;
 
     std::vector<DabSymbol> symbols;
