@@ -82,7 +82,7 @@ func main()
   var cli_addr = ByteBuffer.new(16);
   var cli_addr_len = ByteBuffer.new(8);
 
-  var buffer = ByteBuffer.new(1024);
+  var buffer = ByteBuffer.new(10240);
   var buffer_length = ByteBuffer.new(8);
 
   while (true)
@@ -94,8 +94,8 @@ func main()
     errcheck(client_fd != -1, "accept");
     errcheck(cli_addr_len[0] == 16, "accept");
 
-    var data = read(client_fd, buffer, 1024);
-    puts("DabServer: read " + data.to_s + " bytes.");
+    var data = read(client_fd, buffer, 10240);
+    puts("DabServer: read " + data.to_s + " bytes.\nREQUEST:");
     puts(String.new(buffer, data));
     
     var response = "HTTP/1.1 200 OK\r\n" + 
@@ -104,6 +104,9 @@ func main()
       "Dab server #" + 
       request_id.to_s + 
       " says hello!\r\n";
+
+    puts("\nRESPONSE:");
+    puts(response);
     
     var length = response.length;
     var ret4 = write(client_fd, response, length);

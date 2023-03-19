@@ -999,6 +999,16 @@ DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
         copy.data.intptr = (void *)value.string().c_str();
         return copy;
     }
+    else if (from == CLASS_DYNAMICSTRING && to == CLASS_INTPTR)
+    {
+        DabValue copy;
+        copy.data.type   = TYPE_INTPTR;
+        // TODO: make this better (and less leaky)
+        auto str = value.string();
+        auto cstr = strdup(str.c_str());
+        copy.data.intptr = (void *)cstr;
+        return copy;
+    }
     else if (from == CLASS_BYTEBUFFER && to == CLASS_INTPTR)
     {
         DabValue copy;
