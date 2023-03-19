@@ -8,7 +8,6 @@
 - language: exceptions
 - better handling of parse errors
 - DLL imports on windows
-- simple dynamic method (copy block)
 - implement HARDCALL
 - passing arguments to dynamic methods
 - proper closure support (read/write)

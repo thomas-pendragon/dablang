@@ -42,7 +42,7 @@ void DabVM::dump_vm(FILE *out)
                                        {
                                            std::string name = section.name;
                                            return name == "func" || name == "symb" ||
-                                                  name == "symd";
+                                                  name == "symd" || name == "fext";
                                        }),
                         dump_sections.end());
 
