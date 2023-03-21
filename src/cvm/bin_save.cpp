@@ -104,6 +104,7 @@ void DabVM::dump_vm(FILE *out)
     BinSection func_section = {};
     memcpy(func_section.name, "func", 4);
     std::vector<BinFunctionEx> dump_functions;
+    size_t                     funssize = 0;
     for (auto it : functions)
     {
         const auto &fun = it.second;
@@ -129,18 +130,34 @@ void DabVM::dump_vm(FILE *out)
                     get_symbol(it.first).c_str(), fun.source_ring);
         }
 
-        BinFunction bin_func;
-        bin_func.symbol  = it.first;
-        bin_func.klass   = DAB_CLASS_NIL;
-        bin_func.address = it.second.address;
+        const auto &fundata    = it.second;
+        const auto &reflection = fundata.reflection;
+
+        BinFunctionEx bin_func;
+        bin_func.symbol        = it.first;
+        bin_func.klass         = DAB_CLASS_NIL;
+        bin_func.address       = fundata.address;
+        bin_func.arglist_count = reflection.arg_klasses.size();
         if (fun.new_method)
         {
             bin_func.address += code_section.pos + code_section.length;
         }
+        for (size_t i = 0; i < bin_func.arglist_count; i++)
+        {
+            BinFunctionArg arg;
+            arg.symbol = get_symbol_index(reflection.arg_names[i]);
+            arg.klass  = reflection.arg_klasses[i];
+            bin_func.args.push_back(arg);
+        }
+        BinFunctionArg ret;
+        ret.symbol = -1;
+        ret.klass  = reflection.ret_klass;
+        bin_func.args.push_back(ret);
         dump_functions.push_back(bin_func);
+        funssize += sizeof(BinFunctionExBase) + bin_func.args.size() * sizeof(BinFunctionArg);
     }
     func_section.special_index = TEMP_FUNC_SECTION;
-    func_section.length        = dump_functions.size() * sizeof(BinFunction);
+    func_section.length        = funssize;
 
     BinSection symb_section;
     memcpy(symb_section.name, "symb", 4);

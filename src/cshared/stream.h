@@ -50,16 +50,19 @@ struct dab_register_t
 struct BinFunctionArg
 {
     dab_symbol_t symbol;
-    dab_class_t klass;
+    dab_class_t  klass;
 };
 
-struct BinFunctionEx
+struct BinFunctionExBase
 {
     dab_symbol_t symbol;
     dab_class_t  klass;
     uint64_t     address;
     uint16_t     arglist_count;
     uint64_t     length;
+};
+struct BinFunctionEx : BinFunctionExBase
+{
     std::vector<BinFunctionArg> args;
 };
 
