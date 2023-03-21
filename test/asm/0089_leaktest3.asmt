@@ -40,7 +40,7 @@ func main()
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -50,36 +50,46 @@ func main()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Ffunctrue:
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
                                  RETURN R0
+                   __Ffunctrue_END:
+                                 NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S4
-/* go           */               INSTCALL RNIL, R1, S2
+/* new          */               INSTCALL R1, R0, S5
+/* go           */               INSTCALL RNIL, R1, S3
                                  RELEASE R0
                                  RELEASE R1
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    CFoo_Fgo:
                                  STACK_RESERVE 0
 /* 123          */               LOAD_NUMBER R0, 123
-/* @var=        */               SET_INSTVAR S5, R0
+/* @var=        */               SET_INSTVAR S6, R0
 /* 1            */               LOAD_NUMBER R1, 1
 /* "String1"    */               LOAD_STRING R2, _DATA + 0, 7
 /* "String2"    */               LOAD_STRING R3, _DATA + 8, 7
 /* String       */               LOAD_CLASS R4, 1
-/* new          */               INSTCALL R5, R4, S4, R3
+/* new          */               INSTCALL R5, R4, S5, R3
                                  NEW_ARRAY R6, R1, R2, R5
 /* PRINT        */               SYSCALL RNIL, 0, R6
-/* functrue     */               CALL R7, S1
+/* functrue     */               CALL R7, S2
                                  JMP_IF R7, L1, L2
                    L1:
                                  RELEASE R6
-/* @var         */               GET_INSTVAR R6, S5
+/* @var         */               GET_INSTVAR R6, S6
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R6
@@ -92,12 +102,15 @@ func main()
                                  RELEASE R6
                                  RELEASE R7
                                  RETURN RNIL
+                   __CFoo_Fgo_END:
+                                 NOP 
  
                    _CLAS:
 /* Foo          */               W_CLASS 256, 0, 0
  
                    _SDAT:
                                  W_STRING "Foo" 
+                                 W_STRING "__init" 
                                  W_STRING "functrue" 
                                  W_STRING "go" 
                                  W_STRING "main" 
@@ -106,13 +119,23 @@ func main()
  
                    _SYMB:
 /* Foo          */               W_SYMBOL _SDAT + 0 
-/* functrue     */               W_SYMBOL _SDAT + 4 
-/* go           */               W_SYMBOL _SDAT + 13 
-/* main         */               W_SYMBOL _SDAT + 16 
-/* new          */               W_SYMBOL _SDAT + 21 
-/* var          */               W_SYMBOL _SDAT + 25 
+/* __init       */               W_SYMBOL _SDAT + 4 
+/* functrue     */               W_SYMBOL _SDAT + 11 
+/* go           */               W_SYMBOL _SDAT + 20 
+/* main         */               W_SYMBOL _SDAT + 23 
+/* new          */               W_SYMBOL _SDAT + 28 
+/* var          */               W_SYMBOL _SDAT + 32 
  
                    _FUNC:
-/* functrue     */               W_METHOD 1, -1, Ffunctrue
-/* main         */               W_METHOD 3, -1, Fmain
-/* go           */               W_METHOD 2, 256, CFoo_Fgo
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* functrue     */               W_METHOD_EX 2, -1, Ffunctrue, 0
+                                 W_METHOD_LEN __Ffunctrue_END - Ffunctrue
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 4, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* go           */               W_METHOD_EX 3, 256, CFoo_Fgo, 0
+                                 W_METHOD_LEN __CFoo_Fgo_END - CFoo_Fgo
+/* $ret<Object> */               W_METHOD_ARG -1, 0

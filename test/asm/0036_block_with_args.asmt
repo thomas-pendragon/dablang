@@ -23,7 +23,7 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
@@ -34,29 +34,44 @@ func main()
                                  LOAD_HAS_BLOCK R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __F__foo_Fixnum_END:
+                                 NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  LOAD_NIL R1
-/* __foo_Fixnum */               CALL_BLOCK RNIL, S0, S2, R1, R0
+/* __foo_Fixnum */               CALL_BLOCK RNIL, S0, S3, R1, R0
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    Fmain__block1:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Fmain__block1_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "__foo_Fixnum" 
+                                 W_STRING "a" 
                                  W_STRING "main" 
                                  W_STRING "main__block1" 
  
                    _SYMB:
 /* __foo_Fixnum */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 13 
-/* main__block1 */               W_SYMBOL _SDAT + 18 
+/* a            */               W_SYMBOL _SDAT + 13 
+/* main         */               W_SYMBOL _SDAT + 15 
+/* main__block1 */               W_SYMBOL _SDAT + 20 
  
                    _FUNC:
-/* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum
-/* main         */               W_METHOD 1, -1, Fmain
-/* main__block1 */               W_METHOD 2, -1, Fmain__block1
+/* __foo_Fixnum */               W_METHOD_EX 0, -1, F__foo_Fixnum, 1
+                                 W_METHOD_LEN __F__foo_Fixnum_END - F__foo_Fixnum
+/* a<Fixnum>    */               W_METHOD_ARG 1, 2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 2, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main__block1 */               W_METHOD_EX 3, -1, Fmain__block1, 0
+                                 W_METHOD_LEN __Fmain__block1_END - Fmain__block1
+/* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -25,7 +25,7 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -34,33 +34,55 @@ func main()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
 /* 12           */               LOAD_NUMBER R0, 12
                                  NEW_ARRAY R1, R0
-/* puts         */               CALL RNIL, S2, R1
+/* puts         */               CALL RNIL, S4, R1
 /* 123          */               LOAD_NUMBER R2, 123
-/* insert       */               INSTCALL RNIL, R1, S0, R2
+/* insert       */               INSTCALL RNIL, R1, S2, R2
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
-/* insert       */               INSTCALL RNIL, R1, S0, R3
-/* puts         */               CALL RNIL, S2, R1
+/* insert       */               INSTCALL RNIL, R1, S2, R3
+/* puts         */               CALL RNIL, S4, R1
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    Fputs:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
                                  RETURN RNIL
+                   __Fputs_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "a" 
                                  W_STRING "insert" 
                                  W_STRING "main" 
                                  W_STRING "puts" 
  
                    _SYMB:
-/* insert       */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 7 
-/* puts         */               W_SYMBOL _SDAT + 12 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* a            */               W_SYMBOL _SDAT + 7 
+/* insert       */               W_SYMBOL _SDAT + 9 
+/* main         */               W_SYMBOL _SDAT + 16 
+/* puts         */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* main         */               W_METHOD 1, -1, Fmain
-/* puts         */               W_METHOD 2, -1, Fputs
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 3, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* puts         */               W_METHOD_EX 4, -1, Fputs, 1
+                                 W_METHOD_LEN __Fputs_END - Fputs
+/* a<Object>    */               W_METHOD_ARG 1, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

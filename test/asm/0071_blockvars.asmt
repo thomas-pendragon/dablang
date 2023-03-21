@@ -25,50 +25,86 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  NEW_ARRAY R1, R0
-/* test         */               CALL_BLOCK RNIL, S3, S1, R1
+/* test         */               CALL_BLOCK RNIL, S7, S5, R1
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    Fmain__block1:
                                  STACK_RESERVE 0
 /* bar          */               LOAD_ARG R0, 0
                                  LOAD_CLOSURE R1, 0
-/* qux          */               CALL RNIL, S2, R0, R1
+/* qux          */               CALL RNIL, S6, R0, R1
                                  RETURN RNIL
+                   __Fmain__block1_END:
+                                 NOP 
  
                    Fqux:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Fqux_END:
+                                 NOP 
  
                    Ftest:
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  YIELD RNIL, R0
                                  RETURN RNIL
+                   __Ftest_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "a" 
+                                 W_STRING "b" 
+                                 W_STRING "bar" 
                                  W_STRING "main" 
                                  W_STRING "main__block1" 
                                  W_STRING "qux" 
                                  W_STRING "test" 
  
                    _SYMB:
-/* main         */               W_SYMBOL _SDAT + 0 
-/* main__block1 */               W_SYMBOL _SDAT + 5 
-/* qux          */               W_SYMBOL _SDAT + 18 
-/* test         */               W_SYMBOL _SDAT + 22 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* a            */               W_SYMBOL _SDAT + 7 
+/* b            */               W_SYMBOL _SDAT + 9 
+/* bar          */               W_SYMBOL _SDAT + 11 
+/* main         */               W_SYMBOL _SDAT + 15 
+/* main__block1 */               W_SYMBOL _SDAT + 20 
+/* qux          */               W_SYMBOL _SDAT + 33 
+/* test         */               W_SYMBOL _SDAT + 37 
  
                    _FUNC:
-/* main         */               W_METHOD 0, -1, Fmain
-/* main__block1 */               W_METHOD 1, -1, Fmain__block1
-/* qux          */               W_METHOD 2, -1, Fqux
-/* test         */               W_METHOD 3, -1, Ftest
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 4, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main__block1 */               W_METHOD_EX 5, -1, Fmain__block1, 1
+                                 W_METHOD_LEN __Fmain__block1_END - Fmain__block1
+/* bar<Object>  */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* qux          */               W_METHOD_EX 6, -1, Fqux, 2
+                                 W_METHOD_LEN __Fqux_END - Fqux
+/* a<Object>    */               W_METHOD_ARG 1, 0
+/* b<Object>    */               W_METHOD_ARG 2, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* test         */               W_METHOD_EX 7, -1, Ftest, 0
+                                 W_METHOD_LEN __Ftest_END - Ftest
+/* $ret<Object> */               W_METHOD_ARG -1, 0

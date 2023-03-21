@@ -33,7 +33,7 @@ func main()
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -43,27 +43,39 @@ func main()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
 /* Foo          */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S3
-/* run          */               INSTCALL RNIL, R1, S4
+/* new          */               INSTCALL R1, R0, S4
+/* run          */               INSTCALL RNIL, R1, S5
 /* Bar          */               LOAD_CLASS R2, 257
-/* new          */               INSTCALL R3, R2, S3
-/* run          */               INSTCALL RNIL, R3, S4
+/* new          */               INSTCALL R3, R2, S4
+/* run          */               INSTCALL RNIL, R3, S5
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    CBar_Frun:
                                  STACK_RESERVE 0
 /* "bar"        */               LOAD_STRING R0, _DATA + 0, 3
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __CBar_Frun_END:
+                                 NOP 
  
                    CFoo_Frun:
                                  STACK_RESERVE 0
 /* "foo"        */               LOAD_STRING R0, _DATA + 4, 3
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __CFoo_Frun_END:
+                                 NOP 
  
                    _CLAS:
 /* Foo          */               W_CLASS 256, 0, 1
@@ -72,6 +84,7 @@ func main()
                    _SDAT:
                                  W_STRING "Bar" 
                                  W_STRING "Foo" 
+                                 W_STRING "__init" 
                                  W_STRING "main" 
                                  W_STRING "new" 
                                  W_STRING "run" 
@@ -79,11 +92,21 @@ func main()
                    _SYMB:
 /* Bar          */               W_SYMBOL _SDAT + 0 
 /* Foo          */               W_SYMBOL _SDAT + 4 
-/* main         */               W_SYMBOL _SDAT + 8 
-/* new          */               W_SYMBOL _SDAT + 13 
-/* run          */               W_SYMBOL _SDAT + 17 
+/* __init       */               W_SYMBOL _SDAT + 8 
+/* main         */               W_SYMBOL _SDAT + 15 
+/* new          */               W_SYMBOL _SDAT + 20 
+/* run          */               W_SYMBOL _SDAT + 24 
  
                    _FUNC:
-/* main         */               W_METHOD 2, -1, Fmain
-/* run          */               W_METHOD 4, 257, CBar_Frun
-/* run          */               W_METHOD 4, 256, CFoo_Frun
+/* __init       */               W_METHOD_EX 2, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 3, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* run          */               W_METHOD_EX 5, 257, CBar_Frun, 0
+                                 W_METHOD_LEN __CBar_Frun_END - CBar_Frun
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* run          */               W_METHOD_EX 5, 256, CFoo_Frun, 0
+                                 W_METHOD_LEN __CFoo_Frun_END - CFoo_Frun
+/* $ret<Object> */               W_METHOD_ARG -1, 0

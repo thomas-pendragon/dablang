@@ -38,7 +38,7 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -48,12 +48,20 @@ func main()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Ffun1:
                                  STACK_RESERVE 0
 /* "fun1"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_FALSE R1
                                  RETURN R1
+                   __Ffun1_END:
+                                 NOP 
  
                    Ffun2:
                                  STACK_RESERVE 0
@@ -61,36 +69,45 @@ func main()
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_TRUE R1
                                  RETURN R1
+                   __Ffun2_END:
+                                 NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
-/* main_and     */               CALL RNIL, S3
-/* main_or      */               CALL RNIL, S4
+/* main_and     */               CALL RNIL, S4
+/* main_or      */               CALL RNIL, S5
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    Fmain_and:
                                  STACK_RESERVE 0
-/* fun1         */               CALL R0, S0
+/* fun1         */               CALL R0, S1
                                  JMP_IF R0, L1, L2
                    L1:
-/* fun2         */               CALL R0, S1
+/* fun2         */               CALL R0, S2
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __Fmain_and_END:
+                                 NOP 
  
                    Fmain_or:
                                  STACK_RESERVE 0
-/* fun1         */               CALL R0, S0
+/* fun1         */               CALL R0, S1
                                  JMP_IF R0, L3, L4
                    L4:
-/* fun2         */               CALL R0, S1
+/* fun2         */               CALL R0, S2
                                  JMP L3
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __Fmain_or_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
                                  W_STRING "fun1" 
                                  W_STRING "fun2" 
                                  W_STRING "main" 
@@ -98,15 +115,29 @@ func main()
                                  W_STRING "main_or" 
  
                    _SYMB:
-/* fun1         */               W_SYMBOL _SDAT + 0 
-/* fun2         */               W_SYMBOL _SDAT + 5 
-/* main         */               W_SYMBOL _SDAT + 10 
-/* main_and     */               W_SYMBOL _SDAT + 15 
-/* main_or      */               W_SYMBOL _SDAT + 24 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* fun1         */               W_SYMBOL _SDAT + 7 
+/* fun2         */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 17 
+/* main_and     */               W_SYMBOL _SDAT + 22 
+/* main_or      */               W_SYMBOL _SDAT + 31 
  
                    _FUNC:
-/* fun1         */               W_METHOD 0, -1, Ffun1
-/* fun2         */               W_METHOD 1, -1, Ffun2
-/* main         */               W_METHOD 2, -1, Fmain
-/* main_and     */               W_METHOD 3, -1, Fmain_and
-/* main_or      */               W_METHOD 4, -1, Fmain_or
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* fun1         */               W_METHOD_EX 1, -1, Ffun1, 0
+                                 W_METHOD_LEN __Ffun1_END - Ffun1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* fun2         */               W_METHOD_EX 2, -1, Ffun2, 0
+                                 W_METHOD_LEN __Ffun2_END - Ffun2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 3, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main_and     */               W_METHOD_EX 4, -1, Fmain_and, 0
+                                 W_METHOD_LEN __Fmain_and_END - Fmain_and
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main_or      */               W_METHOD_EX 5, -1, Fmain_or, 0
+                                 W_METHOD_LEN __Fmain_or_END - Fmain_or
+/* $ret<Object> */               W_METHOD_ARG -1, 0

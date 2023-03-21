@@ -32,7 +32,7 @@ func bar()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -43,19 +43,27 @@ func bar()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               LOAD_STRING R0, _DATA + 22, 3
-/* foo          */               CALL RNIL, S1, R0
+/* foo          */               CALL RNIL, S3, R0
 /* 12           */               LOAD_NUMBER R1, 12
-/* foo          */               CALL RNIL, S1, R1
+/* foo          */               CALL RNIL, S3, R1
                                  RETURN RNIL
+                   __Fbar_END:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* String       */               LOAD_CLASS R1, 1
-/* is           */               INSTCALL R2, R0, S2, R1
+/* is           */               INSTCALL R2, R0, S4, R1
                                  JMP_IF R2, L1, L2
                    L1:
 /* "got string" */               LOAD_STRING R3, _DATA + 11, 10
@@ -63,7 +71,7 @@ func bar()
                                  JMP L2
                    L2:
 /* Fixnum       */               LOAD_CLASS R4, 2
-/* is           */               INSTCALL R5, R0, S2, R4
+/* is           */               INSTCALL R5, R0, S4, R4
                                  JMP_IF R5, L3, L4
                    L3:
 /* "got fixnum" */               LOAD_STRING R6, _DATA + 0, 10
@@ -71,17 +79,31 @@ func bar()
                                  JMP L4
                    L4:
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "a" 
                                  W_STRING "bar" 
                                  W_STRING "foo" 
                                  W_STRING "is" 
  
                    _SYMB:
-/* bar          */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 4 
-/* is           */               W_SYMBOL _SDAT + 8 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* a            */               W_SYMBOL _SDAT + 7 
+/* bar          */               W_SYMBOL _SDAT + 9 
+/* foo          */               W_SYMBOL _SDAT + 13 
+/* is           */               W_SYMBOL _SDAT + 17 
  
                    _FUNC:
-/* bar          */               W_METHOD 0, -1, Fbar
-/* foo          */               W_METHOD 1, -1, Ffoo
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* bar          */               W_METHOD_EX 2, -1, Fbar, 0
+                                 W_METHOD_LEN __Fbar_END - Fbar
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD_EX 3, -1, Ffoo, 1
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* a<Object>    */               W_METHOD_ARG 1, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

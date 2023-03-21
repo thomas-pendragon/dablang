@@ -22,42 +22,65 @@ func main_or()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Ffun1:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Ffun1_END:
+                                 NOP 
  
                    Ffun2:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Ffun2_END:
+                                 NOP 
  
                    Fmain_or:
                                  STACK_RESERVE 0
-/* fun1         */               CALL R0, S0
+/* fun1         */               CALL R0, S1
                                  JMP_IF R0, L1, L2
                    L2:
-/* fun2         */               CALL R0, S1
+/* fun2         */               CALL R0, S2
                                  JMP L1
                    L1:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __Fmain_or_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
                                  W_STRING "fun1" 
                                  W_STRING "fun2" 
                                  W_STRING "main_or" 
  
                    _SYMB:
-/* fun1         */               W_SYMBOL _SDAT + 0 
-/* fun2         */               W_SYMBOL _SDAT + 5 
-/* main_or      */               W_SYMBOL _SDAT + 10 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* fun1         */               W_SYMBOL _SDAT + 7 
+/* fun2         */               W_SYMBOL _SDAT + 12 
+/* main_or      */               W_SYMBOL _SDAT + 17 
  
                    _FUNC:
-/* fun1         */               W_METHOD 0, -1, Ffun1
-/* fun2         */               W_METHOD 1, -1, Ffun2
-/* main_or      */               W_METHOD 2, -1, Fmain_or
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* fun1         */               W_METHOD_EX 1, -1, Ffun1, 0
+                                 W_METHOD_LEN __Ffun1_END - Ffun1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* fun2         */               W_METHOD_EX 2, -1, Ffun2, 0
+                                 W_METHOD_LEN __Ffun2_END - Ffun2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main_or      */               W_METHOD_EX 3, -1, Fmain_or, 0
+                                 W_METHOD_LEN __Fmain_or_END - Fmain_or
+/* $ret<Object> */               W_METHOD_ARG -1, 0

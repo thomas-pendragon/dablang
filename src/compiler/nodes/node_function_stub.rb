@@ -23,4 +23,7 @@ class DabNodeFunctionStub < DabNode
   def return_type
     DabType.parse(nil)
   end
+
+  def create_attribute_init(body)
+  end
 end

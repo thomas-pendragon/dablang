@@ -26,7 +26,7 @@ func foo()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -42,12 +42,16 @@ func foo()
 /* "Fixnum"     */               LOAD_STRING R0, _DATA + 2, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __F__spec_Fixnum_END:
+                                 NOP 
  
                    F__spec_String:
                                  STACK_RESERVE 0
 /* "String"     */               LOAD_STRING R0, _DATA + 9, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __F__spec_String_END:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
@@ -58,18 +62,30 @@ func foo()
 /* "A"          */               LOAD_STRING R2, _DATA + 0, 1
 /* __spec_Strin */               CALL RNIL, S1, R2
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "__spec_Fixnum" 
                                  W_STRING "__spec_String" 
+                                 W_STRING "a" 
                                  W_STRING "foo" 
  
                    _SYMB:
 /* __spec_Fixnu */               W_SYMBOL _SDAT + 0 
 /* __spec_Strin */               W_SYMBOL _SDAT + 14 
-/* foo          */               W_SYMBOL _SDAT + 28 
+/* a            */               W_SYMBOL _SDAT + 28 
+/* foo          */               W_SYMBOL _SDAT + 30 
  
                    _FUNC:
-/* __spec_Fixnu */               W_METHOD 0, -1, F__spec_Fixnum
-/* __spec_Strin */               W_METHOD 1, -1, F__spec_String
-/* foo          */               W_METHOD 2, -1, Ffoo
+/* __spec_Fixnu */               W_METHOD_EX 0, -1, F__spec_Fixnum, 1
+                                 W_METHOD_LEN __F__spec_Fixnum_END - F__spec_Fixnum
+/* a<Fixnum>    */               W_METHOD_ARG 2, 2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* __spec_Strin */               W_METHOD_EX 1, -1, F__spec_String, 1
+                                 W_METHOD_LEN __F__spec_String_END - F__spec_String
+/* a<String>    */               W_METHOD_ARG 2, 1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD_EX 3, -1, Ffoo, 0
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -18,36 +18,60 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
-/* socket       */               CALL RNIL, S2
+/* socket       */               CALL RNIL, S3
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    Fsetsockopt:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Fsetsockopt_END:
+                                 NOP 
  
                    Fsocket:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Fsocket_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
                                  W_STRING "main" 
                                  W_STRING "setsockopt" 
                                  W_STRING "socket" 
  
                    _SYMB:
-/* main         */               W_SYMBOL _SDAT + 0 
-/* setsockopt   */               W_SYMBOL _SDAT + 5 
-/* socket       */               W_SYMBOL _SDAT + 16 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 7 
+/* setsockopt   */               W_SYMBOL _SDAT + 12 
+/* socket       */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* main         */               W_METHOD 0, -1, Fmain
-/* setsockopt   */               W_METHOD 1, -1, Fsetsockopt
-/* socket       */               W_METHOD 2, -1, Fsocket
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 1, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* setsockopt   */               W_METHOD_EX 2, -1, Fsetsockopt, 1
+                                 W_METHOD_LEN __Fsetsockopt_END - Fsetsockopt
+/* socket<Objec */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* socket       */               W_METHOD_EX 3, -1, Fsocket, 0
+                                 W_METHOD_LEN __Fsocket_END - Fsocket
+/* $ret<Object> */               W_METHOD_ARG -1, 0

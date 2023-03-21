@@ -18,10 +18,16 @@ func addfunc()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Faddfunc:
@@ -30,14 +36,23 @@ func addfunc()
 /* 23           */               LOAD_NUMBER R1, 23
 /* +            */               INSTCALL R2, R0, S0, R1
                                  RETURN R2
+                   __Faddfunc_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "+" 
+                                 W_STRING "__init" 
                                  W_STRING "addfunc" 
  
                    _SYMB:
 /* +            */               W_SYMBOL _SDAT + 0 
-/* addfunc      */               W_SYMBOL _SDAT + 2 
+/* __init       */               W_SYMBOL _SDAT + 2 
+/* addfunc      */               W_SYMBOL _SDAT + 9 
  
                    _FUNC:
-/* addfunc      */               W_METHOD 1, -1, Faddfunc
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* addfunc      */               W_METHOD_EX 2, -1, Faddfunc, 0
+                                 W_METHOD_LEN __Faddfunc_END - Faddfunc
+/* $ret<Object> */               W_METHOD_ARG -1, 0

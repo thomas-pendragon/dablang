@@ -19,10 +19,16 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Fmain:
@@ -40,16 +46,25 @@ func main()
                                  JMP L1
                    L3:
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "-" 
                                  W_STRING ">" 
+                                 W_STRING "__init" 
                                  W_STRING "main" 
  
                    _SYMB:
 /* -            */               W_SYMBOL _SDAT + 0 
 /* >            */               W_SYMBOL _SDAT + 2 
-/* main         */               W_SYMBOL _SDAT + 4 
+/* __init       */               W_SYMBOL _SDAT + 4 
+/* main         */               W_SYMBOL _SDAT + 11 
  
                    _FUNC:
-/* main         */               W_METHOD 2, -1, Fmain
+/* __init       */               W_METHOD_EX 2, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 3, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0

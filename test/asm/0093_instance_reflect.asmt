@@ -32,10 +32,16 @@ func foo(n)
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Ffoo:
                                  STACK_RESERVE 0
 /* n            */               LOAD_ARG R0, 0
-                                 REFLECT R1, S5, 2, 256
+                                 REFLECT R1, S6, 2, 256
 /* PRINT        */               SYSCALL RNIL, 0, R1
                                  RETURN RNIL
                    __Ffoo_END:
@@ -54,6 +60,7 @@ func foo(n)
  
                    _SDAT:
                                  W_STRING "Foo" 
+                                 W_STRING "__init" 
                                  W_STRING "a" 
                                  W_STRING "b" 
                                  W_STRING "foo" 
@@ -62,19 +69,23 @@ func foo(n)
  
                    _SYMB:
 /* Foo          */               W_SYMBOL _SDAT + 0 
-/* a            */               W_SYMBOL _SDAT + 4 
-/* b            */               W_SYMBOL _SDAT + 6 
-/* foo          */               W_SYMBOL _SDAT + 8 
-/* n            */               W_SYMBOL _SDAT + 12 
-/* zomg         */               W_SYMBOL _SDAT + 14 
+/* __init       */               W_SYMBOL _SDAT + 4 
+/* a            */               W_SYMBOL _SDAT + 11 
+/* b            */               W_SYMBOL _SDAT + 13 
+/* foo          */               W_SYMBOL _SDAT + 15 
+/* n            */               W_SYMBOL _SDAT + 19 
+/* zomg         */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* foo          */               W_METHOD_EX 3, -1, Ffoo, 1
-                                 W_METHOD_LEN __Ffoo_END - Ffoo
-/* n<Object>    */               W_METHOD_ARG 4, 0
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* zomg         */               W_METHOD_EX 5, 256, CFoo_Fzomg, 2
+/* foo          */               W_METHOD_EX 4, -1, Ffoo, 1
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* n<Object>    */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* zomg         */               W_METHOD_EX 6, 256, CFoo_Fzomg, 2
                                  W_METHOD_LEN __CFoo_Fzomg_END - CFoo_Fzomg
-/* a<Object>    */               W_METHOD_ARG 1, 0
-/* b<Uint8>     */               W_METHOD_ARG 2, 6
+/* a<Object>    */               W_METHOD_ARG 2, 0
+/* b<Uint8>     */               W_METHOD_ARG 3, 6
 /* $ret<Object> */               W_METHOD_ARG -1, 0

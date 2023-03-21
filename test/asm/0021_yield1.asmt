@@ -18,22 +18,37 @@ func yield1()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Fyield1:
                                  STACK_RESERVE 0
                                  YIELD RNIL
                                  RETURN RNIL
+                   __Fyield1_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
                                  W_STRING "yield1" 
  
                    _SYMB:
-/* yield1       */               W_SYMBOL _SDAT + 0 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* yield1       */               W_SYMBOL _SDAT + 7 
  
                    _FUNC:
-/* yield1       */               W_METHOD 0, -1, Fyield1
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* yield1       */               W_METHOD_EX 1, -1, Fyield1, 0
+                                 W_METHOD_LEN __Fyield1_END - Fyield1
+/* $ret<Object> */               W_METHOD_ARG -1, 0

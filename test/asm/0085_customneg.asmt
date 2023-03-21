@@ -18,16 +18,24 @@ class Foo
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    CFoo_F%BANG:
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
                                  RETURN R0
+                   __CFoo_F%BANG_END:
+                                 NOP 
  
                    _CLAS:
 /* Foo          */               W_CLASS 256, 0, 1
@@ -35,10 +43,17 @@ class Foo
                    _SDAT:
                                  W_STRING "!" 
                                  W_STRING "Foo" 
+                                 W_STRING "__init" 
  
                    _SYMB:
 /* !            */               W_SYMBOL _SDAT + 0 
 /* Foo          */               W_SYMBOL _SDAT + 2 
+/* __init       */               W_SYMBOL _SDAT + 6 
  
                    _FUNC:
-/* !            */               W_METHOD 0, 256, CFoo_F%BANG
+/* __init       */               W_METHOD_EX 2, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* !            */               W_METHOD_EX 0, 256, CFoo_F%BANG, 0
+                                 W_METHOD_LEN __CFoo_F%BANG_END - CFoo_F%BANG
+/* $ret<Object> */               W_METHOD_ARG -1, 0

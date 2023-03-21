@@ -30,7 +30,7 @@ func main()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -56,6 +56,8 @@ func main()
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __F__foo_Fixnum_END:
+                                 NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
@@ -64,19 +66,28 @@ func main()
 /* 2            */               LOAD_NUMBER R1, 2
 /* __foo_Fixnum */               CALL RNIL, S2, R1
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "*" 
                                  W_STRING "==" 
                                  W_STRING "__foo_Fixnum" 
+                                 W_STRING "a" 
                                  W_STRING "main" 
  
                    _SYMB:
 /* *            */               W_SYMBOL _SDAT + 0 
 /* ==           */               W_SYMBOL _SDAT + 2 
 /* __foo_Fixnum */               W_SYMBOL _SDAT + 5 
-/* main         */               W_SYMBOL _SDAT + 18 
+/* a            */               W_SYMBOL _SDAT + 18 
+/* main         */               W_SYMBOL _SDAT + 20 
  
                    _FUNC:
-/* __foo_Fixnum */               W_METHOD 2, -1, F__foo_Fixnum
-/* main         */               W_METHOD 3, -1, Fmain
+/* __foo_Fixnum */               W_METHOD_EX 2, -1, F__foo_Fixnum, 1
+                                 W_METHOD_LEN __F__foo_Fixnum_END - F__foo_Fixnum
+/* a<Fixnum>    */               W_METHOD_ARG 3, 2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 4, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0

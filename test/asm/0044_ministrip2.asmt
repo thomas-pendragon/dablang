@@ -27,7 +27,7 @@ func bar()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -42,21 +42,32 @@ func bar()
 /* "got string" */               LOAD_STRING R0, _DATA + 0, 10
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __F__foo_String_END:
+                                 NOP 
  
                    Fbar:
                                  STACK_RESERVE 0
 /* "str"        */               LOAD_STRING R0, _DATA + 11, 3
 /* __foo_String */               CALL RNIL, S0, R0
                                  RETURN RNIL
+                   __Fbar_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "__foo_String" 
+                                 W_STRING "a" 
                                  W_STRING "bar" 
  
                    _SYMB:
 /* __foo_String */               W_SYMBOL _SDAT + 0 
-/* bar          */               W_SYMBOL _SDAT + 13 
+/* a            */               W_SYMBOL _SDAT + 13 
+/* bar          */               W_SYMBOL _SDAT + 15 
  
                    _FUNC:
-/* __foo_String */               W_METHOD 0, -1, F__foo_String
-/* bar          */               W_METHOD 1, -1, Fbar
+/* __foo_String */               W_METHOD_EX 0, -1, F__foo_String, 1
+                                 W_METHOD_LEN __F__foo_String_END - F__foo_String
+/* a<String>    */               W_METHOD_ARG 1, 1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* bar          */               W_METHOD_EX 2, -1, Fbar, 0
+                                 W_METHOD_LEN __Fbar_END - Fbar
+/* $ret<Object> */               W_METHOD_ARG -1, 0

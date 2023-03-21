@@ -20,10 +20,16 @@ func assert_equal(value)
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Fassert_equal:
@@ -32,14 +38,26 @@ func assert_equal(value)
 /* 1            */               LOAD_NUMBER R1, 1
 /* !=           */               INSTCALL RNIL, R0, S0, R1
                                  RETURN RNIL
+                   __Fassert_equal_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "!=" 
+                                 W_STRING "__init" 
                                  W_STRING "assert_equal" 
+                                 W_STRING "value" 
  
                    _SYMB:
 /* !=           */               W_SYMBOL _SDAT + 0 
-/* assert_equal */               W_SYMBOL _SDAT + 3 
+/* __init       */               W_SYMBOL _SDAT + 3 
+/* assert_equal */               W_SYMBOL _SDAT + 10 
+/* value        */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* assert_equal */               W_METHOD 1, -1, Fassert_equal
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* assert_equal */               W_METHOD_EX 2, -1, Fassert_equal, 1
+                                 W_METHOD_LEN __Fassert_equal_END - Fassert_equal
+/* value<Object */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

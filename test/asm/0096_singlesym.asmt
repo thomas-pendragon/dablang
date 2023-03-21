@@ -26,39 +26,61 @@ func main()
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
 /* MyObject     */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S2
+/* new          */               INSTCALL R1, R0, S3
 /* 123          */               LOAD_NUMBER R2, 123
-/* value=       */               INSTCALL RNIL, R1, S3, R2
+/* value=       */               INSTCALL RNIL, R1, S5, R2
                                  RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
  
                    CMyObject_Fvalue%EQ:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __CMyObject_Fvalue%EQ_END:
+                                 NOP 
  
                    _CLAS:
 /* MyObject     */               W_CLASS 256, 0, 0
  
                    _SDAT:
                                  W_STRING "MyObject" 
+                                 W_STRING "__init" 
                                  W_STRING "main" 
                                  W_STRING "new" 
+                                 W_STRING "new_value" 
                                  W_STRING "value=" 
  
                    _SYMB:
 /* MyObject     */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 9 
-/* new          */               W_SYMBOL _SDAT + 14 
-/* value=       */               W_SYMBOL _SDAT + 18 
+/* __init       */               W_SYMBOL _SDAT + 9 
+/* main         */               W_SYMBOL _SDAT + 16 
+/* new          */               W_SYMBOL _SDAT + 21 
+/* new_value    */               W_SYMBOL _SDAT + 25 
+/* value=       */               W_SYMBOL _SDAT + 35 
  
                    _FUNC:
-/* main         */               W_METHOD 1, -1, Fmain
-/* value=       */               W_METHOD 3, 256, CMyObject_Fvalue%EQ
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 2, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* value=       */               W_METHOD_EX 5, 256, CMyObject_Fvalue%EQ, 1
+                                 W_METHOD_LEN __CMyObject_Fvalue%EQ_END - CMyObject_Fvalue%EQ
+/* new_value<Ob */               W_METHOD_ARG 4, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

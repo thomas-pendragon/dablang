@@ -27,17 +27,23 @@ class Array
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    CArray_Feach_with_index:
                                  STACK_RESERVE 0
 /* 0            */               LOAD_NUMBER R0, 0
                                  LOAD_SELF R1
-/* count        */               INSTCALL R2, R1, S3
+/* count        */               INSTCALL R2, R1, S4
                                  JMP L1
                    L1:
 /* !=           */               INSTCALL R3, R0, S0, R2
@@ -51,11 +57,14 @@ class Array
                                  JMP L1
                    L3:
                                  RETURN RNIL
+                   __CArray_Feach_with_index_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "!=" 
                                  W_STRING "+" 
                                  W_STRING "[]" 
+                                 W_STRING "__init" 
                                  W_STRING "count" 
                                  W_STRING "each_with_index" 
  
@@ -63,8 +72,14 @@ class Array
 /* !=           */               W_SYMBOL _SDAT + 0 
 /* +            */               W_SYMBOL _SDAT + 3 
 /* []           */               W_SYMBOL _SDAT + 5 
-/* count        */               W_SYMBOL _SDAT + 8 
-/* each_with_in */               W_SYMBOL _SDAT + 14 
+/* __init       */               W_SYMBOL _SDAT + 8 
+/* count        */               W_SYMBOL _SDAT + 15 
+/* each_with_in */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* each_with_in */               W_METHOD 4, 5, CArray_Feach_with_index
+/* __init       */               W_METHOD_EX 3, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* each_with_in */               W_METHOD_EX 5, 5, CArray_Feach_with_index, 0
+                                 W_METHOD_LEN __CArray_Feach_with_index_END - CArray_Feach_with_index
+/* $ret<Object> */               W_METHOD_ARG -1, 0

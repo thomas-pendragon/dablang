@@ -18,22 +18,37 @@ func fun0()
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Ffun0:
                                  STACK_RESERVE 0
 /* 123          */               LOAD_NUMBER R0, 123
                                  RETURN R0
+                   __Ffun0_END:
+                                 NOP 
  
                    _SDAT:
+                                 W_STRING "__init" 
                                  W_STRING "fun0" 
  
                    _SYMB:
-/* fun0         */               W_SYMBOL _SDAT + 0 
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* fun0         */               W_SYMBOL _SDAT + 7 
  
                    _FUNC:
-/* fun0         */               W_METHOD 0, -1, Ffun0
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* fun0         */               W_METHOD_EX 1, -1, Ffun0, 0
+                                 W_METHOD_LEN __Ffun0_END - Ffun0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -32,7 +32,7 @@ func main()
                                  W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -41,37 +41,59 @@ func main()
                    _CODE:
                                  NOP 
  
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
                                  JMP L1
                    L1:
 /* Zomg         */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S3
+/* new          */               INSTCALL R1, R0, S5
 /* "foobar"     */               LOAD_STRING R2, _DATA + 0, 6
-/* foo          */               INSTCALL RNIL, R1, S1, R2
+/* foo          */               INSTCALL RNIL, R1, S3, R2
                                  JMP L1
+                   __Fmain_END:
+                                 NOP 
  
                    CZomg_Ffoo:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
+                   __CZomg_Ffoo_END:
+                                 NOP 
  
                    _CLAS:
 /* Zomg         */               W_CLASS 256, 0, 0
  
                    _SDAT:
                                  W_STRING "Zomg" 
+                                 W_STRING "__init" 
+                                 W_STRING "a" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
                                  W_STRING "new" 
  
                    _SYMB:
 /* Zomg         */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 5 
-/* main         */               W_SYMBOL _SDAT + 9 
-/* new          */               W_SYMBOL _SDAT + 14 
+/* __init       */               W_SYMBOL _SDAT + 5 
+/* a            */               W_SYMBOL _SDAT + 12 
+/* foo          */               W_SYMBOL _SDAT + 14 
+/* main         */               W_SYMBOL _SDAT + 18 
+/* new          */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* main         */               W_METHOD 2, -1, Fmain
-/* foo          */               W_METHOD 1, 256, CZomg_Ffoo
+/* __init       */               W_METHOD_EX 1, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD_EX 4, -1, Fmain, 0
+                                 W_METHOD_LEN __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD_EX 3, 256, CZomg_Ffoo, 1
+                                 W_METHOD_LEN __CZomg_Ffoo_END - CZomg_Ffoo
+/* a<Object>    */               W_METHOD_ARG 2, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -18,10 +18,16 @@ func foo(a)
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
                                  NOP 
  
                    Ffoo:
@@ -34,16 +40,28 @@ func foo(a)
 /* +            */               INSTCALL R5, R2, S1, R4
 /* PRINT        */               SYSCALL RNIL, 0, R5
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "*" 
                                  W_STRING "+" 
+                                 W_STRING "__init" 
+                                 W_STRING "a" 
                                  W_STRING "foo" 
  
                    _SYMB:
 /* *            */               W_SYMBOL _SDAT + 0 
 /* +            */               W_SYMBOL _SDAT + 2 
-/* foo          */               W_SYMBOL _SDAT + 4 
+/* __init       */               W_SYMBOL _SDAT + 4 
+/* a            */               W_SYMBOL _SDAT + 11 
+/* foo          */               W_SYMBOL _SDAT + 13 
  
                    _FUNC:
-/* foo          */               W_METHOD 2, -1, Ffoo
+/* __init       */               W_METHOD_EX 2, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD_EX 4, -1, Ffoo, 1
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* a<Object>    */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0

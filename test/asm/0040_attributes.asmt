@@ -27,7 +27,7 @@ func another_attribute(method, arg1, arg2)
                                  W_SECTION _CODE, "code"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _DATA:
@@ -38,13 +38,15 @@ func another_attribute(method, arg1, arg2)
  
                    F__init:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S2
-/* sample_attri */               CALL RNIL, S3, R0
-                                 LOAD_METHOD R1, S2
+                                 LOAD_METHOD R0, S4
+/* sample_attri */               CALL RNIL, S6, R0
+                                 LOAD_METHOD R1, S4
 /* 14           */               LOAD_NUMBER R2, 14
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* another_attr */               CALL RNIL, S1, R1, R2, R3
                                  RETURN RNIL
+                   __F__init_END:
+                                 NOP 
  
                    Fanother_attribute:
                                  STACK_RESERVE 0
@@ -52,30 +54,54 @@ func another_attribute(method, arg1, arg2)
 /* arg1         */               LOAD_ARG R1, 1
 /* arg2         */               LOAD_ARG R2, 2
                                  RETURN RNIL
+                   __Fanother_attribute_END:
+                                 NOP 
  
                    Ffoo:
                                  STACK_RESERVE 0
                                  RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
  
                    Fsample_attribute:
                                  STACK_RESERVE 0
 /* method       */               LOAD_ARG R0, 0
                                  RETURN RNIL
+                   __Fsample_attribute_END:
+                                 NOP 
  
                    _SDAT:
                                  W_STRING "__init" 
                                  W_STRING "another_attribute" 
+                                 W_STRING "arg1" 
+                                 W_STRING "arg2" 
                                  W_STRING "foo" 
+                                 W_STRING "method" 
                                  W_STRING "sample_attribute" 
  
                    _SYMB:
 /* __init       */               W_SYMBOL _SDAT + 0 
 /* another_attr */               W_SYMBOL _SDAT + 7 
-/* foo          */               W_SYMBOL _SDAT + 25 
-/* sample_attri */               W_SYMBOL _SDAT + 29 
+/* arg1         */               W_SYMBOL _SDAT + 25 
+/* arg2         */               W_SYMBOL _SDAT + 30 
+/* foo          */               W_SYMBOL _SDAT + 35 
+/* method       */               W_SYMBOL _SDAT + 39 
+/* sample_attri */               W_SYMBOL _SDAT + 46 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init
-/* another_attr */               W_METHOD 1, -1, Fanother_attribute
-/* foo          */               W_METHOD 2, -1, Ffoo
-/* sample_attri */               W_METHOD 3, -1, Fsample_attribute
+/* __init       */               W_METHOD_EX 0, -1, F__init, 0
+                                 W_METHOD_LEN __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* another_attr */               W_METHOD_EX 1, -1, Fanother_attribute, 3
+                                 W_METHOD_LEN __Fanother_attribute_END - Fanother_attribute
+/* method<Objec */               W_METHOD_ARG 5, 0
+/* arg1<Object> */               W_METHOD_ARG 2, 0
+/* arg2<Object> */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD_EX 4, -1, Ffoo, 0
+                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* sample_attri */               W_METHOD_EX 6, -1, Fsample_attribute, 1
+                                 W_METHOD_LEN __Fsample_attribute_END - Fsample_attribute
+/* method<Objec */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
