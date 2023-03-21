@@ -130,6 +130,7 @@ class DecompiledFunction
     when 'JMP'
       pos = args[0] + line[:label]
       @body << DabNodeJump.new(@blocks[pos])
+    when 'NOP'
     else
       errap line
       raise "unknown op #{op}"
