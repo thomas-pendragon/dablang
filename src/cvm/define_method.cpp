@@ -46,6 +46,8 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     function.address    = new_address;
     function.name       = method_name;
     function.new_method = true;
+    function.length     = method_length;
+    function.reflection = fun.reflection;
     auto fsymbol        = get_or_create_symbol_index(method_name);
     functions[fsymbol]  = function;
 

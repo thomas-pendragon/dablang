@@ -226,7 +226,7 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
             auto arg_count   = stream.read_uint16();
             auto length      = stream.read_uint64();
 
-            const char * extrasep = "    ";
+            const char *extrasep = "    ";
 
             if (!no_numbers)
             {

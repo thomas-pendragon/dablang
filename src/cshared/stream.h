@@ -47,12 +47,15 @@ struct dab_register_t
     static const uint16_t _nil_value = 0xFFFF;
 };
 
+#pragma pack(push, 1)
 struct BinFunctionArg
 {
     dab_symbol_t symbol;
     dab_class_t  klass;
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 struct BinFunctionExBase
 {
     dab_symbol_t symbol;
@@ -61,6 +64,8 @@ struct BinFunctionExBase
     uint16_t     arglist_count;
     uint64_t     length;
 };
+#pragma pack(pop)
+
 struct BinFunctionEx : BinFunctionExBase
 {
     std::vector<BinFunctionArg> args;

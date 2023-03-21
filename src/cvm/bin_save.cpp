@@ -153,6 +153,7 @@ void DabVM::dump_vm(FILE *out)
         bin_func.symbol        = it.first;
         bin_func.klass         = DAB_CLASS_NIL;
         bin_func.address       = fundata.address;
+        bin_func.length        = fundata.length;
         bin_func.arglist_count = reflection.arg_klasses.size();
         if (fun.new_method)
         {
