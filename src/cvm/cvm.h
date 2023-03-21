@@ -569,9 +569,8 @@ struct DabVM
 
     void read_classes(Stream &input, uint64_t classes_address, uint64_t classes_length);
 
-    void read_functions(Stream &input, uint64_t func_address, uint64_t func_length,
-                        uint64_t offset);
-    void read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length);
+    void read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length,
+                           uint64_t offset);
 
     void read_coverage_files(Stream &stream, uint64_t address, uint64_t length);
 

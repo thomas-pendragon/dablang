@@ -28,6 +28,7 @@ void DabVM::load_newformat(Stream &input)
 
     fprintf(stderr, "vm: newformat: h: %d, d: %d, s: %d\n", (int)size_of_header, (int)size_of_data,
             (int)number_of_sections);
+    fprintf(stderr, "vm: offset is %d\n", (int)offset);
 
     uint64_t code_address = 0;
     uint64_t symb_address = 0;
@@ -37,7 +38,6 @@ void DabVM::load_newformat(Stream &input)
     uint64_t func_address  = 0;
     uint64_t func_length   = 0;
     bool     has_functions = false;
-    bool     functions_ex  = false;
 
     uint64_t classes_address = 0;
     uint64_t classes_length  = 0;
@@ -75,7 +75,6 @@ void DabVM::load_newformat(Stream &input)
             func_address  = address;
             func_length   = length;
             has_functions = true;
-            functions_ex  = name == "fext";
         }
         if (name == "clas")
         {
@@ -102,14 +101,7 @@ void DabVM::load_newformat(Stream &input)
 
     if (has_functions)
     {
-        if (functions_ex)
-        {
-            read_functions_ex(instructions, func_address, func_length);
-        }
-        else
-        {
-            read_functions(instructions, func_address, func_length, offset);
-        }
+        read_functions_ex(instructions, func_address, func_length, offset);
     }
 
     this->last_ring_offset = offset;
@@ -149,46 +141,14 @@ void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t class
     }
 }
 
-void DabVM::read_functions(Stream &input, uint64_t func_address, uint64_t func_length,
-                           uint64_t offset)
-{
-    auto fun_len = 2 + 2 + 8; // uint16 + uint16 + uint64
-
-    auto n_func = func_length / fun_len;
-
-    fprintf(stderr, "funcad=%p funclen=%d n_func=%d\n", (void *)func_address, (int)func_length,
-            (int)n_func);
-
-    for (size_t i = 0; i < n_func; i++)
-    {
-        auto symbol_address      = func_address + i * fun_len;
-        auto class_index_address = symbol_address + 2;
-        auto address_address     = class_index_address + 2;
-
-        auto symbol      = input.uint16_data(symbol_address);
-        auto class_index = input.uint16_data(class_index_address);
-        auto address     = input.uint64_data(address_address);
-
-        auto symbol_str = get_symbol(symbol);
-
-        if (options.verbose)
-        {
-            fprintf(stderr, "vm/debug: func %d: %d -> '%s' at %p (class %d)\n", (int)i, (int)symbol,
-                    symbol_str.c_str(), (void *)address, (int)class_index);
-        }
-
-        auto &fun       = add_function(address, symbol_str, class_index);
-        fun.source_ring = offset;
-    }
-}
-
 struct MethodArgData
 {
     uint16_t symbol_index;
     uint16_t class_index;
 };
 
-void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length)
+void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length,
+                              uint64_t offset)
 {
     auto fun_len = 2 + 2 + 8 + 2 + 8; // uint16 + uint16 + uint64 + uint16 + uint64
     auto arg_len = 2 + 2;             // uint16 + uint16
@@ -226,7 +186,13 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         ptr += arg_len * (arg_count + 1);
 
-        auto &function = add_function(address, symbol_str, class_index);
+        auto &function       = add_function(address, symbol_str, class_index);
+        function.source_ring = offset;
+
+        if (options.verbose)
+        {
+            fprintf(stderr, "vm/debug: func offset is <%d>\n", (int)function.source_ring);
+        }
 
         function.length = method_length;
 

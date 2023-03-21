@@ -125,6 +125,8 @@ void DabVM::dump_vm(FILE *out)
     {
         const auto &fun = it.second;
 
+        fprintf(stderr, "vm/binsave: consider function '%s'\n", get_symbol(it.first).c_str());
+
         if (!fun.regular)
             continue;
 
