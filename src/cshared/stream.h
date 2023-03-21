@@ -47,14 +47,21 @@ struct dab_register_t
     static const uint16_t _nil_value = 0xFFFF;
 };
 
-#pragma pack(push, 1)
-struct BinFunction
+struct BinFunctionArg
+{
+    dab_symbol_t symbol;
+    dab_class_t klass;
+};
+
+struct BinFunctionEx
 {
     dab_symbol_t symbol;
     dab_class_t  klass;
     uint64_t     address;
+    uint16_t     arglist_count;
+    uint64_t     length;
+    std::vector<BinFunctionArg> args;
 };
-#pragma pack(pop)
 
 #pragma pack(push, 1)
 struct BinSection

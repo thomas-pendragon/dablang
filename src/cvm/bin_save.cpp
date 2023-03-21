@@ -103,7 +103,7 @@ void DabVM::dump_vm(FILE *out)
 
     BinSection func_section = {};
     memcpy(func_section.name, "func", 4);
-    std::vector<BinFunction> dump_functions;
+    std::vector<BinFunctionEx> dump_functions;
     for (auto it : functions)
     {
         const auto &fun = it.second;
