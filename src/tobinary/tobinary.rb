@@ -349,10 +349,6 @@ class Parser
           @output_stream._push_cstring(line[1])
         when 'W_SYMBOL'
           @output_stream._push_uint64(_process_address(line[1]))
-        when 'W_METHOD'
-          @output_stream._push_uint16(line[1])
-          @output_stream._push_uint16(line[2])
-          @output_stream._push_uint64(_process_address(line[3]))
         when 'W_CLASS'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
