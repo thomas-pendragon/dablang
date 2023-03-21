@@ -241,6 +241,57 @@ void parse_func_substream(Stream &input_stream, uint64_t start, bool no_numbers)
     }
 }
 
+void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbers)
+{
+    uint64_t     position = 0;
+    StreamReader reader(input_stream, position);
+
+    AsmStream<StreamReader> stream(reader);
+
+    while (true)
+    {
+        try
+        {
+            auto pos         = stream.position();
+            auto symbol      = stream.read_uint16();
+            auto class_index = stream.read_int16();
+            auto address     = stream.read_uint64();
+            auto arg_count   = stream.read_uint16();
+            auto length      = stream.read_uint64();
+
+            const char * extrasep = "    ";
+
+            if (!no_numbers)
+            {
+                fprintf(output, LINEINFO_FORMAT, start + pos);
+                extrasep = "                ";
+            }
+            else
+            {
+                fprintf(output, "    ");
+            }
+            fprintf(output, "W_METHOD_EX %" PRIu16 ", %" PRId16 ", %" PRIu64 ", %" PRId16 "\n",
+                    symbol, class_index, address, arg_count);
+
+            fprintf(output, "%s", extrasep);
+            fprintf(output, "W_METHOD_LEN %" PRIu64 "\n", length);
+            for (int i = 0; i < arg_count + 1; i++)
+            {
+                auto symbol_index = stream.read_int16();
+                auto class_index  = stream.read_int16();
+
+                fprintf(output, "%s", extrasep);
+                fprintf(output, "W_METHOD_ARG %" PRId16 ", %" PRId16 "\n", symbol_index,
+                        class_index);
+            }
+        }
+        catch (EOFError)
+        {
+            break;
+        }
+    }
+}
+
 // TODO: move to Stream
 void read_stream(Stream &stream, FILE *input = stdin, bool close_input = false)
 {
@@ -390,6 +441,10 @@ int main(int argc, char **argv)
             else if (with_headers && section_name == "func")
             {
                 parse_func_substream(substream, start_pos, no_numbers);
+            }
+            else if (with_headers && section_name == "fext")
+            {
+                parse_func_ex_substream(substream, start_pos, no_numbers);
             }
 
             if (with_headers)

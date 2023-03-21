@@ -30,10 +30,17 @@ static void _twrite(std::vector<byte> &out, T value)
 
 static void _twrite(std::vector<byte> &out, BinFunctionEx value)
 {
-    _twrite(out, (const byte *)&value, sizeof(BinFunctionExBase));
+    fprintf(stderr, "Print function... (%d args)\n", (int)value.args.size());
+    fprintf(stderr, "symbol = %d\n", (int)value.symbol);
+    fprintf(stderr, "klass  = %d\n", (int)value.klass);
+    fprintf(stderr, "addres = %d\n", (int)value.address);
+    fprintf(stderr, "arglis = %d\n", (int)value.arglist_count);
+    fprintf(stderr, "length = %d\n", (int)value.length);
+    
+    _ttwrite(out, (const byte *)&value, sizeof(BinFunctionExBase));
     for (auto &arg : value.args)
     {
-        _twrite(out, (const byte *)&arg, sizeof(BinFunctionArg));
+        _ttwrite(out, (const byte *)&arg, sizeof(BinFunctionArg));
     }
 }
 
