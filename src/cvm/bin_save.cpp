@@ -71,7 +71,7 @@ void DabVM::dump_vm(FILE *out)
                                        [](BinSection section)
                                        {
                                            std::string name = section.name;
-                                           return name == "func" || name == "symb" ||
+                                           return name == "symb" ||
                                                   name == "symd" || name == "fext";
                                        }),
                         dump_sections.end());

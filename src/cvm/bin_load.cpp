@@ -70,7 +70,7 @@ void DabVM::load_newformat(Stream &input)
             symb_length  = length;
             has_symbols  = true;
         }
-        if (name == "func" || name == "fext")
+        if (name == "fext")
         {
             func_address  = address;
             func_length   = length;
