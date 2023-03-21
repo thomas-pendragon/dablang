@@ -168,11 +168,7 @@ class DabNodeUnit < DabNode
     output.print('W_SECTION', '_SDAT', '"symd"')
     output.print('W_SECTION', '_SYMB', '"symb"')
 
-    if $feature_reflection
-      output.print('W_SECTION', '_FUNC', '"fext"')
-    else
-      output.print('W_SECTION', '_FUNC', '"func"')
-    end
+    output.print('W_SECTION', '_FUNC', '"fext"')
     output.print('W_END_HEADER')
     output.separate
 

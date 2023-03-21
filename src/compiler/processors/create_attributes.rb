@@ -1,7 +1,5 @@
 class CreateAttributes
   def run(node)
-    return unless $feature_attributes
-
     body = DabNodeTreeBlock.new
 
     node.functions.each do |function|

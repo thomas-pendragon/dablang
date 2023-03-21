@@ -42,13 +42,11 @@ class DabNodeFunction < DabNode
     @ssa_count = 0
     @concreteified = false
     insert(DabNodeSymbol.new(identifier))
-    if $feature_reflection
-      argsymbols = DabNode.new
-      arglist&.each do |arg|
-        argsymbols << DabNodeSymbol.new(arg.identifier)
-      end
-      insert(argsymbols)
+    argsymbols = DabNode.new
+    arglist&.each do |arg|
+      argsymbols << DabNodeSymbol.new(arg.identifier)
     end
+    insert(argsymbols)
   end
 
   def children_info
@@ -166,23 +164,19 @@ class DabNodeFunction < DabNode
 
   def compile_definition(output)
     output.comment(identifier)
-    if $feature_reflection
-      output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
-      output.print('W_METHOD_LEN', "#{funclabel_end} - #{funclabel}")
-      arglist.each_with_index do |arg, index|
-        klass_name = arg.my_type.type_string
-        klass = root.class_number(klass_name)
-        symbol = node_arg_symbols[index].symbol_index
-        output.comment("#{arg.identifier}<#{klass_name}>")
-        output.print('W_METHOD_ARG', symbol, klass)
-      end
-      klass_name = return_type.type_string
+    output.print('W_METHOD_EX', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count)
+    output.print('W_METHOD_LEN', "#{funclabel_end} - #{funclabel}")
+    arglist.each_with_index do |arg, index|
+      klass_name = arg.my_type.type_string
       klass = root.class_number(klass_name)
-      output.comment("$ret<#{klass_name}>")
-      output.print('W_METHOD_ARG', -1, klass)
-    else
-      output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel)
+      symbol = node_arg_symbols[index].symbol_index
+      output.comment("#{arg.identifier}<#{klass_name}>")
+      output.print('W_METHOD_ARG', symbol, klass)
     end
+    klass_name = return_type.type_string
+    klass = root.class_number(klass_name)
+    output.comment("$ret<#{klass_name}>")
+    output.print('W_METHOD_ARG', -1, klass)
   end
 
   def compile_function_description(output, type)
@@ -197,10 +191,8 @@ class DabNodeFunction < DabNode
     blocks.each do |block|
       block.compile(output)
     end
-    if $feature_reflection
-      output.label(funclabel_end)
-      output.print('NOP')
-    end
+    output.label(funclabel_end)
+    output.print('NOP')
   end
 
   def n_local_vars

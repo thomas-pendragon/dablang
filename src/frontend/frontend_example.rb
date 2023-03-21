@@ -35,7 +35,7 @@ def run_test(settings)
   stdlib_glob = "#{stdlib_path}/*.dab"
   stdlib_files = Dir.glob(stdlib_glob)
 
-  options = '--with-attributes --with-reflection'
+  options = ''
   run_options = options
 
   compile_to_asm(([dab] + stdlib_files).compact, asm, options)

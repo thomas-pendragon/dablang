@@ -6,7 +6,6 @@ end
 
 $debug = false
 $debug_code_dump = false
-$feature_reflection = false
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

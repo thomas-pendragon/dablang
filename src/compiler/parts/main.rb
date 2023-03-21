@@ -51,8 +51,6 @@ class DabCompilerFrontend
       $strip = !!settings[:strip]
       $entry = settings[:entry] || 'main'
       $no_autorelease = settings[:no_autorelease]
-      $feature_reflection = settings[:with_reflection]
-      $feature_attributes = settings[:with_attributes]
       $multipass = settings[:multipass]
 
       inputs = settings[:inputs] || [:stdin]
