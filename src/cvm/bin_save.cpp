@@ -28,6 +28,15 @@ static void _twrite(std::vector<byte> &out, T value)
     _twrite(out, (const byte *)&value, sizeof(value));
 }
 
+static void _twrite(std::vector<byte> &out, BinFunctionEx value)
+{
+    _twrite(out, (const byte *)&value, sizeof(BinFunctionExBase));
+    for (auto &arg : value.args)
+    {
+        _twrite(out, (const byte *)&arg, sizeof(BinFunctionArg));
+    }
+}
+
 template <typename T>
 static void _twrite(std::vector<byte> &out, std::vector<T> value)
 {
@@ -102,7 +111,7 @@ void DabVM::dump_vm(FILE *out)
     auto &code_section = sections[last_code_index];
 
     BinSection func_section = {};
-    memcpy(func_section.name, "func", 4);
+    memcpy(func_section.name, "fext", 4);
     std::vector<BinFunctionEx> dump_functions;
     size_t                     funssize = 0;
     for (auto it : functions)
