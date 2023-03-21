@@ -5,7 +5,7 @@
     W_SECTION _CODE, "code"
     W_SECTION _SYMD, "symd"
     W_SECTION _SYMB, "symb"
-    W_SECTION _FUNC, "func"
+    W_SECTION _FUNC, "fext"
     W_END_HEADER
 
 _CODE:
@@ -23,7 +23,9 @@ _SYMB:
     W_SYMBOL 185
 
 _FUNC:
-    W_METHOD 1, -1, 947      
+    W_METHOD_EX 1, -1, 947, 0
+    W_METHOD_LEN 0
+    W_METHOD_ARG 0, 0
 
 ## OPTIONS
 
@@ -37,7 +39,7 @@ _FUNC:
     W_SECTION _CODE, "code"
     W_SECTION _SYMD, "symd"
     W_SECTION _SYMB, "symb"
-    W_SECTION _FUNC, "func"
+    W_SECTION _FEXT, "fext"
     W_END_HEADER
 
 _CODE:
@@ -54,5 +56,7 @@ _SYMB:
 /*      970: */ W_SYMBOL 181
 /*      978: */ W_SYMBOL 185
 
-_FUNC:
-/*      986: */ W_METHOD 1, -1, 947
+_FEXT:
+/*      986: */ W_METHOD_EX 1, -1, 947, 0
+                W_METHOD_LEN 0
+                W_METHOD_ARG 0, 0

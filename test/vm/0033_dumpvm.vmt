@@ -22,7 +22,7 @@ $dumpvm
     W_SECTION _CODE, "code"
     W_SECTION _SYMD, "symd"
     W_SECTION _SYMB, "symb"
-    W_SECTION _FUNC, "func"
+    W_SECTION _FEXT, "fext"
     W_END_HEADER
 
 _DATA:
@@ -119,6 +119,10 @@ _SYMB:
     W_SYMBOL 428
     W_SYMBOL 431
 
-_FUNC:
-    W_METHOD 0, -1, 205
-    W_METHOD 1, -1, 212
+_FEXT:
+    W_METHOD_EX 0, -1, 205, 0
+    W_METHOD_LEN 6
+    W_METHOD_ARG -1, 0
+    W_METHOD_EX 1, -1, 212, 0
+    W_METHOD_LEN 32
+    W_METHOD_ARG -1, 0

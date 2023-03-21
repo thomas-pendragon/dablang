@@ -4,7 +4,7 @@ W_HEADER 3
 W_SECTION _DATA, "data"
 W_SECTION _SYMB, "symb"
 W_SECTION _CODE, "code"
-W_SECTION _FUNC, "func"
+W_SECTION _FUNC, "fext"
 
 W_END_HEADER
 
@@ -25,7 +25,9 @@ Fmain:
   RETURN RNIL 
 
 _FUNC:
-  W_METHOD 0, -1, Fmain
+  W_METHOD_EX 0, -1, Fmain, 0
+  W_METHOD_LEN 0
+  W_METHOD_ARG 0, 0
 
 ## INPUT
 

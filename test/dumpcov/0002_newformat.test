@@ -9,7 +9,7 @@
                                  W_SECTION _SDAT, "data"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _CODE, "code"
-                                 W_SECTION _FUNC, "func"
+                                 W_SECTION _FUNC, "fext"
                                  W_END_HEADER 
  
                    _COVD:
@@ -44,7 +44,9 @@
                                  RETURN RNIL
  
                    _FUNC:
-/* main         */               W_METHOD 1, -1, Fmain
+/* main         */               W_METHOD_EX 1, -1, Fmain, 0
+                                 W_METHOD_LEN 0
+                                 W_METHOD_ARG 0, 0
 
 ## OPTIONS
 
