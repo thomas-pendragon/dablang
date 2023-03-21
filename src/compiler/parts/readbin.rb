@@ -65,21 +65,6 @@ class DabBinReader
     end
   end
 
-  def parse_functions(func, symbols)
-    fun_length = 2 + 2 + 8
-    count = func.length / fun_length
-    Array.new(count) do |n|
-      offset = n * fun_length
-      data = func.unpack("@#{offset}S<S<Q<")
-      fun = %i[symbol klass address].zip(data).to_h
-      {
-        symbol: symbols[fun[:symbol]],
-        klass: lookup_klass(fun[:klass]),
-        address: fun[:address],
-      }
-    end
-  end
-
   def parse_klasses(clas, symbols)
     klass_length = 2 + 2 + 2
     count = clas.length / klass_length
@@ -99,11 +84,11 @@ class DabBinReader
     ret = []
 
     while pos < length
-      data = fext.unpack("@#{pos}S<S<Q<S<")
-      fun = %i[symbol klass address arg_count].zip(data).to_h
+      data = fext.unpack("@#{pos}S<S<Q<S<Q<")
+      fun = %i[symbol klass address arg_count length].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
       fun[:symbol] = symbols[fun[:symbol]]
-      pos += 2 + 2 + 8 + 2
+      pos += 2 + 2 + 8 + 2 + 8
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
         pos += 4
@@ -144,7 +129,6 @@ class DabBinReader
     header = parse_whole_header_with_offset(binary)
 
     symb = get_section(binary, header, 'symb')
-    func = get_section(binary, header, 'func')
     fext = get_section(binary, header, 'fext')
 
     base_offset = header[:offset]
@@ -156,7 +140,6 @@ class DabBinReader
     clas = get_section(binary, header, 'clas')
     @klasses = parse_klasses(clas, all_symbols) if clas
 
-    functions = parse_functions(func, all_symbols) if func
     functions = parse_extended_functions(fext, all_symbols) if fext
 
     {
