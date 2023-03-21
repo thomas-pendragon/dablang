@@ -12,6 +12,11 @@ func bar()
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func bar()
 {
   return 16;

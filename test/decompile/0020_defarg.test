@@ -7,6 +7,11 @@ func foo(arg = 15)
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func foo(arg0 = 15)
 {
   return arg0;

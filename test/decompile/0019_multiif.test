@@ -30,6 +30,11 @@ func foo(a)
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func foo(arg0)
 {
   print("foo");

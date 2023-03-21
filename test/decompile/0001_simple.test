@@ -7,6 +7,11 @@ func foo()
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func foo()
 {
   return 2;

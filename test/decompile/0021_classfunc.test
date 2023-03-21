@@ -18,6 +18,11 @@ class Bar
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 class Bar
 {
   func main()

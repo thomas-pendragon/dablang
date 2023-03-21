@@ -7,6 +7,11 @@ func foo(arg)
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func foo(arg0)
 {
   var R1 = arg0.foo();

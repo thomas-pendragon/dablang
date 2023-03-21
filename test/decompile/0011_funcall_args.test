@@ -14,6 +14,11 @@ func __foo_Fixnum_Fixnum()
   return nil;
 }
 
+func __init()
+{
+  return nil;
+}
+
 func bar()
 {
   var R2 = __foo_Fixnum_Fixnum(123, 456);

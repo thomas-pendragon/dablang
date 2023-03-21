@@ -10,6 +10,11 @@ func foo(a)
 
 ## EXPECTED
 
+func __init()
+{
+  return nil;
+}
+
 func foo(arg0)
 {
   var R2 = arg0 == 1;
