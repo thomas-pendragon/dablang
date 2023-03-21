@@ -66,6 +66,7 @@ class DabMultiSpec
 
       extract_source(input, dab, data[sym])
       compile_options = ''
+      compile_options += ' --with_reflection'
       all_bin.each do |base|
         compile_options += " --ring-base[]=#{base}"
       end

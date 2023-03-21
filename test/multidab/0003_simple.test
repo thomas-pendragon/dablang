@@ -2,10 +2,11 @@
 
 func level0()
 {
-  define_method("foo") ^
+  var block = ^
   {
     print("hello world");
   };
+  define_method("foo", block);
 }
 
 ## LEVEL 1
