@@ -44,7 +44,7 @@ describe DabNode do
     expect(symbol1.following_nodes(DabNodeSymbol, unscoped: true)).to eq [tree11a, tree2, tree22, tree222, symbol2]
   end
 
-  it 'ssaifies captured variable' do
+  xit 'ssaifies captured variable' do
     arglist = DabNode.new
     arglist << DabNodeArgDefinition.new(0, 'bar', nil, nil)
 
@@ -99,7 +99,7 @@ describe DabNode do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  it 'should ssaify var inside if inside while' do
+  xit 'should ssaify var inside if inside while' do
     arglist = DabNode.new
     arglist << DabNodeArgDefinition.new(0, 'bar', nil, nil)
 

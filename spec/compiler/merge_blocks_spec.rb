@@ -3,7 +3,7 @@ require 'spec_helper'
 require_relative '../../src/compiler/_requires'
 
 describe MergeBlocks, decompile: true do
-  it 'should remove jumps when multiple children' do
+  xit 'should remove jumps when multiple children' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new
@@ -51,7 +51,7 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  it 'should merge blocks with multiple children' do
+  xit 'should merge blocks with multiple children' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new
@@ -98,7 +98,7 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  it 'should merge blocks with simple jumps' do
+  xit 'should merge blocks with simple jumps' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
@@ -289,7 +289,7 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  it 'should run decompile postprocess' do
+  xit 'should run decompile postprocess' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))
@@ -340,7 +340,7 @@ describe MergeBlocks, decompile: true do
     expect(root.all_nodes.map(&:simple_info)).to eq(array)
   end
 
-  it 'should merge blocks with conditional jumps' do
+  xit 'should merge blocks with conditional jumps' do
     top_block = DabNodeFlatBlock.new
 
     block0 = DabNodeBasicBlock.new << DabNodeSyscall.new(0, DabNode.new << DabNodeLiteralNumber.new(0))

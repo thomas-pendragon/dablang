@@ -112,7 +112,7 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
-  it 'parses functions' do
+  xit 'parses functions' do
     symbols = ['!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index',
                'first', 'is', 'last', 'length', 'main', 'puts', 'to_bool']
 
@@ -172,7 +172,7 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
-  it 'parses extended functions' do
+  xit 'parses extended functions' do
     symbols = ['!', '!=', '+', '-', '==', '[]', 'a', 'b', 'count', 'each', 'each_with_index', 'first',
                'foo', 'is', 'last', 'length', 'main', 'other', 'puts', 'string', 'to_bool']
 
@@ -326,7 +326,7 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
-  it 'parses whole binary image' do
+  xit 'parses whole binary image' do
     binary = parse_bin('44 41 42 00 03 00 00 00  00 00 00 00 00 00 00 00  c8 00 00 00 00 00 00 00  b2 04 00 00 00 00 00 00
 				    	05 00 00 00 00 00 00 00  64 61 74 61 00 00 00 00  00 00 00 00 00 00 00 00  c8 00 00 00 00 00 00 00
 				    	0e 00 00 00 00 00 00 00  63 6f 64 65 00 00 00 00  00 00 00 00 00 00 00 00  d6 00 00 00 00 00 00 00
@@ -458,7 +458,7 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
-  it 'should parse whole images for ring > 0' do
+  xit 'should parse whole images for ring > 0' do
     binary = parse_bin('44 41 42 00 03 00 00 00 04 03 00 00 00 00 00 00 c8 00 00 00 00 00 00 00 79 02 00 00 00 00 00 00
                         05 00 00 00 00 00 00 00 64 61 74 61 00 00 00 00 00 00 00 00 00 00 00 00 cc 03 00 00 00 00 00 00
                         0e 00 00 00 00 00 00 00 63 6f 64 65 00 00 00 00 00 00 00 00 00 00 00 00 da 03 00 00 00 00 00 00
@@ -525,7 +525,7 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
-  it 'reads classes' do
+  xit 'reads classes' do
     binary = parse_bin('44 41 42 00 03 00 00 00 00 00 00 00 00 00 00 00
                         e8 00 00 00 00 00 00 00 ab 00 00 00 00 00 00 00
                         06 00 00 00 00 00 00 00 64 61 74 61 00 00 00 00

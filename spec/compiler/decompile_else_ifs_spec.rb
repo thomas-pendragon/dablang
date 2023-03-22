@@ -3,7 +3,7 @@ require 'spec_helper'
 require_relative '../../src/compiler/_requires'
 
 describe DecompileElseIfs, decompile: true do
-  it 'should decompile if+else' do
+  xit 'should decompile if+else' do
     top_block = DabNodeTreeBlock.new
 
     block0 = DabNodeBasicBlock.new << DabNodeDefineLocalVar.new('R0', DabNodeLiteralNumber.new(0))

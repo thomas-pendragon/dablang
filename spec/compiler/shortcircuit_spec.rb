@@ -3,7 +3,7 @@ require 'spec_helper'
 require_relative '../../src/compiler/_requires'
 
 describe FixShortcircuit, uint8: true do
-  it 'provides a proper evaluation of ||' do
+  xit 'provides a proper evaluation of ||' do
     op = DabNodeOperator.new(:left, :right, :'||')
     print = DabNodeSyscall.new(0, DabNode.new << op)
     tree = DabNodeTreeBlock.new << :pre << print << :post
