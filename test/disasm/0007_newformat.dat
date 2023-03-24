@@ -100,15 +100,12 @@ _SYMB:
 /*      344: */ W_SYMBOL 299
 
 _FEXT:
-/*      352: */ W_METHOD_EX 0, -1, 203, 0
-                W_METHOD_LEN 6
+/*      352: */ W_METHOD 0, -1, 203, 0, 6
                 W_METHOD_ARG -1, 0
-/*      378: */ W_METHOD_EX 4, -1, 210, 3
-                W_METHOD_LEN 6
+/*      378: */ W_METHOD 4, -1, 210, 3, 6
                 W_METHOD_ARG 1, 1
                 W_METHOD_ARG 2, 6
                 W_METHOD_ARG 3, 0
                 W_METHOD_ARG -1, 0
-/*      416: */ W_METHOD_EX 5, -1, 217, 0
-                W_METHOD_LEN 64
+/*      416: */ W_METHOD 5, -1, 217, 0, 64
                 W_METHOD_ARG -1, 0

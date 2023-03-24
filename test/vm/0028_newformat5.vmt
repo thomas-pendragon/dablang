@@ -39,8 +39,7 @@ Fmain:
   RETURN RNIL
 
 FUNC:
-  W_METHOD_EX 3, -1, Fmain, 0
-  W_METHOD_LEN 0
+  W_METHOD 3, -1, Fmain, 0, 0
   W_METHOD_ARG 0, 0
 
 ## OPTIONS
