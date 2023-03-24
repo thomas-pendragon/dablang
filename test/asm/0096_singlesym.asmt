@@ -74,13 +74,10 @@ func main()
 /* value=       */               W_SYMBOL _SDAT + 35 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 1, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD_EX 2, -1, Fmain, 0
-                                 W_METHOD_LEN __Fmain_END - Fmain
+/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* value=       */               W_METHOD_EX 5, 256, CMyObject_Fvalue%EQ, 1
-                                 W_METHOD_LEN __CMyObject_Fvalue%EQ_END - CMyObject_Fvalue%EQ
+/* value=       */               W_METHOD 5, 256, CMyObject_Fvalue%EQ, 1, __CMyObject_Fvalue%EQ_END - CMyObject_Fvalue%EQ
 /* new_value<Ob */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -76,9 +76,7 @@ func foo()
 /* foo          */               W_SYMBOL _SDAT + 7 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD_EX 1, -1, Ffoo, 0
-                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 1, -1, Ffoo, 0, __Ffoo_END - Ffoo
 /* $ret<Object> */               W_METHOD_ARG -1, 0

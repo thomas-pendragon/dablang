@@ -77,9 +77,7 @@ class Array
 /* each_with_in */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 3, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 3, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* each_with_in */               W_METHOD_EX 5, 5, CArray_Feach_with_index, 0
-                                 W_METHOD_LEN __CArray_Feach_with_index_END - CArray_Feach_with_index
+/* each_with_in */               W_METHOD 5, 5, CArray_Feach_with_index, 0, __CArray_Feach_with_index_END - CArray_Feach_with_index
 /* $ret<Object> */               W_METHOD_ARG -1, 0

@@ -46,9 +46,7 @@ func fun0()
 /* fun0         */               W_SYMBOL _SDAT + 7 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* fun0         */               W_METHOD_EX 1, -1, Ffun0, 0
-                                 W_METHOD_LEN __Ffun0_END - Ffun0
+/* fun0         */               W_METHOD 1, -1, Ffun0, 0, __Ffun0_END - Ffun0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

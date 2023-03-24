@@ -53,9 +53,7 @@ class Foo
 /* __init       */               W_SYMBOL _SDAT + 15 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 2, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* __destruct   */               W_METHOD_EX 1, 256, CFoo_F__destruct, 0
-                                 W_METHOD_LEN __CFoo_F__destruct_END - CFoo_F__destruct
+/* __destruct   */               W_METHOD 1, 256, CFoo_F__destruct, 0, __CFoo_F__destruct_END - CFoo_F__destruct
 /* $ret<Object> */               W_METHOD_ARG -1, 0

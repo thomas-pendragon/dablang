@@ -123,21 +123,15 @@ func main()
 /* main_or      */               W_SYMBOL _SDAT + 31 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* fun1         */               W_METHOD_EX 1, -1, Ffun1, 0
-                                 W_METHOD_LEN __Ffun1_END - Ffun1
+/* fun1         */               W_METHOD 1, -1, Ffun1, 0, __Ffun1_END - Ffun1
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* fun2         */               W_METHOD_EX 2, -1, Ffun2, 0
-                                 W_METHOD_LEN __Ffun2_END - Ffun2
+/* fun2         */               W_METHOD 2, -1, Ffun2, 0, __Ffun2_END - Ffun2
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD_EX 3, -1, Fmain, 0
-                                 W_METHOD_LEN __Fmain_END - Fmain
+/* main         */               W_METHOD 3, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main_and     */               W_METHOD_EX 4, -1, Fmain_and, 0
-                                 W_METHOD_LEN __Fmain_and_END - Fmain_and
+/* main_and     */               W_METHOD 4, -1, Fmain_and, 0, __Fmain_and_END - Fmain_and
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main_or      */               W_METHOD_EX 5, -1, Fmain_or, 0
-                                 W_METHOD_LEN __Fmain_or_END - Fmain_or
+/* main_or      */               W_METHOD 5, -1, Fmain_or, 0, __Fmain_or_END - Fmain_or
 /* $ret<Object> */               W_METHOD_ARG -1, 0

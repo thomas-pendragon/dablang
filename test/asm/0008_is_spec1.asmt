@@ -97,13 +97,10 @@ func bar()
 /* is           */               W_SYMBOL _SDAT + 17 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* bar          */               W_METHOD_EX 2, -1, Fbar, 0
-                                 W_METHOD_LEN __Fbar_END - Fbar
+/* bar          */               W_METHOD 2, -1, Fbar, 0, __Fbar_END - Fbar
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD_EX 3, -1, Ffoo, 1
-                                 W_METHOD_LEN __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 3, -1, Ffoo, 1, __Ffoo_END - Ffoo
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

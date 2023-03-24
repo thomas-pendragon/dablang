@@ -66,14 +66,11 @@ func tap(a)
 /* tap__block1  */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap          */               W_METHOD_EX 4, -1, Ftap, 1
-                                 W_METHOD_LEN __Ftap_END - Ftap
+/* tap          */               W_METHOD 4, -1, Ftap, 1, __Ftap_END - Ftap
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap__block1  */               W_METHOD_EX 5, -1, Ftap__block1, 1
-                                 W_METHOD_LEN __Ftap__block1_END - Ftap__block1
+/* tap__block1  */               W_METHOD 5, -1, Ftap__block1, 1, __Ftap__block1_END - Ftap__block1
 /* arg<Object>  */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

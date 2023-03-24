@@ -90,21 +90,16 @@ func main()
 /* test         */               W_SYMBOL _SDAT + 37 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 0, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD_EX 4, -1, Fmain, 0
-                                 W_METHOD_LEN __Fmain_END - Fmain
+/* main         */               W_METHOD 4, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main__block1 */               W_METHOD_EX 5, -1, Fmain__block1, 1
-                                 W_METHOD_LEN __Fmain__block1_END - Fmain__block1
+/* main__block1 */               W_METHOD 5, -1, Fmain__block1, 1, __Fmain__block1_END - Fmain__block1
 /* bar<Object>  */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* qux          */               W_METHOD_EX 6, -1, Fqux, 2
-                                 W_METHOD_LEN __Fqux_END - Fqux
+/* qux          */               W_METHOD 6, -1, Fqux, 2, __Fqux_END - Fqux
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* b<Object>    */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* test         */               W_METHOD_EX 7, -1, Ftest, 0
-                                 W_METHOD_LEN __Ftest_END - Ftest
+/* test         */               W_METHOD 7, -1, Ftest, 0, __Ftest_END - Ftest
 /* $ret<Object> */               W_METHOD_ARG -1, 0

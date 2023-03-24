@@ -127,15 +127,11 @@ func main()
 /* var          */               W_SYMBOL _SDAT + 32 
  
                    _FUNC:
-/* __init       */               W_METHOD_EX 1, -1, F__init, 0
-                                 W_METHOD_LEN __F__init_END - F__init
+/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* functrue     */               W_METHOD_EX 2, -1, Ffunctrue, 0
-                                 W_METHOD_LEN __Ffunctrue_END - Ffunctrue
+/* functrue     */               W_METHOD 2, -1, Ffunctrue, 0, __Ffunctrue_END - Ffunctrue
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD_EX 4, -1, Fmain, 0
-                                 W_METHOD_LEN __Fmain_END - Fmain
+/* main         */               W_METHOD 4, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* go           */               W_METHOD_EX 3, 256, CFoo_Fgo, 0
-                                 W_METHOD_LEN __CFoo_Fgo_END - CFoo_Fgo
+/* go           */               W_METHOD 3, 256, CFoo_Fgo, 0, __CFoo_Fgo_END - CFoo_Fgo
 /* $ret<Object> */               W_METHOD_ARG -1, 0
