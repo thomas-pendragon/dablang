@@ -237,11 +237,9 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
             {
                 fprintf(output, "    ");
             }
-            fprintf(output, "W_METHOD_EX %" PRIu16 ", %" PRId16 ", %" PRIu64 ", %" PRId16 "\n",
-                    symbol, class_index, address, arg_count);
+            fprintf(output, "W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 ", %" PRId16 ", %" PRIu64 "\n",
+                    symbol, class_index, address, arg_count, length);
 
-            fprintf(output, "%s", extrasep);
-            fprintf(output, "W_METHOD_LEN %" PRIu64 "\n", length);
             for (int i = 0; i < arg_count + 1; i++)
             {
                 auto symbol_index = stream.read_int16();

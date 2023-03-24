@@ -90,7 +90,15 @@ class VMFrontend
       chunk.strip
     end
 
-    compare_output(info, testcase, expected)
+    begin
+      compare_output(info, testcase, expected)
+    rescue DabCompareError
+      raise unless $autofix
+
+      new_data = data.dup
+      new_data[:expect] = testcase.strip
+      write_new_testspec(input, new_data)
+    end
 
     File.open(out, 'wb') { |f| f << '1' }
   end
