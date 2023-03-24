@@ -137,15 +137,11 @@ _SYMB:
     W_SYMBOL 519
 
 _FEXT:
-    W_METHOD_EX 0, -1, 205, 0
-    W_METHOD_LEN 6
+    W_METHOD 0, -1, 205, 0, 6
     W_METHOD_ARG -1, 0
-    W_METHOD_EX 1, -1, 212, 0
-    W_METHOD_LEN 39
+    W_METHOD 1, -1, 212, 0, 39
     W_METHOD_ARG -1, 0
-    W_METHOD_EX 2, -1, 252, 0
-    W_METHOD_LEN 32
+    W_METHOD 2, -1, 252, 0, 32
     W_METHOD_ARG -1, 0
-    W_METHOD_EX 39, -1, 285, 0
-    W_METHOD_LEN 32
+    W_METHOD 39, -1, 285, 0, 32
     W_METHOD_ARG -1, 0
