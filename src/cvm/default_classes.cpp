@@ -280,7 +280,7 @@ void DabVM::define_default_classes()
         for (auto arg : args) { 
             array.push_back(arg);
         }
-        self.set_instvar($VM->get_or_create_symbol_index("@closure"), value);
+        self.set_instvar($VM->get_or_create_symbol_index("closure"), value);
         fprintf(stderr, "method.init [argc = %d]\n", (int)args.size());
         int i = 0;
         for (auto arg : args) {
