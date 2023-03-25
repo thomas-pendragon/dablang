@@ -64,20 +64,21 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     self_register = value.input_register
     list = nil if list.empty?
 
-    if has_block?
-      blockarg = "S#{block_symbol_index}"
-      capture_arg = "R#{block_capture.input_register}"
-    end
+    # if has_block?
+    #   blockarg = "S#{block_symbol_index}"
+    #   capture_arg = "R#{block_capture.input_register}"
+    # end
 
     args = [
       output_register.nil? ? 'RNIL' : "R#{output_register}",
       "R#{self_register}",
       "S#{symbol_index}",
-      blockarg,
-      capture_arg,
+      nil,  # blockarg,
+      nil,  # capture_arg,
       list,
     ]
-    output.printex(self, "INSTCALL#{has_block? ? '_BLOCK' : ''}", *args)
+    # {has_block? ? '_BLOCK' : ''}"
+    output.printex(self, 'INSTCALL', *args)
   end
 
   def compile_as_ssa(output, output_register)

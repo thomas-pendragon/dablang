@@ -5,10 +5,10 @@ class DabNodeYield < DabNodeBasecall
   # lower_with Uncomplexify
   after_init :yield_to_call
 
-  def compile_as_ssa(output, output_register)
-    list = args.map(&:register_string)
-    output.printex(self, 'YIELD', output_register ? "R#{output_register}" : 'RNIL', *list)
-  end
+  # def compile_as_ssa(output, output_register)
+  #   list = args.map(&:register_string)
+  #   output.printex(self, 'YIELD', output_register ? "R#{output_register}" : 'RNIL', *list)
+  # end
 
   def formatted_source(options)
     argstxt = if args.count > 0

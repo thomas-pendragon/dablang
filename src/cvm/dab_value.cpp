@@ -419,11 +419,13 @@ void DabValue::set_data(const DabValueData &other_data)
 DabValue::DabValue(const DabValue &other)
 {
     set_data(other.data);
+    localblock = other.localblock;
 }
 
 DabValue &DabValue::operator=(const DabValue &other)
 {
     set_data(other.data);
+    localblock = other.localblock;
     return *this;
 }
 

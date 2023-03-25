@@ -197,6 +197,7 @@ struct DabValue
 {
     DabMemoryCounter<COUNTER_VALUE> _counter;
     DabValueData                    data;
+    bool                            localblock = false;
 
     void dump(FILE *file = nullptr) const;
 
