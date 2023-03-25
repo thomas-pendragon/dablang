@@ -595,4 +595,8 @@ class DabNode
   def no_side_effects?
     false
   end
+
+  def count_as_argument?
+    true
+  end
 end

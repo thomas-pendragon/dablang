@@ -3,7 +3,7 @@ class CheckCallArgsCount
     function = call.target_function
     return false unless function.is_a? DabNodeFunction
 
-    actual = call.args.count
+    actual = call.arg_count
     expected_min = function.min_argc
     expected_max = function.max_argc
     expected = if expected_min == expected_max

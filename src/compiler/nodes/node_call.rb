@@ -116,4 +116,8 @@ class DabNodeCall < DabNodeExternalBasecall
 
     target_function.concreteified? ? '[hardcall]' : ''
   end
+
+  def arg_count
+    args.select{_1.count_as_argument?}.count
+  end
 end
