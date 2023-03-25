@@ -97,6 +97,7 @@ _SYMD:
     W_STRING "||"
     W_STRING "&&"
     W_STRING "closure"
+    W_STRING "foo"
 
 _SYMB:
     W_SYMBOL 363
@@ -139,11 +140,12 @@ _SYMB:
     W_SYMBOL 560
     W_SYMBOL 563
     W_SYMBOL 566
+    W_SYMBOL 574
 
 _FEXT:
     W_METHOD 1, -1, 237, 0, 6
     W_METHOD_ARG -1, 0
-    W_METHOD 2, -1, 325, 0, 32
-    W_METHOD_ARG -1, 0
     W_METHOD 3, -1, 244, 0, 47
+    W_METHOD_ARG -1, 0
+    W_METHOD 40, -1, 325, 0, 32
     W_METHOD_ARG -1, 0
