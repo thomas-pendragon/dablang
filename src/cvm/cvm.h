@@ -75,6 +75,7 @@ enum
     TYPE_LITERALSTRING = 18,
     TYPE_DYNAMICSTRING = 19,
     TYPE_FLOAT         = 20,
+    TYPE_LOCALBLOCK    = 21,
 };
 
 #include "../cshared/classes.h"
@@ -529,6 +530,8 @@ struct DabVM
 
     bool      has_arg(int arg_index);
     DabValue &get_arg(int arg_index);
+
+    DabValue get_current_block();
 
     DabValue &get_retval();
 

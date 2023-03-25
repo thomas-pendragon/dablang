@@ -202,6 +202,18 @@ DabValue &DabVM::get_arg(int arg_index)
     return current_frame()->args[arg_index];
 }
 
+DabValue DabVM::get_current_block()
+{
+    for (auto value : current_frame()->args)
+    {
+        if (value.data.type == TYPE_LOCALBLOCK)
+        {
+            return value;
+        }
+    }
+    return DabValue(nullptr);
+}
+
 DabValue &DabVM::get_retval()
 {
     return current_frame()->retvalue;
@@ -269,7 +281,6 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
 DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
 {
     (void)self;
-    assert(args.size() == 0); // TODO!
     /*
     auto out_reg = input.read_reg();
     auto symbol  = input.read_symbol();
@@ -288,6 +299,14 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
     DabValue                    fake_self; // ?
     auto                        fun = $VM->functions[symbol];
     std::vector<dab_register_t> reglist;
+    int                         regindex = 1000; // TODO!
+    for (auto arg : args)
+    {
+        auto reg = (dab_register_t)regindex;
+        register_set(reg, arg);
+        reglist.push_back(reg);
+        regindex += 1;
+    }
 
     _call_function(false, reg, fake_self, fun, 0, nullptr, nullptr, reglist);
 
@@ -491,6 +510,18 @@ bool DabVM::execute_single(Stream &input)
         auto in_reg  = input.read_reg();
 
         auto value = register_get(in_reg);
+
+        assert(value.data.type == TYPE_METHOD);
+        value.data.type = TYPE_LOCALBLOCK;
+
+        register_set(out_reg, value);
+        break;
+    }
+    case OP_LOAD_CURRENT_BLOCK:
+    {
+        auto out_reg = input.read_reg();
+
+        auto value = get_current_block();
 
         register_set(out_reg, value);
         break;
