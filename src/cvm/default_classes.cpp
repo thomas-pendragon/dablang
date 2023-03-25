@@ -273,6 +273,16 @@ void DabVM::define_default_classes()
     method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
         return $VM->call_block(self, args);
     });
+    method_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
+        DabValue array_class = $VM->classes[CLASS_ARRAY];
+        DabValue value       = array_class.create_instance();
+        auto    &array       = value.array();
+        for (auto arg : args) { 
+            array.push_back(arg);
+        }
+        self.set_instvar($VM->get_or_create_symbol_index("@closure"), value);
+        return nullptr;
+    });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {

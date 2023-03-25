@@ -206,7 +206,7 @@ DabValue DabVM::get_current_block()
 {
     for (auto value : current_frame()->args)
     {
-        if (value.data.type == TYPE_LOCALBLOCK)
+        if (value.localblock)
         {
             return value;
         }
