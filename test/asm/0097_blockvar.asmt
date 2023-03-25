@@ -1,6 +1,6 @@
 ## CODE
 
-func foo(a) {
+func foo(a,b=nil) {
 }
 
 func main()

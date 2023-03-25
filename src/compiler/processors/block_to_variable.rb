@@ -30,7 +30,9 @@ class BlockToVariable
     node.prepend_in_parent(define_var)
     node.insert(local_block)
 
-    node.function.run_init!
+    # ap ['all vars?', node.function.variables]
+
+    # node.function.run_init!
 
     # puts '---------------'
     # node.function.dump

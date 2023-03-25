@@ -12,7 +12,7 @@ class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckFunctionExistence
   dirty_check_with CheckCallArgsTypes
   dirty_check_with CheckCallArgsCount
-  lower_with BlockToVariable
+  after_init BlockToVariable
   lower_with ConvertCallToSyscall
   lower_with Uncomplexify
   optimize_with ConcreteifyCall
