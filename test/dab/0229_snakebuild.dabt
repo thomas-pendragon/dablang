@@ -1,0 +1,464 @@
+## CODE
+
+// Snake game, initial experiments with using FFI to access SDL2 library
+
+// int SDL_Init(Uint32 flags)
+[__import_sdl]
+func SDL_Init<Int32>(flags<Uint32>) {}
+
+// extern DECLSPEC SDL_Window * SDLCALL SDL_CreateWindow(const char *title,
+//                                                      int x, int y, int w,
+//                                                      int h, Uint32 flags);
+[__import_sdl]
+func SDL_CreateWindow<IntPtr>(title<String>, x<Int32>, y<Int32>, w<Int32>, h<Int32>, flags<Uint32>) {}
+
+// void SDL_Delay(Uint32 ms)
+[__import_sdl]
+func SDL_Delay<NilClass>(ms<Uint32>) {}
+
+// int SDL_PollEvent(SDL_Event* event)
+[__import_sdl]
+func SDL_PollEvent<Int32>(event<IntPtr>) {}
+
+//SDL_Renderer* SDL_CreateRenderer(SDL_Window* window,
+//                                 int         index,
+//                               Uint32      flags)
+[__import_sdl]
+func SDL_CreateRenderer<IntPtr>(window<IntPtr>, index<Int32>, flags<Uint32>) {}
+
+//int SDL_RenderClear(SDL_Renderer* renderer)
+[__import_sdl]
+func SDL_RenderClear<Int32>(renderer<IntPtr>) {}
+
+//void SDL_RenderPresent(SDL_Renderer* renderer)
+[__import_sdl]
+func SDL_RenderPresent<NilClass>(renderer<IntPtr>) {}
+
+// int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
+//                            Uint8         r,
+//                            Uint8         g,
+//                            Uint8         b,
+//                            Uint8         a)
+[__import_sdl]
+func SDL_SetRenderDrawColor<Int32>(renderer<IntPtr>, r<Uint8>, g<Uint8>, b<Uint8>, a<Uint8>) {}
+
+// int SDL_RenderDrawLine(SDL_Renderer* renderer,
+//                        int           x1,
+//                        int           y1,
+//                        int           x2,
+//                        int           y2)
+[__import_sdl]
+func SDL_RenderDrawLine<Int32>(renderer<IntPtr>, x1<Int32>, y1<Int32>, x2<Int32>, y2<Int32>) {}
+
+// Uint64 SDL_GetPerformanceCounter(void)
+[__import_sdl]
+func SDL_GetPerformanceCounter<Uint64>() {}
+
+// Uint64 SDL_GetPerformanceCounter(void)
+[__import_sdl]
+func SDL_GetPerformanceFrequency<Uint64>() {}
+
+func draw_square(renderer, _size, _x, _y, alpha, apple, head)
+{
+ // x = x * size;
+ // y = y * size;
+
+  var x = _x + 1;
+  var y = _y + 1;
+  var size = _size - 2;
+
+  if (apple)
+  {
+   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  }
+  else
+  {
+   SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  
+  }
+
+  SDL_RenderDrawLine(renderer, x + 1, y, x + size - 2, y);
+  SDL_RenderDrawLine(renderer, x + 1, y + size - 1, x + size - 2, y + size - 1);
+
+  SDL_RenderDrawLine(renderer, x, y + 1, x, y + size - 2);
+  SDL_RenderDrawLine(renderer, x + size - 1, y + 1, x + size - 1, y + size - 2);
+
+  if (head)
+  {
+    SDL_RenderDrawLine(renderer, x + 1, y + 1, x + size - 2, y + size - 2);
+    SDL_RenderDrawLine(renderer, x + size - 2, y + 1, x + 1, y + size - 2);
+  }
+
+  if (apple)
+  {
+      SDL_RenderDrawLine(renderer, x + size / 2, y, x + size / 2 + size / 4, y - size / 4);
+  }
+}
+
+
+func draw_simple_square(renderer, _size, _x, _y)
+{
+  var x = _x + 1;
+  var y = _y + 1;
+  var size = _size - 2;
+
+  SDL_RenderDrawLine(renderer, x + 1, y, x + size - 2, y);
+  SDL_RenderDrawLine(renderer, x + 1, y + size - 1, x + size - 2, y + size - 1);
+
+  SDL_RenderDrawLine(renderer, x, y + 1, x, y + size - 2);
+  SDL_RenderDrawLine(renderer, x + size - 1, y + 1, x + size - 1, y + size - 2);
+}
+
+
+class SnakePoint
+{
+  var @x;
+  var @y;
+  func x()
+  {
+    return @x;    
+  }
+  func y()
+  {
+    return @y;
+  }
+  func x=(value)
+  {
+    @x = value;    
+  }
+  func y=(value)
+  {
+    @y = value;
+  }
+  func to_s()
+  {
+    var ret = "(";
+    ret = ret + @x.to_s;
+    ret = ret + ", ";
+    ret = ret + @y.to_s;
+    ret = ret + ")";
+    return ret;
+  }
+  func ==(other)
+  {
+    return (self.x == other.x) && (self.y == other.y);
+  }
+}
+
+class SnakeRandom
+{
+  var @value;
+  construct()
+  {
+    var<Uint32> uint32 = 1;
+    @value = uint32;
+    self.next();
+  }
+  func next()
+  {
+    var<Uint32> a = 214013;
+    var<Uint32> b = 2531011;
+    @value = @value * a + b;
+    return @value;
+  }
+}
+
+class SnakeGame
+{
+  var @snake;
+  var @dx;  
+  var @dy;
+  var @apple;
+  var @random;
+  func init()
+  {
+      var start_point = SnakePoint.new;
+      start_point.x = 10;
+      start_point.y = 5;
+      @dx = 1;
+      @dy = 0;
+      @snake = @[start_point];
+      @apple = SnakePoint.new;
+      @apple.x = 20;
+      @apple.y = 8;
+      @random = SnakeRandom.new;
+      @game_width = 40;
+      @game_height = 26;
+      @score = 0;
+      self.input(1, 0);
+      self.expand();
+      self.expand();
+      self.expand();
+  }
+  func input(dx, dy)
+  {
+    @dx = dx;
+    @dy = dy;
+  }
+  func render(renderer, size)
+  {
+    var snake = @snake;
+    var _size = size;
+    var _renderer = renderer;
+    var _last = @snake.count - 1;
+    snake.each_with_index() ^(point, index)
+    {
+      var x = point.x * _size;
+      var y = point.y * _size;
+      draw_square(_renderer, _size, x, y, 255, 0, index == _last);
+    };
+
+    draw_square(_renderer, _size, @apple.x * _size, @apple.y * _size, 255, 1, true);
+
+    var sy = @game_height * size;
+    var sx = @game_width * size;
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  
+    SDL_RenderDrawLine(renderer, 0, sy, sx, sy);
+    draw_number(renderer, 2, sy + 2, 8, @score, 0, 5);
+  }
+  func snake_head()
+  {
+    return @snake.last;
+  }
+  func new_head_point()
+  {
+      var new_point = SnakePoint.new;
+      var last_point = self.snake_head;
+      new_point.x = (last_point.x + @dx + @game_width) % @game_width;
+      new_point.y = (last_point.y + @dy + @game_height) % @game_height;
+      return new_point;
+  }
+  func expand()
+  {
+      var new_point = self.new_head_point();
+      @snake.insert(new_point);
+  }
+  func new_head_will_collapse()
+  {
+    var new_point = self.new_head_point();
+    var index = 1; // new head can take the same place as the last point
+    var count = @snake.count;
+    while (index < count)
+    {
+      var point = @snake[index];
+      if (point == new_point)
+      {
+        return true;
+      }
+      index = index + 1;
+    };
+    return false;
+  }
+  func generate_new_apple()
+  {
+    var r1 = @random.next;
+    var r2 = @random.next;
+
+    var<Uint32> a = @game_width;
+    var<Uint32> b = @game_height;
+
+    @apple.x = r1 % a;
+    @apple.y = r2 % b;
+
+    @score = @score + 1;
+  }
+  func is_eating_apple()
+  {
+    var head = self.snake_head;
+    var ret = head == @apple;
+    return ret;
+  }
+  func contract()
+  {
+    @snake.shift();
+  }
+  func step()
+  {
+      if (self.new_head_will_collapse())
+      {
+        self.init();
+      }
+      else
+      {
+        self.expand();
+
+        if (self.is_eating_apple())
+        {
+          self.generate_new_apple();
+        }
+        else
+        {
+          self.contract();
+        }
+      }
+  }
+}
+
+func draw_digit(renderer, dx, dy, size, digit, margin)
+{
+  var row0 = 0b111001111111101111111111111111;
+  var row1 = 0b101011001001101100100001101101;
+  var row2 = 0b101001111111111111111001111111;
+  var row3 = 0b101001100001001001101010101001;
+  var row4 = 0b111001111111001111111010111111;
+
+  var rows = @[row0, row1, row2, row3, row4];
+
+  var y = 0;
+  var x = 0;
+  while (y < 5)
+  {
+    x = 0;
+    while (x < 3)
+    {
+     var index = digit * 3 + x;
+     var value = rows[y] >> (30 - index - 1);
+     var c = value & 1;
+      if (c)
+      {
+        draw_simple_square(renderer, size, dx + x * (size + margin), dy + y * (size + margin));
+      }
+      x = x + 1;
+    };
+    y = y + 1;
+  };
+}
+
+func number_length(number)
+{
+  if (number == 0)
+  {
+    return 1;
+  }
+
+  var length = 0;
+  while (number > 0)
+  {
+    length = length + 1;
+    number = number / 10;
+  }
+  return length;
+}
+
+func draw_number(renderer, dx, dy, size, number, margin, extra_offset)
+{
+  var offset = 3 * size + 6 * margin + extra_offset;
+  var index = number_length(number) - 1;
+  if (number == 0)
+  {
+    draw_digit(renderer, dx, dy, size, 0, margin);
+  }
+  while (number > 0)
+  {
+    var digit = number % 10;
+    draw_digit(renderer, dx + offset * index, dy, size, digit, margin);
+    number = number / 10;
+    index = index - 1;
+  }
+}
+
+func main()
+{
+  var SDL_INIT_VIDEO = 32;
+  var status = SDL_Init(SDL_INIT_VIDEO);
+  print("SDL_Init: ");
+  puts(status);
+
+  var size = 20;
+  var width = 40;
+  var height = 30;
+
+  var SDL_WINDOWPOS_UNDEFINED = 536805376;
+  var SDL_WINDOWPOS_CENTERED =  805240832;
+  var SCREEN_WIDTH = size * width;
+  var SCREEN_HEIGHT = size * height;
+  var SDL_WINDOW_SHOWN = 4;
+  var SDL_WINDOW_OPENGL = 2;
+  var window = SDL_CreateWindow("Example 0001: snake",
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    SDL_WINDOW_OPENGL);
+  print("SDL_CreateWindow: ");
+  puts(window);
+
+  var SDL_RENDERER_ACCELERATED = 2;
+  var SDL_RENDERER_PRESENTVSYNC = 4;
+  var renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  print("SDL_CreateRenderer: ");
+  puts(renderer);
+
+  var start_point = SnakePoint.new;
+  start_point.x = 10;
+  start_point.y = 5;
+  var dx = 1;
+  var dy = 0;
+  var<Uint64> time = 0;
+  var<Uint64> step = 400;
+
+  var eventBuffer = ByteBuffer.new(2048);
+
+  var<Uint64> mul_counter= 1000;
+  var last_counter = SDL_GetPerformanceCounter() * mul_counter;
+  var mod_counter = SDL_GetPerformanceFrequency();
+
+  var game = SnakeGame.new;
+  game.init();
+ 
+  while (true)
+  {
+    var has_event = SDL_PollEvent(eventBuffer);
+
+    if (has_event == 1)
+    {
+      var test1 = eventBuffer[0] == 0;    
+      var test2 = eventBuffer[1] == 1;
+      var test3 = eventBuffer[1] == 3;
+      var test_right = eventBuffer[20] == 79;
+      var test_left  = eventBuffer[20] == 80;
+      var test_down  = eventBuffer[20] == 81;
+      var test_up    = eventBuffer[20] == 82;
+      var test_esc   = eventBuffer[20] == 27;
+      
+      if (test1 && test2) // SDL_QUIT
+      {
+        puts("QUIT");
+        exit(0);
+      }
+
+      if (test1 && test3) // SDL_KEYDOWN
+      {
+        if (test_right) { game.input( 1,  0); }
+        if (test_left)  { game.input(-1,  0); }
+        if (test_down)  { game.input( 0,  1); }
+        if (test_up)    { game.input( 0, -1); }
+        if (test_esc)   { puts("ESC QUIT"); exit(0); }
+      }
+    }
+
+    var current_counter = SDL_GetPerformanceCounter() * mul_counter;
+    var dt = current_counter - last_counter;
+    dt = dt / mod_counter;
+    last_counter = current_counter;
+    time = time + dt;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    game.render(renderer, size);
+
+    SDL_RenderPresent(renderer);
+    SDL_Delay(16);
+
+    if (time > step)
+    {
+      game.step();
+      time = time - step;
+    }
+  }
+}
+
+## EXPECT OK
+
+ok
