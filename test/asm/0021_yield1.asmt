@@ -32,21 +32,24 @@ func yield1()
  
                    Fyield1:
                                  STACK_RESERVE 0
-                                 YIELD RNIL
+                                 LOAD_CURRENT_BLOCK R0
+/* call         */               INSTCALL RNIL, R0, S1
                                  RETURN RNIL
                    __Fyield1_END:
                                  NOP 
  
                    _SDAT:
                                  W_STRING "__init" 
+                                 W_STRING "call" 
                                  W_STRING "yield1" 
  
                    _SYMB:
 /* __init       */               W_SYMBOL _SDAT + 0 
-/* yield1       */               W_SYMBOL _SDAT + 7 
+/* call         */               W_SYMBOL _SDAT + 7 
+/* yield1       */               W_SYMBOL _SDAT + 12 
  
                    _FUNC:
 /* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* yield1       */               W_METHOD 1, -1, Fyield1, 0, __Fyield1_END - Fyield1
+/* yield1       */               W_METHOD 2, -1, Fyield1, 0, __Fyield1_END - Fyield1
 /* $ret<Object> */               W_METHOD_ARG -1, 0
