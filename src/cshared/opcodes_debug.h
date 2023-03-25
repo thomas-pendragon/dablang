@@ -57,4 +57,5 @@ const DabOpcodeInfo g_opcodes[] = {
      "LOAD_ARG_DEFAULT",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_REG}},
     {OP_LOAD_LOCAL_BLOCK, "LOAD_LOCAL_BLOCK", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
+    {OP_LOAD_CURRENT_BLOCK, "LOAD_CURRENT_BLOCK", {OpcodeArg::ARG_REG}},
 };
