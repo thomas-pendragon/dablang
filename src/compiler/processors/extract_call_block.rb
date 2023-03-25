@@ -5,8 +5,8 @@ class ExtractCallBlock
 
     block = node.block
 
-    name = node.function.new_block_name
-    klass_name = name + "Class"
+    name = 'call' # .new_block_name
+    klass_name = node.root.new_blockclass_name(node.function) # name + "Class"
 
     block.dump
     arglist = block.arglist&.dup
@@ -40,12 +40,13 @@ class ExtractCallBlock
       capture_getter = DabNodeSSAGet.new(reg, id)
     end
 
-    functions = []
-    klass = DabNodeClassDefinition.new(klass_name, nil, functions)
     fun = DabNodeFunction.new(name, new_body, arglist, false)
+    functions = [fun]
+    base_class = 'Method' # node.root.class_number("Method")
+    klass = DabNodeClassDefinition.new(klass_name, base_class, functions)
 
     node.root.add_class(klass)
-    node.root.add_function(fun)
+    # node.root.add_function(fun)
     node.block_capture.replace_with!(capture_getter) if has_capture
     node.block.replace_with!(DabNodeBlockReference.new(fun))
     node.prepend_instruction(capture_setter) if has_capture

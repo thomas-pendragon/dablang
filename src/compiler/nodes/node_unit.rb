@@ -317,4 +317,17 @@ class DabNodeUnit < DabNode
   def class_names
     @classes.map { |node| node.identifier._to_s }
   end
+
+  def new_blockclass_name(function)
+    base = function.identifier.to_s
+    index = 0
+    while true
+      name = "__block_#{base}#{index}"
+      if class_names.include?(name)
+        index += 1
+      else
+        return name
+      end
+    end
+  end
 end

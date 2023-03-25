@@ -20,6 +20,7 @@ func main()
                                  W_HEADER 3
                                  W_OFFSET 0
                                  W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
@@ -43,39 +44,44 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S3
+                                 LOAD_METHOD R0, S2
                                  LOAD_LOCAL_BLOCK R1, R0
-/* foo          */               CALL R2, S1, R1
+/* foo          */               CALL R2, S3, R1
 /* PRINT        */               SYSCALL RNIL, 0, R2
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
  
-                   Fmain__block1:
+                   C__block_main0_Fcall:
                                  STACK_RESERVE 0
 /* 3            */               LOAD_NUMBER R0, 3
                                  RETURN R0
-                   __Fmain__block1_END:
+                   __C__block_main0_Fcall_END:
                                  NOP 
  
+                   _CLAS:
+/* __block_main */               W_CLASS 256, 14, 0
+ 
                    _SDAT:
+                                 W_STRING "__block_main0" 
                                  W_STRING "__init" 
+                                 W_STRING "call" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
-                                 W_STRING "main__block1" 
  
                    _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* foo          */               W_SYMBOL _SDAT + 7 
-/* main         */               W_SYMBOL _SDAT + 11 
-/* main__block1 */               W_SYMBOL _SDAT + 16 
+/* __block_main */               W_SYMBOL _SDAT + 0 
+/* __init       */               W_SYMBOL _SDAT + 14 
+/* call         */               W_SYMBOL _SDAT + 21 
+/* foo          */               W_SYMBOL _SDAT + 26 
+/* main         */               W_SYMBOL _SDAT + 30 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 1, -1, Ffoo, 0, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 3, -1, Ffoo, 0, __Ffoo_END - Ffoo
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 4, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main__block1 */               W_METHOD 3, -1, Fmain__block1, 0, __Fmain__block1_END - Fmain__block1
+/* call         */               W_METHOD 2, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall
 /* $ret<Object> */               W_METHOD_ARG -1, 0
