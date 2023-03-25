@@ -259,7 +259,7 @@ class DabNodeFunction < DabNode
   end
 
   def block_index(block)
-    blocks.index(block)
+    blocks.index_of(block)
   end
 
   def call_users

@@ -421,12 +421,12 @@ class DabNode
     @children.index(node)
   end
 
-  def index(node)
+  def index_of(node)
     @children.index(node)
   end
 
   def parent_index
-    parent&.index(self)
+    parent&.index_of(self)
   end
 
   # TODO: handle nested code blocks
@@ -505,7 +505,7 @@ class DabNode
 
   def _insert_before(node)
     if parent.is_kind_of_any?([DabNodeBasicBlock, DabNodeTreeBlock])
-      index = parent.index(self)
+      index = parent.index_of(self)
       raise 'no index' unless index
 
       parent.insert_at(index, node)
@@ -515,11 +515,11 @@ class DabNode
   end
 
   def prepend_in_parent(node)
-    parent.insert_at(parent.index(self), node)
+    parent.insert_at(parent.index_of(self), node)
   end
 
   def append_in_parent(node)
-    parent.insert_at(parent.index(self) + 1, node)
+    parent.insert_at(parent.index_of(self) + 1, node)
   end
 
   def prepend_instruction(node)

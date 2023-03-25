@@ -124,7 +124,7 @@ class DabNodeUnit < DabNode
   end
 
   def constant_index(node)
-    @constants.index(node)
+    @constants.index_of(node)
   end
 
   def symbol_index(node)
