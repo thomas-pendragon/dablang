@@ -19,16 +19,21 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     name.dump(stderr);
     fprintf(stderr, "\n");
 
-    fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d)\n", method.data.type,
-            TYPE_METHOD);
+    fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d, TYPE_OBJECT = %d)\n",
+            method.data.type, TYPE_METHOD, TYPE_OBJECT);
 
-    assert(method.data.type == TYPE_METHOD);
+    assert(method.data.type == TYPE_OBJECT);
     assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
 
-    auto method_symbol = method.data.fixnum;
-    auto method_name   = name.string();
+    auto &method_class = method.get_class();
 
-    auto fun = functions[method_symbol];
+    // auto method_symbol = method.data.fixnum;
+    // auto method_name   = name.string();
+
+    // auto fun = functions[method_symbol];
+    auto method_name = std::string("call");
+    auto call_symbol = $VM->get_symbol_index(method_name);
+    auto fun         = method_class.get_instance_function(call_symbol);
     assert(!fun.new_method);
     auto method_address = fun.address;
 
