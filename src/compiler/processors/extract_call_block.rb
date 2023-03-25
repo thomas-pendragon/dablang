@@ -28,6 +28,9 @@ class ExtractCallBlock
     end
 
     has_capture = capture_args.count > 0
+
+    has_capture = false # TODO: rewrite
+
     if has_capture
       id = node.function.allocate_tempvar
       capture = DabNodeLiteralArray.new(capture_args)

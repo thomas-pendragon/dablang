@@ -7,6 +7,7 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
   optimize_with SimplifyClassProperty
   check_with CheckInstanceFunctionExistence
   lower_with Uncomplexify
+  after_init BlockToVariable
 
   def initialize(value, identifier, arglist, block)
     super(arglist)

@@ -35,8 +35,9 @@ func tap(a)
                    Ftap:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
-                                 LOAD_NIL R1
-/* fun          */               INSTCALL_BLOCK RNIL, R0, S3, S5, R1
+                                 LOAD_METHOD R1, S5
+                                 LOAD_LOCAL_BLOCK R2, R1
+/* fun          */               INSTCALL RNIL, R0, S3, R2
                                  RETURN RNIL
                    __Ftap_END:
                                  NOP 
