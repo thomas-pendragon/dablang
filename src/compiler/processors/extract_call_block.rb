@@ -5,8 +5,9 @@ class ExtractCallBlock
 
     block = node.block
 
-    name = 'call' # .new_block_name
-    klass_name = node.root.new_blockclass_name(node.function) # name + "Class"
+    root = node.root
+    name = 'call'
+    klass_name = root.new_blockclass_name(node.function)
 
     block.dump
     arglist = block.arglist&.dup
@@ -23,36 +24,44 @@ class ExtractCallBlock
 
     captured_vars.each_with_index do |captured_define, index|
       identifier = captured_define.identifier
+      # ap ['hmm', identifier]
       value = DabNodeClosureVar.new(index)
       capture_args << DabNodeLocalVar.new(identifier)
       capture_extract << DabNodeDefineLocalVar.new(identifier, value)
     end
 
     # has_capture = capture_args.count > 0
+    # errap ['capture_args',capture_args.dump,has_capture]
 
-    has_capture = false # TODO: rewrite
-
-    if has_capture
-      id = node.function.allocate_tempvar
-      capture = DabNodeLiteralArray.new(capture_args)
-      reg = node.function.allocate_ssa
-      capture_setter = DabNodeSSASet.new(capture, reg, id)
-      capture_getter = DabNodeSSAGet.new(reg, id)
-    end
+    # if has_capture
+    #   id = node.function.allocate_tempvar
+    #   capture = DabNodeLiteralArray.new(capture_args)
+    #   reg = node.function.allocate_ssa
+    #   capture_setter = DabNodeSSASet.new(capture, reg, id)
+    #   capture_getter = DabNodeSSAGet.new(reg, id)
+    # end
 
     fun = DabNodeFunction.new(name, new_body, arglist, false)
     functions = [fun]
-    base_class = 'Method' # node.root.class_number("Method")
+    base_class = 'Method'
     klass = DabNodeClassDefinition.new(klass_name, base_class, functions)
 
-    node.root.add_class(klass)
-    # node.root.add_function(fun)
-    node.block_capture.replace_with!(capture_getter) if has_capture
-    node.block.replace_with!(DabNodeBlockReference.new(fun))
-    node.prepend_instruction(capture_setter) if has_capture
+    root.add_class(klass)
+    # node.block_capture.replace_with!(capture_getter) if has_capture
+
+    init = DabNodeClass.new(klass_name)
+    #  def initialize(value, identifier, arglist, block)
+    # errap ['capture_args',capture_args]
+    initcall = DabNodeInstanceCall.new(init, 'new', capture_args, nil)
+
+    node.replace_with!(initcall) # DabNodeBlockReference.new(fun))
+    # node.prepend_instruction(capture_setter) if has_capture
 
     klass.run_init!
     fun.run_init!
+
+    # root.dump
+    # raise 'a'
 
     true
   end

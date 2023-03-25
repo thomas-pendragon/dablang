@@ -46,9 +46,10 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S2
-                                 LOAD_LOCAL_BLOCK R1, R0
-/* foo          */               CALL RNIL, S3, R1
+/* __block_main */               LOAD_CLASS R0, 256
+/* new          */               INSTCALL R1, R0, S5
+                                 LOAD_LOCAL_BLOCK R2, R1
+/* foo          */               CALL RNIL, S3, R2
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -68,6 +69,7 @@ func main()
                                  W_STRING "call" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
+                                 W_STRING "new" 
  
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
@@ -75,6 +77,7 @@ func main()
 /* call         */               W_SYMBOL _SDAT + 21 
 /* foo          */               W_SYMBOL _SDAT + 26 
 /* main         */               W_SYMBOL _SDAT + 30 
+/* new          */               W_SYMBOL _SDAT + 35 
  
                    _FUNC:
 /* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init

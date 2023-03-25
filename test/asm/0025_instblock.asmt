@@ -18,6 +18,7 @@ func tap(a)
                                  W_HEADER 3
                                  W_OFFSET 0
                                  W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
@@ -35,43 +36,51 @@ func tap(a)
                    Ftap:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
-                                 LOAD_METHOD R1, S5
-                                 LOAD_LOCAL_BLOCK R2, R1
-/* fun          */               INSTCALL RNIL, R0, S3, R2
+/* __block_tap0 */               LOAD_CLASS R1, 256
+/* new          */               INSTCALL R2, R1, S6
+                                 LOAD_LOCAL_BLOCK R3, R2
+/* fun          */               INSTCALL RNIL, R0, S5, R3
                                  RETURN RNIL
                    __Ftap_END:
                                  NOP 
  
-                   Ftap__block1:
+                   C__block_tap0_Fcall:
                                  STACK_RESERVE 0
 /* arg          */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
-                   __Ftap__block1_END:
+                   __C__block_tap0_Fcall_END:
                                  NOP 
  
+                   _CLAS:
+/* __block_tap0 */               W_CLASS 256, 14, 0
+ 
                    _SDAT:
+                                 W_STRING "__block_tap0" 
                                  W_STRING "__init" 
                                  W_STRING "a" 
                                  W_STRING "arg" 
+                                 W_STRING "call" 
                                  W_STRING "fun" 
+                                 W_STRING "new" 
                                  W_STRING "tap" 
-                                 W_STRING "tap__block1" 
  
                    _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* a            */               W_SYMBOL _SDAT + 7 
-/* arg          */               W_SYMBOL _SDAT + 9 
-/* fun          */               W_SYMBOL _SDAT + 13 
-/* tap          */               W_SYMBOL _SDAT + 17 
-/* tap__block1  */               W_SYMBOL _SDAT + 21 
+/* __block_tap0 */               W_SYMBOL _SDAT + 0 
+/* __init       */               W_SYMBOL _SDAT + 13 
+/* a            */               W_SYMBOL _SDAT + 20 
+/* arg          */               W_SYMBOL _SDAT + 22 
+/* call         */               W_SYMBOL _SDAT + 26 
+/* fun          */               W_SYMBOL _SDAT + 31 
+/* new          */               W_SYMBOL _SDAT + 35 
+/* tap          */               W_SYMBOL _SDAT + 39 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap          */               W_METHOD 4, -1, Ftap, 1, __Ftap_END - Ftap
-/* a<Object>    */               W_METHOD_ARG 1, 0
+/* tap          */               W_METHOD 7, -1, Ftap, 1, __Ftap_END - Ftap
+/* a<Object>    */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap__block1  */               W_METHOD 5, -1, Ftap__block1, 1, __Ftap__block1_END - Ftap__block1
-/* arg<Object>  */               W_METHOD_ARG 2, 0
+/* call         */               W_METHOD 4, 256, C__block_tap0_Fcall, 1, __C__block_tap0_Fcall_END - C__block_tap0_Fcall
+/* arg<Object>  */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

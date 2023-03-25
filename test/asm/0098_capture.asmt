@@ -48,10 +48,13 @@ Block variable must be captured.
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S5
-                                 LOAD_METHOD R1, S5
-                                 LOAD_LOCAL_BLOCK R2, R1
-/* bar          */               CALL RNIL, S4, R0, R2
+/* 15           */               LOAD_NUMBER R0, 15
+/* __block_main */               LOAD_CLASS R1, 256
+/* new          */               INSTCALL R2, R1, S7, R0
+/* __block_main */               LOAD_CLASS R3, 257
+/* new          */               INSTCALL R4, R3, S7, R0
+                                 LOAD_LOCAL_BLOCK R5, R4
+/* bar          */               CALL RNIL, S4, R2, R5
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -84,6 +87,7 @@ Block variable must be captured.
                                  W_STRING "bar" 
                                  W_STRING "call" 
                                  W_STRING "main" 
+                                 W_STRING "new" 
  
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
@@ -93,6 +97,7 @@ Block variable must be captured.
 /* bar          */               W_SYMBOL _SDAT + 37 
 /* call         */               W_SYMBOL _SDAT + 41 
 /* main         */               W_SYMBOL _SDAT + 46 
+/* new          */               W_SYMBOL _SDAT + 51 
  
                    _FUNC:
 /* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init

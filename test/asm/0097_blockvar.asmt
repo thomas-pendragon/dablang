@@ -47,10 +47,12 @@ Block must be converted to a variable.
  
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S5
-                                 LOAD_METHOD R1, S5
-                                 LOAD_LOCAL_BLOCK R2, R1
-/* foo          */               CALL RNIL, S6, R0, R2
+/* __block_main */               LOAD_CLASS R0, 256
+/* new          */               INSTCALL R1, R0, S8
+/* __block_main */               LOAD_CLASS R2, 257
+/* new          */               INSTCALL R3, R2, S8
+                                 LOAD_LOCAL_BLOCK R4, R3
+/* foo          */               CALL RNIL, S6, R1, R4
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -84,6 +86,7 @@ Block must be converted to a variable.
                                  W_STRING "call" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
+                                 W_STRING "new" 
  
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
@@ -94,6 +97,7 @@ Block must be converted to a variable.
 /* call         */               W_SYMBOL _SDAT + 39 
 /* foo          */               W_SYMBOL _SDAT + 44 
 /* main         */               W_SYMBOL _SDAT + 48 
+/* new          */               W_SYMBOL _SDAT + 53 
  
                    _FUNC:
 /* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
