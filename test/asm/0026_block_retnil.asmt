@@ -43,10 +43,12 @@ func tap()
  
                    Ftap:
                                  STACK_RESERVE 0
-                                 LOAD_NIL R0
-/* tap          */               CALL_BLOCK RNIL, S1, S2, R0
-                                 LOAD_NIL R1
-/* tap          */               CALL_BLOCK RNIL, S1, S3, R1
+                                 LOAD_METHOD R0, S2
+                                 LOAD_LOCAL_BLOCK R1, R0
+/* tap          */               CALL RNIL, S1, R1
+                                 LOAD_METHOD R2, S3
+                                 LOAD_LOCAL_BLOCK R3, R2
+/* tap          */               CALL RNIL, S1, R3
                                  RETURN RNIL
                    __Ftap_END:
                                  NOP 

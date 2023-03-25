@@ -29,19 +29,20 @@ func main()
                    _CODE:
                                  NOP 
  
-                   F__foo_Fixnum:
+                   Ffoo:
                                  STACK_RESERVE 0
                                  LOAD_HAS_BLOCK R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
-                   __F__foo_Fixnum_END:
+                   __Ffoo_END:
                                  NOP 
  
                    Fmain:
                                  STACK_RESERVE 0
-/* 1            */               LOAD_NUMBER R0, 1
-                                 LOAD_NIL R1
-/* __foo_Fixnum */               CALL_BLOCK RNIL, S0, S3, R1, R0
+                                 LOAD_METHOD R0, S3
+/* 1            */               LOAD_NUMBER R1, 1
+                                 LOAD_LOCAL_BLOCK R2, R0
+/* foo          */               CALL RNIL, S1, R1, R2
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -53,20 +54,20 @@ func main()
                                  NOP 
  
                    _SDAT:
-                                 W_STRING "__foo_Fixnum" 
                                  W_STRING "a" 
+                                 W_STRING "foo" 
                                  W_STRING "main" 
                                  W_STRING "main__block1" 
  
                    _SYMB:
-/* __foo_Fixnum */               W_SYMBOL _SDAT + 0 
-/* a            */               W_SYMBOL _SDAT + 13 
-/* main         */               W_SYMBOL _SDAT + 15 
-/* main__block1 */               W_SYMBOL _SDAT + 20 
+/* a            */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 2 
+/* main         */               W_SYMBOL _SDAT + 6 
+/* main__block1 */               W_SYMBOL _SDAT + 11 
  
                    _FUNC:
-/* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum, 1, __F__foo_Fixnum_END - F__foo_Fixnum
-/* a<Fixnum>    */               W_METHOD_ARG 1, 2
+/* foo          */               W_METHOD 1, -1, Ffoo, 1, __Ffoo_END - Ffoo
+/* a<Object>    */               W_METHOD_ARG 0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0

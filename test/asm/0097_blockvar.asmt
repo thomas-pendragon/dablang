@@ -48,7 +48,7 @@ Block must be converted to a variable.
                                  STACK_RESERVE 0
                                  LOAD_METHOD R0, S5
                                  LOAD_METHOD R1, S6
-                                 MARK_LOCAL_BLOCK R2, R1
+                                 LOAD_LOCAL_BLOCK R2, R1
 /* foo          */               CALL RNIL, S3, R0, R2
                                  RETURN RNIL
                    __Fmain_END:
