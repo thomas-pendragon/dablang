@@ -485,6 +485,16 @@ bool DabVM::execute_single(Stream &input)
         register_set(out_reg, value);
         break;
     }
+    case OP_LOAD_LOCAL_BLOCK:
+    {
+        auto out_reg = input.read_reg();
+        auto in_reg = input.read_reg();
+
+        auto value = register_get(in_reg);
+
+        register_set(out_reg, value);
+        break;
+    }
     case OP_NEW_ARRAY:
     {
         auto out_reg = input.read_reg();
@@ -551,6 +561,11 @@ bool DabVM::execute_single(Stream &input)
 
         auto self = get_self();
         auto addr = get_block_addr();
+
+        if (addr == 0) {
+            fprintf(stderr, "vm: error: no block to yield to\n");
+            exit(1);
+        }
 
         if (options.verbose)
         {
