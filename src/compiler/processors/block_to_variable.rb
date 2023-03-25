@@ -22,7 +22,7 @@ class BlockToVariable
     node_block = node.block.dup
     node.block.replace_with!(DabNodeLiteralNil.new)
 
-    blockvar = DabNodeVarBlock.new(node_block, nil)
+    blockvar = DabNodeVarBlock.new(node_block.body, node_block.arglist)
     define_var = DabNodeDefineLocalVar.new(id, blockvar)
     read_var = DabNodeLocalVar.new(id)
     local_block = DabNodeLocalBlock.new(read_var)
@@ -32,7 +32,7 @@ class BlockToVariable
 
     # ap ['all vars?', node.function.variables]
 
-    # node.function.run_init!
+    node.function.run_init!
 
     # puts '---------------'
     # node.function.dump

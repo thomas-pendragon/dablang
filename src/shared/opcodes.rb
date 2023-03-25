@@ -103,6 +103,7 @@ OPCODES_ARRAY_BASE = [
     items: [
       {name: 'LOAD_FLOAT', args: %i{reg float}}, # reg0 <- arg1
       {name: 'LOAD_ARG_DEFAULT', args: %i[reg uint16 reg]}, # reg0 <- funarg(arg1) || arg2
+      {name: 'MARK_LOCAL_BLOCK', args: %i[reg reg]}, # reg0 <- local_block(reg1)
     ],
   },
   {

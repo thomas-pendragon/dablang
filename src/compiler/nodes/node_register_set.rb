@@ -33,7 +33,8 @@ class DabNodeRegisterSet < DabNode
     if value.respond_to?(:compile_as_ssa)
       value.compile_as_ssa(output, output_register)
     else
-      value.dump
+      # value.dump
+      function.dump
       raise "cannot compile #{value.class} (no ssa form)"
     end
   end

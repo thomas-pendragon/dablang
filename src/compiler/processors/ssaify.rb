@@ -11,7 +11,7 @@ class SSAify
 
   def ssaify_variable(function, variable)
     # errap ['ssaify', variable]
-    
+
     function.blocks.fixup_ssa(variable, nil)
 
     setters = variable.all_unscoped_setters
