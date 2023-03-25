@@ -15,6 +15,28 @@ void DabValue::dump(FILE *file) const
     print(file, true);
 }
 
+void DabValue::dumpex(FILE *file) const
+{
+    dump(file);
+    fprintf(file, "\n");
+    if (data.type == TYPE_OBJECT) {
+        auto objp = data.object;
+        auto obj = objp->object;
+        if (obj) {
+            fprintf(file, "at %p\n", obj);
+
+            auto dd = dynamic_cast<DabObject*>(obj);
+            if (dd) {
+                for (auto i : dd->instvars) {
+                    fprintf(file, "[%s]: ", $VM->get_symbol(i.first).c_str());
+                    i.second.dump(file);
+                    fprintf(file, "\n");
+                }
+            }
+        }
+    }
+}
+
 dab_class_t DabValue::class_index() const
 {
     switch (data.type)

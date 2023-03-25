@@ -200,6 +200,7 @@ struct DabValue
     bool                            localblock = false;
 
     void dump(FILE *file = nullptr) const;
+    void dumpex(FILE *file = nullptr) const;
 
     dab_class_t class_index() const;
     std::string class_name() const;
