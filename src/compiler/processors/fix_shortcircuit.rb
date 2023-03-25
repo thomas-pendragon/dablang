@@ -1,6 +1,16 @@
 class FixShortcircuit
   def run(operator)
-    id = operator.identifier.extra_value.to_s
+    return false unless operator.identifier
+
+    begin
+      id = operator.identifier.extra_value.to_s
+    rescue StandardError
+      err "ERROR:\n"
+      operator.dump
+      err '----'
+      operator.root.dump
+      raise
+    end
 
     return unless ['&&', '||'].include?(id)
 
