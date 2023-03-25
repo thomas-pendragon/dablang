@@ -54,6 +54,8 @@ class DabNodeFunction < DabNode
       arglist => 'arglist',
       blocks => 'blocks',
       attrlist => 'attrlist',
+      node_identifier => 'identifier',
+      node_arg_symbols => 'arg_symbols',
     }
   end
 

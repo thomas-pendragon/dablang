@@ -15,3 +15,10 @@ class DabNodeVarBlock < DabNodeBaseBlock
     self
   end
 end
+
+class DabNodeLocalBlock < DabNode
+  def initialize(inner)
+    super()
+    insert(inner)
+  end
+end

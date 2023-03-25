@@ -1,0 +1,79 @@
+## CODE
+
+func foo() {
+}
+
+func main()
+{
+  foo() ^ {
+    print(2);
+  };
+}
+
+## COMMENT
+
+Block must be converted to a variable.
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 0
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_END_HEADER 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_END:
+                                 NOP 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Ffoo_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 LOAD_NIL R0
+                                 load_method xxx
+/* foo          */               CALL_BLOCK RNIL, S1, S3, R0
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fmain__block1:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fmain__block1_END:
+                                 NOP 
+ 
+                   _SDAT:
+                                 W_STRING "__init" 
+                                 W_STRING "foo" 
+                                 W_STRING "main" 
+                                 W_STRING "main__block1" 
+ 
+                   _SYMB:
+/* __init       */               W_SYMBOL _SDAT + 0 
+/* foo          */               W_SYMBOL _SDAT + 7 
+/* main         */               W_SYMBOL _SDAT + 11 
+/* main__block1 */               W_SYMBOL _SDAT + 16 
+ 
+                   _FUNC:
+/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD 1, -1, Ffoo, 0, __Ffoo_END - Ffoo
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main__block1 */               W_METHOD 3, -1, Fmain__block1, 0, __Fmain__block1_END - Fmain__block1
+/* $ret<Object> */               W_METHOD_ARG -1, 0

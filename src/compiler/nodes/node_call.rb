@@ -6,11 +6,13 @@ require_relative '../processors/check_function_existence'
 require_relative '../processors/concreteify_call'
 require_relative '../processors/convert_call_to_syscall'
 require_relative '../processors/uncomplexify'
+require_relative '../processors/block_to_variable'
 
 class DabNodeCall < DabNodeExternalBasecall
   dirty_check_with CheckFunctionExistence
   dirty_check_with CheckCallArgsTypes
   dirty_check_with CheckCallArgsCount
+  lower_with BlockToVariable
   lower_with ConvertCallToSyscall
   lower_with Uncomplexify
   optimize_with ConcreteifyCall
