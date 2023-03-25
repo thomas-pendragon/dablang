@@ -27,7 +27,7 @@ class ExtractCallBlock
       capture_extract << DabNodeDefineLocalVar.new(identifier, value)
     end
 
-    has_capture = capture_args.count > 0
+    # has_capture = capture_args.count > 0
 
     has_capture = false # TODO: rewrite
 
