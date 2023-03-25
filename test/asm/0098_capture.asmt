@@ -1,20 +1,22 @@
 ## CODE
 
-func test()
-{
-  yield(1);
+func bar(a) {
 }
-
-func qux(a, b) {}
 
 func main()
 {
-  var other = 1;
-  test() ^(bar)
-  {
-    qux(bar, other);
+  var foo = 15;
+  var a = ^ {
+    print(foo);
+  };
+  bar(a) ^ {
+    print(foo);
   };
 }
+
+## COMMENT
+
+Block variable must be captured.
 
 ## EXPECT
 
@@ -37,72 +39,63 @@ func main()
                    __F__init_END:
                                  NOP 
  
+                   Fbar:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fbar_END:
+                                 NOP 
+ 
                    Fmain:
                                  STACK_RESERVE 0
-                                 LOAD_METHOD R0, S6
-                                 LOAD_LOCAL_BLOCK R1, R0
-/* test         */               CALL RNIL, S8, R1
+                                 LOAD_METHOD R0, S4
+                                 LOAD_METHOD R1, S5
+                                 LOAD_LOCAL_BLOCK R2, R1
+/* bar          */               CALL RNIL, S2, R0, R2
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
  
                    Fmain__block1:
                                  STACK_RESERVE 0
-/* bar          */               LOAD_ARG R0, 0
-                                 LOAD_CLOSURE R1, 0
-/* qux          */               CALL RNIL, S7, R0, R1
+                                 LOAD_CLOSURE R0, 0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
                    __Fmain__block1_END:
                                  NOP 
  
-                   Fqux:
+                   Fmain__block2:
                                  STACK_RESERVE 0
+                                 LOAD_CLOSURE R0, 0
+/* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
-                   __Fqux_END:
-                                 NOP 
- 
-                   Ftest:
-                                 STACK_RESERVE 0
-/* 1            */               LOAD_NUMBER R0, 1
-                                 LOAD_CURRENT_BLOCK R1
-/* call         */               INSTCALL RNIL, R1, S4, R0
-                                 RETURN RNIL
-                   __Ftest_END:
+                   __Fmain__block2_END:
                                  NOP 
  
                    _SDAT:
                                  W_STRING "__init" 
                                  W_STRING "a" 
-                                 W_STRING "b" 
                                  W_STRING "bar" 
-                                 W_STRING "call" 
                                  W_STRING "main" 
                                  W_STRING "main__block1" 
-                                 W_STRING "qux" 
-                                 W_STRING "test" 
+                                 W_STRING "main__block2" 
  
                    _SYMB:
 /* __init       */               W_SYMBOL _SDAT + 0 
 /* a            */               W_SYMBOL _SDAT + 7 
-/* b            */               W_SYMBOL _SDAT + 9 
-/* bar          */               W_SYMBOL _SDAT + 11 
-/* call         */               W_SYMBOL _SDAT + 15 
-/* main         */               W_SYMBOL _SDAT + 20 
-/* main__block1 */               W_SYMBOL _SDAT + 25 
-/* qux          */               W_SYMBOL _SDAT + 38 
-/* test         */               W_SYMBOL _SDAT + 42 
+/* bar          */               W_SYMBOL _SDAT + 9 
+/* main         */               W_SYMBOL _SDAT + 13 
+/* main__block1 */               W_SYMBOL _SDAT + 18 
+/* main__block2 */               W_SYMBOL _SDAT + 31 
  
                    _FUNC:
 /* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 5, -1, Fmain, 0, __Fmain_END - Fmain
-/* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main__block1 */               W_METHOD 6, -1, Fmain__block1, 1, __Fmain__block1_END - Fmain__block1
-/* bar<Object>  */               W_METHOD_ARG 3, 0
-/* $ret<Object> */               W_METHOD_ARG -1, 0
-/* qux          */               W_METHOD 7, -1, Fqux, 2, __Fqux_END - Fqux
+/* bar          */               W_METHOD 2, -1, Fbar, 1, __Fbar_END - Fbar
 /* a<Object>    */               W_METHOD_ARG 1, 0
-/* b<Object>    */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* test         */               W_METHOD 8, -1, Ftest, 0, __Ftest_END - Ftest
+/* main         */               W_METHOD 3, -1, Fmain, 0, __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main__block1 */               W_METHOD 4, -1, Fmain__block1, 0, __Fmain__block1_END - Fmain__block1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main__block2 */               W_METHOD 5, -1, Fmain__block2, 0, __Fmain__block2_END - Fmain__block2
 /* $ret<Object> */               W_METHOD_ARG -1, 0

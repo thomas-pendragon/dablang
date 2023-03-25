@@ -43,7 +43,7 @@ class Array
                                  STACK_RESERVE 0
 /* 0            */               LOAD_NUMBER R0, 0
                                  LOAD_SELF R1
-/* count        */               INSTCALL R2, R1, S4
+/* count        */               INSTCALL R2, R1, S5
                                  JMP L1
                    L1:
 /* !=           */               INSTCALL R3, R0, S0, R2
@@ -51,9 +51,10 @@ class Array
                    L2:
                                  LOAD_SELF R4
 /* []           */               INSTCALL R5, R4, S2, R0
-                                 YIELD RNIL, R5, R0
-/* 1            */               LOAD_NUMBER R6, 1
-/* +            */               INSTCALL R0, R0, S1, R6
+                                 LOAD_CURRENT_BLOCK R6
+/* call         */               INSTCALL RNIL, R6, S4, R5, R0
+/* 1            */               LOAD_NUMBER R7, 1
+/* +            */               INSTCALL R0, R0, S1, R7
                                  JMP L1
                    L3:
                                  RETURN RNIL
@@ -65,6 +66,7 @@ class Array
                                  W_STRING "+" 
                                  W_STRING "[]" 
                                  W_STRING "__init" 
+                                 W_STRING "call" 
                                  W_STRING "count" 
                                  W_STRING "each_with_index" 
  
@@ -73,11 +75,12 @@ class Array
 /* +            */               W_SYMBOL _SDAT + 3 
 /* []           */               W_SYMBOL _SDAT + 5 
 /* __init       */               W_SYMBOL _SDAT + 8 
-/* count        */               W_SYMBOL _SDAT + 15 
-/* each_with_in */               W_SYMBOL _SDAT + 21 
+/* call         */               W_SYMBOL _SDAT + 15 
+/* count        */               W_SYMBOL _SDAT + 20 
+/* each_with_in */               W_SYMBOL _SDAT + 26 
  
                    _FUNC:
 /* __init       */               W_METHOD 3, -1, F__init, 0, __F__init_END - F__init
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* each_with_in */               W_METHOD 5, 5, CArray_Feach_with_index, 0, __CArray_Feach_with_index_END - CArray_Feach_with_index
+/* each_with_in */               W_METHOD 6, 5, CArray_Feach_with_index, 0, __CArray_Feach_with_index_END - CArray_Feach_with_index
 /* $ret<Object> */               W_METHOD_ARG -1, 0
