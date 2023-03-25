@@ -43,4 +43,5 @@ enum
     OP_STACK_RESERVE    = 0x26,
     OP_LOAD_FLOAT       = 0x27,
     OP_LOAD_ARG_DEFAULT = 0x28,
+    OP_LOAD_LOCAL_BLOCK = 0x29,
 };
