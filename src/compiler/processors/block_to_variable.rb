@@ -27,7 +27,7 @@ class BlockToVariable
     read_var = DabNodeLocalVar.new(id)
     local_block = DabNodeLocalBlock.new(read_var)
 
-    node.prepend_in_parent(define_var)
+    node.prepend_instruction(define_var)
     node.insert(local_block)
 
     # ap ['all vars?', node.function.variables]
