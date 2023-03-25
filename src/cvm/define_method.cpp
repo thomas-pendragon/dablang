@@ -28,12 +28,12 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     auto &method_class = method.get_class();
 
     // auto method_symbol = method.data.fixnum;
-    // auto method_name   = name.string();
+    auto method_name = name.string();
 
     // auto fun = functions[method_symbol];
-    auto method_name = std::string("call");
-    auto call_symbol = $VM->get_symbol_index(method_name);
-    auto fun         = method_class.get_instance_function(call_symbol);
+    auto real_method_name = std::string("call");
+    auto call_symbol      = $VM->get_symbol_index(real_method_name);
+    auto fun              = method_class.get_instance_function(call_symbol);
     assert(!fun.new_method);
     auto method_address = fun.address;
 
