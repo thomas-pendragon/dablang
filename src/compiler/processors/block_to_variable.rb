@@ -15,7 +15,7 @@ class BlockToVariable
   def run(node)
     return false unless node.has_block?
 
-    node.function.dump
+    # node.function.dump
 
     id = node.function.allocate_tempvar
 
@@ -30,14 +30,16 @@ class BlockToVariable
     node.prepend_in_parent(define_var)
     node.insert(local_block)
 
-    puts '---------------'
-    node.function.dump
+    node.function.run_init!
+
+    # puts '---------------'
+    # node.function.dump
     # 900        ret.add_source_parts(op, lparen, rparen)
     #   prepend_in_parent
 
     # reg = node.function.allocate_ssa
     # setter = DabNodeSSASet.new(arg_dup, reg, id)
     # getter = DabNodeSSAGet.new(reg, id)
-    raise 'a'
+    # raise 'a'
   end
 end
