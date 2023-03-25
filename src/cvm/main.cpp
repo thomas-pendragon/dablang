@@ -668,8 +668,8 @@ bool DabVM::execute_single(Stream &input)
     case OP_LOAD_HAS_BLOCK:
     {
         auto reg_index = input.read_reg();
-        auto addr      = get_block_addr();
-        register_set(reg_index, DabValue(addr != 0));
+        auto addr      = get_current_block().truthy();
+        register_set(reg_index, DabValue(addr));
         break;
     }
     case OP_LOAD_NUMBER:
