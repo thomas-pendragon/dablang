@@ -1,11 +1,14 @@
 ## CODE
 
-func foo() {
+func foo(a) {
 }
 
 func main()
 {
-  foo() ^ {
+  var a = ^ {
+    print(1);
+  };
+  foo(a) ^ {
     print(2);
   };
 }

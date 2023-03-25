@@ -19,13 +19,16 @@ class BlockToVariable
 
     id = node.function.allocate_tempvar
 
-    blockvar = DabNodeVarBlock.new(node.block, nil)
+    node_block = node.block.dup
+    node.block.replace_with!(DabNodeLiteralNil.new)
+
+    blockvar = DabNodeVarBlock.new(node_block, nil)
     define_var = DabNodeDefineLocalVar.new(id, blockvar)
     read_var = DabNodeLocalVar.new(id)
     local_block = DabNodeLocalBlock.new(read_var)
 
     node.prepend_in_parent(define_var)
-    node.insert(read_var)
+    node.insert(local_block)
 
     puts '---------------'
     node.function.dump
