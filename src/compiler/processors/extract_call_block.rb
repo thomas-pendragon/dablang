@@ -9,8 +9,7 @@ class ExtractCallBlock
     name = 'call'
     klass_name = root.new_blockclass_name(node.function)
 
-    # block.dump
-    arglist = block.arglist&.dup
+    arglist = block.arglist # &.dup
     body = block.body
 
     captured_vars = block.captured_variables
@@ -19,6 +18,9 @@ class ExtractCallBlock
     capture_extract = DabNodeTreeBlock.new
 
     new_body << capture_extract << body
+
+    err 'NEW BODY'
+    new_body.dump
 
     capture_args = DabNode.new
 
@@ -41,8 +43,10 @@ class ExtractCallBlock
 
     node.replace_with!(initcall)
 
-    fun.run_init!
-    klass.run_init!
+    # err 'RUN INIT'
+    # fun.run_init!
+    # klass.run_init!
+    # err 'FINISH RUN INIT'
 
     true
   end

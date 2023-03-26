@@ -84,11 +84,17 @@ class DabCompilerFrontend
 
       debug_check!(settings, program, 'raw')
 
+      dab_benchmark('early_init') do
+        program.early_init!
+      end
+
+      debug_check!(settings, program, 'rawinit1')
+
       dab_benchmark('init') do
         program.run_init!
       end
 
-      debug_check!(settings, program, 'rawinit')
+      debug_check!(settings, program, 'rawinit2')
 
       dab_benchmark('process') do
         last_functions = []

@@ -10,6 +10,7 @@ PROCESSOR_POST_SSA_INDEX = 8
 PROCESSOR_OPTIMIZE_SSA_INDEX = 9
 PROCESSOR_LATE_LOWER_INDEX = 10
 PROCESSOR_UNSSA_INDEX = 11
+PROCESSOR_EARLY_INIT_INDEX = 12
 
 PROCESSORS_HASH = [
   [PROCESSOR_CHECK_INDEX, :check_with, :check_callbacks],
@@ -24,6 +25,7 @@ PROCESSORS_HASH = [
   [PROCESSOR_POST_SSA_INDEX, :post_ssa_with, :post_ssa_callbacks],
   [PROCESSOR_LATE_LOWER_INDEX, :late_lower_with, :late_lower_callbacks],
   [PROCESSOR_UNSSA_INDEX, :unssa_with, :unssa_callbacks],
+  [PROCESSOR_EARLY_INIT_INDEX, :early_after_init, :early_init_callbacks],
 ].freeze
 
 module DabNodeModuleProcessors
@@ -101,6 +103,10 @@ module DabNodeModuleProcessors
 
   def run_init!
     all_nodes.each(&:sub_init!)
+  end
+
+  def early_init!
+    run_processors!(PROCESSOR_EARLY_INIT_INDEX)
   end
 
   def sub_init!

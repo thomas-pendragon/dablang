@@ -1,7 +1,7 @@
 require_relative 'node'
 
 class DabNodeVarBlock < DabNodeBaseBlock
-  after_init ExtractCallBlock
+  early_after_init ExtractCallBlock
 
   def initialize(body, arglist = nil)
     super(body, arglist)
