@@ -14,4 +14,10 @@ class Object
   {
     return self.to_bool == false;
   }
+
+  func tap()
+  {
+    yield(self);
+    return self;
+  }
 }
