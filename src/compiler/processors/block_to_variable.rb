@@ -15,7 +15,7 @@ class BlockToVariable
     node.prepend_instruction(define_var)
     node.insert(local_block)
 
-    # node.function.run_init!
+    blockvar.early_init!
 
     true
   end

@@ -1,7 +1,7 @@
 class AddLocalvarPostfix
   def run(node)
-    errap ['AddLocalvarPostfix', node, 'source', node.source_file, node.source_line, 'parent', node.parent]
-    node.root.dump
+    # errap ['AddLocalvarPostfix', node, 'source', node.source_file, node.source_line, 'parent', node.parent]
+    # node.root.dump
 
     return if node.identifier['#']
 
