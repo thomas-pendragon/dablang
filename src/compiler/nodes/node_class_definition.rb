@@ -18,6 +18,13 @@ class DabNodeClassDefinition < DabNode
     insert(DabNodeSymbol.new(identifier))
   end
 
+  def children_info
+    {
+      functions => 'functions',
+      node_identifier => 'identifier',
+    }
+  end
+
   def extract_literal
     ExtractLiteral.new.run(node_identifier) unless standard?
   end

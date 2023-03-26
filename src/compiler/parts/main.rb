@@ -1,10 +1,10 @@
 class DabCompilerFrontend
   def debug_check!(settings, program, type)
     if $debug
-      puts
-      puts '~'.green * 50
-      puts " > #{type}"
-      puts
+      err ''
+      err '~'.green * 50
+      err " > #{type}"
+      err ''
     end
     if $debug || settings[:dump] == type
       program.dump
@@ -85,7 +85,9 @@ class DabCompilerFrontend
       debug_check!(settings, program, 'raw')
 
       dab_benchmark('early_init') do
-        program.early_init!
+        while true
+          break unless program.early_init!
+        end
       end
 
       debug_check!(settings, program, 'rawinit1')

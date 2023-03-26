@@ -19,9 +19,6 @@ class ExtractCallBlock
 
     new_body << capture_extract << body
 
-    err 'NEW BODY'
-    new_body.dump
-
     capture_args = DabNode.new
 
     captured_vars.each_with_index do |captured_define, index|
@@ -43,10 +40,6 @@ class ExtractCallBlock
 
     node.replace_with!(initcall)
 
-    # err 'RUN INIT'
-    # fun.run_init!
-    # klass.run_init!
-    # err 'FINISH RUN INIT'
 
     true
   end
