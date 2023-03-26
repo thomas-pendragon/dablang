@@ -17,7 +17,7 @@ class ExtractCallBlock
     # new_body = DabNodeTreeBlock.new
     # capture_extract = DabNodeTreeBlock.new
 
-    new_body = body #<< capture_extract << body
+    new_body = body # << capture_extract << body
 
     capture_args = DabNode.new
 

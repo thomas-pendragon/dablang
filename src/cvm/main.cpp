@@ -321,7 +321,7 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
     {
         (void)blockaddress;
         (void)capture;
-        
+
         push_new_frame(self, out_reg, reglist);
         instructions.seek(fun.address);
 
