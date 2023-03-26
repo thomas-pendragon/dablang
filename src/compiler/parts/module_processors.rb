@@ -112,7 +112,7 @@ module DabNodeModuleProcessors
   end
 
   def late_init!
-    run_processors!(PROCESSOR_EARLY_INIT_INDEX)
+    run_processors!(PROCESSOR_LATE_INIT_INDEX)
   end
 
   def sub_init!

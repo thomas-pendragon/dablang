@@ -1,5 +1,6 @@
 ## CODE
 
+func puts(a) { print(a + "\n"); }
 func main()
 {
   var bar = "foo";
@@ -9,6 +10,10 @@ func main()
   var bar = "abc";
   puts(bar);
 }
+
+## FRONTEND OPTIONS
+
+--no-stdlib
 
 ## RUN
 

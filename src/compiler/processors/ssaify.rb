@@ -25,6 +25,8 @@ class SSAify
     setters_mapping = {}
 
     setters.each do |setter|
+      next if setter.deleted?
+
       reg = function.allocate_ssa
       value = setter.value.extract
       identifier = setter.identifier
