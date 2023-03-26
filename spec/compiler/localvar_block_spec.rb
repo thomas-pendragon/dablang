@@ -40,7 +40,7 @@ describe AddLocalvarPostfix do
     @root = DabNodeUnit.new
     @root.add_function(DabNodeFunction.new('fun1', @top_block, nil, false))
 
-    @root.dump
+    @root.dump(true)
   end
 
   # - DabNodeUnit (Object) ?:-1

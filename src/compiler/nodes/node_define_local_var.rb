@@ -35,12 +35,16 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
   end
 
   def _all_users
-    list = [self] + following_nodes([DabNodeSetLocalVar, DabNodeLocalVar, DabNodeReferenceLocalVar]) do |node|
+    errap ['following_nodes:',following_nodes]
+    list = [self] + following_nodes([DabNodeSetLocalVar, DabNodeLocalVar, DabNodeReferenceLocalVar], unscoped: true) do |node|
       test1 = node != self
       test2 = node.is_a?(DabNodeDefineLocalVar)
       test3 = node.identifier == self.identifier
       test1 && test2 && test3
     end
+    errap ['find....',list]
     list.select { |item| item.identifier == self.identifier }
   end
 end
+
+#

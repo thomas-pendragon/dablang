@@ -483,7 +483,8 @@ class DabNode
     all_nodes.include?(node)
   end
 
-  def following_nodes(klasses, unscoped: false, &block)
+  def following_nodes(klasses = nil, unscoped: false, &block)
+    errap ['following_nodes of',klasses,'in',self,'function_parent:',function_parent]
     return [] unless function_parent
 
     self_index = function_parent.node_index(self)
