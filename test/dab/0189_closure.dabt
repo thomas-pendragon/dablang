@@ -22,6 +22,10 @@ func main()
   };
 }
 
+## FRONTEND OPTIONS
+
+--no-stdlib
+
 ## EXPECT OK
 
 a = 2, b = 1

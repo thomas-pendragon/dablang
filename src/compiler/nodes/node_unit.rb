@@ -117,7 +117,7 @@ class DabNodeUnit < DabNode
     klass.assign_number(number)
     @classes.insert(klass)
     @class_numbers[klass.identifier] = number
-    mark_children_cache_dirty!
+    mark_whole_cache_dirty!
   end
 
   def class_index(name)

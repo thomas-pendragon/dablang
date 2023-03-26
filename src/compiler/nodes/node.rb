@@ -99,6 +99,11 @@ class DabNode
     parent&.mark_children_cache_dirty!
   end
 
+  def mark_whole_cache_dirty!
+    @children_cache_new = nil
+    @children_cache_new_class = {}
+  end
+
   def _get_children_cache
     if false # TODO: extra debug flag
       old_list = @children_cache_new

@@ -101,6 +101,15 @@ class DabCompilerFrontend
 
       debug_check!(settings, program, 'rawinit2')
 
+      dab_benchmark('late_init') do
+        while true
+          nop
+          break unless program.late_init!
+        end
+      end
+
+      debug_check!(settings, program, 'rawinit3')
+
       dab_benchmark('process') do
         last_functions = []
         index = 0

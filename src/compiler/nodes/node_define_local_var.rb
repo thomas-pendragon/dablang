@@ -2,7 +2,7 @@ require_relative 'node_set_local_var'
 require_relative '../processors/add_localvar_postfix'
 
 class DabNodeDefineLocalVar < DabNodeSetLocalVar
-  after_init AddLocalvarPostfix
+  late_after_init AddLocalvarPostfix
 
   def formatted_source(options)
     var = 'var '
