@@ -444,8 +444,6 @@ struct DabStackFrame
 {
     uint64_t       prev_ip;
     DabValue       self;
-    uint64_t       block_addr;
-    DabValue       capture;
     dab_register_t out_reg;
     DabValue       retvalue;
 
@@ -517,8 +515,10 @@ struct DabVM
 
     bool pop_frame(bool regular);
 
-    void push_new_frame(const DabValue &self, uint64_t block_addr, dab_register_t out_reg,
-                        const DabValue &capture, std::vector<dab_register_t> reglist = {});
+    void push_new_frame(const DabValue &self, // uint64_t block_addr,
+                        dab_register_t  out_reg,
+                        // const DabValue &capture,
+                        std::vector<dab_register_t> reglist = {});
 
     void _dump(const char *name, const std::vector<DabValue> &data, FILE *output);
 
@@ -540,9 +540,6 @@ struct DabVM
     DabValue &get_self();
 
     uint64_t get_prev_ip();
-
-    uint64_t get_block_addr();
-    DabValue get_block_capture();
 
     dab_register_t get_out_reg();
 

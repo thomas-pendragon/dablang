@@ -40,7 +40,6 @@ class ExtractCallBlock
 
     node.replace_with!(initcall)
 
-
     true
   end
 end

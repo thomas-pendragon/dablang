@@ -96,8 +96,11 @@ bool DabVM::pop_frame(bool regular)
     return true;
 }
 
-void DabVM::push_new_frame(const DabValue &self, uint64_t block_addr, dab_register_t out_reg,
-                           const DabValue &capture, std::vector<dab_register_t> reglist)
+void DabVM::push_new_frame(const DabValue &self,
+                           // uint64_t block_addr,
+                           dab_register_t out_reg,
+                           // const DabValue &capture,
+                           std::vector<dab_register_t> reglist)
 {
     DabStackFrame stackframe;
 
@@ -106,10 +109,10 @@ void DabVM::push_new_frame(const DabValue &self, uint64_t block_addr, dab_regist
     {
         stackframe.args.push_back(register_get(reg));
     }
-    stackframe.prev_ip    = ip();
-    stackframe.block_addr = block_addr;
-    stackframe.capture    = capture;
-    stackframe.out_reg    = out_reg;
+    stackframe.prev_ip = ip();
+    // stackframe.block_addr = block_addr;
+    // stackframe.capture    = capture;
+    stackframe.out_reg = out_reg;
 
     stackframes.push_back(stackframe);
 
@@ -219,16 +222,6 @@ DabValue &DabVM::get_retval()
     return current_frame()->retvalue;
 }
 
-uint64_t DabVM::get_block_addr()
-{
-    return current_frame()->block_addr;
-}
-
-DabValue DabVM::get_block_capture()
-{
-    return current_frame()->capture;
-}
-
 dab_register_t DabVM::get_out_reg()
 {
     return current_frame()->out_reg;
@@ -326,7 +319,10 @@ void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue
 
     if (fun.regular)
     {
-        push_new_frame(self, (uint64_t)blockaddress, out_reg, capture, reglist);
+        (void)blockaddress;
+        (void)capture;
+        
+        push_new_frame(self, out_reg, reglist);
         instructions.seek(fun.address);
 
         if (return_value)

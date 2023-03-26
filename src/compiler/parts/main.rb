@@ -14,6 +14,8 @@ class DabCompilerFrontend
     end
   end
 
+  def nop; end
+
   def run(settings, context)
     @settings = settings
 
@@ -86,6 +88,7 @@ class DabCompilerFrontend
 
       dab_benchmark('early_init') do
         while true
+          nop
           break unless program.early_init!
         end
       end
