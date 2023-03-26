@@ -1,0 +1,23 @@
+## CODE
+
+func test()
+{
+  yield();
+}
+
+func main()
+{
+  var other = 1;
+  test() ^()
+  {
+    print(other);
+  };
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+1
