@@ -1,6 +1,6 @@
 ## CODE
 
-func puts(a) { print(a + "\n"); }
+func puts(a) { print(a.to_s + "\n"); }
 func main()
 {
   var bar = "foo";

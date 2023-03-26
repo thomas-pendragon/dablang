@@ -14,10 +14,10 @@ class ExtractCallBlock
 
     captured_vars = block.captured_variables
 
-    new_body = DabNodeTreeBlock.new
-    capture_extract = DabNodeTreeBlock.new
+    # new_body = DabNodeTreeBlock.new
+    # capture_extract = DabNodeTreeBlock.new
 
-    new_body << capture_extract << body
+    new_body = body #<< capture_extract << body
 
     capture_args = DabNode.new
 
@@ -25,7 +25,8 @@ class ExtractCallBlock
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
       capture_args << DabNodeLocalVar.new(identifier)
-      capture_extract << DabNodeDefineLocalVar.new(identifier, value)
+      capture_extract = DabNodeDefineLocalVar.new(identifier, value)
+      body.pre_insert(capture_extract)
     end
 
     fun = DabNodeFunction.new(name, new_body, arglist, false)
