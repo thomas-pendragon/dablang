@@ -40,7 +40,7 @@ describe AddLocalvarPostfix do
     @root = DabNodeUnit.new
     @root.add_function(DabNodeFunction.new('fun1', @top_block, nil, false))
 
-    @root.dump(true)
+    # @root.dump(true)
   end
 
   # - DabNodeUnit (Object) ?:-1
@@ -66,7 +66,7 @@ describe AddLocalvarPostfix do
   #   - constants: DabNode (Object) ?:-1
   #   - classes: DabNode (Object) ?:-1
 
-  fit 'should find all users' do
+  it 'should find all users' do
     AddLocalvarPostfix.new.run(@def)
     expect(@def.all_users).to eq [@def, @use]
   end
