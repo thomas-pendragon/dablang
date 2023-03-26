@@ -1,7 +1,11 @@
 class AddLocalvarPostfix
   def run(node)
-    # errap ['AddLocalvarPostfix', node, 'source', node.source_file, node.source_line, 'parent', node.parent]
-    # node.root.dump
+    xx = node.function.identifier == 'call'
+    if xx
+      errap ['AddLocalvarPostfix', node, 'source', node.source_file, node.source_line, 'parent', node.function.identifier]
+      node.function.dump
+      err '-' * 80
+    end
 
     return if node.identifier['#']
 
@@ -12,8 +16,20 @@ class AddLocalvarPostfix
 
       fun_index += 1
     end
+
+    if xx
+      errap ['all users:']
+      node.all_users.each(&:dump)
+    end
+
     node.all_users.each do |user|
       user.identifier = new_id
+    end
+
+    if xx
+      err 'NOW:'
+      node.function.dump
+      err "\n\n\n#{('~' * 80).blue}"
     end
     true
   end
