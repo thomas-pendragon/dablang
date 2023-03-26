@@ -56,21 +56,13 @@ class DabNodeCall < DabNodeExternalBasecall
     list = args.map(&:input_register).map { |arg| "R#{arg}" }
     list = nil if list.empty?
 
-    # if has_block?
-    #   blockarg = "S#{block_symbol_index}"
-    #   capture_arg = "R#{block_capture.input_register}"
-    # end
-
     args = [
       output_register.nil? ? 'RNIL' : "R#{output_register}",
       "S#{symbol_index}",
-      nil,  # blockarg,
-      nil,  # capture_arg,
       list,
-    ].compact
+    ]
 
     output.comment(self.real_identifier)
-    # #{has_block? ? '_BLOCK' : ''}"
     output.printex(self, 'CALL', *args)
   end
 

@@ -41,8 +41,8 @@ class ExtractCallBlock
 
     node.replace_with!(initcall)
 
-    klass.run_init!
     fun.run_init!
+    klass.run_init!
 
     true
   end

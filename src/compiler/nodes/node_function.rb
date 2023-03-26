@@ -15,7 +15,6 @@ class DabNodeFunction < DabNode
   after_init :copy_original_body
   after_init ConvertArgToLocalvar
   after_init AddMissingReturn
-  # optimize_with OptimizeFirstBlock
   strip_with StripUnusedFunction
   ssa_with SSAify
   post_ssa_with SSABreakPhiNodes

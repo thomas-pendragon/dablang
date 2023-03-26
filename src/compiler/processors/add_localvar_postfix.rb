@@ -1,5 +1,6 @@
 class AddLocalvarPostfix
   def run(node)
+    errap ['AddLocalvarPostfix', node]
     return if node.identifier['#']
 
     fun_index = 1
