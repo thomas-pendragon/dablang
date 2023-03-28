@@ -28,10 +28,10 @@ class DabNodeBox < DabNode
 
   def ssa_box
     # raise 'SSA BOX'
-    
+
     return if @ssa_box
 
-    err ('^'*80).blue
+    err ('^' * 80).blue
     self.dump
 
     @ssa_box = true
@@ -47,11 +47,11 @@ class DabNodeBox < DabNode
     node.prepend_instruction(setter)
     complex_arg.replace_with!(getter)
 
-    err ('^'*80).yellow
+    err ('^' * 80).yellow
     self.dump
 
-    err ('^'*80).red
+    err ('^' * 80).red
 
     true
-  end  
+  end
 end

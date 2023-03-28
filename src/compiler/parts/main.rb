@@ -178,11 +178,11 @@ class DabCompilerFrontend
         end
         context.exit(1)
       else
-        err ('~'*80).yellow
-        err "FINAL FORM"
+        err ('~' * 80).yellow
+        err 'FINAL FORM'
         program.dump
-        err ('~'*80).yellow
-  
+        err ('~' * 80).yellow
+
         output = DabOutput.new(context)
         program.compile(output)
       end
