@@ -24,7 +24,11 @@ class DabNodeSetLocalVar < DabNode
   end
 
   def extra_dump
-    "<#{real_identifier}> [#{index}]"
+    ret = "<#{real_identifier}> [#{index}]"
+    if boxed?
+      ret += ' [BOXED]'.purple
+    end
+    ret
   end
 
   def value

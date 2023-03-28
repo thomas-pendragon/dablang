@@ -41,4 +41,7 @@ enum
     OP_LOAD_ARG_DEFAULT   = 0x24,
     OP_LOAD_LOCAL_BLOCK   = 0x25,
     OP_LOAD_CURRENT_BLOCK = 0x26,
+    OP_BOX                = 0x27,
+    OP_UNBOX              = 0x28,
+    OP_SETBOX             = 0x29,
 };

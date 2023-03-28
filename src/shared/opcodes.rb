@@ -105,6 +105,9 @@ OPCODES_ARRAY_BASE = [
       {name: 'LOAD_ARG_DEFAULT', args: %i[reg uint16 reg]}, # reg0 <- funarg(arg1) || arg2
       {name: 'LOAD_LOCAL_BLOCK', args: %i[reg reg]}, # reg0 <- local_block(reg1)
       {name: 'LOAD_CURRENT_BLOCK', args: %i[reg]}, # reg0 <- local_block or nil
+      {name: 'BOX', args: %i[reg reg]}, # reg0 <- create new box(reg1)
+      {name: 'UNBOX', args: %i[reg reg]}, # reg0 <- unbox(reg1)
+      {name: 'SETBOX', args: %i[reg reg]}, # reg0 <- update box reg0 with (reg1)
     ],
   },
   {

@@ -48,4 +48,7 @@ const DabOpcodeInfo g_opcodes[] = {
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_UINT16, OpcodeArg::ARG_REG}},
     {OP_LOAD_LOCAL_BLOCK, "LOAD_LOCAL_BLOCK", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
     {OP_LOAD_CURRENT_BLOCK, "LOAD_CURRENT_BLOCK", {OpcodeArg::ARG_REG}},
+    {OP_BOX, "BOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
+    {OP_UNBOX, "UNBOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
+    {OP_SETBOX, "SETBOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
 };

@@ -29,6 +29,14 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
     _all_users
   end
 
+  def box!
+    @boxed = true
+  end
+
+  def boxed?
+    @boxed
+  end
+
   def all_unscoped_users
     list = [self] + following_nodes([DabNodeSetLocalVar, DabNodeLocalVar, DabNodeReferenceLocalVar], unscoped: true)
     list.select { |item| item.identifier == self.identifier }
