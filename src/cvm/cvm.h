@@ -334,6 +334,7 @@ struct DabValue
 
     static DabValue box(DabValue base);
     static DabValue unbox(DabValue base);
+    void            setbox(DabValue new_value);
 
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);

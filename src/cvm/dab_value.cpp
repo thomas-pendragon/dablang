@@ -310,6 +310,16 @@ bool DabValue::truthy() const
     }
 }
 
+void DabValue::setbox(DabValue new_value)
+{
+    assert(data.type == TYPE_BOX);
+
+    auto proxy = this->data.object;
+    auto box   = dynamic_cast<DabBox *>(proxy->object);
+
+    box->value = new_value;
+}
+
 DabValue DabValue::box(DabValue base)
 {
     DabValue ret;

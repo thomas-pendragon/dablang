@@ -544,6 +544,20 @@ bool DabVM::execute_single(Stream &input)
         register_set(out_reg, box);
         break;
     }
+    case OP_SETBOX:
+    {
+        auto out_reg    = input.read_reg();
+        auto in_reg     = input.read_reg();
+        auto newval_reg = input.read_reg();
+
+        auto boxval = register_get(in_reg);
+        auto newval = register_get(newval_reg);
+
+        boxval.setbox(newval);
+
+        register_set(out_reg, boxval);
+        break;
+    }
     case OP_NEW_ARRAY:
     {
         auto out_reg = input.read_reg();
