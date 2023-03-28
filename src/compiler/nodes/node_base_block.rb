@@ -42,4 +42,12 @@ class DabNodeBaseBlock < DabNode
 
     all_getter_definitions - all_defines
   end
+
+  def captured_writable_variables
+    all_defines = all_nodes(DabNodeDefineLocalVar)
+
+    all_nodes(DabNodeSetLocalVar)
+      .select(&:setter_only?)
+      .reject { |it| all_defines.include?(it.var_definition) }
+  end
 end

@@ -31,6 +31,10 @@ class DabNodeSetLocalVar < DabNode
     self[0]
   end
 
+  def setter_only?
+    var_definition != self
+  end
+
   def real_identifier
     identifier
   end
