@@ -522,6 +522,17 @@ bool DabVM::execute_single(Stream &input)
         register_set(out_reg, value);
         break;
     }
+    case OP_BOX:
+    {
+        auto out_reg = input.read_reg();
+        auto in_reg  = input.read_reg();
+
+        auto value = register_get(in_reg);
+        auto box   = DabValue::box(value);
+
+        register_set(out_reg, box);
+        break;
+    }
     case OP_NEW_ARRAY:
     {
         auto out_reg = input.read_reg();
