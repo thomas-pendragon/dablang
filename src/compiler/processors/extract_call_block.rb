@@ -9,16 +9,9 @@ class ExtractCallBlock
     name = 'call'
     klass_name = root.new_blockclass_name(node.function)
 
-    arglist = block.arglist # &.dup
+    arglist = block.arglist
     body = block.body
-
     captured_vars = block.captured_variables
-
-    # new_body = DabNodeTreeBlock.new
-    # capture_extract = DabNodeTreeBlock.new
-
-    new_body = body # << capture_extract << body
-
     capture_args = DabNode.new
 
     captured_vars.each_with_index do |captured_define, index|
@@ -29,7 +22,7 @@ class ExtractCallBlock
       body.pre_insert(capture_extract)
     end
 
-    fun = DabNodeFunction.new(name, new_body, arglist, false)
+    fun = DabNodeFunction.new(name, body, arglist, false)
     functions = [fun]
     base_class = 'Method'
     klass = DabNodeClassDefinition.new(klass_name, base_class, functions)
