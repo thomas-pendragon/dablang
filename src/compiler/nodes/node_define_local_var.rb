@@ -33,8 +33,25 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
     @boxed = true
   end
 
+  def closure_box!
+    @boxed = true
+    @closure = true
+  end
+
   def boxed?
     @boxed
+  end
+
+  def closure?
+    @closure
+  end
+
+  def extra_dump
+    ret = super
+    if closure?
+      ret += ' [CLOSURE]'.purple
+    end
+    ret
   end
 
   def all_unscoped_users

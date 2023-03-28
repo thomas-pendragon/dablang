@@ -27,14 +27,16 @@ class ExtractCallBlock
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
-      capture_args << DabNodeLocalVar.new(identifier)
+      carg = DabNodeLocalVar.new(identifier)
+      capture_args << carg
       capture_extract = DabNodeDefineLocalVar.new(identifier, value)
       body.pre_insert(capture_extract)
 
-      if captured_vars_set.include?(captured_define)
-        captured_define.box!
-        capture_extract.box!
-      end
+      next unless captured_vars_set.include?(captured_define)
+
+      captured_define.box!
+      capture_extract.closure_box!
+      carg.closure_pass!
     end
 
     # captured_vars_set.each_with_index do |captured_define, index|

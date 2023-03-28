@@ -18,6 +18,9 @@ class DabNodeLocalVar < DabNode
     if boxed?
       ret += ' [BOXED]'.purple
     end
+    if closure_pass?
+      ret += ' [CLOSURE PASS]'.purple
+    end
     ret
   end
 

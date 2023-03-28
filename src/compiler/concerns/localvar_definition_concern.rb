@@ -7,6 +7,18 @@ module LocalvarDefinitionConcern
     var_definition.box!
   end
 
+  def closure_box!
+    var_definition.closure_box!
+  end
+
+  def closure_pass!
+    @closure_pass = true
+  end
+
+  def closure_pass?
+    @closure_pass
+  end
+
   def boxed?
     var_definition&.boxed?
   end
