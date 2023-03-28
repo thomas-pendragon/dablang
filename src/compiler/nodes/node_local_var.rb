@@ -21,6 +21,10 @@ class DabNodeUnbox < DabNode
     input_register = value.input_register
     output.printex(self, 'UNBOX', "R#{output_register}", "R#{input_register}")
   end
+
+  def uncomplex_anyway?
+    true
+  end
 end
 
 class DabNodeLocalVar < DabNode

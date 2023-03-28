@@ -604,4 +604,8 @@ class DabNode
   def count_as_argument?
     true
   end
+
+  def uncomplex_anyway?
+    false
+  end
 end

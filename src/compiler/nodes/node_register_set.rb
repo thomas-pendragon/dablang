@@ -5,6 +5,7 @@ require_relative '../processors/ssa_prune_unused_setter'
 class DabNodeRegisterSet < DabNode
   include RegisterSetterConcern
 
+  # lower_with Uncomplexify
   ssa_optimize_with SSAPruneUnusedSetter
   post_ssa_with :prune_nil!
 
@@ -19,6 +20,10 @@ class DabNodeRegisterSet < DabNode
     @output_register = output_register
     @output_varname = output_varname
   end
+
+  # def uncomplexify_args
+  #   [value]
+  # end
 
   def value
     @children[0]

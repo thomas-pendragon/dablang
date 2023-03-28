@@ -3,35 +3,7 @@ require_relative '../processors/check_assign_type'
 require_relative '../concerns/localvar_definition_concern'
 require_relative '../processors/convert_set_value'
 
-class DabNodeBox < DabNode
-  lower_with Uncomplexify
-
-  def initialize(inner)
-    super()
-    insert(inner)
-  end
-
-  def value
-    self[0]
-  end
-
-  def uncomplexify_args
-    [value]
-  end
-
-  def compile_as_ssa(output, output_register)
-    input_register = value.input_register
-    output.printex(self, 'BOX', "R#{output_register}", "R#{input_register}")
-  rescue StandardError
-    puts ('!!' * 80).blue
-    self.root.dump
-    raise
-  end
-end
-
 class DabNodeSetLocalVar < DabNode
-  box_with :box_me
-
   include LocalvarDefinitionConcern
 
   attr_accessor :identifier
@@ -40,6 +12,8 @@ class DabNodeSetLocalVar < DabNode
 
   check_with CheckAssignType
   after_init ConvertSetValue
+  lower_with Uncomplexify
+  box_with :box_me
 
   def initialize(identifier, value, type = nil)
     super()
@@ -59,6 +33,10 @@ class DabNodeSetLocalVar < DabNode
       ret += ' [BOXED]'.purple
     end
     ret
+  end
+
+  def uncomplexify_args
+    [value]
   end
 
   def box_me
