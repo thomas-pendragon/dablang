@@ -75,7 +75,8 @@ enum
     TYPE_LITERALSTRING = 18,
     TYPE_DYNAMICSTRING = 19,
     TYPE_FLOAT         = 20,
-    TYPE_LOCALBLOCK    = 21,
+    // TYPE_LOCALBLOCK    = 21,
+    TYPE_BOX = 22,
 };
 
 #include "../cshared/classes.h"
@@ -331,6 +332,8 @@ struct DabValue
         std::swap(data, obj.data);
     }
 
+    static DabValue box(DabValue base);
+
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);
 
@@ -377,6 +380,11 @@ struct DabObject : public DabBaseObject
 struct DabArray : public DabBaseObject
 {
     std::vector<DabValue> array;
+};
+
+struct DabBox : public DabBaseObject
+{
+    DabValue value;
 };
 
 struct DabByteBuffer : public DabBaseObject

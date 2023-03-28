@@ -7,9 +7,9 @@ void DabValue::dump(FILE *file) const
         file = $VM->options.console;
     }
 
-    static const char *types[] = {"INVA", "FIXN", "BOOL", "NIL ", "CLAS", "OBJE", "ARRY", "UIN8",
-                                  "UI16", "UI32", "UI64", "INT8", "IN16", "IN32", "IN64", "METH",
-                                  "PTR*", "BYT*", "CSTR", "DSTR", "FLO",  "LBL"};
+    static const char *types[] = {"INVA", "FIXN", "BOOL", "NIL ", "CLAS", "OBJE",  "ARRY", "UIN8",
+                                  "UI16", "UI32", "UI64", "INT8", "IN16", "IN32",  "IN64", "METH",
+                                  "PTR*", "BYT*", "CSTR", "DSTR", "FLO",  "[LBL]", "BOX"};
     assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
     fprintf(file, "%s ", types[data.type]);
     print(file, true);
@@ -90,9 +90,9 @@ dab_class_t DabValue::class_index() const
     case TYPE_METHOD:
         return CLASS_METHOD;
         break;
-    case TYPE_LOCALBLOCK:
-        return CLASS_METHOD;
-        break;
+        //    case TYPE_LOCALBLOCK:
+        //        return CLASS_METHOD;
+        //        break;
     case TYPE_INTPTR:
         return CLASS_INTPTR;
         break;
@@ -308,6 +308,23 @@ bool DabValue::truthy() const
     default:
         return true;
     }
+}
+
+DabValue DabValue::box(DabValue base)
+{
+    DabValue ret;
+    auto     box = new DabBox;
+    box->value   = base;
+
+    DabObjectProxy *proxy = new DabObjectProxy;
+    proxy->object         = box;
+    proxy->count_strong   = 1;
+    //        proxy->object->klass  = this->data.fixnum;
+
+    ret.data.type   = TYPE_BOX;
+    ret.data.object = proxy;
+
+    return ret;
 }
 
 DabValue DabValue::create_instance() const
