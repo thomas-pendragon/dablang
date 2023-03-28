@@ -40,7 +40,9 @@ class DabNodeBaseBlock < DabNode
     all_getter_definitions = all_getters.map(&:var_definition).compact.uniq
     all_defines = all_nodes(DabNodeDefineLocalVar)
 
-    all_getter_definitions - all_defines
+    list = all_getter_definitions - all_defines
+
+    list.reject { |it| captured_writable_variables.map(&:var_definition).include?(it.var_definition) }
   end
 
   def captured_writable_variables
