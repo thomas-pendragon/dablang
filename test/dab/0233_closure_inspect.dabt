@@ -1,0 +1,43 @@
+## CODE
+
+func test()
+{
+  yield();
+}
+
+func inspect(a,o) { print(a.to_s + ": " + o.to_s + " (" + o.class.to_s + ")\n"); }
+
+func main()
+{
+  var readonly = 1;
+  var readwrite = 2;
+  inspect("RO [pre]", readonly);
+  inspect("RW [pre]", readwrite);
+  test() ^()
+  {
+    inspect("RO [cl-pre]", readonly);
+    inspect("RW [cl-pre]", readwrite);
+
+    readwrite = 3;
+
+    inspect("RO [cl-post]", readonly);
+    inspect("RW [cl-post]", readwrite);
+  };
+  inspect("RO [post]", readonly);
+  inspect("RW [post]", readwrite);
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+RO [pre]: 1 (Fixnum)
+RW [pre]: 2 (Fixnum)
+RO [cl-pre]: 1 (Fixnum)
+RW [cl-pre]: 2 (Fixnum)
+RO [cl-post]: 1 (Fixnum)
+RW [cl-post]: 3 (Fixnum)
+RO [post]: 1 (Fixnum)
+RW [post]: 3 (Fixnum)
