@@ -1,0 +1,22 @@
+## CODE
+
+func main()
+{
+  var a = 2;
+  var func = ^ {
+    print(a);
+    print("\n");
+  };
+  func.call();
+  a = 4;
+  func.call();
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+2
+4
