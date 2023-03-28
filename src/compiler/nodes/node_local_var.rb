@@ -35,10 +35,11 @@ class DabNodeLocalVar < DabNode
   attr_accessor :identifier
   attr_reader :original_identifier
 
-  def initialize(identifier)
+  def initialize(identifier, force_no_box: false)
     super()
     @identifier = identifier
     @original_identifier = identifier
+    @force_no_box = force_no_box
   end
 
   def extra_dump
@@ -57,6 +58,7 @@ class DabNodeLocalVar < DabNode
   end
 
   def unbox
+    return false if @force_no_box
     return false unless boxed?
     return false if @unboxed
     return false if closure_pass?

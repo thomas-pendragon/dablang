@@ -47,7 +47,11 @@ class DabNodeSetLocalVar < DabNode
     @unboxed = true
 
     new_value = value.dup
-    value.replace_with!(DabNodeBox.new(new_value))
+    if setter_only?
+      value.replace_with!(DabNodeSetbox.new(new_value, DabNodeLocalVar.new(identifier, force_no_box: true)))
+    else
+      value.replace_with!(DabNodeBox.new(new_value))
+    end
 
     true
   end

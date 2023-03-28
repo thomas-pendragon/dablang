@@ -55,3 +55,24 @@ class DabNodeBox < DabNode
     true
   end
 end
+
+class DabNodeSetbox < DabNodeBox
+  def initialize(inner, localvar)
+    super(inner)
+    insert(localvar)
+  end
+
+  def localvar
+    self[1]
+  end
+
+  def compile_as_ssa(output, output_register)
+    new_input_register = value.input_register
+    var_input_register = localvar.input_register
+
+    output.printex(self, 'SETBOX',
+                   output_register.nil? ? 'RNIL' : "R#{output_register}",
+                   "R#{var_input_register}",
+                   "R#{new_input_register}")
+  end
+end

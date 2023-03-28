@@ -268,13 +268,21 @@ def cpp_check
   end
 end
 
+def cpp_check_format
+  cpp_check do |file|
+    unless file[/default/]
+      yield(file)
+    end
+  end
+end
+
 namespace :format do
   task :ruby do
     psystem('bundle exec rubocop >/dev/null 2>/dev/null || bundle exec rubocop -a')
   end
 
   task :cpp do
-    cpp_check do |file|
+    cpp_check_format do |file|
       psystem("(#{clang_format_app} #{file} | diff #{file} -) || #{clang_format_app} -i #{file}")
     end
   end
