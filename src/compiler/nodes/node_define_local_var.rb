@@ -48,7 +48,8 @@ class DabNodeDefineLocalVar < DabNodeSetLocalVar
 
   def extra_dump
     ret = super
-    if closure?
+    if @unboxed
+    elsif closure?
       ret += ' [CLOSURE]'.purple
     end
     ret

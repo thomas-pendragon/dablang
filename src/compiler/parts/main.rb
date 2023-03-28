@@ -126,9 +126,9 @@ class DabCompilerFrontend
         end
       end
 
-      err ('*'*80).yellow
+      err ('*' * 80).yellow
       program.dump
-      err ('*'*80).yellow
+      err ('*' * 80).yellow
 
       debug_check!(settings, program, 'rawinit4')
 

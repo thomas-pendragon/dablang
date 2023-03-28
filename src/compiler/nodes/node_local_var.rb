@@ -3,7 +3,7 @@ require_relative '../concerns/localvar_definition_concern'
 
 class DabNodeUnbox < DabNode
   lower_with Uncomplexify
-  
+
   def initialize(inner)
     super()
     insert(inner)
@@ -53,6 +53,7 @@ class DabNodeLocalVar < DabNode
   end
 
   def unbox
+    return false unless boxed?
     return false if @unboxed
     return false if closure_pass?
 

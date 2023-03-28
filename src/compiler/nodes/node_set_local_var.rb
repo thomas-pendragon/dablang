@@ -3,7 +3,35 @@ require_relative '../processors/check_assign_type'
 require_relative '../concerns/localvar_definition_concern'
 require_relative '../processors/convert_set_value'
 
+class DabNodeBox < DabNode
+  lower_with Uncomplexify
+
+  def initialize(inner)
+    super()
+    insert(inner)
+  end
+
+  def value
+    self[0]
+  end
+
+  def uncomplexify_args
+    [value]
+  end
+
+  def compile_as_ssa(output, output_register)
+    input_register = value.input_register
+    output.printex(self, 'BOX', "R#{output_register}", "R#{input_register}")
+  rescue StandardError
+    puts ('!!' * 80).blue
+    self.root.dump
+    raise
+  end
+end
+
 class DabNodeSetLocalVar < DabNode
+  box_with :box_me
+
   include LocalvarDefinitionConcern
 
   attr_accessor :identifier
@@ -25,10 +53,29 @@ class DabNodeSetLocalVar < DabNode
 
   def extra_dump
     ret = "<#{real_identifier}> [#{index}]"
-    if boxed?
+    if @unboxed
+      ret += ' [_box]'
+    elsif boxed?
       ret += ' [BOXED]'.purple
     end
     ret
+  end
+
+  def box_me
+    return false unless boxed?
+    return false if @unboxed
+    return false if closure?
+
+    @unboxed = true
+
+    new_value = value.dup
+    value.replace_with!(DabNodeBox.new(new_value))
+
+    true
+  end
+
+  def closure?
+    false
   end
 
   def value
