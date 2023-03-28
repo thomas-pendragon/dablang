@@ -327,6 +327,13 @@ DabValue DabValue::box(DabValue base)
     return ret;
 }
 
+DabValue DabValue::unbox(DabValue base)
+{
+    auto proxy = base.data.object;
+    auto box   = dynamic_cast<DabBox *>(proxy->object);
+    return box->value;
+}
+
 DabValue DabValue::create_instance() const
 {
     assert(data.type == TYPE_CLASS);

@@ -333,6 +333,7 @@ struct DabValue
     }
 
     static DabValue box(DabValue base);
+    static DabValue unbox(DabValue base);
 
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);
