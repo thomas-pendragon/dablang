@@ -173,6 +173,7 @@ module DabNodeModuleProcessors
 
   def run_processors!(type)
     all_nodes.each do |node|
+      # errap ['run',PROCESSORS_HASH.detect{_1[0]==type}[1],'on',node] if node.is_a?(DabNodeBox)
       return true if node._self_run_processors!(type)
     end
     false
