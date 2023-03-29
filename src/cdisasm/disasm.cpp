@@ -208,6 +208,39 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
     }
 }
 
+void parse_class_substream(Stream &input_stream, uint64_t start, bool no_numbers)
+{
+    uint64_t     position = 0;
+    StreamReader reader(input_stream, position);
+
+    AsmStream<StreamReader> stream(reader);
+
+    while (true)
+    {
+        try
+        {
+            auto pos = stream.position();
+            // class index arg1 = parent class index arg2 = name
+            auto index  = stream.read_uint16();
+            auto parent = stream.read_uint16();
+            auto name   = stream.read_uint16();
+            if (!no_numbers)
+            {
+                fprintf(output, LINEINFO_FORMAT, start + pos);
+            }
+            else
+            {
+                fprintf(output, "    ");
+            }
+            fprintf(output, "W_CLASS %" PRIu16 ", %" PRIu16 ", %" PRIu16 "\n", index, parent, name);
+        }
+        catch (EOFError)
+        {
+            break;
+        }
+    }
+}
+
 void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
     uint64_t     position = 0;
@@ -403,6 +436,10 @@ int main(int argc, char **argv)
             else if (with_headers && section_name == "symb")
             {
                 parse_symbol_substream(substream, start_pos, no_numbers);
+            }
+            else if (with_headers && section_name == "clas")
+            {
+                parse_class_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "fext")
             {
