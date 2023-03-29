@@ -344,6 +344,8 @@ DabValue DabValue::unbox(DabValue base)
     return box->value;
 }
 
+static bool dumpARC = false;
+
 DabValue DabValue::create_instance() const
 {
     assert(data.type == TYPE_CLASS);
@@ -384,7 +386,7 @@ DabValue DabValue::create_instance() const
     ret.data.type   = type;
     ret.data.object = proxy;
 
-    if ($VM->options.verbose)
+    if (dumpARC && $VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p A (strong %3d): ! created : ", proxy,
                 (int)proxy->count_strong);
@@ -515,10 +517,6 @@ void DabValue::retain()
         data.object->retain(this);
     }
 }
-
-//
-
-static bool dumpARC = false;
 
 void DabObjectProxy::retain(DabValue *value)
 {
