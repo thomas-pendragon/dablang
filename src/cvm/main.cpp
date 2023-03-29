@@ -257,18 +257,10 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
         auto name = get_symbol(symbol);
         throw DabRuntimeError("vm error: Unknown function <" + name + ">.");
     }
-    if (block_symbol != DAB_SYMBOL_NIL)
-    {
-        auto &blockfun = functions[block_symbol];
-        assert(blockfun.regular);
-        _call_function(false, out_reg, nullptr, functions[symbol], n_args, (void *)blockfun.address,
-                       capture, reglist);
-    }
-    else
-    {
-        _call_function(false, out_reg, nullptr, functions[symbol], n_args, nullptr, nullptr,
-                       reglist);
-    }
+    assert(block_symbol == DAB_SYMBOL_NIL);
+    (void)capture;
+
+    _call_function(false, out_reg, nullptr, functions[symbol], n_args, nullptr, reglist);
 }
 
 DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
@@ -301,25 +293,24 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
         regindex += 1;
     }
 
-    _call_function(false, reg, fake_self, fun, 0, nullptr, nullptr, reglist);
+    _call_function(false, reg, fake_self, fun, 0, nullptr, reglist);
 
     return out;
 }
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
-                           const DabFunction &fun, int n_args, void *blockaddress,
+                           const DabFunction &fun, int n_args, // void *blockaddress,
                            const DabValue &capture, std::vector<dab_register_t> reglist,
                            DabValue *return_value, size_t stack_pos)
 {
     if (options.verbose)
     {
-        fprintf(stderr, "vm: call <%s> %sand %d arguments -> 0x%x.\n", fun.name.c_str(),
-                blockaddress ? "with block " : "", n_args, out_reg.value());
+        fprintf(stderr, "vm: call <%s> %sand %d arguments -> 0x%x.\n", fun.name.c_str(), "", n_args,
+                out_reg.value());
     }
 
     if (fun.regular)
     {
-        (void)blockaddress;
         (void)capture;
 
         push_new_frame(self, out_reg, reglist);
@@ -1185,16 +1176,10 @@ void DabVM::instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
     auto &fun =
         use_static_func ? klass.get_static_function(symbol) : klass.get_instance_function(symbol);
 
-    void *block_address = nullptr;
-    if (block_symbol != DAB_SYMBOL_NIL)
-    {
-        auto &blockfun = functions[block_symbol];
-        assert(blockfun.regular);
-        block_address = (void *)blockfun.address;
-    }
+    assert(block_symbol == DAB_SYMBOL_NIL);
 
-    _call_function(true, outreg, recv, fun, (int)(1 + n_args), block_address, capture, reglist,
-                   return_value, stack_pos);
+    _call_function(true, outreg, recv, fun, (int)(1 + n_args), capture, reglist, return_value,
+                   stack_pos);
 }
 
 dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
