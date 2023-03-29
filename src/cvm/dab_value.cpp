@@ -518,13 +518,15 @@ void DabValue::retain()
 
 //
 
+static bool dumpARC = false;
+
 void DabObjectProxy::retain(DabValue *value)
 {
     (void)value;
     if (this->destroying)
         return;
     count_strong += 1;
-    if ($VM->options.verbose)
+    if (dumpARC && $VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p B (strong %3d): + retained: ", this, (int)this->count_strong);
         value->dump(stderr);
@@ -537,7 +539,7 @@ void DabObjectProxy::release(DabValue *value)
     if (this->destroying)
         return;
     count_strong -= 1;
-    if ($VM->options.verbose)
+    if (dumpARC && $VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p B (strong %3d): - released: ", this, (int)this->count_strong);
         value->dump(stderr);
@@ -553,7 +555,7 @@ void DabObjectProxy::destroy(DabValue *value)
 {
     (void)value;
     this->destroying = true;
-    if ($VM->options.verbose)
+    if (dumpARC && $VM->options.verbose)
     {
         fprintf(stderr, "vm: proxy %p C (strong %3d): X destroy\n", this, (int)this->count_strong);
     }

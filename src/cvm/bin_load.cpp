@@ -229,11 +229,13 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_length,
                          uint64_t offset)
 {
-    fprintf(stderr, "Q intructions length %" PRIu64 " input %" PRIu64 "\n", instructions.length(),
-            input.length());
+    /*
+        fprintf(stderr, "Q intructions length %" PRIu64 " input %" PRIu64 "\n",
+       instructions.length(), input.length());
 
-    fprintf(stderr, "readbin: symbad=%p (%" PRIu64 ") symblen=%d\n", (void *)symb_address,
-            symb_address, (int)symb_length);
+        fprintf(stderr, "readbin: symbad=%p (%" PRIu64 ") symblen=%d\n", (void *)symb_address,
+                symb_address, (int)symb_length);
+    */
 
     const auto symbol_len = sizeof(uint64_t);
 
@@ -244,9 +246,9 @@ void DabVM::read_symbols(Stream &input, uint64_t symb_address, uint64_t symb_len
     for (uint64_t i = 0; i < n_symbols; i++)
     {
         auto address = symb_address + i * symbol_len;
-        fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> address = %" PRIu64 "\n", i, address);
+        // fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> address = %" PRIu64 "\n", i, address);
         auto ptr = input.uint64_data(address);
-        fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> ptr     = %" PRIu64 "\n", i, ptr);
+        // fprintf(stderr, "readbin: symbol x[%" PRIu64 "] -> ptr     = %" PRIu64 "\n", i, ptr);
         auto str = input.cstring_data(ptr);
 
         DabSymbol symbol;
