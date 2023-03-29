@@ -1,0 +1,22 @@
+## LEVEL 0
+
+func level0()
+{
+  var a = 5;
+  var block = ^
+  {
+    print(a);
+  };
+  define_method("foo", block);
+}
+
+## LEVEL 1
+
+func level1()
+{
+  foo();
+}
+
+## EXPECT
+
+5
