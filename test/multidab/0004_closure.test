@@ -26,6 +26,32 @@ INSTCALL R3, R2, S6, R1
 INSTCALL R4, R3, S3
 RETURN R4
 
+->
+
+00000000  22 00 00 10 00 00 05 00  00 00 00 00 00 00 27 01  |".............'.|
+00000010  00 00 00 0d 02 00 00 01  1a 03 00 02 00 06 00 01  |................|
+00000020  01 00 1a 04 00 03 00 03  00 00 1c 04 00           |.............|
+0000002d
+
+-> 
+
+cdisasm: parse substream 45 bytes
+
+       0: STACK_RESERVE 0
+       3: LOAD_NUMBER R0, 5
+      14: BOX R1, R0
+      19: LOAD_CLASS R2, 256
+      24: INSTCALL R3, R2, S6, R1
+      34: INSTCALL R4, R3, S3
+      42: RETURN R4
+
+::: meanwhile, C++ stream
+
+>> Written 45 binary bytes to stream
+00000000  22 00 00 10 00 00 05 00  00 00 00 00 00 00 27 01
+00000010  00 00 00 0d 02 00 00 01  1a 03 00 02 00 06 00 01
+00000020  01 00 1a 04 00 03 00 03  00 00 1c 04 00
+
 ## LEVEL 1
 
 func level1()

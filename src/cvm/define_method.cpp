@@ -1,4 +1,5 @@
 #include "cvm.h"
+#include "../cshared/opcodes.h"
 
 void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
@@ -38,9 +39,12 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             (void *)method_address, (int)method_length, method_name.c_str());
 
     FILE *output = stderr;
+    Stream binary_output;
 
     fprintf(stderr, ">> New method:\n_________________________________\n");
     fprintf(output, "STACK_RESERVE 0\n");
+    binary_output.write_uint8(OP_STACK_RESERVE);
+    binary_output.write_uint16(0);
 
     //        auto closure_class_object = DabValue(method_class);
     auto  closure       = method; // closure_class_object.create_instance();
@@ -56,7 +60,12 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
         auto fixnum_class = get_class(CLASS_FIXNUM);
         if (object.is_a(fixnum_class))
         {
-            fprintf(output, "LOAD_NUMBER R%d, %d\n", i * 2, (int)object.data.fixnum);
+            auto reg = i * 2;
+            auto num = (int)object.data.fixnum;
+            fprintf(output, "LOAD_NUMBER R%d, %d\n", reg, num);
+            binary_output.write_uint8(OP_LOAD_NUMBER);
+            binary_output.write_uint16(reg);
+            binary_output.write_int64(num);
         }
         else
         {
@@ -64,7 +73,12 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             object.dump(stderr);
             exit(1);
         }
-        fprintf(output, "BOX R%d, R%d\n", i * 2 + 1, i * 2);
+        auto outbox = i * 2 + 1;
+        auto inbox = i * 2;
+        fprintf(output, "BOX R%d, R%d\n", outbox, inbox);
+        binary_output.write_uint8(OP_BOX);
+        binary_output.write_uint16(outbox);
+        binary_output.write_uint16(inbox);
     }
 
     auto class_reg         = (int)closure_array.size() * 2;
@@ -77,15 +91,34 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     //    fprintf(output, "NEW_ARRAY R%d", array_reg);
 
     fprintf(output, "LOAD_CLASS R%d, %d\n", class_reg, class_index);
+    binary_output.write_uint8(OP_LOAD_CLASS);
+    binary_output.write_uint16(class_reg);
+    binary_output.write_uint16(class_index);
     fprintf(output, "INSTCALL R%d, R%d, S%d", method_reg, class_reg, new_symbol_index);
+    binary_output.write_uint8(OP_INSTCALL);
+    binary_output.write_uint16(method_reg);
+    binary_output.write_uint16(class_reg);
+    binary_output.write_uint16(new_symbol_index);
+    binary_output.write_uint8((int)closure_array.size());
     for (int i = 0; i < (int)closure_array.size(); i++)
     {
         fprintf(output, ", R%d", i * 2 + 1);
+        binary_output.write_uint16(i * 2 + 1);
     }
     fprintf(output, "\n");
     fprintf(output, "INSTCALL R%d, R%d, S%d\n", asm_out_reg, method_reg, call_symbol_index);
+    binary_output.write_uint8(OP_INSTCALL);
+    binary_output.write_uint16(asm_out_reg);
+    binary_output.write_uint16(method_reg);
+    binary_output.write_uint16(call_symbol_index);
+    binary_output.write_uint8(0);
     fprintf(output, "RETURN R%d\n", asm_out_reg);
-
+    binary_output.write_uint8(OP_RETURN);
+    binary_output.write_uint16(asm_out_reg);
+    
+    fprintf(stderr, ">> Written %d binary bytes to stream\n", (int)binary_output.length());
+    binary_output.dump(stderr);
+    
     auto data        = instructions.raw_base_data() + method_address;
     auto new_address = new_instructions.length;
     new_instructions.append(data, method_length);

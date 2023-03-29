@@ -61,3 +61,18 @@ void Buffer::append(const byte *new_data, uint64_t new_data_length)
     resize(new_length);
     memcpy(this->data + old_length, new_data, (size_t)new_data_length);
 }
+
+void Buffer::dump(FILE* out)
+{
+    for (int i = 0; i < (int)length; i += 16) {
+        fprintf(out, "%08x  ", (int)i);
+        for (int j = 0; j < 16; j++) {
+            auto p = i + j;
+            if (p < (int)length) {
+                fprintf(out, "%02x ", data[p]);
+            }
+            if (j == 7) fprintf(out, " ");
+        }
+        fprintf(out, "\n");
+    }
+}
