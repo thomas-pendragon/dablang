@@ -300,20 +300,20 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
                            const DabFunction &fun,
-                           //int n_args, // void *blockaddress,
-                           //const DabValue &capture,
-                           std::vector<dab_register_t> reglist,
-                           DabValue *return_value, size_t stack_pos)
+                           // int n_args, // void *blockaddress,
+                           // const DabValue &capture,
+                           std::vector<dab_register_t> reglist, DabValue *return_value,
+                           size_t stack_pos)
 {
     if (options.verbose)
     {
-        fprintf(stderr, "vm: call %s <%s> and %d arguments -> 0x%x.\n", fun.regular ? "Dab" : "C++", fun.name.c_str(), (int)reglist.size(),
-                out_reg.value());
+        fprintf(stderr, "vm: call %s <%s> and %d arguments -> 0x%x.\n", fun.regular ? "Dab" : "C++",
+                fun.name.c_str(), (int)reglist.size(), out_reg.value());
     }
 
     if (fun.regular)
     {
-//        (void)capture;
+        //        (void)capture;
 
         push_new_frame(self, out_reg, reglist);
         instructions.seek(fun.address);
@@ -1182,8 +1182,7 @@ void DabVM::instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
     (void)capture;
     (void)n_args;
 
-    _call_function(true, outreg, recv, fun, reglist, return_value,
-                   stack_pos);
+    _call_function(true, outreg, recv, fun, reglist, return_value, stack_pos);
 }
 
 dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)

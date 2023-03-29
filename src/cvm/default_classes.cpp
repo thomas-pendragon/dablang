@@ -281,17 +281,17 @@ void DabVM::define_default_classes()
             array.push_back(arg);
         }
         self.set_instvar($VM->get_or_create_symbol_index("closure"), value);
-        fprintf(stderr, "method.init [argc = %d]\n", (int)args.size());
-        int i = 0;
-        for (auto arg : args) {
-            fprintf(stderr, "%d: ", (int)i);
-            arg.dump(stderr);
-            fprintf(stderr, "\n");
-            i++;
-        }
-        fprintf(stderr, "self = ");
-        self.dumpex(stderr);
-        fprintf(stderr, "\n-----------\n");
+//        fprintf(stderr, "method.init [argc = %d]\n", (int)args.size());
+//        int i = 0;
+//        for (auto arg : args) {
+//            fprintf(stderr, "%d: ", (int)i);
+//            arg.dump(stderr);
+//            fprintf(stderr, "\n");
+//            i++;
+//        }
+//        fprintf(stderr, "self = ");
+//        self.dumpex(stderr);
+//        fprintf(stderr, "\n-----------\n");
         return nullptr;
     });
 

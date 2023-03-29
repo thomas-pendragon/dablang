@@ -212,8 +212,16 @@ std::string DabValue::print_value(bool debug) const
         }
     }
     break;
+    case TYPE_BOX:
+    {
+        auto inner = unboxed();
+        auto str   = inner.print_value();
+        use_ret    = true;
+        ret        = "BOX[" + str + "]";
+    }
+    break;
     default:
-        snprintf(buffer, sizeof(buffer), "?");
+        snprintf(buffer, sizeof(buffer), "?<%d>", data.type);
         break;
     }
     if (!use_ret)
