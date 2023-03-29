@@ -10,6 +10,12 @@ func level0()
   define_method("foo", block);
 }
 
+## HOW DEFINE METHOD COULD WORK
+
+var closure_data = [5];
+var func = __block_class.new(closure_data);
+return func.call();
+
 ## LEVEL 1
 
 func level1()

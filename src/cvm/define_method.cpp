@@ -2,10 +2,6 @@
 
 void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-    //                                  LOAD_METHOD R0, S1
-    // /* "foo"        */               LOAD_STRING R1, _DATA + 0, 3
-    // /* DEFINE_METHO */               SYSCALL RNIL, 5, R1, R0
-
     assert(reglist.size() == 2);
 
     auto name   = register_get(reglist[0]);
@@ -27,10 +23,8 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
 
     auto &method_class = method.get_class();
 
-    // auto method_symbol = method.data.fixnum;
     auto method_name = name.string();
 
-    // auto fun = functions[method_symbol];
     auto real_method_name = std::string("call");
     auto call_symbol      = $VM->get_symbol_index(real_method_name);
     auto fun              = method_class.get_instance_function(call_symbol);
@@ -57,4 +51,6 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     functions[fsymbol]  = function;
 
     register_set(out_reg, nullptr);
+    
+    exit(1);
 }
