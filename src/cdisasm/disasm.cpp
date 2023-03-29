@@ -229,12 +229,12 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
             auto arg_count   = stream.read_uint16();
             auto length      = stream.read_uint64();
 
-            // const char *extrasep = "    ";
+            const char *extrasep = "    ";
 
             if (!no_numbers)
             {
-                fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
-                // extrasep = "                ";
+                fprintf(output, LINEINFO_FORMAT, start + pos);
+                extrasep = "                ";
             }
             else
             {
@@ -249,17 +249,7 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
                 auto symbol_index = stream.read_int16();
                 auto class_index  = stream.read_int16();
 
-                pos = stream.position();
-                if (!no_numbers)
-                {
-                    fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
-                    // extrasep = "                ";
-                }
-                else
-                {
-                    fprintf(output, "    ");
-                }
-
+                fprintf(output, "%s", extrasep);
                 fprintf(output, "W_METHOD_ARG %" PRId16 ", %" PRId16 "\n", symbol_index,
                         class_index);
             }
