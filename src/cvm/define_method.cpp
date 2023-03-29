@@ -29,16 +29,19 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     auto real_method_name = std::string("call");
     auto call_symbol      = $VM->get_symbol_index(real_method_name);
     auto fun              = method_class.get_instance_function(call_symbol);
-    assert(!fun.new_method);
-    auto method_address = fun.address;
+    //    assert(!fun.new_method);
+    //    auto method_address = fun.address;
 
-    auto method_length = fun.length;
-    assert(method_length > 0);
+    //  auto method_length = fun.length;
+    //    assert(method_length > 0);
 
-    fprintf(stderr, "VM: define_method %x (%p, len = %d) as '%s'\n", (int)method_address,
-            (void *)method_address, (int)method_length, method_name.c_str());
+    // %x (%p, len = %d)
+    fprintf(stderr, "VM: define_method '%s'\n",
+            //(int)method_address,
+            //            (void *)method_address, (int)method_length,
+            method_name.c_str());
 
-    FILE *output = stderr;
+    FILE  *output = stderr;
     Stream binary_output;
 
     fprintf(stderr, ">> New method:\n_________________________________\n");
@@ -74,7 +77,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             exit(1);
         }
         auto outbox = i * 2 + 1;
-        auto inbox = i * 2;
+        auto inbox  = i * 2;
         fprintf(output, "BOX R%d, R%d\n", outbox, inbox);
         binary_output.write_uint8(OP_BOX);
         binary_output.write_uint16(outbox);
@@ -115,11 +118,14 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(output, "RETURN R%d\n", asm_out_reg);
     binary_output.write_uint8(OP_RETURN);
     binary_output.write_uint16(asm_out_reg);
-    
+
+    auto method_length = binary_output.length();
+
     fprintf(stderr, ">> Written %d binary bytes to stream\n", (int)binary_output.length());
     binary_output.dump(stderr);
-    
-    auto data        = instructions.raw_base_data() + method_address;
+
+    //    auto data        = instructions.raw_base_data() + method_address;
+    auto data        = binary_output.raw_base_data();
     auto new_address = new_instructions.length;
     new_instructions.append(data, method_length);
 
@@ -134,5 +140,5 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
 
     register_set(out_reg, nullptr);
 
-    exit(1);
+    //    exit(1);
 }

@@ -8,8 +8,8 @@ struct Buffer
     uint64_t length = 0;
 
     bool _dont_delete = false;
-    
-    void dump(FILE* out);
+
+    void dump(FILE *out);
 
     Buffer();
     Buffer(const Buffer &other);
@@ -143,18 +143,22 @@ struct Stream
         append(stream, stream.remaining());
     }
     void append(Stream &stream, uint64_t length);
-    
-    void write_uint8(uint8_t data) {
-        append((const byte*)&data, sizeof(data));
+
+    void write_uint8(uint8_t data)
+    {
+        append((const byte *)&data, sizeof(data));
     }
-    void write_uint16(uint16_t data) {
-        append((const byte*)&data, sizeof(data));
+    void write_uint16(uint16_t data)
+    {
+        append((const byte *)&data, sizeof(data));
     }
-    void write_uint64(uint64_t data) {
-        append((const byte*)&data, sizeof(data));
+    void write_uint64(uint64_t data)
+    {
+        append((const byte *)&data, sizeof(data));
     }
-    void write_int64(int64_t data) {
-        append((const byte*)&data, sizeof(data));
+    void write_int64(int64_t data)
+    {
+        append((const byte *)&data, sizeof(data));
     }
 
     void seek(uint64_t position);
@@ -185,8 +189,11 @@ struct Stream
     uint16_t    uint16_data(uint64_t address);
     uint64_t    uint64_data(uint64_t address);
 
-    void dump(FILE* out) { buffer.dump(out); }
-    
+    void dump(FILE *out)
+    {
+        buffer.dump(out);
+    }
+
   private:
     Buffer   buffer;
     uint64_t _position = 0;
