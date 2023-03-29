@@ -260,7 +260,7 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
     assert(block_symbol == DAB_SYMBOL_NIL);
     (void)capture;
 
-    _call_function(false, out_reg, nullptr, functions[symbol], n_args, nullptr, reglist);
+    _call_function(false, out_reg, nullptr, functions[symbol], reglist);
 }
 
 DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
@@ -293,25 +293,27 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
         regindex += 1;
     }
 
-    _call_function(false, reg, fake_self, fun, 0, nullptr, reglist);
+    _call_function(false, reg, fake_self, fun, reglist);
 
     return out;
 }
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
-                           const DabFunction &fun, int n_args, // void *blockaddress,
-                           const DabValue &capture, std::vector<dab_register_t> reglist,
+                           const DabFunction &fun,
+                           //int n_args, // void *blockaddress,
+                           //const DabValue &capture,
+                           std::vector<dab_register_t> reglist,
                            DabValue *return_value, size_t stack_pos)
 {
     if (options.verbose)
     {
-        fprintf(stderr, "vm: call <%s> %sand %d arguments -> 0x%x.\n", fun.name.c_str(), "", n_args,
+        fprintf(stderr, "vm: call %s <%s> and %d arguments -> 0x%x.\n", fun.regular ? "Dab" : "C++", fun.name.c_str(), (int)reglist.size(),
                 out_reg.value());
     }
 
     if (fun.regular)
     {
-        (void)capture;
+//        (void)capture;
 
         push_new_frame(self, out_reg, reglist);
         instructions.seek(fun.address);
@@ -1177,8 +1179,10 @@ void DabVM::instcall(const DabValue &recv, dab_symbol_t symbol, size_t n_args,
         use_static_func ? klass.get_static_function(symbol) : klass.get_instance_function(symbol);
 
     assert(block_symbol == DAB_SYMBOL_NIL);
+    (void)capture;
+    (void)n_args;
 
-    _call_function(true, outreg, recv, fun, (int)(1 + n_args), capture, reglist, return_value,
+    _call_function(true, outreg, recv, fun, reglist, return_value,
                    stack_pos);
 }
 
