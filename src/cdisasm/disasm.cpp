@@ -43,7 +43,7 @@ struct StreamReader : public BaseReader
     }
 };
 
-static const char *LINEINFO_FORMAT_NEW    = "/* %20s %8" PRIu64 ": */ ";
+static const char *LINEINFO_FORMAT        = "/* %8" PRIu64 ": */ ";
 static const char *LEGACY_LINEINFO_FORMAT = "%8" PRIu64 ": ";
 
 void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legacy_numbers = false)
@@ -54,19 +54,16 @@ void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legac
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
     processor.go(
-        [start, no_numbers, legacy_numbers](uint64_t pos, std::string info, std::string extra)
+        [start, no_numbers, legacy_numbers](uint64_t pos, std::string info)
         {
             if (no_numbers)
             {
                 fprintf(output, "    ");
             }
-            else if (legacy_numbers)
-            {
-                fprintf(output, LEGACY_LINEINFO_FORMAT, start + pos);
-            }
             else
             {
-                fprintf(output, LINEINFO_FORMAT_NEW, extra.c_str(), start + pos);
+                fprintf(output, legacy_numbers ? LEGACY_LINEINFO_FORMAT : LINEINFO_FORMAT,
+                        start + pos);
             }
             fprintf(output, "%s\n", info.c_str());
         });
@@ -107,7 +104,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                 {
                     if (!no_numbers)
                     {
-                        fprintf(output, LINEINFO_FORMAT_NEW, "", start + string_pos);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos);
                     }
                     else
                     {
@@ -122,7 +119,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                     {
                         if (!no_numbers)
                         {
-                            fprintf(output, LINEINFO_FORMAT_NEW, "", start + string_pos + i);
+                            fprintf(output, LINEINFO_FORMAT, start + string_pos + i);
                         }
                         else
                         {
@@ -134,7 +131,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 
                     if (!no_numbers)
                     {
-                        fprintf(output, LINEINFO_FORMAT_NEW, "", start + string_pos);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos);
                     }
                     else
                     {
@@ -148,7 +145,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
             {
                 if (!no_numbers)
                 {
-                    fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
+                    fprintf(output, LINEINFO_FORMAT, start + pos);
                 }
                 else
                 {
@@ -166,7 +163,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
                 {
                     if (!no_numbers)
                     {
-                        fprintf(output, LINEINFO_FORMAT_NEW, "", start + string_pos + i);
+                        fprintf(output, LINEINFO_FORMAT, start + string_pos + i);
                     }
                     else
                     {
@@ -196,7 +193,7 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
             auto symbol = stream.read_uint64();
             if (!no_numbers)
             {
-                fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
+                fprintf(output, LINEINFO_FORMAT, start + pos);
             }
             else
             {

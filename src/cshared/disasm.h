@@ -244,7 +244,7 @@ struct DisasmProcessor
     {
     }
 
-    void go(std::function<void(uint64_t, std::string, std::string)> yield)
+    void go(std::function<void(uint64_t, std::string)> yield)
     {
         AsmStream<TReader> stream(reader);
         while (!stream.feof())
@@ -307,9 +307,8 @@ struct DisasmProcessor
                         break;
                     }
                 }
-                info              = data.name + " " + info;
-                std::string extra = "";
-                yield(pos, info, extra);
+                info = data.name + " " + info;
+                yield(pos, info);
             }
             catch (EOFError)
             {

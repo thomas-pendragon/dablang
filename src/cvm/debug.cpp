@@ -168,12 +168,8 @@ void DabVM_debug::prepare_disasm()
     InstructionsReader                  reader(vm, position);
     DisasmProcessor<InstructionsReader> processor(reader);
 
-    processor.go(
-        [this, reader](uint64_t pos, std::string info, std::string extra)
-        {
-            (void)extra;
-            disasm.push_back(std::make_pair(pos + reader.start_position, info));
-        });
+    processor.go([this, reader](uint64_t pos, std::string info)
+                 { disasm.push_back(std::make_pair(pos + reader.start_position, info)); });
 }
 
 void DabVM::execute_debug(Stream &input)
