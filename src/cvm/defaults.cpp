@@ -156,7 +156,7 @@ void DabVM::define_defaults()
         DabFunction fun;
         fun.name      = "__import_pq";
         fun.regular   = false;
-        fun.extra_reg = make_import_function("/usr/local/lib/libpq.dylib");
+        fun.extra_reg = make_import_function("/opt/homebrew/Cellar/libpq/15.2/lib/libpq.dylib");
 
         auto func_index = get_or_create_symbol_index("__import_pq");
 
