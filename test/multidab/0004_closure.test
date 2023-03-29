@@ -16,6 +16,16 @@ var closure_data = [5];
 var func = __block_class.new(closure_data);
 return func.call();
 
+## DEFINE METHOD OUTPUT
+
+STACK_RESERVE 0
+LOAD_NUMBER R0, 5
+BOX R1, R0
+LOAD_CLASS R2, 256
+INSTCALL R3, R2, S6, R1
+INSTCALL R4, R3, S3
+RETURN R4
+
 ## LEVEL 1
 
 func level1()

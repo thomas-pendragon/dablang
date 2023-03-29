@@ -42,7 +42,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(stderr, ">> New method:\n_________________________________\n");
     fprintf(output, "STACK_RESERVE 0\n");
 
-    //    auto closure_class_object = DabValue(method_class);
+    //        auto closure_class_object = DabValue(method_class);
     auto  closure       = method; // closure_class_object.create_instance();
     auto  closure_data  = closure.get_instvar($VM->get_or_create_symbol_index("closure"));
     auto &closure_array = closure_data.array();
@@ -56,7 +56,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
         auto fixnum_class = get_class(CLASS_FIXNUM);
         if (object.is_a(fixnum_class))
         {
-            fprintf(output, "LOAD_NUMBER R%d, %d\n", i, (int)object.data.fixnum);
+            fprintf(output, "LOAD_NUMBER R%d, %d\n", i * 2, (int)object.data.fixnum);
         }
         else
         {
@@ -64,7 +64,27 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             object.dump(stderr);
             exit(1);
         }
+        fprintf(output, "BOX R%d, R%d\n", i * 2 + 1, i * 2);
     }
+
+    auto class_reg         = (int)closure_array.size() * 2;
+    auto method_reg        = class_reg + 1;
+    auto asm_out_reg       = method_reg + 1;
+    auto new_symbol_index  = $VM->get_or_create_symbol_index("new");
+    auto call_symbol_index = $VM->get_or_create_symbol_index("call");
+    auto class_index       = method_class.index;
+
+    //    fprintf(output, "NEW_ARRAY R%d", array_reg);
+
+    fprintf(output, "LOAD_CLASS R%d, %d\n", class_reg, class_index);
+    fprintf(output, "INSTCALL R%d, R%d, S%d", method_reg, class_reg, new_symbol_index);
+    for (int i = 0; i < (int)closure_array.size(); i++)
+    {
+        fprintf(output, ", R%d", i * 2 + 1);
+    }
+    fprintf(output, "\n");
+    fprintf(output, "INSTCALL R%d, R%d, S%d\n", asm_out_reg, method_reg, call_symbol_index);
+    fprintf(output, "RETURN R%d\n", asm_out_reg);
 
     auto data        = instructions.raw_base_data() + method_address;
     auto new_address = new_instructions.length;
