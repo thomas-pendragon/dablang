@@ -148,9 +148,10 @@ KERNELCODES = {
   0x04 => 'FETCH_INT32',
   0x05 => 'DEFINE_METHOD',
   0x06 => 'BYTESWAP32',
+  0x07 => 'DLIMPORT',
 }.freeze
 
-EXTRA_STD_CALLS = %w[__import_libc __import_sdl __import_pq].freeze
+EXTRA_STD_CALLS = %w[__import_libc __import_sdl].freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 

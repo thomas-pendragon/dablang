@@ -9,4 +9,5 @@ enum
     KERNEL_FETCH_INT32   = 0x4,
     KERNEL_DEFINE_METHOD = 0x5,
     KERNEL_BYTESWAP32    = 0x6,
+    KERNEL_DLIMPORT      = 0x7,
 };

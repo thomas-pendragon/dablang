@@ -35,57 +35,62 @@ INSERT INTO books (title, author, year) VALUES
 
 */
 
+func import_pq(method) {
+  puts("Import PQ method '" + method.to_s + "'");
+  __dlimport("/opt/homebrew/Cellar/libpq/15.2/lib/libpq.dylib", method);
+}
+
 // PGconn *PQconnectdb(const char *conninfo);
-[__import_pq]
+[import_pq]
 func PQconnectdb<IntPtr>(conninfo<String>) {}
 
 // ConnStatusType PQstatus(const PGconn *conn);
-[__import_pq]
+[import_pq]
 func PQstatus<Uint32>(conn<IntPtr>) {}
 
 // void PQfinish(PGconn *conn);
-[__import_pq]
+[import_pq]
 func PQfinish<NilClass>(conn<IntPtr>) {}
 
 // char *PQerrorMessage(const PGconn *conn);
-[__import_pq]
+[import_pq]
 func PQerrorMessage<String>(conn<IntPtr>) {}
 
 // ExecStatusType PQresultStatus(const PGresult *res);
-[__import_pq]
+[import_pq]
 func PQresultStatus<Uint32>(res<IntPtr>) {}
 
 // void PQclear(PGresult *res);
-[__import_pq]
+[import_pq]
 func PQclear<NilClass>(res<IntPtr>) {}
 
 // PGresult *PQexec(PGconn *conn, const char *command);
-[__import_pq]
+[import_pq]
 func PQexec<IntPtr>(conn<IntPtr>, command<String>) {}
 
 // int PQfnumber(const PGresult *res, const char *column_name);
-[__import_pq]
+[import_pq]
 func PQfnumber<Int32>(res<IntPtr>, column_name<String>) {}
 
 // int PQntuples(const PGresult *res);
-[__import_pq]
+[import_pq]
 func PQntuples<Int32>(res<IntPtr>) {}
 
 // char *PQgetvalue(const PGresult *res, int row_number, int column_number);
-[__import_pq]
+[import_pq]
 func PQgetvalue<IntPtr>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
 
 // int PQgetlength(const PGresult *res, int row_number, int column_number);
-[__import_pq]
+[import_pq]
 func PQgetlength<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
 
 // int PQgetisnull(const PGresult *res, int row_number, int column_number);
-[__import_pq]
+[import_pq]
 func PQgetisnull<Int32>(res<IntPtr>, row_number<Int32>, column_number<Int32>) {}
 
 //PGresult *PQexecParams(PGconn *conn, const char *command, int nParams, const Oid *paramTypes,
 //                       const char * const *paramValues, const int *paramLengths, const int *paramFormats, int resultFormat);
-[__import_pq]
+[import_pq]
 func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
                           paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
 

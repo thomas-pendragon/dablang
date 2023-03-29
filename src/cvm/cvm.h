@@ -531,6 +531,7 @@ struct DabVM
     void kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist);
     void kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist);
     void kernel_byteswap32(dab_register_t out_reg, std::vector<dab_register_t> reglist);
+    void kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> reglist);
 
     bool pop_frame(bool regular);
 
