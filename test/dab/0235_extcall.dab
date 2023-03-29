@@ -1,0 +1,22 @@
+## CODE
+
+//int abs (int number) ¶
+[__import_libc]
+func abs<Int32>(number<Int32>) {}
+
+func main()
+{
+  if (abs(-4) != 3) {
+    print("|-4| != 3")
+  } else {
+    print("wat?");
+  }
+}
+
+## SKIP
+
+windows
+
+## EXPECT OK
+
+|-4| != 3
