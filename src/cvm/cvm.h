@@ -336,6 +336,15 @@ struct DabValue
     static DabValue unbox(DabValue base);
     void            setbox(DabValue new_value);
 
+    DabValue unboxed()
+    {
+        if (data.type == TYPE_BOX)
+        {
+            return unbox(*this);
+        }
+        return *this;
+    }
+
     DabValue(const DabValue &other);
     DabValue &operator=(const DabValue &other);
 

@@ -37,6 +37,35 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(stderr, "VM: define_method %x (%p, len = %d) as '%s'\n", (int)method_address,
             (void *)method_address, (int)method_length, method_name.c_str());
 
+    FILE *output = stderr;
+
+    fprintf(stderr, ">> New method:\n_________________________________\n");
+    fprintf(output, "STACK_RESERVE 0\n");
+
+    //    auto closure_class_object = DabValue(method_class);
+    auto  closure       = method; // closure_class_object.create_instance();
+    auto  closure_data  = closure.get_instvar($VM->get_or_create_symbol_index("closure"));
+    auto &closure_array = closure_data.array();
+
+    fprintf(stderr, ">> %d objects in closure\n", (int)closure_array.size());
+
+    for (int i = 0; i < (int)closure_array.size(); i++)
+    {
+        auto object = closure_array[i].unboxed();
+
+        auto fixnum_class = get_class(CLASS_FIXNUM);
+        if (object.is_a(fixnum_class))
+        {
+            fprintf(output, "LOAD_NUMBER R%d, %d\n", i, (int)object.data.fixnum);
+        }
+        else
+        {
+            fprintf(stderr, ">> Unsupported object in closure\n");
+            object.dump(stderr);
+            exit(1);
+        }
+    }
+
     auto data        = instructions.raw_base_data() + method_address;
     auto new_address = new_instructions.length;
     new_instructions.append(data, method_length);
@@ -51,6 +80,6 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     functions[fsymbol]  = function;
 
     register_set(out_reg, nullptr);
-    
+
     exit(1);
 }
