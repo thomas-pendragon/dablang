@@ -5,12 +5,6 @@ class ExtractCallBlock
 
     block = node.block
 
-    block.dump
-    err ('~' * 80).blue
-    node.function.dump
-    err ('~' * 80).red
-    err "\n"
-
     root = node.root
     name = 'call'
     klass_name = root.new_blockclass_name(node.function)
@@ -21,9 +15,6 @@ class ExtractCallBlock
     captured_vars_set = block.captured_writable_variables
     capture_args = DabNode.new
 
-    errap ['getters', captured_vars]
-    errap ['SETTERS', captured_vars_set]
-
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
@@ -32,16 +23,10 @@ class ExtractCallBlock
       capture_extract = DabNodeDefineLocalVar.new(identifier, value)
       body.pre_insert(capture_extract)
 
-      next unless captured_vars_set.include?(captured_define)
-
       captured_define.box!
       capture_extract.closure_box!
       carg.closure_pass!
     end
-
-    # captured_vars_set.each_with_index do |captured_define, index|
-    #   captured_define.box!
-    # end
 
     fun = DabNodeFunction.new(name, body, arglist, false)
     functions = [fun]
@@ -54,10 +39,6 @@ class ExtractCallBlock
     initcall = DabNodeInstanceCall.new(init, 'new', capture_args, nil)
 
     node.replace_with!(initcall)
-
-    err ('~' * 80).red
-    initcall.root.dump
-    err ('~' * 80).red
 
     true
   end

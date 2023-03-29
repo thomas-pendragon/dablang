@@ -126,10 +126,6 @@ class DabCompilerFrontend
         end
       end
 
-      err ('*' * 80).yellow
-      program.dump
-      err ('*' * 80).yellow
-
       debug_check!(settings, program, 'rawinit4')
 
       dab_benchmark('process') do
@@ -178,10 +174,10 @@ class DabCompilerFrontend
         end
         context.exit(1)
       else
-        err ('~' * 80).yellow
-        err 'FINAL FORM'
-        program.dump
-        err ('~' * 80).yellow
+        # err ('~' * 80).yellow
+        # err 'FINAL FORM'
+        # program.dump
+        # err ('~' * 80).yellow
 
         output = DabOutput.new(context)
         program.compile(output)
@@ -235,9 +231,7 @@ class DabCompilerFrontend
     return if program.run_checks!
 
     dab_benchmark('ssa') do
-      err 'RUN SSA!'
       program.run_ssa_processors!
-      program.dump
     end
 
     debug_check!(@settings, program, 'ssa')
