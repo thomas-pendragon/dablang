@@ -43,7 +43,7 @@ struct StreamReader : public BaseReader
     }
 };
 
-static const char *LINEINFO_FORMAT_NEW    = "/* %20s %8" PRIu64 ": */ ";
+static const char *LINEINFO_FORMAT_NEW    = "/* %-20s %8" PRIu64 ": */ ";
 static const char *LEGACY_LINEINFO_FORMAT = "%8" PRIu64 ": ";
 
 void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legacy_numbers = false)
@@ -181,6 +181,9 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
     }
 }
 
+static Stream $mainStream;
+static std::vector<std::string> $symbols;
+
 void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_numbers)
 {
     uint64_t     position = 0;
@@ -194,9 +197,13 @@ void parse_symbol_substream(Stream &input_stream, uint64_t start, bool no_number
         {
             auto pos    = stream.position();
             auto symbol = stream.read_uint64();
+            fprintf(stderr,"%d: read symbol at %d\n", (int)pos, (int)symbol);
+            auto data = $mainStream.cstring_data(symbol);
+            fprintf(stderr, "read: %s\n", data.c_str());
+            $symbols.push_back(data);
             if (!no_numbers)
             {
-                fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
+                fprintf(output, LINEINFO_FORMAT_NEW, data.c_str(), start + pos);
             }
             else
             {
@@ -229,12 +236,9 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
             auto arg_count   = stream.read_uint16();
             auto length      = stream.read_uint64();
 
-            // const char *extrasep = "    ";
-
             if (!no_numbers)
             {
                 fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
-                // extrasep = "                ";
             }
             else
             {
@@ -253,7 +257,6 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
                 if (!no_numbers)
                 {
                     fprintf(output, LINEINFO_FORMAT_NEW, "", start + pos);
-                    // extrasep = "                ";
                 }
                 else
                 {
@@ -370,8 +373,8 @@ int main(int argc, char **argv)
         }
     }
 
-    Stream stream;
-    read_stream(stream, input, close_input);
+    Stream &stream = $mainStream;
+    read_stream(stream, input, close_input);    
 
     if (raw)
     {
