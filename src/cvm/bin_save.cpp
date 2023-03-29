@@ -121,60 +121,69 @@ void DabVM::dump_vm(FILE *out)
     memcpy(func_section.name, "fext", 4);
     std::vector<BinFunctionEx> dump_functions;
     size_t                     funssize = 0;
-    for (auto it : functions)
+    auto fun_parser = [&](std::map<dab_symbol_t, DabFunction> functions, dab_class_t class_index)
     {
-        const auto &fun = it.second;
-
-        fprintf(stderr, "vm/binsave: consider function '%s'\n", get_symbol(it.first).c_str());
-
-        if (!fun.regular)
-            continue;
-
-        if (fun.source_ring < this->last_ring_offset)
+        for (auto it : functions)
         {
+            const auto &fun = it.second;
+
+            fprintf(stderr, "vm/binsave: consider function '%s'\n", get_symbol(it.first).c_str());
+
+            if (!fun.regular)
+                continue;
+
+            if (fun.source_ring < this->last_ring_offset)
+            {
+                if (options.verbose)
+                {
+                    fprintf(stderr,
+                            "vm/binsave: will skip function '%s' (ring source: %" PRIu64
+                            ", last ring offset: %" PRIu64 ")\n",
+                            get_symbol(it.first).c_str(), fun.source_ring, this->last_ring_offset);
+                }
+                continue;
+            }
+
             if (options.verbose)
             {
-                fprintf(stderr,
-                        "vm/binsave: will skip function '%s' (ring source: %" PRIu64
-                        ", last ring offset: %" PRIu64 ")\n",
-                        get_symbol(it.first).c_str(), fun.source_ring, this->last_ring_offset);
+                fprintf(stderr, "vm/binsave: will save function '%s' (ring source: %" PRId64 ")\n",
+                        get_symbol(it.first).c_str(), fun.source_ring);
             }
-            continue;
-        }
 
-        if (options.verbose)
-        {
-            fprintf(stderr, "vm/binsave: will save function '%s' (ring source: %" PRId64 ")\n",
-                    get_symbol(it.first).c_str(), fun.source_ring);
-        }
+            const auto &fundata    = it.second;
+            const auto &reflection = fundata.reflection;
 
-        const auto &fundata    = it.second;
-        const auto &reflection = fundata.reflection;
-
-        BinFunctionEx bin_func;
-        bin_func.symbol        = it.first;
-        bin_func.klass         = DAB_CLASS_NIL;
-        bin_func.address       = fundata.address;
-        bin_func.length        = fundata.length;
-        bin_func.arglist_count = reflection.arg_klasses.size();
-        if (fun.new_method)
-        {
-            bin_func.address += code_section.pos + code_section.length;
+            BinFunctionEx bin_func;
+            bin_func.symbol        = it.first;
+            bin_func.klass         = class_index;
+            bin_func.address       = fundata.address;
+            bin_func.length        = fundata.length;
+            bin_func.arglist_count = reflection.arg_klasses.size();
+            if (fun.new_method)
+            {
+                bin_func.address += code_section.pos + code_section.length;
+            }
+            for (size_t i = 0; i < bin_func.arglist_count; i++)
+            {
+                BinFunctionArg arg;
+                arg.symbol = get_symbol_index(reflection.arg_names[i]);
+                arg.klass  = reflection.arg_klasses[i];
+                bin_func.args.push_back(arg);
+            }
+            BinFunctionArg ret;
+            ret.symbol = -1;
+            ret.klass  = reflection.ret_klass;
+            bin_func.args.push_back(ret);
+            dump_functions.push_back(bin_func);
+            funssize += sizeof(BinFunctionExBase) + bin_func.args.size() * sizeof(BinFunctionArg);
         }
-        for (size_t i = 0; i < bin_func.arglist_count; i++)
-        {
-            BinFunctionArg arg;
-            arg.symbol = get_symbol_index(reflection.arg_names[i]);
-            arg.klass  = reflection.arg_klasses[i];
-            bin_func.args.push_back(arg);
-        }
-        BinFunctionArg ret;
-        ret.symbol = -1;
-        ret.klass  = reflection.ret_klass;
-        bin_func.args.push_back(ret);
-        dump_functions.push_back(bin_func);
-        funssize += sizeof(BinFunctionExBase) + bin_func.args.size() * sizeof(BinFunctionArg);
+    };
+    fun_parser(functions, DAB_CLASS_NIL);
+    for (auto klass : classes)
+    {
+        fun_parser(klass.second.functions, klass.first);
     }
+
     func_section.special_index = TEMP_FUNC_SECTION;
     func_section.length        = funssize;
 

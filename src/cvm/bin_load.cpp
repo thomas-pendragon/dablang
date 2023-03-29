@@ -191,7 +191,7 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm/debug: func offset is <%d>\n", (int)function.source_ring);
+            // fprintf(stderr, "vm/debug: func offset is <%d>\n", (int)function.source_ring);
         }
 
         function.length = method_length;
@@ -203,8 +203,8 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         if (options.verbose)
         {
-            fprintf(stderr, "vm: describe %s:\n", symbol_str.c_str());
-            fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
+            // fprintf(stderr, "vm: describe %s:\n", symbol_str.c_str());
+            // fprintf(stderr, "vm:   return: %s\n", classes[reflection.ret_klass].name.c_str());
         }
 
         for (size_t i = 0; i < arg_count; i++)
@@ -217,8 +217,9 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
             if (options.verbose)
             {
-                fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i, classes[klass].name.c_str(),
-                        name.c_str());
+                // fprintf(stderr, "vm:   arg[%d]: %s '%s'\n", (int)arg_i,
+                // classes[klass].name.c_str(),
+                //         name.c_str());
             }
         }
 
