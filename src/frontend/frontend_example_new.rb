@@ -56,14 +56,14 @@ class DabExampleSpec
       run_options = options
 
       compile_dab_to_asm((dab + stdlib_files).compact, asm, options)
-      raise 'a'
       assemble(asm, bin)
 
-      if $dont_run_example
-        File.open(out, 'wb') { |f| f << '1' }
-      else
-        execute(bin, run_options)
-      end
+      # if $dont_run_example
+      #   File.open(out, 'wb') { |f| f << '1' }
+      # else
+      #   execute(bin, run_options)
+      # end
+      raise 'a'
     end
   end
 end
