@@ -365,8 +365,9 @@ struct DabValue
     size_t use_count() const;
     void   retain();
     void   release();
-    
-    bool nil() const {
+
+    bool nil() const
+    {
         return data.type == TYPE_NIL;
     }
 

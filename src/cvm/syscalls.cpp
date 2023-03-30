@@ -66,10 +66,13 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
         import_name = method.string();
     }
 
-    auto name_     = path.string();
-    
-    if (name_ == "$LIBC") { name_ = DAB_LIBC_NAME; }
-    
+    auto name_ = path.string();
+
+    if (name_ == "$LIBC")
+    {
+        name_ = DAB_LIBC_NAME;
+    }
+
     auto name      = name_.c_str();
     auto libc_name = import_name.string();
 
