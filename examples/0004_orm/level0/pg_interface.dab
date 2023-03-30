@@ -41,3 +41,7 @@ class Postgres
     self.validate("Connection to database", nil);
   }
 }
+
+func level0() {
+  
+}
