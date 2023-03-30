@@ -27,12 +27,16 @@ class DabExampleSpec
 
   def run_test(settings)
     input = settings[:input]
-    test_output_dir = './tmp/'
+    test_output_dir = "./tmp/example_#{input}/"
     test_prefix = settings[:test_output_prefix] || 'example_'
 
-    info = "Running test #{input.blue.bold} in directory #{test_output_dir.blue.bold}..."
+    test_dir = Dir.glob(sprintf('./examples/%04d_*', input))[0]
+
+    info = "Running test ##{input} #{test_dir.blue.bold} in directory #{test_output_dir.blue.bold}..."
     puts info
     FileUtils.mkdir_p(test_output_dir)
+
+    raise 'a'
 
     dab = input
     asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabca')).to_s
