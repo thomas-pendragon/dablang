@@ -5,20 +5,23 @@ $autorun = true if $autorun.nil?
 class DabExampleSpec
   include BaseFrontend
 
-  def compile_to_asm(input, output, options)
-    run_ruby_part(input, output, 'compile to DabASM', 'compiler', options, true)
-  end
-
-  def assemble(input, output)
-    run_ruby_part(input, output, 'assemble DabASM', 'tobinary')
-  end
-
-  def execute(input, run_options)
-    describe_action(input, '-', 'VM') do
-      input = input.to_s.shellescape
-      cmd = "./bin/cvm #{run_options}"
-
-      qsystem(cmd, input_file: input)
+  def execute(input, output, run_options)
+    input = [input] unless input.is_a?(Array)
+    describe_action(input, output, 'VM') do
+      input = input.map(&:to_s).map(&:shellescape).join(' ')
+      output = output.to_s.shellescape
+      run_options = run_options.presence
+      cmd = "./bin/cvm #{run_options} #{input} --out=#{output}"
+      begin
+        qsystem(cmd, timeout: 10)
+      rescue SystemCommandError => e
+        STDERR.puts
+        warn e.stderr
+        STDERR.puts
+        e.stdout = open(output).read
+        FileUtils.rm(output)
+        raise
+      end
     end
   end
 
