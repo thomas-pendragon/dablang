@@ -1,35 +1,40 @@
 // Snake game, initial experiments with using FFI to access SDL2 library
 
+func import_sdl(method) {
+  puts("Import SDL method '" + method.to_s + "'");
+  __dlimport("/usr/local/lib/libSDL2.dylib", method);
+}
+
 // int SDL_Init(Uint32 flags)
-[__import_sdl]
+[import_sdl]
 func SDL_Init<Int32>(flags<Uint32>) {}
 
 // extern DECLSPEC SDL_Window * SDLCALL SDL_CreateWindow(const char *title,
 //                                                      int x, int y, int w,
 //                                                      int h, Uint32 flags);
-[__import_sdl]
+[import_sdl]
 func SDL_CreateWindow<IntPtr>(title<String>, x<Int32>, y<Int32>, w<Int32>, h<Int32>, flags<Uint32>) {}
 
 // void SDL_Delay(Uint32 ms)
-[__import_sdl]
+[import_sdl]
 func SDL_Delay<NilClass>(ms<Uint32>) {}
 
 // int SDL_PollEvent(SDL_Event* event)
-[__import_sdl]
+[import_sdl]
 func SDL_PollEvent<Int32>(event<IntPtr>) {}
 
 //SDL_Renderer* SDL_CreateRenderer(SDL_Window* window,
 //                                 int         index,
 //                               Uint32      flags)
-[__import_sdl]
+[import_sdl]
 func SDL_CreateRenderer<IntPtr>(window<IntPtr>, index<Int32>, flags<Uint32>) {}
 
 //int SDL_RenderClear(SDL_Renderer* renderer)
-[__import_sdl]
+[import_sdl]
 func SDL_RenderClear<Int32>(renderer<IntPtr>) {}
 
 //void SDL_RenderPresent(SDL_Renderer* renderer)
-[__import_sdl]
+[import_sdl]
 func SDL_RenderPresent<NilClass>(renderer<IntPtr>) {}
 
 // int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
@@ -37,7 +42,7 @@ func SDL_RenderPresent<NilClass>(renderer<IntPtr>) {}
 //                            Uint8         g,
 //                            Uint8         b,
 //                            Uint8         a)
-[__import_sdl]
+[import_sdl]
 func SDL_SetRenderDrawColor<Int32>(renderer<IntPtr>, r<Uint8>, g<Uint8>, b<Uint8>, a<Uint8>) {}
 
 // int SDL_RenderDrawLine(SDL_Renderer* renderer,
@@ -45,15 +50,15 @@ func SDL_SetRenderDrawColor<Int32>(renderer<IntPtr>, r<Uint8>, g<Uint8>, b<Uint8
 //                        int           y1,
 //                        int           x2,
 //                        int           y2)
-[__import_sdl]
+[import_sdl]
 func SDL_RenderDrawLine<Int32>(renderer<IntPtr>, x1<Int32>, y1<Int32>, x2<Int32>, y2<Int32>) {}
 
 // Uint64 SDL_GetPerformanceCounter(void)
-[__import_sdl]
+[import_sdl]
 func SDL_GetPerformanceCounter<Uint64>() {}
 
 // Uint64 SDL_GetPerformanceCounter(void)
-[__import_sdl]
+[import_sdl]
 func SDL_GetPerformanceFrequency<Uint64>() {}
 
 func draw_square(renderer, _size, _x, _y, alpha, apple, head)
