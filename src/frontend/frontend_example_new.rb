@@ -57,7 +57,7 @@ class DabExampleSpec
 
       stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
       stdlib_glob = "#{stdlib_path}/*.dab"
-      stdlib_files = Dir.glob(stdlib_glob)
+      stdlib_files = (level == 0) ? Dir.glob(stdlib_glob) : []
 
       options = vmfiles.map{"--ring-base[]=#{_1}"}.join(' ')
       run_options = "--entry=level#{level}"
