@@ -1,0 +1,43 @@
+class Postgres
+{
+  /* private */ func validate(info, result)
+  {
+    var CONNECTION_OK = 0;
+    var PGRES_COMMAND_OK = 1;
+    var PGRES_TUPLES_OK = 2;
+    var failed = false;
+    # var message;
+
+    if (result)
+    {
+      var status = PQresultStatus(result);
+      failed = !(status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK);
+    }
+    else
+    {
+      failed = (PQstatus(@connection) != CONNECTION_OK);
+    }
+
+    if (!failed)
+    {
+      return nil;
+    }
+
+    print(info);
+    print(" failed: [");
+    print(PQerrorMessage(@connection));
+    puts("].");
+    if (result)
+    {
+      PQclear(result);
+    }
+    PQfinish(@connection);
+    exit(1);
+  }
+
+  // "postgresql://dablang_ex0004@localhost/dablang_ex0004"
+  func __construct(connection_query) {
+     @connection = PQconnectdb(connection_query);
+    validate("Connection to database", nil);
+  }
+}
