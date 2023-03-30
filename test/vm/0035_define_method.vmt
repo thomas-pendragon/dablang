@@ -93,9 +93,7 @@ _SYMD:
     W_STRING "insert"
     W_STRING "[]="
     W_STRING "join"
-    W_STRING "import_libc"
-    W_STRING "__import_sdl"
-    W_STRING "__import_pq"
+    W_STRING "name"
     W_STRING "||"
     W_STRING "&&"
     W_STRING "closure"
@@ -137,19 +135,17 @@ _SYMB:
     W_SYMBOL 507
     W_SYMBOL 511
     W_SYMBOL 516
-    W_SYMBOL 530
-    W_SYMBOL 543
-    W_SYMBOL 555
-    W_SYMBOL 558
-    W_SYMBOL 561
-    W_SYMBOL 569
+    W_SYMBOL 521
+    W_SYMBOL 524
+    W_SYMBOL 527
+    W_SYMBOL 535
 
 _FEXT:
     W_METHOD 1, -1, 237, 0, 6
     W_METHOD_ARG -1, 0
     W_METHOD 3, -1, 244, 0, 47
     W_METHOD_ARG -1, 0
-    W_METHOD 40, -1, 325, 0, 27
+    W_METHOD 38, -1, 325, 0, 27
     W_METHOD_ARG -1, 0
     W_METHOD 2, 256, 292, 0, 32
     W_METHOD_ARG -1, 0

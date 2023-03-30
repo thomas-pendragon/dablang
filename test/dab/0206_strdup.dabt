@@ -12,8 +12,6 @@ func main()
 
 ## FRONTEND OPTIONS
 
---no-stdlib
-
 ## OPTIONS
 
 --with-attributes --with-reflection

@@ -72,10 +72,8 @@ _SYMD:
     W_STRING "insert"
     W_STRING "[]="
     W_STRING "join"
+    W_STRING "name"
     W_STRING "call"
-    W_STRING "import_libc"
-    W_STRING "__import_sdl"
-    W_STRING "__import_pq"
     W_STRING "||"
     W_STRING "&&"
 
@@ -114,10 +112,8 @@ _SYMB:
     W_SYMBOL 379
     W_SYMBOL 384
     W_SYMBOL 389
-    W_SYMBOL 403
-    W_SYMBOL 416
-    W_SYMBOL 428
-    W_SYMBOL 431
+    W_SYMBOL 394
+    W_SYMBOL 397
 
 _FEXT:
     W_METHOD 0, -1, 205, 0, 6
