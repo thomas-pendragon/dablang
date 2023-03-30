@@ -1,28 +1,28 @@
 // int socket(int domain, int type, int protocol);
-[__import_libc] func socket<Int32>(domain<Int32>, type<Int32>, protocol<Int32>) {}
+[import_libc] func socket<Int32>(domain<Int32>, type<Int32>, protocol<Int32>) {}
 
 // int setsockopt(int socket, int level, int option_name, const void *option_value, socklen_t option_len);
 // socklen_t - Int32
-[__import_libc] func setsockopt<Int32>(socket<Int32>, level<Int32>, option_name<Int32>, option_value<IntPtr>, option_len<Int32>) {}
+[import_libc] func setsockopt<Int32>(socket<Int32>, level<Int32>, option_name<Int32>, option_value<IntPtr>, option_len<Int32>) {}
 
 // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
-[__import_libc] func bind<Int32>(socket<Int32>, address<IntPtr>, address_len<Int32>) {}
+[import_libc] func bind<Int32>(socket<Int32>, address<IntPtr>, address_len<Int32>) {}
 
 // int listen(int socket, int backlog);
-[__import_libc] func listen<Int32>(socket<Int32>, backlog<Int32>) {}
+[import_libc] func listen<Int32>(socket<Int32>, backlog<Int32>) {}
 
 // int accept(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
-[__import_libc] func accept<Int32>(socket<Int32>, address<IntPtr>, address_len<IntPtr>) {}
+[import_libc] func accept<Int32>(socket<Int32>, address<IntPtr>, address_len<IntPtr>) {}
 
 // ssize_t read(int fildes, void *buf, size_t nbyte);
 // ssize_t - Uint64
-[__import_libc] func read<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
+[import_libc] func read<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
 
 // ssize_t write(int fildes, const void *buf, size_t nbyte);
-[__import_libc] func write<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
+[import_libc] func write<Uint64>(fildes<Int32>, buf<IntPtr>, nbyte<Uint64>) {}
 
 // int close(int fildes);
-[__import_libc] func close<Int32>(fildes<Int32>) {}
+[import_libc] func close<Int32>(fildes<Int32>) {}
 
 func errcheck(test, message)
 {

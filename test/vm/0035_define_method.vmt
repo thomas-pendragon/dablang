@@ -93,7 +93,7 @@ _SYMD:
     W_STRING "insert"
     W_STRING "[]="
     W_STRING "join"
-    W_STRING "__import_libc"
+    W_STRING "import_libc"
     W_STRING "__import_sdl"
     W_STRING "__import_pq"
     W_STRING "||"

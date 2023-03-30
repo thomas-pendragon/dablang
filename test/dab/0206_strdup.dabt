@@ -1,7 +1,7 @@
 ## CODE
 
 //char *strdup(const char *s);
-[__import_libc]
+[import_libc]
 func strdup<IntPtr>(s<String>) {}
 
 func main()

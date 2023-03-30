@@ -6,6 +6,12 @@
 #include <dlfcn.h>
 #endif
 
+#ifdef __linux__
+#define DAB_LIBC_NAME "libc.so.6" // LINUX
+#else
+#define DAB_LIBC_NAME "libc.dylib" // APPLE
+#endif
+
 static int32_t byteswap(int32_t value)
 {
     return ((value >> 24) & 0x000000FF) | ((value << 8) & 0x00FF0000) |
@@ -61,6 +67,9 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
     }
 
     auto name_     = path.string();
+    
+    if (name_ == "$LIBC") { name_ = DAB_LIBC_NAME; }
+    
     auto name      = name_.c_str();
     auto libc_name = import_name.string();
 

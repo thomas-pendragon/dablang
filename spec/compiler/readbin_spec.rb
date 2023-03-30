@@ -509,12 +509,12 @@ describe DabBinReader, readbin: true do
       symbols: [
         'foo', 'level0', 'new', 'class', 'to_s', '__construct', '__destruct', 'is', '==', 'upcase', 'length', '[]', '+',
         '!=', '>', '>=', '<=', '<', '-', '*', '/', '%', '<<', '>>', '|', '&', 'byteswap', 'fetch_int32', 'count', 'shift',
-        'insert', '[]=', 'join', '__import_libc', '__import_sdl', '__import_pq', '||', '&&', 'bar', 'level1'
+        'insert', '[]=', 'join', '||', '&&', 'bar', 'level1'
       ],
       all_symbols: [
         'foo', 'level0', 'new', 'class', 'to_s', '__construct', '__destruct', 'is', '==', 'upcase', 'length', '[]', '+',
         '!=', '>', '>=', '<=', '<', '-', '*', '/', '%', '<<', '>>', '|', '&', 'byteswap', 'fetch_int32', 'count', 'shift',
-        'insert', '[]=', 'join', '__import_libc', '__import_sdl', '__import_pq', '||', '&&', 'bar', 'level1'
+        'insert', '[]=', 'join', '||', '&&', 'bar', 'level1'
       ],
       functions: [
         {symbol: 'bar', klass: nil, address: 987},

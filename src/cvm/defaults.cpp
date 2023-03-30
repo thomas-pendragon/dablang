@@ -3,12 +3,6 @@
 #define STR2(s) #s
 #define STR(s) STR2(s)
 
-#ifdef __linux__
-#define DAB_LIBC_NAME "libc.so.6" // LINUX
-#else
-#define DAB_LIBC_NAME "libc.dylib" // APPLE
-#endif
-
 DabValue DabVM::merge_arrays(const DabValue &arg0, const DabValue &arg1)
 {
     auto    &a0          = arg0.array();
@@ -38,18 +32,6 @@ void DabVM::define_defaults()
     define_default_classes();
 
     fprintf(stderr, "vm: define default functions\n");
-
-//    {
-//        DabFunction fun;
-//        fun.name      = "__import_libc";
-//        fun.regular   = false;
-//        fun.extra_reg = make_import_function(DAB_LIBC_NAME);
-//
-//        auto func_index = get_or_create_symbol_index("__import_libc");
-//
-//        functions[func_index] = fun;
-//    }
-//
 
     {
         DabFunction fun;

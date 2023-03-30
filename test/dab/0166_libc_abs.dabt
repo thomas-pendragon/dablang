@@ -1,6 +1,6 @@
 ## CODE
 
-[__import_libc("abs")]
+[import_libc("abs")]
 func libc_abs<Int32>(number<Int32>) {}
 
 func main()

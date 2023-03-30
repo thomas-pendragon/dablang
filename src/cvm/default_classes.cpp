@@ -270,6 +270,10 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return std::string("@method(" + self.string() + ")");
     });
+    method_class.add_reg_function("name", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
+        return self.string();
+    });
     method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
         return $VM->call_block(self, args);
     });
@@ -353,5 +357,12 @@ void DabVM::define_default_classes()
             ret += string;
         }
         return "[" + ret + "]";
+    });
+    
+    auto &nil_class = get_class(CLASS_NILCLASS);
+    nil_class.add_reg_function("==", [](DabValue self, std::vector<DabValue> args) {
+        (void)self;
+        assert(args.size() == 1);
+        return DabValue(args[0].nil());
     });
 }

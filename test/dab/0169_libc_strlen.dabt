@@ -1,6 +1,6 @@
 ## CODE
 
-[__import_libc("strlen")]
+[import_libc("strlen")]
 func libc_strlen<Uint64>(string<String>) {}
 
 func main()

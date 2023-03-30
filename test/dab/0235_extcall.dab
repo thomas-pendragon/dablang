@@ -1,7 +1,7 @@
 ## CODE
 
 //int abs (int number) ¶
-[__import_libc]
+[import_libc]
 func abs<Int32>(number<Int32>) {}
 
 func main()
