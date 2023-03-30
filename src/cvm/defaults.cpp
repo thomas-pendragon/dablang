@@ -50,27 +50,6 @@ void DabVM::define_defaults()
 //        functions[func_index] = fun;
 //    }
 //
-//    {
-//        DabFunction fun;
-//        fun.name      = "__import_sdl";
-//        fun.regular   = false;
-//        fun.extra_reg = make_import_function("/usr/local/lib/libSDL2.dylib");
-//
-//        auto func_index = get_or_create_symbol_index("__import_sdl");
-//
-//        functions[func_index] = fun;
-//    }
-
-//    {
-//        DabFunction fun;
-//        fun.name      = "__import_pq";
-//        fun.regular   = false;
-//        fun.extra_reg = make_import_function("/opt/homebrew/Cellar/libpq/15.2/lib/libpq.dylib");
-//
-//        auto func_index = get_or_create_symbol_index("__import_pq");
-//
-//        functions[func_index] = fun;
-//    }
 
     {
         DabFunction fun;

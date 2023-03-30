@@ -1,7 +1,7 @@
 require_relative 'node'
 require_relative '../processors/create_attributes'
 
-BUILTINS = SYSCALLS + EXTRA_STD_CALLS + %w[
+BUILTINS = SYSCALLS + %w[
   print
   exit
   define_method
