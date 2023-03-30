@@ -111,7 +111,10 @@ class DabNodeUnit < DabNode
     @available_functions[function.identifier] = function
   end
 
-  def add_class(klass)
+  def add_class(klass, forced_number: nil)
+    if forced_number
+      @class_numbers[klass.identifier] = forced_number
+    end
     number = @class_numbers[klass.identifier]
     number ||= USER_CLASSES_OFFSET + @classes.count
     klass.assign_number(number)
@@ -281,7 +284,8 @@ class DabNodeUnit < DabNode
       @constants.insert(constant)
     end
     another_program.classes.each do |klass|
-      @classes.insert(klass)
+      add_class(klass)
+      # @classes.insert(klass)
     end
     another_program.clear!
     rebuild_constant_table!

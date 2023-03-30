@@ -47,13 +47,13 @@ class DabNodeClassDefinition < DabNode
     output.print('W_CLASS', number, parent_number, node_identifier.symbol_index)
   end
 
-  def compile(output)
-    parent_number = @parent_class ? root.class_number(@parent_class) : 0
-    output.printex(self, 'DEFINE_CLASS', identifier, number, parent_number)
-    @functions.each do |fun|
-      fun.compile(output)
-    end
-  end
+  # def compile(output)
+  #   parent_number = @parent_class ? root.class_number(@parent_class) : 0
+  #   output.printex(self, 'DEFINE_CLASS', identifier, number, parent_number)
+  #   @functions.each do |fun|
+  #     fun.compile(output)
+  #   end
+  # end
 
   def assign_number(number)
     @number = number

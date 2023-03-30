@@ -40,7 +40,7 @@ class DabBinReader
         # }
       parent = 'Object' # TODO!
       node = DabNodeClassDefinition.new(klass[:symbol], parent, [])
-      unit.add_class(node)
+      unit.add_class(node, forced_number: klass[:index])
     end
 
     [unit, data[:symbols]]
