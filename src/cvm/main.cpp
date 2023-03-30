@@ -212,6 +212,7 @@ bool DabVM::has_arg(int arg_index)
 
 DabValue &DabVM::get_arg(int arg_index)
 {
+    assert(arg_index < (int)current_frame()->args.size());
     return current_frame()->args[arg_index];
 }
 
@@ -903,7 +904,7 @@ bool DabVM::execute_single(Stream &input)
         {
             fprintf(stderr, "vm: instcall, recv = ");
             recv.dump(stderr);
-            fprintf(stderr, "\n");
+            fprintf(stderr, " argc = %d\n", (int)n_args);
         }
         instcall(recv, symbol, n_args, DAB_SYMBOL_NIL, nullptr, out_reg, reglist);
         break;

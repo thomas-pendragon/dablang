@@ -63,6 +63,7 @@ class DabNodeUnit < DabNode
 
   def class_number(id)
     ret = @class_numbers[id]
+    # errap [@class_numbers,'lookup', id, '->', ret]
     unless ret
       errap @class_numbers
       raise "class '#{id}' (#{id.class}) not found"
@@ -112,11 +113,14 @@ class DabNodeUnit < DabNode
   end
 
   def add_class(klass, forced_number: nil)
+    # errap ['add_class',klass.identifier, 'forced_number',forced_number, 'list',@class_numbers,@classes]
     if forced_number
       @class_numbers[klass.identifier] = forced_number
     end
     number = @class_numbers[klass.identifier]
-    number ||= USER_CLASSES_OFFSET + @classes.count
+    number ||= [USER_CLASSES_OFFSET, (@class_numbers.values.max || 0) + 1].max# USER_CLASSES_OFFSET + @classes.count
+
+    # errap ['add_class',klass.identifier, 'forced_number',forced_number, 'list',@class_numbers,@classes,'---->',number]
     klass.assign_number(number)
     @classes.insert(klass)
     @class_numbers[klass.identifier] = number

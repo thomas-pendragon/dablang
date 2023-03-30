@@ -51,6 +51,7 @@ class DabExampleSpec
       basepath = Pathname.new(test_output_dir)
       asm = basepath.join(level_base.ext('.dabca')).to_s
       bin = basepath.join(level_base.ext('.dabcb')).to_s
+      binasm = basepath.join(level_base.ext('.dabcb.dabca')).to_s
       out = basepath.join(level_base.ext('.out')).to_s
       vmo = basepath.join(level_base.ext('.vm')).to_s
       vmoa = basepath.join(level_base.ext('.vm.dabca')).to_s
@@ -66,6 +67,7 @@ class DabExampleSpec
 
       compile_dab_to_asm((dab + stdlib_files).compact, asm, options)
       assemble(asm, bin)
+      disassemble(bin, binasm, '--with-headers')
       execute(vmfiles + [bin], vmo, run_options)
       disassemble(vmo, vmoa, '--with-headers')
 
