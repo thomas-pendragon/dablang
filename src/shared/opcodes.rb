@@ -149,6 +149,7 @@ KERNELCODES = {
   0x05 => 'DEFINE_METHOD',
   0x06 => 'BYTESWAP32',
   0x07 => 'DLIMPORT',
+  0x08 => 'WARN',
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h

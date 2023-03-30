@@ -120,7 +120,8 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
     register_set(out_reg, nullptr);
 }
 
-void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist)
+void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist,
+                         bool use_stderr)
 {
     assert(reglist.size() == 1);
     DabValue arg = register_get(reglist[0]);
@@ -135,8 +136,9 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
     }
     if (!options.coverage_testing && options.extract_part != "dumpvm")
     {
-        arg.print(options.output);
-        fflush(options.output);
+        auto output = use_stderr ? stderr : options.output;
+        arg.print(output);
+        fflush(output);
     }
 
     if (!options.autorelease)
@@ -154,6 +156,11 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
     case KERNEL_PRINT:
     {
         kernel_print(out_reg, reglist);
+        break;
+    }
+    case KERNEL_WARN:
+    {
+        kernel_print(out_reg, reglist, true);
         break;
     }
     case KERNEL_EXIT:
