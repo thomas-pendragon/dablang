@@ -338,7 +338,7 @@ end
 
 task :example, [:number] => [cvm] do |_t, args|
   number = args[:number]
-  input = Dir.glob(sprintf('examples/%04d*', number)).select{File.file?(_1)}.first
+  input = Dir.glob(sprintf('examples/%04d*', number)).select { File.file?(_1) }.first
   if input
     psystem("ruby src/frontend/frontend_example.rb #{input}")
   else
