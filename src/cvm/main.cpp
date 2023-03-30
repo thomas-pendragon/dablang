@@ -171,7 +171,7 @@ int DabVM::run(std::vector<Stream> &inputs)
         {
             init_index = get_symbol_index("__init");
         }
-        catch (DabRuntimeError)
+        catch (DabRuntimeError &error)
         {
             fprintf(stderr, "vm: no __init?\n");
         }
