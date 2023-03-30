@@ -1,0 +1,16 @@
+class OrmGenerator {
+
+  func init() {
+    @pg = Postgres.new("postgresql://dablang_ex0004@localhost/dablang_ex0004");
+  }
+
+  func run() {
+
+  }
+};
+
+func level1() {
+  var generator = OrmGenerator.new;
+  generator.init;
+  generator.run;
+}

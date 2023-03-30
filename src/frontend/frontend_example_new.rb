@@ -59,17 +59,17 @@ class DabExampleSpec
       stdlib_glob = "#{stdlib_path}/*.dab"
       stdlib_files = Dir.glob(stdlib_glob)
 
-      options = ''
+      options = vmfiles.map{"--ring-base[]=#{_1}"}.join(' ')
       run_options = "--entry=level#{level}"
       run_options += ' --output=dumpvm' unless is_final
       run_options += ' --verbose'
 
       compile_dab_to_asm((dab + stdlib_files).compact, asm, options)
       assemble(asm, bin)
-      execute(bin, vmo, run_options)
+      execute(vmfiles + [bin], vmo, run_options)
       disassemble(vmo, vmoa, '--with-headers')
 
-      raise 'a'
+      vmfiles << vmo
     end
   end
 end
