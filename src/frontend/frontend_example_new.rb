@@ -36,28 +36,34 @@ class DabExampleSpec
     puts info
     FileUtils.mkdir_p(test_output_dir)
 
-    raise 'a'
+    levels = Dir.glob("#{test_dir}/level*").sort
+    levels.each_with_index do |level_dir, level|
+      info = "Running test ##{input} #{test_dir.blue.bold} level #{level.to_s.bold.blue} (#{level_dir.yellow})"
+      puts info
 
-    dab = input
-    asm = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabca')).to_s
-    bin = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.dabcb')).to_s
-    out = Pathname.new(test_output_dir).join(test_prefix + File.basename(input).ext('.out')).to_s
+      level_base = test_prefix + input.to_s + '_level' + level.to_s
 
-    stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
-    stdlib_glob = "#{stdlib_path}/*.dab"
-    stdlib_files = Dir.glob(stdlib_glob)
+      dab = Dir.glob(level_dir + '/*.dab')
+      asm = Pathname.new(test_output_dir).join(level_base.ext('.dabca')).to_s
+      bin = Pathname.new(test_output_dir).join(level_base.ext('.dabcb')).to_s
+      out = Pathname.new(test_output_dir).join(level_base.ext('.out')).to_s
 
-    options = ''
-    run_options = options
+      stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
+      stdlib_glob = "#{stdlib_path}/*.dab"
+      stdlib_files = Dir.glob(stdlib_glob)
 
-    compile_to_asm(([dab] + stdlib_files).compact, asm, options)
+      options = ''
+      run_options = options
 
-    assemble(asm, bin)
+      compile_dab_to_asm((dab + stdlib_files).compact, asm, options)
+      raise 'a'
+      assemble(asm, bin)
 
-    if $dont_run_example
-      File.open(out, 'wb') { |f| f << '1' }
-    else
-      execute(bin, run_options)
+      if $dont_run_example
+        File.open(out, 'wb') { |f| f << '1' }
+      else
+        execute(bin, run_options)
+      end
     end
   end
 end

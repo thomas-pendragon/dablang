@@ -38,6 +38,6 @@ class Postgres
   // "postgresql://dablang_ex0004@localhost/dablang_ex0004"
   func __construct(connection_query) {
      @connection = PQconnectdb(connection_query);
-    validate("Connection to database", nil);
+    self.validate("Connection to database", nil);
   }
 }
