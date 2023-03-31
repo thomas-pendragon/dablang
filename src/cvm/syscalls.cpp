@@ -104,9 +104,10 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
 
     auto func_index = get_or_create_symbol_index(method_name);
 
-    auto &function     = functions[func_index];
-    function.regular   = false;
-    function.address   = -1;
+    auto &function    = functions[func_index];
+    function.regular  = false;
+    function.dlimport = true;
+    // function.address   = -1;
     function.extra_reg = import_external_function(symbol, function.reflection);
 
 #else

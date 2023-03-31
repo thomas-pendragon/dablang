@@ -50,6 +50,8 @@ struct DabFunction
     uint64_t source_ring = 0;
 
     bool new_method = false;
+
+    bool dlimport = false;
 };
 
 enum

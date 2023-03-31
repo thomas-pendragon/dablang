@@ -166,22 +166,20 @@ int DabVM::run(std::vector<Stream> &inputs)
     }
     else
     {
-        int init_index = -1;
-        try
+        fprintf(stderr, "vm: trying to initialize attributes\n");
+        for (auto fn : functions)
         {
-            init_index = get_symbol_index("__init");
-        }
-        catch (DabRuntimeError &error)
-        {
-            fprintf(stderr, "vm: no __init?\n");
-        }
-        if (init_index != -1)
-        {
-            fprintf(stderr, "vm: initialize attributes\n");
+            auto symbol = get_symbol(fn.first);
+            // fprintf(stderr, "vm: consider attrfun[%s]\n", symbol.c_str());
+            if (symbol.find("__init_") != 0)
+                continue;
+
+            fprintf(stderr, "vm: initialize attributes (%s)\n", symbol.c_str());
             instructions.rewind();
-            call(dab_register_t::nilreg(), init_index, 0, DAB_SYMBOL_NIL, nullptr);
+            call(dab_register_t::nilreg(), fn.first, 0, DAB_SYMBOL_NIL, nullptr);
             execute(instructions);
         }
+        // fprintf(stderr, "vm: finished initializing attributes\n");
 
         instructions.rewind();
         call(dab_register_t::nilreg(), get_symbol_index(options.entry), 0, DAB_SYMBOL_NIL, nullptr);
