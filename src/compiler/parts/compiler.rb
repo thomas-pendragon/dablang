@@ -3,12 +3,12 @@ class DabCompiler
     @stream = stream
   end
 
-  def program(classes = [])
+  def program(classes = [], parent_unit: nil)
     context = DabContext.new(@stream, :top)
     classes.each do |klass|
       context.add_class(klass)
     end
-    context.read_program
+    context.read_program(parent_unit)
   rescue UnknownTokenException
     ret = DabNodeUnit.new
     source = SourceString.new('', @stream.filename, 0, 0, 0)

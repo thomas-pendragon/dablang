@@ -31,13 +31,13 @@ class DabBinReader
       unit.add_function(node)
     end
 
-    data[:klasses].each do |klass|
-        # :klasses => [
-        # [0] {
-        #            :index => 256,
-        #     :parent_index => 0,
-        #           :symbol => "Postgres"
-        # }
+    data[:klasses]&.each do |klass|
+      # :klasses => [
+      # [0] {
+      #            :index => 256,
+      #     :parent_index => 0,
+      #           :symbol => "Postgres"
+      # }
       parent = 'Object' # TODO!
       node = DabNodeClassDefinition.new(klass[:symbol], parent, [])
       unit.add_class(node, forced_number: klass[:index])

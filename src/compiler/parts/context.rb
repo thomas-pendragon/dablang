@@ -49,8 +49,8 @@ class DabContext < DabBaseContext
     raise SelfOutsideException.new(node)
   end
 
-  def read_program
-    ret = DabNodeUnit.new
+  def read_program(base_program = nil)
+    ret = base_program || DabNodeUnit.new
     until @stream.eof?
       while on_subcontext(&:read_separator)
       end

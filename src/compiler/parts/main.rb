@@ -71,16 +71,10 @@ class DabCompilerFrontend
           streams[filename] = stream
           classes = []
           classes = program.class_names if program
-          new_program = compiler.program(classes)
-          if new_program.has_errors?
-            program = new_program
-            break
-          end
-          if program
-            program.merge!(new_program)
-          else
-            program = new_program
-          end
+          new_program = compiler.program(classes, parent_unit: program)
+          program = new_program
+
+          break if new_program.has_errors?
         end
       end
 

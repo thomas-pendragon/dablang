@@ -52,7 +52,7 @@ class DabExampleSpec
       asm = basepath.join(level_base.ext('.dabca')).to_s
       bin = basepath.join(level_base.ext('.dabcb')).to_s
       binasm = basepath.join(level_base.ext('.dabcb.dabca')).to_s
-      out = basepath.join(level_base.ext('.out')).to_s
+      # out = basepath.join(level_base.ext('.out')).to_s
       vmo = basepath.join(level_base.ext('.vm')).to_s
       vmoa = basepath.join(level_base.ext('.vm.dabca')).to_s
 
@@ -60,7 +60,7 @@ class DabExampleSpec
       stdlib_glob = "#{stdlib_path}/*.dab"
       stdlib_files = (level == 0) ? Dir.glob(stdlib_glob) : []
 
-      options = vmfiles.map{"--ring-base[]=#{_1}"}.join(' ')
+      options = vmfiles.map { "--ring-base[]=#{_1}" }.join(' ')
       run_options = "--entry=level#{level}"
       run_options += ' --output=dumpvm' unless is_final
       run_options += ' --verbose'
