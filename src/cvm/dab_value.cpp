@@ -407,6 +407,10 @@ DabValue DabValue::create_instance() const
 
 DabValue DabValue::allocate_dynstr(const char *str)
 {
+    if (!str) {
+        return DabValue(nullptr);
+    }
+    
     DabValue klass = $VM->get_class(CLASS_DYNAMICSTRING);
 
     auto ret = klass.create_instance();

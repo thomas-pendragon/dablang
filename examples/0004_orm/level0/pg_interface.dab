@@ -11,12 +11,19 @@ class Postgres
     if (result)
     {
       var status = PQresultStatus(result);
-      failed = !(status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK);
+//      puts(">> status: "+status.to_s);
+//      puts(status == PGRES_TUPLES_OK);
+//      puts(status == PGRES_COMMAND_OK);
+//      puts((status == PGRES_COMMAND_OK) || (status == PGRES_TUPLES_OK));
+//      puts(!(status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK));
+      failed = !((status == PGRES_COMMAND_OK) || (status == PGRES_TUPLES_OK));
     }
     else
     {
       failed = (PQstatus(@connection) != CONNECTION_OK);
     }
+
+   // puts("failed? " + failed.to_s);
 
     if (!failed)
     {
@@ -45,7 +52,7 @@ class Postgres
 
   func raw_execute(sql<String>, binary<Boolean> = true) {
 
-    print(" > ");
+    print("  > ");
     puts(sql);
     
     //func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
@@ -56,9 +63,8 @@ class Postgres
     var res = PQexecParams(@connection, sql, 0, nil, nil, nil, nil, resultFormat);
     
     print(" >> result: ");
-
     print(PQresultStatus(res));
-    puts(".");
+    puts("");
     self.validate("SQL query", res);
     return res;        
   }
@@ -74,13 +80,23 @@ class PgResultset {
     
     @query = query;    
     @ncolumns = PQnfields(@query);
+    puts(" >> "+@ncolumns.to_s+" columns found");
 
-    @columns = @[];    
+    var columns = @[];    
+
+    var q = query;
     @ncolumns.times() ^ (i) {
-      var ptr = PQfname(@query, i);
+     // print("Query: ");
+     // puts(query);
+      //print("i: ");
+      //puts(i);
+      var ptr = PQfname(q, i);
+      //print("ptr: ");
+      //puts(ptr);
       var<String> column_name = ptr;
-      @columns.insert(column_name);
+      columns.insert(column_name);
     };
+    @columns = columns;
     
   }
 
