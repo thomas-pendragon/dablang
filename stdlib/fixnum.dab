@@ -4,12 +4,14 @@ class Fixnum
   {
     return self != 0;
   }
-
-  func times() {
+  
+  func times()
+  {
     var i = 0;
-    while (i < self) {
+    while (i < self)
+    {
       yield(i);
       i = i + 1;
-    };
+    }
   }
 }
