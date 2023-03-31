@@ -1,0 +1,64 @@
+## CODE
+
+func foo?() {
+  print(1);
+}
+
+func main()
+{
+  foo?();
+}
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 0
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_END_HEADER 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_0:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_0_END:
+                                 NOP 
+ 
+                   Ffoo%QUEST:
+                                 STACK_RESERVE 0
+/* 1            */               LOAD_NUMBER R0, 1
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Ffoo%QUEST_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* foo?         */               CALL RNIL, S1
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _SDAT:
+                                 W_STRING "__init_0" 
+                                 W_STRING "foo?" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* __init_0     */               W_SYMBOL _SDAT + 0 
+/* foo?         */               W_SYMBOL _SDAT + 9 
+/* main         */               W_SYMBOL _SDAT + 14 
+ 
+                   _FUNC:
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo?         */               W_METHOD 1, -1, Ffoo%QUEST, 0, __Ffoo%QUEST_END - Ffoo%QUEST
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
+/* $ret<Object> */               W_METHOD_ARG -1, 0

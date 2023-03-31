@@ -130,6 +130,7 @@ class DabNodeFunction < DabNode
     mapping = {
       '=' => 'EQ',
       '!' => 'BANG',
+      '?' => 'QUEST',
       '[]' => 'INDEX',
       '+' => 'PLUS',
       '-' => 'MINUS',

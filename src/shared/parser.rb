@@ -161,6 +161,10 @@ class DabParser
       ret += current_char
       advance!
     end
+    if current_char_identifier_end?(options)
+      ret += current_char
+      advance!
+    end
     unless ret.empty?
       debug('identifier ok')
       _return_source(ret, start_pos)
@@ -440,6 +444,10 @@ class DabParser
 
   def current_char_identifier?(options = nil)
     current_char_identifier_start? || current_char_digit? || (options == :extended && current_char_identifier_extended?)
+  end
+
+  def current_char_identifier_end?(options = nil)
+    current_char == '?'
   end
 
   def current_char_identifier_extended?
