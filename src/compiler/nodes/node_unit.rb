@@ -120,7 +120,8 @@ class DabNodeUnit < DabNode
     number = @class_numbers[klass.identifier]
     number ||= [USER_CLASSES_OFFSET, (@class_numbers.values.max || 0) + 1].max# USER_CLASSES_OFFSET + @classes.count
 
-    # errap ['add_class',klass.identifier, 'forced_number',forced_number, 'list',@class_numbers,@classes,'---->',number]
+    errap ['add_class',klass.identifier, 'forced_number',forced_number, 'list',@class_numbers,@classes,'---->',number,caller]
+
     klass.assign_number(number)
     @classes.insert(klass)
     @class_numbers[klass.identifier] = number

@@ -1,0 +1,30 @@
+## LEVEL 0
+
+class Foo {
+  func foo() {
+    print("foo\n");
+  }
+}
+
+func level0()
+{
+}
+
+## LEVEL 1
+
+class Bar {
+  func foo() {
+    print("bar\n");
+    Foo.new.foo;
+  }
+}
+
+func level1()
+{
+  Bar.new.foo;
+}
+
+## EXPECT
+
+bar
+foo
