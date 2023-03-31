@@ -5,9 +5,10 @@ class OrmGenerator {
   }
 
   func run() {
-    var xx = @pg.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'books' ORDER BY ordinal_position;");
-    puts("xx:");
-    puts(xx.columns);
+    var xx = @pg.dump("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'books' ORDER BY ordinal_position;");
+    var yy = @pg.dump("SELECT * FROM books");
+   // puts("xx:");
+   // puts(xx.columns);
   } 
 };
 

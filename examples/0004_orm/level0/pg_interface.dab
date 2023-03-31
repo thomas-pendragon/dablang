@@ -72,7 +72,22 @@ class Postgres
   func execute(sql<String>) {
     return PgResultset.new(self.raw_execute(sql));
   }
-  
+ 
+  func dump(sql<String>) {
+    var result = self.execute(sql);
+    var columns = result.columns;
+
+    result.each() ^ (row) {
+      var r = row;
+      result.ncolumns.times() ^ (column) {
+        print(columns[column]);
+        print(" = ");
+        puts(r[column]);
+      };
+      puts("\n");
+    };
+  }
+
 }
 
 class PgResultset {
@@ -102,25 +117,69 @@ class PgResultset {
     @columns = columns;
     @nrows = PQntuples(query);
     @cursor = 0;
+
+    @formats = formats;
+    @types = types;
+  }
+
+  func ncolumns() {
+    return @ncolumns;
   }
 
   func columns() {
     return @columns;
   }
 
-  //func more?() {
- //   return @cursor != @nrows;
- // }
+  func more?() {
+    return @cursor != @nrows;
+  }
+
+  func _parse(column) {
+    var type = @types[column];
+    var NAMEOID = 19;
+    var INT4OID = 23;
+    var VARCHAROID = 1043;
+
+    if (PQgetisnull(@query, @cursor, column) != 0) {
+      return nil;
+    }
+
+    var ptr = PQgetvalue(@query, @cursor, column);
+
+    if ((type == NAMEOID) || (type == VARCHAROID)) {
+      var<String> str = ptr;
+      return str;
+    }
+
+    if (type == INT4OID) {
+      return ptr.fetch_int32.byteswap;
+
+    }
+
+    return "unknown?";
+
+    // [19, 23, 1043, 1043, 1043]  
+  }
 
   func next() {
 
+    var row = @[];
+
+    var s = self;
+    @ncolumns.times() ^ (i) {
+      row.insert(s._parse(i));
+    };
+
+    @cursor = @cursor + 1;
+
+    return row;
   }
 
- // func each() { 
- //   while (self.more?) {
- //     yield(self.next);
- //   }
- // }
+  func each() { 
+    while (self.more?) {
+      yield(self.next);
+    }
+  }
 }
 
 func level0() {
