@@ -3,6 +3,7 @@ class DabType
     return DabTypeObject.new if typename.nil?
     return DabTypeString.new if typename == 'String'
     return DabTypeFixnum.new if typename == 'Fixnum'
+    return DabTypeBoolean.new if typename == 'Boolean'
     return DabTypeUint.new(8) if typename == 'Uint8'
     return DabTypeUint.new(16) if typename == 'Uint16'
     return DabTypeUint.new(32) if typename == 'Uint32'
@@ -102,6 +103,19 @@ class DabTypeFixnum < DabType
 
     super
   end
+end
+
+class DabTypeBoolean < DabType
+  def type_string
+    'Boolean'
+  end
+
+  # def has_function?(identifier)
+  #   operators = %w[+ - * / == != < <= >= > | & % >> << !]
+  #   return true if operators.include?(identifier)
+
+  #   super
+  # end
 end
 
 class DabTypeFloat < DabType

@@ -40,6 +40,51 @@ class Postgres
      @connection = PQconnectdb(connection_query);
     self.validate("Connection to database", nil);
   }
+
+  func raw_execute(sql<String>, binary<Boolean> = true) {
+
+    print(" > ");
+    puts(sql);
+    
+    //func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
+    //                        paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
+    var resultFormat = 0;
+    if (binary) { resultFormat = 1; }
+    
+    var res = PQexecParams(@connection, sql, 0, nil, nil, nil, nil, resultFormat);
+    
+    print(" >> result: ");
+
+    print(PQresultStatus(res));
+    puts(".");
+    self.validate("SQL query", res);
+    return res;        
+  }
+
+  func execute(sql<String>) {
+    return PgResultset.new(self.raw_execute(sql));
+  }
+  
+}
+
+class PgResultset {
+  func __construct(query) {
+    
+    @query = query;    
+    @ncolumns = PQnfields(@query);
+
+    @columns = @[];    
+    @ncolumns.times() ^ (i) {
+      var ptr = PQfname(@query, i);
+      var<String> column_name = ptr;
+      @columns.insert(column_name);
+    };
+    
+  }
+
+  func columns() {
+    return @columns;
+  }
 }
 
 func level0() {
