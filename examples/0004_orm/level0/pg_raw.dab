@@ -43,6 +43,16 @@ func import_pq(method) {
   [import_pq]
   func PQntuples<Int32>(res<IntPtr>) {}
 
+  // int PQfformat(const PGresult *res,
+  //               int column_number);
+  [import_pq]
+  func PQfformat<Int32>(res<IntPtr>, column_number<Int32>) {}
+
+  //Oid PQftype(const PGresult *res,
+  //          int column_number)
+  [import_pq]
+  func PQftype<Int32>(res<IntPtr>, column_number<Int32>) {}
+
   // int PQnfields(const PGresult *res);
   [import_pq]
   func PQnfields<Int32>(res<IntPtr>) {}

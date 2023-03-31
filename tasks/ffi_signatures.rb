@@ -4,34 +4,35 @@ require_relative '../src/shared/system'
 clang_format_app = ENV['CLANG_FORMAT'] || 'clang-format'
 
 signatures = '
-int32 -> int32
 -> uint64
-uint32 -> int32
-void* -> int32
-void* -> void
-uint32 -> void
-string -> uint64
-void*, int32, uint32 -> void*
-void*, uint8, uint8, uint8, uint8 -> int32
-void*, int32, int32, int32, int32, -> int32
-string, int32, int32, int32, int32, uint32 -> void*
+int32 -> int32
+int32, int32 -> int32
 int32, int32, int32 -> int32
 int32, int32, int32, void*, int32 -> int32
 int32, void*, int32 -> int32
-int32, int32 -> int32
-int32, void*, void* -> int32
 int32, void*, uint64 -> uint64
+int32, void*, void* -> int32
+string -> uint64
 string -> void*
-void* -> uint32
-void* -> void*
-void* -> string
+string, int32, int32, int32, int32, uint32 -> void*
+uint32 -> int32
+uint32 -> void
 void* -> int32
+void* -> int32
+void* -> string
+void* -> uint32
+void* -> void
+void* -> void*
+void*, int32 -> int32
 void*, int32 -> void*
-void*, string -> void*
-void*, string -> int32
-void*, int32, int32 -> void*
 void*, int32, int32 -> int32
+void*, int32, int32 -> void*
+void*, int32, int32, int32, int32, -> int32
+void*, int32, uint32 -> void*
+void*, string -> int32
+void*, string -> void*
 void*, string, int32, void*, void*, void*, void*, int32 -> void*
+void*, uint8, uint8, uint8, uint8 -> int32
 '
 
 DAB_CLASSES = {

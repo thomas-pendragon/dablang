@@ -80,29 +80,47 @@ class PgResultset {
     
     @query = query;    
     @ncolumns = PQnfields(@query);
-    puts(" >> "+@ncolumns.to_s+" columns found");
+    // puts(" >> "+@ncolumns.to_s+" columns found");
 
-    var columns = @[];    
+    var columns = @[];
+    var formats = @[];
+    var types = @[];
 
     var q = query;
+
     @ncolumns.times() ^ (i) {
-     // print("Query: ");
-     // puts(query);
-      //print("i: ");
-      //puts(i);
       var ptr = PQfname(q, i);
-      //print("ptr: ");
-      //puts(ptr);
       var<String> column_name = ptr;
       columns.insert(column_name);
+      formats.insert(PQfformat(q, i));
+      types.insert(PQftype(q, i));
     };
+
+    puts(columns);
+    puts(formats);
+    puts(types);
     @columns = columns;
-    
+    @nrows = PQntuples(query);
+    @cursor = 0;
   }
 
   func columns() {
     return @columns;
   }
+
+  //func more?() {
+ //   return @cursor != @nrows;
+ // }
+
+  func next() {
+
+  }
+
+ // func each() { 
+ //   while (self.more?) {
+ //     yield(self.next);
+ //   }
+ // }
 }
 
 func level0() {
