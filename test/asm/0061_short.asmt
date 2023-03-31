@@ -48,10 +48,10 @@ func main()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ffun1:
@@ -107,7 +107,7 @@ func main()
                                  NOP 
  
                    _SDAT:
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "fun1" 
                                  W_STRING "fun2" 
                                  W_STRING "main" 
@@ -115,15 +115,15 @@ func main()
                                  W_STRING "main_or" 
  
                    _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* fun1         */               W_SYMBOL _SDAT + 7 
-/* fun2         */               W_SYMBOL _SDAT + 12 
-/* main         */               W_SYMBOL _SDAT + 17 
-/* main_and     */               W_SYMBOL _SDAT + 22 
-/* main_or      */               W_SYMBOL _SDAT + 31 
+/* __init_0     */               W_SYMBOL _SDAT + 0 
+/* fun1         */               W_SYMBOL _SDAT + 9 
+/* fun2         */               W_SYMBOL _SDAT + 14 
+/* main         */               W_SYMBOL _SDAT + 19 
+/* main_and     */               W_SYMBOL _SDAT + 24 
+/* main_or      */               W_SYMBOL _SDAT + 33 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* fun1         */               W_METHOD 1, -1, Ffun1, 0, __Ffun1_END - Ffun1
 /* $ret<Object> */               W_METHOD_ARG -1, 0

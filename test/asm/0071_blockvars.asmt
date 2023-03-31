@@ -32,10 +32,10 @@ func main()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fmain:
@@ -83,7 +83,7 @@ func main()
                    _SDAT:
                                  W_STRING "[]" 
                                  W_STRING "__block_main0" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "b" 
                                  W_STRING "bar" 
@@ -97,19 +97,19 @@ func main()
                    _SYMB:
 /* []           */               W_SYMBOL _SDAT + 0 
 /* __block_main */               W_SYMBOL _SDAT + 3 
-/* __init       */               W_SYMBOL _SDAT + 17 
-/* a            */               W_SYMBOL _SDAT + 24 
-/* b            */               W_SYMBOL _SDAT + 26 
-/* bar          */               W_SYMBOL _SDAT + 28 
-/* call         */               W_SYMBOL _SDAT + 32 
-/* closure      */               W_SYMBOL _SDAT + 37 
-/* main         */               W_SYMBOL _SDAT + 45 
-/* new          */               W_SYMBOL _SDAT + 50 
-/* qux          */               W_SYMBOL _SDAT + 54 
-/* test         */               W_SYMBOL _SDAT + 58 
+/* __init_0     */               W_SYMBOL _SDAT + 17 
+/* a            */               W_SYMBOL _SDAT + 26 
+/* b            */               W_SYMBOL _SDAT + 28 
+/* bar          */               W_SYMBOL _SDAT + 30 
+/* call         */               W_SYMBOL _SDAT + 34 
+/* closure      */               W_SYMBOL _SDAT + 39 
+/* main         */               W_SYMBOL _SDAT + 47 
+/* new          */               W_SYMBOL _SDAT + 52 
+/* qux          */               W_SYMBOL _SDAT + 56 
+/* test         */               W_SYMBOL _SDAT + 60 
  
                    _FUNC:
-/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0

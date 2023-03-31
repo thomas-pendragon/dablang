@@ -32,10 +32,10 @@ func tap2()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ftap:
@@ -70,7 +70,7 @@ func tap2()
                    _SDAT:
                                  W_STRING "+" 
                                  W_STRING "__block_tap20" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "b" 
                                  W_STRING "call" 
@@ -81,16 +81,16 @@ func tap2()
                    _SYMB:
 /* +            */               W_SYMBOL _SDAT + 0 
 /* __block_tap2 */               W_SYMBOL _SDAT + 2 
-/* __init       */               W_SYMBOL _SDAT + 16 
-/* a            */               W_SYMBOL _SDAT + 23 
-/* b            */               W_SYMBOL _SDAT + 25 
-/* call         */               W_SYMBOL _SDAT + 27 
-/* new          */               W_SYMBOL _SDAT + 32 
-/* tap          */               W_SYMBOL _SDAT + 36 
-/* tap2         */               W_SYMBOL _SDAT + 40 
+/* __init_0     */               W_SYMBOL _SDAT + 16 
+/* a            */               W_SYMBOL _SDAT + 25 
+/* b            */               W_SYMBOL _SDAT + 27 
+/* call         */               W_SYMBOL _SDAT + 29 
+/* new          */               W_SYMBOL _SDAT + 34 
+/* tap          */               W_SYMBOL _SDAT + 38 
+/* tap2         */               W_SYMBOL _SDAT + 42 
  
                    _FUNC:
-/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* tap          */               W_METHOD 7, -1, Ftap, 0, __Ftap_END - Ftap
 /* $ret<Object> */               W_METHOD_ARG -1, 0

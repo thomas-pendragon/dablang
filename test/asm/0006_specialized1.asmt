@@ -33,10 +33,10 @@ func bar()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fbar:
@@ -57,21 +57,21 @@ func bar()
                                  NOP 
  
                    _SDAT:
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "bar" 
                                  W_STRING "class" 
                                  W_STRING "foo" 
  
                    _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* a            */               W_SYMBOL _SDAT + 7 
-/* bar          */               W_SYMBOL _SDAT + 9 
-/* class        */               W_SYMBOL _SDAT + 13 
-/* foo          */               W_SYMBOL _SDAT + 19 
+/* __init_0     */               W_SYMBOL _SDAT + 0 
+/* a            */               W_SYMBOL _SDAT + 9 
+/* bar          */               W_SYMBOL _SDAT + 11 
+/* class        */               W_SYMBOL _SDAT + 15 
+/* foo          */               W_SYMBOL _SDAT + 21 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* bar          */               W_METHOD 2, -1, Fbar, 0, __Fbar_END - Fbar
 /* $ret<Object> */               W_METHOD_ARG -1, 0

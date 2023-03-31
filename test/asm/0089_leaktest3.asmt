@@ -50,10 +50,10 @@ func main()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ffunctrue:
@@ -110,7 +110,7 @@ func main()
  
                    _SDAT:
                                  W_STRING "Foo" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "functrue" 
                                  W_STRING "go" 
                                  W_STRING "main" 
@@ -119,15 +119,15 @@ func main()
  
                    _SYMB:
 /* Foo          */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 4 
-/* functrue     */               W_SYMBOL _SDAT + 11 
-/* go           */               W_SYMBOL _SDAT + 20 
-/* main         */               W_SYMBOL _SDAT + 23 
-/* new          */               W_SYMBOL _SDAT + 28 
-/* var          */               W_SYMBOL _SDAT + 32 
+/* __init_0     */               W_SYMBOL _SDAT + 4 
+/* functrue     */               W_SYMBOL _SDAT + 13 
+/* go           */               W_SYMBOL _SDAT + 22 
+/* main         */               W_SYMBOL _SDAT + 25 
+/* new          */               W_SYMBOL _SDAT + 30 
+/* var          */               W_SYMBOL _SDAT + 34 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* functrue     */               W_METHOD 2, -1, Ffunctrue, 0, __Ffunctrue_END - Ffunctrue
 /* $ret<Object> */               W_METHOD_ARG -1, 0

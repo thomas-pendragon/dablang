@@ -32,10 +32,10 @@ Should not include standard classes in class section.
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fmain:
@@ -49,16 +49,16 @@ Should not include standard classes in class section.
  
                    _SDAT:
                                  W_STRING "Foo" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "main" 
  
                    _SYMB:
 /* Foo          */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 4 
-/* main         */               W_SYMBOL _SDAT + 11 
+/* __init_0     */               W_SYMBOL _SDAT + 4 
+/* main         */               W_SYMBOL _SDAT + 13 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0

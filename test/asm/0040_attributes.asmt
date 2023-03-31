@@ -36,7 +36,7 @@ func another_attribute(method, arg1, arg2)
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  LOAD_METHOD R0, S4
 /* sample_attri */               CALL RNIL, S6, R0
@@ -45,7 +45,7 @@ func another_attribute(method, arg1, arg2)
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* another_attr */               CALL RNIL, S1, R1, R2, R3
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fanother_attribute:
@@ -71,7 +71,7 @@ func another_attribute(method, arg1, arg2)
                                  NOP 
  
                    _SDAT:
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "another_attribute" 
                                  W_STRING "arg1" 
                                  W_STRING "arg2" 
@@ -80,16 +80,16 @@ func another_attribute(method, arg1, arg2)
                                  W_STRING "sample_attribute" 
  
                    _SYMB:
-/* __init       */               W_SYMBOL _SDAT + 0 
-/* another_attr */               W_SYMBOL _SDAT + 7 
-/* arg1         */               W_SYMBOL _SDAT + 25 
-/* arg2         */               W_SYMBOL _SDAT + 30 
-/* foo          */               W_SYMBOL _SDAT + 35 
-/* method       */               W_SYMBOL _SDAT + 39 
-/* sample_attri */               W_SYMBOL _SDAT + 46 
+/* __init_0     */               W_SYMBOL _SDAT + 0 
+/* another_attr */               W_SYMBOL _SDAT + 9 
+/* arg1         */               W_SYMBOL _SDAT + 27 
+/* arg2         */               W_SYMBOL _SDAT + 32 
+/* foo          */               W_SYMBOL _SDAT + 37 
+/* method       */               W_SYMBOL _SDAT + 41 
+/* sample_attri */               W_SYMBOL _SDAT + 48 
  
                    _FUNC:
-/* __init       */               W_METHOD 0, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* another_attr */               W_METHOD 1, -1, Fanother_attribute, 3, __Fanother_attribute_END - Fanother_attribute
 /* method<Objec */               W_METHOD_ARG 5, 0

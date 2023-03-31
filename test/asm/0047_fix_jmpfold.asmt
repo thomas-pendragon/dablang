@@ -26,10 +26,10 @@ func assert_equal(value)
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fassert_equal:
@@ -43,18 +43,18 @@ func assert_equal(value)
  
                    _SDAT:
                                  W_STRING "!=" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "assert_equal" 
                                  W_STRING "value" 
  
                    _SYMB:
 /* !=           */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 3 
-/* assert_equal */               W_SYMBOL _SDAT + 10 
-/* value        */               W_SYMBOL _SDAT + 23 
+/* __init_0     */               W_SYMBOL _SDAT + 3 
+/* assert_equal */               W_SYMBOL _SDAT + 12 
+/* value        */               W_SYMBOL _SDAT + 25 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* assert_equal */               W_METHOD 2, -1, Fassert_equal, 1, __Fassert_equal_END - Fassert_equal
 /* value<Object */               W_METHOD_ARG 3, 0

@@ -36,10 +36,10 @@ func tap()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ftap:
@@ -79,7 +79,7 @@ func tap()
                    _SDAT:
                                  W_STRING "__block_tap0" 
                                  W_STRING "__block_tap1" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "call" 
                                  W_STRING "new" 
                                  W_STRING "tap" 
@@ -87,13 +87,13 @@ func tap()
                    _SYMB:
 /* __block_tap0 */               W_SYMBOL _SDAT + 0 
 /* __block_tap1 */               W_SYMBOL _SDAT + 13 
-/* __init       */               W_SYMBOL _SDAT + 26 
-/* call         */               W_SYMBOL _SDAT + 33 
-/* new          */               W_SYMBOL _SDAT + 38 
-/* tap          */               W_SYMBOL _SDAT + 42 
+/* __init_0     */               W_SYMBOL _SDAT + 26 
+/* call         */               W_SYMBOL _SDAT + 35 
+/* new          */               W_SYMBOL _SDAT + 40 
+/* tap          */               W_SYMBOL _SDAT + 44 
  
                    _FUNC:
-/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* tap          */               W_METHOD 5, -1, Ftap, 0, __Ftap_END - Ftap
 /* $ret<Object> */               W_METHOD_ARG -1, 0

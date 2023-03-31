@@ -32,10 +32,10 @@ func foo(n)
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ffoo:
@@ -60,7 +60,7 @@ func foo(n)
  
                    _SDAT:
                                  W_STRING "Foo" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "b" 
                                  W_STRING "foo" 
@@ -69,15 +69,15 @@ func foo(n)
  
                    _SYMB:
 /* Foo          */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 4 
-/* a            */               W_SYMBOL _SDAT + 11 
-/* b            */               W_SYMBOL _SDAT + 13 
-/* foo          */               W_SYMBOL _SDAT + 15 
-/* n            */               W_SYMBOL _SDAT + 19 
-/* zomg         */               W_SYMBOL _SDAT + 21 
+/* __init_0     */               W_SYMBOL _SDAT + 4 
+/* a            */               W_SYMBOL _SDAT + 13 
+/* b            */               W_SYMBOL _SDAT + 15 
+/* foo          */               W_SYMBOL _SDAT + 17 
+/* n            */               W_SYMBOL _SDAT + 21 
+/* zomg         */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* foo          */               W_METHOD 4, -1, Ffoo, 1, __Ffoo_END - Ffoo
 /* n<Object>    */               W_METHOD_ARG 5, 0

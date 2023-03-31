@@ -14,7 +14,7 @@ func __foo_Fixnum_Fixnum()
   return nil;
 }
 
-func __init()
+func __init_0()
 {
   return nil;
 }

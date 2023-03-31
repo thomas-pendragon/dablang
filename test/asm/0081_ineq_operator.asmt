@@ -24,10 +24,10 @@ class Foo
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    CFoo_F%BANG%EQ:
@@ -43,17 +43,17 @@ class Foo
                    _SDAT:
                                  W_STRING "!=" 
                                  W_STRING "Foo" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "other" 
  
                    _SYMB:
 /* !=           */               W_SYMBOL _SDAT + 0 
 /* Foo          */               W_SYMBOL _SDAT + 3 
-/* __init       */               W_SYMBOL _SDAT + 7 
-/* other        */               W_SYMBOL _SDAT + 14 
+/* __init_0     */               W_SYMBOL _SDAT + 7 
+/* other        */               W_SYMBOL _SDAT + 16 
  
                    _FUNC:
-/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* !=           */               W_METHOD 0, 256, CFoo_F%BANG%EQ, 1, __CFoo_F%BANG%EQ_END - CFoo_F%BANG%EQ
 /* other<Object */               W_METHOD_ARG 3, 0

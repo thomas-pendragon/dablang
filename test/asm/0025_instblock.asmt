@@ -27,10 +27,10 @@ func tap(a)
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ftap:
@@ -57,7 +57,7 @@ func tap(a)
  
                    _SDAT:
                                  W_STRING "__block_tap0" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "arg" 
                                  W_STRING "call" 
@@ -67,16 +67,16 @@ func tap(a)
  
                    _SYMB:
 /* __block_tap0 */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 13 
-/* a            */               W_SYMBOL _SDAT + 20 
-/* arg          */               W_SYMBOL _SDAT + 22 
-/* call         */               W_SYMBOL _SDAT + 26 
-/* fun          */               W_SYMBOL _SDAT + 31 
-/* new          */               W_SYMBOL _SDAT + 35 
-/* tap          */               W_SYMBOL _SDAT + 39 
+/* __init_0     */               W_SYMBOL _SDAT + 13 
+/* a            */               W_SYMBOL _SDAT + 22 
+/* arg          */               W_SYMBOL _SDAT + 24 
+/* call         */               W_SYMBOL _SDAT + 28 
+/* fun          */               W_SYMBOL _SDAT + 33 
+/* new          */               W_SYMBOL _SDAT + 37 
+/* tap          */               W_SYMBOL _SDAT + 41 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* tap          */               W_METHOD 7, -1, Ftap, 1, __Ftap_END - Ftap
 /* a<Object>    */               W_METHOD_ARG 2, 0

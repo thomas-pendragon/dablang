@@ -33,10 +33,10 @@ Block must be converted to a variable.
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Ffoo:
@@ -80,7 +80,7 @@ Block must be converted to a variable.
                    _SDAT:
                                  W_STRING "__block_main0" 
                                  W_STRING "__block_main1" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "b" 
                                  W_STRING "call" 
@@ -91,16 +91,16 @@ Block must be converted to a variable.
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
 /* __block_main */               W_SYMBOL _SDAT + 14 
-/* __init       */               W_SYMBOL _SDAT + 28 
-/* a            */               W_SYMBOL _SDAT + 35 
-/* b            */               W_SYMBOL _SDAT + 37 
-/* call         */               W_SYMBOL _SDAT + 39 
-/* foo          */               W_SYMBOL _SDAT + 44 
-/* main         */               W_SYMBOL _SDAT + 48 
-/* new          */               W_SYMBOL _SDAT + 53 
+/* __init_0     */               W_SYMBOL _SDAT + 28 
+/* a            */               W_SYMBOL _SDAT + 37 
+/* b            */               W_SYMBOL _SDAT + 39 
+/* call         */               W_SYMBOL _SDAT + 41 
+/* foo          */               W_SYMBOL _SDAT + 46 
+/* main         */               W_SYMBOL _SDAT + 50 
+/* new          */               W_SYMBOL _SDAT + 55 
  
                    _FUNC:
-/* __init       */               W_METHOD 2, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* foo          */               W_METHOD 6, -1, Ffoo, 2, __Ffoo_END - Ffoo
 /* a<Object>    */               W_METHOD_ARG 3, 0

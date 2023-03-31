@@ -41,10 +41,10 @@ func main()
                    _CODE:
                                  NOP 
  
-                   F__init:
+                   F__init_0:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __F__init_END:
+                   __F__init_0_END:
                                  NOP 
  
                    Fmain:
@@ -72,7 +72,7 @@ func main()
  
                    _SDAT:
                                  W_STRING "Zomg" 
-                                 W_STRING "__init" 
+                                 W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
@@ -80,14 +80,14 @@ func main()
  
                    _SYMB:
 /* Zomg         */               W_SYMBOL _SDAT + 0 
-/* __init       */               W_SYMBOL _SDAT + 5 
-/* a            */               W_SYMBOL _SDAT + 12 
-/* foo          */               W_SYMBOL _SDAT + 14 
-/* main         */               W_SYMBOL _SDAT + 18 
-/* new          */               W_SYMBOL _SDAT + 23 
+/* __init_0     */               W_SYMBOL _SDAT + 5 
+/* a            */               W_SYMBOL _SDAT + 14 
+/* foo          */               W_SYMBOL _SDAT + 16 
+/* main         */               W_SYMBOL _SDAT + 20 
+/* new          */               W_SYMBOL _SDAT + 25 
  
                    _FUNC:
-/* __init       */               W_METHOD 1, -1, F__init, 0, __F__init_END - F__init
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* main         */               W_METHOD 4, -1, Fmain, 0, __Fmain_END - Fmain
 /* $ret<Object> */               W_METHOD_ARG -1, 0

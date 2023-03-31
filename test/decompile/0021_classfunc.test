@@ -18,7 +18,7 @@ class Bar
 
 ## EXPECTED
 
-func __init()
+func __init_0()
 {
   return nil;
 }
