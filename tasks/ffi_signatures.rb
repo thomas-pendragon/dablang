@@ -23,7 +23,10 @@ int32, void*, void* -> int32
 int32, void*, uint64 -> uint64
 string -> void*
 void* -> uint32
+void* -> void*
 void* -> string
+void* -> int32
+void*, int32 -> void*
 void*, string -> void*
 void*, string -> int32
 void*, int32, int32 -> void*

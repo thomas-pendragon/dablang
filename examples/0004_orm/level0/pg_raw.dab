@@ -21,7 +21,7 @@ func import_pq(method) {
 
   // char *PQerrorMessage(const PGconn *conn);
   [import_pq]
-  func PQerrorMessage<String>(conn<IntPtr>) {}
+  func PQerrorMessage<IntPtr>(conn<IntPtr>) {}
 
   // ExecStatusType PQresultStatus(const PGresult *res);
   [import_pq]

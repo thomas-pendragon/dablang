@@ -324,6 +324,19 @@ else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INTPTR && ret_klass 
 
     return (DabValue(CLASS_UINT32, return_value));
 }
+else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INTPTR && ret_klass == CLASS_INTPTR)
+{
+    typedef void *(*int_fun)(void *);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value0 = $VM->cast(args[0], CLASS_INTPTR);
+
+    auto value0_data = value0.data.intptr;
+
+    auto return_value = (*int_symbol)(value0_data);
+
+    return (DabValue(CLASS_INTPTR, return_value));
+}
 else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INTPTR && ret_klass == CLASS_STRING)
 {
     typedef const char *(*int_fun)(void *);
@@ -336,6 +349,35 @@ else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INTPTR && ret_klass 
     auto return_value = (*int_symbol)(value0_data);
 
     return (DabValue(CLASS_STRING, return_value));
+}
+else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_INTPTR && ret_klass == CLASS_INT32)
+{
+    typedef int32_t (*int_fun)(void *);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value0 = $VM->cast(args[0], CLASS_INTPTR);
+
+    auto value0_data = value0.data.intptr;
+
+    auto return_value = (*int_symbol)(value0_data);
+
+    return (DabValue(CLASS_INT32, return_value));
+}
+else if (arg_klasses.size() == 2 && arg_klasses[0] == CLASS_INTPTR &&
+         arg_klasses[1] == CLASS_INT32 && ret_klass == CLASS_INTPTR)
+{
+    typedef void *(*int_fun)(void *, int32_t);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value0 = $VM->cast(args[0], CLASS_INTPTR);
+    auto value1 = $VM->cast(args[1], CLASS_INT32);
+
+    auto value0_data = value0.data.intptr;
+    auto value1_data = value1.data.num_int32;
+
+    auto return_value = (*int_symbol)(value0_data, value1_data);
+
+    return (DabValue(CLASS_INTPTR, return_value));
 }
 else if (arg_klasses.size() == 2 && arg_klasses[0] == CLASS_INTPTR &&
          arg_klasses[1] == CLASS_STRING && ret_klass == CLASS_INTPTR)

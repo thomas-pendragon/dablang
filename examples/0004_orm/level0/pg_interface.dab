@@ -25,7 +25,9 @@ class Postgres
 
     print(info);
     print(" failed: [");
-    print(PQerrorMessage(@connection));
+    var msg_ptr = PQerrorMessage(@connection);
+    var<String> msg = msg_ptr;
+    print(msg);
     puts("].");
     if (result)
     {
