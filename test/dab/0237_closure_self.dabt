@@ -1,0 +1,22 @@
+## CODE
+
+func tap() {
+  yield();
+}
+
+class Foo {
+  func run() {
+    tap() ^ {
+      print(self.class);
+    };  
+  }
+}
+
+func main()
+{
+  Foo.new.run;
+}
+
+## EXPECT OK
+
+Foo
