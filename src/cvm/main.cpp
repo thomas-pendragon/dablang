@@ -287,10 +287,12 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
                        const DabValue &capture, std::vector<dab_register_t> reglist,
                        DabValue *return_value, size_t stack_pos)
     */
-    auto                        symbol = self.data.fixnum;
-    auto                        reg    = dab_register_t::nilreg();
-    DabValue                    out;
-    DabValue                    fake_self; // ?
+    auto real_self = self.get_instvar(get_or_create_symbol_index("self"));
+
+    auto     symbol = self.data.fixnum;
+    auto     reg    = dab_register_t::nilreg();
+    DabValue out;
+    //    DabValue                    fake_self; // ?
     auto                        fun = $VM->functions[symbol];
     std::vector<dab_register_t> reglist;
     int                         regindex = 1000; // TODO!
@@ -302,7 +304,7 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
         regindex += 1;
     }
 
-    _call_function(false, reg, fake_self, fun, reglist);
+    _call_function(false, reg, real_self, fun, reglist);
 
     return out;
 }

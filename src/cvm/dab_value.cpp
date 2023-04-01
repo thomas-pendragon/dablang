@@ -407,10 +407,11 @@ DabValue DabValue::create_instance() const
 
 DabValue DabValue::allocate_dynstr(const char *str)
 {
-    if (!str) {
+    if (!str)
+    {
         return DabValue(nullptr);
     }
-    
+
     DabValue klass = $VM->get_class(CLASS_DYNAMICSTRING);
 
     auto ret = klass.create_instance();
@@ -421,7 +422,7 @@ DabValue DabValue::allocate_dynstr(const char *str)
     return ret;
 }
 
-DabValue DabValue::_get_instvar(dab_symbol_t symbol)
+DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
 {
     assert(this->data.type == TYPE_OBJECT);
     assert(this->data.object);
@@ -441,7 +442,7 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol)
     return instvars[symbol];
 }
 
-DabValue DabValue::get_instvar(dab_symbol_t symbol)
+DabValue DabValue::get_instvar(dab_symbol_t symbol) const
 {
     auto ret = _get_instvar(symbol);
     if ($VM->options.verbose)

@@ -28,7 +28,6 @@ class DabNodeClosureVar < DabNode
 end
 
 class DabNodeClosureSelf < DabNode
-
   lower_with :to_instvar
 
   def to_instvar

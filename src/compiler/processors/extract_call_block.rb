@@ -15,6 +15,12 @@ class ExtractCallBlock
     captured_vars_set = block.captured_writable_variables
     capture_args = DabNode.new
 
+    capture_args << DabNodeSelf.new
+
+    block.captured_self.each do |selfnode|
+      selfnode.replace_with!(DabNodeClosureSelf.new)
+    end
+
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
@@ -26,10 +32,6 @@ class ExtractCallBlock
       captured_define.box!
       capture_extract.closure_box!
       carg.closure_pass!
-    end
-
-    block.captured_self.each do |selfnode|
-      selfnode.replace_with!(DabNodeClosureSelf.new)
     end
 
     fun = DabNodeFunction.new(name, body, arglist, false)

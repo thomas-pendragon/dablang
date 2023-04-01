@@ -213,8 +213,8 @@ struct DabValue
 
     bool truthy() const;
 
-    DabValue _get_instvar(dab_symbol_t symbol);
-    DabValue get_instvar(dab_symbol_t symbol);
+    DabValue _get_instvar(dab_symbol_t symbol) const;
+    DabValue get_instvar(dab_symbol_t symbol) const;
 
     void set_instvar(dab_symbol_t symbol, const DabValue &value);
 

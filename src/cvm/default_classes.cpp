@@ -281,9 +281,17 @@ void DabVM::define_default_classes()
         DabValue array_class = $VM->classes[CLASS_ARRAY];
         DabValue value       = array_class.create_instance();
         auto    &array       = value.array();
-        for (auto arg : args) { 
-            array.push_back(arg);
+        bool first = true;
+        DabValue selfnode;
+        for (auto arg : args) {
+            if (first) {
+                selfnode = arg;
+                first = false;
+            } else {
+                array.push_back(arg);
+            }
         }
+        self.set_instvar($VM->get_or_create_symbol_index("self"), selfnode);
         self.set_instvar($VM->get_or_create_symbol_index("closure"), value);
 //        fprintf(stderr, "method.init [argc = %d]\n", (int)args.size());
 //        int i = 0;
