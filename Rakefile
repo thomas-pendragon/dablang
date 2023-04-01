@@ -14,6 +14,7 @@ require_relative './src/frontend/frontend_asm'
 require_relative './src/frontend/frontend_format'
 require_relative './src/frontend/frontend_vm'
 require_relative './src/frontend/frontend_debug'
+require_relative './src/frontend/frontend_minitest'
 
 $sources = Dir.glob('src/**/*.rb')
 
@@ -200,6 +201,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
   task "#{test_name}_reverse".to_sym => outputs.reverse
 end
 
+setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)
 setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
@@ -242,8 +244,8 @@ file ffi_file => [ffi_task] do
   psystem("ruby #{ffi_task} > #{ffi_file}")
 end
 
-task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :spec, :format_spec, :vm_spec, :disasm_spec,
-               :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :build_examples_spec, :decompile_spec] do
+task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :minitest_spec, :spec, :format_spec, :vm_spec,
+               :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :build_examples_spec, :decompile_spec] do
 end
 
 task :clean do

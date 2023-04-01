@@ -99,7 +99,7 @@ class DabTypeFixnum < DabType
 
   def has_function?(identifier)
     return true if identifier == 'times' # ??
-    
+
     operators = %w[+ - * / == != < <= >= > | & % >> << !]
     return true if operators.include?(identifier)
 

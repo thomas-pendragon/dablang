@@ -446,7 +446,7 @@ class DabParser
     current_char_identifier_start? || current_char_digit? || (options == :extended && current_char_identifier_extended?)
   end
 
-  def current_char_identifier_end?(options = nil)
+  def current_char_identifier_end?(_options = nil)
     current_char == '?'
   end
 

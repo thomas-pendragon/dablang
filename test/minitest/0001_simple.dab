@@ -1,0 +1,4 @@
+func test()
+{
+  assert_equal("2 + 2", 2 + 2, 4);
+}
