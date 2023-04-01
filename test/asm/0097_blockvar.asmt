@@ -47,12 +47,14 @@ Block must be converted to a variable.
  
                    Fmain:
                                  STACK_RESERVE 0
-/* __block_main */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S8
-/* __block_main */               LOAD_CLASS R2, 257
-/* new          */               INSTCALL R3, R2, S8
-                                 LOAD_LOCAL_BLOCK R4, R3
-/* foo          */               CALL RNIL, S6, R1, R4
+                                 LOAD_SELF R0
+/* __block_main */               LOAD_CLASS R1, 256
+/* new          */               INSTCALL R2, R1, S8, R0
+                                 LOAD_SELF R3
+/* __block_main */               LOAD_CLASS R4, 257
+/* new          */               INSTCALL R5, R4, S8, R3
+                                 LOAD_LOCAL_BLOCK R6, R5
+/* foo          */               CALL RNIL, S6, R2, R6
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

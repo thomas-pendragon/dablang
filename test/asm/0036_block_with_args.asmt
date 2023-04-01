@@ -40,11 +40,12 @@ func main()
  
                    Fmain:
                                  STACK_RESERVE 0
-/* __block_main */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S5
-/* 1            */               LOAD_NUMBER R2, 1
-                                 LOAD_LOCAL_BLOCK R3, R1
-/* foo          */               CALL RNIL, S3, R2, R3
+                                 LOAD_SELF R0
+/* __block_main */               LOAD_CLASS R1, 256
+/* new          */               INSTCALL R2, R1, S5, R0
+/* 1            */               LOAD_NUMBER R3, 1
+                                 LOAD_LOCAL_BLOCK R4, R2
+/* foo          */               CALL RNIL, S3, R3, R4
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

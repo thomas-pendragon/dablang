@@ -50,10 +50,11 @@ func tap2()
  
                    Ftap2:
                                  STACK_RESERVE 0
-/* __block_tap2 */               LOAD_CLASS R0, 256
-/* new          */               INSTCALL R1, R0, S3
-                                 LOAD_LOCAL_BLOCK R2, R1
-/* tap          */               CALL RNIL, S4, R2
+                                 LOAD_SELF R0
+/* __block_tap2 */               LOAD_CLASS R1, 256
+/* new          */               INSTCALL R2, R1, S3, R0
+                                 LOAD_LOCAL_BLOCK R3, R2
+/* tap          */               CALL RNIL, S4, R3
                                  RETURN RNIL
                    __Ftap2_END:
                                  NOP 

@@ -50,12 +50,14 @@ Block variable must be captured.
                                  STACK_RESERVE 0
 /* 15           */               LOAD_NUMBER R0, 15
                                  BOX R1, R0
-/* __block_main */               LOAD_CLASS R2, 256
-/* new          */               INSTCALL R3, R2, S9, R1
-/* __block_main */               LOAD_CLASS R4, 257
-/* new          */               INSTCALL R5, R4, S9, R1
-                                 LOAD_LOCAL_BLOCK R6, R5
-/* bar          */               CALL RNIL, S5, R3, R6
+                                 LOAD_SELF R2
+/* __block_main */               LOAD_CLASS R3, 256
+/* new          */               INSTCALL R4, R3, S9, R2, R1
+                                 LOAD_SELF R5
+/* __block_main */               LOAD_CLASS R6, 257
+/* new          */               INSTCALL R7, R6, S9, R5, R1
+                                 LOAD_LOCAL_BLOCK R8, R7
+/* bar          */               CALL RNIL, S5, R4, R8
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
