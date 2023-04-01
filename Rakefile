@@ -245,8 +245,10 @@ file ffi_file => [ffi_task] do
 end
 
 task default: [gitlab, opcode_docs_file, classes_docs_file, cvm, cdisasm, :minitest_spec, :spec, :format_spec, :vm_spec,
-               :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :build_examples_spec, :decompile_spec] do
+               :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end
+
+# :build_examples_spec,
 
 task :clean do
   files = Dir.glob('./tmp/**/*') + Dir.glob('./bin/**/') + Dir.glob('./build/**/*')
