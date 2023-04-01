@@ -28,6 +28,10 @@ class ExtractCallBlock
       carg.closure_pass!
     end
 
+    block.captured_self.each do |selfnode|
+      selfnode.replace_with!(DabNodeClosureSelf.new)
+    end
+
     fun = DabNodeFunction.new(name, body, arglist, false)
     functions = [fun]
     base_class = 'Method'

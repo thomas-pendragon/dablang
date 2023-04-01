@@ -26,3 +26,14 @@ class DabNodeClosureVar < DabNode
     true
   end
 end
+
+class DabNodeClosureSelf < DabNode
+
+  lower_with :to_instvar
+
+  def to_instvar
+    data = DabNodeInstanceVar.new('@self')
+    replace_with!(data)
+    true
+  end
+end
