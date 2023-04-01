@@ -165,9 +165,8 @@ class PgResultset {
 
     var row = @[];
 
-    var s = self;
     @ncolumns.times() ^ (i) {
-      row.insert(s._parse(i));
+      row.insert(self._parse(i));
     };
 
     @cursor = @cursor + 1;
