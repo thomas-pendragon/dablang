@@ -743,8 +743,8 @@ class DabContext < DabBaseContext
       read_class ||
       read_literal_value ||
       read_local_var ||
-      read_call ||
       read_yield ||
+      read_call ||
       read_unknown_class
   end
 

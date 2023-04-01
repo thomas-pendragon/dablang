@@ -162,11 +162,8 @@ class PgResultset {
   }
 
   func next() {
-
-    var row = @[];
-
-    @ncolumns.times() ^ (i) {
-      row.insert(self._parse(i));
+    var row = @ncolumns.map() ^ (i) {
+       return self._parse(i);
     };
 
     @cursor = @cursor + 1;
