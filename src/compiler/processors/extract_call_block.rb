@@ -6,7 +6,7 @@ class ExtractCallBlock
     block = node.block
 
     root = node.root
-    name = 'call'
+    name = '__call'
     klass_name = root.new_blockclass_name(node.function)
 
     arglist = block.arglist
@@ -18,7 +18,7 @@ class ExtractCallBlock
     capture_args << DabNodeSelf.new
 
     block.captured_self.each do |selfnode|
-      selfnode.replace_with!(DabNodeClosureSelf.new)
+     # selfnode.replace_with!(DabNodeClosureSelf.new)
     end
 
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|

@@ -290,6 +290,9 @@ void DabVM::call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_sy
 DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
 {
     (void)self;
+    if (options.verbose) {
+        fprintf(stderr, "vm: call_block\n");
+    }
     /*
     auto out_reg = input.read_reg();
     auto symbol  = input.read_symbol();
@@ -304,13 +307,20 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
     */
     auto real_self = self.get_instvar(get_or_create_symbol_index("self"));
 
-    auto     symbol = self.data.fixnum;
-    auto     reg    = dab_register_t::nilreg();
-    DabValue out;
+    auto symbol = get_or_create_symbol_index("__call");
+    auto outreg = 999; // TODO!
     //    DabValue                    fake_self; // ?
-    auto                        fun = $VM->functions[symbol];
+    
+    auto &klass = self.get_class();
+    auto fun = klass.functions[symbol];
+    
+    fprintf(stderr, "vm: block call fun '%s'\n", fun.name.c_str());
+    //$VM->functions[symbol];
+
     std::vector<dab_register_t> reglist;
-    int                         regindex = 1000; // TODO!
+
+    int regindex = 1000; // TODO!
+
     for (auto arg : args)
     {
         auto reg = (dab_register_t)regindex;
@@ -318,14 +328,16 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
         reglist.push_back(reg);
         regindex += 1;
     }
-
-    fprintf(stderr, "vm: will call with self = ");
-    real_self.dump(stderr);
-    fprintf(stderr, "\n");
     
-    _call_function(false, reg, real_self, fun, reglist);
+    if (options.verbose) {
+        fprintf(stderr, "vm: will call with self = ");
+        real_self.dump(stderr);
+        fprintf(stderr, "\n");
+    }
 
-    return out;
+    _call_function(!real_self.nil(), outreg, real_self, fun, reglist);
+
+    return register_get(outreg);
 }
 
 void DabVM::_call_function(bool use_self, dab_register_t out_reg, const DabValue &self,

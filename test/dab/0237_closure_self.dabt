@@ -17,6 +17,10 @@ func main()
   Foo.new.run;
 }
 
+## FRONTEND OPTIONS
+
+--no-stdlib
+
 ## EXPECT OK
 
 Foo

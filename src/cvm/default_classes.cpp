@@ -274,9 +274,9 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return self.string();
     });
-//    method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
-//        return $VM->call_block(self, args);
-//    });
+    method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
+        return $VM->call_block(self, args);
+    });
     method_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
         DabValue array_class = $VM->classes[CLASS_ARRAY];
         DabValue value       = array_class.create_instance();
