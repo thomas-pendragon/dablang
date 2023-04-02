@@ -59,6 +59,7 @@ enum
     TEMP_FUNC_SECTION    = 1,
     TEMP_SYMBOLS_SECTION = 2,
     TEMP_SYMDATA_SECTION = 3,
+    TEMP_CLASS_SECTION   = 4,
 };
 
 void DabVM::dump_vm(FILE *out)
@@ -72,7 +73,7 @@ void DabVM::dump_vm(FILE *out)
                                        {
                                            std::string name = section.name;
                                            return name == "symb" || name == "symd" ||
-                                                  name == "fext";
+                                                  name == "fext" || name == "clas";
                                        }),
                         dump_sections.end());
 
@@ -116,6 +117,23 @@ void DabVM::dump_vm(FILE *out)
     (void)last_data_index;
 
     auto &code_section = sections[last_code_index];
+
+    BinSection class_section = {};
+    memcpy(class_section.name, "clas", 4);
+    auto                  classes_to_copy = classes;
+    std::vector<BinClass> dump_classes;
+    for (auto it : classes_to_copy)
+    {
+        BinClass bin;
+        bin.index  = it.first;
+        bin.parent = it.second.superclass_index;
+        fprintf(stderr, "vm/binsave: dump class %d: '%s'\n", (int)it.first, it.second.name.c_str());
+        bin.name = get_symbol_index(it.second.name);
+        dump_classes.push_back(bin);
+    }
+    int class_def_size          = sizeof(BinClass);
+    class_section.special_index = TEMP_FUNC_SECTION;
+    class_section.length        = class_def_size * classes_to_copy.size();
 
     BinSection func_section = {};
     memcpy(func_section.name, "fext", 4);
@@ -232,6 +250,7 @@ void DabVM::dump_vm(FILE *out)
     symd_section.special_index = TEMP_SYMDATA_SECTION;
     symd_section.length        = symd_data.size();
 
+    dump_sections.push_back(class_section);
     dump_sections.push_back(symd_section);
     auto symd_section_index = dump_sections.size() - 1;
     dump_sections.push_back(symb_section);
@@ -272,6 +291,10 @@ void DabVM::dump_vm(FILE *out)
                 length += new_instructions.length;
                 section.length += new_instructions.length;
             }
+        }
+        else if (section.special_index == TEMP_CLASS_SECTION)
+        {
+            _twrite(dump_data, dump_classes);
         }
         else if (section.special_index == TEMP_FUNC_SECTION)
         {

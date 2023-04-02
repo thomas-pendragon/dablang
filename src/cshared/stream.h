@@ -74,6 +74,15 @@ struct BinFunctionEx : BinFunctionExBase
 };
 
 #pragma pack(push, 1)
+struct BinClass
+{
+    dab_class_t  index;
+    dab_class_t  parent;
+    dab_symbol_t name;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 struct BinSection
 {
     char     name[4];
