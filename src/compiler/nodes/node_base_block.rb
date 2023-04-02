@@ -39,6 +39,10 @@ class DabNodeBaseBlock < DabNode
     all_nodes(DabNodeSelf)
   end
 
+  def captured_instvars
+    all_nodes(DabNodeInstanceVar)
+  end
+
   def captured_variables
     all_getters = all_nodes(DabNodeLocalVar)
     all_getter_definitions = all_getters.map(&:var_definition).compact.uniq

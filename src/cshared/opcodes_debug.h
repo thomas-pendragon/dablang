@@ -51,4 +51,7 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_BOX, "BOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
     {OP_UNBOX, "UNBOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
     {OP_SETBOX, "SETBOX", {OpcodeArg::ARG_REG, OpcodeArg::ARG_REG, OpcodeArg::ARG_REG}},
+    {OP_GET_INSTVAR_EXT,
+     "GET_INSTVAR_EXT",
+     {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REG}},
 };

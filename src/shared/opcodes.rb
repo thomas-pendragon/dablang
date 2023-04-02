@@ -54,7 +54,6 @@ OPCODES_ARRAY_BASE = [
 
       {name: 'LOAD_SELF', args: %i[reg]}, # reg0 <- self
       {name: 'GET_INSTVAR', args: %i[reg symbol]}, # reg0 <- self.@arg1
-      # {name: 'LOAD_CLOSURE', args: %i[reg uint16]}, # reg0 <- closurevar(arg1)
       {name: 'LOAD_HAS_BLOCK', args: %i[reg]}, # reg0 <- has_block?
 
       {name: 'LOAD_ARG', args: %i[reg uint16]}, # reg0 <- funarg(arg1)
@@ -68,14 +67,10 @@ OPCODES_ARRAY_BASE = [
       {name: 'JMP_IF', args: %i[reg int16 int16]}, # add +arg1/2 to PC depending on reg0
 
       {name: 'CALL', args: %i[reg symbol reglist]}, # reg0 <- call(symbol(arg1), arg2..argn)
-      # {name: 'CALL_BLOCK', args: %i[reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg1), block=arg2, capture=arg3, arg4..argn)
 
       {name: 'INSTCALL', args: %i[reg reg symbol reglist]}, # reg0 <- call(symbol(arg2), self: arg1, args: arg3..argn)
-      # {name: 'INSTCALL_BLOCK', args: %i[reg reg symbol symbol reg reglist]}, # reg0 <- call(symbol(arg2), self: arg1, block: arg3, capture: arg4, args: arg5..argn)
 
       {name: 'SYSCALL', args: %i[reg uint8 reglist]}, # reg0 <- syscall(arg1, arg2...argn)
-
-      # {name: 'YIELD', args: %i[reg reglist]}, # reg0 <- yield(reg1..regN)
 
       {name: 'RETURN', args: %i[reg]}, # return(reg0)
     ],
@@ -108,6 +103,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'BOX', args: %i[reg reg]}, # reg0 <- create new box(reg1)
       {name: 'UNBOX', args: %i[reg reg]}, # reg0 <- unbox(reg1)
       {name: 'SETBOX', args: %i[reg reg reg]}, # reg0 <- update box(reg1) with value(reg2)
+      {name: 'GET_INSTVAR_EXT', args: %i[reg symbol reg]}, # reg0 <- @arg2.@arg1
     ],
   },
   {

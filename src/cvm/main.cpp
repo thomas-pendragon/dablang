@@ -322,7 +322,7 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
     fprintf(stderr, "vm: will call with self = ");
     real_self.dump(stderr);
     fprintf(stderr, "\n");
-    
+
     _call_function(false, reg, real_self, fun, reglist);
 
     return out;
@@ -858,6 +858,18 @@ bool DabVM::execute_single(Stream &input)
         auto out_reg = input.read_reg();
         auto symbol  = input.read_symbol();
         get_instvar(symbol, out_reg);
+        break;
+    }
+    case OP_GET_INSTVAR_EXT:
+    {
+        auto out_reg  = input.read_reg();
+        auto symbol   = input.read_symbol();
+        auto self_reg = input.read_reg();
+
+        auto self  = register_get(self_reg);
+        auto value = self.get_instvar(symbol);
+        register_set(out_reg, value);
+
         break;
     }
     case OP_SET_INSTVAR:

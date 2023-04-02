@@ -21,6 +21,10 @@ class ExtractCallBlock
       selfnode.replace_with!(DabNodeClosureSelf.new)
     end
 
+    block.captured_instvars.each(&:use_self_proxy!)
+
+    # block.dump
+
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
