@@ -216,6 +216,11 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         kernel_define_method(out_reg, reglist);
         break;
     }
+    case KERNEL_DEFINE_CLASS:
+    {
+        kernel_define_class(out_reg, reglist);
+        break;
+    }
     case KERNEL_BYTESWAP32:
     {
         kernel_byteswap32(out_reg, reglist);

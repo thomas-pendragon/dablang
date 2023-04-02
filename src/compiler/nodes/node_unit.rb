@@ -5,6 +5,7 @@ BUILTINS = SYSCALLS + %w[
   print
   exit
   define_method
+  define_class
   +
   -
   *

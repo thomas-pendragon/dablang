@@ -40,6 +40,21 @@ std::string DabVM::get_symbol(dab_symbol_t index) const
     return symbols[index].value;
 }
 
+dab_class_t DabVM::find_class(const std::string &name)
+{
+    for (const auto &it : classes)
+    {
+        const auto &klass = it.second;
+        if (klass.name == name)
+        {
+            return it.first;
+        }
+    }
+
+    fprintf(stderr, "VM error: unknown class with name <%s>.\n", name.c_str());
+    exit(1);
+}
+
 DabClass &DabVM::get_class(dab_class_t index)
 {
     if (!classes.count(index))

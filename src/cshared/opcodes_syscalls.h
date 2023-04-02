@@ -11,4 +11,5 @@ enum
     KERNEL_BYTESWAP32    = 0x6,
     KERNEL_DLIMPORT      = 0x7,
     KERNEL_WARN          = 0x8,
+    KERNEL_DEFINE_CLASS  = 0x9,
 };

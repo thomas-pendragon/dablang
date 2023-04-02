@@ -1,6 +1,22 @@
 #include "cvm.h"
 #include "../cshared/opcodes.h"
 
+void DabVM::kernel_define_class(dab_register_t out_reg, std::vector<dab_register_t> reglist)
+{
+    assert(reglist.size() == 1);
+
+    auto name = register_get(reglist[0]).string();
+
+    auto max_index = classes.rbegin()->first;
+    auto index     = max_index + 1;
+
+    fprintf(stderr, "VM: define_class '%s' as %d\n", name.c_str(), (int)index);
+
+    add_class(name, index, 0); // TODO: parent
+
+    register_set(out_reg, nullptr);
+}
+
 void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() >= 2 && reglist.size() <= 3);
@@ -37,7 +53,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
     if (for_class)
     {
-        assert(klass.data.type == TYPE_CLASS);
+        assert(klass.data.type == TYPE_CLASS || klass.data.type == TYPE_LITERALSTRING);
     }
 
     auto &method_class = method.get_class();
@@ -158,6 +174,11 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     auto fsymbol        = get_or_create_symbol_index(method_name);
     if (for_class)
     {
+        auto strclass = get_class(CLASS_STRING);
+        if (klass.is_a(strclass))
+        {
+            klass = get_class(find_class(klass.string()));
+        }
         auto &klass_data              = klass.get_class();
         klass_data.functions[fsymbol] = function;
     }

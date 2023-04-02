@@ -510,10 +510,12 @@ struct DabVM
 
     std::vector<BinSection> sections;
 
-    DabClass &get_class(dab_class_t index);
-    void      predefine_default_classes();
-    void      define_default_classes();
-    void      define_defaults();
+    DabClass   &get_class(dab_class_t index);
+    dab_class_t find_class(const std::string &name);
+
+    void predefine_default_classes();
+    void define_default_classes();
+    void define_defaults();
 
     DabVM();
     DabVM(const DabVM &)            = delete;
@@ -537,6 +539,7 @@ struct DabVM
 
     void kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist,
                       bool use_stderr = false);
+    void kernel_define_class(dab_register_t out_reg, std::vector<dab_register_t> reglist);
     void kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist);
     void kernel_byteswap32(dab_register_t out_reg, std::vector<dab_register_t> reglist);
     void kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> reglist);

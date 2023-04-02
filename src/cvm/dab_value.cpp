@@ -90,9 +90,6 @@ dab_class_t DabValue::class_index() const
     case TYPE_METHOD:
         return CLASS_METHOD;
         break;
-        //    case TYPE_LOCALBLOCK:
-        //        return CLASS_METHOD;
-        //        break;
     case TYPE_INTPTR:
         return CLASS_INTPTR;
         break;
