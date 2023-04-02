@@ -240,6 +240,16 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         register_set(out_reg, value);
         break;
     }
+    case KERNEL_SET_INSTVAR:
+    {
+        assert(reglist.size() == 3);
+        auto self  = register_get(reglist[0]);
+        auto name  = register_get(reglist[1]);
+        auto value = register_get(reglist[2]);
+        self.set_instvar(get_or_create_symbol_index(name.string()), value);
+        register_set(out_reg, nullptr);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown kernel call <%d>.\n", (int)call);
         exit(1);

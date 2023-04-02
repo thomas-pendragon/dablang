@@ -13,4 +13,5 @@ enum
     KERNEL_WARN          = 0x8,
     KERNEL_DEFINE_CLASS  = 0x9,
     KERNEL_GET_INSTVAR   = 0xA,
+    KERNEL_SET_INSTVAR   = 0xB,
 };
