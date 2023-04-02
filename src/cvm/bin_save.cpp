@@ -28,6 +28,15 @@ static void _twrite(std::vector<byte> &out, T value)
     _twrite(out, (const byte *)&value, sizeof(value));
 }
 
+template <typename T>
+static void _ttwrite(std::vector<byte> &out, const std::vector<T> &value)
+{
+    if (value.size() == 0)
+        return;
+
+    _ttwrite(out, (const byte *)&value[0], sizeof(T) * value.size());
+}
+
 static void _twrite(std::vector<byte> &out, BinFunctionEx value)
 {
     // fprintf(stderr, "Print function... (%d args)\n", (int)value.args.size());
@@ -120,10 +129,13 @@ void DabVM::dump_vm(FILE *out)
 
     BinSection class_section = {};
     memcpy(class_section.name, "clas", 4);
-    auto                  classes_to_copy = classes;
+
     std::vector<BinClass> dump_classes;
-    for (auto it : classes_to_copy)
+    for (auto it : classes)
     {
+        if (it.second.builtin)
+            continue;
+
         BinClass bin;
         bin.index  = it.first;
         bin.parent = it.second.superclass_index;
@@ -132,8 +144,8 @@ void DabVM::dump_vm(FILE *out)
         dump_classes.push_back(bin);
     }
     int class_def_size          = sizeof(BinClass);
-    class_section.special_index = TEMP_FUNC_SECTION;
-    class_section.length        = class_def_size * classes_to_copy.size();
+    class_section.special_index = TEMP_CLASS_SECTION;
+    class_section.length        = class_def_size * dump_classes.size();
 
     BinSection func_section = {};
     memcpy(func_section.name, "fext", 4);
@@ -294,7 +306,9 @@ void DabVM::dump_vm(FILE *out)
         }
         else if (section.special_index == TEMP_CLASS_SECTION)
         {
-            _twrite(dump_data, dump_classes);
+            fprintf(stderr, "vm/binsave: DUMP CLASSES\n");
+            _ttwrite(dump_data, dump_classes);
+            fprintf(stderr, "vm/binsave: --\n");
         }
         else if (section.special_index == TEMP_FUNC_SECTION)
         {

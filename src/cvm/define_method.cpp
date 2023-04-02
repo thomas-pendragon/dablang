@@ -12,6 +12,7 @@ void DabVM::kernel_define_class(dab_register_t out_reg, std::vector<dab_register
 
     fprintf(stderr, "VM: define_class '%s' as %d\n", name.c_str(), (int)index);
 
+    get_or_create_symbol_index(name);
     add_class(name, index, 0); // TODO: parent
 
     register_set(out_reg, nullptr);
