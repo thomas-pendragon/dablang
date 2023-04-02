@@ -92,6 +92,12 @@ void DabVM::define_default_classes()
         std::transform(s.begin(), s.end(), s.begin(), ::toupperc);
         return s;
     });
+    string_class.add_reg_function("downcase", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 0);
+        auto s = self.string();
+        std::transform(s.begin(), s.end(), s.begin(), ::tolowerc);
+        return s;
+    });
     string_class.add_reg_function("length", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
         auto     s = self.string();
@@ -233,13 +239,17 @@ void DabVM::define_default_classes()
         return nullptr;
     });
     array_class.add_reg_function("join", [this](DabValue self, std::vector<DabValue> args) {
-        assert(args.size() == 0);
+        assert(args.size() <= 1);
+        std::string glue = ", ";
+        if (args.size() == 1) {
+            glue = args[0].string();
+        }
         std::string ret;
         auto &      a = self.array();
         for (size_t i = 0; i < a.size(); i++)
         {
             if (i)
-                ret += ", ";
+                ret += glue;
             auto val = cinstcall(a[i], "to_s");
             ret += val.string();
             if (!$VM->options.autorelease)

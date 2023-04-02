@@ -41,3 +41,8 @@ inline char toupperc(char c)
 {
     return (char)::toupper(c);
 }
+
+inline char tolowerc(char c)
+{
+    return (char)::tolower(c);
+}
