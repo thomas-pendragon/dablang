@@ -274,9 +274,9 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return self.string();
     });
-    method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
-        return $VM->call_block(self, args);
-    });
+//    method_class.add_reg_function("call", [](DabValue self, std::vector<DabValue> args) {
+//        return $VM->call_block(self, args);
+//    });
     method_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
         DabValue array_class = $VM->classes[CLASS_ARRAY];
         DabValue value       = array_class.create_instance();
@@ -293,17 +293,6 @@ void DabVM::define_default_classes()
         }
         self.set_instvar($VM->get_or_create_symbol_index("self"), selfnode);
         self.set_instvar($VM->get_or_create_symbol_index("closure"), value);
-//        fprintf(stderr, "method.init [argc = %d]\n", (int)args.size());
-//        int i = 0;
-//        for (auto arg : args) {
-//            fprintf(stderr, "%d: ", (int)i);
-//            arg.dump(stderr);
-//            fprintf(stderr, "\n");
-//            i++;
-//        }
-//        fprintf(stderr, "self = ");
-//        self.dumpex(stderr);
-//        fprintf(stderr, "\n-----------\n");
         return nullptr;
     });
 

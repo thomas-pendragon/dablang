@@ -319,6 +319,10 @@ DabValue DabVM::call_block(const DabValue &self, std::vector<DabValue> args)
         regindex += 1;
     }
 
+    fprintf(stderr, "vm: will call with self = ");
+    real_self.dump(stderr);
+    fprintf(stderr, "\n");
+    
     _call_function(false, reg, real_self, fun, reglist);
 
     return out;
@@ -604,81 +608,6 @@ bool DabVM::execute_single(Stream &input)
         call(out_reg, symbol, (int)reglist.size(), DAB_SYMBOL_NIL, nullptr, reglist);
         break;
     }
-    // case OP_CALL_BLOCK:
-    // {
-    //     auto out_reg      = input.read_reg();
-    //     auto symbol       = input.read_symbol();
-    //     auto block_symbol = input.read_symbol();
-    //     auto capture_reg  = input.read_reg();
-    //     auto capture      = register_get(capture_reg);
-    //     auto reglist      = input.read_reglist();
-
-    //     call(out_reg, symbol, (int)reglist.size(), block_symbol, capture, reglist);
-    //     break;
-    // }
-    // case OP_INSTCALL_BLOCK:
-    // {
-    //     auto out_reg  = input.read_reg();
-    //     auto self_reg = input.read_reg();
-    //     auto symbol   = input.read_uint16();
-
-    //     auto block_symbol = input.read_symbol();
-    //     auto capture_reg  = input.read_reg();
-    //     auto capture      = register_get(capture_reg);
-
-    //     auto reglist = input.read_reglist();
-    //     auto n_args  = reglist.size();
-    //     auto recv    = register_get(self_reg);
-
-    //     instcall(recv, symbol, n_args, block_symbol, capture, out_reg, reglist);
-    //     break;
-    // }
-    // case OP_YIELD:
-    // {
-    //     auto out_reg = input.read_reg();
-
-    //     auto reglist = input.read_reglist();
-
-    //     auto n_args = reglist.size();
-
-    //     auto self = get_self();
-    //     auto addr = get_block_addr();
-
-    //     if (addr == 0)
-    //     {
-    //         fprintf(stderr, "vm: error: no block to yield to\n");
-    //         exit(1);
-    //     }
-
-    //     if (options.verbose)
-    //     {
-    //         fprintf(stderr, "vm: yield to %p with %d arguments.\n", (void *)addr, (int)n_args);
-    //         fprintf(stderr, "vm: capture data is ");
-    //         get_block_capture().dump(stderr);
-    //         fprintf(stderr, ".\n");
-    //     }
-
-    //     push_new_frame(self, 0, out_reg, get_block_capture(), reglist);
-    //     instructions.seek(addr);
-
-    //     break;
-    // }
-    // case OP_LOAD_CLOSURE:
-    // {
-    //     auto reg_index     = input.read_reg();
-    //     auto closure_index = input.read_uint16();
-    //     auto closure       = get_block_capture();
-    //     assert(closure.data.type == TYPE_ARRAY);
-    //     auto &array = closure.array();
-    //     if (options.verbose)
-    //     {
-    //         fprintf(stderr, "vm: get captured var %d (of %" PRIu64 ").\n", closure_index,
-    //                 (uint64_t)array.size());
-    //     }
-    //     auto value = array[closure_index];
-    //     register_set(reg_index, value);
-    //     break;
-    // }
     case OP_LOAD_STRING:
     {
         auto reg_index = input.read_reg();

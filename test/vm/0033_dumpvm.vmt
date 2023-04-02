@@ -73,7 +73,6 @@ _SYMD:
     W_STRING "[]="
     W_STRING "join"
     W_STRING "name"
-    W_STRING "call"
     W_STRING "||"
     W_STRING "&&"
 
@@ -112,8 +111,7 @@ _SYMB:
     W_SYMBOL 381
     W_SYMBOL 386
     W_SYMBOL 391
-    W_SYMBOL 396
-    W_SYMBOL 399
+    W_SYMBOL 394
 
 _FEXT:
     W_METHOD 0, -1, 205, 0, 6
