@@ -102,7 +102,9 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     binary_output.write_uint16(method_reg);
     binary_output.write_uint16(class_reg);
     binary_output.write_uint16(new_symbol_index);
-    binary_output.write_uint8((int)closure_array.size());
+    binary_output.write_uint8(1 + (int)closure_array.size());
+    fprintf(output, ", RNIL"); // SELF
+    binary_output.write_uint16(0xFFFF);
     for (int i = 0; i < (int)closure_array.size(); i++)
     {
         fprintf(output, ", R%d", i * 2 + 1);
