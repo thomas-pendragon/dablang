@@ -14,11 +14,13 @@ class Fixnum
       i = i + 1;
     }
   }
-
-  func map() {
+  
+  func map()
+  {
     var i = 0;
     var result = @[];
-    while (i < self) {
+    while (i < self)
+    {
       var val = yield(i);
       result.insert(val);
       i = i + 1;

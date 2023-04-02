@@ -4,22 +4,28 @@ class String
   {
     return self.length != 0;
   }
-
-  func chars() 
+  
+  func chars()
   {
     var i = 0;
     var ret = @[];
-    while (i < self.length) {
+    while (i < self.length)
+    {
       ret.insert(self[i]);
       i = i + 1;
     }
     return ret;
   }
-
+  
   func titleize()
   {
     var array = self.chars;
     var first = array.shift;
     return first.upcase + array.join("").downcase;
+  }
+  
+  func pluralize()
+  {
+    return self + "s";
   }
 }
