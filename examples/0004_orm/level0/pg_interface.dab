@@ -111,9 +111,9 @@ class PgResultset {
       types.insert(PQftype(q, i));
     };
 
-    puts(columns);
-    puts(formats);
-    puts(types);
+    #puts(columns);
+    #puts(formats);
+    #puts(types);
     @columns = columns;
     @nrows = PQntuples(query);
     @cursor = 0;

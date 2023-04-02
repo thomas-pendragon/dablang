@@ -5,10 +5,19 @@ class OrmGenerator {
   }
 
   func run(name) {
-    var table_name = name.downcase.pluralize;
-    var klass_name = name.titleize;
+    @table_name = name.downcase.pluralize;
+    @klass_name = name.titleize;
 
-    puts("Create class '" + klass_name + "' from table '" + table_name + "'.");
+    puts("Create class '" + @klass_name + "' from table '" + @table_name + "'.");
+
+    define_class(@klass_name);
+    
+    var res = @pg.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = '" + @table_name + "' ORDER BY ordinal_position;");
+
+    res.each() ^ (row) {
+      puts(res.columns);
+      puts(row);
+    };    
 
     //var xx = @pg.dump("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'books' ORDER BY ordinal_position;");
     //var yy = @pg.dump("SELECT * FROM books");
