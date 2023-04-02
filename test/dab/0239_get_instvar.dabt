@@ -1,0 +1,21 @@
+## CODE
+
+class Foo {
+  func run() {   
+    @foo = 15;
+    print(__get_instvar(self, "foo"));
+  }
+}
+
+func main()
+{
+  Foo.new.run;
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+15

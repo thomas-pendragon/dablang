@@ -12,4 +12,5 @@ enum
     KERNEL_DLIMPORT      = 0x7,
     KERNEL_WARN          = 0x8,
     KERNEL_DEFINE_CLASS  = 0x9,
+    KERNEL_GET_INSTVAR   = 0xA,
 };

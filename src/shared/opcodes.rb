@@ -147,6 +147,7 @@ KERNELCODES = {
   0x07 => 'DLIMPORT',
   0x08 => 'WARN',
   0x09 => 'DEFINE_CLASS',
+  0x0A => 'GET_INSTVAR',
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
