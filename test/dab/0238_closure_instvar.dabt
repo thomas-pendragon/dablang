@@ -1,0 +1,29 @@
+## CODE
+
+func tap() {
+  yield();
+}
+
+class Foo {
+  func __construct() {
+    @foo = 12;
+  }
+  func run() {    
+    tap() ^ {
+      print(@foo);
+    };  
+  }
+}
+
+func main()
+{
+  Foo.new.run;
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+12
