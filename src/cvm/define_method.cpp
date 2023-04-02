@@ -3,10 +3,18 @@
 
 void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-    assert(reglist.size() == 2);
+    assert(reglist.size() >= 2 && reglist.size() <= 3);
 
-    auto name   = register_get(reglist[0]);
-    auto method = register_get(reglist[1]);
+    auto for_class = reglist.size() == 3;
+
+    auto offset = for_class ? 1 : 0;
+
+    auto name   = register_get(reglist[0 + offset]);
+    auto method = register_get(reglist[1 + offset]);
+
+    DabValue klass;
+    if (for_class)
+        klass = register_get(reglist[0]);
 
     fprintf(stderr, "VM: define_method\n");
     fprintf(stderr, "VM: method: ");
@@ -15,12 +23,22 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     fprintf(stderr, "VM: name:   ");
     name.dump(stderr);
     fprintf(stderr, "\n");
+    if (for_class)
+    {
+        fprintf(stderr, "VM: class:   ");
+        klass.dump(stderr);
+        fprintf(stderr, "\n");
+    }
 
     fprintf(stderr, "VM: method.data.type: %d (TYPE_METHOD == %d, TYPE_OBJECT = %d)\n",
             method.data.type, TYPE_METHOD, TYPE_OBJECT);
 
     assert(method.data.type == TYPE_OBJECT);
     assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
+    if (for_class)
+    {
+        assert(klass.data.type == TYPE_CLASS);
+    }
 
     auto &method_class = method.get_class();
 
@@ -138,7 +156,15 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     function.length     = method_length;
     function.reflection = fun.reflection;
     auto fsymbol        = get_or_create_symbol_index(method_name);
-    functions[fsymbol]  = function;
+    if (for_class)
+    {
+        auto &klass_data              = klass.get_class();
+        klass_data.functions[fsymbol] = function;
+    }
+    else
+    {
+        functions[fsymbol] = function;
+    }
 
     register_set(out_reg, nullptr);
 
