@@ -262,7 +262,10 @@ void DabVM::dump_vm(FILE *out)
     symd_section.special_index = TEMP_SYMDATA_SECTION;
     symd_section.length        = symd_data.size();
 
-    dump_sections.push_back(class_section);
+    if (dump_classes.size())
+    {
+        dump_sections.push_back(class_section);
+    }
     dump_sections.push_back(symd_section);
     auto symd_section_index = dump_sections.size() - 1;
     dump_sections.push_back(symb_section);
