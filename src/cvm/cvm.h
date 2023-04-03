@@ -494,6 +494,8 @@ struct DabVM
 
     Stream instructions;
     Buffer new_instructions;
+    Buffer new_data;
+    std::vector<size_t> new_data_offsets;
 
     std::map<dab_symbol_t, DabFunction> functions;
 

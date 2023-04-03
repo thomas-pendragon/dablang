@@ -96,6 +96,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
         auto object = closure_array[i].unboxed();
 
         auto fixnum_class = get_class(CLASS_FIXNUM);
+        auto string_class = get_class(CLASS_STRING);
         if (object.is_a(fixnum_class))
         {
             auto reg = i * 2;
@@ -104,6 +105,11 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             binary_output.write_uint8(OP_LOAD_NUMBER);
             binary_output.write_uint16(reg);
             binary_output.write_int64(num);
+        }
+        else if (object.is_a(string_class))
+        {
+            fprintf(stderr, ">> Unsupported string in closure\n");
+            exit(1);
         }
         else
         {
