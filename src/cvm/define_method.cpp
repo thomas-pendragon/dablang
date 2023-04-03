@@ -51,7 +51,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             method.data.type, TYPE_METHOD, TYPE_OBJECT);
 
     assert(method.data.type == TYPE_OBJECT);
-    assert(name.data.type == TYPE_LITERALSTRING); // dynamic?
+    assert(name.is_a(get_class(CLASS_STRING)));
     if (for_class)
     {
         assert(klass.data.type == TYPE_CLASS || klass.data.type == TYPE_LITERALSTRING);

@@ -1,0 +1,36 @@
+## LEVEL 0
+
+class Fixnum
+{
+  func times()
+  {
+    var i = 0;
+    while (i < self)
+    {
+      yield(i);
+      i = i + 1;
+    }
+  }
+}
+
+
+func level0()
+{
+  10.times() ^ (i) {
+    var x = i;
+    define_method("test" + i.to_s) ^ {
+      print("Test [" + x.to_s + "]");
+    };
+  };
+}
+
+## LEVEL 1
+
+func level1()
+{
+  test4();
+}
+
+## EXPECT
+
+Test [4]

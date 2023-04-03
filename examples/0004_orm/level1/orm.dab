@@ -14,9 +14,21 @@ class OrmGenerator {
     
     var res = @pg.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = '" + @table_name + "' ORDER BY ordinal_position;");
 
+    var index = 0;
+
     res.each() ^ (row) {
       puts(res.columns);
       puts(row);
+
+      var name = row[0];
+
+      puts("Field: "+name);
+
+      define_method(@klass_name, field) ^ {
+    //    puts("this is field " + index);
+      };
+
+      index = index + 1;
     };    
 
     //var xx = @pg.dump("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'books' ORDER BY ordinal_position;");
