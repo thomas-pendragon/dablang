@@ -77,37 +77,14 @@ void DabVM::dump_vm(FILE *out)
     std::vector<BinSection> dump_sections = sections;
     std::vector<byte>       dump_data;
 
-    int aa = 0;
-    for (auto ss : sections)
-    {
-        fprintf(stderr, "%d %s pos %d len %d\n", (int)aa, (const char *)ss.name, (int)ss.pos,
-                (int)ss.length);
-        aa++;
-    }
-
-    /*
-      0 data pos 232 len 189
-      1 code pos 421 len 3843
-      2 clas pos 4264 len 36
-      3 symd pos 4300 len 906
-      4 symb pos 5206 len 952
-      5 fext pos 6158 len 1780
-      6 data pos 8170 len 258
-      7 code pos 8428 len 662
-      8 clas pos 9090 len 54
-      9 symd pos 9144 len 93
-     10 symb pos 9237 len 80
-     11 fext pos 9317 len 164
-     */
-
-    /*
-
-     >>  0 data pos 232 len 189
-     >>  1 code pos 421 len 3843
-     >>  2 data pos 8170 len 258
-     >>  3 code pos 8428 len 662 -> 9090
-     */
-
+//    int aa = 0;
+//    for (auto ss : sections)
+//    {
+//        fprintf(stderr, "%d %s pos %d len %d\n", (int)aa, (const char *)ss.name, (int)ss.pos,
+//                (int)ss.length);
+//        aa++;
+//    }
+//
     dump_sections.erase(std::remove_if(dump_sections.begin(), dump_sections.end(),
                                        [](BinSection section)
                                        {
@@ -117,16 +94,16 @@ void DabVM::dump_vm(FILE *out)
                                        }),
                         dump_sections.end());
 
-    {
-
-        int aa = 0;
-        for (auto ss : dump_sections)
-        {
-            fprintf(stderr, ">> %2d %s pos %d len %d\n", (int)aa, (const char *)ss.name,
-                    (int)ss.pos, (int)ss.length);
-            aa++;
-        }
-    }
+//    {
+//
+//        int aa = 0;
+//        for (auto ss : dump_sections)
+//        {
+//            fprintf(stderr, ">> %2d %s pos %d len %d\n", (int)aa, (const char *)ss.name,
+//                    (int)ss.pos, (int)ss.length);
+//            aa++;
+//        }
+//    }
     auto last_code_index = -1;
     auto last_data_index = -1;
 
@@ -226,22 +203,6 @@ void DabVM::dump_vm(FILE *out)
                         get_symbol(it.first).c_str(), fun.source_ring, (int)fun.address);
             }
 
-            static bool x = true;
-            if (x)
-            {
-                // x=  false;
-                fprintf(stderr, "VM code_section.pos    = %d\n", (int)code_section.pos);
-                fprintf(stderr, "VM code_section.length = %d\n", (int)code_section.length);
-                fprintf(stderr, "VM code_section.P + L  = %d\n",
-                        (int)code_section.pos + (int)code_section.length);
-                fprintf(stderr, "VM last_ring_offset    = %d\n", (int)last_ring_offset);
-                fprintf(stderr, "VM new_instructions.len= %d\n", (int)new_instructions.length);
-                fprintf(stderr, "VM ??                  = %d\n",
-                        (int)new_instructions.length + (int)last_ring_offset +
-                            (int)code_section.length);
-                fprintf(stderr, "code_offset -> %d\n", (int)base_code_offset);
-            }
-
             const auto &fundata    = it.second;
             const auto &reflection = fundata.reflection;
 
@@ -254,12 +215,7 @@ void DabVM::dump_vm(FILE *out)
             if (fun.new_method)
             {
                 (void)code_section;
-                bin_func.address += 0 +
-                                    //
-                                    last_ring_offset
-                                    //;// code_section.pos
-
-                                    + code_section.length;
+                bin_func.address += base_code_offset;
             }
             fprintf(stderr, "vm/binsave: readjust address to %d\n", (int)bin_func.address);
             for (size_t i = 0; i < bin_func.arglist_count; i++)

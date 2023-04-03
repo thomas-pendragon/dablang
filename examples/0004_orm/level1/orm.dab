@@ -26,7 +26,8 @@ class OrmGenerator {
 
       var kn = @klass_name;
       define_method(kn, name) ^ {
-    //    puts("this is field " + index);
+        puts("this is field " + index.to_s);
+        return "xx";
       };
 
       index = index + 1;

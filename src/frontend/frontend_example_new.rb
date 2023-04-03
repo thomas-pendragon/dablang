@@ -69,7 +69,7 @@ class DabExampleSpec
       assemble(asm, bin)
       disassemble(bin, binasm, '--with-headers')
       execute(vmfiles + [bin], vmo, run_options)
-      disassemble(vmo, vmoa, '--with-headers')
+      disassemble(vmo, vmoa, '--with-headers') unless is_final
 
       vmfiles << vmo
     end
