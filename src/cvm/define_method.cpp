@@ -97,9 +97,9 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
 
         auto fixnum_class = get_class(CLASS_FIXNUM);
         auto string_class = get_class(CLASS_STRING);
+        auto reg          = i * 2;
         if (object.is_a(fixnum_class))
         {
-            auto reg = i * 2;
             auto num = (int)object.data.fixnum;
             fprintf(output, "LOAD_NUMBER R%d, %d\n", reg, num);
             binary_output.write_uint8(OP_LOAD_NUMBER);
@@ -108,8 +108,15 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
         }
         else if (object.is_a(string_class))
         {
-            fprintf(stderr, ">> Unsupported string in closure\n");
-            exit(1);
+            auto str          = object.string();
+            auto new_data_pos = new_data.length;
+            new_data.append((const byte *)str.c_str(), str.length() + 1);
+            binary_output.write_uint8(OP_LOAD_STRING);
+            new_data_offsets.push_back(new_instructions.length + binary_output.length());
+            binary_output.write_uint64(new_data_pos);
+            binary_output.write_uint64(str.length());
+            fprintf(output, "LOAD_STRING R%d, %d, %d\n", (int)reg, (int)new_data_pos,
+                    (int)str.length());
         }
         else
         {

@@ -37,6 +37,14 @@ static void _ttwrite(std::vector<byte> &out, const std::vector<T> &value)
     _ttwrite(out, (const byte *)&value[0], sizeof(T) * value.size());
 }
 
+static void _ttwrite(std::vector<byte> &out, const Buffer &value)
+{
+    if (value.length == 0)
+        return;
+
+    _ttwrite(out, value.data, value.length);
+}
+
 static void _twrite(std::vector<byte> &out, BinFunctionEx value)
 {
     // fprintf(stderr, "Print function... (%d args)\n", (int)value.args.size());
@@ -64,11 +72,12 @@ static void _twrite(std::vector<byte> &out, std::vector<T> value)
 
 enum
 {
-    TEMP_REGULAR         = 0,
-    TEMP_FUNC_SECTION    = 1,
-    TEMP_SYMBOLS_SECTION = 2,
-    TEMP_SYMDATA_SECTION = 3,
-    TEMP_CLASS_SECTION   = 4,
+    TEMP_REGULAR          = 0,
+    TEMP_FUNC_SECTION     = 1,
+    TEMP_SYMBOLS_SECTION  = 2,
+    TEMP_SYMDATA_SECTION  = 3,
+    TEMP_CLASS_SECTION    = 4,
+    TEMP_NEW_DATA_SECTION = 5,
 };
 
 void DabVM::dump_vm(FILE *out)
@@ -77,14 +86,14 @@ void DabVM::dump_vm(FILE *out)
     std::vector<BinSection> dump_sections = sections;
     std::vector<byte>       dump_data;
 
-//    int aa = 0;
-//    for (auto ss : sections)
-//    {
-//        fprintf(stderr, "%d %s pos %d len %d\n", (int)aa, (const char *)ss.name, (int)ss.pos,
-//                (int)ss.length);
-//        aa++;
-//    }
-//
+    //    int aa = 0;
+    //    for (auto ss : sections)
+    //    {
+    //        fprintf(stderr, "%d %s pos %d len %d\n", (int)aa, (const char *)ss.name, (int)ss.pos,
+    //                (int)ss.length);
+    //        aa++;
+    //    }
+    //
     dump_sections.erase(std::remove_if(dump_sections.begin(), dump_sections.end(),
                                        [](BinSection section)
                                        {
@@ -94,16 +103,16 @@ void DabVM::dump_vm(FILE *out)
                                        }),
                         dump_sections.end());
 
-//    {
-//
-//        int aa = 0;
-//        for (auto ss : dump_sections)
-//        {
-//            fprintf(stderr, ">> %2d %s pos %d len %d\n", (int)aa, (const char *)ss.name,
-//                    (int)ss.pos, (int)ss.length);
-//            aa++;
-//        }
-//    }
+    //    {
+    //
+    //        int aa = 0;
+    //        for (auto ss : dump_sections)
+    //        {
+    //            fprintf(stderr, ">> %2d %s pos %d len %d\n", (int)aa, (const char *)ss.name,
+    //                    (int)ss.pos, (int)ss.length);
+    //            aa++;
+    //        }
+    //    }
     auto last_code_index = -1;
     auto last_data_index = -1;
 
@@ -291,6 +300,15 @@ void DabVM::dump_vm(FILE *out)
     {
         dump_sections.push_back(class_section);
     }
+    bool use_new_data = new_data.length > 0;
+    if (use_new_data)
+    {
+        BinSection new_data_section_bin = {};
+        memcpy(new_data_section_bin.name, "data", 4);
+        new_data_section_bin.special_index = TEMP_NEW_DATA_SECTION;
+        new_data_section_bin.length        = new_data.length;
+        dump_sections.push_back(new_data_section_bin);
+    }
     dump_sections.push_back(symd_section);
     auto symd_section_index = dump_sections.size() - 1;
     dump_sections.push_back(symb_section);
@@ -342,6 +360,12 @@ void DabVM::dump_vm(FILE *out)
         else if (section.special_index == TEMP_FUNC_SECTION)
         {
             _twrite(dump_data, dump_functions);
+        }
+        else if (section.special_index == TEMP_NEW_DATA_SECTION)
+        {
+            fprintf(stderr, "vm/binsave: NEW DATA\n");
+            _ttwrite(dump_data, new_data);
+            fprintf(stderr, "vm/binsave: --\n");
         }
         else if (section.special_index == TEMP_SYMDATA_SECTION)
         {
