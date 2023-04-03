@@ -1164,7 +1164,7 @@ dab_symbol_t DabVM::get_or_create_symbol_index(const std::string &string)
     }
     DabSymbol symbol;
     symbol.value       = string;
-    symbol.source_ring = 0;
+    symbol.source_ring = last_ring_offset;
     symbols.push_back(symbol);
     return (dab_symbol_t)(symbols.size() - 1);
 }

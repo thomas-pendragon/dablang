@@ -54,7 +54,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     assert(name.is_a(get_class(CLASS_STRING)));
     if (for_class)
     {
-        assert(klass.data.type == TYPE_CLASS || klass.data.type == TYPE_LITERALSTRING);
+        assert(klass.data.type == TYPE_CLASS || klass.is_a(get_class(CLASS_STRING)));
     }
 
     auto &method_class = method.get_class();
@@ -172,6 +172,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     function.new_method = true;
     function.length     = method_length;
     function.reflection = fun.reflection;
+    function.source_ring=last_ring_offset;
     auto fsymbol        = get_or_create_symbol_index(method_name);
     if (for_class)
     {
