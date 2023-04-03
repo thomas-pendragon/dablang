@@ -332,6 +332,14 @@ void DabVM::dump_vm(FILE *out)
         func.address += code_offset;
     }
 
+    auto new_data_index =
+        std::distance(dump_sections.begin(),
+                      std::find_if(dump_sections.begin(), dump_sections.end(),
+                                   [](const BinSection &sec)
+                                   { return sec.special_index == TEMP_NEW_DATA_SECTION; }));
+
+    uint64_t old_code_offset = 0;
+
     for (auto &section : dump_sections)
     {
         auto pos    = section.pos;
@@ -349,6 +357,7 @@ void DabVM::dump_vm(FILE *out)
             {
                 fprintf(stderr, "vm/binsave: inject %d bytes of new code\n",
                         (int)new_instructions.length);
+                old_code_offset = pos + length;
                 _ttwrite(dump_data, new_instructions.data, new_instructions.length);
                 length += new_instructions.length;
                 section.length += new_instructions.length;
@@ -390,6 +399,19 @@ void DabVM::dump_vm(FILE *out)
     }
 
     dump_header.size_of_data = dump_data.size();
+
+    for (auto pos : new_data_offsets)
+    {
+        auto      internal_offset = old_code_offset;
+        auto      offset          = dump_sections[new_data_index].pos;
+        auto      address         = internal_offset + pos;
+        uint64_t *data            = (uint64_t *)&dump_data[address];
+        fprintf(
+            stderr,
+            "vm/binsave: fixup new data offset, pos = %d, address = %d, value = %d (+ %d = %d)\n",
+            (int)pos, (int)address, (int)*data, (int)offset, (int)*data + (int)offset);
+        *data += offset;
+    }
 
     fwrite(&dump_header, sizeof(BinHeader), 1, out);
     for (auto &section : dump_sections)
