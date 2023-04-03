@@ -399,31 +399,32 @@ void DabVM::dump_vm(FILE *out)
     }
 
     dump_header.size_of_data = dump_data.size();
-    
+
     int header_offset = -(int)dump_header.offset;
     header_offset -= sizeof(BinHeader);
     header_offset -= sizeof(BinSection) * dump_header.section_count;
 
     for (auto pos : new_data_offsets)
     {
-        auto      internal_offset = old_code_offset;
-        auto      offset          = dump_sections[new_data_index].pos;
-        auto      address         = internal_offset + pos;
-        
+        auto internal_offset = old_code_offset;
+        auto offset          = dump_sections[new_data_index].pos;
+        auto address         = internal_offset + pos;
+
         address += header_offset;
-        
-        auto test1            = (uint8_t *)&dump_data[address-3];
-        auto test2            = (uint16_t *)&dump_data[address-2];
-        
-        uint64_t *data            = (uint64_t *)&dump_data[address];
-        fprintf(
-            stderr,
-            "vm/binsave: fixup new data offset, pos = %d, address = [%d=>] %d, value = %d (+ %d = %d)\n",
-            (int)pos, (int)(address + header_offset), (int)address, (int)*data, (int)offset, (int)*data + (int)offset);
+
+        auto test1 = (uint8_t *)&dump_data[address - 3];
+        auto test2 = (uint16_t *)&dump_data[address - 2];
+
+        uint64_t *data = (uint64_t *)&dump_data[address];
+        fprintf(stderr,
+                "vm/binsave: fixup new data offset, pos = %d, address = [%d=>] %d, value = %d (+ "
+                "%d = %d)\n",
+                (int)pos, (int)(address + header_offset), (int)address, (int)*data, (int)offset,
+                (int)*data + (int)offset);
         fprintf(stderr, "test1 = OP_LOAD_STRING %d (should be %d)\n", (int)*test1, (int)0x11);
         fprintf(stderr, "test2 = R%d\n", (int)*test2);
         fprintf(stderr, "all len = %d\n", (int)dump_data.size());
-        
+
         *data += offset;
     }
 

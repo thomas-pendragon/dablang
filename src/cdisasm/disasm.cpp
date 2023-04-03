@@ -80,7 +80,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
     bool        use_string = false;
     uint64_t    string_pos = 0;
 
-    fprintf(stderr, "data stream (%d)\n", (int)start);
+    // fprintf(stderr, "data stream (%d)\n", (int)start);
 
     while (true)
     {
@@ -90,7 +90,7 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
             unsigned char byte  = stream.read_uint8();
             bool          ascii = byte >= 32 && byte <= 127;
 
-            fprintf(stderr, "data stream (%d): %d (%c)\n", (int)pos, (int)byte, (char)byte);
+            // fprintf(stderr, "data stream (%d): %d (%c)\n", (int)pos, (int)byte, (char)byte);
 
             if (ascii)
             {
