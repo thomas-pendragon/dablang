@@ -112,6 +112,7 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
             auto new_data_pos = new_data.length;
             new_data.append((const byte *)str.c_str(), str.length() + 1);
             binary_output.write_uint8(OP_LOAD_STRING);
+            binary_output.write_uint16(reg);
             new_data_offsets.push_back(new_instructions.length + binary_output.length());
             binary_output.write_uint64(new_data_pos);
             binary_output.write_uint64(str.length());
