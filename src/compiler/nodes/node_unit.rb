@@ -176,6 +176,9 @@ class DabNodeUnit < DabNode
     output.print('W_SECTION', '_SYMB', '"symb"')
 
     output.print('W_SECTION', '_FUNC', '"fext"')
+
+    output.print('W_SECTION', '_NDAT', '"ndat"')
+
     output.print('W_END_HEADER')
     output.separate
 
@@ -252,6 +255,10 @@ class DabNodeUnit < DabNode
         function.compile_definition(output)
       end
     end
+    output.separate
+
+    output.label('_NDAT')
+    output.print('W_BYTE 0')
     output.separate
   end
 

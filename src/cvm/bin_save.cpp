@@ -99,7 +99,8 @@ void DabVM::dump_vm(FILE *out)
                                        {
                                            std::string name = section.name;
                                            return name == "symb" || name == "symd" ||
-                                                  name == "fext" || name == "clas";
+                                                  name == "fext" || name == "clas" ||
+                                                  name == "ndat";
                                        }),
                         dump_sections.end());
 
@@ -300,19 +301,21 @@ void DabVM::dump_vm(FILE *out)
     {
         dump_sections.push_back(class_section);
     }
-    bool use_new_data = new_data.length > 0;
-    if (use_new_data)
-    {
-        BinSection new_data_section_bin = {};
-        memcpy(new_data_section_bin.name, "data", 4);
-        new_data_section_bin.special_index = TEMP_NEW_DATA_SECTION;
-        new_data_section_bin.length        = new_data.length;
-        dump_sections.push_back(new_data_section_bin);
-    }
+    bool use_new_data = true; // new_data.length > 0;
+    byte zero         = 0;
+    new_data.append(&zero, 1);
     dump_sections.push_back(symd_section);
     auto symd_section_index = dump_sections.size() - 1;
     dump_sections.push_back(symb_section);
     dump_sections.push_back(func_section);
+    if (use_new_data)
+    {
+        BinSection new_data_section_bin = {};
+        memcpy(new_data_section_bin.name, "ndat", 4);
+        new_data_section_bin.special_index = TEMP_NEW_DATA_SECTION;
+        new_data_section_bin.length        = new_data.length;
+        dump_sections.push_back(new_data_section_bin);
+    }
 
     memcpy(dump_header.dab, "DAB\0", 4);
     dump_header.version        = 3;

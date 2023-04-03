@@ -340,7 +340,7 @@ task :dev do
   psystem('git multipush origin master --force')
 end
 
-task :example, [:number] => [cvm] do |_t, args|
+task :example, [:number] => [cvm, cdisasm] do |_t, args|
   number = args[:number]
   input = Dir.glob(sprintf('examples/%04d*', number)).select { File.file?(_1) }.first
   if input

@@ -98,6 +98,8 @@ class DabBinReader
     ret = []
 
     while pos < length
+      warn "read_ext_fun(#{pos} :: #{length})"
+
       data = fext.unpack("@#{pos}S<S<Q<S<Q<")
       fun = %i[symbol klass address arg_count length].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
@@ -126,7 +128,7 @@ class DabBinReader
 
       a = section[:address]
       b = a + section[:length]
-      return binary[a..b]
+      return binary[a...b]
     end
     nil
   end
@@ -141,6 +143,8 @@ class DabBinReader
 
   def parse_dab_binary(binary, start_symbols = [])
     header = parse_whole_header_with_offset(binary)
+
+    warn header.ai
 
     symb = get_section(binary, header, 'symb')
     fext = get_section(binary, header, 'fext')

@@ -80,6 +80,8 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
     bool        use_string = false;
     uint64_t    string_pos = 0;
 
+    fprintf(stderr, "data stream (%d)\n", (int)start);
+
     while (true)
     {
         try
@@ -87,6 +89,8 @@ void parse_data_substream(Stream &input_stream, uint64_t start, bool no_numbers)
             auto          pos   = stream.position();
             unsigned char byte  = stream.read_uint8();
             bool          ascii = byte >= 32 && byte <= 127;
+
+            fprintf(stderr, "data stream (%d): %d (%c)\n", (int)pos, (int)byte, (char)byte);
 
             if (ascii)
             {
@@ -429,7 +433,8 @@ int main(int argc, char **argv)
             {
                 parse_substream(substream, start_pos, no_numbers);
             }
-            else if (with_headers && (section_name == "data" || section_name == "symd"))
+            else if (with_headers &&
+                     (section_name == "data" || section_name == "symd" || section_name == "ndat"))
             {
                 parse_data_substream(substream, start_pos, no_numbers);
             }
