@@ -167,13 +167,13 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     new_instructions.append(data, method_length);
 
     DabFunction function;
-    function.address    = new_address;
-    function.name       = method_name;
-    function.new_method = true;
-    function.length     = method_length;
-    function.reflection = fun.reflection;
-    function.source_ring=last_ring_offset;
-    auto fsymbol        = get_or_create_symbol_index(method_name);
+    function.address     = new_address;
+    function.name        = method_name;
+    function.new_method  = true;
+    function.length      = method_length;
+    function.reflection  = fun.reflection;
+    function.source_ring = last_ring_offset;
+    auto fsymbol         = get_or_create_symbol_index(method_name);
     if (for_class)
     {
         auto strclass = get_class(CLASS_STRING);

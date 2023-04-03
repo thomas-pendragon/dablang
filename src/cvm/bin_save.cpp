@@ -77,6 +77,37 @@ void DabVM::dump_vm(FILE *out)
     std::vector<BinSection> dump_sections = sections;
     std::vector<byte>       dump_data;
 
+    int aa = 0;
+    for (auto ss : sections)
+    {
+        fprintf(stderr, "%d %s pos %d len %d\n", (int)aa, (const char *)ss.name, (int)ss.pos,
+                (int)ss.length);
+        aa++;
+    }
+
+    /*
+      0 data pos 232 len 189
+      1 code pos 421 len 3843
+      2 clas pos 4264 len 36
+      3 symd pos 4300 len 906
+      4 symb pos 5206 len 952
+      5 fext pos 6158 len 1780
+      6 data pos 8170 len 258
+      7 code pos 8428 len 662
+      8 clas pos 9090 len 54
+      9 symd pos 9144 len 93
+     10 symb pos 9237 len 80
+     11 fext pos 9317 len 164
+     */
+
+    /*
+
+     >>  0 data pos 232 len 189
+     >>  1 code pos 421 len 3843
+     >>  2 data pos 8170 len 258
+     >>  3 code pos 8428 len 662 -> 9090
+     */
+
     dump_sections.erase(std::remove_if(dump_sections.begin(), dump_sections.end(),
                                        [](BinSection section)
                                        {
@@ -86,6 +117,16 @@ void DabVM::dump_vm(FILE *out)
                                        }),
                         dump_sections.end());
 
+    {
+
+        int aa = 0;
+        for (auto ss : dump_sections)
+        {
+            fprintf(stderr, ">> %2d %s pos %d len %d\n", (int)aa, (const char *)ss.name,
+                    (int)ss.pos, (int)ss.length);
+            aa++;
+        }
+    }
     auto last_code_index = -1;
     auto last_data_index = -1;
 
@@ -103,6 +144,9 @@ void DabVM::dump_vm(FILE *out)
 
     fprintf(stderr, "vm/binsave: last code = %d last data = %d\n", last_code_index,
             last_data_index);
+
+    auto base_code_offset =
+        dump_sections[last_code_index].pos + dump_sections[last_code_index].length;
 
     for (int i = 0, section_index = 0; i < (int)dump_sections.size(); i++, section_index++)
     {
@@ -125,7 +169,7 @@ void DabVM::dump_vm(FILE *out)
     (void)last_code_index;
     (void)last_data_index;
 
-    auto &code_section = sections[last_code_index];
+    auto &code_section = dump_sections[last_code_index];
 
     BinSection class_section = {};
     memcpy(class_section.name, "clas", 4);
@@ -157,10 +201,11 @@ void DabVM::dump_vm(FILE *out)
         {
             const auto &fun = it.second;
 
-            fprintf(stderr, "vm/binsave: consider function '%s'\n", get_symbol(it.first).c_str());
-
             if (!fun.dlimport && !fun.regular)
                 continue;
+
+            fprintf(stderr, "vm/binsave: consider %sfunction '%s'\n",
+                    it.second.new_method ? "new " : "", get_symbol(it.first).c_str());
 
             if (fun.source_ring < this->last_ring_offset)
             {
@@ -176,8 +221,25 @@ void DabVM::dump_vm(FILE *out)
 
             if (options.verbose)
             {
-                fprintf(stderr, "vm/binsave: will save function '%s' (ring source: %" PRId64 ")\n",
-                        get_symbol(it.first).c_str(), fun.source_ring);
+                fprintf(stderr,
+                        "vm/binsave: will save function '%s' (ring source: %" PRId64 ") at %d\n",
+                        get_symbol(it.first).c_str(), fun.source_ring, (int)fun.address);
+            }
+
+            static bool x = true;
+            if (x)
+            {
+                // x=  false;
+                fprintf(stderr, "VM code_section.pos    = %d\n", (int)code_section.pos);
+                fprintf(stderr, "VM code_section.length = %d\n", (int)code_section.length);
+                fprintf(stderr, "VM code_section.P + L  = %d\n",
+                        (int)code_section.pos + (int)code_section.length);
+                fprintf(stderr, "VM last_ring_offset    = %d\n", (int)last_ring_offset);
+                fprintf(stderr, "VM new_instructions.len= %d\n", (int)new_instructions.length);
+                fprintf(stderr, "VM ??                  = %d\n",
+                        (int)new_instructions.length + (int)last_ring_offset +
+                            (int)code_section.length);
+                fprintf(stderr, "code_offset -> %d\n", (int)base_code_offset);
             }
 
             const auto &fundata    = it.second;
@@ -191,8 +253,15 @@ void DabVM::dump_vm(FILE *out)
             bin_func.arglist_count = reflection.arg_klasses.size();
             if (fun.new_method)
             {
-                bin_func.address += code_section.pos + code_section.length;
+                (void)code_section;
+                bin_func.address += 0 +
+                                    //
+                                    last_ring_offset
+                                    //;// code_section.pos
+
+                                    + code_section.length;
             }
+            fprintf(stderr, "vm/binsave: readjust address to %d\n", (int)bin_func.address);
             for (size_t i = 0; i < bin_func.arglist_count; i++)
             {
                 BinFunctionArg arg;
@@ -280,6 +349,7 @@ void DabVM::dump_vm(FILE *out)
     auto new_pos = dump_header.size_of_header;
 
     auto code_offset = new_pos - instructions.peek_header()->header.size_of_header;
+    fprintf(stderr, "new code offset: %d\n", (int)code_offset);
     for (auto &func : dump_functions)
     {
         func.address += code_offset;
