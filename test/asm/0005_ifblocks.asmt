@@ -41,6 +41,7 @@ func foo(a, b)
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _DATA:
@@ -107,3 +108,6 @@ func foo(a, b)
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* b<Object>    */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

@@ -78,7 +78,7 @@ class OutputStream
 
   def _push_symbol(arg)
     val = if arg == 'S_NOTEQ'
-            11 # hack
+            12 # hack
           elsif arg == 'S_EQ'
             6 # hack
           else

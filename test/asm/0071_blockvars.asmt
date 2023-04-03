@@ -27,6 +27,7 @@ func main()
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _CODE:
@@ -123,3 +124,6 @@ func main()
 /* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 1, __C__block_main0_Fcall_END - C__block_main0_Fcall
 /* bar<Object>  */               W_METHOD_ARG 5, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

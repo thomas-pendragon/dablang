@@ -27,6 +27,7 @@ func main()
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _CODE:
@@ -81,3 +82,6 @@ func main()
 /* value=       */               W_METHOD 5, 256, CMyObject_Fvalue%EQ, 1, __CMyObject_Fvalue%EQ_END - CMyObject_Fvalue%EQ
 /* new_value<Ob */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

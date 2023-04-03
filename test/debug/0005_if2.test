@@ -27,19 +27,19 @@ quit
 
 ## EXPECT STDOUT
 
-IP = 176
-       168: NOP 
-       169: STACK_RESERVE 0
-       172: RETURN RNIL
-       175: NOP 
->      176: STACK_RESERVE 0
-       179: LOAD_TRUE R0
-       182: JMP_IF R0, 7, 28
-       189: LOAD_NUMBER R1, 1
-       200: SYSCALL RNIL, 0, R1
-       207: JMP 24
-       210: LOAD_NUMBER R2, 2
-       221: SYSCALL RNIL, 0, R2
-       228: JMP 3
-       231: RETURN RNIL
-       234: NOP
+IP = 208
+       200: NOP 
+       201: STACK_RESERVE 0
+       204: RETURN RNIL
+       207: NOP 
+>      208: STACK_RESERVE 0
+       211: LOAD_TRUE R0
+       214: JMP_IF R0, 7, 28
+       221: LOAD_NUMBER R1, 1
+       232: SYSCALL RNIL, 0, R1
+       239: JMP 24
+       242: LOAD_NUMBER R2, 2
+       253: SYSCALL RNIL, 0, R2
+       260: JMP 3
+       263: RETURN RNIL
+       266: NOP

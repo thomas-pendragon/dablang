@@ -28,6 +28,7 @@ func tap()
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _DATA:
@@ -103,3 +104,6 @@ func tap()
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* call         */               W_METHOD 3, 257, C__block_tap1_Fcall, 0, __C__block_tap1_Fcall_END - C__block_tap1_Fcall
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

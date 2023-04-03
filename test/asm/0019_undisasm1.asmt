@@ -19,6 +19,7 @@ func fun0()
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _CODE:
@@ -50,3 +51,6 @@ func fun0()
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* fun0         */               W_METHOD 1, -1, Ffun0, 0, __Ffun0_END - Ffun0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

@@ -19,6 +19,7 @@ func foo(a, b<Uint8>)
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _CODE:
@@ -59,3 +60,6 @@ func foo(a, b<Uint8>)
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* b<Uint8>     */               W_METHOD_ARG 2, 6
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0

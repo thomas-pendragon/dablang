@@ -28,6 +28,7 @@ class Array
                                  W_SECTION _SDAT, "symd"
                                  W_SECTION _SYMB, "symb"
                                  W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
                                  W_END_HEADER 
  
                    _CODE:
@@ -84,3 +85,6 @@ class Array
 /* $ret<Object> */               W_METHOD_ARG -1, 0
 /* each_with_in */               W_METHOD 6, 5, CArray_Feach_with_index, 0, __CArray_Feach_with_index_END - CArray_Feach_with_index
 /* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0
