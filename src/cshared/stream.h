@@ -65,6 +65,7 @@ struct BinFunctionExBase
     uint64_t     address;
     uint16_t     arglist_count;
     uint64_t     length;
+    uint8_t      flags;
 };
 #pragma pack(pop)
 
@@ -195,6 +196,7 @@ struct Stream
     const char *string_ptr(uint64_t address);
 
     std::string cstring_data(uint64_t address);
+    uint8_t     uint8_data(uint64_t address);
     uint16_t    uint16_data(uint64_t address);
     uint64_t    uint64_data(uint64_t address);
 

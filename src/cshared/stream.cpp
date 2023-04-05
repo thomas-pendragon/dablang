@@ -34,6 +34,13 @@ uint64_t Stream::uint64_data(uint64_t address)
     return ret;
 }
 
+uint8_t Stream::uint8_data(uint64_t address)
+{
+    auto ptr = buffer.data + address;
+    auto ret = *(uint8_t *)ptr;
+    return ret;
+}
+
 uint16_t Stream::uint16_data(uint64_t address)
 {
     auto ptr = buffer.data + address;

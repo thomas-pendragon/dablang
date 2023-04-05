@@ -359,6 +359,7 @@ class Parser
           @output_stream._push_uint64(_process_address(line[3]))
           @output_stream._push_uint16(line[4])
           @output_stream._push_uint64(_process_address(line[5]))
+          @output_stream._push_uint8(line[6])
         when 'W_METHOD_ARG'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])

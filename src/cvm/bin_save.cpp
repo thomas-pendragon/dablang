@@ -222,6 +222,7 @@ void DabVM::dump_vm(FILE *out)
             bin_func.address       = fundata.address;
             bin_func.length        = fundata.length;
             bin_func.arglist_count = reflection.arg_klasses.size();
+            bin_func.flags         = fundata.flags;
             if (fun.new_method)
             {
                 (void)code_section;

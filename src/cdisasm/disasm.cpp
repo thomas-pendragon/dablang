@@ -262,6 +262,7 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
             auto address     = stream.read_uint64();
             auto arg_count   = stream.read_uint16();
             auto length      = stream.read_uint64();
+            auto flags       = stream.read_uint8();
 
             const char *extrasep = "    ";
 
@@ -275,8 +276,9 @@ void parse_func_ex_substream(Stream &input_stream, uint64_t start, bool no_numbe
                 fprintf(output, "    ");
             }
             fprintf(output,
-                    "W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 ", %" PRId16 ", %" PRIu64 "\n",
-                    symbol, class_index, address, arg_count, length);
+                    "W_METHOD %" PRIu16 ", %" PRId16 ", %" PRIu64 ", %" PRId16 ", %" PRIu64
+                    ", %" PRIu8 "\n",
+                    symbol, class_index, address, arg_count, length, flags);
 
             for (int i = 0; i < arg_count + 1; i++)
             {

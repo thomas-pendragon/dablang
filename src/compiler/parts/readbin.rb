@@ -100,11 +100,11 @@ class DabBinReader
     while pos < length
       warn "read_ext_fun(#{pos} :: #{length})"
 
-      data = fext.unpack("@#{pos}S<S<Q<S<Q<")
-      fun = %i[symbol klass address arg_count length].zip(data).to_h
+      data = fext.unpack("@#{pos}S<S<Q<S<Q<C")
+      fun = %i[symbol klass address arg_count length flags].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
       fun[:symbol] = symbols[fun[:symbol]]
-      pos += 2 + 2 + 8 + 2 + 8
+      pos += 2 + 2 + 8 + 2 + 8 + 1
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
         pos += 4

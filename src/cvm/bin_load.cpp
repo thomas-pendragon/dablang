@@ -150,8 +150,8 @@ struct MethodArgData
 void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t func_length,
                               uint64_t offset)
 {
-    auto fun_len = 2 + 2 + 8 + 2 + 8; // uint16 + uint16 + uint64 + uint16 + uint64
-    auto arg_len = 2 + 2;             // uint16 + uint16
+    auto fun_len = 2 + 2 + 8 + 2 + 8 + 1; // uint16 + uint16 + uint64 + uint16 + uint64 + uint8
+    auto arg_len = 2 + 2;                 // uint16 + uint16
 
     auto ptr     = func_address;
     auto end_ptr = func_address + func_length;
@@ -165,6 +165,7 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
         auto address_address       = class_index_address + 2;
         auto arg_count_address     = address_address + 8;
         auto method_length_address = arg_count_address + 2;
+        auto method_flags_address  = method_length_address + 8;
 
         ptr += fun_len;
 
@@ -173,6 +174,7 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
         auto address       = input.uint64_data(address_address);
         auto arg_count     = input.uint16_data(arg_count_address);
         auto method_length = input.uint64_data(method_length_address);
+        auto flags         = input.uint8_data(method_flags_address);
 
         auto symbol_str = get_symbol(symbol);
 
@@ -188,6 +190,8 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         auto &function       = add_function(address, symbol_str, class_index);
         function.source_ring = offset;
+
+        function.flags = flags;
 
         if (options.verbose)
         {
