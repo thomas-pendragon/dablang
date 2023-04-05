@@ -117,9 +117,9 @@ _SYMB:
     W_SYMBOL 435
 
 _FEXT:
-    W_METHOD 0, -1, 237, 0, 6
+    W_METHOD 0, -1, 237, 0, 6, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 1, -1, 244, 0, 32
+    W_METHOD 1, -1, 244, 0, 32, 0
     W_METHOD_ARG -1, 0
 
 _NDAT:

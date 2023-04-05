@@ -36,9 +36,9 @@ _CODE:
                                  RETURN RNIL
 
 _FUNC:
-  W_METHOD 0, -1, Ffun1, 0, 0
+  W_METHOD 0, -1, Ffun1, 0, 0, 0
   W_METHOD_ARG 0, 0
-  W_METHOD 1, -1, Fmain, 0, 0
+  W_METHOD 1, -1, Fmain, 0, 0, 0
   W_METHOD_ARG 0, 0
 
 ## INPUT

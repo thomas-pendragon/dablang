@@ -34,9 +34,9 @@ Ffoo:
   RETURN R5
 
 FUNC:
-  W_METHOD 2, -1, Ffoo, 0, 0
+  W_METHOD 2, -1, Ffoo, 0, 0, 0
   W_METHOD_ARG 0, 0
-  W_METHOD 3, -1, Fmain, 0, 0
+  W_METHOD 3, -1, Fmain, 0, 0, 0
   W_METHOD_ARG 0, 0
 
 ## OPTIONS

@@ -147,13 +147,13 @@ _SYMB:
     W_SYMBOL 590
 
 _FEXT:
-    W_METHOD 1, -1, 269, 0, 6
+    W_METHOD 1, -1, 269, 0, 6, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 3, -1, 276, 0, 52
+    W_METHOD 3, -1, 276, 0, 52, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 40, -1, 362, 0, 29
+    W_METHOD 40, -1, 362, 0, 29, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 2, 256, 329, 0, 32
+    W_METHOD 2, 256, 329, 0, 32, 0
     W_METHOD_ARG -1, 0
 
 _NDAT:

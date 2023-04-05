@@ -23,7 +23,7 @@ _SYMB:
     W_SYMBOL 185
 
 _FUNC:
-    W_METHOD 1, -1, 947, 0, 0
+    W_METHOD 1, -1, 947, 0, 0, 0
     W_METHOD_ARG 0, 0
 
 ## OPTIONS
@@ -56,5 +56,5 @@ _SYMB:
 /*      978: */ W_SYMBOL 185
 
 _FEXT:
-/*      986: */ W_METHOD 1, -1, 947, 0, 0
+/*      986: */ W_METHOD 1, -1, 947, 0, 0, 0
                 W_METHOD_ARG 0, 0
