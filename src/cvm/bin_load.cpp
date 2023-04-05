@@ -188,7 +188,9 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         ptr += arg_len * (arg_count + 1);
 
-        auto &function       = add_function(address, symbol_str, class_index);
+        bool is_static = flags == 1; // TODO!
+
+        auto &function       = add_function(address, symbol_str, class_index, is_static);
         function.source_ring = offset;
 
         function.flags = flags;

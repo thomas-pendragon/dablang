@@ -605,7 +605,8 @@ struct DabVM
 
     void kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist);
 
-    DabFunction &add_function(uint64_t address, const std::string &name, uint16_t class_index);
+    DabFunction &add_function(uint64_t address, const std::string &name, uint16_t class_index,
+                              bool is_static);
 
     void read_classes(Stream &input, uint64_t classes_address, uint64_t classes_length);
 

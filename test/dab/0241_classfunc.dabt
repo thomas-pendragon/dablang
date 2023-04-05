@@ -1,0 +1,20 @@
+## CODE
+
+class Foo {
+  static func run() {   
+    print("ok");
+  }
+}
+
+func main()
+{
+  Foo.run;
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+ok
