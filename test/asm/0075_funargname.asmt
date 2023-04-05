@@ -63,14 +63,14 @@ func main()
 /* socket       */               W_SYMBOL _SDAT + 25 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 1, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 1, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* setsockopt   */               W_METHOD 2, -1, Fsetsockopt, 1, __Fsetsockopt_END - Fsetsockopt
+/* setsockopt   */               W_METHOD 2, -1, Fsetsockopt, 1, __Fsetsockopt_END - Fsetsockopt, 0
 /* socket<Objec */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* socket       */               W_METHOD 3, -1, Fsocket, 0, __Fsocket_END - Fsocket
+/* socket       */               W_METHOD 3, -1, Fsocket, 0, __Fsocket_END - Fsocket, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

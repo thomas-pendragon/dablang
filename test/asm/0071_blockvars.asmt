@@ -111,17 +111,17 @@ func main()
 /* test         */               W_SYMBOL _SDAT + 60 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* qux          */               W_METHOD 10, -1, Fqux, 2, __Fqux_END - Fqux
+/* qux          */               W_METHOD 10, -1, Fqux, 2, __Fqux_END - Fqux, 0
 /* a<Object>    */               W_METHOD_ARG 3, 0
 /* b<Object>    */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* test         */               W_METHOD 11, -1, Ftest, 0, __Ftest_END - Ftest
+/* test         */               W_METHOD 11, -1, Ftest, 0, __Ftest_END - Ftest, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 1, __C__block_main0_Fcall_END - C__block_main0_Fcall
+/* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 1, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
 /* bar<Object>  */               W_METHOD_ARG 5, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

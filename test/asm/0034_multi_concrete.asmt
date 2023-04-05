@@ -79,13 +79,13 @@ func foo()
 /* foo          */               W_SYMBOL _SDAT + 30 
  
                    _FUNC:
-/* __spec_Fixnu */               W_METHOD 0, -1, F__spec_Fixnum, 1, __F__spec_Fixnum_END - F__spec_Fixnum
+/* __spec_Fixnu */               W_METHOD 0, -1, F__spec_Fixnum, 1, __F__spec_Fixnum_END - F__spec_Fixnum, 0
 /* a<Fixnum>    */               W_METHOD_ARG 2, 2
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* __spec_Strin */               W_METHOD 1, -1, F__spec_String, 1, __F__spec_String_END - F__spec_String
+/* __spec_Strin */               W_METHOD 1, -1, F__spec_String, 1, __F__spec_String_END - F__spec_String, 0
 /* a<String>    */               W_METHOD_ARG 2, 1
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 3, -1, Ffoo, 0, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 3, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

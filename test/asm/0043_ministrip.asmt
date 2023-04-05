@@ -74,13 +74,13 @@ func bar()
 /* bar          */               W_SYMBOL _SDAT + 28 
  
                    _FUNC:
-/* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum, 1, __F__foo_Fixnum_END - F__foo_Fixnum
+/* __foo_Fixnum */               W_METHOD 0, -1, F__foo_Fixnum, 1, __F__foo_Fixnum_END - F__foo_Fixnum, 0
 /* a<Fixnum>    */               W_METHOD_ARG 2, 2
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* __foo_String */               W_METHOD 1, -1, F__foo_String, 1, __F__foo_String_END - F__foo_String
+/* __foo_String */               W_METHOD 1, -1, F__foo_String, 1, __F__foo_String_END - F__foo_String, 0
 /* a<String>    */               W_METHOD_ARG 2, 1
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* bar          */               W_METHOD 3, -1, Fbar, 0, __Fbar_END - Fbar
+/* bar          */               W_METHOD 3, -1, Fbar, 0, __Fbar_END - Fbar, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

@@ -58,9 +58,9 @@ func foo()
 /* foo          */               W_SYMBOL _SDAT + 15 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 3, 256, CFoo_Ffoo, 0, __CFoo_Ffoo_END - CFoo_Ffoo
+/* foo          */               W_METHOD 3, 256, CFoo_Ffoo, 0, __CFoo_Ffoo_END - CFoo_Ffoo, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

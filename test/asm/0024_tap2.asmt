@@ -92,13 +92,13 @@ func tap2()
 /* tap2         */               W_SYMBOL _SDAT + 42 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap          */               W_METHOD 7, -1, Ftap, 0, __Ftap_END - Ftap
+/* tap          */               W_METHOD 7, -1, Ftap, 0, __Ftap_END - Ftap, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap2         */               W_METHOD 8, -1, Ftap2, 0, __Ftap2_END - Ftap2
+/* tap2         */               W_METHOD 8, -1, Ftap2, 0, __Ftap2_END - Ftap2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 5, 256, C__block_tap20_Fcall, 2, __C__block_tap20_Fcall_END - C__block_tap20_Fcall
+/* call         */               W_METHOD 5, 256, C__block_tap20_Fcall, 2, __C__block_tap20_Fcall_END - C__block_tap20_Fcall, 0
 /* a<Object>    */               W_METHOD_ARG 3, 0
 /* b<Object>    */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0

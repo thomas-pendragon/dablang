@@ -55,9 +55,9 @@ func assert_equal(value)
 /* value        */               W_SYMBOL _SDAT + 25 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* assert_equal */               W_METHOD 2, -1, Fassert_equal, 1, __Fassert_equal_END - Fassert_equal
+/* assert_equal */               W_METHOD 2, -1, Fassert_equal, 1, __Fassert_equal_END - Fassert_equal, 0
 /* value<Object */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

@@ -52,9 +52,9 @@ class Foo
 /* __init_0     */               W_SYMBOL _SDAT + 6 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* !            */               W_METHOD 0, 256, CFoo_F%BANG, 0, __CFoo_F%BANG_END - CFoo_F%BANG
+/* !            */               W_METHOD 0, 256, CFoo_F%BANG, 0, __CFoo_F%BANG_END - CFoo_F%BANG, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

@@ -57,9 +57,9 @@ func main(a)
 /* main         */               W_SYMBOL _SDAT + 18 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 4, -1, Fmain, 1, __Fmain_END - Fmain
+/* main         */               W_METHOD 4, -1, Fmain, 1, __Fmain_END - Fmain, 0
 /* a<Object>    */               W_METHOD_ARG 2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

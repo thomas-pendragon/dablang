@@ -62,10 +62,10 @@ func main()
 /* main         */               W_SYMBOL _SDAT + 15 
  
                    _FUNC:
-/* __foo_String */               W_METHOD 0, -1, F__foo_String, 1, __F__foo_String_END - F__foo_String
+/* __foo_String */               W_METHOD 0, -1, F__foo_String, 1, __F__foo_String_END - F__foo_String, 0
 /* a<String>    */               W_METHOD_ARG 1, 1
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

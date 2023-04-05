@@ -51,9 +51,9 @@ func addfunc()
 /* addfunc      */               W_SYMBOL _SDAT + 11 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* addfunc      */               W_METHOD 2, -1, Faddfunc, 0, __Faddfunc_END - Faddfunc
+/* addfunc      */               W_METHOD 2, -1, Faddfunc, 0, __Faddfunc_END - Faddfunc, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

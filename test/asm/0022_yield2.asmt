@@ -62,9 +62,9 @@ func yield1()
 /* yield1       */               W_SYMBOL _SDAT + 14 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* yield1       */               W_METHOD 2, -1, Fyield1, 0, __Fyield1_END - Fyield1
+/* yield1       */               W_METHOD 2, -1, Fyield1, 0, __Fyield1_END - Fyield1, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

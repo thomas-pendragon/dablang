@@ -77,11 +77,11 @@ func main()
 /* puts         */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 3, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 3, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* puts         */               W_METHOD 4, -1, Fputs, 1, __Fputs_END - Fputs
+/* puts         */               W_METHOD 4, -1, Fputs, 1, __Fputs_END - Fputs, 0
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

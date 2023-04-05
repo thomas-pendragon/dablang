@@ -90,16 +90,16 @@ func another_attribute(method, arg1, arg2)
 /* sample_attri */               W_SYMBOL _SDAT + 48 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* another_attr */               W_METHOD 1, -1, Fanother_attribute, 3, __Fanother_attribute_END - Fanother_attribute
+/* another_attr */               W_METHOD 1, -1, Fanother_attribute, 3, __Fanother_attribute_END - Fanother_attribute, 0
 /* method<Objec */               W_METHOD_ARG 5, 0
 /* arg1<Object> */               W_METHOD_ARG 2, 0
 /* arg2<Object> */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 4, -1, Ffoo, 0, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 4, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* sample_attri */               W_METHOD 6, -1, Fsample_attribute, 1, __Fsample_attribute_END - Fsample_attribute
+/* sample_attri */               W_METHOD 6, -1, Fsample_attribute, 1, __Fsample_attribute_END - Fsample_attribute, 0
 /* method<Objec */               W_METHOD_ARG 5, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

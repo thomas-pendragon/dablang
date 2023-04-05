@@ -302,6 +302,8 @@ class DabTypeClassInstance
   end
 
   def has_class_function?(name)
+    return true if name == 'new'
+
     @root.find_class(@name).has_class_function?(name)
   end
 end

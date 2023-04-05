@@ -52,9 +52,9 @@ func foo(a)
 /* foo          */               W_SYMBOL _SDAT + 11 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 2, -1, Ffoo, 1, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 2, -1, Ffoo, 1, __Ffoo_END - Ffoo, 0
 /* a<Object>    */               W_METHOD_ARG 1, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  

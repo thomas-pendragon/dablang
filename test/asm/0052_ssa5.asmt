@@ -69,11 +69,11 @@ func main()
 /* main         */               W_SYMBOL _SDAT + 13 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 1, -1, Ffoo, 0, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 1, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 2, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:
