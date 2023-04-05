@@ -114,16 +114,16 @@ Block variable must be captured.
 /* new          */               W_SYMBOL _SDAT + 64 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 3, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 3, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* bar          */               W_METHOD 5, -1, Fbar, 1, __Fbar_END - Fbar
+/* bar          */               W_METHOD 5, -1, Fbar, 1, __Fbar_END - Fbar, 0
 /* a<Object>    */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain
+/* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall
+/* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 6, 257, C__block_main1_Fcall, 0, __C__block_main1_Fcall_END - C__block_main1_Fcall
+/* call         */               W_METHOD 6, 257, C__block_main1_Fcall, 0, __C__block_main1_Fcall_END - C__block_main1_Fcall, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

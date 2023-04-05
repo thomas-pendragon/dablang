@@ -78,12 +78,12 @@ func foo(n)
 /* zomg         */               W_SYMBOL _SDAT + 23 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 4, -1, Ffoo, 1, __Ffoo_END - Ffoo
+/* foo          */               W_METHOD 4, -1, Ffoo, 1, __Ffoo_END - Ffoo, 0
 /* n<Object>    */               W_METHOD_ARG 5, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* zomg         */               W_METHOD 6, 256, CFoo_Fzomg, 2, __CFoo_Fzomg_END - CFoo_Fzomg
+/* zomg         */               W_METHOD 6, 256, CFoo_Fzomg, 2, __CFoo_Fzomg_END - CFoo_Fzomg, 0
 /* a<Object>    */               W_METHOD_ARG 2, 0
 /* b<Uint8>     */               W_METHOD_ARG 3, 6
 /* $ret<Object> */               W_METHOD_ARG -1, 0
