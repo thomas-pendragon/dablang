@@ -221,7 +221,7 @@ class DabContext < DabBaseContext
     on_subcontext(merge_local_vars: false) do |subcontext|
       attrlist = subcontext.read_attrlist
       inline = subcontext.read_keyword('inline')
-      static = subcontext.read_keyword('static')
+      static = subcontext.read_keyword('static') if allow_static
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
 

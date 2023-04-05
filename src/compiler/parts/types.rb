@@ -294,3 +294,14 @@ class DabConcreteType < DabType
     @base.has_function?(identifier)
   end
 end
+
+class DabTypeClassInstance
+  def initialize(name, root:)
+    @name = name
+    @root = root
+  end
+
+  def has_class_function?(name)
+    @root.find_class(@name).has_class_function?(name)
+  end
+end

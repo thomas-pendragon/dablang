@@ -286,6 +286,10 @@ class DabNode
     DabTypeObject.new
   end
 
+  def my_class_type
+    nil
+  end
+
   def remove!
     parent._remove_child(self)
     all_nodes.each(&:mark_deleted!)

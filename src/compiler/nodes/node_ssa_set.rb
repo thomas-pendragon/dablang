@@ -46,4 +46,8 @@ class DabNodeSSASet < DabNode
   def formatted_source(options)
     "SR#{output_register} = " + value.formatted_source(options)
   end
+
+  def my_class_type
+    value.my_class_type
+  end
 end

@@ -77,4 +77,8 @@ class DabNodeRegisterSet < DabNode
     remove!
     true
   end
+
+  def my_class_type
+    value.my_class_type
+  end
 end

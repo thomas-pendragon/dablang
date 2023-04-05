@@ -51,4 +51,13 @@ class DabNodeSSAGet < DabNode
   def formatted_source(_options)
     "SR#{input_register}"
   end
+
+  def my_class_type
+    err 'test getter'
+    setters.each do
+      _1.dump
+      err '~' * 40
+    end
+    setters.first.my_class_type
+  end
 end

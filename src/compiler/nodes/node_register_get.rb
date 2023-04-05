@@ -70,4 +70,13 @@ class DabNodeRegisterGet < DabNode
   def no_side_effects?
     true
   end
+
+  def my_class_type
+    err 'test getter'
+    setters.each do
+      _1.dump
+      err '~' * 40
+    end
+    setters.first.my_class_type
+  end
 end

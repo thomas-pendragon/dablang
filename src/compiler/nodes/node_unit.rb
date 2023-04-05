@@ -345,4 +345,8 @@ class DabNodeUnit < DabNode
       end
     end
   end
+
+  def find_class(name)
+    @classes.to_a.detect { _1.identifier == name }
+  end
 end

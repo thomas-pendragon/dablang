@@ -143,7 +143,7 @@ class DabNodeFunction < DabNode
       mangled_identifier = mangled_identifier.gsub(key, "%#{value}")
     end
     if is_static?
-      mangled_identifier = "CL_" + mangled_identifier
+      mangled_identifier = "CL_#{mangled_identifier}"
     end
     ret = "F#{mangled_identifier}"
     if member_function?
@@ -173,13 +173,13 @@ class DabNodeFunction < DabNode
   end
 
   def flags
-     [
-      (:static if is_static?)
+    [
+      (:static if is_static?),
     ].compact
   end
 
   def numeric_flags
-    flags.map{METHOD_FLAGS[_1]}.sum 
+    flags.map { METHOD_FLAGS[_1] }.sum
   end
 
   def compile_definition(output)

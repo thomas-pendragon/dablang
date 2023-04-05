@@ -38,4 +38,8 @@ class DabNodeClass < DabNode
   def my_type
     DabTypeClass.new
   end
+
+  def my_class_type
+    DabTypeClassInstance.new(identifier, root: root)
+  end
 end

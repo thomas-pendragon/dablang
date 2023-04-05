@@ -137,8 +137,8 @@ REAL_OPCODES = ((0...REAL_OPCODES_ARRAY.size).zip REAL_OPCODES_ARRAY).to_h.freez
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
 
 METHOD_FLAGS = {
-  static: 1 << 0
-}
+  static: 1 << 0,
+}.freeze
 
 KERNELCODES = {
   0x00 => 'PRINT',
