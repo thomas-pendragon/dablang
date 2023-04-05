@@ -48,12 +48,8 @@ class DabNodeClassDefinition < DabNode
   end
 
   def has_class_function?(name)
-    return true if name == 'new'
-
     !!functions.to_a.detect do
-      test = _1.identifier.to_s == name && _1.is_static?
-      # errap ['look for',name,'here:',_1.identifier.to_s,',static?',_1.is_static?,'TEST:',test]
-      test
+      _1.identifier.to_s == name && _1.is_static?
     end
   end
 
