@@ -117,7 +117,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'W_STRING', args: %i[cstring]}, # raw data, zero byte limited
       {name: 'W_SYMBOL', args: %i[uint64]}, # define symbol at address, zero-terminated
       {name: 'W_CLASS', args: %i[uint16 uint16 symbol]}, # arg0 = class index arg1 = parent class index arg2 = name
-      {name: 'W_METHOD', args: %i[symbol uint16 uint64 uint16 uint64]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection) arg4 = length
+      {name: 'W_METHOD', args: %i[symbol uint16 uint64 uint16 uint64 uint8]}, # arg0 = symbol arg1 = class index arg2 = address, arg3 = number of args (for reflection) arg4 = length arg5 = flags
       {name: 'W_METHOD_ARG', args: %i[symbol uint16]}, # arg0 = name arg1 = type
       {name: 'W_COV_FILE', args: %i[uint64]}, # arg0 = cstr pointer
       {name: 'W_BYTE', args: %i[uint8]}, # arg0 = byte
@@ -135,6 +135,10 @@ OPCODES = ((0...OPCODES_ARRAY.size).zip OPCODES_ARRAY).to_h.freeze
 REAL_OPCODES = ((0...REAL_OPCODES_ARRAY.size).zip REAL_OPCODES_ARRAY).to_h.freeze
 
 OPCODES_REV = OPCODES.map { |k, v| [v[:name], v.merge(opcode: k)] }.to_h
+
+METHOD_FLAGS = {
+  static: 1 << 0
+}
 
 KERNELCODES = {
   0x00 => 'PRINT',

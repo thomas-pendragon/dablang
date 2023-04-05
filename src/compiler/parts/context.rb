@@ -152,7 +152,7 @@ class DabContext < DabBaseContext
       functions = []
       vars = []
       while true
-        if func = subcontext.read_function
+        if func = subcontext.read_class_function
           functions << func
         elsif ctr = subcontext.read_constructor
           functions << ctr
@@ -213,10 +213,15 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_function
+  def read_class_function
+    read_function(allow_static: true)
+  end
+
+  def read_function(allow_static: false)
     on_subcontext(merge_local_vars: false) do |subcontext|
       attrlist = subcontext.read_attrlist
       inline = subcontext.read_keyword('inline')
+      static = subcontext.read_keyword('static')
       next unless keyw = subcontext.read_keyword('func')
       next unless ident = subcontext.read_identifier_fname
 
@@ -235,8 +240,8 @@ class DabContext < DabBaseContext
       next unless op2 = subcontext.read_operator(')')
       next unless code = subcontext.read_codeblock
 
-      ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist, rettype)
-      ret.add_source_parts(inline, keyw, ident, op1, op2, lp, rettype, rp)
+      ret = DabNodeFunction.new(ident, code, arglist, inline, attrlist, rettype, is_static: !!static)
+      ret.add_source_parts(inline, keyw, ident, op1, op2, lp, rettype, rp, static)
       ret
     end
   end

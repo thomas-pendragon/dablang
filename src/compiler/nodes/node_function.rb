@@ -26,8 +26,9 @@ class DabNodeFunction < DabNode
 
   attr_accessor :concreteified
 
-  def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil)
+  def initialize(identifier, body, arglist, inline = false, attrlist = nil, rettype = nil, is_static: false)
     super()
+    @is_static = is_static
     @identifier = identifier
     insert(arglist || DabNode.new)
     insert(DabNodeBlockNode.new)
@@ -141,6 +142,9 @@ class DabNodeFunction < DabNode
     mapping.each do |key, value|
       mangled_identifier = mangled_identifier.gsub(key, "%#{value}")
     end
+    if is_static?
+      mangled_identifier = "CL_" + mangled_identifier
+    end
     ret = "F#{mangled_identifier}"
     if member_function?
       ret = "C#{parent_class.identifier}_#{ret}"
@@ -164,9 +168,23 @@ class DabNodeFunction < DabNode
     end
   end
 
+  def is_static?
+    @is_static
+  end
+
+  def flags
+     [
+      (:static if is_static?)
+    ].compact
+  end
+
+  def numeric_flags
+    flags.map{METHOD_FLAGS[_1]}.sum 
+  end
+
   def compile_definition(output)
     output.comment(identifier)
-    output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count, "#{funclabel_end} - #{funclabel}")
+    output.print('W_METHOD', node_identifier.symbol_index, parent_class_index, funclabel, arglist.count, "#{funclabel_end} - #{funclabel}", numeric_flags)
     arglist.each_with_index do |arg, index|
       klass_name = arg.my_type.type_string
       klass = root.class_number(klass_name)
@@ -218,6 +236,7 @@ class DabNodeFunction < DabNode
       ret += _indent(block.formatted_source(options))
     end
     ret += "}\n"
+    ret = "static #{ret}" if is_static?
     ret = "inline #{ret}" if inline
     if attrlist && attrlist.count > 0
       list = attrlist.map { |attr| attr.formatted_source(options) }.join(', ')

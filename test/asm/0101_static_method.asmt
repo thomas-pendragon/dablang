@@ -1,0 +1,15 @@
+## CODE
+
+class Foo {
+  static func xaa() {
+    print("ok");
+  }
+}
+
+func main()
+{
+  Foo.xaa;
+}
+
+## EXPECT
+
