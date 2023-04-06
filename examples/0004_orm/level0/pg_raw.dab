@@ -1,6 +1,6 @@
 func import_pq(method) {
   var name = method.name;
-  __warn("Import " + "PQ" + " method '" + name + "' as '" + method.to_s + "'");
+  #__warn("Import " + "PQ" + " method '" + name + "' as '" + method.to_s + "'\n");
   __dlimport("/opt/homebrew/Cellar/libpq/15.2/lib/libpq.dylib", method, name);
 }
 

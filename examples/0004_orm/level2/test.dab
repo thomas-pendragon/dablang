@@ -1,7 +1,5 @@
 func level2() {
-  
-    #@pg = Postgres.new("postgresql://dablang_ex0004@localhost/dablang_ex0004");
-    var b = Book.new;
-    puts(b.id);
-    puts(b.title);
+    DabRecord.init("postgresql://dablang_ex0004@localhost/dablang_ex0004");  
+    var b = Book.first;
+    puts("First book title is '" + b.title + "'");
 }

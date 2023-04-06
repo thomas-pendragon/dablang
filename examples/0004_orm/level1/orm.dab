@@ -1,8 +1,13 @@
-class OrmGenerator {
-
-  func init() {
-    @pg = Postgres.new("postgresql://dablang_ex0004@localhost/dablang_ex0004");
+class DabRecord {
+  static func init(query<String>) {
+    @@connection = Postgres.new("postgresql://dablang_ex0004@localhost/dablang_ex0004");
   }
+  static func connection() {
+    return @@connection;
+  }
+};
+
+class OrmGenerator {
 
   func run(name) {
     @table_name = name.downcase.pluralize;
@@ -12,7 +17,7 @@ class OrmGenerator {
 
     define_class(@klass_name);
     
-    var res = @pg.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = '" + @table_name + "' ORDER BY ordinal_position;");
+    var res = DabRecord.connection.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = '" + @table_name + "' ORDER BY ordinal_position;");
 
     var index = 0;
 
@@ -39,7 +44,7 @@ class OrmGenerator {
 };
 
 func level1() {
+  DabRecord.init("postgresql://dablang_ex0004@localhost/dablang_ex0004");
   var generator = OrmGenerator.new;
-  generator.init;
   generator.run("book");
 }

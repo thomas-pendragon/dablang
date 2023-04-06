@@ -24,7 +24,7 @@ contexts:
     # strings in YAML. When using single quoted strings, only single quotes
     # need to be escaped: this is done by using two single quotes next to each
     # other.
-    - match: '\b(if|else|for|while|func|class|return|yield|nil|var)\b'
+    - match: '\b(if|else|for|while|func|class|return|yield|nil|var|static|inline)\b'
       scope: keyword.control.dab
 
   numbers:
