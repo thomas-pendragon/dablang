@@ -88,4 +88,13 @@ class DabNodeClassVar < DabNode
   def extra_dump
     identifier
   end
+
+  def compile_as_ssa(output, output_register)
+    output.comment(identifier)
+    output.printex(self, 'GET_CLASSVAR', "R#{output_register}", "S#{node_identifier.symbol_index}")
+  end
+
+  def formatted_source(_options)
+    extra_dump
+  end
 end

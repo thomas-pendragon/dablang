@@ -54,4 +54,6 @@ const DabOpcodeInfo g_opcodes[] = {
     {OP_GET_INSTVAR_EXT,
      "GET_INSTVAR_EXT",
      {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REG}},
+    {OP_GET_CLASSVAR, "GET_CLASSVAR", {OpcodeArg::ARG_REG, OpcodeArg::ARG_SYMBOL}},
+    {OP_SET_CLASSVAR, "SET_CLASSVAR", {OpcodeArg::ARG_SYMBOL, OpcodeArg::ARG_REG}},
 };

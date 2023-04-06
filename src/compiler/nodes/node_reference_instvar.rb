@@ -14,3 +14,18 @@ class DabNodeReferenceInstVar < DabNodeReference
     @name
   end
 end
+
+class DabNodeReferenceClassVar < DabNodeReference
+  def initialize(name)
+    super()
+    @name = name
+  end
+
+  def compiled
+    DabNodeClassVar.new(@name)
+  end
+
+  def formatted_source(_options)
+    @name
+  end
+end

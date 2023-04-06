@@ -104,6 +104,8 @@ OPCODES_ARRAY_BASE = [
       {name: 'UNBOX', args: %i[reg reg]}, # reg0 <- unbox(reg1)
       {name: 'SETBOX', args: %i[reg reg reg]}, # reg0 <- update box(reg1) with value(reg2)
       {name: 'GET_INSTVAR_EXT', args: %i[reg symbol reg]}, # reg0 <- @arg2.@arg1
+      {name: 'GET_CLASSVAR', args: %i[reg symbol]}, # reg0 <- Self.@arg1
+      {name: 'SET_CLASSVAR', args: %i{symbol reg}}, # Self.@arg0 <- reg(arg1)
     ],
   },
   {

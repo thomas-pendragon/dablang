@@ -434,7 +434,10 @@ class DabContext < DabBaseContext
   end
 
   def read_simple_reference
-    read_self_reference || read_localvar_reference || read_instvar_reference
+    read_self_reference ||
+      read_localvar_reference ||
+      read_classvar_reference ||
+      read_instvar_reference
   end
 
   def read_localvar_reference
@@ -459,6 +462,14 @@ class DabContext < DabBaseContext
       next unless id = subcontext.read_classvar
 
       DabNodeReferenceInstVar.new(id)
+    end
+  end
+
+  def read_classvar_reference
+    on_subcontext do |subcontext|
+      next unless id = subcontext.read_statclassvar
+
+      DabNodeReferenceClassVar.new(id)
     end
   end
 

@@ -20,6 +20,11 @@ class LowerSetter
       setcall = DabNodeSetInstVar.new(base.identifier, value)
       node.replace_with!(setcall)
       true
+    when DabNodeReferenceClassVar
+      base = reference.compiled
+      setcall = DabNodeSetClassVar.new(base.identifier, value)
+      node.replace_with!(setcall)
+      true
     when DabNodeReferenceLocalVar
       setcall = DabNodeSetLocalVar.new(reference.name, value)
       node.replace_with!(setcall)

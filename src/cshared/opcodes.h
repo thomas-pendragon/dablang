@@ -45,4 +45,6 @@ enum
     OP_UNBOX              = 0x28,
     OP_SETBOX             = 0x29,
     OP_GET_INSTVAR_EXT    = 0x2A,
+    OP_GET_CLASSVAR       = 0x2B,
+    OP_SET_CLASSVAR       = 0x2C,
 };
