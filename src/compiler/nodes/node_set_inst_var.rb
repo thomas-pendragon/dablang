@@ -71,7 +71,7 @@ class DabNodeSetClassVar < DabNode
   end
 
   def identifier
-    "@#{node_identifier.extra_value}"
+    "@@#{node_identifier.extra_value}"
   end
 
   def compile(output)
