@@ -753,7 +753,7 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_classvar
+  def read_stat_classvar
     on_subcontext do |subcontext|
       next unless id = subcontext.read_statclassvar
 
@@ -762,7 +762,7 @@ class DabContext < DabBaseContext
   end
 
   def read_base_value
-    read_classvar ||
+    read_stat_classvar ||
       read_instvar ||
       read_self ||
       read_class ||
