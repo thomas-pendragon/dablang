@@ -742,8 +742,17 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_classvar
+    on_subcontext do |subcontext|
+      next unless id = subcontext.read_statclassvar
+
+      DabNodeClassVar.new(id)
+    end
+  end
+
   def read_base_value
-    read_instvar ||
+    read_classvar ||
+      read_instvar ||
       read_self ||
       read_class ||
       read_literal_value ||

@@ -62,16 +62,30 @@ class DabNodeInstanceVar < DabNode
     output.printex(self, 'GET_INSTVAR', "R#{output_register}", "S#{node_identifier.symbol_index}")
   end
 
-  def compile(output)
-    output.push(node_identifier)
-    output.print('PUSH_INSTVAR')
-  end
-
   def formatted_source(_options)
     extra_dump
   end
 
   def use_self_proxy!
     replace_with!(DabNodeInstanceVarProxy.new(DabNodeClosureSelf.new, node_identifier))
+  end
+end
+
+class DabNodeClassVar < DabNode
+  def initialize(identifier)
+    super()
+    insert(identifier[2..-1])
+  end
+
+  def node_identifier
+    @children[0]
+  end
+
+  def identifier
+    "@#{node_identifier.extra_value}"
+  end
+
+  def extra_dump
+    identifier
   end
 end

@@ -1,0 +1,24 @@
+## CODE
+
+class Foo {
+  static func write() {   
+    @@var = 12;
+  }
+  static func read() {
+    print(@@var);
+  }
+}
+
+func main()
+{
+  Foo.write;
+  Foo.read;
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+12

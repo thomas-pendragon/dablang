@@ -1,0 +1,37 @@
+## CODE
+
+class Foo {
+  static func write() {   
+    @@var = 12;
+  }
+  static func read() {
+    print("C " + @@var.to_s + "\n");
+  }
+  func iwrite() {
+    @@var = 14;    
+  }
+  func iread() {
+    print("I " + @@var.to_s + "\n");
+  }
+}
+
+func main()
+{
+  Foo.write;
+  Foo.read;
+  Foo.new.iread;
+  Foo.new.iwrite;
+  Foo.read;
+  Foo.new.iread;
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+C 12
+I 12
+C 14
+I 14
