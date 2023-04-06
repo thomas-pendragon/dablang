@@ -442,6 +442,10 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
 DabValue DabValue::get_classvar(dab_symbol_t symbol) const
 {
     auto &klass = get_class();
+    if (klass.instvars.count(symbol) == 0)
+    {
+        return DabValue(nullptr);
+    }
     return klass.instvars[symbol];
 }
 

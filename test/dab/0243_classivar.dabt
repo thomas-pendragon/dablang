@@ -17,6 +17,8 @@ class Foo {
 
 func main()
 {
+  Foo.read;
+  Foo.new.iread;
   Foo.write;
   Foo.read;
   Foo.new.iread;
@@ -31,6 +33,8 @@ func main()
 
 ## EXPECT OK
 
+C nil
+I nil
 C 12
 I 12
 C 14
