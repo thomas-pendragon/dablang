@@ -860,6 +860,13 @@ bool DabVM::execute_single(Stream &input)
         get_instvar(symbol, out_reg);
         break;
     }
+    case OP_GET_CLASSVAR:
+    {
+        auto out_reg = input.read_reg();
+        auto symbol  = input.read_symbol();
+        get_classvar(symbol, out_reg);
+        break;
+    }
     case OP_GET_INSTVAR_EXT:
     {
         auto out_reg  = input.read_reg();
@@ -878,6 +885,14 @@ bool DabVM::execute_single(Stream &input)
         auto reg    = input.read_reg();
         auto value  = register_get(reg);
         set_instvar(symbol, value);
+        break;
+    }
+    case OP_SET_CLASSVAR:
+    {
+        auto symbol = input.read_symbol();
+        auto reg    = input.read_reg();
+        auto value  = register_get(reg);
+        set_classvar(symbol, value);
         break;
     }
     case OP_STACK_RESERVE:
@@ -938,6 +953,17 @@ void DabVM::get_instvar(dab_symbol_t symbol, dab_register_t out_reg)
 void DabVM::set_instvar(dab_symbol_t symbol, const DabValue &value)
 {
     get_self().set_instvar(symbol, value);
+}
+
+void DabVM::get_classvar(dab_symbol_t symbol, dab_register_t out_reg)
+{
+    auto value = get_self().get_classvar(symbol);
+    register_set(out_reg, value);
+}
+
+void DabVM::set_classvar(dab_symbol_t symbol, const DabValue &value)
+{
+    get_self().set_classvar(symbol, value);
 }
 
 DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)

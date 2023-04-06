@@ -105,6 +105,8 @@ struct DabClass
     std::map<dab_symbol_t, DabFunction> static_functions;
     dab_class_t                         superclass_index = CLASS_OBJECT;
 
+    std::map<dab_symbol_t, DabValue> instvars;
+
     const DabFunction &get_instance_function(dab_symbol_t symbol) const;
 
     const DabFunction &get_static_function(dab_symbol_t symbol) const;
@@ -219,6 +221,9 @@ struct DabValue
     DabValue get_instvar(dab_symbol_t symbol) const;
 
     void set_instvar(dab_symbol_t symbol, const DabValue &value);
+
+    DabValue get_classvar(dab_symbol_t symbol) const;
+    void     set_classvar(dab_symbol_t symbol, const DabValue &value);
 
     void set_data(const DabValueData &other_data);
 
@@ -628,6 +633,9 @@ struct DabVM
 
     void get_instvar(dab_symbol_t symbol, dab_register_t out_reg);
     void set_instvar(dab_symbol_t symbol, const DabValue &value);
+
+    void get_classvar(dab_symbol_t symbol, dab_register_t out_reg);
+    void set_classvar(dab_symbol_t symbol, const DabValue &value);
 
     void extract(const std::string &name);
 

@@ -439,6 +439,12 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
     return instvars[symbol];
 }
 
+DabValue DabValue::get_classvar(dab_symbol_t symbol) const
+{
+    auto &klass = get_class();
+    return klass.instvars[symbol];
+}
+
 DabValue DabValue::get_instvar(dab_symbol_t symbol) const
 {
     auto ret = _get_instvar(symbol);
@@ -477,6 +483,12 @@ void DabValue::set_instvar(dab_symbol_t symbol, const DabValue &value)
     auto  object     = (DabObject *)this->data.object->object;
     auto &instvars   = object->instvars;
     instvars[symbol] = value;
+}
+
+void DabValue::set_classvar(dab_symbol_t symbol, const DabValue &value)
+{
+    auto &klass            = get_class();
+    klass.instvars[symbol] = value;
 }
 
 void DabValue::set_data(const DabValueData &other_data)
