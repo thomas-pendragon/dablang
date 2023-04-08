@@ -5,6 +5,9 @@ class DabRecord {
   static func connection() {
     return @@connection;
   }
+  static func first() {
+    return self.new;
+  }
 };
 
 class OrmGenerator {
@@ -15,7 +18,7 @@ class OrmGenerator {
 
     puts("Create class '" + @klass_name + "' from table '" + @table_name + "'.");
 
-    define_class(@klass_name);
+    define_class(@klass_name, "DabRecord");
     
     var res = DabRecord.connection.execute("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = '" + @table_name + "' ORDER BY ordinal_position;");
 
