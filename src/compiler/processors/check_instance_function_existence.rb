@@ -6,7 +6,7 @@ class CheckInstanceFunctionExistence
     return unless type.concrete?
 
     if klass = value.my_class_type
-      errap ['test for', identifier, 'in', klass]
+      # errap ['test for', identifier, 'in', klass]
       return if klass.has_class_function?(identifier)
     elsif type.has_function?(identifier)
       return
