@@ -109,7 +109,7 @@ class DabBinReader
       fun = %i[symbol klass address arg_count length flags].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
       fun[:symbol] = symbols[fun[:symbol]]
-      fun[:static] = !!(fun[:flags] & METHOD_FLAGS[:static])
+      fun[:static] = !!(fun[:flags] & METHOD_FLAGS[:static] == METHOD_FLAGS[:static])
       pos += 2 + 2 + 8 + 2 + 8 + 1
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
