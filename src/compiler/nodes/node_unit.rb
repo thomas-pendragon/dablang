@@ -128,11 +128,20 @@ class DabNodeUnit < DabNode
     klass
   end
 
+  def class_numbers_rev
+    @class_numbers.invert
+  end
+
   def find_or_define_class(name)
+    if name.is_a?(Fixnum)
+      errap ['class_numbers_rev', class_numbers_rev, name]
+      name = class_numbers_rev[name]
+    end
     find_class(name) || create_default_class(name) # || add_class(name)
   end
 
   def create_default_class(name)
+    # errap ['STANDARD_CLASSES_REV',STANDARD_CLASSES_REV,name]
     parent = nil # TODO
     klass = DabNodeClassDefinition.new(name, parent, [])
     add_class(klass)

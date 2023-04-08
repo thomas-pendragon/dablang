@@ -51,8 +51,24 @@ class DabNodeClassDefinition < DabNode
     output.print('W_CLASS', number, parent_number, node_identifier.symbol_index)
   end
 
+  def all_functions
+    functions.to_a + parent_functions
+  end
+
+  def parent_functions
+    if number == 0
+      []
+    elsif @parent_class
+      errap ['find parent for', identifier, '::', @parent_class]
+      root.find_class(@parent_class).all_functions
+    else
+      []
+    end
+  end
+
   def has_class_function?(name)
-    !!functions.to_a.detect do
+    # errap(all_functions.map { [identifier, '.', _1.identifier, (_1.is_static? ? ' (static)' : '')].join })
+    !!all_functions.detect do
       _1.identifier.to_s == name && _1.is_static?
     end
   end

@@ -14,7 +14,7 @@ class DabBinReader
 
     index = 0
 
-    # errap data
+    errap data
 
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
@@ -31,7 +31,9 @@ class DabBinReader
       #     :parent_index => 0,
       #           :symbol => "Postgres"
       # }
-      parent = 'Object' # TODO!
+      parent_klass = unit.find_or_define_class(klass[:parent_index])
+      # errap [klass,parent_klass,parent_klass.identifier]
+      parent = parent_klass.identifier
       node = DabNodeClassDefinition.new(klass[:symbol], parent, [])
       unit.add_class(node, forced_number: klass[:index])
     end
@@ -103,7 +105,7 @@ class DabBinReader
     ret = []
 
     while pos < length
-      warn "read_ext_fun(#{pos} :: #{length})"
+      # warn "read_ext_fun(#{pos} :: #{length})"
 
       data = fext.unpack("@#{pos}S<S<Q<S<Q<C")
       fun = %i[symbol klass address arg_count length flags].zip(data).to_h
