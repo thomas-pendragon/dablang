@@ -3,17 +3,27 @@
 
 void DabVM::kernel_define_class(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
-    assert(reglist.size() == 1);
+    assert(reglist.size() >= 1);
+    assert(reglist.size() <= 2);
 
-    auto name = register_get(reglist[0]).string();
+    auto        name         = register_get(reglist[0]).string();
+    dab_class_t parent_index = CLASS_OBJECT;
+    bool        use_parent   = reglist.size() == 2;
+
+    if (use_parent)
+    {
+        auto parent_name = register_get(reglist[1]).string();
+        parent_index     = find_class(parent_name);
+    }
 
     auto max_index = classes.rbegin()->first;
     auto index     = max_index + 1;
 
-    fprintf(stderr, "VM: define_class '%s' as %d\n", name.c_str(), (int)index);
+    fprintf(stderr, "VM: define_class '%s' as %d (parent = %d)\n", name.c_str(), (int)index,
+            (int)parent_index);
 
     get_or_create_symbol_index(name);
-    add_class(name, index, 0); // TODO: parent
+    add_class(name, index, parent_index);
 
     register_set(out_reg, nullptr);
 }

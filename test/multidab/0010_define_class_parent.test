@@ -1,0 +1,26 @@
+## LEVEL 0
+
+class Base {
+  func omg() {
+    print("this is " + self.foo);
+  }  
+}
+
+func level0()
+{
+  define_class("Foo", "Base");
+  define_method("Foo", "foo") ^ {
+    return "ok!";
+  };
+}
+
+## LEVEL 1
+
+func level1()
+{
+  Foo.new.omg;
+}
+
+## EXPECT
+
+this is ok!
