@@ -248,6 +248,7 @@ void DabVM::dump_vm(FILE *out)
     for (auto klass : classes)
     {
         fun_parser(klass.second.functions, klass.first);
+        fun_parser(klass.second.static_functions, klass.first);
     }
 
     func_section.special_index = TEMP_FUNC_SECTION;

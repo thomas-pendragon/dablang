@@ -1,0 +1,24 @@
+## LEVEL 0
+
+class Fixnum
+{
+  static func foo()
+  {
+    print("ok");
+  }
+}
+
+func level0()
+{
+}
+
+## LEVEL 1
+
+func level1()
+{
+  Fixnum.foo;
+}
+
+## EXPECT
+
+ok

@@ -14,7 +14,7 @@ class DabBinReader
 
     index = 0
 
-    # ap data
+    # errap data
 
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)
@@ -22,13 +22,6 @@ class DabBinReader
       node.source_ring_index = index + symbols.count
       index += 1
       unit.add_constant(node)
-    end
-
-    data[:functions].each do |function|
-      name = function[:symbol]
-      arglist = nil
-      node = DabNodeFunctionStub.new(name, arglist)
-      unit.add_function(node)
     end
 
     data[:klasses]&.each do |klass|
@@ -41,6 +34,18 @@ class DabBinReader
       parent = 'Object' # TODO!
       node = DabNodeClassDefinition.new(klass[:symbol], parent, [])
       unit.add_class(node, forced_number: klass[:index])
+    end
+
+    data[:functions].each do |function|
+      name = function[:symbol]
+      arglist = nil
+      node = DabNodeFunctionStub.new(name, arglist, is_static: function[:static])
+      if function[:klass].nil?
+        unit.add_function(node)
+      else
+        klass = unit.find_or_define_class(function[:klass])
+        klass.add_function(node)
+      end
     end
 
     [unit, data[:symbols]]
@@ -104,6 +109,7 @@ class DabBinReader
       fun = %i[symbol klass address arg_count length flags].zip(data).to_h
       fun[:klass] = lookup_klass(fun[:klass])
       fun[:symbol] = symbols[fun[:symbol]]
+      fun[:static] = !!(fun[:flags] & METHOD_FLAGS[:static])
       pos += 2 + 2 + 8 + 2 + 8 + 1
       fun[:args] = Array.new((fun[:arg_count] + 1)) do
         data2 = fext.unpack("@#{pos}S<S<")
@@ -144,7 +150,7 @@ class DabBinReader
   def parse_dab_binary(binary, start_symbols = [])
     header = parse_whole_header_with_offset(binary)
 
-    warn header.ai
+    # warn header.ai
 
     symb = get_section(binary, header, 'symb')
     fext = get_section(binary, header, 'fext')

@@ -41,6 +41,10 @@ class DabNodeClassDefinition < DabNode
     "#{identifier} [n= #{@number}]"
   end
 
+  def add_function(fn)
+    functions.insert(fn)
+  end
+
   def compile_definition(output)
     parent_number = @parent_class ? root.class_number(@parent_class) : 0
     output.comment(identifier)

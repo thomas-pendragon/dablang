@@ -109,6 +109,7 @@ class DabNodeUnit < DabNode
   end
 
   def add_function(function)
+    # errap ['add function', function.identifier.to_s]
     @functions.insert(function)
     @available_functions[function.identifier] = function
   end
@@ -118,12 +119,24 @@ class DabNodeUnit < DabNode
       @class_numbers[klass.identifier] = forced_number
     end
     number = @class_numbers[klass.identifier]
-    number ||= [USER_CLASSES_OFFSET, (@class_numbers.values.max || 0) + 1].max # USER_CLASSES_OFFSET + @classes.count
+    number ||= [USER_CLASSES_OFFSET, (@class_numbers.values.max || 0) + 1].max
 
     klass.assign_number(number)
     @classes.insert(klass)
     @class_numbers[klass.identifier] = number
     mark_whole_cache_dirty!
+    klass
+  end
+
+  def find_or_define_class(name)
+    find_class(name) || create_default_class(name) # || add_class(name)
+  end
+
+  def create_default_class(name)
+    parent = nil # TODO
+    klass = DabNodeClassDefinition.new(name, parent, [])
+    add_class(klass)
+    klass
   end
 
   def class_index(name)

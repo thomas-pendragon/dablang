@@ -3,13 +3,18 @@ require_relative 'node'
 class DabNodeFunctionStub < DabNode
   attr_reader :identifier
 
-  def initialize(identifier, _arglist = nil)
+  def initialize(identifier, _arglist = nil, is_static:)
     super()
     @identifier = identifier
+    @is_static = is_static
   end
 
   def concreteified?
     true
+  end
+
+  def is_static?
+    @is_static
   end
 
   def compile_body(*args); end
