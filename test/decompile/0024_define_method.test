@@ -1,0 +1,37 @@
+## DAB INPUT
+
+func main() {
+  define_class("Foo");
+  define_method("Foo", "foo") ^ {
+    print(@name);
+  };
+}
+
+## EXPECTED
+
+func __init_0()
+{
+  return nil;
+}
+
+func main()
+{
+  sys_DEFINE_CLASS("Foo");
+  var R1 = self;
+  var R2 = __block_main0;
+  var R3 = R2.new(R1);
+  var R6 = __localblock(R3);
+  sys_DEFINE_METHOD("Foo", "foo", R6);
+  return nil;
+}
+
+class __block_main0
+{
+  func call()
+  {
+    var R0 = @self;
+    var R1 = __get_instvar_ext(R0, :name);
+    print(R1);
+    return nil;
+  }
+}

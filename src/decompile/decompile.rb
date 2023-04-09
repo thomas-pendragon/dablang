@@ -135,6 +135,10 @@ class DecompiledFunction
       _define_var(args[0], DabNodeSelf.new)
     when 'LOAD_LOCAL_BLOCK'
       _define_var(args[0], DabNodeCall.new('__localblock', [DabNodeLocalVar.new(args[1])], nil))
+    when 'GET_INSTVAR'
+      _define_var(args[0], DabNodeInstanceVar.new("@#{_symbol(args[1])}"))
+    when 'GET_INSTVAR_EXT'
+      _define_var(args[0], DabNodeInstanceVarProxy.new(DabNodeLocalVar.new(args[2]), _symbol(args[1])))
     else
       errap line
       raise "unknown op #{op}"

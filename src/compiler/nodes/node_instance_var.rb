@@ -29,6 +29,10 @@ class DabNodeInstanceVarProxy < DabNode
     "@#{node_identifier.extra_value}"
   end
 
+  def formatted_source(options)
+    "__get_instvar_ext(#{node_self.formatted_source(options)}, #{node_identifier.formatted_source(options)})"
+  end
+
   def compile_as_ssa(output, output_register)
     self_register = node_self.input_register
     output.comment(identifier)
