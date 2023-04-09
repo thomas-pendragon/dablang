@@ -133,6 +133,8 @@ class DecompiledFunction
     when 'NOP'
     when 'LOAD_SELF'
       _define_var(args[0], DabNodeSelf.new)
+    when 'LOAD_LOCAL_BLOCK'
+      _define_var(args[0], DabNodeCall.new('__localblock', [DabNodeLocalVar.new(args[1])], nil))
     else
       errap line
       raise "unknown op #{op}"

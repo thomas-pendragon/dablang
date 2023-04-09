@@ -1,0 +1,40 @@
+## DAB INPUT
+
+func tap() {}
+
+func main() {
+  tap() ^ {
+    print("ok");
+  };
+}
+
+## EXPECTED
+
+func __init_0()
+{
+  return nil;
+}
+
+func main()
+{
+  var R0 = self;
+  var R1 = __block_main0;
+  var R2 = R1.new(R0);
+  var R3 = __localblock(R2);
+  tap(R3);
+  return nil;
+}
+
+func tap()
+{
+  return nil;
+}
+
+class __block_main0
+{
+  func call()
+  {
+    print("ok");
+    return nil;
+  }
+}
