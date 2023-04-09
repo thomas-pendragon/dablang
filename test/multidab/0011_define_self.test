@@ -1,0 +1,18 @@
+## LEVEL 0
+
+func level0() {
+  define_class("Foo");
+  define_method("Foo", "b") ^ {
+    print(self);
+  };
+}
+
+## LEVEL 1
+
+func level1() {
+  Foo.new.b();
+}
+
+## EXPECT
+
+Foo
