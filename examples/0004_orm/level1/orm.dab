@@ -6,7 +6,20 @@ class DabRecord {
     return @@connection;
   }
   static func first() {
-    return self.new;
+    var result = self.new;
+    var data = DabRecord.connection.execute("SELECT * FROM books ORDER BY id ASC LIMIT 1");
+    data.each() ^ (row) {
+      result._fill(data, row);
+    };
+    return result;
+  }
+  func _fill(res, row) {
+    var columns = res.columns;
+    row.each_with_index() ^ (value, index) {
+      var column = columns[index];
+      // print(column.to_s + " -> "+ value.to_s + "\n");
+      __set_instvar(self, column, value);
+    };
   }
 };
 
@@ -35,7 +48,7 @@ class OrmGenerator {
       //var kn = @klass_name;
       define_method(@klass_name, name) ^ {
         //puts("this is field " + index.to_s);
-        return @name;//__get_instvar(self, name);//"field_" + name;
+        return __get_instvar(self, name);//"field_" + name;
       };
 
       index = index + 1;

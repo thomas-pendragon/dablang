@@ -1,5 +1,5 @@
 func level2() {
     DabRecord.init("postgresql://dablang_ex0004@localhost/dablang_ex0004");  
     var b = Book.first;
-    puts("First book title is '" + b.title + "'");
+    puts("First book title is '" + b.title.to_s + "'");
 }
