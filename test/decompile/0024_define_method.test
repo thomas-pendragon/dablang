@@ -17,9 +17,8 @@ func __init_0()
 func main()
 {
   sys_DEFINE_CLASS("Foo");
-  var R1 = self;
   var R2 = __block_main0;
-  var R3 = R2.new(R1);
+  var R3 = R2.new(self);
   var R6 = __localblock(R3);
   sys_DEFINE_METHOD("Foo", "foo", R6);
   return nil;

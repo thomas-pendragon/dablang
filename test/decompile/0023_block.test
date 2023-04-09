@@ -17,9 +17,8 @@ func __init_0()
 
 func main()
 {
-  var R0 = self;
   var R1 = __block_main0;
-  var R2 = R1.new(R0);
+  var R2 = R1.new(self);
   var R3 = __localblock(R2);
   tap(R3);
   return nil;
