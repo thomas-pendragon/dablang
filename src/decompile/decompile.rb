@@ -131,6 +131,8 @@ class DecompiledFunction
       pos = args[0] + line[:label]
       @body << DabNodeJump.new(@blocks[pos])
     when 'NOP'
+    when 'LOAD_SELF'
+      _define_var(args[0], DabNodeSelf.new)
     else
       errap line
       raise "unknown op #{op}"

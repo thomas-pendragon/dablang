@@ -1,0 +1,27 @@
+## DAB INPUT
+
+class Foo
+{
+func foo()
+{
+  print(self.class);
+}
+}
+
+## EXPECTED
+
+func __init_0()
+{
+  return nil;
+}
+
+class Foo
+{
+  func foo()
+  {
+    var R0 = self;
+    var R1 = R0.class();
+    print(R1);
+    return nil;
+  }
+}
