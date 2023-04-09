@@ -575,7 +575,7 @@ class DabContext < DabBaseContext
       valuelist = subcontext.read_optional_valuelist
       next unless op2 = subcontext.read_operator(')')
 
-      block = subcontext.read_block
+      block = subcontext.read_block(method_identifier: id)
 
       ret = DabNodeCall.new(id, valuelist, block)
       ret.add_source_part(id)
@@ -586,8 +586,12 @@ class DabContext < DabBaseContext
     end
   end
 
-  def read_block
-    on_subcontext do |subcontext|
+  def read_block(method_identifier: nil)
+    params = {}
+    if method_identifier == 'define_method' # TODO: check arg count
+      params[:new_context] = :instance
+    end
+    on_subcontext(**params) do |subcontext|
       next unless op = subcontext.read_operator('^')
 
       if lparen = subcontext.read_operator('(')
