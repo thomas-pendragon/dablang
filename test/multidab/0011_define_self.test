@@ -15,4 +15,4 @@ func level1() {
 
 ## EXPECT
 
-Foo
+#Foo

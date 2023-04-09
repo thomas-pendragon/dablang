@@ -147,7 +147,8 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
 
     auto class_reg         = (int)closure_array.size() * 2;
     auto method_reg        = class_reg + 1;
-    auto asm_out_reg       = method_reg + 1;
+    auto self_reg          = method_reg + 1;
+    auto asm_out_reg       = self_reg + 1;
     auto new_symbol_index  = $VM->get_or_create_symbol_index("new");
     auto call_symbol_index = $VM->get_or_create_symbol_index("call");
     auto class_index       = method_class.index;
@@ -158,14 +159,17 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     binary_output.write_uint8(OP_LOAD_CLASS);
     binary_output.write_uint16(class_reg);
     binary_output.write_uint16(class_index);
+    fprintf(output, "LOAD_SELF R%d\n", self_reg);
+    binary_output.write_uint8(OP_LOAD_SELF);
+    binary_output.write_uint16(self_reg);
     fprintf(output, "INSTCALL R%d, R%d, S%d", method_reg, class_reg, new_symbol_index);
     binary_output.write_uint8(OP_INSTCALL);
     binary_output.write_uint16(method_reg);
     binary_output.write_uint16(class_reg);
     binary_output.write_uint16(new_symbol_index);
     binary_output.write_uint8(1 + (int)closure_array.size());
-    fprintf(output, ", RNIL"); // SELF
-    binary_output.write_uint16(0xFFFF);
+    fprintf(output, ", R%d", (int)self_reg);
+    binary_output.write_uint16(self_reg);
     for (int i = 0; i < (int)closure_array.size(); i++)
     {
         fprintf(output, ", R%d", i * 2 + 1);
