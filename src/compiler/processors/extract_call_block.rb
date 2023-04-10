@@ -51,27 +51,6 @@ class ExtractCallBlock
 
     createbody << DabNodeSetInstVar.new('@closure', DabNodeLiteralArray.new(arraylist))
 
-    # method_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
-    # DabValue array_class = $VM->classes[CLASS_ARRAY];
-    # DabValue value       = array_class.create_instance();
-    # auto    &array       = value.array();
-    # bool first = true;
-    # DabValue selfnode;
-    # for (auto arg : args) {
-    #     if (first) {
-    #         selfnode = arg;
-    #         first = false;
-    #     } else {
-    #         array.push_back(arg);
-    #     }
-    # }
-    # self.set_instvar($VM->get_or_create_symbol_index("self"), selfnode);
-    # self.set_instvar($VM->get_or_create_symbol_index("closure"), value);
-    # return nullptr;
-
-    # DabNodeArgDefinition.new(-1, id, type, defvalue)
-    # DabNodeArgDefinition.new(index, identifier, type, default_value)
-
     fun = DabNodeFunction.new(name, body, arglist, false)
     create = DabNodeFunction.new('__construct', createbody, createarglist, false)
     functions = [fun, create]

@@ -148,7 +148,7 @@ class DecompiledFunction
     when 'SET_INSTVAR'
       symbol = _symbol(args[0])
       data = DabNodeLocalVar.new(args[1])
-      @body << DabNodeSetInstVar.new("@" + symbol, data)
+      @body << DabNodeSetInstVar.new("@#{symbol}", data)
     else
       errap line
       raise "unknown op #{op}"
