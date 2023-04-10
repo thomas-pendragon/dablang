@@ -46,6 +46,39 @@ func main()
   return nil;
 }
 
+class Array
+{
+  func each()
+  {
+    var R2 = self.count();
+    B1:
+    var R3 = R0 != R2;
+    jmp R3 ? B2 : B3;
+    B2:
+    var R5 = self[R0];
+    var R6 = __current_block();
+    R6.call(R5);
+    var R0 = R0 + 1;
+    jmp B1;
+    B3:
+    return nil;
+  }
+}
+
+class __block_main0
+{
+  func call(arg0)
+  {
+    var R1 = __box(arg0);
+    var R3 = __block_call0;
+    var R4 = R3.new(self, R1);
+    var R6 = __unbox(R1);
+    var R7 = __localblock(R4);
+    sys_DEFINE_METHOD("Foo", R6, R7);
+    return nil;
+  }
+}
+
 class __block_call0
 {
   func call()
@@ -63,16 +96,26 @@ class __block_call0
   }
 }
 
-class __block_main0
+class Foo
 {
-  func call(arg0)
+  func foo()
   {
-    var R1 = __box(arg0);
-    var R3 = __block_call0;
-    var R4 = R3.new(self, R1);
-    var R6 = __unbox(R1);
-    var R7 = __localblock(R4);
-    sys_DEFINE_METHOD("Foo", R6, R7);
-    return nil;
+    var R1 = __box("foo");
+    var R2 = __block_call0;
+    var R3 = R2.new(self, R1);
+    var R5 = R3.call();
+    return R5;
+  }
+}
+
+class Foo
+{
+  func bar()
+  {
+    var R1 = __box("bar");
+    var R2 = __block_call0;
+    var R3 = R2.new(self, R1);
+    var R5 = R3.call();
+    return R5;
   }
 }

@@ -143,6 +143,8 @@ class DecompiledFunction
       _define_var(args[0], DabNodeCall.new('__unbox', [DabNodeLocalVar.new(args[1])], nil))
     when 'BOX'
       _define_var(args[0], DabNodeCall.new('__box', [DabNodeLocalVar.new(args[1])], nil))
+    when 'LOAD_CURRENT_BLOCK'
+      _define_var(args[0], DabNodeCall.new('__current_block', [], nil))
     else
       errap line
       raise "unknown op #{op}"
