@@ -45,9 +45,9 @@ func main()
                                  BOX R1, R0
                                  LOAD_SELF R2
 /* __block_main */               LOAD_CLASS R3, 256
-/* new          */               INSTCALL R4, R3, S9, R2, R1
+/* new          */               INSTCALL R4, R3, S12, R2, R1
                                  LOAD_LOCAL_BLOCK R5, R4
-/* test         */               CALL RNIL, S11, R5
+/* test         */               CALL RNIL, S15, R5
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -62,19 +62,30 @@ func main()
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
                                  LOAD_CURRENT_BLOCK R1
-/* call         */               INSTCALL RNIL, R1, S6, R0
+/* call         */               INSTCALL RNIL, R1, S9, R0
                                  RETURN RNIL
                    __Ftest_END:
+                                 NOP 
+ 
+                   C__block_main0_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* @self=       */               SET_INSTVAR S14, R0
+/* arg_other    */               LOAD_ARG R1, 1
+                                 NEW_ARRAY R2, R1
+/* @closure=    */               SET_INSTVAR S10, R2
+                                 RETURN RNIL
+                   __C__block_main0_F__construct_END:
                                  NOP 
  
                    C__block_main0_Fcall:
                                  STACK_RESERVE 0
 /* bar          */               LOAD_ARG R0, 0
 /* 0            */               LOAD_NUMBER R1, 0
-/* @closure     */               GET_INSTVAR R2, S7
+/* @closure     */               GET_INSTVAR R2, S10
 /* []           */               INSTCALL R3, R2, S0, R1
                                  UNBOX R4, R3
-/* qux          */               CALL RNIL, S10, R0, R4
+/* qux          */               CALL RNIL, S13, R0, R4
                                  RETURN RNIL
                    __C__block_main0_Fcall_END:
                                  NOP 
@@ -85,8 +96,11 @@ func main()
                    _SDAT:
                                  W_STRING "[]" 
                                  W_STRING "__block_main0" 
+                                 W_STRING "__construct" 
                                  W_STRING "__init_0" 
                                  W_STRING "a" 
+                                 W_STRING "arg_other" 
+                                 W_STRING "arg_self" 
                                  W_STRING "b" 
                                  W_STRING "bar" 
                                  W_STRING "call" 
@@ -94,35 +108,44 @@ func main()
                                  W_STRING "main" 
                                  W_STRING "new" 
                                  W_STRING "qux" 
+                                 W_STRING "self" 
                                  W_STRING "test" 
  
                    _SYMB:
 /* []           */               W_SYMBOL _SDAT + 0 
 /* __block_main */               W_SYMBOL _SDAT + 3 
-/* __init_0     */               W_SYMBOL _SDAT + 17 
-/* a            */               W_SYMBOL _SDAT + 26 
-/* b            */               W_SYMBOL _SDAT + 28 
-/* bar          */               W_SYMBOL _SDAT + 30 
-/* call         */               W_SYMBOL _SDAT + 34 
-/* closure      */               W_SYMBOL _SDAT + 39 
-/* main         */               W_SYMBOL _SDAT + 47 
-/* new          */               W_SYMBOL _SDAT + 52 
-/* qux          */               W_SYMBOL _SDAT + 56 
-/* test         */               W_SYMBOL _SDAT + 60 
+/* __construct  */               W_SYMBOL _SDAT + 17 
+/* __init_0     */               W_SYMBOL _SDAT + 29 
+/* a            */               W_SYMBOL _SDAT + 38 
+/* arg_other    */               W_SYMBOL _SDAT + 40 
+/* arg_self     */               W_SYMBOL _SDAT + 50 
+/* b            */               W_SYMBOL _SDAT + 59 
+/* bar          */               W_SYMBOL _SDAT + 61 
+/* call         */               W_SYMBOL _SDAT + 65 
+/* closure      */               W_SYMBOL _SDAT + 70 
+/* main         */               W_SYMBOL _SDAT + 78 
+/* new          */               W_SYMBOL _SDAT + 83 
+/* qux          */               W_SYMBOL _SDAT + 87 
+/* self         */               W_SYMBOL _SDAT + 91 
+/* test         */               W_SYMBOL _SDAT + 96 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* __init_0     */               W_METHOD 3, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 8, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* main         */               W_METHOD 11, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* qux          */               W_METHOD 10, -1, Fqux, 2, __Fqux_END - Fqux, 0
-/* a<Object>    */               W_METHOD_ARG 3, 0
-/* b<Object>    */               W_METHOD_ARG 4, 0
+/* qux          */               W_METHOD 13, -1, Fqux, 2, __Fqux_END - Fqux, 0
+/* a<Object>    */               W_METHOD_ARG 4, 0
+/* b<Object>    */               W_METHOD_ARG 7, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* test         */               W_METHOD 11, -1, Ftest, 0, __Ftest_END - Ftest, 0
+/* test         */               W_METHOD 15, -1, Ftest, 0, __Ftest_END - Ftest, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 6, 256, C__block_main0_Fcall, 1, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
-/* bar<Object>  */               W_METHOD_ARG 5, 0
+/* __construct  */               W_METHOD 2, 256, C__block_main0_F__construct, 2, __C__block_main0_F__construct_END - C__block_main0_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 6, 0
+/* arg_other<Ob */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* call         */               W_METHOD 9, 256, C__block_main0_Fcall, 1, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
+/* bar<Object>  */               W_METHOD_ARG 8, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

@@ -145,6 +145,10 @@ class DecompiledFunction
       _define_var(args[0], DabNodeCall.new('__box', [DabNodeLocalVar.new(args[1])], nil))
     when 'LOAD_CURRENT_BLOCK'
       _define_var(args[0], DabNodeCall.new('__current_block', [], nil))
+    when 'SET_INSTVAR'
+      symbol = _symbol(args[0])
+      data = DabNodeLocalVar.new(args[1])
+      @body << DabNodeSetInstVar.new("@" + symbol, data)
     else
       errap line
       raise "unknown op #{op}"

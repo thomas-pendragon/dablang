@@ -49,11 +49,21 @@ func tap2()
                                  STACK_RESERVE 0
                                  LOAD_SELF R0
 /* __block_tap2 */               LOAD_CLASS R1, 256
-/* new          */               INSTCALL R2, R1, S6, R0
+/* new          */               INSTCALL R2, R1, S9, R0
                                  LOAD_LOCAL_BLOCK R3, R2
-/* tap          */               CALL RNIL, S7, R3
+/* tap          */               CALL RNIL, S11, R3
                                  RETURN RNIL
                    __Ftap2_END:
+                                 NOP 
+ 
+                   C__block_tap20_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* @self=       */               SET_INSTVAR S10, R0
+                                 NEW_ARRAY R1
+/* @closure=    */               SET_INSTVAR S8, R1
+                                 RETURN RNIL
+                   __C__block_tap20_F__construct_END:
                                  NOP 
  
                    C__block_tap20_Fcall:
@@ -72,35 +82,46 @@ func tap2()
                    _SDAT:
                                  W_STRING "+" 
                                  W_STRING "__block_tap20" 
+                                 W_STRING "__construct" 
                                  W_STRING "__init_0" 
                                  W_STRING "a" 
+                                 W_STRING "arg_self" 
                                  W_STRING "b" 
                                  W_STRING "call" 
+                                 W_STRING "closure" 
                                  W_STRING "new" 
+                                 W_STRING "self" 
                                  W_STRING "tap" 
                                  W_STRING "tap2" 
  
                    _SYMB:
 /* +            */               W_SYMBOL _SDAT + 0 
 /* __block_tap2 */               W_SYMBOL _SDAT + 2 
-/* __init_0     */               W_SYMBOL _SDAT + 16 
-/* a            */               W_SYMBOL _SDAT + 25 
-/* b            */               W_SYMBOL _SDAT + 27 
-/* call         */               W_SYMBOL _SDAT + 29 
-/* new          */               W_SYMBOL _SDAT + 34 
-/* tap          */               W_SYMBOL _SDAT + 38 
-/* tap2         */               W_SYMBOL _SDAT + 42 
+/* __construct  */               W_SYMBOL _SDAT + 16 
+/* __init_0     */               W_SYMBOL _SDAT + 28 
+/* a            */               W_SYMBOL _SDAT + 37 
+/* arg_self     */               W_SYMBOL _SDAT + 39 
+/* b            */               W_SYMBOL _SDAT + 48 
+/* call         */               W_SYMBOL _SDAT + 50 
+/* closure      */               W_SYMBOL _SDAT + 55 
+/* new          */               W_SYMBOL _SDAT + 63 
+/* self         */               W_SYMBOL _SDAT + 67 
+/* tap          */               W_SYMBOL _SDAT + 72 
+/* tap2         */               W_SYMBOL _SDAT + 76 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* __init_0     */               W_METHOD 3, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap          */               W_METHOD 7, -1, Ftap, 0, __Ftap_END - Ftap, 0
+/* tap          */               W_METHOD 11, -1, Ftap, 0, __Ftap_END - Ftap, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap2         */               W_METHOD 8, -1, Ftap2, 0, __Ftap2_END - Ftap2, 0
+/* tap2         */               W_METHOD 12, -1, Ftap2, 0, __Ftap2_END - Ftap2, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 5, 256, C__block_tap20_Fcall, 2, __C__block_tap20_Fcall_END - C__block_tap20_Fcall, 0
-/* a<Object>    */               W_METHOD_ARG 3, 0
-/* b<Object>    */               W_METHOD_ARG 4, 0
+/* __construct  */               W_METHOD 2, 256, C__block_tap20_F__construct, 1, __C__block_tap20_F__construct_END - C__block_tap20_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* call         */               W_METHOD 7, 256, C__block_tap20_Fcall, 2, __C__block_tap20_Fcall_END - C__block_tap20_Fcall, 0
+/* a<Object>    */               W_METHOD_ARG 4, 0
+/* b<Object>    */               W_METHOD_ARG 6, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

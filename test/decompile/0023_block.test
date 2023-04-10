@@ -31,6 +31,17 @@ func tap()
 
 class __block_main0
 {
+  construct(arg0)
+  {
+    @self = arg0;
+    var R1 = @[];
+    @closure = R1;
+    return nil;
+  }
+}
+
+class __block_main0
+{
   func call()
   {
     print("ok");

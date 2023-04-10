@@ -47,12 +47,22 @@ func main()
                                  STACK_RESERVE 0
                                  LOAD_SELF R0
 /* __block_main */               LOAD_CLASS R1, 256
-/* new          */               INSTCALL R2, R1, S5, R0
+/* new          */               INSTCALL R2, R1, S8, R0
                                  LOAD_LOCAL_BLOCK R3, R2
-/* foo          */               CALL R4, S3, R3
+/* foo          */               CALL R4, S6, R3
 /* PRINT        */               SYSCALL RNIL, 0, R4
                                  RETURN RNIL
                    __Fmain_END:
+                                 NOP 
+ 
+                   C__block_main0_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* @self=       */               SET_INSTVAR S9, R0
+                                 NEW_ARRAY R1
+/* @closure=    */               SET_INSTVAR S5, R1
+                                 RETURN RNIL
+                   __C__block_main0_F__construct_END:
                                  NOP 
  
                    C__block_main0_Fcall:
@@ -67,28 +77,39 @@ func main()
  
                    _SDAT:
                                  W_STRING "__block_main0" 
+                                 W_STRING "__construct" 
                                  W_STRING "__init_0" 
+                                 W_STRING "arg_self" 
                                  W_STRING "call" 
+                                 W_STRING "closure" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
                                  W_STRING "new" 
+                                 W_STRING "self" 
  
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
-/* __init_0     */               W_SYMBOL _SDAT + 14 
-/* call         */               W_SYMBOL _SDAT + 23 
-/* foo          */               W_SYMBOL _SDAT + 28 
-/* main         */               W_SYMBOL _SDAT + 32 
-/* new          */               W_SYMBOL _SDAT + 37 
+/* __construct  */               W_SYMBOL _SDAT + 14 
+/* __init_0     */               W_SYMBOL _SDAT + 26 
+/* arg_self     */               W_SYMBOL _SDAT + 35 
+/* call         */               W_SYMBOL _SDAT + 44 
+/* closure      */               W_SYMBOL _SDAT + 49 
+/* foo          */               W_SYMBOL _SDAT + 57 
+/* main         */               W_SYMBOL _SDAT + 61 
+/* new          */               W_SYMBOL _SDAT + 66 
+/* self         */               W_SYMBOL _SDAT + 70 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 3, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
+/* foo          */               W_METHOD 6, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 4, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* main         */               W_METHOD 7, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 2, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
+/* __construct  */               W_METHOD 1, 256, C__block_main0_F__construct, 1, __C__block_main0_F__construct_END - C__block_main0_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 3, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* call         */               W_METHOD 4, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

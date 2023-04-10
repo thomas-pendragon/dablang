@@ -50,14 +50,24 @@ Block must be converted to a variable.
                                  STACK_RESERVE 0
                                  LOAD_SELF R0
 /* __block_main */               LOAD_CLASS R1, 256
-/* new          */               INSTCALL R2, R1, S8, R0
+/* new          */               INSTCALL R2, R1, S11, R0
                                  LOAD_SELF R3
 /* __block_main */               LOAD_CLASS R4, 257
-/* new          */               INSTCALL R5, R4, S8, R3
+/* new          */               INSTCALL R5, R4, S11, R3
                                  LOAD_LOCAL_BLOCK R6, R5
-/* foo          */               CALL RNIL, S6, R2, R6
+/* foo          */               CALL RNIL, S9, R2, R6
                                  RETURN RNIL
                    __Fmain_END:
+                                 NOP 
+ 
+                   C__block_main0_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* @self=       */               SET_INSTVAR S12, R0
+                                 NEW_ARRAY R1
+/* @closure=    */               SET_INSTVAR S8, R1
+                                 RETURN RNIL
+                   __C__block_main0_F__construct_END:
                                  NOP 
  
                    C__block_main0_Fcall:
@@ -66,6 +76,16 @@ Block must be converted to a variable.
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  RETURN RNIL
                    __C__block_main0_Fcall_END:
+                                 NOP 
+ 
+                   C__block_main1_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* @self=       */               SET_INSTVAR S12, R0
+                                 NEW_ARRAY R1
+/* @closure=    */               SET_INSTVAR S8, R1
+                                 RETURN RNIL
+                   __C__block_main1_F__construct_END:
                                  NOP 
  
                    C__block_main1_Fcall:
@@ -83,37 +103,51 @@ Block must be converted to a variable.
                    _SDAT:
                                  W_STRING "__block_main0" 
                                  W_STRING "__block_main1" 
+                                 W_STRING "__construct" 
                                  W_STRING "__init_0" 
                                  W_STRING "a" 
+                                 W_STRING "arg_self" 
                                  W_STRING "b" 
                                  W_STRING "call" 
+                                 W_STRING "closure" 
                                  W_STRING "foo" 
                                  W_STRING "main" 
                                  W_STRING "new" 
+                                 W_STRING "self" 
  
                    _SYMB:
 /* __block_main */               W_SYMBOL _SDAT + 0 
 /* __block_main */               W_SYMBOL _SDAT + 14 
-/* __init_0     */               W_SYMBOL _SDAT + 28 
-/* a            */               W_SYMBOL _SDAT + 37 
-/* b            */               W_SYMBOL _SDAT + 39 
-/* call         */               W_SYMBOL _SDAT + 41 
-/* foo          */               W_SYMBOL _SDAT + 46 
-/* main         */               W_SYMBOL _SDAT + 50 
-/* new          */               W_SYMBOL _SDAT + 55 
+/* __construct  */               W_SYMBOL _SDAT + 28 
+/* __init_0     */               W_SYMBOL _SDAT + 40 
+/* a            */               W_SYMBOL _SDAT + 49 
+/* arg_self     */               W_SYMBOL _SDAT + 51 
+/* b            */               W_SYMBOL _SDAT + 60 
+/* call         */               W_SYMBOL _SDAT + 62 
+/* closure      */               W_SYMBOL _SDAT + 67 
+/* foo          */               W_SYMBOL _SDAT + 75 
+/* main         */               W_SYMBOL _SDAT + 79 
+/* new          */               W_SYMBOL _SDAT + 84 
+/* self         */               W_SYMBOL _SDAT + 88 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* __init_0     */               W_METHOD 3, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* foo          */               W_METHOD 6, -1, Ffoo, 2, __Ffoo_END - Ffoo, 0
-/* a<Object>    */               W_METHOD_ARG 3, 0
-/* b<Object>    */               W_METHOD_ARG 4, 0
+/* foo          */               W_METHOD 9, -1, Ffoo, 2, __Ffoo_END - Ffoo, 0
+/* a<Object>    */               W_METHOD_ARG 4, 0
+/* b<Object>    */               W_METHOD_ARG 6, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 7, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* main         */               W_METHOD 10, -1, Fmain, 0, __Fmain_END - Fmain, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 5, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
+/* __construct  */               W_METHOD 2, 256, C__block_main0_F__construct, 1, __C__block_main0_F__construct_END - C__block_main0_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 5, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 5, 257, C__block_main1_Fcall, 0, __C__block_main1_Fcall_END - C__block_main1_Fcall, 0
+/* call         */               W_METHOD 7, 256, C__block_main0_Fcall, 0, __C__block_main0_Fcall_END - C__block_main0_Fcall, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* __construct  */               W_METHOD 2, 257, C__block_main1_F__construct, 1, __C__block_main1_F__construct_END - C__block_main1_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* call         */               W_METHOD 7, 257, C__block_main1_Fcall, 0, __C__block_main1_Fcall_END - C__block_main1_Fcall, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

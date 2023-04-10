@@ -39,11 +39,22 @@ func tap(a)
 /* a            */               LOAD_ARG R0, 0
                                  LOAD_SELF R1
 /* __block_tap0 */               LOAD_CLASS R2, 256
-/* new          */               INSTCALL R3, R2, S6, R1
+/* new          */               INSTCALL R3, R2, S9, R1
                                  LOAD_LOCAL_BLOCK R4, R3
-/* fun          */               INSTCALL RNIL, R0, S5, R4
+/* fun          */               INSTCALL RNIL, R0, S8, R4
                                  RETURN RNIL
                    __Ftap_END:
+                                 NOP 
+ 
+                   C__block_tap0_F__construct:
+                                 STACK_RESERVE 0
+/* arg_self     */               LOAD_ARG R0, 0
+/* arg_self     */               LOAD_ARG R1, 0
+/* @self=       */               SET_INSTVAR S10, R1
+                                 NEW_ARRAY R2
+/* @closure=    */               SET_INSTVAR S7, R2
+                                 RETURN RNIL
+                   __C__block_tap0_F__construct_END:
                                  NOP 
  
                    C__block_tap0_Fcall:
@@ -59,32 +70,43 @@ func tap(a)
  
                    _SDAT:
                                  W_STRING "__block_tap0" 
+                                 W_STRING "__construct" 
                                  W_STRING "__init_0" 
                                  W_STRING "a" 
                                  W_STRING "arg" 
+                                 W_STRING "arg_self" 
                                  W_STRING "call" 
+                                 W_STRING "closure" 
                                  W_STRING "fun" 
                                  W_STRING "new" 
+                                 W_STRING "self" 
                                  W_STRING "tap" 
  
                    _SYMB:
 /* __block_tap0 */               W_SYMBOL _SDAT + 0 
-/* __init_0     */               W_SYMBOL _SDAT + 13 
-/* a            */               W_SYMBOL _SDAT + 22 
-/* arg          */               W_SYMBOL _SDAT + 24 
-/* call         */               W_SYMBOL _SDAT + 28 
-/* fun          */               W_SYMBOL _SDAT + 33 
-/* new          */               W_SYMBOL _SDAT + 37 
-/* tap          */               W_SYMBOL _SDAT + 41 
+/* __construct  */               W_SYMBOL _SDAT + 13 
+/* __init_0     */               W_SYMBOL _SDAT + 25 
+/* a            */               W_SYMBOL _SDAT + 34 
+/* arg          */               W_SYMBOL _SDAT + 36 
+/* arg_self     */               W_SYMBOL _SDAT + 40 
+/* call         */               W_SYMBOL _SDAT + 49 
+/* closure      */               W_SYMBOL _SDAT + 54 
+/* fun          */               W_SYMBOL _SDAT + 62 
+/* new          */               W_SYMBOL _SDAT + 66 
+/* self         */               W_SYMBOL _SDAT + 70 
+/* tap          */               W_SYMBOL _SDAT + 75 
  
                    _FUNC:
-/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* __init_0     */               W_METHOD 2, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* tap          */               W_METHOD 7, -1, Ftap, 1, __Ftap_END - Ftap, 0
-/* a<Object>    */               W_METHOD_ARG 2, 0
+/* tap          */               W_METHOD 11, -1, Ftap, 1, __Ftap_END - Ftap, 0
+/* a<Object>    */               W_METHOD_ARG 3, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* call         */               W_METHOD 4, 256, C__block_tap0_Fcall, 1, __C__block_tap0_Fcall_END - C__block_tap0_Fcall, 0
-/* arg<Object>  */               W_METHOD_ARG 3, 0
+/* __construct  */               W_METHOD 1, 256, C__block_tap0_F__construct, 1, __C__block_tap0_F__construct_END - C__block_tap0_F__construct, 0
+/* arg_self<Obj */               W_METHOD_ARG 5, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* call         */               W_METHOD 6, 256, C__block_tap0_Fcall, 1, __C__block_tap0_Fcall_END - C__block_tap0_Fcall, 0
+/* arg<Object>  */               W_METHOD_ARG 4, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:
