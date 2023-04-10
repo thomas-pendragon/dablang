@@ -139,6 +139,10 @@ class DecompiledFunction
       _define_var(args[0], DabNodeInstanceVar.new("@#{_symbol(args[1])}"))
     when 'GET_INSTVAR_EXT'
       _define_var(args[0], DabNodeInstanceVarProxy.new(DabNodeLocalVar.new(args[2]), _symbol(args[1])))
+    when 'UNBOX'
+      _define_var(args[0], DabNodeCall.new('__unbox', [DabNodeLocalVar.new(args[1])], nil))
+    when 'BOX'
+      _define_var(args[0], DabNodeCall.new('__box', [DabNodeLocalVar.new(args[1])], nil))
     else
       errap line
       raise "unknown op #{op}"

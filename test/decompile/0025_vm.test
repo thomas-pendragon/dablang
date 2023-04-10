@@ -1,0 +1,64 @@
+## DAB INPUT
+
+func main() {
+  define_class("Foo");
+  @["foo", "bar"].each() ^ (aword) {
+    var word = aword;
+    define_method("Foo", word) ^ {
+      print(word + ": " + __get_instvar(self, word));
+    };
+  };
+}
+
+## OPTIONS
+
+--vm
+
+## EXPECTED
+
+func __init_0()
+{
+  return nil;
+}
+
+func main()
+{
+  sys_DEFINE_CLASS("Foo");
+  var R2 = __block_main0;
+  var R3 = R2.new(self);
+  var R4 = __localblock(R3);
+  var R7 = @["foo", "bar"];
+  R7.each(R4);
+  return nil;
+}
+
+class __block_call0
+{
+  func call()
+  {
+    var R1 = @closure;
+    var R2 = R1[0];
+    var R3 = __unbox(R2);
+    var R5 = R3 + ": ";
+    var R6 = @self;
+    var R7 = __unbox(R2);
+    var R8 = sys_GET_INSTVAR(R6, R7);
+    var R9 = R5 + R8;
+    print(R9);
+    return nil;
+  }
+}
+
+class __block_main0
+{
+  func call(arg0)
+  {
+    var R1 = __box(arg0);
+    var R3 = __block_call0;
+    var R4 = R3.new(self, R1);
+    var R6 = __unbox(R1);
+    var R7 = __localblock(R4);
+    sys_DEFINE_METHOD("Foo", R6, R7);
+    return nil;
+  }
+}
