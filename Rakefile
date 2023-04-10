@@ -169,7 +169,13 @@ def ci_parallel(inputs)
   inputs[istart...iend] || []
 end
 
-def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil, direct_run = nil)
+compiled_stdlib = 'tmp/stdlib.dabcb'
+
+file compiled_stdlib => ($sources + Dir.glob('stdlib/*.dab')) do
+  psystem("ruby src/frontend/frontend_stdlib.rb --output=#{compiled_stdlib}")
+end
+
+def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [], test_name = nil, direct_run = nil, stdlib: false)
   test_name ||= "#{directory}_spec"
   frontend_type ||= "frontend_#{directory}"
   base_path = "test/#{directory}"
@@ -181,7 +187,8 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
   inputs.each do |input_test_file|
     output_output_file = input_test_file.gsub("#{base_path}/", "tmp/#{test_file_name}").gsub(".#{extension}", '.out')
     outputs << output_output_file
-    file_inputs = $sources + [input_test_file] + $shared_spec_code + extras
+    extra_lib = stdlib ? [stdlib] : []
+    file_inputs = $sources + [input_test_file] + extra_lib + $shared_spec_code + extras
     file output_output_file => file_inputs do
       puts '>> '.white + output_output_file.white.bold
       if direct_run.nil?
@@ -202,7 +209,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
 end
 
 setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)
-setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec)
+setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec, stdlib: compiled_stdlib)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
