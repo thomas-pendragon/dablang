@@ -1,11 +1,25 @@
 ## DAB INPUT
 
+class Array
+{
+  func each()
+  {
+    var index = 0;
+    var count = self.count;
+    while (index != count)
+    {
+      yield(self[index]);
+      index = index + 1;
+    }
+  }
+}
+
 func main() {
   define_class("Foo");
   @["foo", "bar"].each() ^ (aword) {
     var word = aword;
     define_method("Foo", word) ^ {
-      print(word + ": " + __get_instvar(self, word));
+      print((word + ": ") + __get_instvar(self, word));
     };
   };
 }

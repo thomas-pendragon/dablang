@@ -189,3 +189,23 @@ def disassemble(input, output, disasm_options = '')
     qsystem(cmd, output_file: output, timeout: 10)
   end
 end
+
+def execute(input, output, run_options)
+  input = [input] unless input.is_a?(Array)
+  describe_action(input, output, 'VM') do
+    input = input.map(&:to_s).map(&:shellescape).join(' ')
+    output = output.to_s.shellescape
+    run_options = run_options.presence
+    cmd = "./bin/cvm #{run_options} #{input} --out=#{output}"
+    begin
+      qsystem(cmd, timeout: 10)
+    rescue SystemCommandError => e
+      STDERR.puts
+      warn e.stderr
+      STDERR.puts
+      e.stdout = open(output).read
+      FileUtils.rm(output)
+      raise
+    end
+  end
+end
