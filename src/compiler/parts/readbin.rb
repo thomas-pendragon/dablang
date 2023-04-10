@@ -14,7 +14,7 @@ class DabBinReader
 
     index = 0
 
-    errap data
+    # errap data
 
     data[:symbols].each do |symbol|
       node = DabNodeSymbol.new(symbol)

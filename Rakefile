@@ -199,6 +199,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
           inputs: [input_test_file],
           test_output_prefix: test_file_name,
           test_output_dir: './tmp/',
+          stdlib: stdlib,
         }
         direct_run.new.run_test(settings)
       end

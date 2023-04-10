@@ -40,8 +40,9 @@ class DabSpec
   end
 
   def execute(input, output, run_options)
+    input = [input].flatten
     describe_action(input, output, 'VM') do
-      input = input.to_s.shellescape
+      input = input.map { _1.to_s.shellescape }.join(' ')
       output = output.to_s.shellescape
       run_options = run_options.presence
       cmd = "./bin/cvm #{run_options} #{input} --out=#{output}"
@@ -66,8 +67,10 @@ class DabSpec
     end
   end
 
-  def run(_settings)
+  def run(settings)
     data = read_test_file(input)
+
+    stdlib_file = settings[:stdlib]
 
     if data[:skip] == 'windows' && OS.windows?
       puts "Skipping test  #{input.blue.bold} because Windows"
@@ -88,12 +91,18 @@ class DabSpec
 
     extract_source(input, dab, data[:code])
 
-    stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
-    stdlib_glob = "#{stdlib_path}/*.dab"
-    stdlib_files = Dir.glob(stdlib_glob)
-    stdlib_files = [] if data[:frontend_options]['--no-stdlib']
+    # stdlib_path = File.expand_path("#{File.dirname(__FILE__)}/../../stdlib/")
+    # stdlib_glob = "#{stdlib_path}/*.dab"
+    # stdlib_files = Dir.glob(stdlib_glob)
+    # stdlib_files = []
+
+    no_stdlib = data[:frontend_options]['--no-stdlib']
 
     compile_options = data[:options]
+
+    unless no_stdlib
+      compile_options += " --ring-base[]=#{stdlib_file}"
+    end
 
     assemble_options = ''
 
@@ -104,7 +113,7 @@ class DabSpec
       if extra
         extra = "./test/shared/#{extra}.dab"
       end
-      compile_dab_to_asm(([dab, extra] + stdlib_files).compact, asm, compile_options)
+      compile_dab_to_asm([dab, extra].compact, asm, compile_options)
     rescue SystemCommandError => e
       if data[:expected_status] == :compile_error
         compare_output('compare compiler output', e.stderr, data[:expected_compile_error], true)
@@ -120,8 +129,11 @@ class DabSpec
 
     assemble(asm, bin, assemble_options)
 
+    bin_files = [bin]
+    bin_files = [stdlib_file] + bin_files unless no_stdlib
+
     begin
-      execute(bin, vmo, run_options)
+      execute(bin_files, vmo, run_options)
     rescue SystemCommandError => e
       if data[:expected_status] == :runtime_error
         compare_output('compare runtime output', e.stdout, data[:expected_runtime_error], true)
