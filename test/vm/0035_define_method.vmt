@@ -41,9 +41,16 @@ _CODE:
     STACK_RESERVE 0
     LOAD_SELF R0
     LOAD_CLASS R1, 256
-    INSTCALL R2, R1, S4, R0
+    INSTCALL R2, R1, S7, R0
     LOAD_STRING R3, 264, 3
     SYSCALL RNIL, 5, R3, R2
+    RETURN RNIL
+    NOP 
+    STACK_RESERVE 0
+    LOAD_ARG R0, 0
+    SET_INSTVAR S8, R0
+    NEW_ARRAY R1
+    SET_INSTVAR S5, R1
     RETURN RNIL
     NOP 
     STACK_RESERVE 0
@@ -54,8 +61,8 @@ _CODE:
     STACK_RESERVE 0
     LOAD_CLASS R0, 256
     LOAD_SELF R2
-    INSTCALL R1, R0, S4, R2
-    INSTCALL R3, R1, S2
+    INSTCALL R1, R0, S7, R2
+    INSTCALL R3, R1, S4
     RETURN R3
 
 _CLAS:
@@ -63,13 +70,16 @@ _CLAS:
 
 _SYMD:
     W_STRING "__block_main0"
+    W_STRING "__construct"
     W_STRING "__init_0"
+    W_STRING "arg_self"
     W_STRING "call"
+    W_STRING "closure"
     W_STRING "main"
     W_STRING "new"
+    W_STRING "self"
     W_STRING "class"
     W_STRING "to_s"
-    W_STRING "__construct"
     W_STRING "__destruct"
     W_STRING "is"
     W_STRING "=="
@@ -100,61 +110,63 @@ _SYMD:
     W_STRING "name"
     W_STRING "||"
     W_STRING "&&"
-    W_STRING "self"
-    W_STRING "closure"
     W_STRING "foo"
 
 _SYMB:
-    W_SYMBOL 400
-    W_SYMBOL 414
-    W_SYMBOL 423
-    W_SYMBOL 428
-    W_SYMBOL 433
-    W_SYMBOL 437
-    W_SYMBOL 443
-    W_SYMBOL 448
-    W_SYMBOL 460
-    W_SYMBOL 471
-    W_SYMBOL 474
-    W_SYMBOL 477
-    W_SYMBOL 484
-    W_SYMBOL 493
-    W_SYMBOL 500
+    W_SYMBOL 426
+    W_SYMBOL 440
+    W_SYMBOL 452
+    W_SYMBOL 461
+    W_SYMBOL 470
+    W_SYMBOL 475
+    W_SYMBOL 483
+    W_SYMBOL 488
+    W_SYMBOL 492
+    W_SYMBOL 497
     W_SYMBOL 503
-    W_SYMBOL 505
     W_SYMBOL 508
-    W_SYMBOL 510
-    W_SYMBOL 513
-    W_SYMBOL 516
-    W_SYMBOL 518
-    W_SYMBOL 520
+    W_SYMBOL 519
     W_SYMBOL 522
-    W_SYMBOL 524
-    W_SYMBOL 526
-    W_SYMBOL 529
+    W_SYMBOL 525
     W_SYMBOL 532
-    W_SYMBOL 534
-    W_SYMBOL 536
     W_SYMBOL 541
-    W_SYMBOL 547
+    W_SYMBOL 548
+    W_SYMBOL 551
     W_SYMBOL 553
-    W_SYMBOL 560
+    W_SYMBOL 556
+    W_SYMBOL 558
+    W_SYMBOL 561
     W_SYMBOL 564
-    W_SYMBOL 569
+    W_SYMBOL 566
+    W_SYMBOL 568
+    W_SYMBOL 570
+    W_SYMBOL 572
     W_SYMBOL 574
     W_SYMBOL 577
     W_SYMBOL 580
-    W_SYMBOL 585
-    W_SYMBOL 593
+    W_SYMBOL 582
+    W_SYMBOL 584
+    W_SYMBOL 589
+    W_SYMBOL 595
+    W_SYMBOL 601
+    W_SYMBOL 608
+    W_SYMBOL 612
+    W_SYMBOL 617
+    W_SYMBOL 622
+    W_SYMBOL 625
+    W_SYMBOL 628
 
 _FEXT:
-    W_METHOD 1, -1, 269, 0, 6, 0
+    W_METHOD 2, -1, 269, 0, 6, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 3, -1, 276, 0, 52, 0
+    W_METHOD 6, -1, 276, 0, 52, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 40, -1, 362, 0, 32, 0
+    W_METHOD 41, -1, 388, 0, 32, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 2, 256, 329, 0, 32, 0
+    W_METHOD 1, 256, 329, 1, 25, 0
+    W_METHOD_ARG 3, 0
+    W_METHOD_ARG -1, 0
+    W_METHOD 4, 256, 355, 0, 32, 0
     W_METHOD_ARG -1, 0
 
 _NDAT:

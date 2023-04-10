@@ -30,6 +30,8 @@ class ExtractCallBlock
 
     # block.dump
 
+    arraylist = DabNode.new
+
     i = 1
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
@@ -38,6 +40,7 @@ class ExtractCallBlock
       capture_args << carg
       capture_extract = DabNodeDefineLocalVar.new(identifier, value)
       createarglist << DabNodeArgDefinition.new(i, "arg_#{identifier}", nil, nil)
+      arraylist << DabNodeArg.new(i, nil)
       i += 1
       body.pre_insert(capture_extract)
 
@@ -45,6 +48,8 @@ class ExtractCallBlock
       capture_extract.closure_box!
       carg.closure_pass!
     end
+
+    createbody << DabNodeSetInstVar.new('@closure', DabNodeLiteralArray.new(arraylist))
 
     # method_class.add_reg_function("__construct", [](DabValue self, std::vector<DabValue> args) {
     # DabValue array_class = $VM->classes[CLASS_ARRAY];
