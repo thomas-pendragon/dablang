@@ -26,7 +26,7 @@ class DecompileSpec
     test_prefix = settings[:test_output_prefix] || ''
 
     data = read_test_file(input)
-    runvm = data[:options]['--vm']
+    runvm = (data[:options] || '')['--vm']
 
     options = data[:options] || ''
 
