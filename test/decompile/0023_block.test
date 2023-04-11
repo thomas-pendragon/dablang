@@ -34,8 +34,7 @@ class __block_main0
   construct(arg0)
   {
     @self = arg0;
-    var R1 = @[];
-    @closure = R1;
+    @closure = @[];
     return nil;
   }
 }

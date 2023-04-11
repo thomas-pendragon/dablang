@@ -47,4 +47,8 @@ class DabNodeLiteralArray < DabNode
   def accepts?(arg)
     arg.register?
   end
+
+  def no_side_effects?
+    true
+  end
 end
