@@ -3,4 +3,5 @@ func test()
   assert_equal("upcase", "foo".upcase, "FOO");
   assert_equal("downcase", "FOO".downcase, "foo");
   assert_equal("titleize", "fooBar".titleize, "Foobar");
+  assert_equal("pluralize", "cat".pluralize, "cats");
 }

@@ -85,7 +85,7 @@ class DabTypeString < DabType
   end
 
   def has_function?(identifier)
-    identifiers = %w[+ [] upcase length > >= <= < downcase titleize]
+    identifiers = %w[+ [] upcase length > >= <= < downcase titleize pluralize]
     return true if identifiers.include?(identifier)
 
     super
