@@ -1,0 +1,14 @@
+## CODE
+
+func tap() {}
+
+func main(arg)
+{
+  var local = 1;
+  tap() ^ {
+    print(local);
+    print(arg);
+  };
+}
+
+## EXPECT
