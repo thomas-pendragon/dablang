@@ -64,7 +64,6 @@
 - stdlib: Array.sort
 - stdlib: Array.max
 - stdlib: Array.min
-- stdlib: Array.join should take parameter
 - vm: code-based breakpoints (`__break()`)
 - vm: use exceptions
 - vm: debug: disasm should respect function boundary
