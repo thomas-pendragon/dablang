@@ -1,0 +1,4 @@
+func test()
+{  
+  assert_equal("Array.to_s", @[1, "foo", true].to_s, "[1, foo, true]");
+}
