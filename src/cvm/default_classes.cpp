@@ -238,37 +238,6 @@ void DabVM::define_default_classes()
         }
         return nullptr;
     });
-    array_class.add_reg_function("join", [this](DabValue self, std::vector<DabValue> args) {
-        assert(args.size() <= 1);
-        std::string glue = ", ";
-        if (args.size() == 1) {
-            glue = args[0].string();
-        }
-        std::string ret;
-        auto &      a = self.array();
-        for (size_t i = 0; i < a.size(); i++)
-        {
-            if (i)
-                ret += glue;
-            auto val = cinstcall(a[i], "to_s");
-            ret += val.string();
-            if (!$VM->options.autorelease)
-            {
-                val.release();
-            }
-        }
-        return ret;
-    });
-//    array_class.add_reg_function("to_s", [this](DabValue self, std::vector<DabValue> args) {
-//        assert(args.size() == 0);
-//        auto inner = cinstcall(self, "join");
-//        auto ret   = std::string("[" + inner.string() + "]");
-//        if (!$VM->options.autorelease)
-//        {
-//            inner.release();
-//        }
-//        return ret;
-//    });
     array_class.add_reg_function("+", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
         auto arg = $VM->cast(args[0], CLASS_ARRAY);

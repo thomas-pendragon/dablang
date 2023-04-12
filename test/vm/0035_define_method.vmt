@@ -106,7 +106,6 @@ _SYMD:
     W_STRING "shift"
     W_STRING "insert"
     W_STRING "[]="
-    W_STRING "join"
     W_STRING "name"
     W_STRING "||"
     W_STRING "&&"
@@ -152,16 +151,15 @@ _SYMB:
     W_SYMBOL 608
     W_SYMBOL 612
     W_SYMBOL 617
-    W_SYMBOL 622
-    W_SYMBOL 625
-    W_SYMBOL 628
+    W_SYMBOL 620
+    W_SYMBOL 623
 
 _FEXT:
     W_METHOD 2, -1, 269, 0, 6, 0
     W_METHOD_ARG -1, 0
     W_METHOD 6, -1, 276, 0, 52, 0
     W_METHOD_ARG -1, 0
-    W_METHOD 41, -1, 388, 0, 32, 0
+    W_METHOD 40, -1, 388, 0, 32, 0
     W_METHOD_ARG -1, 0
     W_METHOD 1, 256, 329, 1, 25, 0
     W_METHOD_ARG 3, 0

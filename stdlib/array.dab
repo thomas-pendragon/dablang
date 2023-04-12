@@ -66,4 +66,22 @@ class Array
   {
     return self.count != 0;
   }
+
+  func join(separator = ", ")
+  {
+    var sep = separator; // TODO: fix because should not be needed
+    var result = "";
+    self.each_with_index() ^ (item, index) {
+      if (index != 0) {
+        result = result + sep;
+      }
+      result = result + item.to_s;
+    };
+    return result;
+  }
+
+  func to_s()
+  {
+    return "[" + self.join() + "]";
+  }
 }
