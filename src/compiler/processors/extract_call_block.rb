@@ -64,6 +64,9 @@ class ExtractCallBlock
 
     node.replace_with!(initcall)
 
+    fun.extremely_early_init!
+    create.extremely_early_init!
+
     true
   end
 end
