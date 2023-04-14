@@ -269,6 +269,7 @@ class DabNodeFunction < DabNode
     end
     root.add_function(ret)
     ret.concreteified = true
+    ret.extremely_early_init!
     ret.run_init!
     new_name
   end
