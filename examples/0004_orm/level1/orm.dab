@@ -45,10 +45,8 @@ class OrmGenerator {
 
       puts("Field: "+name);
 
-      //var kn = @klass_name;
       define_method(@klass_name, name) ^ {
-        //puts("this is field " + index.to_s);
-        return __get_instvar(self, name);//"field_" + name;
+        return __get_instvar(self, name);
       };
 
       index = index + 1;
