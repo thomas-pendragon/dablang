@@ -78,7 +78,13 @@ class DabCompilerFrontend
         end
       end
 
-      debug_check!(settings, program, 'raw')
+      debug_check!(settings, program, 'raw0')
+
+      dab_benchmark('extremely_early_init') do
+        program.extremely_early_init!
+      end
+
+      debug_check!(settings, program, 'raw1')
 
       dab_benchmark('very_early_init') do
         while true

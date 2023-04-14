@@ -14,6 +14,7 @@ PROCESSOR_EARLY_INIT_INDEX = 12
 PROCESSOR_LATE_INIT_INDEX = 13
 PROCESSOR_VERY_EARLY_INIT_INDEX = 14
 PROCESSOR_BOX_INDEX = 15
+PROCESSOR_EXTREMELY_EARLY_INIT_INDEX = 16
 
 PROCESSORS_HASH = [
   [PROCESSOR_CHECK_INDEX, :check_with, :check_callbacks],
@@ -32,6 +33,7 @@ PROCESSORS_HASH = [
   [PROCESSOR_LATE_INIT_INDEX, :late_after_init, :late_init_callbacks],
   [PROCESSOR_VERY_EARLY_INIT_INDEX, :very_early_after_init, :very_early_init_callbacks],
   [PROCESSOR_BOX_INDEX, :box_with, :box_callbacks],
+  [PROCESSOR_EXTREMELY_EARLY_INIT_INDEX, :extremely_early_after_init, :extremely_early_callbacks],
 ].freeze
 
 module DabNodeModuleProcessors
@@ -109,6 +111,12 @@ module DabNodeModuleProcessors
 
   def run_init!
     all_nodes.each(&:sub_init!)
+  end
+
+  def extremely_early_init!
+    all_nodes.each do |node|
+      node.sub_run_all_processors!(PROCESSOR_EXTREMELY_EARLY_INIT_INDEX)
+    end
   end
 
   def very_early_init!

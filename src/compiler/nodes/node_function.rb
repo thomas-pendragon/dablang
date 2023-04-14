@@ -12,8 +12,8 @@ class DabNodeFunction < DabNode
   attr_accessor :identifier
   attr_reader :inline
 
-  after_init :copy_original_body
-  after_init ConvertArgToLocalvar
+  extremely_early_after_init :copy_original_body
+  extremely_early_after_init ConvertArgToLocalvar
   after_init AddMissingReturn
   strip_with StripUnusedFunction
   ssa_with SSAify
