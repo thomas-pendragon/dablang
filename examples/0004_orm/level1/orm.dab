@@ -21,7 +21,14 @@ class DabRecord {
       __set_instvar(self, column, value);
     };
   }
+  static func transaction() {
+    var t = DabRecrodTransaction.new();
+    yield(t);
+  }
 };
+class DabRecrodTransaction {
+  func abort() {}
+}
 
 class OrmGenerator {
 
