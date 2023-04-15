@@ -26,6 +26,12 @@ func level2() {
        var b2 = Book.first;
        puts("Should be saved in DB, name is '" + b2.title + "'");
 
+       b2.title = "This is \\ t'e's't //";
+       b2.save;
+
+       var b3 = Book.first;
+       puts("Should handle special characters, name is '" + b3.title + "'");
+
        t.abort();
     };
 }

@@ -33,7 +33,7 @@ class DabRecord {
     yield(t);
   }
   func __construct() {
-    @changed_fields = @[];
+    @changed_fields = Set.new;
   }
   func changed?() {
     return @changed_fields.count > 0;
@@ -48,7 +48,7 @@ class DabRecord {
       puts(">>> UPDATE " + field + " TO '" + value + "' for ID=" + id.to_s);
       DabRecord.connection.execute("UPDATE books SET " + field + " = '" + self._escape(value) + "' WHERE id = " + id.to_s);
     };
-//    @changed_fields = @[];
+//    @changed_fields = Set.new;
 //    @_all_fields.each() ^ (field) {
 //     // __set_instvar(self, self._previous_name(field), __get_instvar(self, field));
 //    }

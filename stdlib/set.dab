@@ -20,4 +20,17 @@ class Set
   {
     return @data.has?(item);
   }
+
+  func each() {
+    var index = 0;
+    var count = self.count;
+    while (index != count) {
+      yield(@data[index]);
+      index = index + 1;
+    }
+  }
+
+  func count() {
+    return @data.count;
+  }
 }
