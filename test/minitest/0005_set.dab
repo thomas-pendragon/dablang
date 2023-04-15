@@ -1,0 +1,10 @@
+func test()
+{  
+  var set = Set.new;
+  assert_equal("Set.has?", set.has?("bar"), false);
+  set.insert("bar");
+  set.insert("bar");
+  assert_equal("Set.has?", set.has?("bar"), true);
+  set.remove("bar");
+  assert_equal("Set.has?", set.has?("bar"), false);
+}

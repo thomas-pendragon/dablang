@@ -3,4 +3,9 @@ func test()
   assert_equal("Array.to_s", @[1, "foo", true].to_s, "[1, foo, true]");
   assert_equal("Array.join", @[1, "foo", true].join, "1, foo, true");
   assert_equal("Array.join", @[1, "foo", true].join("|"), "1|foo|true");
+  assert_equal("Array.has?", @[1, "foo", true].has?("foo"), true);
+  assert_equal("Array.has?", @[1, "foo", true].has?("bar"), false);
+  var array = @["foo", "bar", 3];
+  array.remove("bar");  
+  assert_equal("Array.remove", array.to_s, "[foo, 3]");
 }

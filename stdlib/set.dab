@@ -1,0 +1,23 @@
+class Set
+{
+  func __construct() {
+    @data = @[];
+  }
+
+  func insert(item)
+  {
+    if (!self.has?(item)) {
+      @data.insert(item);
+    }
+  }
+
+  func remove(item)
+  {
+    @data.remove(item);
+  }
+
+  func has?(item)
+  {
+    return @data.has?(item);
+  }
+}

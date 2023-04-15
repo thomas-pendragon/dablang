@@ -202,6 +202,16 @@ void DabVM::define_default_classes()
         a.push_back(arg);
         return nullptr;
     });
+    array_class.add_reg_function("remove_at", [](DabValue self, std::vector<DabValue> args) {
+        assert(args.size() == 1);
+        auto arg = args[0];
+        assert(self.data.type == TYPE_ARRAY);
+        assert(arg.data.type == TYPE_FIXNUM);
+        auto &a = self.array();
+        auto index = arg.data.fixnum;
+        a.erase(a.begin() + index);
+        return nullptr;
+    });
     array_class.add_reg_function("[]", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 1);
         auto arg0 = self;
