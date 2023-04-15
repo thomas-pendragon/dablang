@@ -72,6 +72,7 @@ _SYMD:
     W_STRING "count"
     W_STRING "shift"
     W_STRING "insert"
+    W_STRING "remove_at"
     W_STRING "[]="
     W_STRING "name"
     W_STRING "||"
@@ -110,9 +111,10 @@ _SYMB:
     W_SYMBOL 405
     W_SYMBOL 411
     W_SYMBOL 418
-    W_SYMBOL 422
-    W_SYMBOL 427
-    W_SYMBOL 430
+    W_SYMBOL 428
+    W_SYMBOL 432
+    W_SYMBOL 437
+    W_SYMBOL 440
 
 _FEXT:
     W_METHOD 0, -1, 237, 0, 6, 0
