@@ -884,11 +884,11 @@ class DabContext < DabBaseContext
   end
 
   def read_or_value
-    _read_list_or_single(:read_shift_value, ['||', '&&'], DabNodeOperator)
+    _read_list_or_single(:read_eq_value, ['||', '&&'], DabNodeOperator)
   end
 
   def read_cmp_value
-    _read_list_or_single(:read_or_value, ['<=', '>=', '<', '>'], DabNodeOperator)
+    _read_list_or_single(:read_shift_value, ['<=', '>=', '<', '>'], DabNodeOperator)
   end
 
   def read_eq_value
@@ -896,7 +896,7 @@ class DabContext < DabBaseContext
   end
 
   def read_band_value
-    _read_list_or_single(:read_eq_value, ['&'], DabNodeOperator)
+    _read_list_or_single(:read_or_value, ['&'], DabNodeOperator)
   end
 
   def read_bor_value

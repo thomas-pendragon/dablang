@@ -16,7 +16,7 @@ class Postgres
 //      puts(status == PGRES_COMMAND_OK);
 //      puts((status == PGRES_COMMAND_OK) || (status == PGRES_TUPLES_OK));
 //      puts(!(status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK));
-      failed = !((status == PGRES_COMMAND_OK) || (status == PGRES_TUPLES_OK));
+      failed = !(status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK);
     }
     else
     {
