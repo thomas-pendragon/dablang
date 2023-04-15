@@ -27,6 +27,8 @@ func level2() {
        puts("Should be saved in DB, name is '" + b2.title + "'");
 
        b2.title = "This is \\ t'e's't //";
+       b2.author = "Bob Ross";
+       b2.save;
        b2.save;
 
        var b3 = Book.first;

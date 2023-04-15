@@ -14,4 +14,5 @@ enum
     KERNEL_DEFINE_CLASS  = 0x9,
     KERNEL_GET_INSTVAR   = 0xA,
     KERNEL_SET_INSTVAR   = 0xB,
+    KERNEL_ANSI_COLOR    = 0xC,
 };

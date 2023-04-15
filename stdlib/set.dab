@@ -33,4 +33,8 @@ class Set
   func count() {
     return @data.count;
   }
+
+  func to_s() {
+    return "Set" + @data.to_s;
+  }
 }

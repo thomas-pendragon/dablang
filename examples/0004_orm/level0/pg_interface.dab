@@ -52,8 +52,11 @@ class Postgres
 
   func raw_execute(sql<String>, binary<Boolean> = true) {
 
+    print(__ansi_color(1, 34));
     print("  > ");
-    puts(sql);
+    print(sql);
+    print(__ansi_color(0));
+    print("\n");
     
     //func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
     //                        paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
@@ -62,9 +65,9 @@ class Postgres
     
     var res = PQexecParams(@connection, sql, 0, nil, nil, nil, nil, resultFormat);
     
-    print(" >> result: ");
-    print(PQresultStatus(res));
-    puts("");
+  //  print(" >> result: ");
+   // print(PQresultStatus(res));
+   // puts("");
     self.validate("SQL query", res);
     return res;        
   }

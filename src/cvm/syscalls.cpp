@@ -250,6 +250,28 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         register_set(out_reg, nullptr);
         break;
     }
+    case KERNEL_ANSI_COLOR:
+    {
+        std::string ret;
+        ret += "\e[";
+        for (int i = 0; i < (int)reglist.size(); i++)
+        {
+            if (i > 0)
+            {
+                ret += ";";
+            }
+            char data[16];
+            auto v = register_get(reglist[i]);
+            assert(v.data.type == TYPE_FIXNUM);
+            auto n = v.data.fixnum;
+            snprintf(data, 16, "%d", (int)n);
+            ret += data;
+        }
+        ret += "m";
+        //        fprintf(stderr, "VM: ANSI [%s]\n", ret.c_str());
+        register_set(out_reg, ret);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown kernel call <%d>.\n", (int)call);
         exit(1);

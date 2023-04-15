@@ -155,6 +155,7 @@ KERNELCODES = {
   0x09 => 'DEFINE_CLASS',
   0x0A => 'GET_INSTVAR',
   0x0B => 'SET_INSTVAR',
+  0x0C => 'ANSI_COLOR',
 }.freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
