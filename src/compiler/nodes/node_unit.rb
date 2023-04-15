@@ -134,7 +134,6 @@ class DabNodeUnit < DabNode
 
   def find_or_define_class(name)
     if name.is_a?(Fixnum)
-      errap ['class_numbers_rev', class_numbers_rev, name]
       name = class_numbers_rev[name]
     end
     find_class(name) || create_default_class(name) # || add_class(name)

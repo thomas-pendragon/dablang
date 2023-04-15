@@ -74,17 +74,11 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
     auto real_method_name = std::string("call");
     auto call_symbol      = $VM->get_symbol_index(real_method_name);
     auto fun              = method_class.get_instance_function(call_symbol);
-    //    assert(!fun.new_method);
-    //    auto method_address = fun.address;
 
-    //  auto method_length = fun.length;
-    //    assert(method_length > 0);
+    auto n_args = (int)fun.reflection.arg_names.size();
 
-    // %x (%p, len = %d)
-    fprintf(stderr, "VM: define_method '%s'\n",
-            //(int)method_address,
-            //            (void *)method_address, (int)method_length,
-            method_name.c_str());
+    fprintf(stderr, "VM: define_method '%s'\n", method_name.c_str());
+    fprintf(stderr, "VM: !! fun has %d args\n", n_args);
 
     FILE  *output = stderr;
     Stream binary_output;
@@ -176,12 +170,30 @@ void DabVM::kernel_define_method(dab_register_t out_reg, std::vector<dab_registe
         binary_output.write_uint16(i * 2 + 1);
     }
     fprintf(output, "\n");
-    fprintf(output, "INSTCALL R%d, R%d, S%d\n", asm_out_reg, method_reg, call_symbol_index);
+    int first_arg_reg = asm_out_reg;
+    for (int i = 0; i < n_args; i++)
+    {
+        fprintf(output, "LOAD_ARG R%d, %d\n", first_arg_reg + i, i);
+        binary_output.write_uint8(OP_LOAD_ARG);
+        binary_output.write_uint16(first_arg_reg + i);
+        binary_output.write_uint16(i);
+        asm_out_reg += 1;
+    }
+    fprintf(output, "INSTCALL R%d, R%d, S%d", asm_out_reg, method_reg, call_symbol_index);
+    for (int i = 0; i < n_args; i++)
+    {
+        fprintf(output, ", R%d", first_arg_reg + i);
+    }
+    fprintf(output, "\n");
     binary_output.write_uint8(OP_INSTCALL);
     binary_output.write_uint16(asm_out_reg);
     binary_output.write_uint16(method_reg);
     binary_output.write_uint16(call_symbol_index);
-    binary_output.write_uint8(0);
+    binary_output.write_uint8(n_args);
+    for (int i = 0; i < n_args; i++)
+    {
+        binary_output.write_uint16(first_arg_reg + i);
+    }
     fprintf(output, "RETURN R%d\n", asm_out_reg);
     binary_output.write_uint8(OP_RETURN);
     binary_output.write_uint16(asm_out_reg);
