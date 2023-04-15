@@ -15,6 +15,7 @@ class DabType
     return DabTypeIntPtr.new if typename == 'IntPtr'
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
+    return DabTypeByteBuffer.new if typename == 'ByteBuffer'
 
     raise "Unknown type #{typename}"
   end

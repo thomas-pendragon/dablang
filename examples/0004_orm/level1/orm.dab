@@ -15,14 +15,16 @@ class DabRecord {
   }
   func _fill(res, row) {
     var columns = res.columns;
+    @_all_fields = Set.new();
     row.each_with_index() ^ (value, index) {
       var column = columns[index];
       // print(column.to_s + " -> "+ value.to_s + "\n");
       __set_instvar(self, column, value);
-      __set_instvar(self, self.__previous_name(column), value);
+      __set_instvar(self, self._previous_name(column), value);
+      @_all_fields.insert(column);
     };
   }
-  func __previous_name(name) {
+  func _previous_name(name) {
     return "__previous_" + name;
   }
   static func transaction() {
@@ -38,6 +40,25 @@ class DabRecord {
   }
   func changed_fields() {
     return @changed_fields;
+  }
+  func save() {
+    @changed_fields.each() ^ (field) {
+      var id = self.id;
+      var value = __get_instvar(self, field);
+      puts(">>> UPDATE " + field + " TO '" + value + "' for ID=" + id.to_s);
+      DabRecord.connection.execute("UPDATE books SET " + field + " = '" + self._escape(value) + "' WHERE id = " + id.to_s);
+    };
+//    @changed_fields = @[];
+//    @_all_fields.each() ^ (field) {
+//     // __set_instvar(self, self._previous_name(field), __get_instvar(self, field));
+//    }
+  }
+  func _escape(str) {    
+    var buffer = ByteBuffer.new(str.length * 2);
+    PQescapeString(buffer, str, str.length * 2);
+   # var<ByteBuffer> result1 = buffer;
+    var<String> result = buffer;
+    return result;
   }
 };
 class DabRecrodTransaction {
@@ -74,7 +95,7 @@ class OrmGenerator {
 
       define_method(@klass_name, name + "=") ^ (value) {
         @changed_fields.remove(name);
-        var previous = __get_instvar(self, self.__previous_name(name));
+        var previous = __get_instvar(self, self._previous_name(name));
         if (value != previous) {
           @changed_fields.insert(name);
         }
@@ -82,7 +103,7 @@ class OrmGenerator {
       };
 
       index = index + 1;
-    };    
+    };
 
     //var xx = @pg.dump("SELECT column_name, ordinal_position, column_default, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'books' ORDER BY ordinal_position;");
     //var yy = @pg.dump("SELECT * FROM books");

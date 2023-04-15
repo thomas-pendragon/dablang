@@ -20,6 +20,12 @@ func level2() {
        puts("First book title is now '" + b.title.to_s + "'");
        puts("book.changed? '" + b.changed?.to_s + "'");
        puts("book.changed_fields '" + b.changed_fields.to_s + "'");
+
+       b.save; # !
+
+       var b2 = Book.first;
+       puts("Should be saved in DB, name is '" + b2.title + "'");
+
        t.abort();
     };
 }

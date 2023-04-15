@@ -500,3 +500,22 @@ else if (arg_klasses.size() == 5 && arg_klasses[0] == CLASS_INTPTR &&
 
     return (DabValue(CLASS_INT32, return_value));
 }
+else if (arg_klasses.size() == 3 && arg_klasses[0] == CLASS_INTPTR &&
+         arg_klasses[1] == CLASS_INTPTR && arg_klasses[2] == CLASS_UINT64 &&
+         ret_klass == CLASS_UINT64)
+{
+    typedef uint64_t (*int_fun)(void *, void *, uint64_t);
+    auto int_symbol = (int_fun)symbol;
+
+    auto value0 = $VM->cast(args[0], CLASS_INTPTR);
+    auto value1 = $VM->cast(args[1], CLASS_INTPTR);
+    auto value2 = $VM->cast(args[2], CLASS_UINT64);
+
+    auto value0_data = value0.data.intptr;
+    auto value1_data = value1.data.intptr;
+    auto value2_data = value2.data.num_uint64;
+
+    auto return_value = (*int_symbol)(value0_data, value1_data, value2_data);
+
+    return (DabValue(CLASS_UINT64, return_value));
+}

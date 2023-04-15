@@ -1097,6 +1097,17 @@ DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
     {
         return DabValue(CLASS_FLOAT, (float)value.data.fixnum);
     }
+    else if (from == CLASS_BYTEBUFFER && to == CLASS_STRING) {        
+        return DabValue::allocate_dynstr((const char *)&value.bytebuffer()[0]);
+    }
+    else if (from == CLASS_LITERALSTRING && to == CLASS_INTPTR) {
+        DabValue copy;
+        copy.data.type   = TYPE_INTPTR;
+        auto proxy = value.data.object;
+        auto object = dynamic_cast<DabLiteralString*>(proxy->object);
+        copy.data.intptr = (void*)object->pointer;
+        return copy;
+    }
     else
     {
         char info[256];

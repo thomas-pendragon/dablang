@@ -79,4 +79,7 @@ func import_pq(method) {
   func PQexecParams<IntPtr>(conn<IntPtr>, command<String>, nParams<Int32>, paramTypes<IntPtr>,
                             paramValues<IntPtr>, paramLengths<IntPtr>, paramFormats<IntPtr>, resultFormat<Int32>) {}
 
+  // size_t PQescapeString (char *to, const char *from, size_t length);
+  [import_pq]
+  func PQescapeString<Uint64>(to<IntPtr>, from<IntPtr>, length<Uint64>) {}
 #}
