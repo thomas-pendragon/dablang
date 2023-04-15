@@ -19,12 +19,25 @@ class DabRecord {
       var column = columns[index];
       // print(column.to_s + " -> "+ value.to_s + "\n");
       __set_instvar(self, column, value);
+      __set_instvar(self, self.__previous_name(column), value);
     };
+  }
+  func __previous_name(name) {
+    return "__previous_" + name;
   }
   static func transaction() {
     var t = DabRecrodTransaction.new();
     DabRecord.connection.execute("BEGIN");
     yield(t);
+  }
+  func __construct() {
+    @changed_fields = @[];
+  }
+  func changed?() {
+    return @changed_fields.count > 0;
+  }
+  func changed_fields() {
+    return @changed_fields;
   }
 };
 class DabRecrodTransaction {
@@ -60,6 +73,11 @@ class OrmGenerator {
       };
 
       define_method(@klass_name, name + "=") ^ (value) {
+        @changed_fields.remove(name);
+        var previous = __get_instvar(self, self.__previous_name(name));
+        if (value != previous) {
+          @changed_fields.insert(name);
+        }
         return __set_instvar(self, name, value);
       };
 

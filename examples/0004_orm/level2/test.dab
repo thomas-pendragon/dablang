@@ -3,8 +3,23 @@ func level2() {
     DabRecord.transaction() ^ (t) {
        var b = Book.first;
        puts("First book title is '" + b.title.to_s + "'");
+       puts("book.changed? '" + b.changed?.to_s + "'");
+       puts("book.changed_fields '" + b.changed_fields.to_s + "'");
+       
        b.title = "New title";
        puts("First book title is now '" + b.title.to_s + "'");
+       puts("book.changed? '" + b.changed?.to_s + "'");
+       puts("book.changed_fields '" + b.changed_fields.to_s + "'");
+       
+       b.title = "The motor boys on the wing";
+       puts("First book title is now '" + b.title.to_s + "'");
+       puts("book.changed? '" + b.changed?.to_s + "'");
+       puts("book.changed_fields '" + b.changed_fields.to_s + "'");
+
+       b.title = "Another new title";
+       puts("First book title is now '" + b.title.to_s + "'");
+       puts("book.changed? '" + b.changed?.to_s + "'");
+       puts("book.changed_fields '" + b.changed_fields.to_s + "'");
        t.abort();
     };
 }
