@@ -59,6 +59,10 @@ class OrmGenerator {
         return __get_instvar(self, name);
       };
 
+      define_method(@klass_name, name + "=") ^ (value) {
+        return __set_instvar(self, name, value);
+      };
+
       index = index + 1;
     };    
 

@@ -1,0 +1,17 @@
+## LEVEL 0
+
+func level0() {
+  define_method("with_arg") ^ (arg) {
+    print(arg * 2);
+  };
+}
+
+## LEVEL 1
+
+func level1() {
+  with_arg(5);
+}
+
+## EXPECT
+
+10
