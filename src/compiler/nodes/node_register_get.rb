@@ -18,7 +18,7 @@ class DabNodeRegisterGet < DabNode
 
   def compile_as_ssa(output, output_register)
     output.print('MOV', output_register ? "R#{output_register}" : 'RNIL', "R#{input_register}")
-    if $no_autorelease
+    if true
       output.print('RETAIN', "R#{output_register}")
     end
   end

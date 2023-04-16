@@ -30,7 +30,7 @@ class DabNodeArg < DabNode
       output.print('LOAD_ARG', "R#{output_register}", @index)
     end
 
-    # if $no_autorelease
+    # if true
     #   output.printex(self, 'RETAIN', "R#{output_register}")
     # end
   end

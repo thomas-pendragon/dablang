@@ -34,7 +34,7 @@ class DabNodeRegisterSet < DabNode
   end
 
   def compile(output)
-    output.print('RELEASE', "R#{output_register}") if $no_autorelease && !first_setter?
+    output.print('RELEASE', "R#{output_register}") if true && !first_setter?
     if value.respond_to?(:compile_as_ssa)
       value.compile_as_ssa(output, output_register)
     else
