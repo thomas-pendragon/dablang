@@ -30,9 +30,9 @@ class DabNodeArg < DabNode
       output.print('LOAD_ARG', "R#{output_register}", @index)
     end
 
-    if $no_autorelease
-      output.printex(self, 'RETAIN', "R#{output_register}")
-    end
+    # if $no_autorelease
+    #   output.printex(self, 'RETAIN', "R#{output_register}")
+    # end
   end
 
   def no_side_effects?

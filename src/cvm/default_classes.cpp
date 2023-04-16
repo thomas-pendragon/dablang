@@ -142,10 +142,7 @@ void DabVM::define_default_classes()
     });
     string_class.add_reg_function("to_s", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
-        if (!$VM->options.autorelease)
-        {
-            self.retain();
-        }
+        self.retain();
         return self;
     });
     DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .string());

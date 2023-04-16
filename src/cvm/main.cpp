@@ -754,6 +754,7 @@ bool DabVM::execute_single(Stream &input)
         auto reg_index = input.read_reg();
         auto arg_index = input.read_uint16();
         auto var       = get_arg(arg_index);
+        var.retain();
         register_set(reg_index, var);
         break;
     }
@@ -772,6 +773,7 @@ bool DabVM::execute_single(Stream &input)
         {
             var = register_get(def_index);
         }
+        var.retain();
         register_set(reg_index, var);
         break;
     }
@@ -1399,11 +1401,6 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     if (flags["--cov"])
     {
         this->coverage_testing = true;
-    }
-
-    if (flags["--noautorelease"] || flags["--no-autorelease"])
-    {
-        this->autorelease = false;
     }
 }
 

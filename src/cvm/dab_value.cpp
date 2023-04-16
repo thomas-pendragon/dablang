@@ -498,10 +498,6 @@ void DabValue::set_classvar(dab_symbol_t symbol, const DabValue &value)
 void DabValue::set_data(const DabValueData &other_data)
 {
     data = other_data;
-    if ($VM->options.autorelease)
-    {
-        retain();
-    }
 }
 
 DabValue::DabValue(const DabValue &other)
@@ -519,10 +515,6 @@ DabValue &DabValue::operator=(const DabValue &other)
 
 DabValue::~DabValue()
 {
-    if ($VM->options.autorelease)
-    {
-        release();
-    }
 }
 
 void DabValue::release()
