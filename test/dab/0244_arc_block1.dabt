@@ -1,0 +1,20 @@
+## CODE
+
+func main()
+{
+  var i = 0;
+  while (i < 3) {
+    print("test " + i.to_s + "\n");
+    i = i + 1;  
+  }
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+#EXPECT OK
+
+test 0
+test 1
+test 2

@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+  var i = 0;
+  while (i < 3) {
+    print("test " + i.to_s + "\n");
+    i = i + 1;  
+  }
+}
+
+## EXPECT
+
+aa
