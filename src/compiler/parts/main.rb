@@ -52,7 +52,7 @@ class DabCompilerFrontend
       $opt = false if settings[:no_opt]
       $strip = !!settings[:strip]
       $entry = settings[:entry] || 'main'
-      $no_autorelease = settings[:no_autorelease]
+      $no_autorelease = true # settings[:no_autorelease]
       $multipass = settings[:multipass]
 
       inputs = settings[:inputs] || [:stdin]

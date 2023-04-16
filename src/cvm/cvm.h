@@ -452,7 +452,7 @@ struct DabRunOptions
     bool autorun     = true;
     bool extract     = false;
     bool raw         = false;
-    bool autorelease = true;
+    bool autorelease = false;
     bool verbose     = false;
     //    bool with_attributes = false;
     bool leaktest = false;
