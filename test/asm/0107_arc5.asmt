@@ -1,0 +1,105 @@
+## CODE
+
+func zomb() {
+  return true;
+}
+
+func foo() {
+  var a = 2;
+  if (zomb()) {
+    a = 4;
+  }
+  return 4 + a;
+}
+
+func main() {
+  print(foo());
+}
+
+## OPTIONS
+
+--no-opt
+
+## EXPECT
+
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 0
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_0:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_0_END:
+                                 NOP 
+ 
+                   Ffoo:
+                                 STACK_RESERVE 0
+/* 2            */               LOAD_NUMBER R0, 2
+/* zomb         */               CALL R1, S4
+                                 JMP_IF R1, L1, L2
+                   L1:
+                                 RELEASE R0
+/* 4            */               LOAD_NUMBER R0, 4
+                                 JMP L2
+                   L2:
+/* 4            */               LOAD_NUMBER R2, 4
+/* +            */               INSTCALL R3, R2, S0, R0
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RETURN R3
+                   __Ffoo_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* foo          */               CALL R0, S2
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fzomb:
+                                 STACK_RESERVE 0
+                                 LOAD_TRUE R0
+                                 RETURN R0
+                   __Fzomb_END:
+                                 NOP 
+ 
+                   _SDAT:
+                                 W_STRING "+" 
+                                 W_STRING "__init_0" 
+                                 W_STRING "foo" 
+                                 W_STRING "main" 
+                                 W_STRING "zomb" 
+ 
+                   _SYMB:
+/* +            */               W_SYMBOL _SDAT + 0 
+/* __init_0     */               W_SYMBOL _SDAT + 2 
+/* foo          */               W_SYMBOL _SDAT + 11 
+/* main         */               W_SYMBOL _SDAT + 15 
+/* zomb         */               W_SYMBOL _SDAT + 20 
+ 
+                   _FUNC:
+/* __init_0     */               W_METHOD 1, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* foo          */               W_METHOD 2, -1, Ffoo, 0, __Ffoo_END - Ffoo, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 3, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* zomb         */               W_METHOD 4, -1, Fzomb, 0, __Fzomb_END - Fzomb, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0
