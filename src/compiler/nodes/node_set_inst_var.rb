@@ -28,8 +28,10 @@ class DabNodeSetInstVar < DabNode
 
   def compile(output)
     reg = value.input_register
+    output.printex(self, 'RELEASE_INSTVAR', node_identifier.symbol_arg)
     output.comment("#{identifier}=")
     output.printex(self, 'SET_INSTVAR', node_identifier.symbol_arg, "R#{reg}")
+    output.printex(self, 'RETAIN_INSTVAR', node_identifier.symbol_arg)
   end
 
   def formatted_source(options)

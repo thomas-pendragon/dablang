@@ -66,10 +66,14 @@ func main() {
 /* arg_self     */               LOAD_ARG R0, 0
 /* arg_a        */               LOAD_ARG R1, 1
 /* arg_self     */               LOAD_ARG R2, 0
+                                 RELEASE_INSTVAR S10
 /* @self=       */               SET_INSTVAR S10, R2
+                                 RETAIN_INSTVAR S10
 /* arg_a        */               LOAD_ARG R3, 1
                                  NEW_ARRAY R4, R3
+                                 RELEASE_INSTVAR S7
 /* @closure=    */               SET_INSTVAR S7, R4
+                                 RETAIN_INSTVAR S7
                                  RELEASE R0
                                  RELEASE R1
                                  RELEASE R2

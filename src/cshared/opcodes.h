@@ -47,4 +47,6 @@ enum
     OP_GET_INSTVAR_EXT    = 0x2A,
     OP_GET_CLASSVAR       = 0x2B,
     OP_SET_CLASSVAR       = 0x2C,
+    OP_RETAIN_INSTVAR     = 0x2D,
+    OP_RELEASE_INSTVAR    = 0x2E,
 };

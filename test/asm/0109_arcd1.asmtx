@@ -1,0 +1,14 @@
+## CODE
+
+func main()
+{
+  3.times() ^ (i) {
+    puts("test " + i.to_s);
+  };
+}
+
+## EXPECT OK
+
+test 0
+test 1
+test 2

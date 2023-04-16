@@ -106,6 +106,8 @@ OPCODES_ARRAY_BASE = [
       {name: 'GET_INSTVAR_EXT', args: %i[reg symbol reg]}, # reg0 <- @arg2.@arg1
       {name: 'GET_CLASSVAR', args: %i[reg symbol]}, # reg0 <- Self.@arg1
       {name: 'SET_CLASSVAR', args: %i{symbol reg}}, # Self.@arg0 <- reg(arg1)
+      {name: 'RETAIN_INSTVAR', args: %i[symbol]}, # retain(self.@arg0)
+      {name: 'RELEASE_INSTVAR', args: %i[symbol]}, # release(self.@arg0)
     ],
   },
   {
