@@ -889,6 +889,20 @@ bool DabVM::execute_single(Stream &input)
         set_instvar(symbol, value);
         break;
     }
+    case OP_RELEASE_INSTVAR:
+    {
+        auto symbol = input.read_symbol();
+        auto value = get_self().get_instvar(symbol);
+        value.release();
+        break;
+    }
+    case OP_RETAIN_INSTVAR:
+    {
+        auto symbol = input.read_symbol();
+        auto value = get_self().get_instvar(symbol);
+        value.retain();
+        break;
+    }
     case OP_SET_CLASSVAR:
     {
         auto symbol = input.read_symbol();
