@@ -3,38 +3,42 @@ class Set
   func __construct() {
     @data = @[];
   }
-
+  
   func insert(item)
   {
     if (!self.has?(item)) {
       @data.insert(item);
     }
   }
-
+  
   func remove(item)
   {
     @data.remove(item);
   }
-
+  
   func has?(item)
   {
     return @data.has?(item);
   }
-
-  func each() {
+  
+  func each()
+  {
     var index = 0;
     var count = self.count;
-    while (index != count) {
+    while (index != count)
+    {
       yield(@data[index]);
       index = index + 1;
     }
   }
-
-  func count() {
+  
+  func count()
+  {
     return @data.count;
   }
-
-  func to_s() {
+  
+  func to_s()
+  {
     return "Set" + @data.to_s;
   }
 }

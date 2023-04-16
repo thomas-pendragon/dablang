@@ -85,26 +85,30 @@ class Array
   {
     return "[" + self.join() + "]";
   }
-
-  func has?(item) {
+  
+  func has?(item)
+  {
     var index = 0;
     var count = self.count;
     while (index != count)
     {
-      if (self[index] == item) {
+      if (self[index] == item)
+      {
         return true;
       }
       index = index + 1;
     }
     return false;
   }
-
-  func remove(item) {
+  
+  func remove(item)
+  {
     var index = 0;
     var count = self.count;
     while (index != count)
     {
-      if (self[index] == item) {
+      if (self[index] == item)
+      {
         return self.remove_at(index);
       }
       index = index + 1;
