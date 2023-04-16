@@ -200,17 +200,15 @@ class SnakeGame
   func render(renderer, size)
   {
     var snake = @snake;
-    var _size = size;
-    var _renderer = renderer;
-    var _last = @snake.count - 1;
+    var last = @snake.count - 1;
     snake.each_with_index() ^(point, index)
     {
-      var x = point.x * _size;
-      var y = point.y * _size;
-      draw_square(_renderer, _size, x, y, 255, 0, index == _last);
+      var x = point.x * size;
+      var y = point.y * size;
+      draw_square(renderer, size, x, y, 255, 0, index == last);
     };
 
-    draw_square(_renderer, _size, @apple.x * _size, @apple.y * _size, 255, 1, true);
+    draw_square(renderer, size, @apple.x * size, @apple.y * size, 255, 1, true);
 
     var sy = @game_height * size;
     var sx = @game_width * size;
