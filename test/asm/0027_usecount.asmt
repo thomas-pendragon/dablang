@@ -39,6 +39,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* USECOUNT     */               SYSCALL RNIL, 2, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

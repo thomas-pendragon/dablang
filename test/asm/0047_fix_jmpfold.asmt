@@ -38,6 +38,8 @@ func assert_equal(value)
 /* value        */               LOAD_ARG R0, 0
 /* 1            */               LOAD_NUMBER R1, 1
 /* !=           */               INSTCALL RNIL, R0, S0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fassert_equal_END:
                                  NOP 

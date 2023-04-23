@@ -52,10 +52,13 @@ func main()
 /* foo          */               CALL R1, S1
                                  JMP_IF R1, L2, L3
                    L2:
+                                 RELEASE R0
 /* 2            */               LOAD_NUMBER R0, 2
                                  JMP L1
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

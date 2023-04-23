@@ -52,10 +52,12 @@ func main_or()
 /* fun1         */               CALL R0, S1
                                  JMP_IF R0, L1, L2
                    L2:
+                                 RELEASE R0
 /* fun2         */               CALL R0, S2
                                  JMP L1
                    L1:
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_or_END:
                                  NOP 

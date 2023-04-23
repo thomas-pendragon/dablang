@@ -37,6 +37,9 @@ func main()
 /* 1            */               LOAD_NUMBER R1, 1
 /* >>           */               INSTCALL R2, R0, S0, R1
 /* PRINT        */               SYSCALL RNIL, 0, R2
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

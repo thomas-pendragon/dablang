@@ -42,6 +42,7 @@ func bar()
                                  STACK_RESERVE 0
 /* "got string" */               LOAD_STRING R0, _DATA + 0, 10
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__foo_String_END:
                                  NOP 
@@ -50,6 +51,7 @@ func bar()
                                  STACK_RESERVE 0
 /* "str"        */               LOAD_STRING R0, _DATA + 11, 3
 /* __foo_String */               CALL RNIL, S0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fbar_END:
                                  NOP 

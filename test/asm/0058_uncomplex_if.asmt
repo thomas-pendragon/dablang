@@ -56,6 +56,13 @@ func main()
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
+                                 RELEASE R6
                                  RETURN RNIL
                    __F__foo_Fixnum_END:
                                  NOP 
@@ -66,6 +73,8 @@ func main()
 /* __foo_Fixnum */               CALL RNIL, S2, R0
 /* 2            */               LOAD_NUMBER R1, 2
 /* __foo_Fixnum */               CALL RNIL, S2, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

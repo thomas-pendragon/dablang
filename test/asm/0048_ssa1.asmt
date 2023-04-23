@@ -40,6 +40,8 @@ func main()
 /* PRINT        */               SYSCALL RNIL, 0, R0
 /* 2            */               LOAD_NUMBER R1, 2
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

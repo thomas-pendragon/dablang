@@ -42,6 +42,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "Fixnum"     */               LOAD_STRING R0, _DATA + 2, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__spec_Fixnum_END:
                                  NOP 
@@ -50,6 +51,7 @@ func foo()
                                  STACK_RESERVE 0
 /* "String"     */               LOAD_STRING R0, _DATA + 9, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__spec_String_END:
                                  NOP 
@@ -62,6 +64,9 @@ func foo()
 /* __spec_Fixnu */               CALL RNIL, S0, R1
 /* "A"          */               LOAD_STRING R2, _DATA + 0, 1
 /* __spec_Strin */               CALL RNIL, S1, R2
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

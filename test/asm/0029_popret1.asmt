@@ -51,6 +51,10 @@ func main()
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
 /* insert       */               INSTCALL RNIL, R1, S2, R3
 /* puts         */               CALL RNIL, S4, R1
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -58,6 +62,7 @@ func main()
                    Fputs:
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fputs_END:
                                  NOP 

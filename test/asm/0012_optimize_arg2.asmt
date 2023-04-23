@@ -37,6 +37,7 @@ func foo(a)
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

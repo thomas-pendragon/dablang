@@ -43,6 +43,7 @@ Instructions should pop return value if not used.
                                  STACK_RESERVE 0
 /* "foo"        */               LOAD_STRING R0, _DATA + 0, 3
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

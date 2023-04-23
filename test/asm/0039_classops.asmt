@@ -41,6 +41,9 @@ func foo(a)
 /* foo          */               CALL RNIL, S2, R1
                                  LOAD_FALSE R2
 /* foo          */               CALL RNIL, S2, R2
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

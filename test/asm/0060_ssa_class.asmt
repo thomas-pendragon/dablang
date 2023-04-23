@@ -32,6 +32,7 @@ func main()
                                  STACK_RESERVE 0
 /* String       */               LOAD_CLASS R0, 1
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

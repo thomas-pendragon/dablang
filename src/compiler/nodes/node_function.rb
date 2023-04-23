@@ -198,12 +198,6 @@ class DabNodeFunction < DabNode
     output.print('W_METHOD_ARG', -1, klass)
   end
 
-  def compile_function_description(output, type)
-    identifier = type.type_string
-    number = root.class_number(identifier)
-    output.print('PUSH_CLASS', number)
-  end
-
   def compile_body(output)
     output.label(funclabel)
     output.print('STACK_RESERVE', n_local_vars)
@@ -351,5 +345,9 @@ class DabNodeFunction < DabNode
 
   def max_argc
     arglist.count
+  end
+
+  def allocate_new_tmp_reg
+    (all_nodes(DabNodeRegisterSet).map(&:output_register).max || -1) + 1
   end
 end

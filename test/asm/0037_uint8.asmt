@@ -35,6 +35,8 @@ func main()
                                  STACK_RESERVE 0
 /* 150          */               LOAD_NUMBER R0, 150
 /* Uint8        */               CAST R1, R0, 6
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

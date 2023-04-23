@@ -64,6 +64,7 @@ func main()
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __CZomg_Ffoo_END:
                                  NOP 

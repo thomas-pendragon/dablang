@@ -56,6 +56,10 @@ func tap2()
 /* new          */               INSTCALL R2, R1, S6, R0
                                  LOAD_LOCAL_BLOCK R3, R2
 /* tap          */               CALL RNIL, S8, R3
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
                                  RETURN RNIL
                    __Ftap2_END:
                                  NOP 
@@ -64,9 +68,16 @@ func tap2()
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
 /* arg_self     */               LOAD_ARG R1, 0
+                                 RELEASE_INSTVAR S7
 /* @self=       */               SET_INSTVAR S7, R1
+                                 RETAIN_INSTVAR S7
                                  NEW_ARRAY R2
+                                 RELEASE_INSTVAR S5
 /* @closure=    */               SET_INSTVAR S5, R2
+                                 RETAIN_INSTVAR S5
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __C__block_tap20_F__construct_END:
                                  NOP 
@@ -75,6 +86,7 @@ func tap2()
                                  STACK_RESERVE 0
 /* "foo"        */               LOAD_STRING R0, _DATA + 0, 3
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __C__block_tap20_Fcall_END:
                                  NOP 

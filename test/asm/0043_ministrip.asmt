@@ -39,6 +39,7 @@ func bar()
                                  STACK_RESERVE 0
                                  LOAD_FALSE R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__foo_Fixnum_END:
                                  NOP 
@@ -47,6 +48,7 @@ func bar()
                                  STACK_RESERVE 0
                                  LOAD_TRUE R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__foo_String_END:
                                  NOP 
@@ -57,6 +59,8 @@ func bar()
 /* __foo_String */               CALL RNIL, S1, R0
 /* 12           */               LOAD_NUMBER R1, 12
 /* __foo_Fixnum */               CALL RNIL, S0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fbar_END:
                                  NOP 

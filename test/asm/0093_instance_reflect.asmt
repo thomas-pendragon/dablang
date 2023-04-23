@@ -44,6 +44,8 @@ func foo(n)
 /* n            */               LOAD_ARG R0, 0
                                  REFLECT R1, S6, 2, 256
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 
@@ -52,6 +54,8 @@ func foo(n)
                                  STACK_RESERVE 0
 /* a            */               LOAD_ARG R0, 0
 /* b            */               LOAD_ARG R1, 1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __CFoo_Fzomg_END:
                                  NOP 

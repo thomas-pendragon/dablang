@@ -41,6 +41,8 @@ func foo()
 /* "abc"        */               LOAD_STRING R0, _DATA + 0, 3
 /* USECOUNT     */               SYSCALL R1, 2, R0
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

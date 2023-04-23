@@ -31,6 +31,7 @@ func main()
                                  STACK_RESERVE 0
 /* 666          */               LOAD_NUMBER R0, 666
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

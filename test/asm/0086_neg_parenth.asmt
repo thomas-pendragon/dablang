@@ -32,6 +32,8 @@ func main()
                                  LOAD_FALSE R0
 /* !            */               INSTCALL R1, R0, S0
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

@@ -35,6 +35,7 @@ func yield1()
                                  STACK_RESERVE 0
                                  LOAD_CURRENT_BLOCK R0
 /* call         */               INSTCALL RNIL, R0, S1
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fyield1_END:
                                  NOP 

@@ -42,6 +42,7 @@ func main()
                                  STACK_RESERVE 0
 /* Foo          */               LOAD_CLASS R0, 256
 /* xaa          */               INSTCALL RNIL, R0, S3
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -50,6 +51,7 @@ func main()
                                  STACK_RESERVE 0
 /* "ok"         */               LOAD_STRING R0, _DATA + 0, 2
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __CFoo_FCL_xaa_END:
                                  NOP 

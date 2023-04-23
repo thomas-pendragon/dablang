@@ -44,6 +44,7 @@ func bar()
                                  STACK_RESERVE 0
 /* "str"        */               LOAD_STRING R0, _DATA + 0, 3
 /* foo          */               CALL RNIL, S4, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fbar_END:
                                  NOP 
@@ -53,6 +54,8 @@ func bar()
 /* a            */               LOAD_ARG R0, 0
 /* class        */               INSTCALL R1, R0, S3
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

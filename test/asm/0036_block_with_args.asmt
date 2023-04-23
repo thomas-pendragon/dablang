@@ -35,6 +35,7 @@ func main()
                                  STACK_RESERVE 0
                                  LOAD_HAS_BLOCK R0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 
@@ -47,6 +48,11 @@ func main()
 /* 1            */               LOAD_NUMBER R3, 1
                                  LOAD_LOCAL_BLOCK R4, R2
 /* foo          */               CALL RNIL, S6, R3, R4
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -54,9 +60,15 @@ func main()
                    C__block_main0_F__construct:
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
+                                 RELEASE_INSTVAR S9
 /* @self=       */               SET_INSTVAR S9, R0
+                                 RETAIN_INSTVAR S9
                                  NEW_ARRAY R1
+                                 RELEASE_INSTVAR S5
 /* @closure=    */               SET_INSTVAR S5, R1
+                                 RETAIN_INSTVAR S5
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __C__block_main0_F__construct_END:
                                  NOP 

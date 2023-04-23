@@ -47,6 +47,11 @@ func yield1()
 /* "foo"        */               LOAD_STRING R3, _DATA + 0, 3
                                  LOAD_CURRENT_BLOCK R4
 /* call         */               INSTCALL RNIL, R4, S1, R2, R3
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
                                  RETURN RNIL
                    __Fyield1_END:
                                  NOP 

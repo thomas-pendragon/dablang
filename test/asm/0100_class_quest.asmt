@@ -39,6 +39,8 @@ func main()
 /* Foo          */               LOAD_CLASS R0, 256
 /* new          */               INSTCALL R1, R0, S4
 /* foo?         */               INSTCALL RNIL, R1, S2
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -47,6 +49,7 @@ func main()
                                  STACK_RESERVE 0
 /* 1            */               LOAD_NUMBER R0, 1
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __CFoo_Ffoo%QUEST_END:
                                  NOP 

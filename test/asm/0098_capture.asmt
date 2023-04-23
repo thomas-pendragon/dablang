@@ -59,6 +59,15 @@ Block variable must be captured.
 /* new          */               INSTCALL R7, R6, S12, R5, R1
                                  LOAD_LOCAL_BLOCK R8, R7
 /* bar          */               CALL RNIL, S8, R4, R8
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
+                                 RELEASE R6
+                                 RELEASE R7
+                                 RELEASE R8
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -66,10 +75,17 @@ Block variable must be captured.
                    C__block_main0_F__construct:
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
+                                 RELEASE_INSTVAR S13
 /* @self=       */               SET_INSTVAR S13, R0
+                                 RETAIN_INSTVAR S13
 /* arg_foo      */               LOAD_ARG R1, 1
                                  NEW_ARRAY R2, R1
+                                 RELEASE_INSTVAR S10
 /* @closure=    */               SET_INSTVAR S10, R2
+                                 RETAIN_INSTVAR S10
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __C__block_main0_F__construct_END:
                                  NOP 
@@ -81,6 +97,10 @@ Block variable must be captured.
 /* []           */               INSTCALL R2, R1, S0, R0
                                  UNBOX R3, R2
 /* PRINT        */               SYSCALL RNIL, 0, R3
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
                                  RETURN RNIL
                    __C__block_main0_Fcall_END:
                                  NOP 
@@ -88,10 +108,17 @@ Block variable must be captured.
                    C__block_main1_F__construct:
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
+                                 RELEASE_INSTVAR S13
 /* @self=       */               SET_INSTVAR S13, R0
+                                 RETAIN_INSTVAR S13
 /* arg_foo      */               LOAD_ARG R1, 1
                                  NEW_ARRAY R2, R1
+                                 RELEASE_INSTVAR S10
 /* @closure=    */               SET_INSTVAR S10, R2
+                                 RETAIN_INSTVAR S10
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __C__block_main1_F__construct_END:
                                  NOP 
@@ -103,6 +130,10 @@ Block variable must be captured.
 /* []           */               INSTCALL R2, R1, S0, R0
                                  UNBOX R3, R2
 /* PRINT        */               SYSCALL RNIL, 0, R3
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
                                  RETURN RNIL
                    __C__block_main1_Fcall_END:
                                  NOP 

@@ -39,6 +39,7 @@ func main()
                                  STACK_RESERVE 0
 /* "String"     */               LOAD_STRING R0, _DATA + 0, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __F__foo_String_END:
                                  NOP 
@@ -47,6 +48,7 @@ func main()
                                  STACK_RESERVE 0
 /* "hello"      */               LOAD_STRING R0, _DATA + 7, 5
 /* __foo_String */               CALL RNIL, S0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

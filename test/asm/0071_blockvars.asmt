@@ -48,6 +48,12 @@ func main()
 /* new          */               INSTCALL R4, R3, S12, R2, R1
                                  LOAD_LOCAL_BLOCK R5, R4
 /* test         */               CALL RNIL, S15, R5
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 
@@ -63,6 +69,8 @@ func main()
 /* 1            */               LOAD_NUMBER R0, 1
                                  LOAD_CURRENT_BLOCK R1
 /* call         */               INSTCALL RNIL, R1, S9, R0
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Ftest_END:
                                  NOP 
@@ -70,10 +78,17 @@ func main()
                    C__block_main0_F__construct:
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
+                                 RELEASE_INSTVAR S14
 /* @self=       */               SET_INSTVAR S14, R0
+                                 RETAIN_INSTVAR S14
 /* arg_other    */               LOAD_ARG R1, 1
                                  NEW_ARRAY R2, R1
+                                 RELEASE_INSTVAR S10
 /* @closure=    */               SET_INSTVAR S10, R2
+                                 RETAIN_INSTVAR S10
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __C__block_main0_F__construct_END:
                                  NOP 
@@ -86,6 +101,11 @@ func main()
 /* []           */               INSTCALL R3, R2, S0, R1
                                  UNBOX R4, R3
 /* qux          */               CALL RNIL, S13, R0, R4
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
                                  RETURN RNIL
                    __C__block_main0_Fcall_END:
                                  NOP 

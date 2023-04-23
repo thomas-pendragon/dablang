@@ -35,6 +35,7 @@ func foo()
                                  STACK_RESERVE 0
 /* 3            */               LOAD_NUMBER R0, 3
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

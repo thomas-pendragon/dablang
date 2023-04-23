@@ -55,9 +55,21 @@ class Array
                                  LOAD_CURRENT_BLOCK R6
 /* call         */               INSTCALL RNIL, R6, S4, R5, R0
 /* 1            */               LOAD_NUMBER R7, 1
-/* +            */               INSTCALL R0, R0, S1, R7
+                                 MOV R8, R0
+                                 RETAIN R8
+                                 RELEASE R0
+/* +            */               INSTCALL R0, R8, S1, R7
+                                 RELEASE R8
                                  JMP L1
                    L3:
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
+                                 RELEASE R6
+                                 RELEASE R7
                                  RETURN RNIL
                    __CArray_Feach_with_index_END:
                                  NOP 

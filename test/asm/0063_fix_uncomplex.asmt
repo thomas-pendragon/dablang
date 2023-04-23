@@ -43,9 +43,15 @@ func main()
                                  JMP_IF R0, L2, L3
                    L2:
 /* 1            */               LOAD_NUMBER R1, 1
-/* -            */               INSTCALL R0, R0, S0, R1
+                                 MOV R2, R0
+                                 RETAIN R2
+                                 RELEASE R0
+/* -            */               INSTCALL R0, R2, S0, R1
+                                 RELEASE R2
                                  JMP L1
                    L3:
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

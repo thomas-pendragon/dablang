@@ -42,6 +42,11 @@ func tap(a)
 /* new          */               INSTCALL R3, R2, S9, R1
                                  LOAD_LOCAL_BLOCK R4, R3
 /* fun          */               INSTCALL RNIL, R0, S8, R4
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
                                  RETURN RNIL
                    __Ftap_END:
                                  NOP 
@@ -50,9 +55,16 @@ func tap(a)
                                  STACK_RESERVE 0
 /* arg_self     */               LOAD_ARG R0, 0
 /* arg_self     */               LOAD_ARG R1, 0
+                                 RELEASE_INSTVAR S10
 /* @self=       */               SET_INSTVAR S10, R1
+                                 RETAIN_INSTVAR S10
                                  NEW_ARRAY R2
+                                 RELEASE_INSTVAR S7
 /* @closure=    */               SET_INSTVAR S7, R2
+                                 RETAIN_INSTVAR S7
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
                                  RETURN RNIL
                    __C__block_tap0_F__construct_END:
                                  NOP 
@@ -61,6 +73,7 @@ func tap(a)
                                  STACK_RESERVE 0
 /* arg          */               LOAD_ARG R0, 0
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __C__block_tap0_Fcall_END:
                                  NOP 

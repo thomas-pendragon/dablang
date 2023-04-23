@@ -60,6 +60,7 @@ func main()
 /* "fun1"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_FALSE R1
+                                 RELEASE R0
                                  RETURN R1
                    __Ffun1_END:
                                  NOP 
@@ -69,6 +70,7 @@ func main()
 /* "fun2"       */               LOAD_STRING R0, _DATA + 5, 4
 /* PRINT        */               SYSCALL RNIL, 0, R0
                                  LOAD_TRUE R1
+                                 RELEASE R0
                                  RETURN R1
                    __Ffun2_END:
                                  NOP 
@@ -86,10 +88,12 @@ func main()
 /* fun1         */               CALL R0, S1
                                  JMP_IF R0, L1, L2
                    L1:
+                                 RELEASE R0
 /* fun2         */               CALL R0, S2
                                  JMP L2
                    L2:
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_and_END:
                                  NOP 
@@ -99,10 +103,12 @@ func main()
 /* fun1         */               CALL R0, S1
                                  JMP_IF R0, L3, L4
                    L4:
+                                 RELEASE R0
 /* fun2         */               CALL R0, S2
                                  JMP L3
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_or_END:
                                  NOP 

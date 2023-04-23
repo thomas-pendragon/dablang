@@ -48,6 +48,7 @@ func main()
 /* main         */               CALL R1, S1
                                  JMP_IF R1, L2, L3
                    L2:
+                                 RELEASE R0
                                  LOAD_NIL R0
                                  JMP L3
                    L3:

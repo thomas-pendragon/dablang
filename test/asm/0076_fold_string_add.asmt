@@ -35,6 +35,7 @@ func main()
                                  STACK_RESERVE 0
 /* "Foobar"     */               LOAD_STRING R0, _DATA + 0, 6
 /* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

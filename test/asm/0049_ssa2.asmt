@@ -56,10 +56,13 @@ func main()
 /* 2            */               LOAD_NUMBER R1, 2
                                  JMP L3
                    L2:
+                                 RELEASE R1
 /* 3            */               LOAD_NUMBER R1, 3
                                  JMP L3
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

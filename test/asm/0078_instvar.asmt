@@ -35,9 +35,13 @@ func foo()
                    CFoo_Ffoo:
                                  STACK_RESERVE 0
 /* 12           */               LOAD_NUMBER R0, 12
+                                 RELEASE_INSTVAR S2
 /* @a=          */               SET_INSTVAR S2, R0
+                                 RETAIN_INSTVAR S2
 /* @a           */               GET_INSTVAR R1, S2
 /* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __CFoo_Ffoo_END:
                                  NOP 

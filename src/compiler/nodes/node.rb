@@ -612,4 +612,7 @@ class DabNode
   def uncomplex_anyway?
     false
   end
+
+  def protect_register(output,reg)
+  end
 end

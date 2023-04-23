@@ -36,6 +36,8 @@ func addfunc()
 /* 12           */               LOAD_NUMBER R0, 12
 /* 23           */               LOAD_NUMBER R1, 23
 /* +            */               INSTCALL R2, R0, S0, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN R2
                    __Faddfunc_END:
                                  NOP 

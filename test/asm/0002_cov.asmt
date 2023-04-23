@@ -48,6 +48,7 @@ func main()
 /* "Test"       */               LOAD_STRING R0, _DATA + 0, 4
 /* PRINT        */               COV 1, 3
                                  SYSCALL RNIL, 0, R0
+                                 RELEASE R0
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

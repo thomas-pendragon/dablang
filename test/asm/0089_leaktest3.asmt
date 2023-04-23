@@ -78,7 +78,9 @@ func main()
                    CFoo_Fgo:
                                  STACK_RESERVE 0
 /* 123          */               LOAD_NUMBER R0, 123
+                                 RELEASE_INSTVAR S6
 /* @var=        */               SET_INSTVAR S6, R0
+                                 RETAIN_INSTVAR S6
 /* 1            */               LOAD_NUMBER R1, 1
 /* "String1"    */               LOAD_STRING R2, _DATA + 0, 7
 /* "String2"    */               LOAD_STRING R3, _DATA + 8, 7

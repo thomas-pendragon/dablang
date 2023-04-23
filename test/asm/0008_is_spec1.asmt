@@ -56,6 +56,8 @@ func bar()
 /* foo          */               CALL RNIL, S3, R0
 /* 12           */               LOAD_NUMBER R1, 12
 /* foo          */               CALL RNIL, S3, R1
+                                 RELEASE R0
+                                 RELEASE R1
                                  RETURN RNIL
                    __Fbar_END:
                                  NOP 
@@ -79,6 +81,13 @@ func bar()
 /* PRINT        */               SYSCALL RNIL, 0, R6
                                  JMP L4
                    L4:
+                                 RELEASE R0
+                                 RELEASE R1
+                                 RELEASE R2
+                                 RELEASE R3
+                                 RELEASE R4
+                                 RELEASE R5
+                                 RELEASE R6
                                  RETURN RNIL
                    __Ffoo_END:
                                  NOP 

@@ -41,8 +41,11 @@ func main()
                                  JMP_IF R2, L2, L3
                    L2:
 /* 1            */               LOAD_NUMBER R3, 1
+                                 MOV R4, R0
+                                 RETAIN R4
                                  RELEASE R0
-/* +            */               INSTCALL R0, R0, S0, R3
+/* +            */               INSTCALL R0, R4, S0, R3
+                                 RELEASE R4
                                  JMP L1
                    L3:
 /* PRINT        */               SYSCALL RNIL, 0, R0
