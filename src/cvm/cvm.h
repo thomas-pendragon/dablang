@@ -448,12 +448,12 @@ struct DabRunOptions
 {
     std::vector<FILE *> inputs = {stdin};
 
-    bool close_file  = false;
-    bool autorun     = true;
-    bool extract     = false;
-    bool raw         = false;
-//    bool autorelease = false;
-    bool verbose     = false;
+    bool close_file = false;
+    bool autorun    = true;
+    bool extract    = false;
+    bool raw        = false;
+    //    bool autorelease = false;
+    bool verbose = false;
     //    bool with_attributes = false;
     bool leaktest = false;
     bool bare     = false;

@@ -613,6 +613,5 @@ class DabNode
     false
   end
 
-  def protect_register(output,reg)
-  end
+  def protect_register(output, reg); end
 end
