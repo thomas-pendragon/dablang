@@ -63,24 +63,17 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
     [self_register] + args.map(&:input_register)
   end
 
-  def protect_register(output, reg)
-    @retains = []
-    i = 0
-    all_real_args.each do |areg|
-      next unless reg == areg
+  def protected_registers
+    all_real_args
+  end
 
-      new_reg = function.allocate_new_tmp_reg + i
-      i += 1
-      output.print('MOV', "R#{new_reg}", "R#{reg}")
-      output.print('RETAIN', "R#{new_reg}")
-      @retains << new_reg
-      if reg == value.input_register # self
-        value.input_register = new_reg
-      else
-        args.each do |arg|
-          if arg.input_register == reg
-            arg.input_register = new_reg
-          end
+  def fixup_protected_arg(old:, new:)
+    if old == value.input_register # self
+      value.input_register = new
+    else
+      args.each do |arg|
+        if arg.input_register == old
+          arg.input_register = new
         end
       end
     end
@@ -101,9 +94,7 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
 
     output.printex(self, 'INSTCALL', *args)
 
-    @retains.each do |reg|
-      output.print('RELEASE', "R#{reg}")
-    end
+    write_protect_barrier(output)
   end
 
   def compile_as_ssa(output, output_register)

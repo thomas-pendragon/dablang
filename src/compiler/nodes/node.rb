@@ -613,5 +613,30 @@ class DabNode
     false
   end
 
-  def protect_register(output, reg); end
+  def write_protect_barrier(output)
+    @retains.each do |reg|
+      output.print('RELEASE', "R#{reg}")
+    end
+  end
+
+  def protect_register(output, reg)
+    @retains = []
+    i = 0
+    protected_registers.each do |areg|
+      next unless reg == areg
+
+      new_reg = function.allocate_new_tmp_reg + i
+      i += 1
+      output.print('MOV', "R#{new_reg}", "R#{reg}")
+      output.print('RETAIN', "R#{new_reg}")
+      @retains << new_reg
+      fixup_protected_arg(old: reg, new: new_reg)
+    end
+  end
+
+  def protected_registers
+    []
+  end
+
+  def fixup_protected_arg(old:, new:); end
 end
