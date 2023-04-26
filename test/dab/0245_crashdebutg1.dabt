@@ -1,0 +1,53 @@
+## CODE
+
+class Array
+{ 
+  func each_with_index()
+  {
+    var index = 0;
+    var count = self.count;
+    while (index != count)
+    {
+      yield(self[index], index);
+      index = index + 1;
+    }
+  }
+  
+  func join(separator = ", ")
+  {
+    var sep = separator; // TODO: fix because should not be needed
+    var result = "";
+    self.each_with_index() ^(item, index) {
+      if (index != 0)
+      {
+        result = result + sep;
+      }
+      result = result + item.to_s;
+    };
+    return result;
+  }
+  
+  func to_s()
+  {
+    return "[" + self.join() + "]";
+  }
+}
+
+func main()
+{
+  var b = @[12, "foo", true];
+
+  print(b);
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## RUN
+
+main
+
+## EXPECT OK
+
+[12, foo, true]
