@@ -344,6 +344,7 @@ DabValue DabValue::box(DabValue base)
 
 DabValue DabValue::unbox(DabValue base)
 {
+    assert(base.data.type == TYPE_BOX);
     auto proxy = base.data.object;
     auto box   = dynamic_cast<DabBox *>(proxy->object);
     return box->value;

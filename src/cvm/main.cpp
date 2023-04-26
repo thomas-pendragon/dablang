@@ -563,9 +563,9 @@ bool DabVM::execute_single(Stream &input)
 
         auto value = register_get(in_reg);
         if (options.ultraverbose) {
-            fprintf(stderr, "vm: unbox value");
+            fprintf(stderr, "vm: unbox value {");
             value.print(stderr);
-            fprintf(stderr, "\n");
+            fprintf(stderr, "}\n");
         }
         auto box   = DabValue::unbox(value);
 
