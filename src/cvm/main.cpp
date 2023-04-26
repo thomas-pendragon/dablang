@@ -562,6 +562,11 @@ bool DabVM::execute_single(Stream &input)
         auto in_reg  = input.read_reg();
 
         auto value = register_get(in_reg);
+        if (options.ultraverbose) {
+            fprintf(stderr, "vm: unbox value");
+            value.print(stderr);
+            fprintf(stderr, "\n");
+        }
         auto box   = DabValue::unbox(value);
 
         register_set(out_reg, box);
@@ -1395,6 +1400,12 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     if (flags["--verbose"])
     {
         this->verbose = true;
+    }
+    
+    if (flags["--ultraverbose"])
+    {
+        this->verbose = true;
+        this->ultraverbose = true;
     }
 
     if (flags["--debug"])

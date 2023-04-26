@@ -454,6 +454,7 @@ struct DabRunOptions
     bool raw        = false;
     //    bool autorelease = false;
     bool verbose = false;
+    bool ultraverbose = false;
     //    bool with_attributes = false;
     bool leaktest = false;
     bool bare     = false;
