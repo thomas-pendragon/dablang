@@ -3,6 +3,9 @@ class ExtractCallBlock
     return false unless node.has_block?
     return false if node.block.is_a?(DabNodeBlockReference)
 
+    # node.dump
+    # err '~'.blue*40
+
     block = node.block
 
     root = node.root
@@ -33,11 +36,13 @@ class ExtractCallBlock
     arraylist = DabNode.new
 
     i = 1
+    # errap ['captured_vars',captured_vars,'captured_vars_set',captured_vars_set]
     (captured_vars + captured_vars_set).each_with_index do |captured_define, index|
       identifier = captured_define.identifier
       value = DabNodeClosureVar.new(index)
       carg = DabNodeLocalVar.new(identifier)
       capture_args << carg
+      # errap ['capture_args << ',carg]
       capture_extract = DabNodeDefineLocalVar.new(identifier, value)
       createarglist << DabNodeArgDefinition.new(i, "arg_#{identifier}", nil, nil)
       arraylist << DabNodeArg.new(i, nil)

@@ -59,5 +59,6 @@ class DabNodeBaseBlock < DabNode
     all_nodes(DabNodeSetLocalVar)
       .select(&:setter_only?)
       .reject { |it| all_defines.include?(it.var_definition) }
+      .uniq { _1.identifier }
   end
 end
