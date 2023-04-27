@@ -505,7 +505,17 @@ bool DabVM::execute_single(Stream &input)
 {
     auto pos    = input.position();
     auto opcode = input.read_uint8();
-    if (options.verbose)
+    if (options.newverbose)
+    {
+        char spos[32], sop[32];
+        snprintf(spos, 32, "%8x", (int)pos);
+        snprintf(sop, 32, "%2x", (int)opcode);
+        auto text = std::string(spos);
+        auto ssop = g_opcodes[opcode].name;
+        text      = "IP=" + text + " | " + ssop;
+        debug_print(colorize(text, BG_WHITE, FG_BLACK) + "\n");
+    }
+    else if (options.verbose)
     {
         fprintf(stderr, "@ %d: %d [%s]\n", (int)pos, (int)opcode, g_opcodes[opcode].name.c_str());
     }
@@ -1411,6 +1421,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
     if (flags["--verbose"])
     {
         this->verbose = true;
+    }
+
+    if (flags["--newverbose"])
+    {
+        this->newverbose = true;
     }
 
     if (flags["--ultraverbose"])

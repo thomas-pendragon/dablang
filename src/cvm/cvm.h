@@ -455,6 +455,7 @@ struct DabRunOptions
     //    bool autorelease = false;
     bool verbose      = false;
     bool ultraverbose = false;
+    bool newverbose   = false;
     //    bool with_attributes = false;
     bool leaktest = false;
     bool bare     = false;
@@ -695,3 +696,55 @@ struct DabVM_debug
 extern DabVM *$VM;
 
 void setup_handlers();
+
+enum
+{
+    RESET = 0,
+
+    FG_BLACK   = 30,
+    FG_RED     = 31,
+    FG_GREEN   = 32,
+    FG_YELLOW  = 33,
+    FG_BLUE    = 34,
+    FG_MAGENTA = 35,
+    FG_CYAN    = 36,
+    FG_WHITE   = 37,
+
+    BG_BLACK   = 40,
+    BG_RED     = 41,
+    BG_GREEN   = 42,
+    BG_YELLOW  = 44,
+    BG_BLUE    = 44,
+    BG_MAGENTA = 45,
+    BG_CYAN    = 46,
+    BG_WHITE   = 47,
+};
+
+inline std::string ansi(int color)
+{
+    char data[32];
+    snprintf(data, 32, "\033[%dm", color);
+    return data;
+}
+
+inline std::string ansi(int color1, int color2)
+{
+    char data[32];
+    snprintf(data, 32, "\033[%d;%dm", color1, color2);
+    return data;
+}
+
+inline std::string colorize(const std::string &input, int color)
+{
+    return ansi(color) + input + ansi(RESET);
+}
+
+inline std::string colorize(const std::string &input, int color1, int color2)
+{
+    return ansi(color1, color2) + input + ansi(RESET);
+}
+
+inline void debug_print(const std::string &string)
+{
+    fprintf(stderr, "%s", string.c_str());
+}
