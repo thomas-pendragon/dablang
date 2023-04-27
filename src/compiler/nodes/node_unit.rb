@@ -2,7 +2,7 @@ require_relative 'node'
 require_relative '../processors/create_attributes'
 
 BUILTINS = SYSCALLS + %w[
-  print
+  __print
   exit
   define_method
   define_class

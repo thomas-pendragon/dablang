@@ -7,11 +7,8 @@ void DabValue::dump(FILE *file) const
         file = $VM->options.console;
     }
 
-    static const char *types[] = {"INVA", "FIXN", "BOOL", "NIL ", "CLAS", "OBJE",  "ARRY", "UIN8",
-                                  "UI16", "UI32", "UI64", "INT8", "IN16", "IN32",  "IN64", "METH",
-                                  "PTR*", "BYT*", "CSTR", "DSTR", "FLO",  "[LBL]", "BOX"};
-    assert((int)data.type >= 0 && (int)data.type < (int)countof(types));
-    fprintf(file, "%s ", types[data.type]);
+    assert((int)data.type >= 0 && (int)data.type < (int)countof(_type_sym));
+    fprintf(file, "%s ", _type_sym[data.type]);
     print(file, true);
 }
 

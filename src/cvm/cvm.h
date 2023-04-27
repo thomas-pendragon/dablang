@@ -83,6 +83,10 @@ enum
     TYPE_BOX = 22,
 };
 
+static const char *_type_sym[] = {"INVA", "FIXN", "BOOL", "NULL", "CLAS", "OBJE",  "ARRY", "UIN8",
+                                  "UI16", "UI32", "UI64", "INT8", "IN16", "IN32",  "IN64", "METH",
+                                  "PTR*", "BYT*", "CSTR", "DSTR", "FLOA", "[LBL]", "BOXX"};
+
 #include "../cshared/classes.h"
 
 enum
@@ -701,6 +705,8 @@ enum
 {
     RESET = 0,
 
+    BOLD = 1,
+
     FG_BLACK   = 30,
     FG_RED     = 31,
     FG_GREEN   = 32,
@@ -734,6 +740,13 @@ inline std::string ansi(int color1, int color2)
     return data;
 }
 
+inline std::string ansi(int color1, int color2, int color3)
+{
+    char data[32];
+    snprintf(data, 32, "\033[%d;%d;%dm", color1, color2, color3);
+    return data;
+}
+
 inline std::string colorize(const std::string &input, int color)
 {
     return ansi(color) + input + ansi(RESET);
@@ -742,6 +755,11 @@ inline std::string colorize(const std::string &input, int color)
 inline std::string colorize(const std::string &input, int color1, int color2)
 {
     return ansi(color1, color2) + input + ansi(RESET);
+}
+
+inline std::string colorize(const std::string &input, int color1, int color2, int color3)
+{
+    return ansi(color1, color2, color3) + input + ansi(RESET);
 }
 
 inline void debug_print(const std::string &string)

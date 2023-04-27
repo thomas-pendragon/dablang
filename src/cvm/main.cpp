@@ -408,9 +408,11 @@ void DabVM::register_set(dab_register_t reg, const DabValue &value)
         return;
     }
 
-    if (_registers.size() <= reg_index)
+    auto old_size = _registers.size();
+    if (old_size <= reg_index)
     {
-        _registers.resize(reg_index + 1);
+        _registers.resize(reg_index + 1, nullptr);
+        //        for (int i = )
     }
     _registers[reg_index] = value;
 }
@@ -507,13 +509,37 @@ bool DabVM::execute_single(Stream &input)
     auto opcode = input.read_uint8();
     if (options.newverbose)
     {
-        char spos[32], sop[32];
+        char spos[32];
         snprintf(spos, 32, "%8x", (int)pos);
-        snprintf(sop, 32, "%2x", (int)opcode);
+        snprintf(spos, 32, "%8d", (int)pos);
         auto text = std::string(spos);
-        auto ssop = g_opcodes[opcode].name;
-        text      = "IP=" + text + " | " + ssop;
-        debug_print(colorize(text, BG_WHITE, FG_BLACK) + "\n");
+        char sssop[32];
+        snprintf(sssop, 32, "%20s", g_opcodes[opcode].name.c_str());
+
+        text = "IP=" + text + " | " + sssop + " |";
+
+        text = colorize(text, BG_WHITE, FG_BLACK);
+
+        auto frame = *current_frame();
+
+        for (int i = 0; i < (int)_registers.size(); i++)
+        {
+            auto reg = register_get(i);
+            if (!reg.nil())
+            {
+                char tt[32];
+                snprintf(tt, 32, " R%02d", i);
+                text += colorize(tt, BOLD, BG_WHITE, FG_BLACK);
+                auto tps = _type_sym[reg.data.type];
+                text += colorize(tps, BG_WHITE, FG_BLACK);
+            }
+            else
+            {
+                text += colorize("        ", BG_WHITE);
+            }
+        }
+
+        debug_print(text + "\n");
     }
     else if (options.verbose)
     {

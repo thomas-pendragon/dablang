@@ -49,7 +49,7 @@ class DabNodeSyscall < DabNodeBasecall
 
   def funname
     map = {
-      0 => 'print',
+      0 => '__print',
       1 => 'exit',
     }
     map[@call] || "sys_#{real_identifier}"

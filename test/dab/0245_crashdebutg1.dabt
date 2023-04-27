@@ -1,5 +1,10 @@
 ## CODE
 
+func print(text)
+{
+  __print(text.to_s());
+}
+
 class Array
 { 
   func each_with_index()

@@ -1,3 +1,8 @@
+func print(string)
+{
+  __print(string.to_s());
+}
+
 func puts(string)
 {
   print(string);
