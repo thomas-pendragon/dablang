@@ -317,6 +317,8 @@ bool DabValue::truthy() const
 
 void DabValue::setbox(DabValue new_value)
 {
+    new_value.retain();
+
     assert(data.type == TYPE_BOX);
 
     auto proxy = this->data.object;
@@ -327,6 +329,8 @@ void DabValue::setbox(DabValue new_value)
 
 DabValue DabValue::box(DabValue base)
 {
+    base.retain();
+
     DabValue ret;
     auto     box = new DabBox;
     box->value   = base;
@@ -435,8 +439,8 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
     }
 
     auto object_any = this->data.object->object;
-    auto  object   = dynamic_cast<DabObject *>(object_any);
-                                   
+    auto object     = dynamic_cast<DabObject *>(object_any);
+
     assert(object);
     auto &instvars = object->instvars;
 
@@ -463,6 +467,14 @@ DabValue DabValue::get_classvar(dab_symbol_t symbol) const
 
 DabValue DabValue::get_instvar(dab_symbol_t symbol) const
 {
+    if ($VM->options.ultraverbose)
+    {
+        fprintf(stderr, "vm: proxy %p (strong %d): Get instvar <%d>\n", this->data.object,
+                (int)this->data.object->count_strong, (int)symbol);
+        fprintf(stderr, "vm: self = ");
+        dumpex(stderr);
+        fprintf(stderr, "\n");
+    }
     auto ret = _get_instvar(symbol);
     if ($VM->options.verbose)
     {

@@ -482,7 +482,7 @@ struct DabStackFrame
     DabValue       retvalue;
 
     std::vector<DabValue> args;
-    
+
     std::string description;
 };
 

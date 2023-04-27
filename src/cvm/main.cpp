@@ -858,6 +858,16 @@ bool DabVM::execute_single(Stream &input)
             recv.dump(stderr);
             fprintf(stderr, " argc = %d\n", (int)n_args);
         }
+        if (options.ultraverbose)
+        {
+            for (int i = 0; i < (int)n_args; i++)
+            {
+                auto v = register_get(reglist[i]);
+                fprintf(stderr, "arg[%d] = ", (int)i);
+                v.print(stderr);
+                fprintf(stderr, "\n");
+            }
+        }
         instcall(recv, symbol, n_args, DAB_SYMBOL_NIL, nullptr, out_reg, reglist);
         break;
     }

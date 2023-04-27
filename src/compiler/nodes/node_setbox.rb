@@ -15,6 +15,7 @@ class DabNodeSetbox < DabNodeBox
   end
 
   def fixup_protected_arg(old:, new:)
+    old # unused
     localvar.input_register = new
   end
 
