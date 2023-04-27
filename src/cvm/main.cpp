@@ -503,6 +503,19 @@ void DabVM::_reflect(const DabFunction &function, dab_register_t reg, bool outpu
     register_set(reg, value);
 }
 
+void DabVM::debug_print(const std::string &text)
+{
+    std::string pre;
+    bool first = true;
+    for (auto & frame : stackframes) {
+        (void)frame;
+        if (!first)
+            pre += "  ";
+        first = false;
+    }
+    ::debug_print(pre + text);
+}
+
 bool DabVM::execute_single(Stream &input)
 {
     auto pos    = input.position();
@@ -510,14 +523,14 @@ bool DabVM::execute_single(Stream &input)
     if (options.newverbose)
     {
         if (opcode == OP_STACK_RESERVE) {
-            debug_print("\n");
+            //debug_print("\n");
         }
         char spos[32];
         snprintf(spos, 32, "%8x", (int)pos);
         snprintf(spos, 32, "%8d", (int)pos);
         auto text = std::string(spos);
         char sssop[32];
-        snprintf(sssop, 32, "%20s", g_opcodes[opcode].name.c_str());
+        snprintf(sssop, 32, "%-20s", g_opcodes[opcode].name.c_str());
 
         text = "IP=" + text + " | " + sssop + " |";
 

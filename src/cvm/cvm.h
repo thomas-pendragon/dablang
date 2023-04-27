@@ -670,6 +670,8 @@ struct DabVM
     void define_default_classes_int();
 
     void dump_vm(FILE *out);
+    
+    void debug_print(const std::string &text);
 };
 
 struct DabVM_debug
