@@ -427,14 +427,25 @@ DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
 
     if (!this->data.object->object)
     {
+        if ($VM->options.ultraverbose)
+        {
+            fprintf(stderr, "vm: get_instvar(%d) -> not an object\n", (int)symbol);
+        }
         return DabValue(nullptr);
     }
 
-    auto  object   = (DabObject *)this->data.object->object;
+    auto object_any = this->data.object->object;
+    auto  object   = dynamic_cast<DabObject *>(object_any);
+                                   
+    assert(object);
     auto &instvars = object->instvars;
 
     if (!instvars.count(symbol))
     {
+        if ($VM->options.ultraverbose)
+        {
+            fprintf(stderr, "vm: get_instvar(%d) -> key not found\n", (int)symbol);
+        }
         return DabValue(nullptr);
     }
     return instvars[symbol];
