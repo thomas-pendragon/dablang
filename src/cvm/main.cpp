@@ -509,6 +509,9 @@ bool DabVM::execute_single(Stream &input)
     auto opcode = input.read_uint8();
     if (options.newverbose)
     {
+        if (opcode == OP_STACK_RESERVE) {
+            debug_print("\n");
+        }
         char spos[32];
         snprintf(spos, 32, "%8x", (int)pos);
         snprintf(spos, 32, "%8d", (int)pos);
