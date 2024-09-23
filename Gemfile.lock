@@ -8,8 +8,8 @@ GEM
     diff-lcs (1.5.1)
     diffy (3.4.2)
     docile (1.4.1)
-    ffi (1.17.0)
-    ffi (1.17.0-x64-mingw32)
+    ffi (1.16.3)
+    ffi (1.16.3-x64-mingw32)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
     os (1.1.4)
@@ -65,7 +65,7 @@ DEPENDENCIES
   clipboard
   colorize
   diffy
-  ffi
+  ffi (< 1.17.0)
   json
   os
   rake
