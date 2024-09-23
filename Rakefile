@@ -9,12 +9,12 @@ require_relative 'src/shared/system'
 
 $autorun = false
 
-require_relative './src/frontend/frontend'
-require_relative './src/frontend/frontend_asm'
-require_relative './src/frontend/frontend_format'
-require_relative './src/frontend/frontend_vm'
-require_relative './src/frontend/frontend_debug'
-require_relative './src/frontend/frontend_minitest'
+require_relative 'src/frontend/frontend'
+require_relative 'src/frontend/frontend_asm'
+require_relative 'src/frontend/frontend_format'
+require_relative 'src/frontend/frontend_vm'
+require_relative 'src/frontend/frontend_debug'
+require_relative 'src/frontend/frontend_minitest'
 
 $sources = Dir.glob('src/**/*.rb')
 
@@ -206,7 +206,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
     end
   end
   task test_name.to_sym => outputs
-  task "#{test_name}_reverse".to_sym => outputs.reverse
+  task "#{test_name}_reverse": outputs.reverse
 end
 
 setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)

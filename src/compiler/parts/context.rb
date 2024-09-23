@@ -24,7 +24,7 @@ class DabContext < DabBaseContext
   attr_accessor :classes
 
   def initialize(stream, context)
-    super(stream, context)
+    super
     @local_vars = []
     @classes = STANDARD_CLASSES.dup
   end
@@ -932,7 +932,7 @@ class DabContext < DabBaseContext
   end
 
   def clone(new_context)
-    ret = super(new_context)
+    ret = super
     ret.local_vars = @local_vars.clone
     ret.classes = @classes.clone
     ret

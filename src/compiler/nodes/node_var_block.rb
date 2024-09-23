@@ -4,7 +4,7 @@ class DabNodeVarBlock < DabNodeBaseBlock
   early_after_init ExtractCallBlock
 
   def initialize(body, arglist = nil)
-    super(body, arglist)
+    super
   end
 
   def has_block?

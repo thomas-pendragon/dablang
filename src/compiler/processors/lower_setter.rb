@@ -12,7 +12,7 @@ class LowerSetter
     when DabNodeReferenceMember
       base = reference.base.compiled
       name = reference.name
-      setcall = DabNodeInstanceCall.new(base, "#{name}=".to_sym, [value], nil)
+      setcall = DabNodeInstanceCall.new(base, :"#{name}=", [value], nil)
       node.replace_with!(setcall)
       true
     when DabNodeReferenceInstVar

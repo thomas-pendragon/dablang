@@ -1,4 +1,4 @@
-require_relative './shared_noautorun'
+require_relative 'shared_noautorun'
 require_relative '../compiler/compiler_noautorun'
 
 $autorun = true if $autorun.nil?

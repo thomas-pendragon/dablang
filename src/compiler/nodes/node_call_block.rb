@@ -2,10 +2,10 @@ require_relative 'node_base_block'
 
 class DabNodeCallBlock < DabNodeBaseBlock
   def initialize(body, arglist = nil)
-    super(body, arglist)
+    super
   end
 
   def formatted_source(options)
-    " #{super(options)}"
+    " #{super}"
   end
 end

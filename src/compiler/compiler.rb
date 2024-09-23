@@ -1,4 +1,4 @@
-require_relative './compiler_noautorun'
+require_relative 'compiler_noautorun'
 
 settings = read_args!
 

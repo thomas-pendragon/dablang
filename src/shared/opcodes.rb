@@ -162,7 +162,7 @@ KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
 SYSCALLS = KERNELCODES.values.map { "__#{_1.downcase}" }
 
-require_relative './classes'
+require_relative 'classes'
 
 REFLECTION = {
   0x00 => :method_arguments,

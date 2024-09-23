@@ -1,4 +1,4 @@
-require_relative './shared_noautorun'
+require_relative 'shared_noautorun'
 
 $autorun = true if $autorun.nil?
 
@@ -32,8 +32,8 @@ class DabMultiSpec
     out = temp_file('out')
 
     begin
-      sym = "level_#{level}".to_sym
-      next_sym = "level_#{level + 1}".to_sym
+      sym = :"level_#{level}"
+      next_sym = :"level_#{level + 1}"
       is_final = !data[next_sym]
 
       lfile = "level#{level}"

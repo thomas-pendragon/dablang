@@ -33,7 +33,7 @@ class DabNodeUnit < DabNode
   after_init CreateAttributes
 
   def initialize
-    super()
+    super
     @functions = DabNode.new
     @constants = DabNode.new
     @classes = DabNode.new
