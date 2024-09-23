@@ -219,9 +219,8 @@ class DabNodeFunction < DabNode
   end
 
   def formatted_source(options)
-    fargs = []
-    arglist.each do |arg|
-      fargs << arg.formatted_source(options)
+    fargs = arglist.map do |arg|
+      arg.formatted_source(options)
     end
     fargs = fargs.join(', ')
     ret = if identifier == '__construct'

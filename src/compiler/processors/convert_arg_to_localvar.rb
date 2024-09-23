@@ -1,6 +1,6 @@
 class ConvertArgToLocalvar
   def run(function)
-    list = function.arglist&.to_a || []
+    list = function.arglist.to_a
     list.reverse_each do |arg|
       index = list.index(arg)
       default_value = arg.default_value&.dup
