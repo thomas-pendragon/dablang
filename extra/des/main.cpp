@@ -1,21 +1,13 @@
-#include <GL/glew.h> // Include GLEW first
-
-#include <SFML/Window.hpp>
-#include <SFML/OpenGL.hpp>
-
+#include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <glm/glm.hpp> // For GLM matrices
-#include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
-
-#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <ctime>
 
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <png.h>
-#include <zlib.h>
-#include <algorithm>
 
 // DES interface
 
