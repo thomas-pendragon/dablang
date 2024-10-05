@@ -9,6 +9,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 
+
+// DES interface
+
+// colors - RGB tuples, will be rounded down to 12 bit
+void des_palette_setup(uint8_t paletteIndex, uint8_t colors[16 * 3]);
+// data - count * 64 bytes, each byte is color index, will be clamped to 16 colors/4 bit
+void des_tileset_copy(uint8_t startIndex, uint8_t count, uint8_t *data);
+
+
+
+
 // Shader loading utility functions
 GLuint loadShader(const char* path, GLenum shaderType) {
     std::ifstream shaderFile(path);
