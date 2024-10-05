@@ -19,21 +19,21 @@ struct des_palette
 
 void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
 {
-    uint16_t big = pos / 2;
+    uint16_t big   = pos / 2;
     uint16_t small = 1 - pos % 2;
-    uint8_t shift = small ? 4 : 0;
-    uint8_t mask = 0xF << (4 - shift);
-    uint8_t *ptr = data + big;
+    uint8_t  shift = small ? 4 : 0;
+    uint8_t  mask  = 0xF << (4 - shift);
+    uint8_t *ptr   = data + big;
     *ptr &= mask;
     *ptr |= (value & 0xF) << shift;
 }
 
 uint8_t unpack_uint4(uint8_t *data, uint16_t pos)
 {
-    uint16_t big = pos / 2;
+    uint16_t big   = pos / 2;
     uint16_t small = 1 - pos % 2;
-    uint8_t shift = small ? 4 : 0;
-    uint8_t *ptr = data + big;
+    uint8_t  shift = small ? 4 : 0;
+    uint8_t *ptr   = data + big;
     return (*ptr >> shift) & 0xF;
 }
 
@@ -60,9 +60,9 @@ int des_screen_height()
 }
 
 // colors - RGB tuples, will be rounded down to 12 bit
-void des_palette_copy(uint8_t paletteIndex, uint8_t colors[16 * 3])
+void des_palette_copy(uint8_t paletteIndex, uint8_t colors[24])
 {
-    memcpy(&DES.palettes[paletteIndex], colors, 16 * 3);
+    memcpy(&DES.palettes[paletteIndex], colors, 24);
 }
 // data - count * 64 bytes, each byte is color index, will be clamped to 16 colors/4 bit
 void des_tileset_copy(uint16_t startIndex, uint16_t count, uint8_t *data)
@@ -93,7 +93,6 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
             "depth\n",
             path, (int)width, (int)height, color_type, (int)PNG_COLOR_TYPE_PALETTE, bit_depth);
 
-
     if (color_type != PNG_COLOR_TYPE_PALETTE)
     {
         fprintf(stderr, "[desx] error: must be indexed png\n");
@@ -122,17 +121,14 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
         exit(1);
     }
 
-    uint8_t des_palette[16 * 3];
+    uint8_t des_palette[24];
 
     // Iterate over the palette and print out the RGB values
     for (int i = 0; i < num_palette; i++)
     {
-        des_palette[i * 3 + 0] = palette[i].red >> 4 << 4;
-        des_palette[i * 3 + 1] = palette[i].green >> 4 << 4;
-        des_palette[i * 3 + 2] = palette[i].blue >> 4 << 4;
-        fprintf(stderr, "Color %d: R=%d, G=%d, B=%d -> %d %d %d\n", i, palette[i].red,
-                palette[i].green, palette[i].blue, des_palette[i * 3 + 0], des_palette[i * 3 + 1],
-                des_palette[i * 3 + 2]);
+        pack_uint4(des_palette, i * 3 + 0, palette[i].red >> 4);
+        pack_uint4(des_palette, i * 3 + 1, palette[i].green >> 4);
+        pack_uint4(des_palette, i * 3 + 2, palette[i].blue >> 4);
     }
 
     des_palette_copy(paletteIndex, des_palette);
@@ -194,8 +190,15 @@ void _des_dump_palettes()
     {
         for (int x = 0; x < 16; x++)
         {
-            uint8_t  *cc = &DES.palettes[y].data[x * 3];
-            sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
+            uint8_t *des_palette = DES.palettes[y].data;
+
+            auto i = x;
+
+            auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
+            auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
+            auto b = unpack_uint4(des_palette, i * 3 + 2) << 4;
+
+            sf::Color color(r, g, b);
             DES.screen.setPixel(x, y, color);
         }
     }
@@ -219,10 +222,14 @@ void _des_render()
 
                     int pp = x + y * 8;
 
-                    int      pIndex = DES.tiles[tn].data[pp];
-                    uint8_t *cc     = &DES.palettes[0].data[pIndex * 3];
+                    int      i           = DES.tiles[tn].data[pp];
+                    uint8_t *des_palette = DES.palettes[0].data;
 
-                    sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
+                    auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
+                    auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
+                    auto b = unpack_uint4(des_palette, i * 3 + 2) << 4;
+
+                    sf::Color color(r, g, b);
                     DES.screen.setPixel(sx, sy, color);
                 }
             }
@@ -253,8 +260,9 @@ struct FPSChecker
     }
 };
 
-void test() {
-//void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
+void test()
+{
+    // void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
     uint8_t data[2];
 
     pack_uint4(data, 0, 0xA);
@@ -262,10 +270,10 @@ void test() {
     pack_uint4(data, 2, 0xC);
     pack_uint4(data, 3, 0xD);
 
-    fprintf(stderr,"%02X%02X\n",data[0],data[1]);
+    fprintf(stderr, "%02X%02X\n", data[0], data[1]);
 
-    assert(data[0]==0xAB);
-    assert(data[1]==0xCD);
+    assert(data[0] == 0xAB);
+    assert(data[1] == 0xCD);
 
     assert(unpack_uint4(data, 0) == 0xA);
     assert(unpack_uint4(data, 1) == 0xB);
@@ -299,7 +307,7 @@ int main()
                     static_cast<float>(scale)); // Scale sprite to window size
 
     // CC-BY 3.0 https://opengameart.org/content/tileset-1bit-color
-    desx_load_png("tileset_1bit.png", 0, 0);//256);
+    desx_load_png("tileset_1bit.png", 0, 0); // 256);
 
     // CC0 https://opengameart.org/content/8x8-1bit-roguelike-tiles-bitmap-font
     desx_load_png("glyphs_mini.png", 1, 256);
