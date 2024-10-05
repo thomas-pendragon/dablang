@@ -18,16 +18,22 @@
 
 // DES interface
 
-sf::Image image;
-
 struct des_palette
 {
     uint8_t data[16 * 3];
 };
 
+struct des_tile
+{
+    uint8_t data[64];
+};
+
 struct des_state
 {
     des_palette palettes[16];
+    des_tile    tiles[1024];
+
+    sf::Image screen;
 } DES;
 
 int des_screen_width()
@@ -45,7 +51,13 @@ void des_palette_copy(uint8_t paletteIndex, uint8_t colors[16 * 3])
     memcpy(&DES.palettes[paletteIndex], colors, 16 * 3);
 }
 // data - count * 64 bytes, each byte is color index, will be clamped to 16 colors/4 bit
-void des_tileset_copy(uint8_t startIndex, uint8_t count, uint8_t *data);
+void des_tileset_copy(uint8_t startIndex, uint16_t count, uint8_t *data)
+{
+    fprintf(stderr, "startIndex = %d | count = %d | data = %p\n", (int)startIndex, (int)count,
+            data);
+    fprintf(stderr, "copy %d bytes from %p to %p\n", count * 64, data, &DES.tiles[startIndex]);
+    memcpy(&DES.tiles[startIndex], data, count * 64);
+}
 
 // data:
 // T - tile index, P - palette, VH - flip
@@ -80,6 +92,12 @@ void desx_load_png(const char *path)
         exit(1);
     }
 
+    if (width % 8 || height % 8)
+    {
+        fprintf(stderr, "[desx] error: width and height must be divible by 8\n");
+        exit(1);
+    }
+
     png_colorp palette;
     int        num_palette;
 
@@ -110,11 +128,97 @@ void desx_load_png(const char *path)
 
     des_palette_copy(0, des_palette);
 
+    // Allocate memory for reading the indexed pixel data
+    png_bytep *row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+    for (int y = 0; y < height; y++)
+    {
+        row_pointers[y] = (png_byte *)malloc(png_get_rowbytes(png, info));
+    }
+
+    // Read the image data (pixel indices)
+    png_read_image(png, row_pointers);
+
+    int x_tiles = width / 8;
+    int y_tiles = height / 8;
+
+    int n_tiles = x_tiles * y_tiles;
+
+    uint8_t *tileData = new uint8_t[n_tiles * 64];
+
+    fprintf(stderr, "tileData=%p\n", tileData);
+
+    int nq = 0;
+
+    for (int yt = 0; yt < y_tiles; yt++)
+    {
+        for (int xt = 0; xt < x_tiles; xt++)
+        {
+            int      tileIndex = xt + yt * x_tiles;
+            uint8_t *ptr       = &tileData[tileIndex * 64];
+
+            bool paq = yt == 13 && xt == 6;
+            if (paq)
+                fprintf(stderr, "%04d %02d %02d %p: ", tileIndex, xt, yt, ptr);
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+
+                    int xx = xt * 8 + x;
+                    int yy = yt * 8 + y;
+
+                    ptr[x + y * 8] = row_pointers[yy][xx];
+                    if (paq)
+                        fprintf(stderr, "%X", ptr[x + y * 8]);
+                    nq++;
+                }
+            }
+            if (paq)
+                fprintf(stderr, "\n");
+        }
+    }
+    fprintf(stderr, "%d bytes copies\n", nq);
+
+    fprintf(stderr, "copy %d tiles\n", n_tiles);
+    des_tileset_copy(0, n_tiles, tileData);
+
+    fprintf(stderr, "MEM 422 [6x13]->[%p]->", &tileData[422 * 64]);
+    for (int i = 0; i < 64; i++)
+    {
+        fprintf(stderr, "%X", tileData[422 * 64 + i]);
+    }
+    fprintf(stderr, "\n");
+    fprintf(stderr, "DAS 422 [6x13]->[%p]->", &DES.tiles[422].data);
+    for (int i = 0; i < 64; i++)
+    {
+        fprintf(stderr, "%X", DES.tiles[422].data[i]);
+    }
+    fprintf(stderr, "\n");
+
+    delete[] tileData;
+
+    // // You can now access the indexed pixel data
+    // fprintf(stderr,"Pixel data (indexed values):\n");
+    // for (int y = 0; y < 128; y++) {
+    //     for (int x = 0; x < 128; x++) {
+    //         png_byte index = row_pointers[y][x];  // Indexed value (palette index)
+    //         fprintf(stderr, "%X", index);  // Print or use the index
+    //     }
+    //     fprintf(stderr, "\n");
+    // }
+
+    // Clean up
+    for (int y = 0; y < height; y++)
+    {
+        free(row_pointers[y]);
+    }
+    free(row_pointers);
+
     png_destroy_read_struct(&png, &info, NULL);
     fclose(fp);
 }
 
-void _des_render()
+void _des_dump_palettes()
 {
     // Dump palette
     for (int y = 0; y < 16; y++)
@@ -124,9 +228,50 @@ void _des_render()
             // Generate random color for each pixel
             uint8_t  *cc = &DES.palettes[y].data[x * 3];
             sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
-            image.setPixel(x, y, color);
+            DES.screen.setPixel(x, y, color);
         }
     }
+}
+
+void _des_render()
+{
+    static bool ok = true;
+
+    for (int ty = 0; ty < 28; ty++)
+    {
+        for (int tx = 0; tx < 32; tx++)
+        {
+            int tn = tx + ty * 32;
+
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+
+                    int sx = x + tx * 8;
+                    int sy = y + ty * 8;
+
+                    int pp = x + y * 8;
+
+                    int      pIndex = DES.tiles[tn].data[pp];
+                    uint8_t *cc     = &DES.palettes[0].data[pIndex * 3];
+
+                    if (!false && ok && tx == 6 && ty == 13)
+                    {
+                        fprintf(
+                            stderr,
+                            "sx %03d sy %03d -> tx %03d ty %03d x %02d y %02d pp %04d pI %02d\n",
+                            sx, sy, tx, ty, x, y, pp, pIndex);
+                    }
+
+                    sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
+                    DES.screen.setPixel(sx, sy, color);
+                }
+            }
+        }
+    }
+
+    ok = false;
 }
 
 struct FPSChecker
@@ -163,7 +308,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Random Pixels with Texture");
     window.setFramerateLimit(60);
 
-    image.create(des_screen_width(), des_screen_height());
+    DES.screen.create(des_screen_width(), des_screen_height());
 
     sf::Texture texture;
     texture.create(des_screen_width(), des_screen_height());
@@ -191,7 +336,7 @@ int main()
         }
 
         _des_render();
-        texture.update(image);
+        texture.update(DES.screen);
         sprite.setTexture(texture);
         // window.clear();
         window.draw(sprite);
