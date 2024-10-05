@@ -65,11 +65,6 @@ int des_tilemap_copy(uint8_t startIndex, uint8_t *data);
 
 void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startIndex = 0)
 {
-    // sf::Image image;
-    // if (!image.loadFromFile(path)) {
-    //   throw "fail";
-    //   }
-    //   fprintf(stderr,"loaded %d x %d\n", image.width(), image.height());
     png_structp png  = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     png_infop   info = png_create_info_struct(png);
     FILE       *fp   = fopen(path, "rb");
@@ -84,6 +79,7 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
             "[desx] Loaded '%s': %dx%d pixels, %d color type (PNG_COLOR_TYPE_PALETTE = %d), %d bit "
             "depth\n",
             path, (int)width, (int)height, color_type, (int)PNG_COLOR_TYPE_PALETTE, bit_depth);
+
 
     if (color_type != PNG_COLOR_TYPE_PALETTE)
     {
@@ -107,9 +103,9 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
     }
 
     fprintf(stderr, "[desx] palette has %d colors\n", num_palette);
-    if (num_palette != 16)
+    if (num_palette > 16)
     {
-        fprintf(stderr, "[desx] error: palette must have 16 colors!\n");
+        fprintf(stderr, "[desx] error: palette must have at most 16 colors!\n");
         exit(1);
     }
 
@@ -267,14 +263,17 @@ int main()
     sprite.setScale(static_cast<float>(scale),
                     static_cast<float>(scale)); // Scale sprite to window size
 
+    // CC-BY 3.0 https://opengameart.org/content/tileset-1bit-color
+    desx_load_png("tileset_1bit.png", 0, 0);//256);
+
     // CC0 https://opengameart.org/content/8x8-1bit-roguelike-tiles-bitmap-font
-    desx_load_png("glyphs.png", 1, 0);
+    desx_load_png("glyphs_mini.png", 1, 256);
 
     // Credit goes to Daniel Cook's 2d Circle Graphic Archive, Jetrel's mockups resized 32x32,
     // Bertram's improvements, Zabin's modification and additions, Saphy (TMW) tall grass and please
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
-    desx_load_png("mountain_landscape_16c_256.png", 0, 256);
+    desx_load_png("mountain_landscape_16c_256.png", 2, 320);
 
     FPSChecker fpsChecker;
     while (window.isOpen())
