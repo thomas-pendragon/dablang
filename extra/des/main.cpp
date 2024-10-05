@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <cassert>
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -13,8 +14,28 @@
 
 struct des_palette
 {
-    uint8_t data[16 * 3];
+    uint8_t data[24];
 };
+
+void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
+{
+    uint16_t big = pos / 2;
+    uint16_t small = 1 - pos % 2;
+    uint8_t shift = small ? 4 : 0;
+    uint8_t mask = 0xF << (4 - shift);
+    uint8_t *ptr = data + big;
+    *ptr &= mask;
+    *ptr |= (value & 0xF) << shift;
+}
+
+uint8_t unpack_uint4(uint8_t *data, uint16_t pos)
+{
+    uint16_t big = pos / 2;
+    uint16_t small = 1 - pos % 2;
+    uint8_t shift = small ? 4 : 0;
+    uint8_t *ptr = data + big;
+    return (*ptr >> shift) & 0xF;
+}
 
 struct des_tile
 {
@@ -232,8 +253,30 @@ struct FPSChecker
     }
 };
 
+void test() {
+//void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
+    uint8_t data[2];
+
+    pack_uint4(data, 0, 0xA);
+    pack_uint4(data, 1, 0xB);
+    pack_uint4(data, 2, 0xC);
+    pack_uint4(data, 3, 0xD);
+
+    fprintf(stderr,"%02X%02X\n",data[0],data[1]);
+
+    assert(data[0]==0xAB);
+    assert(data[1]==0xCD);
+
+    assert(unpack_uint4(data, 0) == 0xA);
+    assert(unpack_uint4(data, 1) == 0xB);
+    assert(unpack_uint4(data, 2) == 0xC);
+    assert(unpack_uint4(data, 3) == 0xD);
+}
+
 int main()
 {
+    test();
+
     // Set the size of the window to 256x224
     const int scale        = 3;
     int       w            = des_screen_width();
