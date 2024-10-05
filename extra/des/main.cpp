@@ -15,6 +15,7 @@
 
 #include <png.h>
 #include <zlib.h>
+#include <algorithm>
 
 // DES interface
 
@@ -51,9 +52,10 @@ void des_palette_copy(uint8_t paletteIndex, uint8_t colors[16 * 3])
     memcpy(&DES.palettes[paletteIndex], colors, 16 * 3);
 }
 // data - count * 64 bytes, each byte is color index, will be clamped to 16 colors/4 bit
-void des_tileset_copy(uint8_t startIndex, uint16_t count, uint8_t *data)
+void des_tileset_copy(uint16_t startIndex, uint16_t count, uint8_t *data)
 {
-    memcpy(&DES.tiles[startIndex], data, count * 64);
+    int size = std::min(count * 64, (1024 - startIndex) * 64);
+    memcpy(&DES.tiles[startIndex], data, size);
 }
 
 // data:
@@ -61,7 +63,7 @@ void des_tileset_copy(uint8_t startIndex, uint16_t count, uint8_t *data)
 // TTTTTTTT TTPPPPVH
 int des_tilemap_copy(uint8_t startIndex, uint8_t *data);
 
-void desx_load_png(const char *path)
+void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startIndex = 0)
 {
     // sf::Image image;
     // if (!image.loadFromFile(path)) {
@@ -123,7 +125,7 @@ void desx_load_png(const char *path)
                 palette[i].blue, des_palette[i*3+0],des_palette[i*3+1],des_palette[i*3+2]);
     }
 
-    des_palette_copy(0, des_palette);
+    des_palette_copy(paletteIndex, des_palette);
 
     // Allocate memory for reading the indexed pixel data
     png_bytep *row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
@@ -164,7 +166,7 @@ void desx_load_png(const char *path)
             }
         }
     }
-    des_tileset_copy(0, n_tiles, tileData);
+    des_tileset_copy(startIndex, n_tiles, tileData);
     delete[] tileData;
 
     for (int y = 0; y < height; y++)
@@ -265,11 +267,14 @@ int main()
     sprite.setScale(static_cast<float>(scale),
                     static_cast<float>(scale)); // Scale sprite to window size
 
+    // CC0 https://opengameart.org/content/8x8-1bit-roguelike-tiles-bitmap-font
+    desx_load_png("glyphs.png", 1, 0);
+
     // Credit goes to Daniel Cook's 2d Circle Graphic Archive, Jetrel's mockups resized 32x32,
     // Bertram's improvements, Zabin's modification and additions, Saphy (TMW) tall grass and please
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
-    desx_load_png("mountain_landscape_16c_256.png");
+    desx_load_png("mountain_landscape_16c_256.png", 0, 256);    
 
     FPSChecker fpsChecker;
     while (window.isOpen())
