@@ -53,9 +53,6 @@ void des_palette_copy(uint8_t paletteIndex, uint8_t colors[16 * 3])
 // data - count * 64 bytes, each byte is color index, will be clamped to 16 colors/4 bit
 void des_tileset_copy(uint8_t startIndex, uint16_t count, uint8_t *data)
 {
-    fprintf(stderr, "startIndex = %d | count = %d | data = %p\n", (int)startIndex, (int)count,
-            data);
-    fprintf(stderr, "copy %d bytes from %p to %p\n", count * 64, data, &DES.tiles[startIndex]);
     memcpy(&DES.tiles[startIndex], data, count * 64);
 }
 
@@ -119,11 +116,11 @@ void desx_load_png(const char *path)
     // Iterate over the palette and print out the RGB values
     for (int i = 0; i < num_palette; i++)
     {
-        des_palette[i * 3 + 0] = palette[i].red;
-        des_palette[i * 3 + 1] = palette[i].green;
-        des_palette[i * 3 + 2] = palette[i].blue;
-        fprintf(stderr, "Color %d: R=%d, G=%d, B=%d\n", i, palette[i].red, palette[i].green,
-                palette[i].blue);
+        des_palette[i * 3 + 0] = palette[i].red >> 4 << 4;
+        des_palette[i * 3 + 1] = palette[i].green >> 4 << 4;
+        des_palette[i * 3 + 2] = palette[i].blue  >> 4 << 4;
+        fprintf(stderr, "Color %d: R=%d, G=%d, B=%d -> %d %d %d\n", i, palette[i].red, palette[i].green,
+                palette[i].blue, des_palette[i*3+0],des_palette[i*3+1],des_palette[i*3+2]);
     }
 
     des_palette_copy(0, des_palette);
@@ -145,8 +142,6 @@ void desx_load_png(const char *path)
 
     uint8_t *tileData = new uint8_t[n_tiles * 64];
 
-    fprintf(stderr, "tileData=%p\n", tileData);
-
     int nq = 0;
 
     for (int yt = 0; yt < y_tiles; yt++)
@@ -156,58 +151,22 @@ void desx_load_png(const char *path)
             int      tileIndex = xt + yt * x_tiles;
             uint8_t *ptr       = &tileData[tileIndex * 64];
 
-            bool paq = yt == 13 && xt == 6;
-            if (paq)
-                fprintf(stderr, "%04d %02d %02d %p: ", tileIndex, xt, yt, ptr);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
                 {
-
                     int xx = xt * 8 + x;
                     int yy = yt * 8 + y;
 
                     ptr[x + y * 8] = row_pointers[yy][xx];
-                    if (paq)
-                        fprintf(stderr, "%X", ptr[x + y * 8]);
                     nq++;
                 }
             }
-            if (paq)
-                fprintf(stderr, "\n");
         }
     }
-    fprintf(stderr, "%d bytes copies\n", nq);
-
-    fprintf(stderr, "copy %d tiles\n", n_tiles);
     des_tileset_copy(0, n_tiles, tileData);
-
-    fprintf(stderr, "MEM 422 [6x13]->[%p]->", &tileData[422 * 64]);
-    for (int i = 0; i < 64; i++)
-    {
-        fprintf(stderr, "%X", tileData[422 * 64 + i]);
-    }
-    fprintf(stderr, "\n");
-    fprintf(stderr, "DAS 422 [6x13]->[%p]->", &DES.tiles[422].data);
-    for (int i = 0; i < 64; i++)
-    {
-        fprintf(stderr, "%X", DES.tiles[422].data[i]);
-    }
-    fprintf(stderr, "\n");
-
     delete[] tileData;
 
-    // // You can now access the indexed pixel data
-    // fprintf(stderr,"Pixel data (indexed values):\n");
-    // for (int y = 0; y < 128; y++) {
-    //     for (int x = 0; x < 128; x++) {
-    //         png_byte index = row_pointers[y][x];  // Indexed value (palette index)
-    //         fprintf(stderr, "%X", index);  // Print or use the index
-    //     }
-    //     fprintf(stderr, "\n");
-    // }
-
-    // Clean up
     for (int y = 0; y < height; y++)
     {
         free(row_pointers[y]);
@@ -220,12 +179,10 @@ void desx_load_png(const char *path)
 
 void _des_dump_palettes()
 {
-    // Dump palette
     for (int y = 0; y < 16; y++)
     {
         for (int x = 0; x < 16; x++)
         {
-            // Generate random color for each pixel
             uint8_t  *cc = &DES.palettes[y].data[x * 3];
             sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
             DES.screen.setPixel(x, y, color);
@@ -235,8 +192,6 @@ void _des_dump_palettes()
 
 void _des_render()
 {
-    static bool ok = true;
-
     for (int ty = 0; ty < 28; ty++)
     {
         for (int tx = 0; tx < 32; tx++)
@@ -256,22 +211,12 @@ void _des_render()
                     int      pIndex = DES.tiles[tn].data[pp];
                     uint8_t *cc     = &DES.palettes[0].data[pIndex * 3];
 
-                    if (!false && ok && tx == 6 && ty == 13)
-                    {
-                        fprintf(
-                            stderr,
-                            "sx %03d sy %03d -> tx %03d ty %03d x %02d y %02d pp %04d pI %02d\n",
-                            sx, sy, tx, ty, x, y, pp, pIndex);
-                    }
-
                     sf::Color color(*(cc + 0), *(cc + 1), *(cc + 2));
                     DES.screen.setPixel(sx, sy, color);
                 }
             }
         }
     }
-
-    ok = false;
 }
 
 struct FPSChecker
@@ -281,7 +226,7 @@ struct FPSChecker
     int       counter  = 0;
     int       interval = 60;
 
-    void ping()
+    void ping(sf::RenderWindow &window)
     {
         counter++;
         if (counter == interval)
@@ -290,7 +235,9 @@ struct FPSChecker
             float dt = t2 - t;
             t        = t2;
             counter  = 0;
-            fprintf(stderr, "t = %f, fps = %f\n", dt, (float)interval / dt);
+            char buffer[256];
+            sprintf(buffer, "DES :: fps = %f", (float)interval / dt);
+            window.setTitle(buffer);
         }
     }
 };
@@ -327,7 +274,7 @@ int main()
     FPSChecker fpsChecker;
     while (window.isOpen())
     {
-        fpsChecker.ping();
+        fpsChecker.ping(window);
         sf::Event event;
         while (window.pollEvent(event))
         {
