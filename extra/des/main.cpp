@@ -32,10 +32,9 @@ int main() {
     int h = 224;
     const int windowWidth = w * scale;
     const int windowHeight = h * scale;
-    const int rectSize = scale;  // Each rectangle will be 2x2
 
     // Create the window
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Random Pixels");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Random Pixels with Texture");
     window.setFramerateLimit(60);
 
     // Seed the random number generator
@@ -44,10 +43,21 @@ int main() {
     sf::Clock clock;
     float t = 0;
 
+    // Create an image with the size of the screen (256x224)
+    sf::Image image;
+    image.create(w, h);
+
+    // Create a texture to load the image
+    sf::Texture texture;
+    texture.create(w, h);
+
+    // Create a sprite to display the texture
+    sf::Sprite sprite;
+    sprite.setScale(static_cast<float>(scale), static_cast<float>(scale)); // Scale sprite to window size
+
     // Run the program as long as the window is open
     while (window.isOpen()) {
         // Check all the window's events
-
         float t2 = static_cast<float>(clock.getElapsedTime().asSeconds());
         float dt = t2 - t;
         t = t2;
@@ -59,29 +69,30 @@ int main() {
                 window.close();
         }
 
+        // Set random pixels in the image
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                // Generate random color for each pixel
+                sf::Color color(
+                    std::rand() % 256,  // Red
+                    std::rand() % 256,  // Green
+                    std::rand() % 256   // Blue
+                );
+                image.setPixel(x, y, color);
+            }
+        }
+
+        // Update the texture with the modified image
+        texture.update(image);
+
+        // Set the texture to the sprite
+        sprite.setTexture(texture);
+
         // Clear the window
         window.clear();
 
-        // Draw random 2x2 rectangles
-        for (int y = 0; y < h; y += 1) {
-            for (int x = 0; x < w; x += 1) {
-                // Create a 2x2 rectangle
-                sf::RectangleShape rect(sf::Vector2f(rectSize, rectSize));
-
-                // Set random color for the rectangle
-                rect.setFillColor(sf::Color(
-                    std::rand() % 256,   // Red
-                    std::rand() % 256,   // Green
-                    std::rand() % 256    // Blue
-                ));
-
-                // Set position for the rectangle
-                rect.setPosition(static_cast<float>(x * scale), static_cast<float>(y * scale));
-
-                // Draw the rectangle
-                window.draw(rect);
-            }
-        }
+        // Draw the sprite (which contains the updated texture)
+        window.draw(sprite);
 
         // Display what has been drawn to the window
         window.display();
