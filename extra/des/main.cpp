@@ -236,7 +236,7 @@ struct FPSChecker
             t        = t2;
             counter  = 0;
             char buffer[256];
-            sprintf(buffer, "DES :: fps = %f", (float)interval / dt);
+            snprintf(buffer, 256, "DES :: fps = %f", (float)interval / dt);
             window.setTitle(buffer);
         }
     }
