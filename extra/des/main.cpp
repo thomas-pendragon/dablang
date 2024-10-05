@@ -120,18 +120,21 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
     {
         des_palette[i * 3 + 0] = palette[i].red >> 4 << 4;
         des_palette[i * 3 + 1] = palette[i].green >> 4 << 4;
-        des_palette[i * 3 + 2] = palette[i].blue  >> 4 << 4;
-        fprintf(stderr, "Color %d: R=%d, G=%d, B=%d -> %d %d %d\n", i, palette[i].red, palette[i].green,
-                palette[i].blue, des_palette[i*3+0],des_palette[i*3+1],des_palette[i*3+2]);
+        des_palette[i * 3 + 2] = palette[i].blue >> 4 << 4;
+        fprintf(stderr, "Color %d: R=%d, G=%d, B=%d -> %d %d %d\n", i, palette[i].red,
+                palette[i].green, palette[i].blue, des_palette[i * 3 + 0], des_palette[i * 3 + 1],
+                des_palette[i * 3 + 2]);
     }
 
     des_palette_copy(paletteIndex, des_palette);
 
     // Allocate memory for reading the indexed pixel data
     png_bytep *row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+    size_t     rowsize      = png_get_rowbytes(png, info);
+    png_byte  *rowdata      = (png_byte *)malloc(rowsize * height);
     for (int y = 0; y < height; y++)
     {
-        row_pointers[y] = (png_byte *)malloc(png_get_rowbytes(png, info));
+        row_pointers[y] = rowdata + rowsize * y;
     }
 
     // Read the image data (pixel indices)
@@ -169,10 +172,7 @@ void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startInd
     des_tileset_copy(startIndex, n_tiles, tileData);
     delete[] tileData;
 
-    for (int y = 0; y < height; y++)
-    {
-        free(row_pointers[y]);
-    }
+    free(rowdata);
     free(row_pointers);
 
     png_destroy_read_struct(&png, &info, NULL);
@@ -274,7 +274,7 @@ int main()
     // Bertram's improvements, Zabin's modification and additions, Saphy (TMW) tall grass and please
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
-    desx_load_png("mountain_landscape_16c_256.png", 0, 256);    
+    desx_load_png("mountain_landscape_16c_256.png", 0, 256);
 
     FPSChecker fpsChecker;
     while (window.isOpen())
