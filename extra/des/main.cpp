@@ -42,10 +42,19 @@ struct des_tile
     uint8_t data[64];
 };
 
+struct des_tilemap
+{
+    uint16_t tile: 10;
+    uint16_t palette: 4;
+    uint16_t vflip: 1;
+    uint16_t hflip: 1;
+};
+
 struct des_state
 {
     des_palette palettes[16];
     des_tile    tiles[1024];
+    des_tilemap tilemap[64*64];
 
     sf::Image screen;
 } DES;
@@ -74,7 +83,10 @@ void des_tileset_copy(uint16_t startIndex, uint16_t count, uint8_t *data)
 // data:
 // T - tile index, P - palette, VH - flip
 // TTTTTTTT TTPPPPVH
-int des_tilemap_copy(uint8_t startIndex, uint8_t *data);
+void des_tilemap_copy(uint8_t startIndex, uint16_t count, uint8_t *data) 
+{
+    memcpy(&DES.tilemap[startIndex], data, count * 2);
+}
 
 void desx_load_png(const char *path, uint8_t paletteIndex = 0, uint16_t startIndex = 0)
 {
@@ -204,7 +216,7 @@ void _des_dump_palettes()
     }
 }
 
-void _des_render()
+void _des_dump_tiles()
 {
     static int z = 0;
     z++;
@@ -236,6 +248,23 @@ void _des_render()
                     DES.screen.setPixel(sx, sy, color);
                 }
             }
+        }
+    }
+}
+
+void _des_render()
+{
+    for (int sy = 0; sy < 224; sy++) {
+        for (int sx = 0; sx < 256; sx++) {
+            int tile_x = sx / 8;
+            int tile_y = sy / 8;
+            int subx = sx % 8;
+            int suby = sy % 8;
+            int tile_n = tile_x + tile_y * 64;
+            const auto &tile = DES.tilemap[tile_n];
+            const auto tId = tile.tile;
+            const auto pId = tile.palette;
+            
         }
     }
 }
@@ -323,6 +352,16 @@ int main()
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
     desx_load_png("mountain_landscape_16c_256.png", 3, 320 + 12 * 4);
+
+    uint16_t tilemap[64*64];
+    FILE*f=fopen("rpg1.dat","rb");
+    //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+    fread(tilemap,2,64*64,f);
+    fclose(f);
+
+    des_tilemap_copy(0, 64*64, (uint8_t*)tilemap);
+
+    //for (int i=0;i<64*64;i++) { fprintf(stderr,"%d ",tilemap[i]);}
 
     FPSChecker fpsChecker;
     while (window.isOpen())
