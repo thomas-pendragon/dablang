@@ -172,12 +172,19 @@ struct des_sprite
     }
 };
 
+struct des_bk
+{
+    uint16_t xOffset;
+    uint16_t yOffset;
+};
+
 struct des_state
 {
     des_palette palettes[16]     = {};
     des_tile    tiles[1024]      = {};
     des_tilemap tilemap[64 * 64] = {};
     des_sprite  sprites[40]      = {};
+    des_bk      backgrounds[1]   = {};
 
     sf::Image screen;
 } DES;
@@ -201,6 +208,12 @@ void des_tileset_copy(uint16_t startIndex, uint16_t count, uint8_t *data)
 {
     int size = std::min(count * 64, (1024 - startIndex) * 64);
     memcpy(&DES.tiles[startIndex], data, size);
+}
+
+void des_background_offset(uint8_t backgroundIndex, uint16_t xOffset, uint16_t yOffset)
+{
+    DES.backgrounds[backgroundIndex].xOffset = xOffset;
+    DES.backgrounds[backgroundIndex].yOffset = yOffset;
 }
 
 // data:
@@ -385,14 +398,19 @@ void _des_dump_tiles()
 
 void _des_render_tiles()
 {
+    const auto &bk = DES.backgrounds[0];
+
     for (int sy = 0; sy < 224; sy++)
     {
         for (int sx = 0; sx < 256; sx++)
         {
-            int tile_x = sx / 8;
-            int tile_y = sy / 8;
-            int subx   = sx % 8;
-            int suby   = sy % 8;
+            uint16_t ssx = (sx + bk.xOffset) % 512;
+            uint16_t ssy = (sy + bk.yOffset) % 512;
+
+            int tile_x = ssx / 8;
+            int tile_y = ssy / 8;
+            int subx   = ssx % 8;
+            int suby   = ssy % 8;
             int tile_n = tile_x + tile_y * 64;
 
             const auto &tile = DES.tilemap[tile_n];
@@ -515,7 +533,8 @@ void test()
 
 void _des_callback_frame()
 {
-
+    static int allC = 0;
+    allC++;
     static int c = 0;
     c++;
     static int st = 0;
@@ -525,6 +544,8 @@ void _des_callback_frame()
         st = st % 4;
         c  = 0;
     }
+
+    des_background_offset(0, allC, 0);
 
     int pp = 2;
     int bT = 320; // 168
@@ -603,7 +624,7 @@ int main()
     // Bertram's improvements, Zabin's modification and additions, Saphy (TMW) tall grass and please
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
-    desx_load_png("mountain_landscape_16c_256.png", 3, 320 + 12 * 4);
+    // desx_load_png("mountain_landscape_16c_256.png", 3, 320 + 12 * 4);
 
     uint16_t tilemap[64 * 64];
     FILE    *f = fopen("rpg1.dat", "rb");
