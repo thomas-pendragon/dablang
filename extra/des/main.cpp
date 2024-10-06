@@ -208,7 +208,7 @@ void _des_render()
 {
     static int z = 0;
     z++;
-    int palI = (z / 60) % 3;
+    int palI = (z / 60) % 4;
     for (int ty = 0; ty < 28; ty++)
     {
         for (int tx = 0; tx < 32; tx++)
@@ -315,11 +315,14 @@ int main()
     // CC0 https://opengameart.org/content/8x8-1bit-roguelike-tiles-bitmap-font
     desx_load_png("glyphs_mini.png", 1, 256);
 
+    // CC-BY-SA 3.0 https://route1rodent.itch.io/16x16-rpg-character-sprite-sheet
+    desx_load_png("player.png", 2, 320);
+
     // Credit goes to Daniel Cook's 2d Circle Graphic Archive, Jetrel's mockups resized 32x32,
     // Bertram's improvements, Zabin's modification and additions, Saphy (TMW) tall grass and please
     // provide a link back to OGA and this submission.
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
-    desx_load_png("mountain_landscape_16c_256.png", 2, 320);
+    desx_load_png("mountain_landscape_16c_256.png", 3, 320 + 12 * 4);
 
     FPSChecker fpsChecker;
     while (window.isOpen())
