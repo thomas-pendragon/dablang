@@ -12,6 +12,8 @@
 
 // DES interface
 
+void _des_callback_scanline(int sy);
+
 struct des_palette
 {
     uint8_t data[24];
@@ -40,6 +42,14 @@ uint8_t unpack_uint4(uint8_t *data, uint16_t pos)
 struct des_tile
 {
     uint8_t data[64];
+};
+
+struct TileData
+{
+    uint16_t tile;    // Tile index (10 bits)
+    uint8_t  palette; // Palette index (4 bits)
+    bool     vflip;   // Vertical flip flag (1 bit)
+    bool     hflip;   // Horizontal flip flag (1 bit)
 };
 
 struct des_tilemap
@@ -72,6 +82,19 @@ struct des_tilemap
     uint8_t hflip() const
     {
         return bytes[1] & 0x01;
+    }
+
+    des_tilemap()
+    {
+        data = 0;
+    }
+    des_tilemap(const TileData &tileData)
+    {
+        // Construct bytes from TileData
+        bytes[0] = (tileData.tile & 0x3FF) >> 2; // Upper 8 bits of the tile
+        bytes[1] = ((tileData.tile & 0x03) << 6) | ((tileData.palette & 0x0F) << 2) |
+                   (tileData.vflip << 1) |
+                   tileData.hflip; // Combine tile, palette, vflip, and hflip
     }
 };
 
@@ -396,93 +419,97 @@ void _des_dump_tiles()
     }
 }
 
-void _des_render_tiles()
+void _des_render_tiles(int sy)
 {
     const auto &bk = DES.backgrounds[0];
 
-    for (int sy = 0; sy < 224; sy++)
+    //  for (int sy = 0; sy < 224; sy++)
+    //    {
+    for (int sx = 0; sx < 256; sx++)
     {
-        for (int sx = 0; sx < 256; sx++)
+        uint16_t ssx = (sx + bk.xOffset) % 512;
+        uint16_t ssy = (sy + bk.yOffset) % 512;
+
+        int tile_x = ssx / 8;
+        int tile_y = ssy / 8;
+        int subx   = ssx % 8;
+        int suby   = ssy % 8;
+        int tile_n = tile_x + tile_y * 64;
+
+        const auto &tile = DES.tilemap[tile_n];
+        const auto  tId  = tile.tile();
+        const auto  pId  = tile.palette();
+
+        int pp = subx + suby * 8;
+
+        int      i           = DES.tiles[tId].data[pp];
+        uint8_t *des_palette = DES.palettes[pId].data;
+
+        auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
+        auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
+        auto b = unpack_uint4(des_palette, i * 3 + 2) << 4;
+
+        sf::Color color(r, g, b);
+        DES.screen.setPixel(sx, sy, color);
+    }
+    // }
+}
+
+void _des_render_sprites(int sy)
+{
+    // for (int sy = 0; sy < 224; sy++)
+    //    {
+    for (int sx = 0; sx < 256; sx++)
+    {
+        for (int i = 0; i < 40; i++)
         {
-            uint16_t ssx = (sx + bk.xOffset) % 512;
-            uint16_t ssy = (sy + bk.yOffset) % 512;
+            const auto &sp = DES.sprites[i];
+            if (!sp.enabled())
+                continue;
+            int x = sp.x();
+            int y = sp.y();
 
-            int tile_x = ssx / 8;
-            int tile_y = ssy / 8;
-            int subx   = ssx % 8;
-            int suby   = ssy % 8;
-            int tile_n = tile_x + tile_y * 64;
+            x = sx - x;
+            y = sy - y;
 
-            const auto &tile = DES.tilemap[tile_n];
-            const auto  tId  = tile.tile();
-            const auto  pId  = tile.palette();
+            if (x < 0 || x >= 8)
+                continue;
+            if (y < 0 || y >= 8)
+                continue;
 
-            int pp = subx + suby * 8;
+            const auto tId = sp.tile();
+            const auto pId = sp.palette();
 
-            int      i           = DES.tiles[tId].data[pp];
+            int pp = x + y * 8;
+
+            int ci = DES.tiles[tId].data[pp];
+
+            auto ptra = ci == 0 && sp.transparent();
+
+            if (ptra)
+                continue;
+
             uint8_t *des_palette = DES.palettes[pId].data;
 
-            auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
-            auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
-            auto b = unpack_uint4(des_palette, i * 3 + 2) << 4;
+            auto r = unpack_uint4(des_palette, ci * 3 + 0) << 4;
+            auto g = unpack_uint4(des_palette, ci * 3 + 1) << 4;
+            auto b = unpack_uint4(des_palette, ci * 3 + 2) << 4;
 
             sf::Color color(r, g, b);
             DES.screen.setPixel(sx, sy, color);
         }
     }
-}
-
-void _des_render_sprites()
-{
-    for (int sy = 0; sy < 224; sy++)
-    {
-        for (int sx = 0; sx < 256; sx++)
-        {
-            for (int i = 0; i < 40; i++)
-            {
-                const auto &sp = DES.sprites[i];
-                if (!sp.enabled())
-                    continue;
-                int x = sp.x();
-                int y = sp.y();
-
-                x = sx - x;
-                y = sy - y;
-
-                if (x < 0 || x >= 8)
-                    continue;
-                if (y < 0 || y >= 8)
-                    continue;
-
-                const auto tId = sp.tile();
-                const auto pId = sp.palette();
-
-                int pp = x + y * 8;
-
-                int ci = DES.tiles[tId].data[pp];
-
-                auto ptra = ci == 0 && sp.transparent();
-
-                if (ptra)
-                    continue;
-
-                uint8_t *des_palette = DES.palettes[pId].data;
-
-                auto r = unpack_uint4(des_palette, ci * 3 + 0) << 4;
-                auto g = unpack_uint4(des_palette, ci * 3 + 1) << 4;
-                auto b = unpack_uint4(des_palette, ci * 3 + 2) << 4;
-
-                sf::Color color(r, g, b);
-                DES.screen.setPixel(sx, sy, color);
-            }
-        }
-    }
+    //   }
 }
 
 void _des_render()
 {
-    _des_render_tiles();
-    _des_render_sprites();
+    for (int sy = 0; sy < 224; sy++)
+    {
+        _des_callback_scanline(sy);
+        _des_render_tiles(sy);
+        _des_render_sprites(sy);
+    }
 
     //  _des_dump_tiles();
 }
@@ -530,11 +557,47 @@ void test()
     assert(unpack_uint4(data, 2) == 0xC);
     assert(unpack_uint4(data, 3) == 0xD);
 }
+int frameCounter = 0;
 
+void des_tilemap_set(int tileX, int tileY, int tile, int palette, bool vflip, bool hflip)
+{
+    TileData td;
+    td.tile        = tile;
+    td.palette     = palette;
+    td.vflip       = vflip;
+    td.hflip       = hflip;
+    int n          = tileX + tileY * 32;
+    DES.tilemap[n] = td;
+}
+
+void desx_text_print(int tileX, int tileY, const char *str, int letterOffset, int palette)
+{
+    static bool ok  = true;
+    int         len = strlen(str);
+    for (int i = 0; i < len; i++)
+    {
+        int ch = toupper(str[i]) - 'A' + 34 - 1;
+        if (ok)
+            fprintf(stderr, "print(%d '%c') -> %d (%d)\n", i, str[i], ch, letterOffset + ch);
+        des_tilemap_set(tileX + i, tileY, letterOffset + ch, palette, false, false);
+    }
+    ok = false;
+}
+
+void _des_callback_scanline(int sy)
+{
+    des_background_offset(
+        0, sy > 8 ? frameCounter + sin(2.5 * frameCounter * 0.1 + 3.1415 * 2 * sy / 244.0) * 4 : 0,
+        0);
+    // des_background_offset(0, sy > 8 ? frameCounter : 0, 0);
+}
 void _des_callback_frame()
 {
-    static int allC = 0;
-    allC++;
+    char buffer[128];
+    snprintf(buffer, 128, "Frame %d!", frameCounter);
+    desx_text_print(0, 0, buffer, 256, 1);
+    //    static int allC = 0;
+    frameCounter++;
     static int c = 0;
     c++;
     static int st = 0;
@@ -545,7 +608,7 @@ void _des_callback_frame()
         c  = 0;
     }
 
-    des_background_offset(0, allC, 0);
+    // des_background_offset(0, allC, 0);
 
     int pp = 2;
     int bT = 320; // 168
@@ -655,6 +718,9 @@ int main()
 
         _des_callback_frame();
         _des_render();
+        char fn[128];
+        sprintf(fn, "frames/%05d.png", frameCounter);
+        // DES.screen.saveToFile(fn);//"filename.png")
         if (tiles)
             _des_dump_tiles();
 
