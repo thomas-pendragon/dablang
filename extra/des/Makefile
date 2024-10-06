@@ -7,5 +7,5 @@ format:
 run: all
 	./cube
 
-rpg1.dat: rpg1_dump.json map.rb
+rpg1.dat: rpg1.json map.rb
 	ruby map.rb > rpg1.dat

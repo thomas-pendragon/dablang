@@ -513,6 +513,58 @@ void test()
     assert(unpack_uint4(data, 3) == 0xD);
 }
 
+void _des_callback_frame()
+{
+
+    static int c = 0;
+    c++;
+    static int st = 0;
+    if (c == 10)
+    {
+        st++;
+        st = st % 4;
+        c  = 0;
+    }
+
+    int pp = 2;
+    int bT = 320; // 168
+
+    int sta = st;
+    if (sta == 3)
+        sta = 1;
+
+    // bT += 12;
+    bT += sta * 2;
+
+    int        bX  = 41;
+    int        bY  = 23;
+    SpriteData sp  = {};
+    sp.x           = bX;
+    sp.y           = bY;
+    sp.tile        = bT;
+    sp.palette     = pp;
+    sp.transparent = true;
+    des_sprite_enable(0, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX + 8;
+    sp.y    = bY;
+    sp.tile = bT + 1;
+    // sp.palette = pp;
+    des_sprite_enable(1, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX;
+    sp.y    = bY + 8;
+    sp.tile = bT + 6;
+    // sp.palette = pp;
+    des_sprite_enable(2, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX + 8;
+    sp.y    = bY + 8;
+    sp.tile = bT + 6 + 1;
+    // sp.palette = pp;
+    des_sprite_enable(3, &sp);
+}
+
 int main()
 {
     test();
@@ -560,35 +612,7 @@ int main()
 
     des_tilemap_copy(0, 64 * 64, (uint8_t *)tilemap);
 
-    int        pp  = 2;
-    int        bT  = 320; // 168
-    int        bX  = 41;
-    int        bY  = 23;
-    SpriteData sp  = {};
-    sp.x           = bX;
-    sp.y           = bY;
-    sp.tile        = bT;
-    sp.palette     = pp;
-    sp.transparent = true;
-    des_sprite_enable(0, &sp);
-    // SpriteData sp = {};
-    sp.x    = bX + 8;
-    sp.y    = bY;
-    sp.tile = bT + 1;
-    // sp.palette = pp;
-    des_sprite_enable(1, &sp);
-    // SpriteData sp = {};
-    sp.x    = bX;
-    sp.y    = bY + 8;
-    sp.tile = bT + 6;
-    // sp.palette = pp;
-    des_sprite_enable(2, &sp);
-    // SpriteData sp = {};
-    sp.x    = bX + 8;
-    sp.y    = bY + 8;
-    sp.tile = bT + 6 + 1;
-    // sp.palette = pp;
-    des_sprite_enable(3, &sp);
+    bool tiles = false;
 
     FPSChecker fpsChecker;
     while (window.isOpen())
@@ -599,9 +623,20 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::T) // Check if the "T" key was pressed
+                {
+                    tiles ^= true;
+                }
+            }
         }
 
+        _des_callback_frame();
         _des_render();
+        if (tiles)
+            _des_dump_tiles();
+
         texture.update(DES.screen);
         sprite.setTexture(texture);
         // window.clear();
