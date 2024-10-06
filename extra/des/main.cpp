@@ -44,9 +44,10 @@ struct des_tile
 
 struct des_tilemap
 {
-    union {
+    union
+    {
         uint16_t data;
-        uint8_t bytes[2];
+        uint8_t  bytes[2];
     };
 
     // uint16_t tile: 10;
@@ -54,33 +55,42 @@ struct des_tilemap
     // uint16_t vflip: 1;
     // uint16_t hflip: 1;
 
-    uint16_t tile() const { return bytes[0] << 2 | bytes[1] >> 6; }
-    uint8_t palette() const {
-        return (bytes[1] >> 2) & 0x0F; 
+    uint16_t tile() const
+    {
+        return bytes[0] << 2 | bytes[1] >> 6;
+    }
+    uint8_t palette() const
+    {
+        return (bytes[1] >> 2) & 0x0F;
     }
 
-    uint8_t vflip() const {
-        return (bytes[1] >> 1) & 0x01; 
+    uint8_t vflip() const
+    {
+        return (bytes[1] >> 1) & 0x01;
     }
 
-    uint8_t hflip() const {
+    uint8_t hflip() const
+    {
         return bytes[1] & 0x01;
-    } 
+    }
 };
 
-struct SpriteData {
-    uint8_t x;          // X coordinate (8 bits)
-    uint8_t y;          // Y coordinate (8 bits)
-    uint16_t tile;      // Tile index (10 bits)
-    uint8_t palette;    // Palette index (4 bits)
-    bool vflip;         // Vertical flip flag (1 bit)
-    bool hflip;         // Horizontal flip flag (1 bit)
-    bool enabled;       // Enabled flag (1 bit)
-    bool transparent;    // Transparent flag (1 bit)
+struct SpriteData
+{
+    uint8_t  x;           // X coordinate (8 bits)
+    uint8_t  y;           // Y coordinate (8 bits)
+    uint16_t tile;        // Tile index (10 bits)
+    uint8_t  palette;     // Palette index (4 bits)
+    bool     vflip;       // Vertical flip flag (1 bit)
+    bool     hflip;       // Horizontal flip flag (1 bit)
+    bool     enabled;     // Enabled flag (1 bit)
+    bool     transparent; // Transparent flag (1 bit)
 
     // Constructor
-    //SpriteData(uint8_t x, uint8_t y, uint16_t tile, uint8_t palette, bool vflip, bool hflip, bool enabled, bool transparent)
-//        : x(x), y(y), tile(tile), palette(palette), vflip(vflip), hflip(hflip), enabled(enabled), transparent(transparent) {}
+    // SpriteData(uint8_t x, uint8_t y, uint16_t tile, uint8_t palette, bool vflip, bool hflip, bool
+    // enabled, bool transparent)
+    //        : x(x), y(y), tile(tile), palette(palette), vflip(vflip), hflip(hflip),
+    //        enabled(enabled), transparent(transparent) {}
 };
 
 struct des_sprite
@@ -102,60 +112,72 @@ struct des_sprite
     // uint16_t enabled: 1;
     // uint16_t transparent: 1;
 
-    uint16_t x() const {
+    uint16_t x() const
+    {
         return bytes[0];
     }
 
-    uint16_t y() const {
-        return bytes[1]; 
+    uint16_t y() const
+    {
+        return bytes[1];
     }
 
-    uint16_t tile() const {
+    uint16_t tile() const
+    {
         return ((bytes[2] & 0xFF) << 2) | (bytes[3] >> 6);
     }
 
-    uint8_t palette() const {
-        return (bytes[3] >> 2) & 0x0F; 
+    uint8_t palette() const
+    {
+        return (bytes[3] >> 2) & 0x0F;
     }
 
-    uint8_t vflip() const {
+    uint8_t vflip() const
+    {
         return (bytes[3] >> 1) & 0x01;
     }
 
-    uint8_t hflip() const {
-        return bytes[3] & 0x01; 
+    uint8_t hflip() const
+    {
+        return bytes[3] & 0x01;
     }
 
-    uint8_t enabled() const {
-        return (bytes[4] >> 7) & 0x01; 
+    uint8_t enabled() const
+    {
+        return (bytes[4] >> 7) & 0x01;
     }
 
-    uint8_t transparent() const {
-        return (bytes[4] >> 6) & 0x01; 
+    uint8_t transparent() const
+    {
+        return (bytes[4] >> 6) & 0x01;
     }
 
-    des_sprite() {
+    des_sprite()
+    {
         bytes[0] = 0;
         bytes[1] = 0;
         bytes[2] = 0;
         bytes[3] = 0;
         bytes[4] = 0;
     }
-    des_sprite(const SpriteData& data) {
-        bytes[0] = data.x; // Set x
-        bytes[1] = data.y; // Set y
+    des_sprite(const SpriteData &data)
+    {
+        bytes[0] = data.x;                   // Set x
+        bytes[1] = data.y;                   // Set y
         bytes[2] = (data.tile & 0x3FF) >> 2; // Store the upper 8 bits of the 10-bit tile
-        bytes[3] = ((data.tile & 0x03) << 6) | ((data.palette & 0x0F) << 2) | (data.vflip << 1) | (data.hflip); // Combine tile, palette, vflip and hflip
-        bytes[4] = (data.enabled << 7) | (data.transparent << 6); // Combine enabled and transparent flags
+        bytes[3] = ((data.tile & 0x03) << 6) | ((data.palette & 0x0F) << 2) | (data.vflip << 1) |
+                   (data.hflip); // Combine tile, palette, vflip and hflip
+        bytes[4] =
+            (data.enabled << 7) | (data.transparent << 6); // Combine enabled and transparent flags
     }
 };
 
 struct des_state
 {
-    des_palette palettes[16] = {};
-    des_tile    tiles[1024] = {};
-    des_tilemap tilemap[64*64] = {};
-    des_sprite  sprites[40] = {};
+    des_palette palettes[16]     = {};
+    des_tile    tiles[1024]      = {};
+    des_tilemap tilemap[64 * 64] = {};
+    des_sprite  sprites[40]      = {};
 
     sf::Image screen;
 } DES;
@@ -184,15 +206,15 @@ void des_tileset_copy(uint16_t startIndex, uint16_t count, uint8_t *data)
 // data:
 // T - tile index, P - palette, VH - flip
 // TTTTTTTT TTPPPPVH
-void des_tilemap_copy(uint8_t startIndex, uint16_t count, uint8_t *data) 
+void des_tilemap_copy(uint8_t startIndex, uint16_t count, uint8_t *data)
 {
     memcpy(&DES.tilemap[startIndex], data, count * 2);
 }
 
 void des_sprite_enable(uint8_t index, const SpriteData *sd)
 {
-    auto copy = *sd;
-    copy.enabled = true;
+    auto copy          = *sd;
+    copy.enabled       = true;
     DES.sprites[index] = des_sprite(copy);
 }
 
@@ -329,7 +351,7 @@ void _des_dump_tiles()
     static int z = 0;
     z++;
     int palI = (z / 60) % 4;
-//    palI=2;
+    //    palI=2;
     for (int ty = 0; ty < 28; ty++)
     {
         for (int tx = 0; tx < 32; tx++)
@@ -363,21 +385,19 @@ void _des_dump_tiles()
 
 void _des_render_tiles()
 {
-   // _des_dump_tiles();
-   // return;
-
-    for (int sy = 0; sy < 224; sy++) {
-        for (int sx = 0; sx < 256; sx++) {
+    for (int sy = 0; sy < 224; sy++)
+    {
+        for (int sx = 0; sx < 256; sx++)
+        {
             int tile_x = sx / 8;
             int tile_y = sy / 8;
-            int subx = sx % 8;
-            int suby = sy % 8;
+            int subx   = sx % 8;
+            int suby   = sy % 8;
             int tile_n = tile_x + tile_y * 64;
+
             const auto &tile = DES.tilemap[tile_n];
-            const auto tId = tile.tile();
-          //  fprintf(stderr,"tile id = %d (should be 54)\n", tId);
-            //exit(5);
-            const auto pId = tile.palette();
+            const auto  tId  = tile.tile();
+            const auto  pId  = tile.palette();
 
             int pp = subx + suby * 8;
 
@@ -396,50 +416,49 @@ void _des_render_tiles()
 
 void _des_render_sprites()
 {
-    static bool ok = true;
-    for (int sy = 0; sy < 224; sy++) {
-        for (int sx = 0; sx < 256; sx++) {
-            for (int i = 0; i < 40; i++) {
+    for (int sy = 0; sy < 224; sy++)
+    {
+        for (int sx = 0; sx < 256; sx++)
+        {
+            for (int i = 0; i < 40; i++)
+            {
                 const auto &sp = DES.sprites[i];
-                if (!sp.enabled()) continue;
+                if (!sp.enabled())
+                    continue;
                 int x = sp.x();
                 int y = sp.y();
 
-                x = sx-x;
-                y = sy-y;
-              // if(ok) fprintf(stderr,"screen[%dx%d] render [%dx%d] {%dx%d}\n", sx,sy,x,y,sp.x(),sp.y());
+                x = sx - x;
+                y = sy - y;
 
-
-                if (x < 0 || x >= 8) continue;
-                if (y < 0 || y >= 8) continue;
+                if (x < 0 || x >= 8)
+                    continue;
+                if (y < 0 || y >= 8)
+                    continue;
 
                 const auto tId = sp.tile();
                 const auto pId = sp.palette();
 
+                int pp = x + y * 8;
 
-            int pp = x + y * 8;
+                int ci = DES.tiles[tId].data[pp];
 
-            int      ci           = DES.tiles[tId].data[pp];
+                auto ptra = ci == 0 && sp.transparent();
 
-auto ptra = ci==0&&sp.transparent();
+                if (ptra)
+                    continue;
 
-               if(ok) fprintf(stderr," >> screen[%dx%d] render [%dx%d] {%dx%d} pal %d :: col %d TR %d isPixtra %d\n", sx,sy,x,y,sp.x(),sp.y(),(int)pId,
-                ci,sp.transparent(),ptra);
+                uint8_t *des_palette = DES.palettes[pId].data;
 
-            if (ptra) continue;
-            uint8_t *des_palette = DES.palettes[pId].data;
+                auto r = unpack_uint4(des_palette, ci * 3 + 0) << 4;
+                auto g = unpack_uint4(des_palette, ci * 3 + 1) << 4;
+                auto b = unpack_uint4(des_palette, ci * 3 + 2) << 4;
 
-            auto r = unpack_uint4(des_palette, ci * 3 + 0) << 4;
-            auto g = unpack_uint4(des_palette, ci * 3 + 1) << 4;
-            auto b = unpack_uint4(des_palette, ci * 3 + 2) << 4;
-
-            sf::Color color(r, g, b);
-            DES.screen.setPixel(sx, sy, color);
+                sf::Color color(r, g, b);
+                DES.screen.setPixel(sx, sy, color);
             }
         }
-        if (sy > 12) ok=false;
     }
-    ok = false;
 }
 
 void _des_render()
@@ -447,7 +466,7 @@ void _des_render()
     _des_render_tiles();
     _des_render_sprites();
 
-//  _des_dump_tiles();
+    //  _des_dump_tiles();
 }
 
 struct FPSChecker
@@ -534,59 +553,42 @@ int main()
     // https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions
     desx_load_png("mountain_landscape_16c_256.png", 3, 320 + 12 * 4);
 
-    uint16_t tilemap[64*64];
-    FILE*f=fopen("rpg1.dat","rb");
-    //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
-    fread(tilemap,2,64*64,f);
+    uint16_t tilemap[64 * 64];
+    FILE    *f = fopen("rpg1.dat", "rb");
+    fread(tilemap, 2, 64 * 64, f);
     fclose(f);
 
-    des_tilemap_copy(0, 64*64, (uint8_t*)tilemap);
+    des_tilemap_copy(0, 64 * 64, (uint8_t *)tilemap);
 
-    des_tilemap *xx=(des_tilemap*)tilemap;
-
-    for (int i=0;i<2;i++) { fprintf(stderr,"%04X",tilemap[i]);}
-        fprintf(stderr,"\n");
-
-fprintf(stderr,"tile %d pal %d v %d h %d \n",xx[0].tile(), xx[0].palette(), xx[0].vflip(), xx[0].hflip());
-
-uint8_t *yy=(uint8_t*)tilemap;
-uint16_t a = yy[0];
-uint16_t b = yy[1];
-uint16_t TT = a << 2 | b >> 6;
-
-fprintf(stderr,"sizeof()=%d\n",(int)sizeof(struct des_tilemap));
-fprintf(stderr,"a=%d (%x),b=%d (%x),TT=%d\n",a,a,b,b,TT);
-
-int pp = 2;
-int bT = 320;//168
-int bX=41;
-int bY=23;
-SpriteData sp = {};
-sp.x = bX;
-sp.y = bY;
-sp.tile = bT;
-sp.palette = pp;
-sp.transparent=true;
-des_sprite_enable(0, &sp);
-//SpriteData sp = {};
-sp.x = bX+8;
-sp.y = bY;
-sp.tile = bT+1;
-//sp.palette = pp;
-des_sprite_enable(1, &sp);
-//SpriteData sp = {};
-sp.x = bX;
-sp.y = bY+8;
-sp.tile = bT+6;
-//sp.palette = pp;
-des_sprite_enable(2, &sp);
-//SpriteData sp = {};
-sp.x = bX+8;
-sp.y = bY+8;
-sp.tile = bT+6+1;
-//sp.palette = pp;
-des_sprite_enable(3, &sp);
-
+    int        pp  = 2;
+    int        bT  = 320; // 168
+    int        bX  = 41;
+    int        bY  = 23;
+    SpriteData sp  = {};
+    sp.x           = bX;
+    sp.y           = bY;
+    sp.tile        = bT;
+    sp.palette     = pp;
+    sp.transparent = true;
+    des_sprite_enable(0, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX + 8;
+    sp.y    = bY;
+    sp.tile = bT + 1;
+    // sp.palette = pp;
+    des_sprite_enable(1, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX;
+    sp.y    = bY + 8;
+    sp.tile = bT + 6;
+    // sp.palette = pp;
+    des_sprite_enable(2, &sp);
+    // SpriteData sp = {};
+    sp.x    = bX + 8;
+    sp.y    = bY + 8;
+    sp.tile = bT + 6 + 1;
+    // sp.palette = pp;
+    des_sprite_enable(3, &sp);
 
     FPSChecker fpsChecker;
     while (window.isOpen())
