@@ -1,9 +1,9 @@
 require 'json'
-data = JSON.parse(File.read('rpg1_dump.json'))['layers'][0]['tiles']
+data = JSON.parse(File.read('rpg1.json'))['layers'][0]['tiles']
 map = Array.new(64) { Array.new(64) }
 data.each do |item|
-  x = item['x'].to_i# / 16
-  y = item['y'].to_i# / 16
+  x = item['x'].to_i / 16
+  y = item['y'].to_i / 16
   map[x][y] = item['id'].to_i
 end
 
@@ -37,7 +37,7 @@ bigmap = Array.new(64) { Array.new(64) }
 
 32.times do |x|
   32.times do |y|
-    v = (map[x][y] || '28').to_i - 1#0x1b
+    v = (map[x][y] || '27').to_i #- 1#0x1b
     STDERR.printf('%02x', v)
     2.times do |xx|
       2.times do |yy|
