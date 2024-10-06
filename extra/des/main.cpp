@@ -264,7 +264,18 @@ void _des_render()
             const auto &tile = DES.tilemap[tile_n];
             const auto tId = tile.tile;
             const auto pId = tile.palette;
-            
+
+            int pp = subx + suby * 8;
+
+            int      i           = DES.tiles[tId].data[pp];
+            uint8_t *des_palette = DES.palettes[pId].data;
+
+            auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
+            auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
+            auto b = unpack_uint4(des_palette, i * 3 + 2) << 4;
+
+            sf::Color color(r, g, b);
+            DES.screen.setPixel(sx, sy, color);
         }
     }
 }
