@@ -44,10 +44,20 @@ struct des_tile
 
 struct des_tilemap
 {
-    uint16_t tile: 10;
-    uint16_t palette: 4;
-    uint16_t vflip: 1;
-    uint16_t hflip: 1;
+    union {
+        uint16_t data;
+        uint8_t bytes[2];
+    };
+
+    // uint16_t tile: 10;
+    // uint16_t palette: 4;
+    // uint16_t vflip: 1;
+    // uint16_t hflip: 1;
+
+    uint16_t tile() const { return bytes[0] << 2 | bytes[1] >> 6; }
+    uint8_t palette() const { return 0; }
+    uint8_t vflip() const { return 0; }
+    uint8_t hflip() const { return 0; }    
 };
 
 struct des_state
@@ -221,6 +231,7 @@ void _des_dump_tiles()
     static int z = 0;
     z++;
     int palI = (z / 60) % 4;
+    palI=0;
     for (int ty = 0; ty < 28; ty++)
     {
         for (int tx = 0; tx < 32; tx++)
@@ -254,6 +265,9 @@ void _des_dump_tiles()
 
 void _des_render()
 {
+    _des_dump_tiles();
+   // return;
+
     for (int sy = 0; sy < 224; sy++) {
         for (int sx = 0; sx < 256; sx++) {
             int tile_x = sx / 8;
@@ -262,8 +276,10 @@ void _des_render()
             int suby = sy % 8;
             int tile_n = tile_x + tile_y * 64;
             const auto &tile = DES.tilemap[tile_n];
-            const auto tId = tile.tile;
-            const auto pId = tile.palette;
+            const auto tId = tile.tile();
+          //  fprintf(stderr,"tile id = %d (should be 54)\n", tId);
+            //exit(5);
+            const auto pId = tile.palette();
 
             int pp = subx + suby * 8;
 
@@ -372,7 +388,21 @@ int main()
 
     des_tilemap_copy(0, 64*64, (uint8_t*)tilemap);
 
-    //for (int i=0;i<64*64;i++) { fprintf(stderr,"%d ",tilemap[i]);}
+    des_tilemap *xx=(des_tilemap*)tilemap;
+
+    for (int i=0;i<2;i++) { fprintf(stderr,"%04X",tilemap[i]);}
+        fprintf(stderr,"\n");
+
+fprintf(stderr,"tile %d pal %d v %d h %d \n",xx[0].tile(), xx[0].palette(), xx[0].vflip(), xx[0].hflip());
+
+uint8_t *yy=(uint8_t*)tilemap;
+uint16_t a = yy[0];
+uint16_t b = yy[1];
+uint16_t TT = a << 2 | b >> 6;
+
+fprintf(stderr,"sizeof()=%d\n",(int)sizeof(struct des_tilemap));
+fprintf(stderr,"a=%d (%x),b=%d (%x),TT=%d\n",a,a,b,b,TT);
+
 
     FPSChecker fpsChecker;
     while (window.isOpen())
