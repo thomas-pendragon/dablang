@@ -20,8 +20,8 @@ struct des_palette
 void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
 {
     uint16_t big   = pos / 2;
-    uint16_t small = 1 - pos % 2;
-    uint8_t  shift = small ? 4 : 0;
+    uint16_t small = pos % 2;
+    uint8_t  shift = small ? 0 : 4;
     uint8_t  mask  = 0xF << (4 - shift);
     uint8_t *ptr   = data + big;
     *ptr &= mask;
@@ -31,8 +31,8 @@ void pack_uint4(uint8_t *data, uint16_t pos, uint8_t value)
 uint8_t unpack_uint4(uint8_t *data, uint16_t pos)
 {
     uint16_t big   = pos / 2;
-    uint16_t small = 1 - pos % 2;
-    uint8_t  shift = small ? 4 : 0;
+    uint16_t small = pos % 2;
+    uint8_t  shift = small ? 0 : 4;
     uint8_t *ptr   = data + big;
     return (*ptr >> shift) & 0xF;
 }
@@ -206,6 +206,9 @@ void _des_dump_palettes()
 
 void _des_render()
 {
+    static int z = 0;
+    z++;
+    int palI = (z / 60) % 3;
     for (int ty = 0; ty < 28; ty++)
     {
         for (int tx = 0; tx < 32; tx++)
@@ -223,7 +226,7 @@ void _des_render()
                     int pp = x + y * 8;
 
                     int      i           = DES.tiles[tn].data[pp];
-                    uint8_t *des_palette = DES.palettes[0].data;
+                    uint8_t *des_palette = DES.palettes[palI].data;
 
                     auto r = unpack_uint4(des_palette, i * 3 + 0) << 4;
                     auto g = unpack_uint4(des_palette, i * 3 + 1) << 4;
