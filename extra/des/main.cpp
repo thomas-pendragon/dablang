@@ -682,21 +682,118 @@ float sqwave(double x)
     return 2 * (fmod(x, 2 * M_PI) >= M_PI) - 1;
 }
 
-class CustomStream : public sf::SoundStream
+template <typename T>
+class LockFreeByteQueue //<T>
 {
   public:
-    const unsigned int        SAMPLE_RATE       = 44100;   // 44.1 kHz
-    static const unsigned int SAMPLES_PER_CHUNK = 2 * 512; // 2048;
-    short                     samples[SAMPLES_PER_CHUNK];
+    LockFreeByteQueue(size_t bufferSize, size_t chunkSize)
+        : buffer(bufferSize * sizeof(T)), chunkSize(chunkSize * sizeof(T)), head(0), tail(0)
+    {
+    }
 
-    constexpr static const float MIDDLE_C = 261.625565;
+    bool enqueue(const T *data)
+    {
+        size_t current_tail = tail.load(std::memory_order_relaxed);
+        size_t next_tail    = (current_tail + chunkSize) % buffer.size();
 
+        // Check if the queue has enough space for the chunk
+        if (next_tail == head.load(std::memory_order_acquire))
+        {
+            return false; // Queue is full
+        }
+
+        // Copy N bytes (chunkSize) from the data into the buffer
+        std::memcpy(&buffer[current_tail], data, chunkSize);
+        tail.store(next_tail, std::memory_order_release);
+        return true;
+    }
+
+    bool dequeue(T *data)
+    {
+        size_t current_head = head.load(std::memory_order_relaxed);
+
+        // Check if the queue is empty
+        if (current_head == tail.load(std::memory_order_acquire))
+        {
+            return false; // Queue is empty
+        }
+
+        // Copy N bytes (chunkSize) from the buffer into the output data
+        std::memcpy(data, &buffer[current_head], chunkSize);
+        head.store((current_head + chunkSize) % buffer.size(), std::memory_order_release);
+        return true;
+    }
+
+  private:
+    std::vector<char>   buffer;    // Byte buffer
+    size_t              chunkSize; // Number of bytes per operation
+    std::atomic<size_t> head, tail;
+};
+
+constexpr const int CLOCK_INTERVAL = 1000;
+
+constexpr const unsigned int SAMPLE_RATE       = 44100;   // 44.1 kHz
+constexpr const unsigned int SAMPLES_PER_CHUNK = 2 * 512; // 2048;
+constexpr const float        MIDDLE_C          = 261.625565;
+
+constexpr int ceil_div(int x, int y)
+{
+    return (x + y - 1) / y;
+}
+
+constexpr const size_t SAMPLES_PER_GEN =
+    ceil_div(SAMPLE_RATE, CLOCK_INTERVAL); // Number of bytes per chunk
+constexpr const size_t NUMBER_OF_GENS   = ceil_div(SAMPLES_PER_CHUNK, SAMPLES_PER_GEN);
+constexpr const size_t REAL_BUFFER_SIZE = NUMBER_OF_GENS * SAMPLES_PER_GEN;
+
+LockFreeByteQueue<short> queue(REAL_BUFFER_SIZE * 4, SAMPLES_PER_GEN);
+
+int soundPosition = 0;
+
+void genMoreSoundData()
+{
+    static int   geni = 0;
+    static short samples[SAMPLES_PER_GEN];
+    const auto  &snd = DES.channels[0];
+
+    for (unsigned int i = 0; i < SAMPLES_PER_GEN; ++i)
+    {
+        float freq   = MIDDLE_C * pow(2.0, (snd.note - 60.0) / 12.0);
+        float sample = (32767 - 1) * ((float)snd.velocity / 15.0) * (snd.enabled ? 1 : 0) *
+                       sqwave(2 * 3.14159f * freq * (soundPosition + i) / SAMPLE_RATE);
+        samples[i] = sample;
+    }
+    soundPosition += SAMPLES_PER_GEN;
+
+    int i = 0;
+    while (true)
+    {
+        if (queue.enqueue(samples))
+            break;
+        i++;
+        sf::sleep(sf::Time::Zero);
+    }
+    // if(i>0)    fprintf(stderr, "%8d: sound queued after %d tries\n",geni,i);
+    geni++;
+}
+
+class CustomStream : public sf::SoundStream
+{
+    short samples[REAL_BUFFER_SIZE];
+
+  public:
     bool open(const std::string &location)
     {
         // Open the source and get audio settings
         //...
         unsigned int channelCount = 1;           //...;
         unsigned int sampleRate   = SAMPLE_RATE; //...;
+
+        fprintf(stderr,
+                "init sound engine with play chunks of %d samples (target was %d), gen chunks of "
+                "%d samples and %d gen buffer of %d samples total\n",
+                (int)REAL_BUFFER_SIZE, (int)SAMPLES_PER_CHUNK, (int)SAMPLES_PER_GEN,
+                (int)NUMBER_OF_GENS, (int)REAL_BUFFER_SIZE * 4);
 
         // Initialize the stream -- important!
         initialize(channelCount, sampleRate);
@@ -707,32 +804,25 @@ class CustomStream : public sf::SoundStream
     int          pos = 0;
     virtual bool onGetData(Chunk &data)
     {
-        const double       DURATION  = 2;      // 2 seconds
-        const unsigned int AMPLITUDE = 3000;   // amplitude of the wave
-        float              FREQUENCY = 440.0f; // frequency of the wave (A4)
-
-        FREQUENCY = 440.0 * pow(pow(2.0, 1.0 / 12.0), audioTest);
-
-        int cc = SAMPLES_PER_CHUNK; // SAMPLE_RATE * DURATION;
-        //   fprintf(stderr,"AUDIOGEN\n");
-
-        const auto &snd = DES.channels[0];
-
-        for (unsigned int i = 0; i < cc; ++i)
+        for (int i = 0; i < NUMBER_OF_GENS; i++)
         {
 
-            float freq = MIDDLE_C * pow(2.0, (snd.note - 60.0) / 12.0);
-            // if (i<10)        fprintf(stderr,"audio %d\n",lastI+i);
-            float sample = (32767 - 1) * ((float)snd.velocity / 15.0) * (snd.enabled ? 1 : 0) *
-                           sqwave(2 * 3.14159f * freq * (pos + i) / SAMPLE_RATE);
-            samples[i] = sample;
+            while (true)
+            {
+                if (queue.dequeue(&samples[SAMPLES_PER_GEN * i]))
+                {
+                    break;
+                }
+                fprintf(stderr, "sound queue %d empty, wait...\n", i);
+            }
         }
-        pos += SAMPLES_PER_CHUNK;
+        //        fprintf(stderr,"> sound ate %d bytes in
+        //        total\n",(int)(SAMPLES_PER_GEN*NUMBER_OF_GENS));
 
         // Fill the chunk with audio data from the stream source
         // (note: must not be empty if you want to continue playing)
-        data.samples     = samples;           //...;
-        data.sampleCount = SAMPLES_PER_CHUNK; //...;
+        data.samples     = samples;          //...;
+        data.sampleCount = REAL_BUFFER_SIZE; //...;
 
         // Return true to continue playing
         return true;
@@ -770,14 +860,20 @@ Note notes[] = {
 
     {81, 0.2, 1},     {0, 0.2, 0},      {84, 0.2, 1},     {0, 0.2, 0},
 
-    {83, 0.2, 1},     {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},
-    {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},
+    {79, 0.067, 1},   {81, 0.067, 1},   {83, 0.067, 1},
 
-    {83, 0.2, 1},     {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},
-    {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},
+    {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},     {0, 0.2, 0},
+    {81, 0.2, 1},     {0, 0.2, 0},
 
-    {83, 0.2, 1},     {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},
-    {0, 0.2, 0},      {78, 0.2, 1},     {0, 0.2, 0},      {76, 0.2, 1},     {0, 0.6, 0},
+    {79, 0.067, 1},   {81, 0.067, 1},   {83, 0.067, 1},
+
+    {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},     {0, 0.2, 0},
+    {81, 0.2, 1},     {0, 0.2, 0},
+
+    {79, 0.067, 1},   {81, 0.067, 1},   {83, 0.067, 1},
+
+    {0, 0.2, 0},      {81, 0.2, 1},     {0, 0.2, 0},      {79, 0.2, 1},     {0, 0.2, 0},
+    {78, 0.2, 1},     {0, 0.2, 0},      {76, 0.2, 1},     {0, 0.6, 0},
 
     {-1, 0, 0}};
 
@@ -831,7 +927,7 @@ struct MusicPlayback
             {
                 if (DES.channels[0].note != note.note)
                     fprintf(stderr, "%f: play note %d for %f\n", p, note.note, note.length);
-                des_sound_play(0, note.note, note.amplitude * 15);
+                des_sound_play(0, note.note, note.amplitude * 15 * 0.3);
                 break;
             }
             t -= note.length;
@@ -871,6 +967,7 @@ void clockTask()
                 sec++;
             }
             _des_callback_time(sec, mili);
+            genMoreSoundData();
             dt -= interval;
             t += interval;
         }
