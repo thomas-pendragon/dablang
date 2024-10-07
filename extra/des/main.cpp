@@ -974,27 +974,42 @@ void clockTask()
     }
 }
 
-enum {
-    DES_KEY_UP = 1,
-    DES_KEY_DOWN = 2,
-    DES_KEY_LEFT = 3,
-    DES_KEY_RIGHT = 4,
-    DES_KEY_A = 5,
-    DES_KEY_B = 6,
-    DES_KEY_START = 7,
+enum
+{
+    DES_KEY_UP     = 1,
+    DES_KEY_DOWN   = 2,
+    DES_KEY_LEFT   = 3,
+    DES_KEY_RIGHT  = 4,
+    DES_KEY_A      = 5,
+    DES_KEY_B      = 6,
+    DES_KEY_START  = 7,
     DES_KEY_SELECT = 8
 };
 
-int sf_key_to_des(sf::Keyboard::Key key) {
-    if (key == sf::Keyboard::X) return DES_KEY_A;
-    if (key == sf::Keyboard::Z) return DES_KEY_B;
-    if (key == sf::Keyboard::Space) return DES_KEY_SELECT;
-    if (key == sf::Keyboard::Enter) return DES_KEY_START;
-    if (key == sf::Keyboard::Left) return DES_KEY_LEFT;
-    if (key == sf::Keyboard::Right) return DES_KEY_RIGHT;
-    if (key == sf::Keyboard::Up) return DES_KEY_UP;
-    if (key == sf::Keyboard::Down) return DES_KEY_DOWN;
+int sf_key_to_des(sf::Keyboard::Key key)
+{
+    if (key == sf::Keyboard::X)
+        return DES_KEY_A;
+    if (key == sf::Keyboard::Z)
+        return DES_KEY_B;
+    if (key == sf::Keyboard::Space)
+        return DES_KEY_SELECT;
+    if (key == sf::Keyboard::Enter)
+        return DES_KEY_START;
+    if (key == sf::Keyboard::Left)
+        return DES_KEY_LEFT;
+    if (key == sf::Keyboard::Right)
+        return DES_KEY_RIGHT;
+    if (key == sf::Keyboard::Up)
+        return DES_KEY_UP;
+    if (key == sf::Keyboard::Down)
+        return DES_KEY_DOWN;
     return 0;
+}
+
+void _des_callback_key(uint8_t key, bool down)
+{
+    fprintf(stderr, "key %d %s\n", key, down ? "down" : "up");
 }
 
 int main()
@@ -1020,6 +1035,7 @@ int main()
     // Create the window
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Random Pixels with Texture");
     window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
 
     DES.screen.create(des_screen_width(), des_screen_height());
 
@@ -1064,6 +1080,16 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyReleased || event.type == sf::Event::KeyPressed)
+            {
+                auto key = sf_key_to_des(event.key.code);
+                if (key)
+                {
+                    _des_callback_key(key, event.type == sf::Event::KeyPressed);
+                }
+            }
+
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::T) // Check if the "T" key was pressed
