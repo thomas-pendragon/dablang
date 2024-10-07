@@ -676,8 +676,9 @@ void _des_callback_frame()
 
 int audioTest = 0;
 
-int sqwave(double x)
+float sqwave(double x)
 {
+    // return std::sin(x);
     return 2 * (fmod(x, 2 * M_PI) >= M_PI) - 1;
 }
 
@@ -722,7 +723,7 @@ class CustomStream : public sf::SoundStream
 
             float freq = MIDDLE_C * pow(2.0, (snd.note - 60.0) / 12.0);
             // if (i<10)        fprintf(stderr,"audio %d\n",lastI+i);
-            float sample = 32767 * ((float)snd.velocity / 15.0) * (snd.enabled ? 1 : 0) *
+            float sample = (32767 - 1) * ((float)snd.velocity / 15.0) * (snd.enabled ? 1 : 0) *
                            sqwave(2 * 3.14159f * freq * (pos + i) / SAMPLE_RATE);
             samples[i] = sample;
         }
@@ -751,36 +752,41 @@ struct Note
     float amplitude;
 };
 
-Note notes[] = {{0, 0.1, 0},
+Note notes[] = {
 
-                {60, 0.2, 1}, // Middle C
-                {64, 0.2, 1}, // E
-                {67, 0.2, 1}, // G
-                {72, 0.4, 1}, // C (octave higher)
+    {71, 0.2, 1},
+    {69, 0.2, 1},
+    {68, 0.2, 1},
+    {69, 0.2, 1},
+    {72, 0.2, 1},
+    {0, 0.6, 0},
 
-                {0, 0.1, 0},  // Rest
-                {67, 0.2, 1}, // G
-                {64, 0.2, 1}, // E
-                {60, 0.4, 1}, // Middle C
+    {71 + 3, 0.2, 1},
+    {69 + 3, 0.2, 1},
+    {68 + 3, 0.2, 1},
+    {69 + 3, 0.2, 1},
+    {72 + 3 + 1, 0.2, 1},
+    {0, 0.6, 0},
 
-                {0, 0.1, 0},  // Rest
-                {62, 0.2, 1}, // D
-                {65, 0.2, 1}, // F
-                {69, 0.2, 1}, // A
-                {74, 0.4, 1}, // D (octave higher)
+    {77, 0.2, 1},
+    {76, 0.2, 1},
+    {75, 0.2, 1},
+    {76, 0.2, 1},
 
-                {0, 0.1, 0},  // Rest
-                {69, 0.2, 1}, // A
-                {65, 0.2, 1}, // F
-                {62, 0.4, 1}, // D
+    {83, 0.2, 1},
+    {81, 0.2, 1},
+    {80, 0.2, 1},
+    {81, 0.2, 1},
 
-                {0, 0.1, 0},  // Rest
-                {60, 0.2, 1}, // Middle C
-                {64, 0.2, 1}, // E
-                {67, 0.2, 1}, // G
-                {72, 0.4, 1}, // C (octave higher)
+    {83, 0.2, 1},
+    {81, 0.2, 1},
+    {80, 0.2, 1},
+    {81, 0.2, 1},
 
-                {-1, 0, 0}};
+    {84, 0.2, 1},
+    {0, 0.6, 0},
+
+    {-1, 0, 0}};
 
 struct MusicPlayback
 {
@@ -806,7 +812,7 @@ struct MusicPlayback
     }
     void update(float dt)
     {
-        //  dt*=0.25;
+        //   dt*=0.25;
         p += dt;
         static int cc = 0;
         cc++;
