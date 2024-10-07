@@ -974,6 +974,29 @@ void clockTask()
     }
 }
 
+enum {
+    DES_KEY_UP = 1,
+    DES_KEY_DOWN = 2,
+    DES_KEY_LEFT = 3,
+    DES_KEY_RIGHT = 4,
+    DES_KEY_A = 5,
+    DES_KEY_B = 6,
+    DES_KEY_START = 7,
+    DES_KEY_SELECT = 8
+};
+
+int sf_key_to_des(sf::Keyboard::Key key) {
+    if (key == sf::Keyboard::X) return DES_KEY_A;
+    if (key == sf::Keyboard::Z) return DES_KEY_B;
+    if (key == sf::Keyboard::Space) return DES_KEY_SELECT;
+    if (key == sf::Keyboard::Enter) return DES_KEY_START;
+    if (key == sf::Keyboard::Left) return DES_KEY_LEFT;
+    if (key == sf::Keyboard::Right) return DES_KEY_RIGHT;
+    if (key == sf::Keyboard::Up) return DES_KEY_UP;
+    if (key == sf::Keyboard::Down) return DES_KEY_DOWN;
+    return 0;
+}
+
 int main()
 {
     //    test();
