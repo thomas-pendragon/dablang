@@ -705,7 +705,7 @@ class CustomStream : public sf::SoundStream
     virtual bool onGetData(Chunk &data)
     {
         const double       DURATION  = 2;      // 2 seconds
-        const unsigned int AMPLITUDE = 30000;  // amplitude of the wave
+        const unsigned int AMPLITUDE = 3000;   // amplitude of the wave
         float              FREQUENCY = 440.0f; // frequency of the wave (A4)
 
         FREQUENCY = 440.0 * pow(pow(2.0, 1.0 / 12.0), audioTest);
@@ -736,10 +736,45 @@ class CustomStream : public sf::SoundStream
     }
 };
 
+void _des_callback_time(uint16_t sec, uint16_t mili)
+{
+    // if (mili==0) fprintf(stderr,"TIME %d %d\n", sec, mili);
+}
+
+void clockTask()
+{
+    sf::Clock clock;
+    float     t        = 0.0;
+    float     interval = 1.0 / 1000.0; // 00.0;
+
+    uint16_t sec  = 0;
+    uint16_t mili = 0;
+
+    while (true)
+    {
+        float t2 = clock.getElapsedTime().asSeconds();
+        float dt = t2 - t;
+        while (dt > interval)
+        {
+            mili++;
+            if (mili == 1000)
+            {
+                mili = 0;
+                sec++;
+            }
+            _des_callback_time(sec, mili);
+            dt -= interval;
+            t += interval;
+        }
+    }
+}
+
 int main()
 {
     //    test();
     //    std::thread audioThread(audioTask);
+
+    std::thread clockThread(clockTask);
 
     CustomStream stream;
     stream.open("path/to/stream");
