@@ -5,9 +5,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <cassert>
+#include <vector>
+#include <thread>
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <png.h>
 
 // DES interface
@@ -201,6 +204,13 @@ struct des_bk
     uint16_t yOffset;
 };
 
+struct des_sound
+{
+    uint8_t note;     // 60 = middle C
+    uint8_t velocity; // 4bit 0..15
+    bool    enabled;
+};
+
 struct des_state
 {
     des_palette palettes[16]     = {};
@@ -209,8 +219,23 @@ struct des_state
     des_sprite  sprites[40]      = {};
     des_bk      backgrounds[1]   = {};
 
+    des_sound channels[1] = {};
+
     sf::Image screen;
 } DES;
+
+void des_sound_play(uint8_t channel, uint8_t note, uint8_t velocity)
+{
+    auto &ch    = DES.channels[channel];
+    ch.enabled  = true;
+    ch.note     = note;
+    ch.velocity = velocity;
+}
+
+void des_sound_stop(uint8_t channel)
+{
+    DES.channels[channel].enabled = false;
+}
 
 int des_screen_width()
 {
@@ -649,9 +674,78 @@ void _des_callback_frame()
     des_sprite_enable(3, &sp);
 }
 
+int audioTest = 0;
+
+int sqwave(double x)
+{
+    return 2 * (fmod(x, 2 * M_PI) >= M_PI) - 1;
+}
+
+class CustomStream : public sf::SoundStream
+{
+  public:
+    const unsigned int        SAMPLE_RATE       = 44100;   // 44.1 kHz
+    static const unsigned int SAMPLES_PER_CHUNK = 2 * 512; // 2048;
+    short                     samples[SAMPLES_PER_CHUNK];
+
+    bool open(const std::string &location)
+    {
+        // Open the source and get audio settings
+        //...
+        unsigned int channelCount = 1;           //...;
+        unsigned int sampleRate   = SAMPLE_RATE; //...;
+
+        // Initialize the stream -- important!
+        initialize(channelCount, sampleRate);
+        return true;
+    }
+
+  private:
+    int          pos = 0;
+    virtual bool onGetData(Chunk &data)
+    {
+        const double       DURATION  = 2;      // 2 seconds
+        const unsigned int AMPLITUDE = 30000;  // amplitude of the wave
+        float              FREQUENCY = 440.0f; // frequency of the wave (A4)
+
+        FREQUENCY = 440.0 * pow(pow(2.0, 1.0 / 12.0), audioTest);
+
+        int cc = SAMPLES_PER_CHUNK; // SAMPLE_RATE * DURATION;
+        //   fprintf(stderr,"AUDIOGEN\n");
+        for (unsigned int i = 0; i < cc; ++i)
+        {
+            // if (i<10)        fprintf(stderr,"audio %d\n",lastI+i);
+            float sample = AMPLITUDE * sqwave(2 * 3.14159f * FREQUENCY * (pos + i) / SAMPLE_RATE);
+            samples[i]   = sample;
+        }
+        pos += SAMPLES_PER_CHUNK;
+
+        // Fill the chunk with audio data from the stream source
+        // (note: must not be empty if you want to continue playing)
+        data.samples     = samples;           //...;
+        data.sampleCount = SAMPLES_PER_CHUNK; //...;
+
+        // Return true to continue playing
+        return true;
+    }
+
+    virtual void onSeek(sf::Time timeOffset)
+    {
+        // Change the current position in the stream source
+        //...
+    }
+};
+
 int main()
 {
-    test();
+    //    test();
+    //    std::thread audioThread(audioTask);
+
+    CustomStream stream;
+    stream.open("path/to/stream");
+    stream.play();
+
+    //   audio();
 
     // Set the size of the window to 256x224
     const int scale        = 3;
@@ -713,13 +807,17 @@ int main()
                 {
                     tiles ^= true;
                 }
+                if (event.key.code == sf::Keyboard::A)
+                {
+                    audioTest++;
+                }
             }
         }
 
         _des_callback_frame();
         _des_render();
         char fn[128];
-        sprintf(fn, "frames/%05d.png", frameCounter);
+        snprintf(fn, 128, "frames/%05d.png", frameCounter);
         // DES.screen.saveToFile(fn);//"filename.png")
         if (tiles)
             _des_dump_tiles();
