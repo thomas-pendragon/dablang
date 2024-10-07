@@ -688,6 +688,8 @@ class CustomStream : public sf::SoundStream
     static const unsigned int SAMPLES_PER_CHUNK = 2 * 512; // 2048;
     short                     samples[SAMPLES_PER_CHUNK];
 
+    constexpr static const float MIDDLE_C = 261.625565;
+
     bool open(const std::string &location)
     {
         // Open the source and get audio settings
@@ -712,11 +714,17 @@ class CustomStream : public sf::SoundStream
 
         int cc = SAMPLES_PER_CHUNK; // SAMPLE_RATE * DURATION;
         //   fprintf(stderr,"AUDIOGEN\n");
+
+        const auto &snd = DES.channels[0];
+
         for (unsigned int i = 0; i < cc; ++i)
         {
+
+            float freq = MIDDLE_C * pow(2.0, (snd.note - 60.0) / 12.0);
             // if (i<10)        fprintf(stderr,"audio %d\n",lastI+i);
-            float sample = AMPLITUDE * sqwave(2 * 3.14159f * FREQUENCY * (pos + i) / SAMPLE_RATE);
-            samples[i]   = sample;
+            float sample = 32767 * ((float)snd.velocity / 15.0) * (snd.enabled ? 1 : 0) *
+                           sqwave(2 * 3.14159f * freq * (pos + i) / SAMPLE_RATE);
+            samples[i] = sample;
         }
         pos += SAMPLES_PER_CHUNK;
 
@@ -736,8 +744,109 @@ class CustomStream : public sf::SoundStream
     }
 };
 
-void _des_callback_time(uint16_t sec, uint16_t mili)
+struct Note
 {
+    int   note;
+    float length;
+    float amplitude;
+};
+
+Note notes[] = {{0, 0.1, 0},
+
+                {60, 0.2, 1}, // Middle C
+                {64, 0.2, 1}, // E
+                {67, 0.2, 1}, // G
+                {72, 0.4, 1}, // C (octave higher)
+
+                {0, 0.1, 0},  // Rest
+                {67, 0.2, 1}, // G
+                {64, 0.2, 1}, // E
+                {60, 0.4, 1}, // Middle C
+
+                {0, 0.1, 0},  // Rest
+                {62, 0.2, 1}, // D
+                {65, 0.2, 1}, // F
+                {69, 0.2, 1}, // A
+                {74, 0.4, 1}, // D (octave higher)
+
+                {0, 0.1, 0},  // Rest
+                {69, 0.2, 1}, // A
+                {65, 0.2, 1}, // F
+                {62, 0.4, 1}, // D
+
+                {0, 0.1, 0},  // Rest
+                {60, 0.2, 1}, // Middle C
+                {64, 0.2, 1}, // E
+                {67, 0.2, 1}, // G
+                {72, 0.4, 1}, // C (octave higher)
+
+                {-1, 0, 0}};
+
+struct MusicPlayback
+{
+    Note *notes;
+    float p = 0;
+    MusicPlayback(Note *notes)
+    {
+        this->notes = notes;
+    }
+    float length()
+    {
+        float res   = 0.0;
+        auto  cNote = notes;
+        while (true)
+        {
+            auto note = *cNote;
+            if (note.note == -1)
+                break;
+            res += note.length;
+            cNote++;
+        }
+        return res;
+    }
+    void update(float dt)
+    {
+        //  dt*=0.25;
+        p += dt;
+        static int cc = 0;
+        cc++;
+
+        auto t     = p;
+        auto cNote = notes;
+        int  i     = 0;
+        while (true)
+        {
+            auto note = *cNote;
+            // fprintf(stderr,"%d: %f (%f): %f: check %d
+            // %f\n",cc,p,length(),t,note.note,note.length);
+            cc++;
+            // if(cc>100)exit(9);
+            if (note.note == -1)
+            {
+                cNote = notes;
+                p -= length();
+                t = p;
+                continue;
+            }
+            if (note.length > t)
+            {
+                if (DES.channels[0].note != note.note)
+                    fprintf(stderr, "%f: play note %d for %f\n", p, note.note, note.length);
+                des_sound_play(0, note.note, note.amplitude * 15);
+                break;
+            }
+            t -= note.length;
+            cNote++;
+            i++;
+        }
+    }
+};
+
+MusicPlayback mp(notes);
+void          _des_callback_time(uint16_t sec, uint16_t mili)
+{
+    //    static
+    mp.update(1.0 / 1000.0);
     // if (mili==0) fprintf(stderr,"TIME %d %d\n", sec, mili);
 }
 
