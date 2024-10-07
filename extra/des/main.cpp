@@ -674,8 +674,6 @@ void _des_callback_frame()
     des_sprite_enable(3, &sp);
 }
 
-int audioTest = 0;
-
 float sqwave(double x)
 {
     // return std::sin(x);
@@ -927,7 +925,7 @@ struct MusicPlayback
             {
                 if (DES.channels[0].note != note.note)
                     fprintf(stderr, "%f: play note %d for %f\n", p, note.note, note.length);
-                des_sound_play(0, note.note, note.amplitude * 15 * 0.3);
+                des_sound_play(0, note.note, note.amplitude * 15 * 0.1);
                 break;
             }
             t -= note.length;
@@ -1033,7 +1031,7 @@ int main()
     const int windowHeight = h * scale;
 
     // Create the window
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Random Pixels with Texture");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "DES");
     window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
 
@@ -1079,7 +1077,10 @@ int main()
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
+                exit(0);
+            }
 
             if (event.type == sf::Event::KeyReleased || event.type == sf::Event::KeyPressed)
             {
@@ -1096,10 +1097,6 @@ int main()
                 {
                     tiles ^= true;
                 }
-                if (event.key.code == sf::Keyboard::A)
-                {
-                    audioTest++;
-                }
             }
         }
 
@@ -1113,7 +1110,6 @@ int main()
 
         texture.update(DES.screen);
         sprite.setTexture(texture);
-        // window.clear();
         window.draw(sprite);
         window.display();
     }
