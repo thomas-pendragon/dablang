@@ -263,6 +263,31 @@ void DabVM::define_default_classes()
         assert(args.size() == 0);
         return self.string();
     });
+    method_class.add_reg_function("call", [this](DabValue self, std::vector<DabValue> args) {
+
+//    void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
+  //            const DabValue &capture, std::vector<dab_register_t> reglist = {});
+
+        fprintf(stderr,"vm: .call() @method %d with %d args\n",(int)self.data.fixnum, (int)args.size());
+
+        push_registers();
+        // _register_stack.push_back(_registers);
+        _registers.resize(args.size() + 1);
+
+        std::vector<dab_register_t> reglist;
+
+        register_set(0, nullptr);
+        for (int i = 0; i <(int)args.size();i++) {register_set(i+1,args[i]);reglist.push_back(i+1);}
+
+        call(0, self.data.fixnum, args.size(), DAB_SYMBOL_NIL,  nullptr, reglist);
+
+        auto ret = register_get(0);
+
+        pop_registers();
+        // _registers = _register_stack.back();
+        // _register_stack.pop_back();
+        return ret;
+    });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);
     bytebuffer_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {

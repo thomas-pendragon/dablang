@@ -522,6 +522,9 @@ struct DabVM
     std::vector<DabValue>              _registers;
     std::vector<std::vector<DabValue>> _register_stack;
 
+    void pop_registers();
+    void push_registers();
+
     std::vector<DabStackFrame> stackframes;
 
     std::vector<BinSection> sections;

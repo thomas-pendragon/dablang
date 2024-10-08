@@ -65,6 +65,11 @@ DabClass &DabVM::get_class(dab_class_t index)
     return classes[index];
 }
 
+void DabVM::pop_registers() {
+    _registers = _register_stack.back();
+    _register_stack.pop_back();
+}
+
 bool DabVM::pop_frame(bool regular)
 {
     if (options.verbose)
@@ -87,8 +92,7 @@ bool DabVM::pop_frame(bool regular)
         instructions.seek(prev_ip);
     }
 
-    _registers = _register_stack.back();
-    _register_stack.pop_back();
+    pop_registers();
 
     if (!out_reg.nil())
     {
@@ -131,6 +135,10 @@ void DabVM::push_new_frame(const DabValue &self,
 
     stackframes.push_back(stackframe);
 
+    push_registers();
+}
+
+void DabVM::push_registers() {
     _register_stack.push_back(_registers);
     _registers.resize(0);
 }
