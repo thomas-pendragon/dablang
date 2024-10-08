@@ -65,6 +65,10 @@ class DabNodeClass < DabNode
     DabType.parse(identifier)
   end
 
+  def actual_type
+    constant_value
+  end
+
   def my_type
     DabTypeClass.new
   end

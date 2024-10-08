@@ -1,0 +1,24 @@
+## CODE
+
+func dab_function()
+{
+  return 11;
+}
+
+func call_proxy(function<Function<Int32>>)
+{
+  return 2 * function.call();
+}
+
+func main()
+{
+  print(call_proxy(@^(dab_function)));
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+22

@@ -19,6 +19,7 @@ STANDARD_CLASSES = %w(
   LiteralString
   DynamicString
   Float
+  Function
 ).freeze
 
 STANDARD_CLASSES_MAP = STANDARD_CLASSES.each_with_index.map { |item, index| [index, item] }.to_h

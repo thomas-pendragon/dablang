@@ -1,5 +1,9 @@
 class DabType
   def self.parse(typename)
+    if typename.is_a? DabNodeClass
+      return typename.actual_type
+    end
+
     return DabTypeObject.new if typename.nil?
     return DabTypeString.new if typename == 'String'
     return DabTypeFixnum.new if typename == 'Fixnum'

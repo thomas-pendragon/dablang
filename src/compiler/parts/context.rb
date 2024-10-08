@@ -132,7 +132,7 @@ class DabContext < DabBaseContext
 
   def read_type
     on_subcontext do |subcontext|
-      typename = subcontext.read_identifier
+      typename = subcontext.read_class
       next unless typename
 
       DabNodeType.new(typename)
