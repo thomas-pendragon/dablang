@@ -20,32 +20,32 @@ end
 def convert(in16, size:)
   x16 = in16 % size
   y16 = in16 / size
-  #puts "16: #{in16} -> #{x16} / #{y16}"
+  # puts "16: #{in16} -> #{x16} / #{y16}"
 
   x8 = x16 * 2
   y8 = y16 * 2
-  #puts "8: #{x8} / #{y8}"
+  # puts "8: #{x8} / #{y8}"
 
-  cc = ->(x,y){(x8+x)+(y8+y)*16}
+  cc = ->(x, y) { (x8 + x) + ((y8 + y) * 16) }
 
-  [cc[0,0],cc[1,0],cc[0,1],cc[1,1]]
+  [cc[0, 0], cc[1, 0], cc[0, 1], cc[1, 1]]
 
-  #abort
+  # abort
 end
 
 bigmap = Array.new(64) { Array.new(64) }
 
 32.times do |x|
   32.times do |y|
-    v = (map[x][y] || '27').to_i #- 1#0x1b
+    v = (map[x][y] || '27').to_i # - 1#0x1b
     STDERR.printf('%02x', v)
-    2.times do |xx|
-      2.times do |yy|
+    2.times do |_xx|
+      2.times do |_yy|
         indices = convert(v, size: 8)
-        bigmap[x*2+0][y*2+0] = indices[0]
-        bigmap[x*2+1][y*2+0] = indices[1]
-        bigmap[x*2+0][y*2+1] = indices[2]
-        bigmap[x*2+1][y*2+1] = indices[3]
+        bigmap[(x * 2) + 0][(y * 2) + 0] = indices[0]
+        bigmap[(x * 2) + 1][(y * 2) + 0] = indices[1]
+        bigmap[(x * 2) + 0][(y * 2) + 1] = indices[2]
+        bigmap[(x * 2) + 1][(y * 2) + 1] = indices[3]
       end
     end
   end
@@ -55,7 +55,7 @@ end
 64.times do |y|
   64.times do |x|
     v = bigmap[x][y]
-    #STDERR.puts v
+    # STDERR.puts v
     str << pack_custom([v, 0, 0, 0])
   end
 end

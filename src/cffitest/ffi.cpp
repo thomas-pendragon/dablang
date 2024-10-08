@@ -1,3 +1,5 @@
+extern "C" {
+
 int ffi_simple_test()
 {
   return 4;
@@ -18,4 +20,6 @@ typedef int (*ffi_fun_int_retint_type)(int);
 int ffi_fun_arg_test(ffi_fun_int_retint_type fun)
 {
   return 5 * fun(2);
+}
+
 }

@@ -519,3 +519,12 @@ else if (arg_klasses.size() == 3 && arg_klasses[0] == CLASS_INTPTR &&
 
     return (DabValue(CLASS_UINT64, return_value));
 }
+else if (arg_klasses.size() == 0 && ret_klass == CLASS_INT32)
+{
+    typedef int32_t (*int_fun)();
+    auto int_symbol = (int_fun)symbol;
+
+    auto return_value = (*int_symbol)();
+
+    return (DabValue(CLASS_INT32, return_value));
+}

@@ -34,6 +34,7 @@ void*, string -> void*
 void*, string, int32, void*, void*, void*, void*, int32 -> void*
 void*, uint8, uint8, uint8, uint8 -> int32
 void*, void*, uint64 -> uint64
+-> int32
 '
 
 DAB_CLASSES = {
