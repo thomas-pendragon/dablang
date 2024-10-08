@@ -1,0 +1,19 @@
+## CODE
+
+func dab_function()
+{
+  return 11;
+}
+
+func main()
+{
+  print(@fn(dab_function));
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+Function<dab_function>

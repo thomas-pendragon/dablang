@@ -12,7 +12,7 @@ func call_proxy(function)
 
 func main()
 {
-  print(call_proxy(dab_function));
+  print(call_proxy(@fn(dab_function)));
 }
 
 ## FRONTEND OPTIONS
