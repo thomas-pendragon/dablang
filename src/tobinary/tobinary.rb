@@ -359,6 +359,9 @@ class Parser
           @output_stream._push_uint16(line[2])
           @output_stream._push_uint16(line[3])
           @output_stream._push_uint16(line[4])
+        when 'W_TEMPLATE_ARG'
+          # TODO: we should check class index and arg index (or drop them?)
+          @output_stream._push_uint16(line[3])
         when 'W_METHOD'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
