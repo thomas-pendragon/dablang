@@ -69,12 +69,11 @@ class Array
   
   func join(separator = ", ")
   {
-    var sep = separator; // TODO: fix because should not be needed
     var result = "";
     self.each_with_index() ^(item, index) {
       if (index != 0)
       {
-        result = result + sep;
+        result = result + separator;
       }
       result = result + item.to_s;
     };
