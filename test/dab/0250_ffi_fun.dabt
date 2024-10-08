@@ -18,7 +18,15 @@ func c_export(method)
 }
 
 [import_ffi("ffi_fun_test")]
-func FFIfunTest<Int32>(arg<Function<Int32>>) {}
+func FFIfunTest<Int32>(arg<Method<Int32>>) {}
+/*
+
+    typedef int (*ffi_fun_int_type)(void);
+    int ffi_fun_test(ffi_fun_int_type fun)
+    {
+        return 5 * fun();
+    }
+*/
 
 [c_export]
 func dab_function<Int32>()

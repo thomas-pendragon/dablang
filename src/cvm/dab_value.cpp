@@ -284,7 +284,7 @@ std::string DabValue::string() const
 
 hack_int_fun DabValue::func_ptr()
 {
-    assert(data.type==TYPE_METHOD);
+    assert(data.type == TYPE_METHOD);
     const auto &fn = $VM->functions[data.fixnum];
     assert(fn.c_export);
     return (hack_int_fun)fn.c_export_addr;

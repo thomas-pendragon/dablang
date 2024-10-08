@@ -38,7 +38,6 @@ void DabVM::predefine_default_classes()
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
     define_builtin_class("DynamicString", CLASS_DYNAMICSTRING, CLASS_STRING);
     define_builtin_class("Float", CLASS_FLOAT);
-    define_builtin_class("Function", CLASS_FUNCTION);
 }
 
 void DabVM::define_default_classes()

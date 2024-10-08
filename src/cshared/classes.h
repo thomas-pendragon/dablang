@@ -22,5 +22,4 @@ enum
     CLASS_LITERALSTRING = 17,
     CLASS_DYNAMICSTRING = 18,
     CLASS_FLOAT         = 19,
-    CLASS_FUNCTION      = 20,
 };

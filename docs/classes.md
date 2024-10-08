@@ -23,4 +23,3 @@
 - [LiteralString](/classes/literalstring.html)
 - [DynamicString](/classes/dynamicstring.html)
 - [Float](/classes/float.html)
-- [Function](/classes/function.html)

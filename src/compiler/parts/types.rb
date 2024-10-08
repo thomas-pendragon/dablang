@@ -20,7 +20,7 @@ class DabType
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
     return DabTypeByteBuffer.new if typename == 'ByteBuffer'
-    return DabTypeFunction.new if typename == 'Function'
+    return DabTypeFunction.new if typename == 'Method'
 
     raise "Unknown type #{typename}"
   end
@@ -318,6 +318,6 @@ end
 
 class DabTypeFunction < DabType
   def type_string
-    'Function'
+    'Method'
   end
 end

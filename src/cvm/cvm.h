@@ -606,9 +606,8 @@ struct DabVM
     DabValue call_block(const DabValue &self, std::vector<DabValue> args);
 
     void _call_function(bool use_self, dab_register_t out_reg, const DabValue &self,
-                        const DabFunction &fun,
-                        std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
-                        size_t stack_pos = 0);
+                        const DabFunction &fun, std::vector<dab_register_t> reglist = {},
+                        DabValue *return_value = nullptr, size_t stack_pos = 0);
 
     void execute_debug(Stream &input);
 

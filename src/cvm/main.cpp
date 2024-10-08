@@ -65,7 +65,8 @@ DabClass &DabVM::get_class(dab_class_t index)
     return classes[index];
 }
 
-void DabVM::pop_registers() {
+void DabVM::pop_registers()
+{
     _registers = _register_stack.back();
     _register_stack.pop_back();
 }
@@ -138,7 +139,8 @@ void DabVM::push_new_frame(const DabValue &self,
     push_registers();
 }
 
-void DabVM::push_registers() {
+void DabVM::push_registers()
+{
     _register_stack.push_back(_registers);
     _registers.resize(0);
 }

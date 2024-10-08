@@ -5,7 +5,7 @@ func dab_function()
   return 11;
 }
 
-func call_proxy(function<Function<Int32>>)
+func call_proxy(function<Method<Int32>>)
 {
   return 2 * function.call();
 }

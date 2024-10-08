@@ -749,7 +749,7 @@ class DabContext < DabBaseContext
     on_subcontext do |subcontext|
       next unless subcontext.read_operator('@')
       next unless subcontext.read_operator('^')
-      next unless subcontext.read_operator('(')      
+      next unless subcontext.read_operator('(')
 
       id = subcontext.read_identifier
       next unless subcontext.read_operator(')')
