@@ -20,7 +20,8 @@ $sources = Dir.glob('src/**/*.rb')
 
 $toolset = ENV['TOOLSET'] || 'gmake'
 
-def mangle_bin(bin)
+def mangle_bin(bin, library: false)
+  bin = "lib#{bin}.dylib" if library
   bin = "bin/#{bin}"
   bin += '.exe' if $toolset['vs']
   bin
@@ -36,6 +37,7 @@ premake_source = 'premake5.lua'
 cvm = mangle_bin('cvm')
 cdisasm = mangle_bin('cdisasm')
 cdumpcov = mangle_bin('cdumpcov')
+cffitest = mangle_bin('cffitest', library: true)
 
 opcodes = 'src/shared/opcodes.rb'
 classes_file = 'src/shared/classes.rb'
@@ -61,8 +63,9 @@ ffi_file = './src/cvm/ffi_signatures.h'
 ffi_task = './tasks/ffi_signatures.rb'
 
 csources_type = {}
-%w[cvm cdisasm cdumpcov].each do |ctype|
+%w[cvm cdisasm cdumpcov cffitest].each do |ctype|
   sources = Dir.glob("src/{#{ctype},cshared}/**/*")
+  sources = Dir.glob("src/{#{ctype}}/**/*") if ctype == 'cffitest'
   sources += [cvm_opcodes, cvm_classes, cvm_opcodes_debug, cvm_syscalls]
   sources.sort!
   sources.uniq!
@@ -152,6 +155,12 @@ file cvm => csources_type['cvm'] + [makefile, ffi_file] do
   end
 end
 
+file cffitest => csources_type['cffitest'] + [makefile] do
+  Dir.chdir('build') do
+    build_project(makefile, 'cffitest')
+  end
+end
+
 file cdumpcov => csources_type['cdumpcov'] + [makefile] do
   Dir.chdir('build') do
     build_project(makefile, 'cdumpcov')
@@ -210,7 +219,7 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
 end
 
 setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)
-setup_tests('dab', 'dabt', 'frontend', [cvm], 'dab', DabSpec, stdlib: compiled_stdlib)
+setup_tests('dab', 'dabt', 'frontend', [cvm, cffitest], 'dab', DabSpec, stdlib: compiled_stdlib)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
