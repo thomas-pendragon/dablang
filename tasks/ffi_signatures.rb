@@ -35,6 +35,7 @@ void*, string, int32, void*, void*, void*, void*, int32 -> void*
 void*, uint8, uint8, uint8, uint8 -> int32
 void*, void*, uint64 -> uint64
 -> int32
+function -> int32 
 '
 
 DAB_CLASSES = {
@@ -49,6 +50,7 @@ DAB_CLASSES = {
   'void*' => 'CLASS_INTPTR',
   'string' => 'CLASS_STRING',
   'void' => 'CLASS_NILCLASS',
+  'function' => 'CLASS_METHOD',
 }.freeze
 
 C_CLASSES = {
@@ -63,6 +65,7 @@ C_CLASSES = {
   'void*' => 'void*',
   'string' => 'const char*',
   'void' => 'void',
+  'function' => 'int(*)()',
 }.freeze
 
 DAB_DATA = {
@@ -72,6 +75,7 @@ DAB_DATA = {
   'uint64' => 'data.num_uint64',
   'void*' => 'data.intptr',
   'string' => 'string()',
+  'function' => 'func_ptr()',
 }.freeze
 
 class Hash

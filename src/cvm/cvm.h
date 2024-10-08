@@ -206,6 +206,8 @@ struct DabValueData
     };
 };
 
+typedef int (*hack_int_fun)();
+
 struct DabValue
 {
     DabMemoryCounter<COUNTER_VALUE> _counter;
@@ -380,6 +382,8 @@ struct DabValue
     size_t use_count() const;
     void   retain();
     void   release();
+
+    hack_int_fun func_ptr();
 
     bool nil() const
     {

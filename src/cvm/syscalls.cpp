@@ -43,6 +43,13 @@ dab_function_reg_t import_external_function(void *symbol, const DabFunctionRefle
 #include "ffi_signatures.h"
         else
         {
+            if ($VM->options.verbose)
+            {
+                fprintf(stderr, "return klass %d\n", ret_klass);
+                for (int i = 0; i < (int)arg_klasses.size(); i++) {
+                    fprintf(stderr, "arg[%d] klass %d\n", i, arg_klasses[i]);
+                }
+            }
             fprintf(stderr, "vm: unsupported signature\n");
             exit(1);
         }
