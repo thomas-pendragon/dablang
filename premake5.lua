@@ -9,7 +9,7 @@ function dab_common_setup(name, kindt, skip_shared)
     kind(kindt)
     language "C++"
     targetdir "bin/"
-    cppdialect "C++11"
+    cppdialect "C++11"    
 
     warnings "Extra"
     flags "FatalCompileWarnings"
@@ -34,6 +34,8 @@ function dab_common_setup(name, kindt, skip_shared)
       buildoptions "-std=c++11"
 
     filter "system:not windows"
+      buildoptions "-arch x86_64"
+      linkoptions "-arch x86_64"
       links "dl"
       linkoptions "-rdynamic"
 end

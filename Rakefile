@@ -235,17 +235,17 @@ setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_
 setup_tests('multidab', 'test', nil, [cvm, cdisasm])
 setup_tests('decompile', 'test', nil, [cdisasm])
 
-#gitlab = '.gitlab-ci.yml'
-#gitlab_base = 'gitlab_base.rb'
+# gitlab = '.gitlab-ci.yml'
+# gitlab_base = 'gitlab_base.rb'
 
-#file gitlab => [gitlab_base, 'gitlab_base.yml'] do
+# file gitlab => [gitlab_base, 'gitlab_base.yml'] do
 #  psystem("ruby #{gitlab_base} > #{gitlab}")
-#end
+# end
 
-#task :docker do
+# task :docker do
 #  tag = YAML.load_file('gitlab_base.yml')['image']
 #  psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
-#end
+# end
 
 task spec: :dab do
 end
