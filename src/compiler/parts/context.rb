@@ -144,7 +144,7 @@ class DabContext < DabBaseContext
       next unless keyword = subcontext.read_keyword('class')
       next unless ident = subcontext.read_identifier
 
-      if op = subcontext.read_operator('<')
+      if subcontext.read_operator('<')
         next unless template_list = subcontext._read_simple_list(:read_identifier)
         next unless subcontext.read_operator('>')
       end
@@ -521,9 +521,9 @@ class DabContext < DabBaseContext
   def read_class
     on_subcontext do |subcontext|
       id = subcontext.read_identifier
-      if @classes.include? id        
-        if op = subcontext.read_operator('<')
-          next unless template_list = subcontext._read_simple_list(:read_identifier)
+      if @classes.include? id
+        if subcontext.read_operator('<')
+          next unless subcontext._read_simple_list(:read_identifier)
           next unless subcontext.read_operator('>')
         end
         ret = DabNodeClass.new(id)

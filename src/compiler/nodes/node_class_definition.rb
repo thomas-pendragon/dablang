@@ -57,7 +57,7 @@ class DabNodeClassDefinition < DabNode
     parent_number = @parent_class ? root.class_number(@parent_class) : 0
     output.comment(identifier)
     if template_list
-      output.print('W_CLASS_EX', number, parent_number, node_identifier.symbol_index, template_list.count)      
+      output.print('W_CLASS_EX', number, parent_number, node_identifier.symbol_index, template_list.count)
       template_list.each_with_index do |template_item, index|
         # ap [template_item,template_item.real_value,index]
         output.comment(template_item.real_value.extra_value)
