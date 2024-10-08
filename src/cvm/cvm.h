@@ -105,6 +105,9 @@ struct DabClass
     std::map<dab_symbol_t, DabFunction> static_functions;
     dab_class_t                         superclass_index = CLASS_OBJECT;
 
+    bool                  templated = false;
+    std::vector<DabValue> template_arguments;
+
     std::map<dab_symbol_t, DabValue> instvars;
 
     const DabFunction &get_instance_function(dab_symbol_t symbol) const;

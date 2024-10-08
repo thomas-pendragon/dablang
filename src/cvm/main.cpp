@@ -775,6 +775,34 @@ bool DabVM::execute_single(Stream &input)
         register_set(reg_index, var);
         break;
     }
+    case OP_LOAD_CLASS_EX:
+    {
+        auto reg_index   = input.read_reg();
+        auto klass_index = input.read_uint16();
+        auto reglist     = input.read_reglist();
+
+        std::vector<DabValue> regvalues;
+        for (auto reg : reglist)
+            regvalues.push_back(register_get(reg));
+
+        auto klass = classes[klass_index];
+
+        int index = 4096;
+
+        klass.name += "<";
+        for (auto reg : regvalues)
+            klass.name += reg.print_value();
+        klass.name += ">";
+        klass.index              = index;
+        klass.superclass_index   = klass_index;
+        klass.templated          = true;
+        klass.template_arguments = regvalues;
+
+        classes[index] = klass;
+
+        register_set(reg_index, klass);
+        break;
+    }
     case OP_LOAD_CLASS:
     {
         auto reg_index   = input.read_reg();

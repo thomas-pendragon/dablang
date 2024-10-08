@@ -87,15 +87,28 @@ class DabBinReader
   end
 
   def parse_klasses(clas, symbols)
-    klass_length = 2 + 2 + 2
-    count = clas.length / klass_length
-    Array.new(count) do |n|
-      offset = n * klass_length
-      data = clas.unpack("@#{offset}S<S<S<")
-      klass = %i[index parent_index symbol].zip(data).to_h
+    # klass_length = 2 + 2 + 2
+    # count = clas.length / klass_length
+    offset = 0
+    ret = []
+    loop do # Array.new(count) do |n|
+      # offset = n * klass_length
+      # STDERR.puts "read class index = #{offset}"
+      data = clas.unpack("@#{offset}S<S<S<S<")
+      offset += 8
+      klass = %i[index parent_index symbol templateargsn].zip(data).to_h
+      # ap klass
+      klass[:templateargs] = (0...klass[:templateargsn]).map do
+        v = clas.unpack("@#{offset}S<")
+        offset += 2
+        v
+      end
       klass[:symbol] = symbols[klass[:symbol]]
-      klass
+      ret << klass
+
+      break if offset == clas.length
     end
+    ret
   end
 
   def parse_extended_functions(fext, symbols)
