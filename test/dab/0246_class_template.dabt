@@ -1,0 +1,19 @@
+## CODE
+
+#
+class MyType<T>
+{
+};
+
+func main()
+{
+  print(MyType<Int32>.new());
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+#MyType<Int32>
