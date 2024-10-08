@@ -1,0 +1,27 @@
+## CODE
+
+func import_ffi(method, name = nil)
+{
+  if (name == nil)
+  {
+    name = method.name;
+  }
+  __warn("Import FFI method '" + name + "' as '" + method.to_s + "'\n");
+  __dlimport("bin/libcffitest.dylib", method, name);
+}
+
+[import_ffi("ffi_arg_test")]
+func FFIargTest<Int32>(arg<Int32>) {}
+
+func main()
+{
+  print(FFIargTest(11));
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+23
