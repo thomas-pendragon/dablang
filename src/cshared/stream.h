@@ -80,7 +80,7 @@ struct BinClass
     dab_class_t  index;
     dab_class_t  parent;
     dab_symbol_t name;
-    uint16_t template_but_not_unused = 0;
+    uint16_t     template_but_not_unused = 0;
 };
 #pragma pack(pop)
 

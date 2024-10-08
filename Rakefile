@@ -1,3 +1,5 @@
+require 'os'
+
 if ENV['COVERAGE']
   require 'simplecov'
   SimpleCov.start
@@ -21,7 +23,8 @@ $sources = Dir.glob('src/**/*.rb')
 $toolset = ENV['TOOLSET'] || 'gmake'
 
 def mangle_bin(bin, library: false)
-  bin = "lib#{bin}.dylib" if library
+  dyext = OS.linux? ? 'so' : 'dylib'
+  bin = "lib#{bin}.#{dyext}" if library
   bin = "bin/#{bin}"
   bin += '.exe' if $toolset['vs']
   bin

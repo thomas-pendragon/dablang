@@ -25,6 +25,8 @@ class DabSpec
       body = 'all test ok'
     end
 
+    code = code.gsub('{$OS_DYLIB_EXT}', OS.linux? ? 'so' : 'dylib')
+
     {
       code: code,
       expected_status: expected_status,

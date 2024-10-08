@@ -7,7 +7,7 @@ func import_ffi(method, name = nil)
     name = method.name;
   }
   __warn("Import FFI method '" + name + "' as '" + method.to_s + "'\n");
-  __dlimport("bin/libcffitest.dylib", method, name);
+  __dlimport("bin/libcffitest.{$OS_DYLIB_EXT}", method, name);
 }
 
 [import_ffi("ffi_arg_test")]
