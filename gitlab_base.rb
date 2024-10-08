@@ -2,7 +2,12 @@ require_relative 'setup'
 
 base_path = 'gitlab_base.yml'
 
-data = YAML.load_file(base_path)
+data = nil
+begin
+  data = YAML.load_file(base_path, aliases: true)
+rescue ArgumentError
+  YAML.load_file(base_path)
+end
 
 compilers = [
   # 'g++-4.7',
