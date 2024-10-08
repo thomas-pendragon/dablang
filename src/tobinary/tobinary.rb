@@ -353,6 +353,12 @@ class Parser
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
           @output_stream._push_uint16(line[3])
+          @output_stream._push_uint16(0)
+        when 'W_CLASS_EX'
+          @output_stream._push_uint16(line[1])
+          @output_stream._push_uint16(line[2])
+          @output_stream._push_uint16(line[3])
+          @output_stream._push_uint16(line[4])
         when 'W_METHOD'
           @output_stream._push_uint16(line[1])
           @output_stream._push_uint16(line[2])
