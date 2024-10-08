@@ -228,6 +228,8 @@ void parse_class_substream(Stream &input_stream, uint64_t start, bool no_numbers
             auto index  = stream.read_uint16();
             auto parent = stream.read_uint16();
             auto name   = stream.read_uint16();
+            auto temp_n = stream.read_uint16();
+            assert(temp_n == 0);
             if (!no_numbers)
             {
                 fprintf(output, LINEINFO_FORMAT, start + pos);
