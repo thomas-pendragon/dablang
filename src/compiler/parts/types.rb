@@ -16,6 +16,7 @@ class DabType
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
     return DabTypeByteBuffer.new if typename == 'ByteBuffer'
+    return DabTypeFunction.new if typename == 'Function'
 
     raise "Unknown type #{typename}"
   end
@@ -308,5 +309,12 @@ class DabTypeClassInstance
     return true if name == 'to_s'
 
     @root.find_class(@name).has_class_function?(name)
+  end
+end
+
+
+class DabTypeFunction < DabType
+  def type_string
+    'Function'
   end
 end

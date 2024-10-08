@@ -15,4 +15,5 @@ enum
     KERNEL_GET_INSTVAR   = 0xA,
     KERNEL_SET_INSTVAR   = 0xB,
     KERNEL_ANSI_COLOR    = 0xC,
+    KERNEL_C_EXPORT      = 0xD,
 };

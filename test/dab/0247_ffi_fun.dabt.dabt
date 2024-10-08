@@ -1,0 +1,40 @@
+## CODE
+
+func import_ffi(method, name = nil)
+{
+  if (name == nil)
+  {
+    name = method.name;
+  }
+  __warn("Import FFI method '" + name + "' as '" + method.to_s + "'\n");
+  __dlimport("bin/libcffitest.{$OS_DYLIB_EXT}", method, name);
+}
+
+func c_export(method)
+{
+  var name = method.name;
+  __warn("Export as C Function: '" + name + "'\n");
+  __c_export(method);
+}
+
+//[import_ffi("ffi_fun_test")]
+//func FFIfunTest<Int32>(arg<Function<Int32>>) {}
+
+[c_export]
+func dab_function<Int32>()
+{
+  return 11;
+}
+
+func main()
+{
+//  print(FFIfunTest(dab_function));
+}
+
+## FRONTEND OPTIONS
+
+--no-stdlib
+
+## EXPECT OK
+
+55
