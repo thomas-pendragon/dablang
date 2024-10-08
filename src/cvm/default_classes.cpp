@@ -268,7 +268,9 @@ void DabVM::define_default_classes()
 //    void call(dab_register_t out_reg, dab_symbol_t symbol, int n_args, dab_symbol_t block_symbol,
   //            const DabValue &capture, std::vector<dab_register_t> reglist = {});
 
-        fprintf(stderr,"vm: .call() @method %d with %d args\n",(int)self.data.fixnum, (int)args.size());
+        auto sym = get_symbol(self.data.fixnum);
+
+        fprintf(stderr,"vm: .call() @method %d (%s) with %d args\n",(int)self.data.fixnum,sym.c_str(), (int)args.size());
 
         push_registers();
         // _register_stack.push_back(_registers);
@@ -279,14 +281,32 @@ void DabVM::define_default_classes()
         register_set(0, nullptr);
         for (int i = 0; i <(int)args.size();i++) {register_set(i+1,args[i]);reglist.push_back(i+1);}
 
-        call(0, self.data.fixnum, args.size(), DAB_SYMBOL_NIL,  nullptr, reglist);
+        //call(0, self.data.fixnum, args.size(), DAB_SYMBOL_NIL, nullptr, reglist);
+        // function(bool use_self, dab_register_t out_reg, const DabValue &self,
+        //                 const DabFunction &fun,
+        //                 std::vector<dab_register_t> reglist = {}, DabValue *return_value = nullptr,
+        //                 size_t stack_pos = 0);
+        const auto &fun = functions[self.data.fixnum];
+        DabValue return_value;
+        auto outreg = 0;
 
-        auto ret = register_get(0);
+        auto stack_pos = stackframes.size();
+        _call_function(false, outreg, nullptr, fun, reglist, &return_value, stack_pos);
+    
+        fprintf(stderr,"vm: .called! @method %d with %d args\n",(int)self.data.fixnum, (int)args.size());
+
+        // auto ret = register_get(0);
+
+        fprintf(stderr,"vm: .called! result:");
+
+        return_value.print(stderr, true);
+
+        fprintf(stderr,"\n");
 
         pop_registers();
         // _registers = _register_stack.back();
         // _register_stack.pop_back();
-        return ret;
+        return return_value;
     });
 
     auto &bytebuffer_class = get_class(CLASS_BYTEBUFFER);

@@ -75,6 +75,7 @@ _SYMD:
     W_STRING "remove_at"
     W_STRING "[]="
     W_STRING "name"
+    W_STRING "call"
     W_STRING "||"
     W_STRING "&&"
 
@@ -114,7 +115,8 @@ _SYMB:
     W_SYMBOL 428
     W_SYMBOL 432
     W_SYMBOL 437
-    W_SYMBOL 440
+    W_SYMBOL 442
+    W_SYMBOL 445
 
 _FEXT:
     W_METHOD 0, -1, 237, 0, 6, 0
