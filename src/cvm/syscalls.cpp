@@ -272,6 +272,11 @@ void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_registe
         register_set(out_reg, ret);
         break;
     }
+    case KERNEL_C_EXPORT:
+    {
+        kernel_c_export(out_reg, reglist);
+        break;
+    }
     default:
         fprintf(stderr, "VM error: Unknown kernel call <%d>.\n", (int)call);
         exit(1);
