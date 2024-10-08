@@ -7,7 +7,7 @@ func dab_function()
 
 func main()
 {
-  print(@fn(dab_function));
+  print(@^(dab_function));
 }
 
 ## FRONTEND OPTIONS
@@ -16,4 +16,4 @@ func main()
 
 ## EXPECT OK
 
-Function<dab_function>
+@method(dab_function)

@@ -745,8 +745,22 @@ class DabContext < DabBaseContext
     end
   end
 
+  def read_literal_function
+    on_subcontext do |subcontext|
+      next unless subcontext.read_operator('@')
+      next unless subcontext.read_operator('^')
+      next unless subcontext.read_operator('(')      
+
+      id = subcontext.read_identifier
+      next unless subcontext.read_operator(')')
+
+      DabNodeMethodReference.new(id)
+    end
+  end
+
   def read_extended_literal
-    read_literal_array
+    read_literal_array ||
+      read_literal_function
   end
 
   def read_literal_value
