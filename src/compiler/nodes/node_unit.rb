@@ -133,7 +133,7 @@ class DabNodeUnit < DabNode
   end
 
   def find_or_define_class(name)
-    if name.is_a?(Fixnum)
+    if name.is_a?(Integer)
       name = class_numbers_rev[name]
     end
     find_class(name) || create_default_class(name) # || add_class(name)

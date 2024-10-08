@@ -17,7 +17,7 @@ class TypedNumber
 
   def ==(other)
     case other
-    when Fixnum
+    when Integer
       value == other
     when TypedNumber
       value == other.value

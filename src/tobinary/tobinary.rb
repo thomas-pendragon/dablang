@@ -302,7 +302,7 @@ class Parser
       raise "unknown op #{op}"
     when String
       @label_positions[item] + offset
-    when Fixnum
+    when Integer
       item
     else
       raise "unknown item #{item.class}"
