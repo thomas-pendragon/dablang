@@ -5,8 +5,10 @@
 #include <string.h>
 #include <stdint.h>
 
-static void load_address(unsigned char *code_ptr, uintptr_t value) {
-    for (int i = 0; i < 8; i++) {
+static void load_address(unsigned char *code_ptr, uintptr_t value)
+{
+    for (int i = 0; i < 8; i++)
+    {
         code_ptr[i] = (value >> (8 * i)) & 0xFF;
     }
 }
@@ -32,9 +34,10 @@ static int_fun_ptr create_dynamic_func(int_fun_handler_ptr func_template, void *
     load_address(&code[12], (uintptr_t)func_template);
 
     // Allocate memory with rwx (read, write, execute) permissions
-    void *mem = mmap(NULL, sizeof(code), PROT_READ | PROT_WRITE | PROT_EXEC,
-                     MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (mem == MAP_FAILED) {
+    void *mem =
+        mmap(NULL, sizeof(code), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (mem == MAP_FAILED)
+    {
         perror("mmap");
         return NULL;
     }
@@ -73,11 +76,16 @@ void DabVM::kernel_c_export(dab_register_t out_reg, std::vector<dab_register_t> 
 
     fprintf(stderr, "test handler: %d\n", call_dab_int_function(handler));
 
-    auto fun = create_dynamic_func(call_dab_int_function, handler);
+    auto cfun = create_dynamic_func(call_dab_int_function, handler);
 
-    fprintf(stderr, "vm: created func at ptr %p\n", fun);
-    auto q = fun();
+    fprintf(stderr, "vm: created func at ptr %p\n", cfun);
+    auto q = cfun();
     fprintf(stderr, "vm: test call? [%d]\n", q);
+
+    auto symbol = (dab_symbol_t)method.data.fixnum;
+    auto &fun = functions[symbol];
+    fun.c_export = true;
+    fun.c_export_addr = (void*)cfun;
 
     register_set(out_reg, nullptr);
 }

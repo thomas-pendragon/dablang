@@ -312,7 +312,6 @@ class DabTypeClassInstance
   end
 end
 
-
 class DabTypeFunction < DabType
   def type_string
     'Function'

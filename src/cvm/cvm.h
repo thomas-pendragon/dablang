@@ -54,6 +54,9 @@ struct DabFunction
     bool new_method = false;
 
     bool dlimport = false;
+
+    bool  c_export      = false;
+    void *c_export_addr = nullptr;
 };
 
 enum
