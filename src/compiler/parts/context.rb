@@ -523,11 +523,12 @@ class DabContext < DabBaseContext
       id = subcontext.read_identifier
       if @classes.include? id
         if subcontext.read_operator('<')
-          next unless subcontext._read_simple_list(:read_identifier)
+          next unless template_list = subcontext._read_simple_list(:read_class)
           next unless subcontext.read_operator('>')
         end
-        ret = DabNodeClass.new(id)
+        ret = DabNodeClass.new(id, template_list: template_list)
         ret.add_source_parts(id)
+        ret.add_source_parts(*template_list) if template_list
         ret
       else
         false

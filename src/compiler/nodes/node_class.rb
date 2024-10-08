@@ -1,11 +1,18 @@
 require_relative 'node'
 
 class DabNodeClass < DabNode
+  lower_with Uncomplexify
+
   attr_reader :identifier
 
-  def initialize(identifier)
+  def initialize(identifier, template_list: nil)
     super()
     @identifier = identifier
+    insert(template_list) if template_list
+  end
+
+  def template_list
+    self[0]
   end
 
   def extra_dump
@@ -20,7 +27,30 @@ class DabNodeClass < DabNode
     raise "no class for <#{@identifier}>" unless number
 
     output.comment(@identifier)
-    output.print('LOAD_CLASS', "R#{output_register}", number)
+    if template_list
+
+      list = template_list.map(&:input_register).map { |arg| "R#{arg}" }
+
+      args = [
+        output_register.nil? ? 'RNIL' : "R#{output_register}",
+        number,
+        list,
+      ]
+
+      output.print('LOAD_CLASS_EX', *args)
+    else
+      output.print('LOAD_CLASS', "R#{output_register}", number)
+    end
+  end
+
+  def uncomplexify_args
+    return [] unless template_list
+
+    template_list[0..-1]
+  end
+
+  def accepts?(arg)
+    arg.register?
   end
 
   def formatted_source(_options)

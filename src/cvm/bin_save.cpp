@@ -334,11 +334,10 @@ void DabVM::dump_vm(FILE *out)
         func.address += code_offset;
     }
 
-    auto new_data_index =
-        std::distance(dump_sections.begin(),
-                      std::find_if(dump_sections.begin(), dump_sections.end(),
-                                   [](const BinSection &sec)
-                                   { return sec.special_index == TEMP_NEW_DATA_SECTION; }));
+    auto new_data_index = std::distance(
+        dump_sections.begin(),
+        std::find_if(dump_sections.begin(), dump_sections.end(), [](const BinSection &sec)
+                     { return sec.special_index == TEMP_NEW_DATA_SECTION; }));
 
     uint64_t old_code_offset = 0;
 

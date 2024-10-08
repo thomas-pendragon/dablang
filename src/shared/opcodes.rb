@@ -45,6 +45,7 @@ OPCODES_ARRAY_BASE = [
       {name: 'LOAD_INT64', args: %i{reg int64}}, # reg0 <- arg1
 
       {name: 'LOAD_CLASS', args: %i[reg uint16]}, # reg0 <- class(arg1)
+      {name: 'LOAD_CLASS_EX', args: %i[reg uint16 reglist]}, # reg0 -> class(arg1)<arg2..argN>
       {name: 'LOAD_METHOD', args: %i[reg symbol]}, # reg0 <- method[sym1]
       {name: 'REFLECT', args: %i[reg symbol uint16 uint16]}, # reg0 <- reflect(sym1) with type arg2, klass=arg3
 

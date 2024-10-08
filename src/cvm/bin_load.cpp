@@ -117,14 +117,14 @@ void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t class
     // auto n_class = classes_length / class_len;
 
     fprintf(stderr, "classad=%p\n",
-        //classlen=%d n_class=%d\n", 
-        (void *)classes_address
-        //    (int)classes_length, (int)n_class);
-        );
+            // classlen=%d n_class=%d\n",
+            (void *)classes_address
+            //    (int)classes_length, (int)n_class);
+    );
 
     auto address = classes_address;
 
-    while (true)//for (size_t i = 0; i < n_class; i++)
+    while (true) // for (size_t i = 0; i < n_class; i++)
     {
         auto class_index_address        = address;
         auto parent_class_index_address = class_index_address + 2;
@@ -137,7 +137,7 @@ void DabVM::read_classes(Stream &input, uint64_t classes_address, uint64_t class
         auto template_num       = input.uint16_data(template_num_address);
 
         fprintf(stderr, "[class] index=%d parent=%d symbol=%d template=%d\n", (int)class_index,
-            (int)parent_class_index, (int)symbol, (int)template_num);
+                (int)parent_class_index, (int)symbol, (int)template_num);
 
         auto symbol_str = get_symbol(symbol);
 
