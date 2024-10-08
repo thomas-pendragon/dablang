@@ -6,7 +6,7 @@ class DabNodeClassDefinition < DabNode
 
   after_init :extract_literal
 
-  def initialize(identifier, parent, functions)
+  def initialize(identifier, parent, functions, template_list: nil)
     super()
     @identifier = identifier
     @parent_class = parent
@@ -16,6 +16,7 @@ class DabNodeClassDefinition < DabNode
     end
     insert(@functions)
     insert(DabNodeSymbol.new(identifier))
+    insert(template_list) if template_list
   end
 
   def children_info
@@ -27,10 +28,17 @@ class DabNodeClassDefinition < DabNode
 
   def extract_literal
     ExtractLiteral.new.run(node_identifier) unless standard?
+    template_list&.each do |template_item|
+      ExtractLiteral.new.run(template_item)
+    end
   end
 
   def node_identifier
     self[1]
+  end
+
+  def template_list
+    self[2]
   end
 
   def functions
@@ -48,7 +56,16 @@ class DabNodeClassDefinition < DabNode
   def compile_definition(output)
     parent_number = @parent_class ? root.class_number(@parent_class) : 0
     output.comment(identifier)
-    output.print('W_CLASS', number, parent_number, node_identifier.symbol_index)
+    if template_list
+      output.print('W_CLASS_EX', number, parent_number, node_identifier.symbol_index, template_list.count)      
+      template_list.each_with_index do |template_item, index|
+        # ap [template_item,template_item.real_value,index]
+        output.comment(template_item.real_value.extra_value)
+        output.print('W_TEMPLATE_ARG', number, index, template_item.symbol_index)
+      end
+    else
+      output.print('W_CLASS', number, parent_number, node_identifier.symbol_index)
+    end
   end
 
   def all_functions

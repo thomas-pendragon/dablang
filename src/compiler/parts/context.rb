@@ -173,7 +173,7 @@ class DabContext < DabBaseContext
       next unless subcontext.read_operator('}')
 
       subcontext.add_class(ident)
-      ret = DabNodeClassDefinition.new(ident, parent, functions)
+      ret = DabNodeClassDefinition.new(ident, parent, functions, template_list: template_list)
       ret.add_source_parts(keyword, ident, op, parent)
       ret
     end
