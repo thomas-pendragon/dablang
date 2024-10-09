@@ -40,6 +40,10 @@ func main()
   print(FFIfunTest(@^(dab_function)));
 }
 
+## RUN OPTIONS
+
+--verbose
+
 ## FRONTEND OPTIONS
 
 --no-stdlib
