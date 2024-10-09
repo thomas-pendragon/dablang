@@ -84,7 +84,7 @@ void DabVM::kernel_c_export(dab_register_t out_reg, std::vector<dab_register_t> 
 
     auto cfun = create_dynamic_func(call_dab_int_function, handler);
 
-    fprintf(stderr, "vm: created func at ptr %p\n", cfun);
+    fprintf(stderr, "vm: created func at ptr %p\n", (void*)cfun);
     //auto q = cfun();
     //fprintf(stderr, "vm: test call? [%d]\n", q);
 
@@ -94,4 +94,6 @@ void DabVM::kernel_c_export(dab_register_t out_reg, std::vector<dab_register_t> 
     fun.c_export_addr = (void *)cfun;
 
     register_set(out_reg, nullptr);
+
+    fprintf(stderr, "vm: cexport all set\n");
 }
