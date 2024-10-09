@@ -140,8 +140,8 @@ void DabVM::kernel_c_export(dab_register_t out_reg, std::vector<dab_register_t> 
     auto cfun = create_dynamic_func(call_dab_int_function, handler);
 
     fprintf(stderr, "vm: created func at ptr %p\n", (void*)cfun);
-    //auto q = cfun();
-    //fprintf(stderr, "vm: test call? [%d]\n", q);
+    auto q = cfun();
+    fprintf(stderr, "vm: test call? [%d]\n", q);
 
     auto  symbol      = (dab_symbol_t)method.data.fixnum;
     auto &fun         = functions[symbol];
