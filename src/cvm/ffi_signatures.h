@@ -537,7 +537,7 @@ else if (arg_klasses.size() == 1 && arg_klasses[0] == CLASS_METHOD && ret_klass 
 
     auto value0_data = value0.func_ptr();
 
-    auto return_value = (*int_symbol)(value0_data);
+    auto return_value = (int_symbol)(value0_data);
 
     return (DabValue(CLASS_INT32, return_value));
 }

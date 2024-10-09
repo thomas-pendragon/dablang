@@ -124,9 +124,12 @@ signatures.strip.split("\n").each do |line|
 
   body += "\n"
 
+  star = '*'
+  star = '' if args.include?('function')
+
   body += '    '
   body += 'auto return_value = ' unless voidret
-  body += '(*int_symbol)('
+  body += '('+star+'int_symbol)('
   body += Array.new(args.count) { |n| "value#{n}_data" }.join(', ')
   body += ");\n"
 
