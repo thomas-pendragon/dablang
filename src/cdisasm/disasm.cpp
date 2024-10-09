@@ -359,7 +359,7 @@ void parse_headers(DisasmContext &context, BinHeader *base_header)
             {
                 break;
             }
-            char number[8];
+            char number[16];
             snprintf(number, sizeof(number), "%d", label_counter++);
             label_name = base_label_name + number;
         }
