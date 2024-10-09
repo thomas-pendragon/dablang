@@ -18,6 +18,8 @@ typedef int (*int_fun_ptr)();
 
 static int_fun_ptr create_dynamic_func(int_fun_handler_ptr func_template, void *literal)
 {
+    fprintf(stderr, "create_dynamic_func(func=%p,literal=%p)\n",(void*)func_template,(void*)literal);
+
     // Machine code that:
     // - Moves the 64-bit `literal` into the RDI register (the first argument in x86-64 calling convention)
     // - Calls func_template (which is at the address we provide)
@@ -33,6 +35,12 @@ static int_fun_ptr create_dynamic_func(int_fun_handler_ptr func_template, void *
 
     load_address(&code[2], (uintptr_t)literal);
     load_address(&code[12], (uintptr_t)func_template);
+
+    for (int i = 0 ; i < 23; i++)
+    {
+        fprintf(stderr, "%02x ", code[i]);
+    }
+    fprintf(stderr, "\n");
 
     // Allocate memory with rwx (read, write, execute) permissions
     void *mem =
