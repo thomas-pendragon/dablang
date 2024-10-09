@@ -36,6 +36,7 @@ func dab_function<Int32>()
 
 func main()
 {
+  print("Now will call: ");
   print(FFIfunTest(@^(dab_function)));
 }
 
@@ -45,4 +46,4 @@ func main()
 
 ## EXPECT OK
 
-55
+Now will call: 55
