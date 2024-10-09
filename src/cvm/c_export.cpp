@@ -135,7 +135,8 @@ void DabVM::kernel_c_export(dab_register_t out_reg, std::vector<dab_register_t> 
 
     fprintf(stderr, "vm: c_export '%s'\n", method_name.c_str());
 
-    //fprintf(stderr, "test handler: %d\n", call_dab_int_function(handler));
+fprintf(stderr,"handler = %p call_dab = %p\n", handler, (void*)call_dab_int_function);
+    fprintf(stderr, "test handler: %d\n", call_dab_int_function(handler));
 
     auto cfun = create_dynamic_func(call_dab_int_function, handler);
 
