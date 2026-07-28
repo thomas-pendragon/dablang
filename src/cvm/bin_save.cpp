@@ -135,19 +135,26 @@ void DabVM::dump_vm(FILE *out)
     auto base_code_offset =
         dump_sections[last_code_index].pos + dump_sections[last_code_index].length;
 
+    const auto latest_code_index = last_code_index;
+    const auto latest_data_index = last_data_index;
+
     for (int i = 0, section_index = 0; i < (int)dump_sections.size(); i++, section_index++)
     {
         auto       &section = dump_sections[i];
         std::string name    = section.name;
 
-        bool previous_code = name == "code" && section_index != last_code_index;
-        bool previous_data = name == "data" && section_index != last_data_index;
+        bool previous_code = name == "code" && section_index != latest_code_index;
+        bool previous_data = name == "data" && section_index != latest_data_index;
         bool remove        = previous_code || previous_data;
 
         if (remove)
         {
             fprintf(stderr, "vm/binsave: remove previous section %d '%s'\n", section_index,
                     name.c_str());
+            if (i < last_code_index)
+                last_code_index--;
+            if (i < last_data_index)
+                last_data_index--;
             dump_sections.erase(dump_sections.begin() + i);
             i--;
         }

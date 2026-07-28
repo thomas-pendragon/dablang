@@ -12,7 +12,7 @@ function dab_common_setup(name, kindt, skip_shared)
     cppdialect "C++11"    
 
     warnings "Extra"
-    flags "FatalCompileWarnings"
+    fatalwarnings "All"
 
     if not skip_shared then
       files { "src/cshared/**.h", "src/cshared/**.cpp" }
