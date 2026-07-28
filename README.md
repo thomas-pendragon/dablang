@@ -1,6 +1,6 @@
 Dab programming language
 
-[![Build Status](https://travis-ci.org/thomas-pendragon/dablang.svg?branch=master)](https://travis-ci.org/thomas-pendragon/dablang)
+[![CI](https://github.com/thomas-pendragon/dablang/actions/workflows/ruby.yml/badge.svg?branch=master)](https://github.com/thomas-pendragon/dablang/actions/workflows/ruby.yml)
 
 Very early prototype, with compiler and assembler written in Ruby, and VM in C++.
 
