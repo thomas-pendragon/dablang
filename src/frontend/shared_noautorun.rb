@@ -1,3 +1,5 @@
+require 'stringio'
+
 require_relative '../../setup'
 require_relative '../shared/system'
 require_relative '../shared/presence'

@@ -1,40 +1,48 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    amazing_print (1.6.0)
-    ast (2.4.2)
-    clipboard (1.4.1)
+    amazing_print (2.0.0)
+    ast (2.4.3)
+    clipboard (2.0.0)
     colorize (1.1.0)
-    diff-lcs (1.5.1)
-    diffy (3.4.2)
-    docile (1.4.1)
-    ffi (1.16.3)
-    ffi (1.16.3-x64-mingw32)
-    json (2.7.2)
-    language_server-protocol (3.17.0.3)
+    diff-lcs (1.6.2)
+    diffy (3.4.4)
+    ffi (1.17.4)
+    ffi (1.17.4-aarch64-linux-gnu)
+    ffi (1.17.4-aarch64-linux-musl)
+    ffi (1.17.4-arm-linux-gnu)
+    ffi (1.17.4-arm-linux-musl)
+    ffi (1.17.4-arm64-darwin)
+    ffi (1.17.4-x64-mingw-ucrt)
+    ffi (1.17.4-x86-linux-gnu)
+    ffi (1.17.4-x86-linux-musl)
+    ffi (1.17.4-x86_64-darwin)
+    json (2.21.1)
+    language_server-protocol (3.17.0.6)
     os (1.1.4)
-    parallel (1.26.3)
-    parser (3.3.5.0)
+    parallel (1.28.0)
+    parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
+    prism (1.9.0)
     racc (1.8.1)
     rainbow (3.1.1)
-    rake (13.2.1)
+    rake (13.4.2)
     random-word (2.1.1)
-    regexp_parser (2.9.2)
-    rspec (3.13.0)
+    regexp_parser (2.12.0)
+    rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
       rspec-mocks (~> 3.13.0)
-    rspec-core (3.13.1)
+    rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
-    rspec-expectations (3.13.3)
+    rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.1)
+    rspec-mocks (3.13.8)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-support (3.13.1)
+    rspec-support (3.13.7)
     rubocop (1.66.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -45,27 +53,31 @@ GEM
       rubocop-ast (>= 1.32.2, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.32.3)
-      parser (>= 3.3.1.0)
+    rubocop-ast (1.50.0)
+      parser (>= 3.3.7.2)
+      prism (~> 1.7)
     ruby-progressbar (1.13.0)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.1)
-    simplecov_json_formatter (0.1.4)
+    simplecov (1.0.3)
     unicode-display_width (2.6.0)
 
 PLATFORMS
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  arm-linux-gnu
+  arm-linux-musl
+  arm64-darwin
   ruby
-  x64-mingw32
+  x64-mingw-ucrt
+  x86-linux-gnu
+  x86-linux-musl
+  x86_64-darwin
 
 DEPENDENCIES
   amazing_print
   clipboard
   colorize
   diffy
-  ffi (< 1.17.0)
+  ffi
   json
   os
   rake
@@ -75,4 +87,4 @@ DEPENDENCIES
   simplecov
 
 BUNDLED WITH
-   2.5.21
+   2.7.2
