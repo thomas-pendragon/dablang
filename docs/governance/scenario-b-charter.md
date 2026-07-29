@@ -1,7 +1,7 @@
 # Scenario B charter: incremental modernization of Dab
 
-**Status:** owner-selected direction; active from 2026-07-29  
-**Scope:** governance and planning charter  
+**Status:** owner-selected direction; active from 2026-07-29<br>
+**Scope:** governance and planning charter<br>
 **Companion work log:** `Dab Scenario B Modernization` in the GitHub Wiki
 
 ## 1. Decision and objective
