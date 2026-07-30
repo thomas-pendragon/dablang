@@ -37,6 +37,7 @@ $msbuild = ENV['MSBUILD'] || 'msbuild'
 
 premake = "#{premake} #{$toolset}"
 premake_source = 'premake5.lua'
+version_file = 'VERSION'
 cvm = mangle_bin('cvm')
 cdisasm = mangle_bin('cdisasm')
 cdumpcov = mangle_bin('cdumpcov')
@@ -80,7 +81,7 @@ csources = csources_type.values.reduce(&:|)
 csources.sort!
 csources.uniq!
 
-filelist_body_new = csources.join("\n")
+filelist_body_new = "#{csources.join("\n")}\nVERSION=#{File.read(version_file).strip}"
 
 original_makefile = case $toolset
                     when 'gmake'
@@ -141,7 +142,7 @@ file cvm_opcodes_debug => [opcodes, opcode_debug_task] do
   psystem("ruby #{opcode_debug_task} | #{clang_format_app} > #{cvm_opcodes_debug}")
 end
 
-file makefile => [premake_source] do
+file makefile => [premake_source, version_file] do
   psystem(premake.to_s)
   psystem("mv #{original_makefile} #{makefile}")
 end

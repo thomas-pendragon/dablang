@@ -1,11 +1,16 @@
+$autorun = true if $autorun.nil?
+
+if $autorun && ARGV.include?('--version')
+  require_relative '../shared/version'
+  DabVersion.print_and_exit('assembler')
+end
+
 require_relative '../../setup'
 require_relative '../shared/debug_output'
 require_relative '../shared/opcodes'
 require_relative '../shared/parser'
 require_relative '../shared/asm_context'
 require_relative '../shared/args_noautorun'
-
-$autorun = true if $autorun.nil?
 
 class InputStream
   attr_reader :lines
