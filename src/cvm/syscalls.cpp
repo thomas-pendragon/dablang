@@ -73,14 +73,13 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
         name_ = DAB_LIBC_NAME;
     }
 
-    auto name      = name_.c_str();
     auto libc_name = import_name.string();
 
 #ifndef DAB_PLATFORM_WINDOWS
     fprintf(stderr, "vm: readjust '%s' to libc function '%s'\n", method_name.c_str(),
             libc_name.c_str());
 
-    auto handle = dlopen(name, RTLD_LAZY);
+    auto handle = dlopen(name_.c_str(), RTLD_LAZY);
     if (!handle)
     {
         fprintf(stderr, "vm: dlopen error: %s", dlerror());
