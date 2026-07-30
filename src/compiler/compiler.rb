@@ -1,3 +1,9 @@
+if ARGV.include?('--version')
+  version = File.read(File.expand_path('../../VERSION', __dir__)).strip
+  puts "Dab compiler #{version}"
+  exit 0
+end
+
 require_relative 'compiler_noautorun'
 
 settings = read_args!
