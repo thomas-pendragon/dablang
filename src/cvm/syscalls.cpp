@@ -54,6 +54,7 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
     assert(reglist.size() >= 2 && reglist.size() <= 3);
 #ifdef DAB_PLATFORM_WINDOWS
     (void)out_reg;
+    (void)reglist;
     throw DabRuntimeError("function import not supported on windows yet");
 #else
     DabValue path        = register_get(reglist[0]);
