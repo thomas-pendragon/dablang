@@ -39,11 +39,14 @@ function dab_common_setup(name, kindt, skip_shared)
     filter "action:xcode4"
       buildoptions "-std=c++11"
 
+    filter "system:windows"
+      defines { "DAB_PLATFORM_WINDOWS" }
+
     filter "system:macosx"
       buildoptions "-arch x86_64"
       linkoptions "-arch x86_64"
 
-    filter "system:not windows"
+    filter "system:linux"
       links "dl"
       linkoptions "-rdynamic"
 end

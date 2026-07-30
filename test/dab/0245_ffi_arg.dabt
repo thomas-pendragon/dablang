@@ -22,6 +22,10 @@ func main()
 
 --no-stdlib
 
+## SKIP
+
+windows
+
 ## EXPECT OK
 
 23

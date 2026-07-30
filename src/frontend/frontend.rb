@@ -25,7 +25,14 @@ class DabSpec
       body = 'all test ok'
     end
 
-    code = code.gsub('{$OS_DYLIB_EXT}', OS.linux? ? 'so' : 'dylib')
+    dylib_extension = if OS.windows?
+                        'dll'
+                      elsif OS.linux?
+                        'so'
+                      else
+                        'dylib'
+                      end
+    code = code.gsub('{$OS_DYLIB_EXT}', dylib_extension)
 
     {
       code: code,
