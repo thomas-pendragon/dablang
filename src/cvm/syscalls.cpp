@@ -111,7 +111,6 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
     function.extra_reg = import_external_function(symbol, function.reflection);
 
 #else
-    (void)args;
     if (true)
     {
         throw DabRuntimeError("function import not supported on windows yet");

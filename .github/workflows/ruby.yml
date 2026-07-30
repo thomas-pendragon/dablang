@@ -52,7 +52,7 @@ jobs:
           tar xf premake-5.0.0-beta8-macosx-x64.tar.gz
           chmod +x premake5
       - name: Run tests
-        run: PREMAKE='./premake5' bundle exec rake
+        run: CLANG_FORMAT="$(brew --prefix llvm@18)/bin/clang-format" PREMAKE='./premake5' bundle exec rake
 
   test-windows:
     runs-on: windows-latest
@@ -64,8 +64,6 @@ jobs:
         with:
           ruby-version: '3.3.12'
           bundler-cache: true
-      - name: Set up MSBuild
-        uses: microsoft/setup-msbuild@v3
       - name: Download Premake
         shell: pwsh
         run: curl.exe --fail --location --retry 3 --output premake-5.0.0-beta8-windows.zip https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-windows.zip
@@ -76,5 +74,4 @@ jobs:
         shell: pwsh
         env:
           PREMAKE: .\premake5.exe
-          TOOLSET: vs2022
         run: bundle exec rake

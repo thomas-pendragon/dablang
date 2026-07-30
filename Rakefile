@@ -32,7 +32,7 @@ def mangle_bin(bin, library: false)
           end
   end
   bin = "bin/#{bin}"
-  bin += '.exe' if $toolset['vs'] && !library
+  bin += '.exe' if OS.windows? && !library
   bin
 end
 
