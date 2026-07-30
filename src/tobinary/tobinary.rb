@@ -1,3 +1,8 @@
+if ARGV.include?('--version')
+  require_relative '../shared/version'
+  DabVersion.print_and_exit('assembler')
+end
+
 require_relative '../../setup'
 require_relative '../shared/debug_output'
 require_relative '../shared/opcodes'

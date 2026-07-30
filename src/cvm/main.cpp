@@ -3,6 +3,7 @@
 #include "../cshared/opcodes.h"
 #include "../cshared/opcodes_format.h"
 #include "../cshared/opcodes_debug.h"
+#include "../cshared/version.h"
 
 DabVM *$VM = nullptr;
 
@@ -1514,6 +1515,11 @@ int unsafe_main(DabVM &vm, int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+    if (dab_print_version_if_requested(argc, argv, "VM"))
+    {
+        return 0;
+    }
+
     setup_handlers();
 
     DabVM vm;

@@ -4,6 +4,7 @@
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/asm_stream.h"
 #include "../cshared/stream.h"
+#include "../cshared/version.h"
 
 struct Arg
 {
@@ -144,6 +145,11 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
 
 int main(int argc, char **argv)
 {
+    if (dab_print_version_if_requested(argc, argv, "coverage dumper"))
+    {
+        return 0;
+    }
+
     std::map<uint64_t, std::string>        files;
     std::map<uint64_t, std::set<uint64_t>> lines;
 

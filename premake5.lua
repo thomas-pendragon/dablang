@@ -2,6 +2,10 @@ workspace "Dab"
   location "build"
   configurations { "Debug", "Release" }
 
+local version_file = assert(io.open("VERSION", "r"))
+local dab_version = assert(version_file:read("*l"))
+version_file:close()
+
 function dab_common_setup(name, kindt, skip_shared)
   kindt = kindt or "ConsoleApp"
 
@@ -13,6 +17,7 @@ function dab_common_setup(name, kindt, skip_shared)
 
     warnings "Extra"
     fatalwarnings "All"
+    defines { 'DAB_VERSION="'..dab_version..'"' }
 
     if not skip_shared then
       files { "src/cshared/**.h", "src/cshared/**.cpp" }

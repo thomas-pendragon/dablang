@@ -1,6 +1,7 @@
 #include "../cshared/shared.h"
 #include "../cshared/disasm.h"
 #include "../cshared/stream.h"
+#include "../cshared/version.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -373,6 +374,11 @@ void parse_headers(DisasmContext &context, BinHeader *base_header)
 
 int main(int argc, char **argv)
 {
+    if (dab_print_version_if_requested(argc, argv, "disassembler"))
+    {
+        return 0;
+    }
+
     DisasmContext context;
 
     bool raw          = parse_bool_arg(argc, argv, "--raw");

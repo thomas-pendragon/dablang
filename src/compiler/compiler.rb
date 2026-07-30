@@ -1,7 +1,6 @@
 if ARGV.include?('--version')
-  version = File.read(File.expand_path('../../VERSION', __dir__)).strip
-  puts "Dab compiler #{version}"
-  exit 0
+  require_relative '../shared/version'
+  DabVersion.print_and_exit('compiler')
 end
 
 require_relative 'compiler_noautorun'
