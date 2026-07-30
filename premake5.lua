@@ -5,6 +5,7 @@ workspace "Dab"
 local version_file = assert(io.open("VERSION", "r"))
 local dab_version = assert(version_file:read("*l"))
 version_file:close()
+dab_version = dab_version:match("^%s*(.-)%s*$")
 
 function dab_common_setup(name, kindt, skip_shared)
   kindt = kindt or "ConsoleApp"
