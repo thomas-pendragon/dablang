@@ -5,11 +5,12 @@ require 'tmpdir'
 
 describe 'Dab native tool versions' do
   project_root = File.expand_path('../..', __dir__)
+  project_version = File.read(File.join(project_root, 'VERSION')).strip
 
   {
-    'bin/cvm' => 'Dab VM 0.0.2',
-    'bin/cdisasm' => 'Dab disassembler 0.0.2',
-    'bin/cdumpcov' => 'Dab coverage dumper 0.0.2',
+    'bin/cvm' => "Dab VM #{project_version}",
+    'bin/cdisasm' => "Dab disassembler #{project_version}",
+    'bin/cdumpcov' => "Dab coverage dumper #{project_version}",
   }.each do |relative_path, expected_output|
     it "reports #{expected_output}" do
       Dir.mktmpdir('dab-native-tool-version') do |directory|

@@ -6,12 +6,13 @@ require 'tmpdir'
 
 describe 'Dab Ruby tool versions' do
   project_root = File.expand_path('../..', __dir__)
+  project_version = File.read(File.join(project_root, 'VERSION')).strip
 
   {
-    'src/tobinary/tobinary.rb' => 'Dab assembler 0.0.2',
-    'src/format/format.rb' => 'Dab formatter 0.0.2',
-    'src/decompile/decompile.rb' => 'Dab decompiler 0.0.2',
-    'src/cov/cov.rb' => 'Dab coverage 0.0.2',
+    'src/tobinary/tobinary.rb' => "Dab assembler #{project_version}",
+    'src/format/format.rb' => "Dab formatter #{project_version}",
+    'src/decompile/decompile.rb' => "Dab decompiler #{project_version}",
+    'src/cov/cov.rb' => "Dab coverage #{project_version}",
   }.each do |relative_path, expected_output|
     it "reports #{expected_output}" do
       Dir.mktmpdir('dab-ruby-tool-version') do |directory|

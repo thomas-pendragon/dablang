@@ -11,9 +11,9 @@ inline bool dab_print_version_if_requested(int argc, char **argv, const char *to
 {
     for (int i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i], "--version") == 0)
+        if (std::strcmp(argv[i], "--version") == 0)
         {
-            printf("Dab %s %s\n", tool, DAB_VERSION);
+            std::printf("Dab %s %s\n", tool, DAB_VERSION);
             return true;
         }
     }

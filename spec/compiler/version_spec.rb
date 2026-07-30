@@ -23,7 +23,7 @@ describe 'Dab compiler version' do
         stdin_data: 'ignored input'
       )
 
-      expect(stdout).to eq("Dab compiler 0.0.2\n")
+      expect(stdout).to eq("Dab compiler #{File.read(version_file).strip}\n")
       expect(stderr).to eq('')
       expect(status).to be_success
       expect(Dir.entries(directory) - %w[. ..]).to be_empty
