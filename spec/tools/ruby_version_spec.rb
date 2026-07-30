@@ -31,4 +31,19 @@ describe 'Dab Ruby tool versions' do
       end
     end
   end
+
+  it 'does not handle --version when the assembler is loaded without autorun' do
+    assembler = File.join(project_root, 'src/tobinary/tobinary.rb')
+    script = '$autorun = false; path = ARGV.shift; require path; puts "loaded"'
+    stdout, _stderr, status = Open3.capture3(
+      RbConfig.ruby,
+      '-e',
+      script,
+      assembler,
+      '--version'
+    )
+
+    expect(stdout).to eq("loaded\n")
+    expect(status).to be_success
+  end
 end
