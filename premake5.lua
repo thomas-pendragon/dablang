@@ -3,15 +3,31 @@ newoption {
   description = "Generate the dedicated Linux x86_64 AddressSanitizer build",
 }
 
+newoption {
+  trigger = "undefined-behavior-sanitizer",
+  description = "Generate the dedicated Linux x86_64 UndefinedBehaviorSanitizer build",
+}
+
 local address_sanitizer = _OPTIONS["address-sanitizer"] ~= nil
+local undefined_behavior_sanitizer = _OPTIONS["undefined-behavior-sanitizer"] ~= nil
+
+if address_sanitizer and undefined_behavior_sanitizer then
+  error("AddressSanitizer and UndefinedBehaviorSanitizer builds must be generated separately")
+end
 
 if address_sanitizer and os.target() ~= "linux" then
   error("the AddressSanitizer Premake configuration supports Linux only; the validation gate requires x86_64")
 end
 
+if undefined_behavior_sanitizer and os.target() ~= "linux" then
+  error("the UndefinedBehaviorSanitizer Premake configuration supports Linux only; the validation gate requires x86_64")
+end
+
 workspace "Dab"
-  location(address_sanitizer and "build/address-sanitizer" or "build")
-  configurations(address_sanitizer and { "ASan" } or { "Debug", "Release" })
+  location(address_sanitizer and "build/address-sanitizer" or
+           undefined_behavior_sanitizer and "build/undefined-behavior-sanitizer" or "build")
+  configurations(address_sanitizer and { "ASan" } or
+                 undefined_behavior_sanitizer and { "UBSan" } or { "Debug", "Release" })
 
 local version_file = assert(io.open("VERSION", "r"))
 local dab_version = assert(version_file:read("*l"))
@@ -24,7 +40,8 @@ function dab_common_setup(name, kindt, skip_shared)
   project(name)
     kind(kindt)
     language "C++"
-    targetdir(address_sanitizer and "bin/address-sanitizer/" or "bin/")
+    targetdir(address_sanitizer and "bin/address-sanitizer/" or
+              undefined_behavior_sanitizer and "bin/undefined-behavior-sanitizer/" or "bin/")
     cppdialect "C++11"    
 
     warnings "Extra"
@@ -54,6 +71,18 @@ function dab_common_setup(name, kindt, skip_shared)
         "-fno-optimize-sibling-calls",
       }
       linkoptions { "-fsanitize=address" }
+
+    filter "configurations:UBSan"
+      symbols "On"
+      optimize "Debug"
+      objdir "build/undefined-behavior-sanitizer/obj/%{cfg.buildcfg}/%{prj.name}"
+      buildoptions {
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-fno-optimize-sibling-calls",
+      }
+      linkoptions { "-fsanitize=undefined" }
 
     filter "action:xcode4"
       buildoptions "-stdlib=libc++"

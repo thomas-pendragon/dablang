@@ -86,7 +86,8 @@ Its Rake dependency builds the platform-native VM before two independent
 external compiler, assembler, and VM runs. The smoke uses its own stage limits;
 it does not alter the fixture harness limits above.
 
-The dedicated [AddressSanitizer validation](/address-sanitizer.html) remains an
-active manual and CI suite outside this ordinary complete gate. Keeping it in a
-single Linux x86_64 job avoids multiplying the native sanitizer build through
-the Ruby and operating-system matrix.
+The dedicated [AddressSanitizer validation](/address-sanitizer.html) and
+[UndefinedBehaviorSanitizer validation](/undefined-behavior-sanitizer.html)
+remain active manual and CI suites outside this ordinary complete gate. Each
+has one independent Linux x86_64 job and repository-root command. They are not
+combined or multiplied through the Ruby and operating-system matrix.

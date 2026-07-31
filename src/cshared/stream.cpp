@@ -29,8 +29,9 @@ std::string Stream::cstring_data(uint64_t address)
 
 uint64_t Stream::uint64_data(uint64_t address)
 {
-    auto ptr = buffer.data + address;
-    auto ret = *(uint64_t *)ptr;
+    auto     ptr = buffer.data + address;
+    uint64_t ret;
+    memcpy(&ret, ptr, sizeof(ret));
     return ret;
 }
 
@@ -43,8 +44,9 @@ uint8_t Stream::uint8_data(uint64_t address)
 
 uint16_t Stream::uint16_data(uint64_t address)
 {
-    auto ptr = buffer.data + address;
-    auto ret = *(uint16_t *)ptr;
+    auto     ptr = buffer.data + address;
+    uint16_t ret;
+    memcpy(&ret, ptr, sizeof(ret));
     return ret;
 }
 

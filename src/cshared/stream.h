@@ -216,7 +216,8 @@ struct Stream
     T _read()
     {
         assert(remaining() >= sizeof(T));
-        auto ret = *(T *)data();
+        T ret;
+        memcpy(&ret, data(), sizeof(ret));
         _position += sizeof(T);
         return ret;
     }

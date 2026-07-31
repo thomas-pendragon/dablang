@@ -27,6 +27,9 @@ The separate [AddressSanitizer profile](/address-sanitizer.html) narrows its
 supported environment further to Linux x86_64, GitHub-hosted `ubuntu-24.04`,
 and Clang 18. Its gate performs the additional exact compiler, build-layout,
 instrumentation, and runtime checks after this general preflight succeeds.
+The independent [UndefinedBehaviorSanitizer profile](/undefined-behavior-sanitizer.html)
+uses the same narrow host and compiler support claim, but has separate build
+state, instrumentation proof, canary, runtime contract, and blocking job.
 
 Success means that the environment and repository metadata match the supported
 contract. Failure reports all detected missing, unsupported, or drifted

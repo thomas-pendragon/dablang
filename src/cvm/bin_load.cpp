@@ -199,8 +199,6 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
                     (int)fun_index, symbol_str.c_str(), (void *)address, (int)class_index,
                     (int)method_length, (int)arg_count);
         }
-        auto data = (MethodArgData *)(input.raw_base_data() + ptr);
-
         ptr += arg_len * (arg_count + 1);
 
         bool is_static = flags == 1; // TODO!
@@ -220,7 +218,9 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
         auto &reflection = function.reflection;
         reflection.arg_names.resize(arg_count);
         reflection.arg_klasses.resize(arg_count);
-        reflection.ret_klass = data[arg_count].class_index;
+        MethodArgData return_data;
+        memcpy(&return_data, input.raw_base_data() + ptr - arg_len, sizeof(return_data));
+        reflection.ret_klass = return_data.class_index;
 
         if (options.verbose)
         {
@@ -230,8 +230,11 @@ void DabVM::read_functions_ex(Stream &input, uint64_t func_address, uint64_t fun
 
         for (size_t i = 0; i < arg_count; i++)
         {
-            auto klass                    = data[i].class_index;
-            auto name                     = get_symbol(data[i].symbol_index);
+            MethodArgData argument_data;
+            memcpy(&argument_data, input.raw_base_data() + ptr - arg_len * (arg_count + 1 - i),
+                   sizeof(argument_data));
+            auto klass                    = argument_data.class_index;
+            auto name                     = get_symbol(argument_data.symbol_index);
             auto arg_i                    = i;
             reflection.arg_klasses[arg_i] = klass;
             reflection.arg_names[arg_i]   = name;

@@ -260,6 +260,10 @@ describe Dab::ToolchainPreflight::Runner do
   it 'reports a structurally invalid manifest without raising' do
     profile_drift = JSON.parse(File.binread(File.join(project_root, 'config/supported_toolchain.json')))
     profile_drift.fetch('profiles').fetch('address_sanitizer')['unexpected'] = true
+    undefined_behavior_profile_drift = JSON.parse(
+      File.binread(File.join(project_root, 'config/supported_toolchain.json'))
+    )
+    undefined_behavior_profile_drift.fetch('profiles').fetch('undefined_behavior_sanitizer')['unexpected'] = true
     invalid_manifests = [
       {},
       {
@@ -271,6 +275,7 @@ describe Dab::ToolchainPreflight::Runner do
         'platforms' => [],
       },
       profile_drift,
+      undefined_behavior_profile_drift,
     ]
 
     invalid_manifests.each do |manifest|
