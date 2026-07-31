@@ -15,9 +15,9 @@ class DabExampleSpec
       begin
         qsystem(cmd, timeout: 10)
       rescue SystemCommandError => e
-        STDERR.puts
+        warn
         warn e.stderr
-        STDERR.puts
+        warn
         e.stdout = open(output).read
         FileUtils.rm(output)
         raise

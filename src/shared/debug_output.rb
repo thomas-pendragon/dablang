@@ -1,8 +1,10 @@
+require_relative 'test_output'
+
 def errn(str, *args)
   if args.count > 0
     str = sprintf(str, *args)
   end
-  STDERR.print(str)
+  DabTestOutput.emit(str)
 end
 
 def err(str, *args)

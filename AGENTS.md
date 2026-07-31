@@ -67,6 +67,9 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
   work, add the appropriate malformed-input or sanitizer proof.
 - Always run `git diff --check`. Documentation-only changes require Markdown
   link and structure review; they do not justify changing generated files.
+- Fixture and VM test output is concise by default. Use `DAB_TEST_VERBOSE=1`
+  when detailed successful-test compiler, assembler, VM, and diagnostic output
+  is needed; failures replay the captured per-test details automatically.
 
 ## Documentation and pull requests
 

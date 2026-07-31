@@ -1,6 +1,9 @@
+require_relative 'test_output'
+
 class SystemCommandError < RuntimeError
   attr_accessor :stderr
   attr_accessor :stdout
+  attr_accessor :exit_code
 
   def initialize(message, stderr)
     super(message)
@@ -86,10 +89,10 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
     ready.each do |fd|
       command.try_update(fd) do |line, is_stderr|
         if is_stderr
-          STDERR.print line if show_stderr
+          DabTestOutput.emit(line, stream: :stderr, display: :stderr) if show_stderr
           stderr += line
         else
-          STDERR.print line if show_stdout
+          DabTestOutput.emit(line, stream: :stdout, display: :stderr) if show_stdout
           stdout += line
         end
         data = true
@@ -118,16 +121,25 @@ def psystem(cmd)
 end
 
 def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, error_file: nil, binmode: false)
-  STDERR.print ' >> '.yellow
-  STDERR.print "timeout #{timeout} ".white if timeout
-  STDERR.print cmd.yellow
-  STDERR.print " < #{input_file}".white if input_file
-  STDERR.print " > #{output_file}".white if output_file
-  STDERR.print "\n"
+  DabTestOutput.emit(' >> '.yellow)
+  DabTestOutput.emit("timeout #{timeout} ".white) if timeout
+  DabTestOutput.emit(cmd.yellow)
+  DabTestOutput.emit(" < #{input_file}".white) if input_file
+  DabTestOutput.emit(" > #{output_file}".white) if output_file
+  DabTestOutput.emit("\n")
   ret = system_with_progress(cmd, input: input, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file, binmode: binmode)
+  DabTestOutput.record_command(cmd, exit_code: ret[:exit_code], stdout: ret[:stdout], stderr: ret[:stderr])
   unless ret[:exit_code] == 0
-    warn ret[:stderr].to_s.red
-    raise SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
+    DabTestOutput.emit("#{ret[:stderr].to_s.red}\n") unless DabTestOutput.current
+    error = SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
+    error.stdout = ret[:stdout]
+    status = ret[:exit_code]
+    error.exit_code = if status.respond_to?(:exitstatus)
+                        status.exitstatus || (status.signaled? ? 128 + status.termsig : 1)
+                      else
+                        status
+                      end
+    raise error
   end
   File.open(output_file, 'wb') { |file| file << ret[:stdout] } if output_file
   File.open(error_file, 'wb') { |file| file << ret[:stderr] } if error_file

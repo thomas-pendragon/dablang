@@ -32,3 +32,18 @@ your working tree.
 Use `bundle exec rake spec` for the Ruby RSpec suite alone. The inherited Dab
 fixture suite remains available as `bundle exec rake dab_fixture_spec` and is
 still part of both `bundle exec rake` and the complete validation gate.
+
+Fixture and VM tests keep successful output concise by default: each selected
+test reports a pass status and each suite reports a completion summary, while
+compiler, assembler, VM, and diagnostic details are retained for failures. To
+inspect the detailed output for successful tests, set the explicit opt-in
+environment variable:
+
+```shell
+DAB_TEST_VERBOSE=1 bundle exec rake dab_fixture_spec
+```
+
+Failure reports include the test identity, stage, command, exit status, and
+captured stdout/stderr. This is scoped to the test harness; setup, build, CI,
+warnings, selection, ordering, and command exit statuses remain visible and
+unchanged.
