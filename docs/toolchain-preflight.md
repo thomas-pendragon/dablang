@@ -1,0 +1,30 @@
+---
+layout: page
+title: Supported toolchain preflight
+---
+
+Run the fast, read-only supported-toolchain check from the repository root:
+
+```shell
+ruby script/toolchain_preflight.rb
+```
+
+The command accepts the currently tested x86_64 environments:
+
+| Platform | Ruby | Bundler | Premake | Build driver | Native compiler | Formatter |
+| --- | --- | --- | --- | --- | --- | --- |
+| Linux x86_64 | 3.3.12, 3.4.9, or 4.0.5 | 2.7.2 | 5.0.0-beta8 | Premake `gmake` and `make` | `g++` | `clang-format` |
+| macOS x86_64 | 3.3.12 | 2.7.2 | 5.0.0-beta8 | Premake `gmake` and `make` | `clang++` | Homebrew `llvm@18` `clang-format` in CI |
+| Windows x86_64 | 3.3.12 | 2.7.2 | 5.0.0-beta8 | Premake `gmake` and `make` | `g++` | `clang-format` |
+
+Premake can be selected with `PREMAKE`, and clang-format can be selected with
+`CLANG_FORMAT`. The preflight reports the resolved paths and detected versions.
+Compiler, `make`, and clang-format release numbers are reported but are not
+pinned because the current CI contract only proves their availability on the
+named runners.
+
+Success means that the environment and repository metadata match the supported
+contract. Failure reports all detected missing, unsupported, or drifted
+prerequisites before the build begins. The command does not install or download
+tools, modify or generate files, clean the checkout, build Dab, or run tests.
+The inherited build and test command remains a separate step.
