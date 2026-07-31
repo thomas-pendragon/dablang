@@ -58,9 +58,9 @@ class DabSpec
       begin
         qsystem(cmd, timeout: 10)
       rescue SystemCommandError => e
-        STDERR.puts
+        warn
         warn e.stderr
-        STDERR.puts
+        warn
         e.stdout = File.read(output)
         FileUtils.rm(output)
         raise

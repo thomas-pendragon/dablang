@@ -1,3 +1,5 @@
+require_relative 'test_output'
+
 $dab_benchmark_stack = []
 $dab_benchmark_data = {}
 
@@ -49,7 +51,7 @@ end
 def dab_benchmark_print!
   return unless $dab_benchmark_enabled
 
-  file = STDERR
+  file = DabTestOutput
   file.printf("  Calls   | %-120s |   Time    | Relative |  Total\n", 'Name')
   file.printf("----------+-%s-+-----------+----------+---------\n", '-' * 120)
   total = $dab_benchmark_data.map { |_, node| node[:time] }.reduce(&:+)

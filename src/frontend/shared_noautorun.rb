@@ -58,15 +58,19 @@ module BaseFrontend
 
   def describe_action(input, output, action)
     info = " * #{action}: #{input.to_s.blue.bold} -> #{output.blue.bold}..."
-    warn info.white
-    yield
-    warn "#{info.white} #{'[OK]'.green}"
+    DabTestOutput.with_action(action) do
+      warn info.white
+      yield
+      warn "#{info.white} #{'[OK]'.green}"
+    end
   end
 
   def describe_action_with_replacement(input, output, action, replacement)
-    describe_action(input, output, action) do
-      warn "~> #{replacement.yellow}"
-      yield
+    DabTestOutput.with_action(action, command: replacement) do
+      describe_action(input, output, action) do
+        warn "~> #{replacement.yellow}"
+        yield
+      end
     end
   end
 
@@ -87,9 +91,9 @@ module BaseFrontend
       begin
         qsystem(cmd, timeout: 30, output_file: output)
       rescue SystemCommandError => e
-        STDERR.puts
+        warn
         warn e.stderr
-        STDERR.puts
+        warn
         raise
       end
     end
@@ -148,7 +152,8 @@ module BaseFrontend
 
   def run_test(settings)
     @settings = settings
-    run(@settings)
+    identity = input || @settings[:output] || self.class.name
+    DabTestOutput.with_test(identity) { run(@settings) }
   end
 
   def input
@@ -202,9 +207,9 @@ def execute(input, output, run_options)
     begin
       qsystem(cmd, timeout: 10)
     rescue SystemCommandError => e
-      STDERR.puts
+      warn
       warn e.stderr
-      STDERR.puts
+      warn
       e.stdout = open(output).read
       FileUtils.rm(output)
       raise

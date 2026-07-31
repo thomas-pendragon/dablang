@@ -224,7 +224,9 @@ def setup_tests(directory, extension = 'test', frontend_type = nil, extras = [],
       end
     end
   end
-  task test_name.to_sym => outputs
+  task test_name.to_sym => outputs do
+    DabTestOutput.summary(test_name, outputs.length)
+  end
   task "#{test_name}_reverse": outputs.reverse
 end
 
