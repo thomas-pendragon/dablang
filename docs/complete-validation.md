@@ -11,15 +11,21 @@ ruby script/complete_gate.rb
 
 The command runs these stages once and in this order:
 
-1. supported-toolchain preflight;
-2. the inherited `bundle exec rake` build, fixture-test, and documentation
+1. read-only [test suite manifest validation](/test-suite-manifest.html);
+2. supported-toolchain preflight;
+3. the inherited `bundle exec rake` build, fixture-test, and documentation
    gate, without omitting any of its current tasks; and
-3. the Ruby RSpec suite (`bundle exec rspec`).
+4. the Ruby RSpec suite (`bundle exec rspec`).
 
 Each stage is announced before it runs. Failures stop the command immediately,
 preserve the failing stage's exit code, and leave its diagnostics visible. The
 CI workflow invokes this one entrypoint for every Linux, macOS, and Windows
 run.
+
+The manifest validator runs before the preflight and expensive validation. Use
+`bundle exec ruby script/test_suite_manifest.rb` to run that topology check by
+itself. After it succeeds, the preflight, inherited Rake gate, and RSpec suite
+keep their existing order and one-run behavior.
 
 The command supports the same Linux, macOS, and Windows environments as the
 preflight. Set `PREMAKE` and `CLANG_FORMAT` when the supported tools are not on
