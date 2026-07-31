@@ -1,4 +1,3 @@
-require 'English'
 require 'digest'
 require 'fileutils'
 require 'json'

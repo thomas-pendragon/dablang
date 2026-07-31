@@ -77,6 +77,25 @@ describe Dab::LegacySourceVmSmoke::Runner do
     [runner.run, executor]
   end
 
+  def run_with_contract(contents)
+    Dir.mktmpdir('dab-legacy-smoke-contract-spec') do |contract_root|
+      contract_directory = File.join(contract_root, 'test/legacy_source_vm_smoke')
+      FileUtils.mkdir_p(contract_directory)
+      File.binwrite(File.join(contract_directory, 'contract.json'), contents)
+      contract_error = StringIO.new
+      executor = LegacySourceVmSmokeSpecSupport::FakeExecutor.new([])
+      runner = described_class.new(
+        root: contract_root,
+        executor: executor,
+        commands: LegacySourceVmSmokeSpecSupport::FakeCommands.new,
+        output: StringIO.new,
+        error: contract_error
+      )
+
+      return runner.run, executor, contract_error.string
+    end
+  end
+
   it 'runs compiler, assembler, and native VM twice and accepts byte-identical portable bytecode' do
     status, executor = run_with(successful_results)
 
@@ -201,6 +220,50 @@ describe Dab::LegacySourceVmSmoke::Runner do
     expect(error.string).to include('FAILED during runtime stderr contract')
     expect(error.string).to include('run 1 "vm diagnostics"')
     expect(error.string).to include('run 2 "different diagnostics"')
+  end
+
+  it 'fails closed before execution when the contract contains malformed JSON' do
+    status, executor, contract_error = run_with_contract('{')
+
+    expect(status).to eq(1)
+    expect(executor.calls).to be_empty
+    expect(contract_error).to include('FAILED during smoke setup: JSON::ParserError')
+  end
+
+  it 'fails closed before execution when the contract has missing or extra fields' do
+    contracts = [
+      '{"stdout":"expected","stderr":"identical-across-runs"}',
+      '{"stdout":"expected","stderr":"identical-across-runs","exit_status":0,"extra":true}',
+    ]
+
+    contracts.each do |contract|
+      status, executor, contract_error = run_with_contract(contract)
+
+      expect(status).to eq(1)
+      expect(executor.calls).to be_empty
+      expect(contract_error).to include('FAILED during smoke setup: KeyError')
+      expect(contract_error).to include('contract fields must be exit_status, stderr, stdout')
+    end
+  end
+
+  it 'fails closed before execution when contract values have invalid types or values' do
+    contracts = {
+      '{"stdout":42,"stderr":"identical-across-runs","exit_status":0}' =>
+        'contract stdout must be a string',
+      '{"stdout":"expected","stderr":"ignored","exit_status":0}' =>
+        'contract stderr must be identical-across-runs',
+      '{"stdout":"expected","stderr":"identical-across-runs","exit_status":"0"}' =>
+        'contract exit_status must be an integer',
+    }
+
+    contracts.each do |contract, diagnostic|
+      status, executor, contract_error = run_with_contract(contract)
+
+      expect(status).to eq(1)
+      expect(executor.calls).to be_empty
+      expect(contract_error).to include('FAILED during smoke setup: TypeError')
+      expect(contract_error).to include(diagnostic)
+    end
   end
 end
 
