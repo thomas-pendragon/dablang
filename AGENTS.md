@@ -54,8 +54,8 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 
 ## Build and test guidance
 
-- Read `Rakefile` before assuming a task name. `rake spec` is an alias for the
-  Dab fixture task, not the Ruby RSpec suite.
+- Read `Rakefile` before assuming a task name. `rake spec` runs the Ruby RSpec
+  suite; `rake dab_fixture_spec` runs the inherited Dab fixture suite.
 - The default `bundle exec rake` generates tracked documentation with `Last
   revised` dates. Run it in a disposable worktree, inspect resulting changes,
   and never commit generated churn unless the task specifically requires it.

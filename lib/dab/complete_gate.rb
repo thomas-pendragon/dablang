@@ -28,6 +28,12 @@ module Dab
     class Runner
       PREFLIGHT_COMMAND = %w[ruby script/toolchain_preflight.rb].freeze
       INHERITED_GATE_COMMAND = %w[bundle exec rake].freeze
+      RSPEC_COMMAND = %w[bundle exec rspec].freeze
+      STAGES = [
+        ['supported toolchain preflight', PREFLIGHT_COMMAND],
+        ['inherited build, test, and documentation gate', INHERITED_GATE_COMMAND],
+        ['Ruby RSpec suite', RSPEC_COMMAND],
+      ].freeze
 
       def initialize(root:, executor: SystemExecutor.new, output: $stdout, error: $stderr)
         @root = root
@@ -37,11 +43,8 @@ module Dab
       end
 
       def run
-        unless run_stage('supported toolchain preflight', PREFLIGHT_COMMAND)
-          return failure('supported toolchain preflight', PREFLIGHT_COMMAND)
-        end
-        unless run_stage('inherited build, test, and documentation gate', INHERITED_GATE_COMMAND)
-          return failure('inherited build, test, and documentation gate', INHERITED_GATE_COMMAND)
+        STAGES.each do |name, command|
+          return failure(name, command) unless run_stage(name, command)
         end
 
         announce(@output, 'complete validation gate: PASSED')
