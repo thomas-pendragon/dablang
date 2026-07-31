@@ -11,7 +11,17 @@ module Dab
     class SystemExecutor
       def call(command, chdir:)
         success = system(*command, chdir: chdir)
-        CommandResult.new(success, $CHILD_STATUS.exitstatus || 1)
+        status = $CHILD_STATUS
+        exit_code = status&.exitstatus || signal_exit_code(status) || 1
+        CommandResult.new(success, exit_code)
+      end
+
+    private
+
+      def signal_exit_code(status)
+        return unless status&.signaled?
+
+        128 + status.termsig
       end
     end
 

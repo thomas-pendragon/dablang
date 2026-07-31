@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 require 'stringio'
+require 'rbconfig'
 
 require_relative '../lib/dab/complete_gate'
 
@@ -73,6 +74,27 @@ describe Dab::CompleteGate::Runner do
     expect(status).to eq(9)
     expect(executor.commands.last.first).to eq(%w[bundle exec rake])
     expect(error.string).to include('FAILED during inherited build, test, and documentation gate (bundle exec rake)')
+  end
+end
+
+describe Dab::CompleteGate::SystemExecutor do
+  let(:root) { File.expand_path('..', __dir__) }
+
+  it 'returns a nonzero status when a command cannot be executed' do
+    result = described_class.new.call(['dab-command-that-does-not-exist'], chdir: root)
+
+    expect(result).not_to be_success
+    expect(result.exit_code).to be > 0
+  end
+
+  it 'maps a signal-terminated command to its conventional exit status' do
+    result = described_class.new.call(
+      [RbConfig.ruby, '-e', 'Process.kill("TERM", Process.pid)'],
+      chdir: root
+    )
+
+    expect(result).not_to be_success
+    expect(result.exit_code).to eq(143)
   end
 end
 
