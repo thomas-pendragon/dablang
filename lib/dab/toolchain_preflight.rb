@@ -390,6 +390,7 @@ module Dab
         expected_jobs = @contract.platforms.values.map { |platform| platform.fetch('ci').fetch('job') }
         expected_jobs << @contract.address_sanitizer.fetch('ci').fetch('job')
         expected_jobs << @contract.undefined_behavior_sanitizer.fetch('ci').fetch('job')
+        expected_jobs << 'public-site'
         expected_jobs.sort!
         errors << 'CI jobs drifted from the supported-toolchain manifest' unless jobs.keys.sort == expected_jobs
       end

@@ -1,0 +1,26 @@
+---
+layout: page
+title: Public site publication contract
+---
+
+# Public site publication contract
+
+`docs/_data/public_site.yml` classifies every documentation page as a public
+product page, a public reference page, or a repository-only page. The same
+manifest defines the ordered top-level navigation. Repository-only pages stay
+tracked in `docs/`, but `docs/_config.yml` excludes them from the Jekyll build.
+
+From a clean checkout, install the repository-pinned documentation bundle and
+run the public-site validation from the repository root:
+
+```shell
+BUNDLE_GEMFILE=docs/Gemfile bundle install
+BUNDLE_GEMFILE=docs/Gemfile bundle exec ruby script/public_site.rb
+```
+
+The validator rejects unclassified documentation pages, unsafe or duplicate
+navigation targets, publication/exclusion drift, generated-documentation
+ownership drift, and canonical-domain or CNAME changes. It builds the site in
+a disposable directory and checks the expected output, navigation, canonical
+URLs, and local links. It does not write `docs/_site` or any tracked generated
+documentation.

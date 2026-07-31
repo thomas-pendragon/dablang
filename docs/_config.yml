@@ -30,3 +30,12 @@ gems:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - address-sanitizer.md
+  - complete-validation.md
+  - design
+  - governance
+  - legacy-source-vm-smoke.md
+  - public-site.md
+  - test-suite-manifest.md
+  - toolchain-preflight.md
+  - undefined-behavior-sanitizer.md
