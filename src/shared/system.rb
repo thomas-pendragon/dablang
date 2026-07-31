@@ -54,7 +54,10 @@ class SystemRunCommand
 
     data = fd.read_nonblock(1024)
     yield(data, fd == @stderr) unless data.empty?
-  rescue IO::WaitReadable, EOFError
+  rescue IO::WaitReadable
+    nil
+  rescue EOFError
+    fd.close
     nil
   end
 
@@ -248,13 +251,13 @@ def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, er
   unless ret[:exit_code] == 0
     DabTestOutput.emit("#{ret[:stderr].to_s.red}\n") unless DabTestOutput.current
     message = if ret[:timed_out]
-                "Command timed out after #{timeout} seconds: #{cmd}"
+                "Command timed out after #{ret[:timeout]} seconds: #{cmd}"
               else
                 "Error during executing #{cmd}"
               end
     error = SystemCommandError.new(message, ret[:stderr])
     error.stdout = ret[:stdout]
-    error.timeout = timeout if ret[:timed_out]
+    error.timeout = ret[:timeout] if ret[:timed_out]
     status = ret[:exit_code]
     error.exit_code = if status.respond_to?(:exitstatus)
                         status.exitstatus || (status.signaled? ? 128 + status.termsig : 1)
