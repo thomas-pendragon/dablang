@@ -68,6 +68,21 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
+  it 'detects an additional workflow trigger' do
+    with_contract_repository(project_root) do |root, contract|
+      workflow_path = File.join(root, '.github/workflows/ruby.yml')
+      workflow = File.read(workflow_path).sub(
+        "    branches: [master]\n",
+        "    branches: [master]\n  workflow_dispatch:\n"
+      )
+      File.write(workflow_path, workflow)
+
+      errors = described_class.new(root: root, contract: contract).errors
+
+      expect(errors).to include('CI trigger drifted; keep the workflow pull-request-only for master')
+    end
+  end
+
   it 'detects Rake tool-selection drift' do
     with_contract_repository(project_root) do |root, contract|
       rakefile_path = File.join(root, 'Rakefile')

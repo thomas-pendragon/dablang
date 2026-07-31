@@ -7,11 +7,15 @@ require_relative '../lib/dab/toolchain_preflight'
 
 module ToolchainPreflightSpecSupport
   class FakeToolchainProbe
+    attr_reader :captures
+
     def initialize(results)
       @results = results
+      @captures = []
     end
 
-    def capture(command, *_arguments)
+    def capture(command, *arguments)
+      captures << [command, arguments]
       @results.fetch(command) do
         Dab::ToolchainPreflight::CommandResult.new(command, nil, '', '', false)
       end
@@ -143,16 +147,26 @@ describe Dab::ToolchainPreflight::Runner do
 
   it 'rejects an unsupported Ruby without skipping other probes' do
     platform = contract.platforms.fetch('macos-x86_64')
+    probe = successful_probe(contract, platform)
     result = runner(
       contract: contract,
       platform_name: 'macos-x86_64',
       ruby_version: '0.0.0',
-      probe: successful_probe(contract, platform)
+      probe: probe
     ).run
 
     expect(result).not_to be_success
     expect(result.errors).to include("unsupported Ruby 0.0.0 for macos-x86_64; use #{platform.fetch('ruby_versions').join(' or ')}")
     expect(result.errors.length).to eq(1)
+    expect(probe.captures).to eq(
+      [
+        ['bundle', ['--version']],
+        [platform.fetch('premake_command'), ['--version']],
+        [platform.fetch('build_driver'), ['--version']],
+        [platform.fetch('compiler'), ['--version']],
+        [platform.fetch('clang_format'), ['--version']],
+      ]
+    )
   end
 
   it 'rejects unsupported operating systems and architectures' do

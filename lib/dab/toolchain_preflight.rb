@@ -201,7 +201,9 @@ module Dab
       end
 
       def check_workflow_guards(errors, workflow_text, workflow, jobs)
-        unless workflow_text[/^on:\s*\n\s+pull_request:\s*\n\s+branches:\s+\[master\]\s*$/]
+        trigger_block = workflow_text[/^on:\n(?:[ \t].*(?:\n|\z))*/]
+        expected_trigger_block = "on:\n  pull_request:\n    branches: [master]\n"
+        unless trigger_block == expected_trigger_block
           errors << 'CI trigger drifted; keep the workflow pull-request-only for master'
         end
 
