@@ -37,7 +37,9 @@ describe 'tracked generated documentation' do
     source = File.join(root, 'src/shared/classes.rb')
     original_stat = File.stat(source)
     generated_paths = [File.join(root, 'docs/classes.md')] + Dir[File.join(root, 'docs/classes/*.md')].sort
-    tracked_outputs = generated_paths.to_h { |path| [path, File.binread(path)] }
+    tracked_outputs = generated_paths.to_h do |path|
+      [path, normalize_newlines(File.binread(path))]
+    end
 
     begin
       _first_stdout, first_stderr, first_status = run_generator('tasks/classes_docs.rb')
@@ -46,7 +48,10 @@ describe 'tracked generated documentation' do
 
       expect(first_status).to be_success, first_stderr
       expect(second_status).to be_success, second_stderr
-      expect(generated_paths.to_h { |path| [path, File.binread(path)] }).to eq(tracked_outputs)
+      regenerated_outputs = generated_paths.to_h do |path|
+        [path, normalize_newlines(File.binread(path))]
+      end
+      expect(regenerated_outputs).to eq(tracked_outputs)
     ensure
       File.utime(original_stat.atime, original_stat.mtime, source)
     end
