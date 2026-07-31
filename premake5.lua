@@ -20,7 +20,7 @@ if address_sanitizer and os.target() ~= "linux" then
 end
 
 if undefined_behavior_sanitizer and os.target() ~= "linux" then
-  error("the UndefinedBehaviorSanitizer Premake configuration supports Linux only; the validation gate requires x86_64")
+  error("the UndefinedBehaviorSanitizer Premake configuration supports Linux only; the validation gate checks x86_64 separately")
 end
 
 workspace "Dab"

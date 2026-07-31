@@ -103,6 +103,10 @@ describe Dab::UndefinedBehaviorSanitizerGate::Runner do
     expect(profile.fetch('link_flags')).to eq(['-fsanitize=undefined'])
     expect(premake).to include('fatalwarnings "All"')
     expect(premake).to include('filter "configurations:UBSan"')
+    expect(premake).to include(
+      'the UndefinedBehaviorSanitizer Premake configuration supports Linux only; ' \
+      'the validation gate checks x86_64 separately'
+    )
   end
 
   it 'keeps normal, AddressSanitizer, and UndefinedBehaviorSanitizer state isolated' do
