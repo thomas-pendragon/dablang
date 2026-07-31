@@ -11,6 +11,11 @@ describe 'test harness subprocess timeouts' do
   let(:ruby) { RbConfig.ruby }
 
   def ruby_command(script, *arguments)
+    if OS.windows?
+      command = [ruby, '-e', script, *arguments]
+      return command.map { |part| "\"#{part.to_s.gsub('"', '\\\"')}\"" }.join(' ')
+    end
+
     [ruby, '-e', script, *arguments].shelljoin
   end
 
