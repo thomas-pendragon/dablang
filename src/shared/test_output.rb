@@ -57,13 +57,15 @@ module DabTestOutput
       @error = error
       @verbose = verbose
       @events = []
+      @captured_streams = Hash.new { |streams, stream| streams[stream] = '' }
       @actions = []
       @commands = []
-      @current_action = nil
+      @action_stack = []
     end
 
     def capture(text, stream:, display: stream)
       @events << [stream, display, text]
+      @captured_streams[stream] << text.to_s
       return unless @verbose
 
       destination(display).write(text)
@@ -74,17 +76,18 @@ module DabTestOutput
     end
 
     def start_action(stage, command: nil)
-      @current_action = stage.to_s
-      @actions << {stage: @current_action, command: command}
+      stage = stage.to_s
+      @action_stack << stage
+      @actions << {stage: stage, command: command}
     end
 
     def finish_action
-      @current_action = nil
+      @action_stack.pop
     end
 
     def record_command(command, exit_code:, stdout:, stderr:)
       @commands << {
-        stage: @current_action || 'unknown',
+        stage: current_action || 'unknown',
         command: command.to_s,
         exit_code: normalize_exit_code(exit_code),
         stdout: stdout.to_s,
@@ -148,8 +151,11 @@ module DabTestOutput
     end
 
     def captured?(stream, text)
-      captured = @events.filter_map { |event_stream, _display, event_text| event_text if event_stream == stream }.join
-      captured.include?(text)
+      @captured_streams.fetch(stream, '').include?(text)
+    end
+
+    def current_action
+      @action_stack.last
     end
   end
 
