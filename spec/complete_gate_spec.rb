@@ -110,14 +110,18 @@ describe Dab::CompleteGate::SystemExecutor do
     expect(result.exit_code).to be > 0
   end
 
-  it 'maps a signal-terminated command to its conventional exit status' do
+  it 'returns a nonzero status for a terminated command on every supported platform' do
     result = described_class.new.call(
       [RbConfig.ruby, '-e', 'Process.kill("TERM", Process.pid)'],
       chdir: root
     )
 
     expect(result).not_to be_success
-    expect(result.exit_code).to eq(143)
+    if Gem.win_platform?
+      expect(result.exit_code).to be > 0
+    else
+      expect(result.exit_code).to eq(143)
+    end
   end
 end
 
