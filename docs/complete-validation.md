@@ -25,9 +25,21 @@ The command supports the same Linux, macOS, and Windows environments as the
 preflight. Set `PREMAKE` and `CLANG_FORMAT` when the supported tools are not on
 `PATH`, as described in the [supported toolchain preflight](/toolchain-preflight.html).
 
-The inherited Rake gate can regenerate tracked documentation. Run the complete
-gate in a disposable checkout when those generated-file changes must not affect
-your working tree.
+The inherited Rake gate owns `docs/vm/opcodes.md`, `docs/classes.md`, and every
+page under `docs/classes/`. These generated files do not embed checkout time or
+revision metadata, so their contents depend only on their source definitions.
+The complete gate rejects pre-existing tracked changes to these paths before
+preflight, then checks after each successful stage that validation did not
+change them. A failure lists every changed generated-documentation path in
+deterministic order. Untracked build artifacts and tracked files outside these
+owned paths are ignored by this check.
+
+A clean checkout with current generated documentation can therefore run the
+complete gate in place. When an intentional source or generator change updates
+the owned documentation, regenerate and review the outputs, commit them with
+the source change, and rerun the complete gate. A failing build, test, or
+documentation stage keeps its original nonzero exit status even if it also
+changes generated documentation.
 
 Use `bundle exec rake spec` for the Ruby RSpec suite alone. The inherited Dab
 fixture suite remains available as `bundle exec rake dab_fixture_spec` and is
