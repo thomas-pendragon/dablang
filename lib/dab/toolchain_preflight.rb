@@ -13,6 +13,10 @@ module Dab
     end
 
     class Contract
+      TOP_LEVEL_STRINGS = %w[default_ruby_version bundler_version premake_version premake_action].freeze
+      PLATFORM_STRINGS = %w[os architecture premake_command build_driver compiler clang_format].freeze
+      CI_STRINGS = %w[job runner ruby_setup premake_command premake_asset].freeze
+
       attr_reader :data
 
       def self.load(path)
@@ -47,6 +51,31 @@ module Dab
         platforms.values.find do |candidate|
           candidate.fetch('os') == os && candidate.fetch('architecture') == architecture
         end
+      end
+
+      def valid_structure?
+        return false unless data.is_a?(Hash) && data['schema_version'].is_a?(Integer)
+        return false unless TOP_LEVEL_STRINGS.all? { |key| data[key].is_a?(String) }
+
+        supported_platforms = data['platforms']
+        return false unless supported_platforms.is_a?(Hash) && !supported_platforms.empty?
+
+        supported_platforms.all? { |name, candidate| name.is_a?(String) && valid_platform?(candidate) }
+      end
+
+    private
+
+      def valid_platform?(candidate)
+        return false unless candidate.is_a?(Hash)
+        return false unless PLATFORM_STRINGS.all? { |key| candidate[key].is_a?(String) }
+
+        ruby_versions = candidate['ruby_versions']
+        return false unless ruby_versions.is_a?(Array) && !ruby_versions.empty?
+        return false unless ruby_versions.all? { |version| version.is_a?(String) }
+
+        ci = candidate['ci']
+        ci.is_a?(Hash) && CI_STRINGS.all? { |key| ci[key].is_a?(String) } &&
+          (!ci.key?('clang_format') || ci['clang_format'].is_a?(String))
       end
     end
 
@@ -381,7 +410,12 @@ module Dab
         return [contract, nil] if contract
 
         path = File.join(@root, 'config/supported_toolchain.json')
-        [Contract.load(path), nil]
+        loaded_contract = Contract.load(path)
+        unless loaded_contract.valid_structure?
+          return [nil, 'config/supported_toolchain.json does not match the required structure; restore it from the repository']
+        end
+
+        [loaded_contract, nil]
       rescue Errno::ENOENT
         [nil, 'config/supported_toolchain.json is missing; restore it from the repository']
       rescue Errno::EACCES, IOError

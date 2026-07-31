@@ -256,4 +256,40 @@ describe Dab::ToolchainPreflight::Runner do
       )
     end
   end
+
+  it 'reports a structurally invalid manifest without raising' do
+    invalid_manifests = [
+      {},
+      {
+        'schema_version' => 1,
+        'default_ruby_version' => '3.3.12',
+        'bundler_version' => '2.7.2',
+        'premake_version' => '5.0.0-beta8',
+        'premake_action' => 'gmake',
+        'platforms' => [],
+      },
+    ]
+
+    invalid_manifests.each do |manifest|
+      Dir.mktmpdir('dab-invalid-toolchain-structure') do |root|
+        FileUtils.mkdir_p(File.join(root, 'config'))
+        File.write(File.join(root, 'config/supported_toolchain.json'), JSON.generate(manifest))
+
+        result = described_class.new(
+          root: root,
+          probe: ToolchainPreflightSpecSupport::FakeToolchainProbe.new({}),
+          environment: {},
+          host_os: 'linux',
+          host_cpu: 'x86_64',
+          ruby_version: RUBY_VERSION
+        ).run
+
+        expect(result).not_to be_success
+        expect(result.output).to eq(
+          "supported-toolchain preflight: FAILED\n" \
+          "- config/supported_toolchain.json does not match the required structure; restore it from the repository\n"
+        )
+      end
+    end
+  end
 end
