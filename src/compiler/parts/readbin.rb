@@ -96,13 +96,15 @@ private
     offset = 0
     ret = []
     while offset < clas.length
-      return nil if clas.length - offset < 8
+      return nil if clas.length - offset < 8 && ret.empty?
+      raise ArgumentError.new('truncated class table') if clas.length - offset < 8
 
       data = clas.unpack("@#{offset}S<S<S<S<")
       offset += 8
       klass = %i[index parent_index symbol templateargsn].zip(data).to_h
       templateargs_length = klass[:templateargsn] * 2
-      return nil if clas.length - offset < templateargs_length
+      return nil if clas.length - offset < templateargs_length && ret.empty?
+      raise ArgumentError.new('truncated class table') if clas.length - offset < templateargs_length
 
       templateargs = Array.new(klass[:templateargsn]) do
         value = clas.unpack("@#{offset}S<").first

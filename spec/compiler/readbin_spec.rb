@@ -198,6 +198,13 @@ describe DabBinReader, readbin: true do
       .to raise_error(ArgumentError, 'truncated class table')
   end
 
+  it 'rejects a class table truncated after a current-format record' do
+    clas = parse_bin('00 01 00 00 00 00 00 00  01 01 00 00')
+
+    expect { DabBinReader.new.parse_klasses(clas, ['CurrentClass']) }
+      .to raise_error(ArgumentError, 'truncated class table')
+  end
+
   xit 'parses extended functions' do
     symbols = ['!', '!=', '+', '-', '==', '[]', 'a', 'b', 'count', 'each', 'each_with_index', 'first',
                'foo', 'is', 'last', 'length', 'main', 'other', 'puts', 'string', 'to_bool']
