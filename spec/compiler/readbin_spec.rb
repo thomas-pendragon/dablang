@@ -153,7 +153,6 @@ describe DabBinReader, readbin: true do
   end
 
   it 'parses klasses' do
-    pending('Known parser behavior is deferred to Original roadmap item 6 / Dab 0.0.7; this example must fail until that focused compatibility decision and fix land.')
     symbols = ['!', '!=', '%', '&', '*', '+', '-', '/', '<', '==', '>', '>>', 'SDL_CreateRenderer',
                'SDL_CreateWindow', 'SDL_Delay', 'SDL_GetPerformanceCounter', 'SDL_GetPerformanceFrequency',
                'SDL_Init', 'SDL_PollEvent', 'SDL_RenderClear', 'SDL_RenderDrawLine', 'SDL_RenderPresent',
@@ -171,6 +170,32 @@ describe DabBinReader, readbin: true do
     ]
 
     expect(result).to eq(expected)
+  end
+
+  it 'parses class records with template arguments' do
+    symbols = ['TemplateClass']
+    clas = parse_bin('00 01 00 00 00 00 02 00  07 00 08 00')
+
+    result = DabBinReader.new.parse_klasses(clas, symbols)
+
+    expect(result).to eq(
+      [{index: 256, parent_index: 0, symbol: 'TemplateClass', templateargs: [7, 8]}]
+    )
+  end
+
+  it 'parses current class records without template arguments' do
+    clas = parse_bin('00 01 00 00 00 00 00 00')
+
+    expect(DabBinReader.new.parse_klasses(clas, ['CurrentClass'])).to eq(
+      [{index: 256, parent_index: 0, symbol: 'CurrentClass'}]
+    )
+  end
+
+  it 'rejects a truncated class record' do
+    clas = parse_bin('00 01 00 00 00 00 01')
+
+    expect { DabBinReader.new.parse_klasses(clas, ['TemplateClass']) }
+      .to raise_error(ArgumentError, 'truncated class table')
   end
 
   xit 'parses extended functions' do
