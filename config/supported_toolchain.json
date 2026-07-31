@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "default_ruby_version": "3.3.12",
+  "bundler_version": "2.7.2",
+  "premake_version": "5.0.0-beta8",
+  "premake_action": "gmake",
+  "platforms": {
+    "linux-x86_64": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "ruby_versions": ["3.3.12", "3.4.9", "4.0.5"],
+      "premake_command": "premake5",
+      "build_driver": "make",
+      "compiler": "g++",
+      "clang_format": "clang-format",
+      "ci": {
+        "job": "test",
+        "runner": "ubuntu-latest",
+        "ruby_setup": "${{ matrix.ruby-version }}",
+        "premake_command": "./premake5",
+        "premake_asset": "premake-5.0.0-beta8-linux.tar.gz"
+      }
+    },
+    "macos-x86_64": {
+      "os": "macos",
+      "architecture": "x86_64",
+      "ruby_versions": ["3.3.12"],
+      "premake_command": "premake5",
+      "build_driver": "make",
+      "compiler": "clang++",
+      "clang_format": "clang-format",
+      "ci": {
+        "job": "test-macos",
+        "runner": "macos-15-intel",
+        "ruby_setup": "3.3.12",
+        "premake_command": "./premake5",
+        "premake_asset": "premake-5.0.0-beta8-macosx-x64.tar.gz",
+        "clang_format": "$(brew --prefix llvm@18)/bin/clang-format"
+      }
+    },
+    "windows-x86_64": {
+      "os": "windows",
+      "architecture": "x86_64",
+      "ruby_versions": ["3.3.12"],
+      "premake_command": "premake5",
+      "build_driver": "make",
+      "compiler": "g++",
+      "clang_format": "clang-format",
+      "ci": {
+        "job": "test-windows",
+        "runner": "windows-latest",
+        "ruby_setup": "3.3.12",
+        "premake_command": ".\\premake5.exe",
+        "premake_asset": "premake-5.0.0-beta8-windows.zip"
+      }
+    }
+  }
+}

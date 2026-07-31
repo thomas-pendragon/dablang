@@ -7,6 +7,7 @@ Dab is an experimental, highly optimised dynamic language, It is still a very ea
 
  - [Purpose of the language](/design/language-purpose.html)
  - [Building](/building.html)
+ - [Supported toolchain preflight](/toolchain-preflight.html)
  - [Examples](/examples.html)
  - [Type system](/design/type-system.html)
  - [Concretify](/design/concretify.html)
