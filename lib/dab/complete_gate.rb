@@ -34,6 +34,10 @@ module Dab
         end
 
         normalize_paths(output.split("\0"))
+      rescue SystemCallError => e
+        raise GeneratedDocumentationInspectionError.new(
+          "git diff could not be executed: #{e.message}"
+        )
       end
 
     private

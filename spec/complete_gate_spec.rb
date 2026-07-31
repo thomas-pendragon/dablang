@@ -263,6 +263,16 @@ describe Dab::CompleteGate::GeneratedDocumentation do
 
     expect(described_class.new(root: repository).changed_paths).to be_empty
   end
+
+  it 'reports a closed inspection failure when Git cannot be executed' do
+    allow(Open3).to receive(:capture3).and_raise(Errno::ENOENT, 'git')
+
+    expect { described_class.new(root: repository).changed_paths }
+      .to raise_error(
+        Dab::CompleteGate::GeneratedDocumentationInspectionError,
+        /git diff could not be executed:.*git/
+      )
+  end
 end
 
 describe Dab::CompleteGate::SystemExecutor do
