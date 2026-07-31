@@ -94,4 +94,34 @@ describe Dab::ToolchainPreflight::RepositoryContract do
       expect(errors).to include("Rakefile must default TOOLSET to #{contract.premake_action}")
     end
   end
+
+  it 'reports every missing repository contract input' do
+    with_contract_repository(project_root) do |root, contract|
+      FileUtils.rm(File.join(root, '.ruby-version'))
+      FileUtils.rm(File.join(root, 'Gemfile.lock'))
+      FileUtils.rm(File.join(root, 'Rakefile'))
+      FileUtils.rm(File.join(root, '.github/workflows/ruby.yml'))
+
+      errors = described_class.new(root: root, contract: contract).errors
+
+      expect(errors).to eq(
+        [
+          '.ruby-version is missing; restore it from the repository',
+          'Gemfile.lock is missing; restore it from the repository',
+          'Rakefile is missing; restore it from the repository',
+          '.github/workflows/ruby.yml is missing; restore it from the repository',
+        ]
+      )
+    end
+  end
+
+  it 'attributes invalid YAML to the workflow' do
+    with_contract_repository(project_root) do |root, contract|
+      File.write(File.join(root, '.github/workflows/ruby.yml'), "jobs: [\n")
+
+      errors = described_class.new(root: root, contract: contract).errors
+
+      expect(errors).to include('.github/workflows/ruby.yml is invalid YAML; fix its syntax')
+    end
+  end
 end

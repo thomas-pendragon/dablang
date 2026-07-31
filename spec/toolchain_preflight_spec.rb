@@ -217,4 +217,43 @@ describe Dab::ToolchainPreflight::Runner do
     after = before.map { |path, _digest| [path, Digest::SHA256.file(path).hexdigest] }
     expect(after).to eq(before)
   end
+
+  it 'reports a missing manifest without raising' do
+    Dir.mktmpdir('dab-missing-toolchain-manifest') do |root|
+      result = described_class.new(
+        root: root,
+        probe: ToolchainPreflightSpecSupport::FakeToolchainProbe.new({}),
+        environment: {},
+        host_os: 'linux',
+        host_cpu: 'x86_64',
+        ruby_version: RUBY_VERSION
+      ).run
+
+      expect(result).not_to be_success
+      expect(result.errors).to eq(
+        ['config/supported_toolchain.json is missing; restore it from the repository']
+      )
+    end
+  end
+
+  it 'reports an invalid manifest without raising' do
+    Dir.mktmpdir('dab-invalid-toolchain-manifest') do |root|
+      FileUtils.mkdir_p(File.join(root, 'config'))
+      File.write(File.join(root, 'config/supported_toolchain.json'), '{')
+
+      result = described_class.new(
+        root: root,
+        probe: ToolchainPreflightSpecSupport::FakeToolchainProbe.new({}),
+        environment: {},
+        host_os: 'linux',
+        host_cpu: 'x86_64',
+        ruby_version: RUBY_VERSION
+      ).run
+
+      expect(result).not_to be_success
+      expect(result.errors).to eq(
+        ['config/supported_toolchain.json is invalid JSON; fix its syntax']
+      )
+    end
+  end
 end

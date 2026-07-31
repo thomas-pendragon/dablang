@@ -137,16 +137,26 @@ module Dab
 
       def errors
         result = []
-        check_ruby_version(result)
-        check_bundler_version(result)
-        check_rakefile(result)
-        check_workflow(result)
+        safely_check(result, '.ruby-version') { check_ruby_version(result) }
+        safely_check(result, 'Gemfile.lock') { check_bundler_version(result) }
+        safely_check(result, 'Rakefile') { check_rakefile(result) }
+        safely_check(result, WORKFLOW_PATH) { check_workflow(result) }
         result
-      rescue JSON::ParserError, Psych::SyntaxError => e
-        ["cannot parse supported-toolchain contract: #{e.message.lines.first.strip}"]
       end
 
     private
+
+      def safely_check(errors, relative_path)
+        yield
+      rescue Errno::ENOENT
+        errors << "#{relative_path} is missing; restore it from the repository"
+      rescue Errno::EACCES, IOError
+        errors << "#{relative_path} is unreadable; repair its permissions"
+      rescue Psych::SyntaxError
+        errors << "#{relative_path} is invalid YAML; fix its syntax"
+      rescue KeyError, TypeError
+        errors << "#{relative_path} does not match the supported-toolchain structure"
+      end
 
       def check_ruby_version(errors)
         actual = read('.ruby-version').strip
@@ -309,12 +319,17 @@ module Dab
         @host_cpu = Platform.architecture(host_cpu)
         @ruby_version = ruby_version
         @ruby_path = ruby_path
-        @contract = contract || Contract.load(File.join(root, 'config/supported_toolchain.json'))
-        @repository_contract = repository_contract || RepositoryContract.new(root: root, contract: @contract)
+        @contract, @contract_error = load_contract(contract)
+        @repository_contract = repository_contract
+        if @repository_contract.nil? && @contract
+          @repository_contract = RepositoryContract.new(root: root, contract: @contract)
+        end
         @probe = probe || SystemProbe.new(root: root, environment: environment)
       end
 
       def run
+        return failure([@contract_error]) if @contract_error
+
         errors = @repository_contract.errors.dup
         versions = {}
         paths = {}
@@ -361,6 +376,19 @@ module Dab
       end
 
     private
+
+      def load_contract(contract)
+        return [contract, nil] if contract
+
+        path = File.join(@root, 'config/supported_toolchain.json')
+        [Contract.load(path), nil]
+      rescue Errno::ENOENT
+        [nil, 'config/supported_toolchain.json is missing; restore it from the repository']
+      rescue Errno::EACCES, IOError
+        [nil, 'config/supported_toolchain.json is unreadable; repair its permissions']
+      rescue JSON::ParserError
+        [nil, 'config/supported_toolchain.json is invalid JSON; fix its syntax']
+      end
 
       def supported_platforms
         @contract.platforms.keys.sort
