@@ -27,7 +27,7 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
-  it 'keeps the manifest, Ruby default, lockfile, and all five CI jobs consistent' do
+  it 'keeps the manifest, Ruby default, lockfile, and three job definitions for five effective CI runs consistent' do
     with_contract_repository(project_root) do |root, contract|
       errors = described_class.new(root: root, contract: contract).errors
 
