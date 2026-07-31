@@ -273,6 +273,23 @@ describe Dab::CompleteGate::GeneratedDocumentation do
         /git diff could not be executed:.*git/
       )
   end
+
+  it 'reports a nonzero exit code when Git terminates via signal' do
+    status = instance_double(
+      Process::Status,
+      success?: false,
+      exitstatus: nil,
+      signaled?: true,
+      termsig: 9
+    )
+    allow(Open3).to receive(:capture3).and_return(['', 'terminated', status])
+
+    expect { described_class.new(root: repository).changed_paths }
+      .to raise_error(
+        Dab::CompleteGate::GeneratedDocumentationInspectionError,
+        'git diff failed with exit status 137: terminated'
+      )
+  end
 end
 
 describe Dab::CompleteGate::SystemExecutor do

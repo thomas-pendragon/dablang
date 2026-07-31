@@ -28,8 +28,9 @@ module Dab
           chdir: @root
         )
         unless status.success?
+          exit_code = status.exitstatus || signal_exit_code(status) || 1
           raise GeneratedDocumentationInspectionError.new(
-            "git diff failed with exit status #{status.exitstatus}: #{error.strip}"
+            "git diff failed with exit status #{exit_code}: #{error.strip}"
           )
         end
 
@@ -44,6 +45,12 @@ module Dab
 
       def normalize_paths(paths)
         paths.reject(&:empty?).map { |path| path.tr('\\', '/') }.uniq.sort
+      end
+
+      def signal_exit_code(status)
+        return unless status.signaled?
+
+        128 + status.termsig
       end
     end
 
