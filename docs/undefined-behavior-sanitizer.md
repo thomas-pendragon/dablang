@@ -43,7 +43,7 @@ canary, proves its instrumentation, and executes it with exactly:
 UBSAN_OPTIONS=exitcode=86:halt_on_error=1:print_stacktrace=1:symbolize=0
 ```
 
-The canary must exit `86`, emit a signed-integer-overflow diagnostic, an UBSan
+The canary must exit `86`, emit a signed-integer-overflow diagnostic, a UBSan
 summary, and a stack frame, and produce no standard output. Live symbolizer
 processes can hang independently of UBSan detection, so the bounded runtime
 contract keeps raw stack addresses. Debug symbols and frame pointers remain in

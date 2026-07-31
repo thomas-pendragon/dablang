@@ -76,10 +76,19 @@ module Dab
 
         Process.kill('TERM', -wait_thread.pid)
         wait_thread.join(TERMINATION_GRACE_SECONDS)
-        Process.kill('KILL', -wait_thread.pid)
+        Process.kill('KILL', -wait_thread.pid) if process_group_alive?(wait_thread.pid)
         wait_thread.join
       rescue Errno::ESRCH
         wait_thread.join
+      end
+
+      def process_group_alive?(process_group_id)
+        Process.kill(0, -process_group_id)
+        true
+      rescue Errno::ESRCH
+        false
+      rescue Errno::EPERM
+        true
       end
 
       def status_code(status)
