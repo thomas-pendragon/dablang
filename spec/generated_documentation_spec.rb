@@ -10,6 +10,10 @@ describe 'tracked generated documentation' do
     Open3.capture3(RbConfig.ruby, relative_path, chdir: root)
   end
 
+  def normalize_newlines(value)
+    value.gsub("\r\n", "\n")
+  end
+
   it 'generates opcode documentation independently of source mtime' do
     source = File.join(root, 'src/shared/opcodes.rb')
     tracked_output = File.binread(File.join(root, 'docs/vm/opcodes.md'))
@@ -22,8 +26,8 @@ describe 'tracked generated documentation' do
 
       expect(first_status).to be_success, first_stderr
       expect(second_status).to be_success, second_stderr
-      expect(first_stdout.b).to eq(tracked_output)
-      expect(second_stdout.b).to eq(first_stdout.b)
+      expect(normalize_newlines(first_stdout.b)).to eq(normalize_newlines(tracked_output))
+      expect(normalize_newlines(second_stdout.b)).to eq(normalize_newlines(first_stdout.b))
     ensure
       File.utime(original_stat.atime, original_stat.mtime, source)
     end
