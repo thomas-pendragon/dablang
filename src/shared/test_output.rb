@@ -85,13 +85,15 @@ module DabTestOutput
       @action_stack.pop
     end
 
-    def record_command(command, exit_code:, stdout:, stderr:)
+    def record_command(command, exit_code:, stdout:, stderr:, timeout: nil, timed_out: false)
       @commands << {
         stage: current_action || 'unknown',
         command: command.to_s,
         exit_code: normalize_exit_code(exit_code),
         stdout: stdout.to_s,
         stderr: stderr.to_s,
+        timeout: timeout,
+        timed_out: timed_out,
       }
     end
 
@@ -134,6 +136,8 @@ module DabTestOutput
         reported = true
         @error.write("stage: #{command[:stage]}\n")
         @error.write("command: #{command[:command]}\n")
+        @error.write("timeout: #{command[:timeout]} seconds\n") if command[:timeout]
+        @error.write("outcome: timed out\n") if command[:timed_out]
         @error.write("exit status: #{command[:exit_code]}\n")
         @error.write("stdout:\n#{command[:stdout]}") unless command[:stdout].empty? || captured?(:stdout, command[:stdout])
         @error.write("stderr:\n#{command[:stderr]}") unless command[:stderr].empty? || captured?(:stderr, command[:stderr])
@@ -183,8 +187,15 @@ module DabTestOutput
       session&.finish_action
     end
 
-    def record_command(command, exit_code:, stdout:, stderr:)
-      current&.record_command(command, exit_code: exit_code, stdout: stdout, stderr: stderr)
+    def record_command(command, exit_code:, stdout:, stderr:, timeout: nil, timed_out: false)
+      current&.record_command(
+        command,
+        exit_code: exit_code,
+        stdout: stdout,
+        stderr: stderr,
+        timeout: timeout,
+        timed_out: timed_out
+      )
     end
 
     def with_test(identity, output: $stdout, error: $stderr)
