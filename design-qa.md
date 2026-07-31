@@ -2,11 +2,11 @@
 
 ## Evidence
 
-- Source visual truth: `/mnt/data/codex-home/.codex/generated_images/019fad3c-a754-74f0-ab31-9ee00fb983f6/exec-84bddd1e-ded7-48c4-8fa3-617eafd0fd5e.png`
-- Desktop implementation: `/tmp/dablang-product-design-final/home-1440x1200.png`
-- Normalized full-view comparison: `/tmp/dablang-product-design-final/comparison.png`
-- Mobile home implementation: `/tmp/dablang-product-design-final/home-390x844.png`
-- Mobile document implementation: `/tmp/dablang-product-design-final/building-390x844.png`
+- Source visual truth: `design-evidence/public-site/reference.webp`
+- Desktop implementation: `design-evidence/public-site/implementation-desktop.webp`
+- Normalized full-view comparison: `design-evidence/public-site/comparison.webp`
+- Mobile home implementation: `design-evidence/public-site/implementation-mobile-home.webp`
+- Mobile document implementation: `design-evidence/public-site/implementation-mobile-building.webp`
 - Desktop viewport: 1440 by 1200 CSS pixels at device scale factor 1.
 - Mobile viewport: 390 by 844 CSS pixels at device scale factor 1, forced through Chrome DevTools emulation and verified with `innerWidth`, `innerHeight`, `devicePixelRatio`, and document scroll-width readback.
 - Source pixels: 1374 by 1145. The source was uniformly normalized to 1440 by 1200 for the desktop comparison; its aspect ratio was unchanged.
