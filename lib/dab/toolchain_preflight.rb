@@ -157,7 +157,7 @@ module Dab
 
     class RepositoryContract
       WORKFLOW_PATH = '.github/workflows/ruby.yml'.freeze
-      PREFLIGHT_COMMAND = 'ruby script/toolchain_preflight.rb'.freeze
+      COMPLETE_GATE_COMMAND = 'ruby script/complete_gate.rb'.freeze
 
       def initialize(root:, contract:)
         @root = root
@@ -362,19 +362,15 @@ module Dab
       def check_job_steps(errors, job_name, job)
         steps = job.fetch('steps')
         install_index = steps.index { |step| step['name'] == 'Install Premake' }
-        preflight_index = steps.index { |step| step['name'] == 'Check supported toolchain' }
-        gate_index = steps.index { |step| step['name'] == 'Run tests' }
+        gate_index = steps.index { |step| step['name'] == 'Run complete validation gate' }
 
-        unless install_index && preflight_index && gate_index && install_index < preflight_index && preflight_index < gate_index
-          errors << "CI job #{job_name} must run the preflight after Premake installation and before tests"
+        unless install_index && gate_index && install_index < gate_index
+          errors << "CI job #{job_name} must run the complete validation gate after Premake installation"
           return
         end
 
-        unless steps[preflight_index]['run'] == PREFLIGHT_COMMAND
-          errors << "CI job #{job_name} must run #{PREFLIGHT_COMMAND}"
-        end
-        unless steps[gate_index]['run'] == 'bundle exec rake'
-          errors << "CI job #{job_name} must preserve the inherited bundle exec rake gate"
+        unless steps[gate_index]['run'] == COMPLETE_GATE_COMMAND
+          errors << "CI job #{job_name} must run #{COMPLETE_GATE_COMMAND}"
         end
       end
 
