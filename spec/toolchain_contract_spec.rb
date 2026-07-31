@@ -27,7 +27,7 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
-  it 'keeps five job definitions for five normal runs plus two independent sanitizer runs consistent' do
+  it 'keeps five normal runs, two independent sanitizer runs, and the public-site job consistent' do
     with_contract_repository(project_root) do |root, contract|
       errors = described_class.new(root: root, contract: contract).errors
 

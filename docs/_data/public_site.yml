@@ -1,0 +1,151 @@
+schema_version: 1
+canonical_domain: dablang.net
+
+navigation:
+  - title: Building
+    target: /building.html
+  - title: Examples
+    target: /examples.html
+  - title: Classes
+    target: /classes.html
+
+pages:
+  - source: index.md
+    output: index.html
+    classification: public_product
+  - source: building.md
+    output: building.html
+    classification: public_product
+  - source: examples.md
+    output: examples.html
+    classification: public_product
+  - source: examples/0001-snake.md
+    output: examples/0001-snake.html
+    classification: public_product
+  - source: license.md
+    output: license.html
+    classification: public_product
+  - source: classes.md
+    output: classes.html
+    classification: public_reference
+    generated: true
+  - source: classes/array.md
+    output: classes/array.html
+    classification: public_reference
+    generated: true
+  - source: classes/boolean.md
+    output: classes/boolean.html
+    classification: public_reference
+    generated: true
+  - source: classes/bytebuffer.md
+    output: classes/bytebuffer.html
+    classification: public_reference
+    generated: true
+  - source: classes/dynamicstring.md
+    output: classes/dynamicstring.html
+    classification: public_reference
+    generated: true
+  - source: classes/fixnum.md
+    output: classes/fixnum.html
+    classification: public_reference
+    generated: true
+  - source: classes/float.md
+    output: classes/float.html
+    classification: public_reference
+    generated: true
+  - source: classes/int16.md
+    output: classes/int16.html
+    classification: public_reference
+    generated: true
+  - source: classes/int32.md
+    output: classes/int32.html
+    classification: public_reference
+    generated: true
+  - source: classes/int64.md
+    output: classes/int64.html
+    classification: public_reference
+    generated: true
+  - source: classes/int8.md
+    output: classes/int8.html
+    classification: public_reference
+    generated: true
+  - source: classes/intptr.md
+    output: classes/intptr.html
+    classification: public_reference
+    generated: true
+  - source: classes/literalstring.md
+    output: classes/literalstring.html
+    classification: public_reference
+    generated: true
+  - source: classes/method.md
+    output: classes/method.html
+    classification: public_reference
+    generated: true
+  - source: classes/nilclass.md
+    output: classes/nilclass.html
+    classification: public_reference
+    generated: true
+  - source: classes/object.md
+    output: classes/object.html
+    classification: public_reference
+    generated: true
+  - source: classes/string.md
+    output: classes/string.html
+    classification: public_reference
+    generated: true
+  - source: classes/uint16.md
+    output: classes/uint16.html
+    classification: public_reference
+    generated: true
+  - source: classes/uint32.md
+    output: classes/uint32.html
+    classification: public_reference
+    generated: true
+  - source: classes/uint64.md
+    output: classes/uint64.html
+    classification: public_reference
+    generated: true
+  - source: classes/uint8.md
+    output: classes/uint8.html
+    classification: public_reference
+    generated: true
+  - source: vm/opcodes.md
+    output: vm/opcodes.html
+    classification: public_reference
+    generated: true
+  - source: address-sanitizer.md
+    output: address-sanitizer.html
+    classification: repository_only
+  - source: complete-validation.md
+    output: complete-validation.html
+    classification: repository_only
+  - source: design/concretify.md
+    output: design/concretify.html
+    classification: repository_only
+  - source: design/language-purpose.md
+    output: design/language-purpose.html
+    classification: repository_only
+  - source: design/rings.md
+    output: design/rings.html
+    classification: repository_only
+  - source: design/type-system.md
+    output: design/type-system.html
+    classification: repository_only
+  - source: governance/scenario-b-charter.md
+    output: governance/scenario-b-charter.md
+    classification: repository_only
+  - source: legacy-source-vm-smoke.md
+    output: legacy-source-vm-smoke.html
+    classification: repository_only
+  - source: public-site.md
+    output: public-site.html
+    classification: repository_only
+  - source: test-suite-manifest.md
+    output: test-suite-manifest.html
+    classification: repository_only
+  - source: toolchain-preflight.md
+    output: toolchain-preflight.html
+    classification: repository_only
+  - source: undefined-behavior-sanitizer.md
+    output: undefined-behavior-sanitizer.html
+    classification: repository_only

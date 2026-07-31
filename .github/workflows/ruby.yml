@@ -12,6 +12,21 @@ permissions:
   contents: read
 
 jobs:
+  public-site:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: docs/Gemfile
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.12'
+          bundler-cache: true
+      - name: Validate and build public site
+        run: bundle exec ruby script/public_site.rb
+
   test:
     runs-on: ubuntu-latest
     env:

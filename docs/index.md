@@ -5,18 +5,9 @@ title: Design
 
 Dab is an experimental, highly optimised dynamic language, It is still a very early prototype, with compiler and assembler written in Ruby, and VM in C++.
 
- - [Purpose of the language](/design/language-purpose.html)
  - [Building](/building.html)
- - [Supported toolchain preflight](/toolchain-preflight.html)
- - [Complete validation gate](/complete-validation.html)
- - [AddressSanitizer validation](/address-sanitizer.html)
- - [UndefinedBehaviorSanitizer validation](/undefined-behavior-sanitizer.html)
- - [Test suite manifest](/test-suite-manifest.html)
  - [Examples](/examples.html)
- - [Type system](/design/type-system.html)
- - [Concretify](/design/concretify.html)
- - [Rings](/design/rings.html)
  - [VM opcodes](/vm/opcodes.html)
  - [Classes](/classes.html)
 
-License: [MIT](/license.md)
+License: [MIT](/license.html)
