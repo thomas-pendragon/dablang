@@ -47,3 +47,12 @@ Failure reports include the test identity, stage, command, exit status, and
 captured stdout/stderr. This is scoped to the test harness; setup, build, CI,
 warnings, selection, ordering, and command exit statuses remain visible and
 unchanged.
+
+The fixture frontends already declare their subprocess limits through the
+existing `qsystem(..., timeout: seconds)` calls (30 seconds for Ruby compiler
+actions and 10 seconds for native tools and VM actions). These limits are
+enforced per action using monotonic elapsed time. A timeout terminates the
+command process tree, fails the harness with exit status 124, and replays the
+test identity, stage, command, configured limit, and `timed out` outcome with
+the captured diagnostics. Tests without a declared timeout keep their existing
+unbounded behavior.

@@ -105,6 +105,33 @@ describe DabTestOutput do
     expect(error.string).to include('exit status: 137')
   end
 
+  it 'reports an enforced timeout with its configured limit and outcome' do
+    expect do
+      DabTestOutput.with_test('test/vm/timeout.vmt', output: output, error: error) do
+        DabTestOutput.with_action('VM') do
+          DabTestOutput.record_command(
+            './bin/cvm --run',
+            exit_code: 124,
+            stdout: '',
+            stderr: 'VM did not finish\n',
+            timeout: 10,
+            timed_out: true
+          )
+          raise 'fixture timed out'
+        end
+      end
+    end.to raise_error('fixture timed out')
+
+    expect(error.string).to include(
+      'stage: VM',
+      'command: ./bin/cvm --run',
+      'timeout: 10 seconds',
+      'outcome: timed out',
+      'exit status: 124',
+      'VM did not finish'
+    )
+  end
+
   it 'forwards detailed successful output when verbose mode is enabled' do
     ENV['DAB_TEST_VERBOSE'] = '1'
 
