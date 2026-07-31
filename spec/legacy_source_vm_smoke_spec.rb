@@ -278,6 +278,17 @@ describe Dab::LegacySourceVmSmoke::Commands do
       [File.join(root, 'bin', "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}"), bytecode]
     )
   end
+
+  it 'can select the isolated AddressSanitizer VM without changing the default' do
+    root = File.expand_path('..', __dir__)
+    bytecode = File.join(root, 'program.dabcb')
+
+    command = described_class.new(root: root, binary_directory: 'bin/address-sanitizer').vm(bytecode)
+
+    expect(command).to eq(
+      [File.join(root, 'bin/address-sanitizer', "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}"), bytecode]
+    )
+  end
 end
 
 describe Dab::LegacySourceVmSmoke::SystemExecutor do

@@ -23,6 +23,11 @@ Compiler, `make`, and clang-format release numbers are reported but are not
 pinned because the current CI contract only proves their availability on the
 named runners.
 
+The separate [AddressSanitizer profile](/address-sanitizer.html) narrows its
+supported environment further to Linux x86_64, GitHub-hosted `ubuntu-24.04`,
+and Clang 18. Its gate performs the additional exact compiler, build-layout,
+instrumentation, and runtime checks after this general preflight succeeds.
+
 Success means that the environment and repository metadata match the supported
 contract. Failure reports all detected missing, unsupported, or drifted
 prerequisites before the build begins. The command does not install or download

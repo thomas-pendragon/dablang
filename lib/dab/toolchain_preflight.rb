@@ -13,9 +13,23 @@ module Dab
     end
 
     class Contract
+      SCHEMA_VERSION = 2
       TOP_LEVEL_STRINGS = %w[default_ruby_version bundler_version premake_version premake_action].freeze
       PLATFORM_STRINGS = %w[os architecture premake_command build_driver compiler clang_format].freeze
       CI_STRINGS = %w[job runner ruby_setup premake_command premake_asset].freeze
+      ADDRESS_SANITIZER_STRINGS = %w[
+        platform compiler compiler_version c_compiler configuration premake_option
+        build_directory object_directory binary_directory metadata_tool instrumentation_symbol
+      ].freeze
+      ADDRESS_SANITIZER_ARRAYS = %w[compile_flags link_flags].freeze
+      ADDRESS_SANITIZER_CI_STRINGS = %w[
+        job runner ruby_setup premake_command premake_asset command compiler_setup
+      ].freeze
+      TOP_LEVEL_FIELDS = (%w[schema_version platforms profiles] + TOP_LEVEL_STRINGS).freeze
+      PLATFORM_FIELDS = (%w[ruby_versions ci] + PLATFORM_STRINGS).freeze
+      ADDRESS_SANITIZER_FIELDS = (
+        %w[leak_detection targets ci] + ADDRESS_SANITIZER_STRINGS + ADDRESS_SANITIZER_ARRAYS
+      ).freeze
 
       attr_reader :data
 
@@ -47,6 +61,14 @@ module Dab
         data.fetch('platforms')
       end
 
+      def profiles
+        data.fetch('profiles')
+      end
+
+      def address_sanitizer
+        profiles.fetch('address_sanitizer')
+      end
+
       def platform(os, architecture)
         platforms.values.find do |candidate|
           candidate.fetch('os') == os && candidate.fetch('architecture') == architecture
@@ -54,19 +76,26 @@ module Dab
       end
 
       def valid_structure?
-        return false unless data.is_a?(Hash) && data['schema_version'].is_a?(Integer)
+        return false unless data.is_a?(Hash) && data['schema_version'] == SCHEMA_VERSION
+        return false unless data.keys.sort == TOP_LEVEL_FIELDS.sort
         return false unless TOP_LEVEL_STRINGS.all? { |key| data[key].is_a?(String) }
 
         supported_platforms = data['platforms']
         return false unless supported_platforms.is_a?(Hash) && !supported_platforms.empty?
 
-        supported_platforms.all? { |name, candidate| name.is_a?(String) && valid_platform?(candidate) }
+        return false unless supported_platforms.all? { |name, candidate| name.is_a?(String) && valid_platform?(candidate) }
+
+        profiles = data['profiles']
+        return false unless profiles.is_a?(Hash) && profiles.keys == ['address_sanitizer']
+
+        valid_address_sanitizer?(profiles['address_sanitizer'])
       end
 
     private
 
       def valid_platform?(candidate)
         return false unless candidate.is_a?(Hash)
+        return false unless candidate.keys.sort == PLATFORM_FIELDS.sort
         return false unless PLATFORM_STRINGS.all? { |key| candidate[key].is_a?(String) }
 
         ruby_versions = candidate['ruby_versions']
@@ -74,8 +103,28 @@ module Dab
         return false unless ruby_versions.all? { |version| version.is_a?(String) }
 
         ci = candidate['ci']
-        ci.is_a?(Hash) && CI_STRINGS.all? { |key| ci[key].is_a?(String) } &&
+        allowed_ci_fields = CI_STRINGS + ['clang_format']
+        ci.is_a?(Hash) && (ci.keys - allowed_ci_fields).empty? && CI_STRINGS.all? { |key| ci[key].is_a?(String) } &&
           (!ci.key?('clang_format') || ci['clang_format'].is_a?(String))
+      end
+
+      def valid_address_sanitizer?(profile)
+        return false unless profile.is_a?(Hash)
+        return false unless profile.keys.sort == ADDRESS_SANITIZER_FIELDS.sort
+        return false unless ADDRESS_SANITIZER_STRINGS.all? { |key| profile[key].is_a?(String) }
+        return false unless ADDRESS_SANITIZER_ARRAYS.all? do |key|
+          profile[key].is_a?(Array) && !profile[key].empty? && profile[key].all? { |value| value.is_a?(String) }
+        end
+        return false unless profile['leak_detection'] == true
+
+        targets = profile['targets']
+        expected_targets = %w[cdisasm cdumpcov cffitest cvm]
+        return false unless targets.is_a?(Hash) && targets.keys.sort == expected_targets
+        return false unless targets.values.all? { |value| value.is_a?(String) && !value.empty? }
+
+        ci = profile['ci']
+        ci.is_a?(Hash) && ci.keys.sort == ADDRESS_SANITIZER_CI_STRINGS.sort &&
+          ADDRESS_SANITIZER_CI_STRINGS.all? { |key| ci[key].is_a?(String) }
       end
     end
 
@@ -245,6 +294,7 @@ module Dab
         @contract.platforms.each_value do |platform|
           check_job(errors, jobs, platform)
         end
+        check_address_sanitizer_job(errors, jobs, @contract.address_sanitizer)
       end
 
       def workflow_structure_error(workflow)
@@ -302,7 +352,9 @@ module Dab
           errors << 'CI concurrency drifted; keep per-PR cancellation enabled'
         end
 
-        expected_jobs = @contract.platforms.values.map { |platform| platform.fetch('ci').fetch('job') }.sort
+        expected_jobs = @contract.platforms.values.map { |platform| platform.fetch('ci').fetch('job') }
+        expected_jobs << @contract.address_sanitizer.fetch('ci').fetch('job')
+        expected_jobs.sort!
         errors << 'CI jobs drifted from the supported-toolchain manifest' unless jobs.keys.sort == expected_jobs
       end
 
@@ -371,6 +423,61 @@ module Dab
 
         unless steps[gate_index]['run'] == COMPLETE_GATE_COMMAND
           errors << "CI job #{job_name} must run #{COMPLETE_GATE_COMMAND}"
+        end
+      end
+
+      def check_address_sanitizer_job(errors, jobs, profile)
+        ci = profile.fetch('ci')
+        job_name = ci.fetch('job')
+        job = jobs[job_name]
+        unless job
+          errors << "CI job #{job_name} is missing"
+          return
+        end
+
+        errors << "CI job #{job_name} must run on #{ci.fetch('runner')}" unless job['runs-on'] == ci.fetch('runner')
+        errors << "CI job #{job_name} must not use a matrix" if job.key?('strategy')
+        if job['continue-on-error']
+          errors << "CI job #{job_name} must remain blocking"
+        end
+
+        environment = job.fetch('env', {})
+        expected_environment = {
+          'PREMAKE' => ci.fetch('premake_command'),
+          'CC' => profile.fetch('c_compiler'),
+          'CXX' => profile.fetch('compiler'),
+        }
+        unless expected_environment.all? { |key, value| environment[key] == value }
+          errors << "CI job #{job_name} compiler and Premake environment must match the AddressSanitizer profile"
+        end
+
+        steps = job.fetch('steps')
+        if steps.any? { |step| step['continue-on-error'] }
+          errors << "CI job #{job_name} steps must remain blocking"
+        end
+        setup = steps.find { |step| step['uses'] == 'ruby/setup-ruby@v1' }
+        actual_ruby = setup && setup.fetch('with', {})['ruby-version']
+        unless actual_ruby == ci.fetch('ruby_setup')
+          errors << "CI job #{job_name} Ruby setup must be #{ci.fetch('ruby_setup')}"
+        end
+
+        steps_text = steps.map { |step| step.fetch('run', '').to_s }.join("\n")
+        unless steps_text.include?(ci.fetch('premake_asset')) && steps_text.include?(@contract.premake_version)
+          errors << "CI job #{job_name} must install Premake #{@contract.premake_version} from #{ci.fetch('premake_asset')}"
+        end
+        unless steps_text.include?(ci.fetch('compiler_setup'))
+          errors << "CI job #{job_name} must install #{ci.fetch('compiler_setup')}"
+        end
+
+        compiler_index = steps.index { |step| step['name'] == 'Install AddressSanitizer compiler' }
+        premake_index = steps.index { |step| step['name'] == 'Install Premake' }
+        gate_index = steps.index { |step| step['name'] == 'Run AddressSanitizer validation gate' }
+        unless compiler_index && premake_index && gate_index && compiler_index < gate_index && premake_index < gate_index
+          errors << "CI job #{job_name} must run the AddressSanitizer gate after compiler and Premake installation"
+          return
+        end
+        unless steps[gate_index]['run'] == ci.fetch('command')
+          errors << "CI job #{job_name} must run #{ci.fetch('command')}"
         end
       end
 

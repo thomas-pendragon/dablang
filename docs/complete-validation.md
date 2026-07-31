@@ -85,3 +85,8 @@ bundle exec rake legacy_source_vm_smoke
 Its Rake dependency builds the platform-native VM before two independent
 external compiler, assembler, and VM runs. The smoke uses its own stage limits;
 it does not alter the fixture harness limits above.
+
+The dedicated [AddressSanitizer validation](/address-sanitizer.html) remains an
+active manual and CI suite outside this ordinary complete gate. Keeping it in a
+single Linux x86_64 job avoids multiplying the native sanitizer build through
+the Ruby and operating-system matrix.

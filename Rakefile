@@ -257,6 +257,18 @@ task legacy_source_vm_smoke: [cvm, *legacy_source_vm_smoke_files] do
   sh RbConfig.ruby, 'script/legacy_source_vm_smoke.rb'
 end
 
+address_sanitizer_files = [
+  'script/address_sanitizer_gate.rb',
+  'lib/dab/address_sanitizer_gate.rb',
+  'test/address_sanitizer/heap_buffer_overflow.cpp',
+  'test/address_sanitizer/legacy_smoke_leak_contract.json',
+]
+
+desc 'Build and validate the dedicated Linux x86_64 AddressSanitizer profile'
+task address_sanitizer_spec: address_sanitizer_files do
+  sh RbConfig.ruby, 'script/address_sanitizer_gate.rb'
+end
+
 # gitlab = '.gitlab-ci.yml'
 # gitlab_base = 'gitlab_base.rb'
 

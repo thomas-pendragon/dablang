@@ -63,6 +63,21 @@ describe Dab::TestSuiteManifest::Validator do
     )
   end
 
+  it 'represents the dedicated AddressSanitizer suite exactly once outside the complete gate' do
+    document = manifest
+    topology = Dab::TestSuiteManifest::Topology.new(root: root)
+    entries = document.fetch('suites').select { |entry| entry['rake_task'] == 'address_sanitizer_spec' }
+
+    expect(entries.length).to eq(1)
+    expect(entries.first.fetch('state')).to eq('active')
+    expect(entries.first.fetch('in_complete_gate')).to be(false)
+    expect(topology.gate_task?('address_sanitizer_spec')).to be(false)
+    expect(topology.task_inputs('address_sanitizer_spec')).to include(
+      'test/address_sanitizer/heap_buffer_overflow.cpp',
+      'test/address_sanitizer/legacy_smoke_leak_contract.json'
+    )
+  end
+
   it 'fails closed for malformed JSON' do
     Dir.mktmpdir('dab-test-suite-manifest') do |directory|
       path = File.join(directory, 'manifest.json')
@@ -91,13 +106,14 @@ describe Dab::TestSuiteManifest::Validator do
     document.fetch('suites')[1]['id'] = document.fetch('suites').first.fetch('id')
     document.fetch('suites')[2].delete('command')
     suite(document, 'rake-build-examples').delete('reason')
+    build_examples_index = document.fetch('suites').index { |entry| entry['id'] == 'rake-build-examples' }
 
     result = validate_document(document)
 
     expect(result.errors).to include('suites[0].state must be one of active, pending, disabled')
     expect(result.errors.grep(/duplicate id/)).not_to be_empty
     expect(result.errors).to include('suites[2] is missing fields: command')
-    expect(result.errors).to include('suites[12].reason must be a non-empty string')
+    expect(result.errors).to include("suites[#{build_examples_index}].reason must be a non-empty string")
   end
 
   it 'rejects missing Rake tasks and source paths' do

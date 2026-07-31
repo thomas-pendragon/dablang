@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "default_ruby_version": "3.3.12",
   "bundler_version": "2.7.2",
   "premake_version": "5.0.0-beta8",
@@ -52,6 +52,44 @@
         "ruby_setup": "3.3.12",
         "premake_command": ".\\premake5.exe",
         "premake_asset": "premake-5.0.0-beta8-windows.zip"
+      }
+    }
+  },
+  "profiles": {
+    "address_sanitizer": {
+      "platform": "linux-x86_64",
+      "compiler": "clang++-18",
+      "compiler_version": "18",
+      "c_compiler": "clang-18",
+      "configuration": "ASan",
+      "premake_option": "--address-sanitizer",
+      "build_directory": "build/address-sanitizer",
+      "object_directory": "build/address-sanitizer/obj/ASan",
+      "binary_directory": "bin/address-sanitizer",
+      "metadata_tool": "readelf",
+      "instrumentation_symbol": "__asan_init",
+      "compile_flags": [
+        "-fsanitize=address",
+        "-fsanitize-address-use-after-scope",
+        "-fno-omit-frame-pointer",
+        "-fno-optimize-sibling-calls"
+      ],
+      "link_flags": ["-fsanitize=address"],
+      "leak_detection": true,
+      "targets": {
+        "cvm": "cvm",
+        "cdisasm": "cdisasm",
+        "cdumpcov": "cdumpcov",
+        "cffitest": "libcffitest.so"
+      },
+      "ci": {
+        "job": "address-sanitizer",
+        "runner": "ubuntu-24.04",
+        "ruby_setup": "3.3.12",
+        "premake_command": "./premake5",
+        "premake_asset": "premake-5.0.0-beta8-linux.tar.gz",
+        "command": "bundle exec rake address_sanitizer_spec",
+        "compiler_setup": "clang-18"
       }
     }
   }
