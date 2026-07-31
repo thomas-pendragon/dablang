@@ -6,7 +6,7 @@ newoption {
 local address_sanitizer = _OPTIONS["address-sanitizer"] ~= nil
 
 if address_sanitizer and os.target() ~= "linux" then
-  error("the AddressSanitizer profile supports Linux x86_64 only")
+  error("the AddressSanitizer Premake configuration supports Linux only; the validation gate requires x86_64")
 end
 
 workspace "Dab"
