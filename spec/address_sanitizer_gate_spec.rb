@@ -120,7 +120,14 @@ describe Dab::AddressSanitizerGate::Runner do
     executor = AddressSanitizerGateSpecSupport::FakeExecutor.new(
       [result(stderr: 'still validating', exit_code: 124, timed_out: true)]
     )
-    status = described_class.new(root: root, executor: executor, output: output, error: error).run
+    status = described_class.new(
+      root: root,
+      executor: executor,
+      output: output,
+      error: error,
+      host_os: 'linux-gnu',
+      host_cpu: 'x86_64'
+    ).run
 
     expect(status).to eq(124)
     expect(error.string).to include('FAILED during test suite manifest validation (timed out after 10 seconds)')
@@ -131,7 +138,14 @@ describe Dab::AddressSanitizerGate::Runner do
     executor = AddressSanitizerGateSpecSupport::FakeExecutor.new(
       [result, result, result(stderr: 'missing', exit_code: 127)]
     )
-    status = described_class.new(root: root, executor: executor, output: output, error: error).run
+    status = described_class.new(
+      root: root,
+      executor: executor,
+      output: output,
+      error: error,
+      host_os: 'linux-gnu',
+      host_cpu: 'x86_64'
+    ).run
 
     expect(status).to eq(127)
     expect(error.string).to include('FAILED during AddressSanitizer C++ compiler precondition')
@@ -156,6 +170,7 @@ describe Dab::AddressSanitizerGate::Runner do
       executor: executor,
       output: output,
       error: error,
+      host_os: 'linux-gnu',
       host_cpu: 'aarch64'
     ).run
 
@@ -207,6 +222,8 @@ describe Dab::AddressSanitizerGate::SystemExecutor do
   end
 
   it 'maps a native signal to 128 plus the signal number' do
+    skip 'POSIX signal status is covered on the supported Linux profile and macOS' if Gem.win_platform?
+
     result = described_class.new.call(
       [RbConfig.ruby, '-e', 'Process.kill("TERM", Process.pid)'],
       chdir: root,
@@ -241,7 +258,8 @@ describe 'AddressSanitizer gate repository contract' do
     expect(entries.length).to eq(1)
     expect(entries.first.fetch('command')).to eq(%w[bundle exec rake address_sanitizer_spec])
     expect(entries.first.fetch('in_complete_gate')).to be(false)
-    expect(documentation).to include("```shell\nbundle exec rake address_sanitizer_spec\n```")
+    normalized_documentation = documentation.gsub("\r\n", "\n")
+    expect(normalized_documentation).to include("```shell\nbundle exec rake address_sanitizer_spec\n```")
     expect(workflow.scan('run: bundle exec rake address_sanitizer_spec').length).to eq(1)
     expect(workflow).not_to include('continue-on-error')
   end
