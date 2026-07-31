@@ -1,4 +1,8 @@
+require 'monitor'
+
 module DabTestOutput
+  OUTPUT_MONITOR = Monitor.new
+
   class SessionIO
     def initialize(session, stream)
       @session = session
@@ -110,7 +114,13 @@ module DabTestOutput
 
     def normalize_exit_code(status)
       return status if status.is_a?(Integer)
-      return status.exitstatus || 1 if status.respond_to?(:exitstatus)
+
+      if status.respond_to?(:exitstatus)
+        return status.exitstatus if status.exitstatus
+        return 128 + status.termsig if status.respond_to?(:signaled?) && status.signaled?
+
+        return 1
+      end
 
       status.to_i
     end
@@ -172,24 +182,26 @@ module DabTestOutput
     end
 
     def with_test(identity, output: $stdout, error: $stderr)
-      previous = current
       session = Session.new(identity, output: output, error: error)
-      Thread.current[:dab_test_output_session] = session
-      previous_stdout = $stdout
-      previous_stderr = $stderr
-      $stdout = SessionIO.new(session, :stdout)
-      $stderr = SessionIO.new(session, :stderr)
+      OUTPUT_MONITOR.synchronize do
+        previous = current
+        Thread.current[:dab_test_output_session] = session
+        previous_stdout = $stdout
+        previous_stderr = $stderr
+        $stdout = SessionIO.new(session, :stdout)
+        $stderr = SessionIO.new(session, :stderr)
 
-      begin
-        yield
-        session.pass
-      rescue StandardError => e
-        session.failure(e)
-        raise
-      ensure
-        $stdout = previous_stdout
-        $stderr = previous_stderr
-        Thread.current[:dab_test_output_session] = previous
+        begin
+          yield
+          session.pass
+        rescue StandardError => e
+          session.failure(e)
+          raise
+        ensure
+          $stdout = previous_stdout
+          $stderr = previous_stderr
+          Thread.current[:dab_test_output_session] = previous
+        end
       end
     end
 
