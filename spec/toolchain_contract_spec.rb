@@ -54,17 +54,14 @@ describe Dab::ToolchainPreflight::RepositoryContract do
       workflow = File.read(workflow_path)
       workflow = workflow.sub("['3.3.12', '3.4.9', '4.0.5']", "['3.3.12']")
       workflow = workflow.gsub('premake-5.0.0-beta8-linux.tar.gz', 'premake-5.0.0-beta7-linux.tar.gz')
-      workflow = workflow.sub(
-        "      - name: Check supported toolchain\n        run: ruby script/toolchain_preflight.rb\n      - name: Run tests",
-        "      - name: Run tests\n        run: bundle exec rake\n      - name: Check supported toolchain"
-      )
+      workflow = workflow.sub('run: ruby script/complete_gate.rb', 'run: bundle exec rake')
       File.write(workflow_path, workflow)
 
       errors = described_class.new(root: root, contract: contract).errors
 
       expect(errors).to include('CI job test Ruby matrix must match the supported-toolchain manifest')
       expect(errors).to include('CI job test must install Premake 5.0.0-beta8 from premake-5.0.0-beta8-linux.tar.gz')
-      expect(errors).to include('CI job test must run the preflight after Premake installation and before tests')
+      expect(errors).to include('CI job test must run ruby script/complete_gate.rb')
     end
   end
 

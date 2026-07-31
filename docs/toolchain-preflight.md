@@ -27,4 +27,5 @@ Success means that the environment and repository metadata match the supported
 contract. Failure reports all detected missing, unsupported, or drifted
 prerequisites before the build begins. The command does not install or download
 tools, modify or generate files, clean the checkout, build Dab, or run tests.
-The inherited build and test command remains a separate step.
+Run the [complete validation gate](/complete-validation.html) when the
+preflight and inherited build/test/documentation gate should run together.
