@@ -254,7 +254,11 @@ setup_tests('decompile', 'test', nil, [cdisasm])
 #  psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
 # end
 
-task spec: :dab do
+task dab_fixture_spec: :dab do
+end
+
+task :spec do
+  psystem('bundle exec rspec')
 end
 
 task reverse: :dab_reverse
@@ -271,7 +275,7 @@ file ffi_file => [ffi_task] do
   psystem("ruby #{ffi_task} > #{ffi_file}")
 end
 
-task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :minitest_spec, :spec, :format_spec, :vm_spec,
+task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :minitest_spec, :dab_fixture_spec, :format_spec, :vm_spec,
                :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end
 

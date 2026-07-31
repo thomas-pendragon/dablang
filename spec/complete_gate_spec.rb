@@ -30,8 +30,9 @@ describe Dab::CompleteGate::Runner do
     Dab::CompleteGate::CommandResult.new(success, exit_code)
   end
 
-  it 'runs the supported-toolchain preflight before the complete inherited gate' do
+  it 'runs the preflight, inherited gate, and Ruby RSpec suite exactly once in order' do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
                                                            command_result(true, 0),
                                                            command_result(true, 0),
                                                          ])
@@ -43,11 +44,13 @@ describe Dab::CompleteGate::Runner do
       [
         [%w[ruby script/toolchain_preflight.rb], root],
         [%w[bundle exec rake], root],
+        [%w[bundle exec rspec], root],
       ]
     )
     expect(output.string).to eq(
       "complete validation gate: supported toolchain preflight\n" \
       "complete validation gate: inherited build, test, and documentation gate\n" \
+      "complete validation gate: Ruby RSpec suite\n" \
       "complete validation gate: PASSED\n"
     )
     expect(error.string).to eq('')
@@ -63,7 +66,7 @@ describe Dab::CompleteGate::Runner do
     expect(error.string).to include('FAILED during supported toolchain preflight (ruby script/toolchain_preflight.rb)')
   end
 
-  it 'returns the inherited gate exit status after a successful preflight' do
+  it 'returns the inherited gate exit status after a successful preflight without running RSpec' do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
                                                            command_result(true, 0),
                                                            command_result(false, 9),
@@ -74,6 +77,26 @@ describe Dab::CompleteGate::Runner do
     expect(status).to eq(9)
     expect(executor.commands.last.first).to eq(%w[bundle exec rake])
     expect(error.string).to include('FAILED during inherited build, test, and documentation gate (bundle exec rake)')
+  end
+
+  it 'returns the Ruby RSpec suite exit status after the inherited gate succeeds' do
+    executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
+                                                           command_result(true, 0),
+                                                           command_result(false, 23),
+                                                         ])
+
+    status = described_class.new(root: root, executor: executor, output: output, error: error).run
+
+    expect(status).to eq(23)
+    expect(executor.commands.map(&:first)).to eq(
+      [
+        %w[ruby script/toolchain_preflight.rb],
+        %w[bundle exec rake],
+        %w[bundle exec rspec],
+      ]
+    )
+    expect(error.string).to include('FAILED during Ruby RSpec suite (bundle exec rspec)')
   end
 end
 
@@ -101,7 +124,7 @@ end
 describe 'complete validation gate contract' do
   let(:root) { File.expand_path('..', __dir__) }
 
-  it 'keeps the documented command, CI entrypoint, and inherited gate consistent' do
+  it 'keeps the documented command, CI entrypoint, Rake tasks, and complete-gate stages consistent' do
     documentation = File.read(File.join(root, 'docs/complete-validation.md'))
     workflow = File.read(File.join(root, '.github/workflows/ruby.yml'))
 
@@ -109,6 +132,17 @@ describe 'complete validation gate contract' do
     expect(workflow.scan('run: ruby script/complete_gate.rb').count).to eq(3)
     expect(Dab::CompleteGate::Runner::PREFLIGHT_COMMAND).to eq(%w[ruby script/toolchain_preflight.rb])
     expect(Dab::CompleteGate::Runner::INHERITED_GATE_COMMAND).to eq(%w[bundle exec rake])
-    expect(File.read(File.join(root, 'Rakefile'))).to include('task spec: :dab')
+    expect(Dab::CompleteGate::Runner::RSPEC_COMMAND).to eq(%w[bundle exec rspec])
+    expect(Dab::CompleteGate::Runner::STAGES.map(&:last)).to eq(
+      [
+        %w[ruby script/toolchain_preflight.rb],
+        %w[bundle exec rake],
+        %w[bundle exec rspec],
+      ]
+    )
+    rakefile = File.read(File.join(root, 'Rakefile'))
+    expect(rakefile).to include('task dab_fixture_spec: :dab')
+    expect(rakefile).to include("task :spec do\n  psystem('bundle exec rspec')")
+    expect(rakefile).to include(':dab_fixture_spec, :format_spec')
   end
 end
