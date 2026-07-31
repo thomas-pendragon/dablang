@@ -16,7 +16,7 @@ also name their real Rake task. The state vocabulary is closed:
 
 - `active` means that the suite has executable repository wiring. Active does
   not imply complete-gate membership; `compiler_performance_spec` is deliberately
-  manual.
+  manual, and `address_sanitizer_spec` has one dedicated manual/CI path.
 - `pending` means that evidence is collected but deliberately not executed on
   at least one represented path.
 - `disabled` means that repository evidence deliberately excludes the suite or
@@ -45,6 +45,10 @@ RSpec suite exactly once. The active `compiler_performance_spec` task is manual
 and is not in the complete gate. Rake also declares `build_examples_spec`, but
 its default-task dependency is explicitly commented out; the manifest therefore
 records it as disabled and outside the complete gate.
+
+The active `address_sanitizer_spec` task is represented once and remains outside
+the complete gate. Its repository-root command is also the command used by the
+single blocking Linux x86_64 AddressSanitizer CI job.
 
 Current non-active evidence remains recorded without enabling or deleting it:
 

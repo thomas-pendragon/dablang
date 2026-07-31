@@ -258,6 +258,8 @@ describe Dab::ToolchainPreflight::Runner do
   end
 
   it 'reports a structurally invalid manifest without raising' do
+    profile_drift = JSON.parse(File.binread(File.join(project_root, 'config/supported_toolchain.json')))
+    profile_drift.fetch('profiles').fetch('address_sanitizer')['unexpected'] = true
     invalid_manifests = [
       {},
       {
@@ -268,6 +270,7 @@ describe Dab::ToolchainPreflight::Runner do
         'premake_action' => 'gmake',
         'platforms' => [],
       },
+      profile_drift,
     ]
 
     invalid_manifests.each do |manifest|

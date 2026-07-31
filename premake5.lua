@@ -1,6 +1,17 @@
+newoption {
+  trigger = "address-sanitizer",
+  description = "Generate the dedicated Linux x86_64 AddressSanitizer build",
+}
+
+local address_sanitizer = _OPTIONS["address-sanitizer"] ~= nil
+
+if address_sanitizer and os.target() ~= "linux" then
+  error("the AddressSanitizer profile supports Linux x86_64 only")
+end
+
 workspace "Dab"
-  location "build"
-  configurations { "Debug", "Release" }
+  location(address_sanitizer and "build/address-sanitizer" or "build")
+  configurations(address_sanitizer and { "ASan" } or { "Debug", "Release" })
 
 local version_file = assert(io.open("VERSION", "r"))
 local dab_version = assert(version_file:read("*l"))
@@ -13,7 +24,7 @@ function dab_common_setup(name, kindt, skip_shared)
   project(name)
     kind(kindt)
     language "C++"
-    targetdir "bin/"
+    targetdir(address_sanitizer and "bin/address-sanitizer/" or "bin/")
     cppdialect "C++11"    
 
     warnings "Extra"
@@ -31,6 +42,18 @@ function dab_common_setup(name, kindt, skip_shared)
 
     filter "configurations:Release"
       optimize "On"
+
+    filter "configurations:ASan"
+      symbols "On"
+      optimize "Debug"
+      objdir "build/address-sanitizer/obj/%{cfg.buildcfg}/%{prj.name}"
+      buildoptions {
+        "-fsanitize=address",
+        "-fsanitize-address-use-after-scope",
+        "-fno-omit-frame-pointer",
+        "-fno-optimize-sibling-calls",
+      }
+      linkoptions { "-fsanitize=address" }
 
     filter "action:xcode4"
       buildoptions "-stdlib=libc++"

@@ -80,3 +80,30 @@ jobs:
       - name: Run complete validation gate
         shell: pwsh
         run: ruby script/complete_gate.rb
+
+  address-sanitizer:
+    runs-on: ubuntu-24.04
+    env:
+      PREMAKE: ./premake5
+      CC: clang-18
+      CXX: clang++-18
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.12'
+          bundler-cache: true
+      - name: Install AddressSanitizer compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes clang-18
+      - name: Download Premake
+        run: wget https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-linux.tar.gz
+      - name: Install Premake
+        run: |
+          tar xf premake-5.0.0-beta8-linux.tar.gz
+          chmod +x premake5
+      - name: Run AddressSanitizer validation gate
+        run: bundle exec rake address_sanitizer_spec

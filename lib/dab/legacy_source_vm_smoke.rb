@@ -39,8 +39,9 @@ module Dab
     end
 
     class Commands
-      def initialize(root:)
+      def initialize(root:, binary_directory: 'bin')
         @root = root
+        @binary_directory = binary_directory
       end
 
       def compiler(source)
@@ -53,7 +54,7 @@ module Dab
 
       def vm(bytecode)
         executable = "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}"
-        [File.join(@root, 'bin', executable), bytecode]
+        [File.join(@root, @binary_directory, executable), bytecode]
       end
     end
 

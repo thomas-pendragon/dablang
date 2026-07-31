@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "expected_exit_status": 86,
+  "expected_summary": "SUMMARY: AddressSanitizer: 160 byte(s) leaked in 4 allocation(s).",
+  "reason": "The trusted-local legacy VM smoke has a deterministic LeakSanitizer baseline outside roadmap item 11; core AddressSanitizer remains enabled and blocking."
+}

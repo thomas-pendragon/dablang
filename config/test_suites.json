@@ -110,6 +110,15 @@
       "in_complete_gate": false
     },
     {
+      "id": "rake-address-sanitizer",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "address_sanitizer_spec"],
+      "rake_task": "address_sanitizer_spec",
+      "source_glob": "test/address_sanitizer/*",
+      "in_complete_gate": false
+    },
+    {
       "id": "rake-build-examples",
       "state": "disabled",
       "kind": "rake",

@@ -27,11 +27,34 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
-  it 'keeps the manifest, Ruby default, lockfile, and three job definitions for five effective CI runs consistent' do
+  it 'keeps four job definitions for five normal runs plus one AddressSanitizer run consistent' do
     with_contract_repository(project_root) do |root, contract|
       errors = described_class.new(root: root, contract: contract).errors
 
       expect(errors).to be_empty
+    end
+  end
+
+  it 'detects AddressSanitizer runner, compiler, command, and blocking drift' do
+    with_contract_repository(project_root) do |root, contract|
+      workflow_path = File.join(root, '.github/workflows/ruby.yml')
+      workflow = File.read(workflow_path)
+      workflow = workflow.sub('runs-on: ubuntu-24.04', 'runs-on: ubuntu-latest')
+      workflow = workflow.sub('CXX: clang++-18', 'CXX: clang++')
+      workflow = workflow.sub(
+        'run: bundle exec rake address_sanitizer_spec',
+        "continue-on-error: true\n        run: bundle exec rake"
+      )
+      File.write(workflow_path, workflow)
+
+      errors = described_class.new(root: root, contract: contract).errors
+
+      expect(errors).to include('CI job address-sanitizer must run on ubuntu-24.04')
+      expect(errors).to include(
+        'CI job address-sanitizer compiler and Premake environment must match the AddressSanitizer profile'
+      )
+      expect(errors).to include('CI job address-sanitizer steps must remain blocking')
+      expect(errors).to include('CI job address-sanitizer must run bundle exec rake address_sanitizer_spec')
     end
   end
 
