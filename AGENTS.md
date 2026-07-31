@@ -56,12 +56,15 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 
 - Read `Rakefile` before assuming a task name. `rake spec` runs the Ruby RSpec
   suite; `rake dab_fixture_spec` runs the inherited Dab fixture suite.
-- The default `bundle exec rake` generates tracked documentation with `Last
-  revised` dates. Run it in a disposable worktree, inspect resulting changes,
-  and never commit generated churn unless the task specifically requires it.
+- The default `bundle exec rake` owns `docs/vm/opcodes.md`, `docs/classes.md`,
+  and `docs/classes/*.md`. They do not embed checkout time or revision metadata.
+  The complete gate rejects pre-existing edits and reports any
+  generated-documentation churn, so a clean checkout with current outputs can
+  run it in place.
 - The active PR workflow downloads Premake 5.0.0-beta8 and runs `bundle exec
-  rake` on Ruby 3.3.12, 3.4.9, and 4.0.5. Follow the current workflow rather
-  than old build instructions when reproducing CI.
+  rake` through `ruby script/complete_gate.rb` on Ruby 3.3.12, 3.4.9, and
+  4.0.5. Follow the current workflow rather than old build instructions when
+  reproducing CI.
 - Run the smallest relevant task first, then the required gate. For semantic
   work, run affected fixture tests and `bundle exec rspec`; for native boundary
   work, add the appropriate malformed-input or sanitizer proof.
