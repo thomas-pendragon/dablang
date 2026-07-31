@@ -43,7 +43,7 @@ function dab_common_setup(name, kindt, skip_shared)
       buildoptions "-arch x86_64"
       linkoptions "-arch x86_64"
 
-    filter "system:not windows"
+    filter "system:linux"
       links "dl"
       linkoptions "-rdynamic"
 end

@@ -52,6 +52,11 @@ dab_function_reg_t import_external_function(void *symbol, const DabFunctionRefle
 void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
     assert(reglist.size() >= 2 && reglist.size() <= 3);
+#ifdef DAB_PLATFORM_WINDOWS
+    (void)out_reg;
+    (void)reglist;
+    throw DabRuntimeError("function import not supported on windows yet");
+#else
     DabValue path        = register_get(reglist[0]);
     DabValue method      = register_get(reglist[1]);
     auto     method_name = method.string();
@@ -73,14 +78,12 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
         name_ = DAB_LIBC_NAME;
     }
 
-    auto name      = name_.c_str();
     auto libc_name = import_name.string();
 
-#ifndef DAB_PLATFORM_WINDOWS
     fprintf(stderr, "vm: readjust '%s' to libc function '%s'\n", method_name.c_str(),
             libc_name.c_str());
 
-    auto handle = dlopen(name, RTLD_LAZY);
+    auto handle = dlopen(name_.c_str(), RTLD_LAZY);
     if (!handle)
     {
         fprintf(stderr, "vm: dlopen error: %s", dlerror());
@@ -110,15 +113,8 @@ void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> 
     // function.address   = -1;
     function.extra_reg = import_external_function(symbol, function.reflection);
 
-#else
-    (void)args;
-    if (true)
-    {
-        throw DabRuntimeError("function import not supported on windows yet");
-    }
-#endif
-
     register_set(out_reg, nullptr);
+#endif
 }
 
 void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reglist,

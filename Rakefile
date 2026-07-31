@@ -23,10 +23,16 @@ $sources = Dir.glob('src/**/*.rb')
 $toolset = ENV['TOOLSET'] || 'gmake'
 
 def mangle_bin(bin, library: false)
-  dyext = OS.linux? ? 'so' : 'dylib'
-  bin = "lib#{bin}.#{dyext}" if library
+  if library
+    bin = if OS.windows?
+            "#{bin}.dll"
+          else
+            dyext = OS.linux? ? 'so' : 'dylib'
+            "lib#{bin}.#{dyext}"
+          end
+  end
   bin = "bin/#{bin}"
-  bin += '.exe' if $toolset['vs']
+  bin += '.exe' if OS.windows? && !library
   bin
 end
 
@@ -102,7 +108,7 @@ def build_project(makefile, project)
   when 'gmake'
     psystem("make -f ../#{makefile} #{project} verbose=1")
   when /vs\d+/
-    psystem("#{$msbuild} #{project}.vcxproj /p:Configuration=Release /p:Platform=x86 /t:Build")
+    psystem("#{$msbuild} #{project}.vcxproj /p:Configuration=Release /p:Platform=Win32 /t:Build")
   end
 end
 
@@ -144,7 +150,7 @@ end
 
 file makefile => [premake_source, version_file] do
   psystem(premake.to_s)
-  psystem("mv #{original_makefile} #{makefile}")
+  FileUtils.mv(original_makefile, makefile)
 end
 
 file cdisasm => csources_type['cdisasm'] + [makefile] do
