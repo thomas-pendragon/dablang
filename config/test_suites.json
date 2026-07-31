@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "suites": [
+    {
+      "id": "rake-minitest",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "minitest_spec"],
+      "rake_task": "minitest_spec",
+      "source_glob": "test/minitest/*.dab",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-dab-fixtures",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "dab_fixture_spec"],
+      "rake_task": "dab_fixture_spec",
+      "source_glob": "test/dab/*.dabt",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-format",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "format_spec"],
+      "rake_task": "format_spec",
+      "source_glob": "test/format/*.dabft",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-vm",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "vm_spec"],
+      "rake_task": "vm_spec",
+      "source_glob": "test/vm/*.vmt",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-disasm",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "disasm_spec"],
+      "rake_task": "disasm_spec",
+      "source_glob": "test/disasm/*.dat",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-asm",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "asm_spec"],
+      "rake_task": "asm_spec",
+      "source_glob": "test/asm/*.asmt",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-dumpcov",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "dumpcov_spec"],
+      "rake_task": "dumpcov_spec",
+      "source_glob": "test/dumpcov/*.test",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-cov",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "cov_spec"],
+      "rake_task": "cov_spec",
+      "source_glob": "test/cov/*.test",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-debug",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "debug_spec"],
+      "rake_task": "debug_spec",
+      "source_glob": "test/debug/*.test",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-multidab",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "multidab_spec"],
+      "rake_task": "multidab_spec",
+      "source_glob": "test/multidab/*.test",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-decompile",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "decompile_spec"],
+      "rake_task": "decompile_spec",
+      "source_glob": "test/decompile/*.test",
+      "in_complete_gate": true
+    },
+    {
+      "id": "rake-compiler-performance",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "compiler_performance_spec"],
+      "rake_task": "compiler_performance_spec",
+      "source_glob": "test/compiler_performance/*.test",
+      "in_complete_gate": false
+    },
+    {
+      "id": "rake-build-examples",
+      "state": "disabled",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "build_examples_spec"],
+      "rake_task": "build_examples_spec",
+      "source_glob": "examples/*.dab",
+      "in_complete_gate": false,
+      "reason": "Rake declares the task, but its default-task dependency remains explicitly commented out."
+    },
+    {
+      "id": "rspec",
+      "state": "active",
+      "kind": "command",
+      "command": ["bundle", "exec", "rspec"],
+      "source_glob": "spec/**/*_spec.rb",
+      "in_complete_gate": true
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "rspec-pending-examples",
+      "state": "pending",
+      "source_glob": "spec/**/*_spec.rb",
+      "evidence": {"type": "pattern", "value": "\\bxit\\s"},
+      "reason": "RSpec examples declared with xit are collected and reported as pending rather than executed."
+    },
+    {
+      "id": "rspec-windows-process-group-skip",
+      "state": "pending",
+      "source_glob": "spec/system_timeout_spec.rb",
+      "evidence": {"type": "pattern", "value": "skip .+ if OS\\.windows\\?"},
+      "reason": "The process-group assertion is skipped on Windows because Windows uses the separately exercised taskkill path."
+    },
+    {
+      "id": "dab-disabled-leak-fixtures",
+      "state": "disabled",
+      "source_glob": "test/dab/*.dabtx",
+      "evidence": {"type": "excluded_from_task", "value": "dab_fixture_spec"},
+      "reason": "The .dabtx leak fixtures are excluded from the active .dabt Rake glob."
+    },
+    {
+      "id": "multidab-disabled-ivar-fixture",
+      "state": "disabled",
+      "source_glob": "test/multidab/*.testx",
+      "evidence": {"type": "excluded_from_task", "value": "multidab_spec"},
+      "reason": "The .testx fixture is excluded from the active .test Rake glob."
+    },
+    {
+      "id": "decompile-disabled-vm-fixture",
+      "state": "disabled",
+      "source_glob": "test/decompile/*.testx",
+      "evidence": {"type": "excluded_from_task", "value": "decompile_spec"},
+      "reason": "The .testx fixture is excluded from the active .test Rake glob."
+    }
+  ]
+}

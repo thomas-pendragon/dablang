@@ -46,8 +46,9 @@ describe Dab::CompleteGate::Runner do
     Dab::CompleteGate::CommandResult.new(success, exit_code)
   end
 
-  it 'runs the preflight, inherited gate, and Ruby RSpec suite exactly once in order' do
+  it 'runs manifest validation before the unchanged validation stages exactly once in order' do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
                                                            command_result(true, 0),
                                                            command_result(true, 0),
                                                            command_result(true, 0),
@@ -64,12 +65,14 @@ describe Dab::CompleteGate::Runner do
     expect(status).to eq(0)
     expect(executor.commands).to eq(
       [
+        [%w[bundle exec ruby script/test_suite_manifest.rb], root],
         [%w[ruby script/toolchain_preflight.rb], root],
         [%w[bundle exec rake], root],
         [%w[bundle exec rspec], root],
       ]
     )
     expect(output.string).to eq(
+      "complete validation gate: test suite manifest validation\n" \
       "complete validation gate: supported toolchain preflight\n" \
       "complete validation gate: inherited build, test, and documentation gate\n" \
       "complete validation gate: Ruby RSpec suite\n" \
@@ -78,8 +81,29 @@ describe Dab::CompleteGate::Runner do
     expect(error.string).to eq('')
   end
 
+  it 'returns the manifest validator status before preflight or expensive tests run' do
+    executor = CompleteGateSpecSupport::FakeExecutor.new([command_result(false, 19)])
+
+    status = described_class.new(
+      root: root,
+      executor: executor,
+      generated_documentation: generated_documentation,
+      output: output,
+      error: error
+    ).run
+
+    expect(status).to eq(19)
+    expect(executor.commands).to eq([[%w[bundle exec ruby script/test_suite_manifest.rb], root]])
+    expect(error.string).to include(
+      'FAILED during test suite manifest validation (bundle exec ruby script/test_suite_manifest.rb)'
+    )
+  end
+
   it 'fails fast and returns the preflight exit status without running the inherited gate' do
-    executor = CompleteGateSpecSupport::FakeExecutor.new([command_result(false, 17)])
+    executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
+                                                           command_result(false, 17),
+                                                         ])
 
     status = described_class.new(
       root: root,
@@ -90,12 +114,18 @@ describe Dab::CompleteGate::Runner do
     ).run
 
     expect(status).to eq(17)
-    expect(executor.commands).to eq([[%w[ruby script/toolchain_preflight.rb], root]])
+    expect(executor.commands.map(&:first)).to eq(
+      [
+        %w[bundle exec ruby script/test_suite_manifest.rb],
+        %w[ruby script/toolchain_preflight.rb],
+      ]
+    )
     expect(error.string).to include('FAILED during supported toolchain preflight (ruby script/toolchain_preflight.rb)')
   end
 
   it 'returns the inherited gate exit status after a successful preflight without running RSpec' do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
                                                            command_result(true, 0),
                                                            command_result(false, 9),
                                                          ])
@@ -117,6 +147,7 @@ describe Dab::CompleteGate::Runner do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
                                                            command_result(true, 0),
                                                            command_result(true, 0),
+                                                           command_result(true, 0),
                                                            command_result(false, 23),
                                                          ])
 
@@ -131,6 +162,7 @@ describe Dab::CompleteGate::Runner do
     expect(status).to eq(23)
     expect(executor.commands.map(&:first)).to eq(
       [
+        %w[bundle exec ruby script/test_suite_manifest.rb],
         %w[ruby script/toolchain_preflight.rb],
         %w[bundle exec rake],
         %w[bundle exec rspec],
@@ -155,7 +187,7 @@ describe Dab::CompleteGate::Runner do
 
     expect(status).to eq(1)
     expect(executor.commands).to be_empty
-    expect(error.string).to include('FAILED before supported toolchain preflight')
+    expect(error.string).to include('FAILED before test suite manifest validation')
     expect(error.string).to include("  docs/classes/array.md\n")
   end
 
@@ -163,8 +195,10 @@ describe Dab::CompleteGate::Runner do
     executor = CompleteGateSpecSupport::FakeExecutor.new([
                                                            command_result(true, 0),
                                                            command_result(true, 0),
+                                                           command_result(true, 0),
                                                          ])
     generated_documentation = CompleteGateSpecSupport::FakeGeneratedDocumentation.new(
+      [],
       [],
       [],
       ['docs/vm/opcodes.md', 'docs\\classes\\array.md']
@@ -181,6 +215,7 @@ describe Dab::CompleteGate::Runner do
     expect(status).to eq(1)
     expect(executor.commands.map(&:first)).to eq(
       [
+        %w[bundle exec ruby script/test_suite_manifest.rb],
         %w[ruby script/toolchain_preflight.rb],
         %w[bundle exec rake],
       ]
@@ -192,8 +227,12 @@ describe Dab::CompleteGate::Runner do
   end
 
   it 'preserves an earlier stage exit status while reporting generated-documentation changes' do
-    executor = CompleteGateSpecSupport::FakeExecutor.new([command_result(false, 17)])
+    executor = CompleteGateSpecSupport::FakeExecutor.new([
+                                                           command_result(true, 0),
+                                                           command_result(false, 17),
+                                                         ])
     generated_documentation = CompleteGateSpecSupport::FakeGeneratedDocumentation.new(
+      [],
       [],
       ['docs/vm/opcodes.md']
     )
@@ -326,6 +365,9 @@ describe 'complete validation gate contract' do
 
     expect(documentation).to include("```shell\nruby script/complete_gate.rb\n```")
     expect(workflow.scan('run: ruby script/complete_gate.rb').count).to eq(3)
+    expect(Dab::CompleteGate::Runner::MANIFEST_COMMAND).to eq(
+      %w[bundle exec ruby script/test_suite_manifest.rb]
+    )
     expect(Dab::CompleteGate::Runner::PREFLIGHT_COMMAND).to eq(%w[ruby script/toolchain_preflight.rb])
     expect(Dab::CompleteGate::Runner::INHERITED_GATE_COMMAND).to eq(%w[bundle exec rake])
     expect(Dab::CompleteGate::Runner::RSPEC_COMMAND).to eq(%w[bundle exec rspec])
@@ -338,6 +380,7 @@ describe 'complete validation gate contract' do
     )
     expect(Dab::CompleteGate::Runner::STAGES.map(&:last)).to eq(
       [
+        %w[bundle exec ruby script/test_suite_manifest.rb],
         %w[ruby script/toolchain_preflight.rb],
         %w[bundle exec rake],
         %w[bundle exec rspec],

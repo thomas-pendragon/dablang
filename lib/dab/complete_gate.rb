@@ -72,10 +72,12 @@ module Dab
     end
 
     class Runner
+      MANIFEST_COMMAND = %w[bundle exec ruby script/test_suite_manifest.rb].freeze
       PREFLIGHT_COMMAND = %w[ruby script/toolchain_preflight.rb].freeze
       INHERITED_GATE_COMMAND = %w[bundle exec rake].freeze
       RSPEC_COMMAND = %w[bundle exec rspec].freeze
       STAGES = [
+        ['test suite manifest validation', MANIFEST_COMMAND],
         ['supported toolchain preflight', PREFLIGHT_COMMAND],
         ['inherited build, test, and documentation gate', INHERITED_GATE_COMMAND],
         ['Ruby RSpec suite', RSPEC_COMMAND],
@@ -127,7 +129,7 @@ module Dab
       def preexisting_generated_documentation_failure(paths)
         announce(
           @error,
-          'complete validation gate: FAILED before supported toolchain preflight; ' \
+          'complete validation gate: FAILED before test suite manifest validation; ' \
           'tracked generated documentation is already modified'
         )
         report_generated_documentation_paths(paths)

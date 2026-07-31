@@ -9,6 +9,7 @@ Dab is an experimental, highly optimised dynamic language, It is still a very ea
  - [Building](/building.html)
  - [Supported toolchain preflight](/toolchain-preflight.html)
  - [Complete validation gate](/complete-validation.html)
+ - [Test suite manifest](/test-suite-manifest.html)
  - [Examples](/examples.html)
  - [Type system](/design/type-system.html)
  - [Concretify](/design/concretify.html)
