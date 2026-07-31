@@ -328,7 +328,8 @@ module Dab
         if platform
           check_toolset(errors)
           premake_command = @environment['PREMAKE'] || platform.fetch('premake_command')
-          probe_exact(errors, versions, paths, 'premake', premake_command, @contract.premake_version, /(\d+\.\d+\.\d+-beta\d+)/)
+          premake_version = @contract.premake_version
+          probe_exact(errors, versions, paths, 'premake', premake_command, premake_version, exact_version_pattern(premake_version))
           probe_available(errors, versions, paths, 'driver', platform.fetch('build_driver'))
           probe_available(errors, versions, paths, 'compiler', platform.fetch('compiler'))
           clang_format = @environment['CLANG_FORMAT'] || platform.fetch('clang_format')
@@ -390,7 +391,13 @@ module Dab
 
         actual = result.stdout[pattern, 1] || result.stderr[pattern, 1]
         unless actual
-          errors << "#{label} at #{result.path} did not report a recognizable version; install #{label} #{expected}"
+          reported = version_number(result.stdout) || version_number(result.stderr)
+          message = if reported
+                      "#{label} at #{result.path} is #{reported}; install #{label} #{expected}"
+                    else
+                      "#{label} at #{result.path} did not report a recognizable version; install #{label} #{expected}"
+                    end
+          errors << message
           return
         end
         unless actual == expected
@@ -436,6 +443,10 @@ module Dab
       def version_number(output)
         first_line = output.to_s.lines.first.to_s
         first_line.scan(/\d+(?:\.\d+)+(?:[-+][0-9A-Za-z.-]+)?/).last
+      end
+
+      def exact_version_pattern(version)
+        /(?<![0-9A-Za-z.+-])(#{Regexp.escape(version)})(?![0-9A-Za-z.+-])/
       end
 
       def failure(errors)

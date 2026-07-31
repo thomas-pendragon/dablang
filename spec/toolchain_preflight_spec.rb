@@ -84,7 +84,11 @@ describe Dab::ToolchainPreflight::Runner do
     }
     probe = successful_probe(contract, platform, premake_command: '/selected/premake')
     probe_results = probe.instance_variable_get(:@results)
-    probe_results['/selected/clang-format'] = probe_results.delete('clang-format')
+    probe_results['/selected/premake'].path = '/selected/premake'
+    selected_clang_format = probe_results.delete('clang-format')
+    selected_clang_format.command = '/selected/clang-format'
+    selected_clang_format.path = '/selected/clang-format'
+    probe_results['/selected/clang-format'] = selected_clang_format
 
     result = runner(
       contract: contract,
@@ -95,8 +99,25 @@ describe Dab::ToolchainPreflight::Runner do
     ).run
 
     expect(result).to be_success
-    expect(result.output).to include('premake_path=/tools/premake5')
-    expect(result.output).to include('clang-format_path=/tools/clang-format')
+    expect(result.output).to include('premake_path=/selected/premake')
+    expect(result.output).to include('clang-format_path=/selected/clang-format')
+  end
+
+  it 'accepts an exact stable Premake version from the contract' do
+    stable_data = JSON.parse(JSON.generate(contract.data))
+    stable_data['premake_version'] = '5.0.0'
+    stable_contract = Dab::ToolchainPreflight::Contract.new(stable_data)
+    platform = stable_contract.platforms.fetch('linux-x86_64')
+
+    result = runner(
+      contract: stable_contract,
+      platform_name: 'linux-x86_64',
+      ruby_version: platform.fetch('ruby_versions').first,
+      probe: successful_probe(stable_contract, platform)
+    ).run
+
+    expect(result).to be_success
+    expect(result.output).to include('premake=5.0.0')
   end
 
   it 'reports missing commands and wrong exact versions together' do
