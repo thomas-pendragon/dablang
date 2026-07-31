@@ -130,10 +130,15 @@ def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, er
   ret = system_with_progress(cmd, input: input, input_file: input_file, show_stdout: !output_file, show_stderr: !error_file, binmode: binmode)
   DabTestOutput.record_command(cmd, exit_code: ret[:exit_code], stdout: ret[:stdout], stderr: ret[:stderr])
   unless ret[:exit_code] == 0
-    DabTestOutput.emit("#{ret[:stderr].to_s.red}\n")
+    DabTestOutput.emit("#{ret[:stderr].to_s.red}\n") unless DabTestOutput.current
     error = SystemCommandError.new("Error during executing #{cmd}", ret[:stderr])
     error.stdout = ret[:stdout]
-    error.exit_code = ret[:exit_code].respond_to?(:exitstatus) ? ret[:exit_code].exitstatus : ret[:exit_code]
+    status = ret[:exit_code]
+    error.exit_code = if status.respond_to?(:exitstatus)
+                        status.exitstatus || (status.signaled? ? 128 + status.termsig : 1)
+                      else
+                        status
+                      end
     raise error
   end
   File.open(output_file, 'wb') { |file| file << ret[:stdout] } if output_file

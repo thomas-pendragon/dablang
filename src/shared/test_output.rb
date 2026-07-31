@@ -122,8 +122,8 @@ module DabTestOutput
         @error.write("stage: #{command[:stage]}\n")
         @error.write("command: #{command[:command]}\n")
         @error.write("exit status: #{command[:exit_code]}\n")
-        @error.write("stdout:\n#{command[:stdout]}") unless command[:stdout].empty?
-        @error.write("stderr:\n#{command[:stderr]}") unless command[:stderr].empty?
+        @error.write("stdout:\n#{command[:stdout]}") unless command[:stdout].empty? || captured?(:stdout, command[:stdout])
+        @error.write("stderr:\n#{command[:stderr]}") unless command[:stderr].empty? || captured?(:stderr, command[:stderr])
         @error.write("\n")
       end
       return if reported
@@ -135,6 +135,11 @@ module DabTestOutput
         @error.write("command: #{action[:command]}\n")
         @error.write("exit status: unavailable (no subprocess)\n")
       end
+    end
+
+    def captured?(stream, text)
+      captured = @events.filter_map { |event_stream, _display, event_text| event_text if event_stream == stream }.join
+      captured.include?(text)
     end
   end
 
