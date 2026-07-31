@@ -87,29 +87,53 @@ class DabBinReader
   end
 
   def parse_klasses(clas, symbols)
-    # klass_length = 2 + 2 + 2
-    # count = clas.length / klass_length
+    parse_klasses_with_template_arguments(clas, symbols) || parse_legacy_klasses(clas, symbols)
+  end
+
+private
+
+  def parse_klasses_with_template_arguments(clas, symbols)
     offset = 0
     ret = []
-    loop do # Array.new(count) do |n|
-      # offset = n * klass_length
-      # STDERR.puts "read class index = #{offset}"
+    while offset < clas.length
+      return nil if clas.length - offset < 8 && ret.empty?
+      raise ArgumentError.new('truncated class table') if clas.length - offset < 8
+
       data = clas.unpack("@#{offset}S<S<S<S<")
       offset += 8
       klass = %i[index parent_index symbol templateargsn].zip(data).to_h
-      # ap klass
-      klass[:templateargs] = (0...klass[:templateargsn]).map do
-        v = clas.unpack("@#{offset}S<")
+      templateargs_length = klass[:templateargsn] * 2
+      return nil if clas.length - offset < templateargs_length && ret.empty?
+      raise ArgumentError.new('truncated class table') if clas.length - offset < templateargs_length
+
+      templateargs = Array.new(klass[:templateargsn]) do
+        value = clas.unpack("@#{offset}S<").first
         offset += 2
-        v
+        value
       end
       klass[:symbol] = symbols[klass[:symbol]]
+      klass[:templateargs] = templateargs unless templateargs.empty?
+      klass.delete(:templateargsn)
       ret << klass
-
-      break if offset == clas.length
     end
     ret
   end
+
+  def parse_legacy_klasses(clas, symbols)
+    klass_length = 2 + 2 + 2
+    raise ArgumentError.new('truncated class table') unless (clas.length % klass_length).zero?
+
+    count = clas.length / klass_length
+    Array.new(count) do |index|
+      offset = index * klass_length
+      data = clas.unpack("@#{offset}S<S<S<")
+      klass = %i[index parent_index symbol].zip(data).to_h
+      klass[:symbol] = symbols[klass[:symbol]]
+      klass
+    end
+  end
+
+public
 
   def parse_extended_functions(fext, symbols)
     length = fext.length
