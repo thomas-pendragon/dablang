@@ -1,4 +1,5 @@
 require 'os'
+require 'rbconfig'
 
 if ENV['COVERAGE']
   require 'simplecov'
@@ -244,6 +245,18 @@ setup_tests('../examples', 'dab', 'frontend_build_example', [], 'build_examples_
 setup_tests('multidab', 'test', nil, [cvm, cdisasm])
 setup_tests('decompile', 'test', nil, [cdisasm])
 
+legacy_source_vm_smoke_files = [
+  'script/legacy_source_vm_smoke.rb',
+  'lib/dab/legacy_source_vm_smoke.rb',
+  'test/legacy_source_vm_smoke/contract.json',
+  'test/legacy_source_vm_smoke/program.dab',
+]
+
+desc 'Compile, assemble, and execute the reproducible legacy source smoke'
+task legacy_source_vm_smoke: [cvm, *legacy_source_vm_smoke_files] do
+  sh RbConfig.ruby, 'script/legacy_source_vm_smoke.rb'
+end
+
 # gitlab = '.gitlab-ci.yml'
 # gitlab_base = 'gitlab_base.rb'
 
@@ -276,7 +289,8 @@ file ffi_file => [ffi_task] do
   psystem("ruby #{ffi_task} > #{ffi_file}")
 end
 
-task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :minitest_spec, :dab_fixture_spec, :format_spec, :vm_spec,
+task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :legacy_source_vm_smoke, :minitest_spec,
+               :dab_fixture_spec, :format_spec, :vm_spec,
                :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end
 

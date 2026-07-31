@@ -47,6 +47,22 @@ describe Dab::TestSuiteManifest::Validator do
     expect(command_suites.map { |entry| entry['command'] }).to eq(topology.suite_commands)
   end
 
+  it 'represents the direct legacy source-to-VM smoke once and wires all of its contract inputs' do
+    document = manifest
+    topology = Dab::TestSuiteManifest::Topology.new(root: root)
+    smoke_entries = document.fetch('suites').select do |entry|
+      entry['rake_task'] == 'legacy_source_vm_smoke'
+    end
+
+    expect(smoke_entries.length).to eq(1)
+    expect(topology.task_prerequisites('default').count('legacy_source_vm_smoke')).to eq(1)
+    expect(topology.gate_task?('legacy_source_vm_smoke')).to be(true)
+    expect(topology.task_inputs('legacy_source_vm_smoke')).to include(
+      'test/legacy_source_vm_smoke/contract.json',
+      'test/legacy_source_vm_smoke/program.dab'
+    )
+  end
+
   it 'fails closed for malformed JSON' do
     Dir.mktmpdir('dab-test-suite-manifest') do |directory|
       path = File.join(directory, 'manifest.json')

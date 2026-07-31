@@ -14,7 +14,8 @@ The command runs these stages once and in this order:
 1. read-only [test suite manifest validation](/test-suite-manifest.html);
 2. supported-toolchain preflight;
 3. the inherited `bundle exec rake` build, fixture-test, and documentation
-   gate, without omitting any of its current tasks; and
+   gate, including the reproducible [legacy source-to-VM smoke](/legacy-source-vm-smoke.html)
+   exactly once and without omitting any of its current tasks; and
 4. the Ruby RSpec suite (`bundle exec rspec`).
 
 Each stage is announced before it runs. Failures stop the command immediately,
@@ -74,3 +75,13 @@ command process tree, fails the harness with exit status 124, and replays the
 test identity, stage, command, configured limit, and `timed out` outcome with
 the captured diagnostics. Tests without a declared timeout keep their existing
 unbounded behavior.
+
+The legacy source-to-VM smoke is also available directly as:
+
+```shell
+bundle exec rake legacy_source_vm_smoke
+```
+
+Its Rake dependency builds the platform-native VM before two independent
+external compiler, assembler, and VM runs. The smoke uses its own stage limits;
+it does not alter the fixture harness limits above.

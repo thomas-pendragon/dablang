@@ -30,13 +30,15 @@ pattern or an `excluded_from_task` assertion.
 
 ## Current executable inventory
 
-The default `bundle exec rake` task reaches these active fixture suites:
+The default `bundle exec rake` task reaches these active Rake suites:
 
 - `minitest_spec`;
 - `dab_fixture_spec` (the public alias for the generated `dab` task);
 - `format_spec`, `vm_spec`, `disasm_spec`, and `asm_spec`;
 - `dumpcov_spec`, `cov_spec`, and `debug_spec`;
-- `multidab_spec` and `decompile_spec`.
+- `multidab_spec` and `decompile_spec`; and
+- `legacy_source_vm_smoke`, the external production source-to-bytecode-to-native-VM
+  reproducibility check.
 
 The complete gate runs that default Rake task and then the active standalone
 RSpec suite exactly once. The active `compiler_performance_spec` task is manual
@@ -76,7 +78,8 @@ failure stops immediately and preserves its nonzero exit status. After a
 successful validation, the existing preflight, inherited Rake gate, and RSpec
 suite retain their order and one-run behavior.
 
-Changing `setup_tests` declarations, default Rake dependencies, complete-gate
-suite stages, suite state, source extensions, pending markers, or platform skips
-requires updating the manifest and its evidence in the same change. Run the
-manifest validator before the complete gate so topology drift fails early.
+Changing `setup_tests` declarations, direct test Rake tasks, default Rake
+dependencies, complete-gate suite stages, suite state, source extensions,
+pending markers, or platform skips requires updating the manifest and its
+evidence in the same change. Run the manifest validator before the complete
+gate so topology drift fails early.
