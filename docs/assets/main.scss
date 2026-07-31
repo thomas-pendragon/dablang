@@ -442,6 +442,7 @@ summary:focus-visible {
   gap: 0.7rem;
   grid-template-columns: 1fr auto;
   padding: 0.45rem 0;
+  position: relative;
 }
 
 .footer-social-row > a {
@@ -449,6 +450,16 @@ summary:focus-visible {
   display: flex;
   gap: 0.7rem;
   text-decoration: none;
+}
+
+.footer-social-row > a::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.footer-social-row > span {
+  pointer-events: none;
 }
 
 .footer-social-row svg {
