@@ -24,3 +24,12 @@ ownership drift, and canonical-domain or CNAME changes. It builds the site in
 a disposable directory and checks the expected output, navigation, canonical
 URLs, and local links. It does not write `docs/_site` or any tracked generated
 documentation.
+
+The public pages share a responsive editorial shell defined by the local
+layouts and `docs/assets/main.scss`. On wide screens it uses a persistent
+project rail, explicit primary navigation, high-contrast display typography,
+and a structured project footer. On narrow screens the rail collapses into a
+compact header while every public destination remains reachable. The shell
+uses semantic landmarks, a keyboard skip link, visible focus treatment, and
+reduced-motion handling. This visual system does not change which pages are
+public or make new claims about the language.

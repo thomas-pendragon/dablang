@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+  {%- include head.html -%}
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="site-shell">
+      <aside class="site-rail" aria-label="Dab overview">
+        <div class="rail-brand">
+          <a class="rail-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+          <div class="rail-status">
+            <span class="github-mark" aria-label="Dab on GitHub">
+              {% include icon-github.html username=site.github_username %}
+            </span>
+            <a href="https://github.com/thomas-pendragon/dablang/actions/workflows/ruby.yml">
+              <img src="https://github.com/thomas-pendragon/dablang/actions/workflows/ruby.yml/badge.svg?branch=master" alt="Continuous integration status">
+            </a>
+          </div>
+        </div>
+
+        <nav class="rail-navigation" aria-label="Explore Dab">
+          <p class="rail-label">Explore</p>
+          {% for item in site.data.public_site.navigation %}
+            <a href="{{ item.target | relative_url }}">
+              <span>{{ item.title | escape }}</span><span aria-hidden="true">→</span>
+            </a>
+          {% endfor %}
+          <a href="{{ "/vm/opcodes.html" | relative_url }}">
+            <span>VM opcodes</span><span aria-hidden="true">→</span>
+          </a>
+        </nav>
+
+        <div class="rail-license">
+          <p class="rail-label">License</p>
+          <a href="{{ "/license.html" | relative_url }}">MIT</a>
+        </div>
+      </aside>
+
+      <div class="site-stage">
+        {%- include header.html -%}
+        <main class="page-content" id="main-content" aria-label="Content">
+          {{ content }}
+        </main>
+      </div>
+
+      {%- include footer.html -%}
+    </div>
+  </body>
+</html>

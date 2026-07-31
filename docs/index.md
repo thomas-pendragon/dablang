@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: home
 title: Design
 ---
 
@@ -7,7 +7,3 @@ Dab is an experimental, highly optimised dynamic language, It is still a very ea
 
  - [Building](/building.html)
  - [Examples](/examples.html)
- - [VM opcodes](/vm/opcodes.html)
- - [Classes](/classes.html)
-
-License: [MIT](/license.html)

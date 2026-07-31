@@ -39,6 +39,7 @@ module Dab::PublicSite
       validate_exclusions(pages)
       validate_domain
       validate_header
+      validate_visual_shell
       validate_ci
       validate_generated_documentation(pages)
       Result.new(@errors.uniq.sort, pages.length)
@@ -194,6 +195,44 @@ module Dab::PublicSite
       end
     rescue Errno::ENOENT => e
       @errors << "Jekyll header could not be read: #{e.message}"
+    end
+
+    def validate_visual_shell
+      default_layout = read_site_source('_layouts/default.html', 'default layout')
+      home_layout = read_site_source('_layouts/home.html', 'home layout')
+      page_layout = read_site_source('_layouts/page.html', 'page layout')
+      stylesheet = read_site_source('assets/main.scss', 'public-site stylesheet')
+      return unless default_layout && home_layout && page_layout && stylesheet
+
+      {
+        'site shell' => 'class="site-shell"',
+        'project rail' => 'class="site-rail"',
+        'skip link' => 'class="skip-link"',
+        'main content landmark' => 'id="main-content"',
+        'shared footer' => '{%- include footer.html -%}',
+      }.each do |name, marker|
+        @errors << "default layout must include the #{name}" unless default_layout.include?(marker)
+      end
+
+      unless home_layout.include?('layout: default') && home_layout.include?('class="home-page"')
+        @errors << 'home layout must use the shared editorial shell'
+      end
+      unless page_layout.include?('layout: default') && page_layout.include?('class="document-page"')
+        @errors << 'page layout must use the shared editorial shell'
+      end
+      unless stylesheet.include?('@media (max-width: 850px)') && stylesheet.include?('@media (max-width: 560px)')
+        @errors << 'public-site stylesheet must define both responsive breakpoints'
+      end
+      unless stylesheet.include?(':focus-visible') && stylesheet.include?('@media (prefers-reduced-motion: reduce)')
+        @errors << 'public-site stylesheet must preserve focus and reduced-motion handling'
+      end
+    end
+
+    def read_site_source(relative, name)
+      File.binread(File.join(@docs, relative))
+    rescue Errno::ENOENT => e
+      @errors << "#{name} could not be read: #{e.message}"
+      nil
     end
 
     def validate_ci

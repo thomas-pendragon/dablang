@@ -67,6 +67,20 @@ describe Dab::PublicSite::Contract do
     end
   end
 
+  it 'requires the responsive editorial shell and accessibility hooks' do
+    with_docs_copy do |root|
+      default_layout = File.join(root, 'docs/_layouts/default.html')
+      File.binwrite(default_layout, File.binread(default_layout).gsub('class="skip-link"', 'class="removed"'))
+      stylesheet = File.join(root, 'docs/assets/main.scss')
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('@media (prefers-reduced-motion: reduce)', '@media print'))
+
+      expect(validate(root).errors).to include(
+        'default layout must include the skip link',
+        'public-site stylesheet must preserve focus and reduced-motion handling'
+      )
+    end
+  end
+
   it 'rejects an internal page that is emitted or top-level navigable' do
     with_docs_copy do |root|
       config_path = File.join(root, 'docs/_config.yml')

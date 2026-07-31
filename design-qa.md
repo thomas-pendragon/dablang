@@ -1,0 +1,89 @@
+# Dab public-site design QA
+
+## Evidence
+
+- Source visual truth: `/mnt/data/codex-home/.codex/generated_images/019fad3c-a754-74f0-ab31-9ee00fb983f6/exec-84bddd1e-ded7-48c4-8fa3-617eafd0fd5e.png`
+- Desktop implementation: `/tmp/dablang-product-design-final/home-1440x1200.png`
+- Normalized full-view comparison: `/tmp/dablang-product-design-final/comparison.png`
+- Mobile home implementation: `/tmp/dablang-product-design-final/home-390x844.png`
+- Mobile document implementation: `/tmp/dablang-product-design-final/building-390x844.png`
+- Desktop viewport: 1440 by 1200 CSS pixels at device scale factor 1.
+- Mobile viewport: 390 by 844 CSS pixels at device scale factor 1, forced through Chrome DevTools emulation and verified with `innerWidth`, `innerHeight`, `devicePixelRatio`, and document scroll-width readback.
+- Source pixels: 1374 by 1145. The source was uniformly normalized to 1440 by 1200 for the desktop comparison; its aspect ratio was unchanged.
+- State: anonymous visitor, light presentation, homepage and representative long-form Building page.
+
+## Full-view comparison
+
+The normalized side-by-side comparison shows the same defining composition as
+the selected visual: a narrow project rail, a ruled primary navigation row, an
+oversized horizontally extended display title, a high-contrast serif
+description, two large underlined calls to action, and a three-part author and
+project footer. The implementation deliberately retains the repository's real
+CI badge, public navigation contract, and existing project destinations.
+
+The implementation omits the mock's dotted field and red ornamental marks.
+They were non-functional decoration with no source assets, and replacing them
+with CSS drawings or improvised glyphs would violate the asset-fidelity rule.
+The omission is acceptable P3 drift; the typography and editorial hierarchy
+remain the selected direction's primary identity.
+
+No focused crop was required: the 2880 by 1200 combined comparison keeps the
+display title, body typography, navigation labels, rules, footer signature,
+social marks, and CTA treatment legible at the same time.
+
+## Required fidelity surfaces
+
+- Fonts and typography: the implementation preserves the mock's wide heavy
+  grotesque display hierarchy, compact blue utility type, and contrasting
+  editorial serif copy. System font stacks avoid a new network dependency.
+  Heading scale, line height, tracking, wrapping, and desktop crop were checked
+  visually at the target viewport and separately on mobile.
+- Spacing and layout rhythm: rail width, main-column origin, navigation rule,
+  hero-to-copy gap, CTA row, and footer boundary align closely with the source.
+  The mobile layout removes the rail, retains all primary links, and uses a
+  single readable column without horizontal overflow.
+- Colors and visual tokens: warm paper, near-black ink, saturated cobalt links,
+  neutral rules, and a red focus/error accent match the selected palette while
+  maintaining readable contrast.
+- Image quality and asset fidelity: no required imagery was approximated. The
+  existing GitHub and Twitter icons and live CI badge remain legitimate source
+  assets. Non-essential decorative art without source assets was omitted.
+- Copy and content: existing public product copy and destinations were
+  preserved. This release does not pre-empt the separately planned 0.0.17
+  README and homepage content overhaul.
+
+## Comparison history
+
+1. Initial desktop comparison found a P2 proportion mismatch: the project rail
+   was too wide, the display word was too narrow, the body copy wrapped into too
+   many lines, and the footer fell below the target viewport. The grid track,
+   display scale, copy measure, vertical gaps, and viewport row were corrected.
+2. The first representative mobile document capture found a P2 overflow issue:
+   long inline code and highlighted blocks widened the Building page. Explicit
+   mobile content bounds, inline-code wrapping, and scroll-contained code blocks
+   were added. Final DevTools readback reports a 390-pixel viewport and
+   390-pixel document width.
+3. The post-fix desktop comparison and 390 by 844 home/document captures show no
+   remaining actionable P0, P1, or P2 mismatch.
+
+## Findings
+
+- P3: the source's dotted and red ornamental marks are omitted because no real
+  source assets exist. This does not affect hierarchy, navigation, or product
+  comprehension and avoids an inauthentic code-drawn substitute.
+
+## Interaction and accessibility checks
+
+- The disposable public-site validator built all 39 classified pages and
+  verified every local link and explicit navigation target.
+- Direct browser renders covered the homepage and Building destination at the
+  desktop and mobile breakpoints.
+- Semantic header, navigation, aside, main, article, and footer landmarks are
+  present; the skip link, visible keyboard focus, reduced-motion rule, and
+  responsive content bounds are contract-tested.
+- The public shell ships no client-side application JavaScript; browser renders
+  produced no application console errors.
+
+## Final result
+
+final result: passed
