@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "default_ruby_version": "3.3.12",
   "bundler_version": "2.7.2",
   "premake_version": "5.0.0-beta8",
@@ -89,6 +89,42 @@
         "premake_command": "./premake5",
         "premake_asset": "premake-5.0.0-beta8-linux.tar.gz",
         "command": "bundle exec rake address_sanitizer_spec",
+        "compiler_setup": "clang-18"
+      }
+    },
+    "undefined_behavior_sanitizer": {
+      "platform": "linux-x86_64",
+      "compiler": "clang++-18",
+      "compiler_version": "18",
+      "c_compiler": "clang-18",
+      "configuration": "UBSan",
+      "premake_option": "--undefined-behavior-sanitizer",
+      "build_directory": "build/undefined-behavior-sanitizer",
+      "object_directory": "build/undefined-behavior-sanitizer/obj/UBSan",
+      "binary_directory": "bin/undefined-behavior-sanitizer",
+      "metadata_tool": "readelf",
+      "instrumentation_symbol": "__ubsan_handle_[A-Za-z0-9_]+_abort",
+      "symbolizer_tool": "/usr/bin/llvm-symbolizer-18",
+      "compile_flags": [
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-fno-optimize-sibling-calls"
+      ],
+      "link_flags": ["-fsanitize=undefined"],
+      "targets": {
+        "cvm": "cvm",
+        "cdisasm": "cdisasm",
+        "cdumpcov": "cdumpcov",
+        "cffitest": "libcffitest.so"
+      },
+      "ci": {
+        "job": "undefined-behavior-sanitizer",
+        "runner": "ubuntu-24.04",
+        "ruby_setup": "3.3.12",
+        "premake_command": "./premake5",
+        "premake_asset": "premake-5.0.0-beta8-linux.tar.gz",
+        "command": "bundle exec rake undefined_behavior_sanitizer_spec",
         "compiler_setup": "clang-18"
       }
     }

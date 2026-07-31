@@ -119,6 +119,15 @@
       "in_complete_gate": false
     },
     {
+      "id": "rake-undefined-behavior-sanitizer",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "undefined_behavior_sanitizer_spec"],
+      "rake_task": "undefined_behavior_sanitizer_spec",
+      "source_glob": "test/undefined_behavior_sanitizer/*",
+      "in_complete_gate": false
+    },
+    {
       "id": "rake-build-examples",
       "state": "disabled",
       "kind": "rake",

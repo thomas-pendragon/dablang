@@ -27,11 +27,38 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
-  it 'keeps four job definitions for five normal runs plus one AddressSanitizer run consistent' do
+  it 'keeps five job definitions for five normal runs plus two independent sanitizer runs consistent' do
     with_contract_repository(project_root) do |root, contract|
       errors = described_class.new(root: root, contract: contract).errors
 
       expect(errors).to be_empty
+    end
+  end
+
+  it 'detects UndefinedBehaviorSanitizer runner, compiler, command, and blocking drift' do
+    with_contract_repository(project_root) do |root, contract|
+      workflow_path = File.join(root, '.github/workflows/ruby.yml')
+      workflow = File.read(workflow_path)
+      prefix, job = workflow.split("  undefined-behavior-sanitizer:\n", 2)
+      job = job.sub('runs-on: ubuntu-24.04', 'runs-on: ubuntu-latest')
+      job = job.sub('CXX: clang++-18', 'CXX: clang++')
+      job = job.sub(
+        'run: bundle exec rake undefined_behavior_sanitizer_spec',
+        "continue-on-error: true\n        run: bundle exec rake"
+      )
+      File.write(workflow_path, "#{prefix}  undefined-behavior-sanitizer:\n#{job}")
+
+      errors = described_class.new(root: root, contract: contract).errors
+
+      expect(errors).to include('CI job undefined-behavior-sanitizer must run on ubuntu-24.04')
+      expect(errors).to include(
+        'CI job undefined-behavior-sanitizer compiler and Premake environment must match the ' \
+        'UndefinedBehaviorSanitizer profile'
+      )
+      expect(errors).to include('CI job undefined-behavior-sanitizer steps must remain blocking')
+      expect(errors).to include(
+        'CI job undefined-behavior-sanitizer must run bundle exec rake undefined_behavior_sanitizer_spec'
+      )
     end
   end
 

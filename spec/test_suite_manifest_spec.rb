@@ -78,6 +78,22 @@ describe Dab::TestSuiteManifest::Validator do
     )
   end
 
+  it 'represents the dedicated UndefinedBehaviorSanitizer suite exactly once outside the complete gate' do
+    document = manifest
+    topology = Dab::TestSuiteManifest::Topology.new(root: root)
+    entries = document.fetch('suites').select do |entry|
+      entry['rake_task'] == 'undefined_behavior_sanitizer_spec'
+    end
+
+    expect(entries.length).to eq(1)
+    expect(entries.first.fetch('state')).to eq('active')
+    expect(entries.first.fetch('in_complete_gate')).to be(false)
+    expect(topology.gate_task?('undefined_behavior_sanitizer_spec')).to be(false)
+    expect(topology.task_inputs('undefined_behavior_sanitizer_spec')).to include(
+      'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp'
+    )
+  end
+
   it 'fails closed for malformed JSON' do
     Dir.mktmpdir('dab-test-suite-manifest') do |directory|
       path = File.join(directory, 'manifest.json')

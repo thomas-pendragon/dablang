@@ -13,7 +13,10 @@ This profile is initially supported only on Linux x86_64 with Clang 18. CI
 runs it once in the blocking `address-sanitizer` job on GitHub-hosted
 `ubuntu-24.04`; it is intentionally separate from the three-run Linux Ruby
 matrix and the normal macOS and Windows jobs. No macOS or Windows sanitizer
-support is claimed.
+support is claimed for this profile. The independently runnable
+[UndefinedBehaviorSanitizer profile](/undefined-behavior-sanitizer.html) has its
+own build state, runtime contract, and blocking job; the two sanitizers are not
+combined.
 
 The command validates the test-suite and supported-toolchain manifests, checks
 the profile-specific host and tools, and then generates only

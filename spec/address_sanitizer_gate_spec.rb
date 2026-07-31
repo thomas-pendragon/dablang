@@ -93,14 +93,15 @@ describe Dab::AddressSanitizerGate::Runner do
     expect(profile.fetch('link_flags')).to include('-fsanitize=address')
     expect(profile.fetch('leak_detection')).to be(true)
     expect(premake).to include('fatalwarnings "All"')
-    expect(premake).to include('configurations(address_sanitizer and { "ASan" } or { "Debug", "Release" })')
+    expect(premake).to include('address_sanitizer and { "ASan" }')
+    expect(premake).to include('filter "configurations:ASan"')
   end
 
   it 'keeps normal build state and outputs distinct from the AddressSanitizer namespace' do
     premake = File.binread(File.join(root, 'premake5.lua'))
 
-    expect(premake).to include('location(address_sanitizer and "build/address-sanitizer" or "build")')
-    expect(premake).to include('targetdir(address_sanitizer and "bin/address-sanitizer/" or "bin/")')
+    expect(premake).to include('address_sanitizer and "build/address-sanitizer"')
+    expect(premake).to include('address_sanitizer and "bin/address-sanitizer/"')
     expect(premake).to include('objdir "build/address-sanitizer/obj/%{cfg.buildcfg}/%{prj.name}"')
   end
 

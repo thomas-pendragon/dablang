@@ -10,7 +10,7 @@ require_relative 'legacy_source_vm_smoke'
 require_relative 'toolchain_preflight'
 
 module Dab
-  module AddressSanitizerGate
+  module UndefinedBehaviorSanitizerGate
     CommandResult = Struct.new(:stdout, :stderr, :exit_code, :timed_out) do
       def success?
         exit_code.zero? && !timed_out
@@ -70,13 +70,25 @@ module Dab
       def terminate(wait_thread)
         if Gem.win_platform?
           system('taskkill', '/PID', wait_thread.pid.to_s, '/T', '/F', out: File::NULL, err: File::NULL)
-        else
-          Process.kill('TERM', -wait_thread.pid)
-          Process.kill('KILL', -wait_thread.pid) unless wait_thread.join(TERMINATION_GRACE_SECONDS)
+          wait_thread.join
+          return
         end
+
+        Process.kill('TERM', -wait_thread.pid)
+        wait_thread.join(TERMINATION_GRACE_SECONDS)
+        Process.kill('KILL', -wait_thread.pid) if process_group_alive?(wait_thread.pid)
         wait_thread.join
       rescue Errno::ESRCH
-        nil
+        wait_thread.join
+      end
+
+      def process_group_alive?(process_group_id)
+        Process.kill(0, -process_group_id)
+        true
+      rescue Errno::ESRCH
+        false
+      rescue Errno::EPERM
+        true
       end
 
       def status_code(status)
@@ -87,20 +99,19 @@ module Dab
     class Runner
       MANIFEST_COMMAND = %w[bundle exec ruby script/test_suite_manifest.rb].freeze
       PREFLIGHT_COMMAND = %w[ruby script/toolchain_preflight.rb].freeze
-      OWNED_DIRECTORIES = %w[build/address-sanitizer bin/address-sanitizer].freeze
+      OWNED_DIRECTORIES = %w[
+        build/undefined-behavior-sanitizer
+        bin/undefined-behavior-sanitizer
+      ].freeze
       GENERATED_CONTRACT_TIMEOUT = 30
       BUILD_TIMEOUT = 180
       TOOL_TIMEOUT = 10
       CANARY_EXIT_CODE = 86
-      SANITIZER_REPORT = /(?:ERROR|SUMMARY): (?:AddressSanitizer|LeakSanitizer)/.freeze
-      BASE_ASAN_OPTIONS = [
-        'abort_on_error=0',
-        'check_initialization_order=1',
-        'detect_odr_violation=2',
-        'detect_stack_use_after_return=1',
+      SANITIZER_REPORT = /(?:runtime error:|SUMMARY: UndefinedBehaviorSanitizer|UndefinedBehaviorSanitizer:DEADLYSIGNAL)/.freeze
+      BASE_UBSAN_OPTIONS = [
         "exitcode=#{CANARY_EXIT_CODE}",
         'halt_on_error=1',
-        'strict_string_checks=1',
+        'print_stacktrace=1',
         'symbolize=0',
       ].freeze
       VERSION_LABELS = {
@@ -131,11 +142,11 @@ module Dab
         validate_generated_build
         build_targets
         verify_target_instrumentation
-        run_memory_error_canary
+        build_and_verify_canary_binaries
+        run_undefined_behavior_canary
         run_native_tool_smoke
-        characterize_legacy_smoke_leak
         run_legacy_source_vm_smoke
-        announce(@output, 'AddressSanitizer gate: PASSED')
+        announce(@output, 'UndefinedBehaviorSanitizer gate: PASSED')
         0
       rescue StageFailure => e
         report_stage_failure(e)
@@ -143,8 +154,8 @@ module Dab
       rescue ContractFailure => e
         report_contract_failure(e)
         e.exit_code
-      rescue Errno::ENOENT, Errno::EACCES, IOError, JSON::ParserError, KeyError, TypeError => e
-        announce(@error, "AddressSanitizer gate: FAILED during setup: #{e.class}: #{e.message}")
+      rescue Errno::ENOENT, Errno::EACCES, IOError, JSON::ParserError, KeyError, TypeError, RegexpError => e
+        announce(@error, "UndefinedBehaviorSanitizer gate: FAILED during setup: #{e.class}: #{e.message}")
         1
       end
 
@@ -160,46 +171,47 @@ module Dab
                      "#{ToolchainPreflight::Contract::SCHEMA_VERSION}"
           )
         end
-        @profile = @contract.address_sanitizer
+        @profile = @contract.undefined_behavior_sanitizer
+        @instrumentation_pattern = Regexp.new(@profile.fetch('instrumentation_symbol'))
       end
 
       def validate_profile
         expected_platform = "#{@host_os}-#{@host_cpu}"
         unless @profile.fetch('platform') == expected_platform
           raise ContractFailure.new(
-            stage: 'AddressSanitizer platform precondition',
+            stage: 'UndefinedBehaviorSanitizer platform precondition',
             details: "supported #{@profile.fetch('platform')}; current #{expected_platform}"
           )
         end
 
-        unless @profile.fetch('configuration') == 'ASan'
-          contract_failure('AddressSanitizer profile contract', 'configuration must remain ASan')
+        unless @profile.fetch('configuration') == 'UBSan'
+          contract_failure('UndefinedBehaviorSanitizer profile contract', 'configuration must remain UBSan')
         end
-        unless @profile.fetch('premake_option') == '--address-sanitizer'
-          contract_failure('AddressSanitizer profile contract', 'Premake option must remain --address-sanitizer')
-        end
-        unless @profile.fetch('leak_detection') == true
-          contract_failure('AddressSanitizer profile contract', 'leak detection must remain enabled')
+        unless @profile.fetch('premake_option') == '--undefined-behavior-sanitizer'
+          contract_failure(
+            'UndefinedBehaviorSanitizer profile contract',
+            'Premake option must remain --undefined-behavior-sanitizer'
+          )
         end
 
         validate_owned_directories
         require_flags(@profile.fetch('compile_flags'), required_compile_flags, 'compile')
-        require_flags(@profile.fetch('link_flags'), ['-fsanitize=address'], 'link')
+        require_flags(@profile.fetch('link_flags'), ['-fsanitize=undefined'], 'link')
       end
 
       def validate_owned_directories
         actual = [@profile.fetch('build_directory'), @profile.fetch('binary_directory')]
         unless actual == OWNED_DIRECTORIES
           contract_failure(
-            'AddressSanitizer output-isolation contract',
+            'UndefinedBehaviorSanitizer output-isolation contract',
             "owned directories must remain #{OWNED_DIRECTORIES.join(' and ')}"
           )
         end
         object_directory = @profile.fetch('object_directory')
-        expected_object = File.join(@profile.fetch('build_directory'), 'obj', 'ASan')
+        expected_object = File.join(@profile.fetch('build_directory'), 'obj', 'UBSan')
         unless object_directory == expected_object
           contract_failure(
-            'AddressSanitizer output-isolation contract',
+            'UndefinedBehaviorSanitizer output-isolation contract',
             "object directory must remain #{expected_object}"
           )
         end
@@ -207,8 +219,8 @@ module Dab
 
       def required_compile_flags
         [
-          '-fsanitize=address',
-          '-fsanitize-address-use-after-scope',
+          '-fsanitize=undefined',
+          '-fno-sanitize-recover=all',
           '-fno-omit-frame-pointer',
           '-fno-optimize-sibling-calls',
         ]
@@ -219,55 +231,59 @@ module Dab
         return if missing.empty?
 
         contract_failure(
-          'AddressSanitizer profile contract',
+          'UndefinedBehaviorSanitizer profile contract',
           "#{kind} flags are missing: #{missing.join(', ')}"
         )
       end
 
       def validate_tools
-        compiler = execute_required(
-          'AddressSanitizer C++ compiler precondition',
-          [@profile.fetch('compiler'), '--version'],
-          timeout: TOOL_TIMEOUT
-        )
-        compiler_pattern = /clang version #{Regexp.escape(@profile.fetch('compiler_version'))}(?:\.|\s)/
-        unless compiler.stdout.match?(compiler_pattern)
-          contract_failure(
-            'AddressSanitizer C++ compiler precondition',
-            "#{@profile.fetch('compiler')} must report Clang #{@profile.fetch('compiler_version')}.x"
-          )
-        end
+        validate_clang_tool('C++', @profile.fetch('compiler'))
+        validate_clang_tool('C', @profile.fetch('c_compiler'))
         execute_required(
-          'AddressSanitizer C compiler precondition',
-          [@profile.fetch('c_compiler'), '--version'],
-          timeout: TOOL_TIMEOUT
-        )
-        execute_required(
-          'AddressSanitizer build-driver precondition',
+          'UndefinedBehaviorSanitizer build-driver precondition',
           ['make', '--version'],
           timeout: TOOL_TIMEOUT
         )
         execute_required(
-          'AddressSanitizer metadata-tool precondition',
+          'UndefinedBehaviorSanitizer metadata-tool precondition',
           [@profile.fetch('metadata_tool'), '--version'],
           timeout: TOOL_TIMEOUT
         )
-        premake = selected_premake
-        premake_result = execute_required(
-          'AddressSanitizer Premake precondition',
-          [premake, '--version'],
+        execute_required(
+          'UndefinedBehaviorSanitizer offline-symbolizer precondition',
+          [@profile.fetch('symbolizer_tool'), '--version'],
           timeout: TOOL_TIMEOUT
         )
-        unless premake_result.stdout.include?(@contract.premake_version)
-          contract_failure(
-            'AddressSanitizer Premake precondition',
-            "selected Premake must report #{@contract.premake_version}"
-          )
-        end
+        premake_result = execute_required(
+          'UndefinedBehaviorSanitizer Premake precondition',
+          [selected_premake, '--version'],
+          timeout: TOOL_TIMEOUT
+        )
+        return if premake_result.stdout.include?(@contract.premake_version)
+
+        contract_failure(
+          'UndefinedBehaviorSanitizer Premake precondition',
+          "selected Premake must report #{@contract.premake_version}"
+        )
+      end
+
+      def validate_clang_tool(kind, command)
+        result = execute_required(
+          "UndefinedBehaviorSanitizer #{kind} compiler precondition",
+          [command, '--version'],
+          timeout: TOOL_TIMEOUT
+        )
+        pattern = /clang version #{Regexp.escape(@profile.fetch('compiler_version'))}(?:\.|\s)/i
+        return if (result.stdout + result.stderr).match?(pattern)
+
+        contract_failure(
+          "UndefinedBehaviorSanitizer #{kind} compiler precondition",
+          "#{command} must report Clang #{@profile.fetch('compiler_version')}.x"
+        )
       end
 
       def clean_owned_outputs
-        announce(@output, 'AddressSanitizer gate: clean isolated outputs')
+        announce(@output, 'UndefinedBehaviorSanitizer gate: clean isolated outputs')
         OWNED_DIRECTORIES.each do |relative_path|
           FileUtils.rm_rf(File.join(@root, relative_path))
         end
@@ -275,14 +291,14 @@ module Dab
 
       def generate_build
         execute_required(
-          'dedicated AddressSanitizer build generation',
+          'dedicated UndefinedBehaviorSanitizer build generation',
           [selected_premake, @profile.fetch('premake_option'), @contract.premake_action],
           timeout: GENERATED_CONTRACT_TIMEOUT
         )
       end
 
       def validate_generated_build
-        announce(@output, 'AddressSanitizer gate: generated build contract')
+        announce(@output, 'UndefinedBehaviorSanitizer gate: generated build contract')
         build_directory = File.join(@root, @profile.fetch('build_directory'))
         @profile.fetch('targets').each do |target, output_name|
           makefile_path = File.join(build_directory, "#{target}.make")
@@ -295,6 +311,7 @@ module Dab
             "TARGET = $(TARGETDIR)/#{File.basename(expected_target)}",
             "OBJDIR = #{expected_object}",
             '-Werror',
+            '-g',
             *@profile.fetch('compile_flags'),
             *@profile.fetch('link_flags'),
           ]
@@ -302,7 +319,7 @@ module Dab
           next if missing.empty?
 
           contract_failure(
-            'generated AddressSanitizer build contract',
+            'generated UndefinedBehaviorSanitizer build contract',
             "#{relative(makefile_path)} is missing #{missing.uniq.join(', ')}"
           )
         end
@@ -316,60 +333,101 @@ module Dab
           *@profile.fetch('targets').keys,
           'verbose=1'
         ]
-        execute_required('dedicated AddressSanitizer native build', command, timeout: BUILD_TIMEOUT)
+        execute_required('dedicated UndefinedBehaviorSanitizer native build', command, timeout: BUILD_TIMEOUT)
       end
 
       def verify_target_instrumentation
-        announce(@output, 'AddressSanitizer gate: instrumentation metadata proof')
+        announce(@output, 'UndefinedBehaviorSanitizer gate: instrumentation metadata proof')
         @profile.fetch('targets').each_value do |output_name|
           verify_instrumented(File.join(@profile.fetch('binary_directory'), output_name))
         end
       end
 
-      def verify_instrumented(relative_path)
-        path = File.join(@root, relative_path)
-        result = execute_required(
-          "AddressSanitizer metadata read for #{relative_path}",
-          [@profile.fetch('metadata_tool'), '--symbols', '--wide', path],
-          timeout: TOOL_TIMEOUT,
-          replay: false
+      def build_and_verify_canary_binaries
+        canary_directory = File.join(@root, @profile.fetch('build_directory'), 'canary')
+        FileUtils.mkdir_p(canary_directory)
+        source = File.join(@root, 'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp')
+        @normal_control = File.join(canary_directory, 'normal-control')
+        @canary = File.join(canary_directory, 'signed-integer-overflow')
+        common_flags = %w[-Wall -Wextra -Werror -g -O1]
+
+        execute_required(
+          'normal non-UndefinedBehaviorSanitizer control build',
+          [@profile.fetch('compiler'), *common_flags, source, '-o', @normal_control],
+          timeout: TOOL_TIMEOUT
         )
-        return if result.stdout.include?(@profile.fetch('instrumentation_symbol'))
+        verify_uninstrumented(relative(@normal_control))
+
+        execute_required(
+          'controlled UndefinedBehaviorSanitizer canary build',
+          [
+            @profile.fetch('compiler'),
+            *@profile.fetch('compile_flags'),
+            *common_flags,
+            source,
+            *@profile.fetch('link_flags'),
+            '-o', @canary
+          ],
+          timeout: TOOL_TIMEOUT
+        )
+        verify_instrumented(relative(@canary))
+      end
+
+      def verify_instrumented(relative_path)
+        symbols = instrumentation_symbols(relative_path)
+        return unless symbols.empty?
 
         contract_failure(
-          'AddressSanitizer instrumentation proof',
-          "#{relative_path} has no #{@profile.fetch('instrumentation_symbol')} symbol"
+          'UndefinedBehaviorSanitizer instrumentation proof',
+          "#{relative_path} has no symbol matching #{@profile.fetch('instrumentation_symbol')}"
         )
       end
 
-      def run_memory_error_canary
-        canary_directory = File.join(@root, @profile.fetch('build_directory'), 'canary')
-        FileUtils.mkdir_p(canary_directory)
-        canary = File.join(canary_directory, 'heap-buffer-overflow')
-        source = File.join(@root, 'test/address_sanitizer/heap_buffer_overflow.cpp')
-        command = [
-          @profile.fetch('compiler'),
-          *@profile.fetch('compile_flags'),
-          '-g', '-O1', source,
-          *@profile.fetch('link_flags'),
-          '-o', canary
-        ]
-        execute_required('controlled AddressSanitizer canary build', command, timeout: TOOL_TIMEOUT)
-        verify_instrumented(relative(canary))
+      def verify_uninstrumented(relative_path)
+        symbols = instrumentation_symbols(relative_path)
+        if symbols.empty?
+          announce(
+            @output,
+            'UndefinedBehaviorSanitizer gate: normal binary rejected by instrumentation proof'
+          )
+          return
+        end
 
-        announce(@output, 'AddressSanitizer gate: controlled heap-buffer-overflow canary')
+        contract_failure(
+          'UndefinedBehaviorSanitizer negative instrumentation proof',
+          "#{relative_path} unexpectedly contains #{symbols.join(', ')}"
+        )
+      end
+
+      def instrumentation_symbols(relative_path)
+        path = File.join(@root, relative_path)
+        result = execute_required(
+          "UndefinedBehaviorSanitizer metadata read for #{relative_path}",
+          [@profile.fetch('metadata_tool'), '--symbols', '--wide', path],
+          timeout: TOOL_TIMEOUT
+        )
+        result.stdout.scan(@instrumentation_pattern).uniq.sort
+      end
+
+      def run_undefined_behavior_canary
+        announce(@output, 'UndefinedBehaviorSanitizer gate: controlled signed-integer-overflow canary')
         result = @executor.call(
-          [canary],
+          [@canary],
           chdir: @root,
           timeout: TOOL_TIMEOUT,
           environment: sanitizer_environment
         )
-        expected_report = /ERROR: AddressSanitizer: heap-buffer-overflow/
-        return if result.exit_code == CANARY_EXIT_CODE && result.stderr.match?(expected_report) && !result.timed_out
+        expected_report = /runtime error: signed integer overflow: .* cannot be represented in type 'int'/
+        expected_summary = /SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior/
+        stack_trace = result.stderr.include?('#0')
+        matches = result.exit_code == CANARY_EXIT_CODE && !result.timed_out && result.stdout.empty? &&
+                  result.stderr.match?(expected_report) && result.stderr.match?(expected_summary) && stack_trace
+        return if matches
 
-        details = "expected exit #{CANARY_EXIT_CODE} and heap-buffer-overflow report; " \
-                  "got exit #{result.exit_code}, timed_out=#{result.timed_out}, stderr=#{result.stderr.dump}"
-        raise ContractFailure.new(stage: 'controlled AddressSanitizer canary', details: details)
+        details = "expected exit #{CANARY_EXIT_CODE}, empty stdout, signed-integer-overflow report, summary, " \
+                  "and stack trace; got exit #{result.exit_code}, timed_out=#{result.timed_out}, " \
+                  "stdout=#{result.stdout.dump}, stderr=#{result.stderr.dump}"
+        raise ContractFailure.new(stage: 'controlled UndefinedBehaviorSanitizer canary', details: details)
       end
 
       def run_native_tool_smoke
@@ -380,8 +438,7 @@ module Dab
             "instrumented #{target} version smoke",
             [File.join(@root, relative_path), '--version'],
             timeout: TOOL_TIMEOUT,
-            environment: sanitizer_environment,
-            replay: false
+            environment: sanitizer_environment
           )
           expected = "#{label} #{version}\n"
           next if result.stdout == expected && result.stderr.empty?
@@ -394,70 +451,14 @@ module Dab
       end
 
       def run_legacy_source_vm_smoke
-        announce(@output, 'AddressSanitizer gate: instrumented legacy source-to-VM smoke')
-        status, smoke_output, smoke_error = capture_legacy_smoke(detect_leaks: false)
-        @output.write(smoke_output.string)
-        @error.write(smoke_error.string)
-        @output.flush
-        @error.flush
-        combined = smoke_output.string + smoke_error.string
-        if combined.match?(SANITIZER_REPORT)
-          raise ContractFailure.new(
-            stage: 'instrumented legacy source-to-VM smoke',
-            details: 'sanitizer report detected in captured diagnostics',
-            exit_code: status
-          )
-        end
-        return if status.zero?
-
-        raise ContractFailure.new(
-          stage: 'instrumented legacy source-to-VM smoke',
-          details: "legacy smoke returned #{status}",
-          exit_code: status
-        )
-      end
-
-      def characterize_legacy_smoke_leak
-        announce(@output, 'AddressSanitizer gate: exact legacy-smoke LeakSanitizer boundary')
-        contract_path = File.join(@root, 'test/address_sanitizer/legacy_smoke_leak_contract.json')
-        contract = JSON.parse(File.binread(contract_path))
-        expected_fields = %w[expected_exit_status expected_summary reason schema_version]
-        unless contract.keys.sort == expected_fields && contract['schema_version'] == 1
-          contract_failure(
-            'legacy-smoke LeakSanitizer contract',
-            "#{relative(contract_path)} must contain exactly schema version 1 and #{expected_fields.join(', ')}"
-          )
-        end
-        status, smoke_output, smoke_error = capture_legacy_smoke(detect_leaks: true)
-        diagnostics = smoke_output.string + smoke_error.string
-        leak_marker = 'ERROR: LeakSanitizer: detected memory leaks'
-        core_address_error = diagnostics.match?(/ERROR: AddressSanitizer:/)
-        matches = status == contract.fetch('expected_exit_status') &&
-                  diagnostics.scan(leak_marker).length == 1 &&
-                  diagnostics.include?(contract.fetch('expected_summary')) &&
-                  !core_address_error
-        if matches
-          announce(@output, 'AddressSanitizer gate: known legacy-smoke leak fingerprint confirmed')
-          return
-        end
-
-        @output.write(smoke_output.string)
-        @error.write(smoke_error.string)
-        contract_failure(
-          'legacy-smoke LeakSanitizer contract',
-          "expected only #{contract.fetch('expected_summary').dump} with exit " \
-          "#{contract.fetch('expected_exit_status')}; got exit #{status}"
-        )
-      end
-
-      def capture_legacy_smoke(detect_leaks:)
+        announce(@output, 'UndefinedBehaviorSanitizer gate: instrumented legacy source-to-VM smoke')
         smoke_output = StringIO.new
         smoke_error = StringIO.new
         commands = LegacySourceVmSmoke::Commands.new(
           root: @root,
           binary_directory: @profile.fetch('binary_directory')
         )
-        status = with_sanitizer_environment(detect_leaks: detect_leaks) do
+        status = with_sanitizer_environment do
           LegacySourceVmSmoke::Runner.new(
             root: @root,
             commands: commands,
@@ -465,13 +466,27 @@ module Dab
             error: smoke_error
           ).run
         end
-        [status, smoke_output, smoke_error]
+        combined = smoke_output.string + smoke_error.string
+        if combined.match?(SANITIZER_REPORT)
+          raise ContractFailure.new(
+            stage: 'instrumented legacy source-to-VM smoke',
+            details: "sanitizer report detected: #{combined.dump}",
+            exit_code: status
+          )
+        end
+        return if status.zero?
+
+        raise ContractFailure.new(
+          stage: 'instrumented legacy source-to-VM smoke',
+          details: "legacy smoke returned #{status}; stdout=#{smoke_output.string.dump}; " \
+                   "stderr=#{smoke_error.string.dump}",
+          exit_code: status
+        )
       end
 
-      def execute_required(stage, command, timeout:, environment: {}, replay: true)
-        announce(@output, "AddressSanitizer gate: #{stage}")
+      def execute_required(stage, command, timeout:, environment: {})
+        announce(@output, "UndefinedBehaviorSanitizer gate: #{stage}")
         result = @executor.call(command, chdir: @root, timeout: timeout, environment: environment)
-        replay_result(result) if replay
         unless result.success?
           raise StageFailure.new(stage: stage, command: command, result: result, timeout: timeout)
         end
@@ -482,16 +497,9 @@ module Dab
         result
       end
 
-      def replay_result(result)
-        @output.write(result.stdout)
-        @error.write(result.stderr)
-        @output.flush
-        @error.flush
-      end
-
       def report_stage_failure(failure)
         timeout = failure.result.timed_out ? " (timed out after #{failure.timeout} seconds)" : ''
-        announce(@error, "AddressSanitizer gate: FAILED during #{failure.stage}#{timeout}")
+        announce(@error, "UndefinedBehaviorSanitizer gate: FAILED during #{failure.stage}#{timeout}")
         announce(@error, "command: #{Shellwords.join(failure.command)}")
         announce(@error, "exit status: #{failure.result.exit_code}")
         announce(@error, "captured stdout: #{failure.result.stdout.dump}")
@@ -499,19 +507,16 @@ module Dab
       end
 
       def report_contract_failure(failure)
-        announce(@error, "AddressSanitizer gate: FAILED during #{failure.stage}")
+        announce(@error, "UndefinedBehaviorSanitizer gate: FAILED during #{failure.stage}")
         announce(@error, failure.details)
       end
 
-      def sanitizer_environment(detect_leaks: true)
-        {
-          'ASAN_OPTIONS' => (BASE_ASAN_OPTIONS + ["detect_leaks=#{detect_leaks ? 1 : 0}"]).join(':'),
-          'LSAN_OPTIONS' => "exitcode=#{CANARY_EXIT_CODE}",
-        }
+      def sanitizer_environment
+        {'UBSAN_OPTIONS' => BASE_UBSAN_OPTIONS.join(':')}
       end
 
-      def with_sanitizer_environment(detect_leaks: true)
-        selected_environment = sanitizer_environment(detect_leaks: detect_leaks)
+      def with_sanitizer_environment
+        selected_environment = sanitizer_environment
         previous = selected_environment.keys.map { |key| [key, ENV.fetch(key, nil)] }.to_h
         selected_environment.each { |key, value| ENV[key] = value }
         yield

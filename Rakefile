@@ -269,6 +269,17 @@ task address_sanitizer_spec: address_sanitizer_files do
   sh RbConfig.ruby, 'script/address_sanitizer_gate.rb'
 end
 
+undefined_behavior_sanitizer_files = [
+  'script/undefined_behavior_sanitizer_gate.rb',
+  'lib/dab/undefined_behavior_sanitizer_gate.rb',
+  'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp',
+]
+
+desc 'Build and validate the dedicated Linux x86_64 UndefinedBehaviorSanitizer profile'
+task undefined_behavior_sanitizer_spec: undefined_behavior_sanitizer_files do
+  sh RbConfig.ruby, 'script/undefined_behavior_sanitizer_gate.rb'
+end
+
 # gitlab = '.gitlab-ci.yml'
 # gitlab_base = 'gitlab_base.rb'
 
