@@ -254,8 +254,7 @@ setup_tests('decompile', 'test', nil, [cdisasm])
 #  psystem("cd dockerenv && docker build -t #{tag} . && docker push #{tag}")
 # end
 
-task dab_fixture_spec: :dab do
-end
+task dab_fixture_spec: :dab
 
 task :spec do
   psystem('bundle exec rspec')

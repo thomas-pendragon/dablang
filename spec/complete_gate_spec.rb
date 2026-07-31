@@ -146,7 +146,7 @@ describe 'complete validation gate contract' do
     )
     rakefile = File.read(File.join(root, 'Rakefile'))
     expect(rakefile).to include('task dab_fixture_spec: :dab')
-    expect(rakefile).to include("task :spec do\n  psystem('bundle exec rspec')")
+    expect(rakefile).to match(/task\s+:spec\s+do\s+psystem\(['\"]bundle exec rspec['\"]\)\s+end/)
     expect(rakefile).to include(':dab_fixture_spec, :format_spec')
   end
 end
