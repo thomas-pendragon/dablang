@@ -179,11 +179,13 @@ module Dab
         yield
       rescue Errno::ENOENT
         errors << "#{relative_path} is missing; restore it from the repository"
-      rescue Errno::EACCES, IOError
+      rescue SystemCallError, IOError
         errors << "#{relative_path} is unreadable; repair its permissions"
       rescue Psych::SyntaxError
         errors << "#{relative_path} is invalid YAML; fix its syntax"
-      rescue KeyError, TypeError
+      rescue Psych::Exception
+        errors << "#{relative_path} cannot be loaded safely as YAML; remove aliases or unsupported YAML constructs"
+      rescue KeyError, NoMethodError, TypeError
         errors << "#{relative_path} does not match the supported-toolchain structure"
       end
 
@@ -231,12 +233,57 @@ module Dab
       def check_workflow(errors)
         workflow_text = read(WORKFLOW_PATH)
         workflow = YAML.safe_load(workflow_text, aliases: false)
+        structure_error = workflow_structure_error(workflow)
+        if structure_error
+          errors << "#{WORKFLOW_PATH} has invalid workflow structure: #{structure_error}"
+          return
+        end
+
         jobs = workflow.fetch('jobs')
 
         check_workflow_guards(errors, workflow_text, workflow, jobs)
         @contract.platforms.each_value do |platform|
           check_job(errors, jobs, platform)
         end
+      end
+
+      def workflow_structure_error(workflow)
+        return 'document root must be a mapping' unless workflow.is_a?(Hash)
+        return 'permissions must be a mapping' if workflow.key?('permissions') && !workflow['permissions'].is_a?(Hash)
+        return 'concurrency must be a mapping' if workflow.key?('concurrency') && !workflow['concurrency'].is_a?(Hash)
+
+        jobs = workflow['jobs']
+        return 'jobs must be a mapping' unless jobs.is_a?(Hash)
+        return 'job names must be strings' unless jobs.keys.all? { |name| name.is_a?(String) }
+
+        jobs.each do |name, job|
+          error = job_structure_error(name, job)
+          return error if error
+        end
+        nil
+      end
+
+      def job_structure_error(name, job)
+        return "CI job #{name} must be a mapping" unless job.is_a?(Hash)
+        return "CI job #{name} env must be a mapping" if job.key?('env') && !job['env'].is_a?(Hash)
+
+        if job.key?('strategy')
+          strategy = job['strategy']
+          return "CI job #{name} strategy must be a mapping" unless strategy.is_a?(Hash)
+          if strategy.key?('matrix') && !strategy['matrix'].is_a?(Hash)
+            return "CI job #{name} strategy matrix must be a mapping"
+          end
+        end
+
+        steps = job['steps']
+        unless steps.is_a?(Array) && steps.all? { |step| step.is_a?(Hash) }
+          return "CI job #{name} steps must be a list of mappings"
+        end
+
+        invalid_inputs = steps.find { |step| step.key?('with') && !step['with'].is_a?(Hash) }
+        return "CI job #{name} step inputs must be mappings" if invalid_inputs
+
+        nil
       end
 
       def check_workflow_guards(errors, workflow_text, workflow, jobs)
