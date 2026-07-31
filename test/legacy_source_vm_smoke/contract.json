@@ -1,0 +1,5 @@
+{
+  "stdout": "legacy source-to-VM smoke: 42",
+  "stderr": "identical-across-runs",
+  "exit_status": 0
+}

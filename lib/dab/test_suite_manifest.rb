@@ -54,6 +54,15 @@ module Dab
         end.map { |path| Pathname.new(path).cleanpath.to_s.tr('\\', '/') }.sort
       end
 
+      def gate_task?(name)
+        reachable?('default', name)
+      end
+
+      def task_prerequisites(name)
+        task = @application.lookup(name)
+        task ? task.prerequisites : []
+      end
+
     private
 
       def load_rakefile
@@ -300,7 +309,8 @@ module Dab
       def validate_suites(suites, topology)
         rake_suites = suites.select { |suite| suite['kind'] == 'rake' }
         command_suites = suites.select { |suite| suite['kind'] == 'command' }
-        resolved_tasks = {}
+        represented_tasks = {}
+        represented_fixture_tasks = {}
 
         rake_suites.each do |suite|
           validate_source_glob(suite['source_glob'], suite['id'])
@@ -311,15 +321,14 @@ module Dab
           end
 
           fixture_task = topology.fixture_task_for(task)
-          unless fixture_task
-            @errors << "suite #{suite['id']}: Rake task #{task.inspect} does not resolve to exactly one fixture suite"
-            next
-          end
+          represented_task = fixture_task || task
 
-          if resolved_tasks.key?(fixture_task)
-            @errors << "fixture suite #{fixture_task.inspect} is represented by both #{resolved_tasks[fixture_task]} and #{suite['id']}"
+          if represented_tasks.key?(represented_task)
+            @errors << "Rake suite #{represented_task.inspect} is represented by both " \
+                       "#{represented_tasks[represented_task]} and #{suite['id']}"
           else
-            resolved_tasks[fixture_task] = suite['id']
+            represented_tasks[represented_task] = suite['id']
+            represented_fixture_tasks[fixture_task] = suite['id'] if fixture_task
           end
 
           expected_command = %w[bundle exec rake] + [task]
@@ -327,14 +336,12 @@ module Dab
             @errors << "suite #{suite['id']}: command must be #{expected_command.inspect} for Rake task #{task.inspect}"
           end
           validate_glob_wiring(suite, topology, task)
-          actual_gate = topology.gate_fixture_tasks.include?(fixture_task)
+          actual_gate = topology.gate_task?(task)
           validate_gate_membership(suite, actual_gate)
         end
 
-        missing_tasks = topology.fixture_tasks - resolved_tasks.keys
-        extra_tasks = resolved_tasks.keys - topology.fixture_tasks
+        missing_tasks = topology.fixture_tasks - represented_fixture_tasks.keys
         @errors << "manifest is missing Rake fixture suites: #{missing_tasks.join(', ')}" unless missing_tasks.empty?
-        @errors << "manifest has unknown Rake fixture suites: #{extra_tasks.join(', ')}" unless extra_tasks.empty?
 
         validate_command_suites(command_suites, topology)
       end

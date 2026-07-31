@@ -1,0 +1,5 @@
+func main()
+{
+	print("legacy source-to-VM smoke: ");
+	print(6 * 7);
+}

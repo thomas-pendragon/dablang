@@ -120,6 +120,15 @@
       "reason": "Rake declares the task, but its default-task dependency remains explicitly commented out."
     },
     {
+      "id": "rake-legacy-source-vm-smoke",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "legacy_source_vm_smoke"],
+      "rake_task": "legacy_source_vm_smoke",
+      "source_glob": "test/legacy_source_vm_smoke/*",
+      "in_complete_gate": true
+    },
+    {
       "id": "rspec",
       "state": "active",
       "kind": "command",
