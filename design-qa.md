@@ -81,7 +81,10 @@ social marks, and CTA treatment legible at the same time.
    low-contrast strip. Nested code now explicitly inherits the block foreground
    and uses a transparent background; the Building page was rechecked at desktop
    and mobile widths.
-6. The post-fix desktop comparison and 390 by 844 home/document captures show no
+6. Owner review found excessive vertical whitespace before second-level document
+   sections. The inherited shared heading margin remains for deeper headings,
+   while `h2` now uses a tighter editorial rhythm at desktop and mobile widths.
+7. The post-fix desktop comparison and 390 by 844 home/document captures show no
    remaining actionable P0, P1, or P2 mismatch.
 
 ## Findings
