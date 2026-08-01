@@ -47,7 +47,6 @@ module AddressSanitizerGateSpecSupport
     def verify_target_instrumentation; end
     def run_memory_error_canary; end
     def run_native_tool_smoke; end
-    def characterize_legacy_smoke_leak; end
     def run_legacy_source_vm_smoke; end
 
     def execute_required(stage, _command, **_arguments)
@@ -194,17 +193,17 @@ describe Dab::AddressSanitizerGate::Runner do
     expect(error.string).to include('exit status: 139')
   end
 
-  it 'records the exact leak-only boundary without suppressing the known dangling-pointer source' do
-    contract = JSON.parse(File.binread(File.join(root, 'test/address_sanitizer/legacy_smoke_leak_contract.json')))
+  it 'requires leak detection for the legacy smoke and keeps the repaired lifetime path in scope' do
+    gate = File.binread(File.join(root, 'lib/dab/address_sanitizer_gate.rb'))
     source = File.binread(File.join(root, 'src/cvm/main.cpp'))
     documentation = File.binread(File.join(root, 'docs/address-sanitizer.md'))
 
-    expect(contract.fetch('expected_summary')).to eq(
-      'SUMMARY: AddressSanitizer: 160 byte(s) leaked in 4 allocation(s).'
-    )
-    expect(source).to include('copy.data.intptr = (void *)value.string().c_str();')
-    expect(documentation).to include('neither fixes nor suppresses that path')
-    expect(documentation).to include('only leak detection disabled')
+    expect(gate).to include('capture_legacy_smoke(detect_leaks: true)')
+    expect(gate).not_to include('capture_legacy_smoke(detect_leaks: false)')
+    expect(source).to include('return DabValue::allocate_string_intptr(value.string());')
+    expect(source).not_to include('copy.data.intptr = (void *)value.string().c_str();')
+    expect(documentation).to match(/executes that regression with full address\s+and leak detection/)
+    expect(documentation).to include('legacy smoke with leak detection enabled')
   end
 end
 

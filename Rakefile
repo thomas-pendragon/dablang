@@ -1,5 +1,6 @@
 require 'os'
 require 'rbconfig'
+require 'shellwords'
 
 if ENV['COVERAGE']
   require 'simplecov'
@@ -261,7 +262,8 @@ address_sanitizer_files = [
   'script/address_sanitizer_gate.rb',
   'lib/dab/address_sanitizer_gate.rb',
   'test/address_sanitizer/heap_buffer_overflow.cpp',
-  'test/address_sanitizer/legacy_smoke_leak_contract.json',
+  'test/native/string_intptr_lifetime.cpp',
+  'src/cvm/string_intptr_storage.h',
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 AddressSanitizer profile'
@@ -273,11 +275,28 @@ undefined_behavior_sanitizer_files = [
   'script/undefined_behavior_sanitizer_gate.rb',
   'lib/dab/undefined_behavior_sanitizer_gate.rb',
   'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp',
+  'test/native/string_intptr_lifetime.cpp',
+  'src/cvm/string_intptr_storage.h',
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 UndefinedBehaviorSanitizer profile'
 task undefined_behavior_sanitizer_spec: undefined_behavior_sanitizer_files do
   sh RbConfig.ruby, 'script/undefined_behavior_sanitizer_gate.rb'
+end
+
+string_intptr_lifetime_source = 'test/native/string_intptr_lifetime.cpp'
+string_intptr_lifetime_binary = "tmp/string_intptr_lifetime_spec#{RbConfig::CONFIG.fetch('EXEEXT')}"
+
+file string_intptr_lifetime_binary => [string_intptr_lifetime_source, 'src/cvm/string_intptr_storage.h'] do
+  FileUtils.mkdir_p(File.dirname(string_intptr_lifetime_binary))
+  cxx = Shellwords.split(ENV['CXX'] || RbConfig::CONFIG.fetch('CXX'))
+  sh(*cxx, '-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic',
+     string_intptr_lifetime_source, '-o', string_intptr_lifetime_binary)
+end
+
+desc 'Build and run the String-to-IntPtr native lifetime regression'
+task string_intptr_lifetime_spec: string_intptr_lifetime_binary do
+  sh File.expand_path(string_intptr_lifetime_binary)
 end
 
 # gitlab = '.gitlab-ci.yml'
@@ -312,7 +331,8 @@ file ffi_file => [ffi_task] do
   psystem("ruby #{ffi_task} > #{ffi_file}")
 end
 
-task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :legacy_source_vm_smoke, :minitest_spec,
+task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :string_intptr_lifetime_spec,
+               :legacy_source_vm_smoke, :minitest_spec,
                :dab_fixture_spec, :format_spec, :vm_spec,
                :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end

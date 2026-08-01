@@ -419,6 +419,15 @@ DabValue DabValue::allocate_dynstr(const char *str)
     return ret;
 }
 
+DabValue DabValue::allocate_string_intptr(const std::string &str)
+{
+    DabValue ret;
+    ret.string_intptr_storage = DabStringIntPtrStorage(str);
+    ret.data.type             = TYPE_INTPTR;
+    ret.data.intptr           = ret.string_intptr_storage.get();
+    return ret;
+}
+
 DabValue DabValue::_get_instvar(dab_symbol_t symbol) const
 {
     assert(this->data.type == TYPE_OBJECT);
@@ -507,13 +516,21 @@ void DabValue::set_data(const DabValueData &other_data)
 DabValue::DabValue(const DabValue &other)
 {
     set_data(other.data);
-    localblock = other.localblock;
+    string_intptr_storage = other.string_intptr_storage;
+    localblock            = other.localblock;
 }
 
 DabValue &DabValue::operator=(const DabValue &other)
 {
-    set_data(other.data);
-    localblock = other.localblock;
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    DabValue copy(other);
+    std::swap(data, copy.data);
+    std::swap(string_intptr_storage, copy.string_intptr_storage);
+    std::swap(localblock, copy.localblock);
     return *this;
 }
 
@@ -532,6 +549,7 @@ void DabValue::release()
         this->data.object->release(this);
         this->data.object = nullptr;
     }
+    string_intptr_storage.reset();
     this->data.type        = TYPE_NIL;
     this->data._initialize = 0;
 }

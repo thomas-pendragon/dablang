@@ -1088,10 +1088,7 @@ DabValue DabVM::cast(const DabValue &value, dab_class_t klass_index)
     }
     else if (from == CLASS_STRING && to == CLASS_INTPTR)
     {
-        DabValue copy;
-        copy.data.type   = TYPE_INTPTR;
-        copy.data.intptr = (void *)value.string().c_str();
-        return copy;
+        return DabValue::allocate_string_intptr(value.string());
     }
     else if (from == CLASS_DYNAMICSTRING && to == CLASS_INTPTR)
     {

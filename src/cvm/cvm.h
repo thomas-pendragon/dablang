@@ -3,6 +3,7 @@
 #include "../cshared/dab.h"
 #include "../cshared/shared.h"
 #include "../cshared/stream.h"
+#include "string_intptr_storage.h"
 
 struct DabValue;
 
@@ -207,6 +208,7 @@ struct DabValue
 {
     DabMemoryCounter<COUNTER_VALUE> _counter;
     DabValueData                    data;
+    DabStringIntPtrStorage          string_intptr_storage;
     bool                            localblock = false;
 
     void dump(FILE *file = nullptr) const;
@@ -363,6 +365,7 @@ struct DabValue
     ~DabValue();
 
     static DabValue allocate_dynstr(const char *str);
+    static DabValue allocate_string_intptr(const std::string &str);
 
     std::vector<DabValue> &array() const;
     std::vector<uint8_t>  &bytebuffer() const;
