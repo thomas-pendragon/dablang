@@ -1,4 +1,5 @@
 #include "cvm.h"
+#include "bytecode_string_validation.h"
 
 #include "../cshared/opcode_validation.h"
 #include "../cshared/version.h"
@@ -180,6 +181,11 @@ int DabVM::run(std::vector<Stream> &inputs)
             if (!inputs[index].read_validated_header(parsed_headers[index], validation_error))
             {
                 throw DabRuntimeError("invalid bytecode header: " + validation_error);
+            }
+            if (!validate_bytecode_string_tables(inputs[index], parsed_headers[index],
+                                                 validation_error))
+            {
+                throw DabRuntimeError("invalid bytecode String/symbol data: " + validation_error);
             }
         }
     }
