@@ -77,6 +77,8 @@ describe Dab::PublicSite::Contract do
       File.binwrite(header, File.binread(header).gsub('/vm/opcodes.html', '/removed.html'))
       footer = File.join(root, 'docs/_includes/footer.html')
       File.binwrite(footer, File.binread(footer).gsub('{{ site.author_bio | escape }}', 'Biography removed'))
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('background: transparent;',
+                                                              'background: #eef;'))
       config_path = File.join(root, 'docs/_config.yml')
       config = YAML.safe_load(File.binread(config_path), aliases: false)
       config.delete('author_bio')
@@ -87,6 +89,7 @@ describe Dab::PublicSite::Contract do
         'mobile header must link to the VM opcode reference',
         'shared footer must include the author biography and profile links',
         'Jekyll author_bio must be a non-empty string',
+        'public-site stylesheet must reset nested code styling',
         'public-site stylesheet must preserve focus and reduced-motion handling'
       )
     end

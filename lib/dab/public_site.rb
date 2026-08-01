@@ -237,6 +237,11 @@ module Dab::PublicSite
       unless @config['author_bio'].is_a?(String) && !@config['author_bio'].strip.empty?
         @errors << 'Jekyll author_bio must be a non-empty string'
       end
+      nested_code = stylesheet[/\.document-body\s+pre\s*>\s*code\s*\{([^}]*)\}/m, 1]
+      unless nested_code&.match?(/\bbackground\s*:\s*transparent\s*;/) &&
+             nested_code&.match?(/\bcolor\s*:\s*inherit\s*;/)
+        @errors << 'public-site stylesheet must reset nested code styling'
+      end
       responsive_breakpoints = [850, 560].all? do |width|
         stylesheet.match?(/@media\s*\(\s*max-width\s*:\s*#{width}px\s*\)/)
       end

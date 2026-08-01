@@ -76,7 +76,12 @@ social marks, and CTA treatment legible at the same time.
    profile list as under-informative. The signature is now subordinate to the
    page, and a concise author biography and both profile links form one compact,
    responsive block.
-5. The post-fix desktop comparison and 390 by 844 home/document captures show no
+5. Owner review found that Minima's inherited inline-code background remained on
+   code nested inside dark highlighted blocks, rendering each line as a pale,
+   low-contrast strip. Nested code now explicitly inherits the block foreground
+   and uses a transparent background; the Building page was rechecked at desktop
+   and mobile widths.
+6. The post-fix desktop comparison and 390 by 844 home/document captures show no
    remaining actionable P0, P1, or P2 mismatch.
 
 ## Findings
