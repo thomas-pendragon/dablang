@@ -22,7 +22,7 @@ class DabStringIntPtrStorage
         return storage.get();
     }
 
-    size_t use_count() const
+    long use_count() const
     {
         return storage.use_count();
     }
