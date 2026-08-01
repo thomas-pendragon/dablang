@@ -123,6 +123,8 @@ private
     true
   rescue Errno::ESRCH
     false
+  rescue Errno::EPERM
+    true
   end
 
   def wait_for_process_group(seconds)
@@ -153,14 +155,22 @@ private
   end
 end
 
-def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, show_stdout: true, binmode: false, timeout: nil)
+def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, show_stdout: true, binmode: false,
+                         timeout: nil, ready_output: nil, startup_timeout: nil)
   command = SystemRunCommand.new(cmd)
   command.open_process!(input: input, input_file: input_file, binmode: binmode)
   fdlist = command.streams
   stdout = ''
   stderr = ''
   timeout = Float(timeout) if timeout
-  deadline = monotonic_time + timeout if timeout
+  if ready_output
+    raise ArgumentError.new('startup_timeout is required with ready_output') unless startup_timeout
+
+    startup_timeout = Float(startup_timeout)
+  end
+  ready = ready_output.nil?
+  timeout_limit = ready ? timeout : startup_timeout
+  deadline = monotonic_time + timeout_limit if timeout_limit
   timed_out = false
   while true
     fdlist.reject!(&:closed?)
@@ -169,6 +179,7 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
     if deadline && monotonic_time >= deadline && !command.finished?
       command.terminate!
       timed_out = true
+      timeout = timeout_limit
       deadline = nil
       next
     end
@@ -182,9 +193,9 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
     selected = IO.select(fdlist, nil, nil, wait_time)
     next unless selected
 
-    ready = selected[0]
+    ready_fds = selected[0]
     data = false
-    ready.each do |fd|
+    ready_fds.each do |fd|
       command.try_update(fd) do |line, is_stderr|
         if is_stderr
           DabTestOutput.emit(line, stream: :stderr, display: :stderr) if show_stderr
@@ -192,6 +203,11 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
         else
           DabTestOutput.emit(line, stream: :stdout, display: :stderr) if show_stdout
           stdout += line
+        end
+        if !ready && stdout.include?(ready_output)
+          ready = true
+          timeout_limit = timeout
+          deadline = monotonic_time + timeout if timeout
         end
         data = true
       end
@@ -224,7 +240,8 @@ def psystem(cmd)
   end
 end
 
-def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, error_file: nil, binmode: false)
+def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, error_file: nil, binmode: false,
+            ready_output: nil, startup_timeout: nil)
   DabTestOutput.emit(' >> '.yellow)
   DabTestOutput.emit("timeout #{timeout} ".white) if timeout
   DabTestOutput.emit(cmd.yellow)
@@ -238,7 +255,9 @@ def qsystem(cmd, input: nil, input_file: nil, output_file: nil, timeout: nil, er
     show_stdout: !output_file,
     show_stderr: !error_file,
     binmode: binmode,
-    timeout: timeout
+    timeout: timeout,
+    ready_output: ready_output,
+    startup_timeout: startup_timeout
   )
   DabTestOutput.record_command(
     cmd,

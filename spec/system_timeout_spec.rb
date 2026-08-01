@@ -76,14 +76,24 @@ describe 'test harness subprocess timeouts' do
     Dir.mktmpdir('dab-timeout-child') do |directory|
       child_pid_file = File.join(directory, 'child.pid')
       script = <<~RUBY
+        # Keep startup slower than the execution timeout to make the handshake
+        # necessary instead of relying on the runner scheduling the child.
+        sleep 0.35
         child = Process.spawn(#{ruby.dump}, '-e', 'sleep 60')
         File.write(ARGV.fetch(0), child.to_s)
+        STDOUT.write('child-ready')
+        STDOUT.flush
         sleep 60
       RUBY
 
       expect do
-        qsystem(ruby_command(script, child_pid_file), timeout: 0.25)
-      end.to raise_error(SystemCommandError, /Command timed out/)
+        qsystem(
+          ruby_command(script, child_pid_file),
+          timeout: 0.25,
+          ready_output: 'child-ready',
+          startup_timeout: 2
+        )
+      end.to raise_error(SystemCommandError, /Command timed out/) { |error| expect(error.timeout).to eq(0.25) }
 
       child_pid = Integer(File.read(child_pid_file))
       wait_until_stopped(child_pid)
