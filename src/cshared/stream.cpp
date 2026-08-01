@@ -1,5 +1,9 @@
 #include "stream.h"
 
+#include <limits>
+#include <new>
+#include <utility>
+
 Stream Stream::section_stream(uint64_t section_index)
 {
     Stream ret;
@@ -14,6 +18,101 @@ Stream Stream::section_stream(uint64_t section_index)
 BinHeader *Stream::peek_header()
 {
     return (BinHeader *)buffer.data;
+}
+
+bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &error) const
+{
+    const uint64_t fixed_header_size = sizeof(BinDabHeader);
+    const uint64_t section_size      = sizeof(BinSection);
+
+    if (buffer.length < fixed_header_size)
+    {
+        error = "fixed header is truncated (expected 40 bytes)";
+        return false;
+    }
+
+    BinDabHeader header = {};
+    memcpy(&header, buffer.data, sizeof(header));
+
+    if (memcmp(header.dab, "DAB", 3) != 0)
+    {
+        error = "magic must be DAB";
+        return false;
+    }
+    if (header.dab[3] != 0)
+    {
+        error = "header zero marker must be 0";
+        return false;
+    }
+    if (header.version != 3)
+    {
+        error = "unsupported bytecode version (expected 3)";
+        return false;
+    }
+
+    if (header.section_count >
+        (std::numeric_limits<uint64_t>::max() - fixed_header_size) / section_size)
+    {
+        error = "section table size overflows uint64";
+        return false;
+    }
+    if (header.section_count > std::numeric_limits<size_t>::max() / sizeof(BinSection))
+    {
+        error = "section count exceeds platform limits";
+        return false;
+    }
+
+    const uint64_t expected_header_size = fixed_header_size + header.section_count * section_size;
+    if (header.size_of_header != expected_header_size)
+    {
+        error = "size_of_header does not match section_count";
+        return false;
+    }
+    if (expected_header_size > buffer.length)
+    {
+        error = "declared section table exceeds input";
+        return false;
+    }
+
+    try
+    {
+        ValidatedBinHeader parsed;
+        parsed.header = header;
+        if (header.section_count > parsed.sections.max_size())
+        {
+            error = "section count exceeds container limits";
+            return false;
+        }
+        parsed.sections.reserve((size_t)header.section_count);
+
+        const byte *section_data = buffer.data + fixed_header_size;
+        for (uint64_t index = 0; index < header.section_count; index++)
+        {
+            BinSection section = {};
+            memcpy(&section, section_data + index * section_size, sizeof(section));
+            if (section.zero1 != 0 || section.zero2 != 0 || section.special_index != 0)
+            {
+                error = "section " + std::to_string(index) + " reserved fields must be zero";
+                return false;
+            }
+            parsed.sections.push_back(section);
+        }
+
+        validated = std::move(parsed);
+    }
+    catch (const std::length_error &)
+    {
+        error = "section table exceeds container limits";
+        return false;
+    }
+    catch (const std::bad_alloc &)
+    {
+        error = "section table allocation failed";
+        return false;
+    }
+
+    error.clear();
+    return true;
 }
 
 const char *Stream::string_ptr(uint64_t address)

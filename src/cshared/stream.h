@@ -116,9 +116,22 @@ struct BinHeader
 };
 #pragma pack(pop)
 
+static_assert(sizeof(BinDabHeader) == 40, "version 3 bytecode header layout changed");
+static_assert(sizeof(BinSection) == 32, "version 3 bytecode section layout changed");
+
+struct ValidatedBinHeader
+{
+    BinDabHeader            header = {};
+    std::vector<BinSection> sections;
+};
+
 struct Stream
 {
     BinHeader *peek_header();
+
+    // On success, the returned values are owned copies from a complete, structurally valid
+    // version 3 header and section table. On failure, validated remains unchanged.
+    bool read_validated_header(ValidatedBinHeader &validated, std::string &error) const;
 
     Stream section_stream(uint64_t section_index);
 
