@@ -170,6 +170,19 @@ end
 describe Dab::UnsafeFfiCapabilitySmoke::Commands do
   let(:root) { File.expand_path('..', __dir__) }
 
+  it 'keeps assembler stdout binary on Windows-compatible Ruby runtimes' do
+    command = described_class.new(root: root).assembler
+
+    expect(command).to eq(
+      [
+        RbConfig.ruby,
+        '-e',
+        'STDOUT.binmode; load ARGV.shift',
+        File.join(root, 'src/tobinary/tobinary.rb'),
+      ]
+    )
+  end
+
   it 'adds exactly one explicit unsafe FFI flag only to the opted-in VM command' do
     commands = described_class.new(root: root)
     bytecode = File.join(root, 'path with spaces', 'program.dabcb')

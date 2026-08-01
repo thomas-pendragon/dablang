@@ -52,7 +52,8 @@ module Dab
       end
 
       def assembler
-        [RbConfig.ruby, File.join(@root, 'src/tobinary/tobinary.rb')]
+        assembler = File.join(@root, 'src/tobinary/tobinary.rb')
+        [RbConfig.ruby, '-e', 'STDOUT.binmode; load ARGV.shift', assembler]
       end
 
       def vm(bytecode, allow_unsafe_ffi:)
