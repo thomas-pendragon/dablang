@@ -1,7 +1,7 @@
 # Unknown opcode fixture contract
 
 Scenario B roadmap item 17 accepts deterministic rejection of unknown opcodes
-for Dab 0.0.22. The generated real-opcode table in
+for Dab 0.0.21. The generated real-opcode table in
 `src/shared/opcodes.rb` defines the supported instruction values.
 
 Before this item, the native VM rejected an unknown opcode only in the
