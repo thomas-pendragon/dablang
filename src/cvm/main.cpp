@@ -5,6 +5,8 @@
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/version.h"
 
+#include <utility>
+
 DabVM *$VM = nullptr;
 
 DabVM::DabVM()
@@ -154,6 +156,22 @@ uint64_t DabVM::ip() const
 
 int DabVM::run(std::vector<Stream> &inputs)
 {
+    std::vector<ValidatedBinHeader> parsed_headers;
+    if (!options.bare)
+    {
+        parsed_headers.reserve(inputs.size());
+        for (const auto &stream : inputs)
+        {
+            ValidatedBinHeader parsed_header;
+            std::string        validation_error;
+            if (!stream.read_validated_header(parsed_header, validation_error))
+            {
+                throw DabRuntimeError("invalid bytecode header: " + validation_error);
+            }
+            parsed_headers.push_back(std::move(parsed_header));
+        }
+    }
+
     for (auto &stream : inputs)
     {
         instructions.append(stream);
@@ -168,9 +186,9 @@ int DabVM::run(std::vector<Stream> &inputs)
 
     if (!options.bare)
     {
-        for (auto &stream : inputs)
+        for (size_t index = 0; index < inputs.size(); index++)
         {
-            load_newformat(stream);
+            load_newformat(parsed_headers[index]);
         }
     }
 

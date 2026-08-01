@@ -1,30 +1,12 @@
 #include "cvm.h"
 
-void DabVM::load_newformat(Stream &input)
+void DabVM::load_newformat(const ValidatedBinHeader &parsed_header)
 {
-    auto peeked_header = input.peek_header();
-
-    auto mark1 = input.read_uint8();
-    auto mark2 = input.read_uint8();
-    auto mark3 = input.read_uint8();
-    if (mark1 != 'D' || mark2 != 'A' || mark3 != 'B')
-    {
-        fprintf(stderr, "VM error: invalid mark (%c%c%c, expected DAB).\n", (char)mark1,
-                (char)mark2, (char)mark3);
-        exit(1);
-    }
-
-    auto zero_byte = input.read_uint8();
-    assert(zero_byte == 0);
-
-    auto version = input.read_uint32();
-    assert(version == 3);
-
-    auto offset = input.read_uint64();
-
-    auto size_of_header     = input.read_uint64();
-    auto size_of_data       = input.read_uint64();
-    auto number_of_sections = input.read_uint64();
+    const auto &header             = parsed_header.header;
+    auto        offset             = header.offset;
+    auto        size_of_header     = header.size_of_header;
+    auto        size_of_data       = header.size_of_data;
+    auto        number_of_sections = header.section_count;
 
     fprintf(stderr, "vm: newformat: h: %d, d: %d, s: %d\n", (int)size_of_header, (int)size_of_data,
             (int)number_of_sections);
@@ -43,22 +25,18 @@ void DabVM::load_newformat(Stream &input)
     uint64_t classes_length  = 0;
     bool     has_classes     = false;
 
-    for (uint32_t index = 0; index < number_of_sections; index++)
+    this->sections.insert(this->sections.end(), parsed_header.sections.begin(),
+                          parsed_header.sections.end());
+
+    for (size_t index = 0; index < parsed_header.sections.size(); index++)
     {
-        this->sections.push_back(peeked_header->sections[index]);
+        const auto &section = parsed_header.sections[index];
+        std::string name(section.name, sizeof(section.name));
+        auto        address = section.pos;
+        auto        length  = section.length;
 
-        auto name = input.read_string4();
-        auto zero = input.read_uint32();
-        assert(zero == 0);
-        zero = input.read_uint32();
-        assert(zero == 0);
-        zero = input.read_uint32();
-        assert(zero == 0);
-        auto address = input.read_uint64();
-        auto length  = input.read_uint64();
-
-        fprintf(stderr, "vm: newformat: section %d: name '%s' address %p/%d length %d\n", index,
-                name.c_str(), (void *)address, (int)address, (int)length);
+        fprintf(stderr, "vm: newformat: section %d: name '%s' address %p/%d length %d\n",
+                (int)index, name.c_str(), (void *)address, (int)address, (int)length);
 
         if (name == "code")
         {

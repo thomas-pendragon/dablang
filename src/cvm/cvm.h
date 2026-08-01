@@ -573,7 +573,7 @@ struct DabVM
 
     int run(std::vector<Stream> &inputs);
 
-    void load_newformat(Stream &input);
+    void load_newformat(const ValidatedBinHeader &parsed_header);
 
     DabStackFrame *current_frame();
 
