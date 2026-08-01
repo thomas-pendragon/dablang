@@ -123,6 +123,8 @@ private
     true
   rescue Errno::ESRCH
     false
+  rescue Errno::EPERM
+    true
   end
 
   def wait_for_process_group(seconds)
