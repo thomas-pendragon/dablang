@@ -214,7 +214,10 @@ module Dab::PublicSite
         class_pattern = /class="(?:[^"]*\s)?#{Regexp.escape(class_name)}(?:\s[^"]*)?"/
         @errors << "default layout must include the #{name}" unless default_layout.match?(class_pattern)
       end
-      @errors << 'default layout must include the main content landmark' unless default_layout.include?('id="main-content"')
+      main_landmark = /<main\b(?=[^>]*\bid="main-content")(?=[^>]*\btabindex="-1")[^>]*>/
+      unless default_layout.match?(main_landmark)
+        @errors << 'default layout must include a focusable main content landmark'
+      end
       footer_include = /\{%-?\s*include\s+footer\.html\s*-?%\}/
       @errors << 'default layout must include the shared footer' unless default_layout.match?(footer_include)
 

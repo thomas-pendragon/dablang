@@ -70,7 +70,10 @@ describe Dab::PublicSite::Contract do
   it 'requires the responsive editorial shell and accessibility hooks' do
     with_docs_copy do |root|
       default_layout = File.join(root, 'docs/_layouts/default.html')
-      File.binwrite(default_layout, File.binread(default_layout).gsub('class="skip-link"', 'class="removed"'))
+      default_source = File.binread(default_layout)
+                           .gsub('class="skip-link"', 'class="removed"')
+                           .gsub('tabindex="-1"', 'tabindex="0"')
+      File.binwrite(default_layout, default_source)
       stylesheet = File.join(root, 'docs/assets/main.scss')
       File.binwrite(stylesheet, File.binread(stylesheet).gsub('@media (prefers-reduced-motion: reduce)', '@media print'))
       header = File.join(root, 'docs/_includes/header.html')
@@ -88,6 +91,7 @@ describe Dab::PublicSite::Contract do
 
       expect(validate(root).errors).to include(
         'default layout must include the skip link',
+        'default layout must include a focusable main content landmark',
         'mobile header must link to the VM opcode reference',
         'shared footer must include the author biography and profile links',
         'Jekyll author_bio must be a non-empty string',
