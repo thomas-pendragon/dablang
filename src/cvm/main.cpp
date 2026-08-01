@@ -998,7 +998,8 @@ bool DabVM::execute_single(Stream &input)
         break;
     }
     default:
-        throw DabRuntimeError("valid opcode is missing a VM implementation");
+        throw DabRuntimeError("valid opcode " + std::to_string((unsigned int)opcode) + " (" +
+                              opcode_info.name + ") is missing a VM implementation");
     }
     return true;
 }
