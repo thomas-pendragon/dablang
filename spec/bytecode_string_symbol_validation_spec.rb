@@ -87,7 +87,12 @@ describe 'Dab VM version 3 String and symbol data validation' do
 
     expect(status.exitstatus).to eq(1), stderr
     expect(stdout).to eq('')
-    expect(stderr).to include("vm: invalid bytecode String/symbol data: #{diagnostic}")
+    expected = if diagnostic.start_with?('invalid bytecode header:')
+                 "vm: #{diagnostic}"
+               else
+                 "vm: invalid bytecode String/symbol data: #{diagnostic}"
+               end
+    expect(stderr).to include(expected)
     expect(stderr).not_to match(/Assertion|AddressSanitizer|runtime error:|Segmentation fault/)
   end
 
@@ -178,7 +183,7 @@ describe 'Dab VM version 3 String and symbol data validation' do
         index: 1,
         position: 999
       ),
-      'symb section starts before the artifact',
+      'invalid bytecode header: section 1 position precedes header offset',
     ],
     'an overflowing symbol table range' => [
       V3StringTableArtifact.rewrite_section(
@@ -186,7 +191,7 @@ describe 'Dab VM version 3 String and symbol data validation' do
         index: 1,
         length: (2**64) - 8
       ),
-      'symb section address range overflows uint64',
+      'invalid bytecode header: section 1 range overflows uint64',
     ],
     'a symbol reference below a nonzero artifact offset' => [
       V3StringTableArtifact.build(offset: 1000, reference: 999),
@@ -315,6 +320,19 @@ describe 'Dab VM version 3 String and symbol data validation' do
     expect(stdout).to eq("[{\"file\": \"count\", \"lines\": []}]\n")
   end
 
+  it 'preserves a valid coverage pointer in a nonzero-offset artifact' do
+    bytecode = V3StringTableArtifact.build(
+      table_name: 'cove',
+      offset: 1000,
+      order: %w[data cove code]
+    )
+
+    stdout, stderr, status = run_consumer(cdumpcov, bytecode)
+
+    expect(status).to be_success, stderr
+    expect(stdout).to eq("[{\"file\": \"count\", \"lines\": []}]\n")
+  end
+
   {
     'a partial coverage pointer record' => [
       V3StringTableArtifact.build(
@@ -328,6 +346,15 @@ describe 'Dab VM version 3 String and symbol data validation' do
       V3StringTableArtifact.build(
         table_name: 'cove',
         reference: (2**64) - 1,
+        order: %w[data cove code]
+      ),
+      'cove entry 0 reference is outside the artifact',
+    ],
+    'a coverage pointer below a nonzero artifact offset' => [
+      V3StringTableArtifact.build(
+        table_name: 'cove',
+        offset: 1000,
+        reference: 999,
         order: %w[data cove code]
       ),
       'cove entry 0 reference is outside the artifact',

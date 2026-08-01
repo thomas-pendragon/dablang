@@ -216,9 +216,11 @@ int unsafe_main(int argc, char **argv)
             fprintf(stderr, "cdumpcov: %d cov files\n", (int)number_of_cov_files);
             for (size_t j = 0; j < number_of_cov_files; j++)
             {
-                auto ptr    = section.pos + size_of_cov_file * j;
-                auto data   = stream.uint64_data(ptr);
-                auto string = stream.cstring_data(data);
+                auto ptr        = section.pos + size_of_cov_file * j;
+                auto local_ptr  = version_3 ? ptr - header->offset : ptr;
+                auto data       = stream.uint64_data(local_ptr);
+                auto local_data = version_3 ? data - header->offset : data;
+                auto string     = stream.cstring_data(local_data);
                 fprintf(stderr, "cdumpcov: cov[%d] %p -> %p -> '%s'\n", (int)j, (void *)ptr,
                         (void *)data, string.c_str());
                 files[j + 1] = string;

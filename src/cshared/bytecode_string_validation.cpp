@@ -58,18 +58,7 @@ bool validate_string_table(const Stream &input, const BinDabHeader &header,
 
     uint64_t table_start;
     uint64_t table_length;
-    if (consumer == DabStringDataConsumer::COVERAGE_DUMPER)
-    {
-        const uint64_t input_length = input.raw_base_length();
-        table_start                 = section.pos;
-        table_length                = section.length;
-        if (table_start > input_length || table_length > input_length - table_start)
-        {
-            error = std::string(table_name) + " section range is outside the artifact";
-            return false;
-        }
-    }
-    else if (!section_range(input, header, section, table_name, table_start, table_length, error))
+    if (!section_range(input, header, section, table_name, table_start, table_length, error))
     {
         return false;
     }
@@ -94,8 +83,13 @@ bool validate_string_table(const Stream &input, const BinDabHeader &header,
         }
         else if (consumer == DabStringDataConsumer::COVERAGE_DUMPER)
         {
+            if (reference < header.offset)
+            {
+                error = entry + " reference is outside the artifact";
+                return false;
+            }
             string_data         = input.raw_base_data();
-            string_offset       = reference;
+            string_offset       = reference - header.offset;
             string_space_length = input.raw_base_length();
         }
         else
