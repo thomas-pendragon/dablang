@@ -356,9 +356,12 @@ bool validate_bytecode_string_data(const Stream &input, const ValidatedBinHeader
             (section_name_is(section, "data") || section_name_is(section, "symd") ||
              section_name_is(section, "ndat")))
         {
-            uint64_t start;
-            uint64_t length;
-            if (!section_range(input, header.header, section, "data", start, length, error))
+            uint64_t    start;
+            uint64_t    length;
+            const char *section_name = section_name_is(section, "symd")   ? "symd"
+                                       : section_name_is(section, "ndat") ? "ndat"
+                                                                          : "data";
+            if (!section_range(input, header.header, section, section_name, start, length, error))
             {
                 return false;
             }
