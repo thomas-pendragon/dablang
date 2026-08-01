@@ -27,6 +27,10 @@ with CSS drawings or improvised glyphs would violate the asset-fidelity rule.
 The omission is acceptable P3 drift; the typography and editorial hierarchy
 remain the selected direction's primary identity.
 
+The mock's display word `Design` identified the visual direction rather than
+the product. The shipped hero therefore uses the language name `Dab` while
+preserving the selected scale, weight, crop, and editorial composition.
+
 No focused crop was required: the 2880 by 1200 combined comparison keeps the
 display title, body typography, navigation labels, rules, footer signature,
 social marks, and CTA treatment legible at the same time.
@@ -63,7 +67,10 @@ social marks, and CTA treatment legible at the same time.
    mobile content bounds, inline-code wrapping, and scroll-contained code blocks
    were added. Final DevTools readback reports a 390-pixel viewport and
    390-pixel document width.
-3. The post-fix desktop comparison and 390 by 844 home/document captures show no
+3. Owner review identified `Design` as ideation placeholder copy. The hero and
+   document title now use `Dab`, and the desktop and mobile evidence was
+   recaptured against the LAN-served implementation.
+4. The post-fix desktop comparison and 390 by 844 home/document captures show no
    remaining actionable P0, P1, or P2 mismatch.
 
 ## Findings
