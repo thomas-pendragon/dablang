@@ -8,6 +8,10 @@
           <a class="page-link" href="{{ item.target | relative_url }}">{{ item.title | escape }}</a>
         {% endfor %}
       </div>
+      <div class="mobile-reference-links">
+        <a class="page-link" href="{{ "/vm/opcodes.html" | relative_url }}">VM opcodes</a>
+        <a class="page-link" href="{{ "/license.html" | relative_url }}">License</a>
+      </div>
     </nav>
   {% endif %}
 </header>

@@ -201,8 +201,9 @@ module Dab::PublicSite
       default_layout = read_site_source('_layouts/default.html', 'default layout')
       home_layout = read_site_source('_layouts/home.html', 'home layout')
       page_layout = read_site_source('_layouts/page.html', 'page layout')
+      header = read_site_source('_includes/header.html', 'site header')
       stylesheet = read_site_source('assets/main.scss', 'public-site stylesheet')
-      return unless default_layout && home_layout && page_layout && stylesheet
+      return unless default_layout && home_layout && page_layout && header && stylesheet
 
       {
         'site shell' => 'class="site-shell"',
@@ -219,6 +220,12 @@ module Dab::PublicSite
       end
       unless page_layout.include?('layout: default') && page_layout.include?('class="document-page"')
         @errors << 'page layout must use the shared editorial shell'
+      end
+      {
+        'VM opcode reference' => 'href="{{ "/vm/opcodes.html" | relative_url }}"',
+        'license' => 'href="{{ "/license.html" | relative_url }}"',
+      }.each do |name, marker|
+        @errors << "mobile header must link to the #{name}" unless header.include?(marker)
       end
       unless stylesheet.include?('@media (max-width: 850px)') && stylesheet.include?('@media (max-width: 560px)')
         @errors << 'public-site stylesheet must define both responsive breakpoints'

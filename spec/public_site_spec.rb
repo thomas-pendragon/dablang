@@ -73,9 +73,12 @@ describe Dab::PublicSite::Contract do
       File.binwrite(default_layout, File.binread(default_layout).gsub('class="skip-link"', 'class="removed"'))
       stylesheet = File.join(root, 'docs/assets/main.scss')
       File.binwrite(stylesheet, File.binread(stylesheet).gsub('@media (prefers-reduced-motion: reduce)', '@media print'))
+      header = File.join(root, 'docs/_includes/header.html')
+      File.binwrite(header, File.binread(header).gsub('/vm/opcodes.html', '/removed.html'))
 
       expect(validate(root).errors).to include(
         'default layout must include the skip link',
+        'mobile header must link to the VM opcode reference',
         'public-site stylesheet must preserve focus and reduced-motion handling'
       )
     end

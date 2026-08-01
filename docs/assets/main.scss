@@ -201,6 +201,10 @@ summary:focus-visible {
   justify-content: flex-end;
 }
 
+.mobile-reference-links {
+  display: none;
+}
+
 .site-nav .page-link {
   border-left: 1px solid $rule;
   color: $blue;
@@ -498,6 +502,11 @@ summary:focus-visible {
     padding: 0.5rem;
   }
 
+  .mobile-reference-links {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .home-page {
     padding-top: 3rem;
   }
@@ -547,7 +556,8 @@ summary:focus-visible {
   }
 
   .site-nav,
-  .site-nav .trigger {
+  .site-nav .trigger,
+  .mobile-reference-links {
     width: 100%;
   }
 
@@ -558,7 +568,8 @@ summary:focus-visible {
     position: static;
   }
 
-  .site-nav .trigger {
+  .site-nav .trigger,
+  .mobile-reference-links {
     justify-content: flex-start;
   }
 
