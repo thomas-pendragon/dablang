@@ -95,8 +95,17 @@ describe Dab::PublicSite::Contract do
   it 'allows required shell hooks to coexist with additional classes' do
     with_docs_copy do |root|
       default_layout = File.join(root, 'docs/_layouts/default.html')
-      File.binwrite(default_layout, File.binread(default_layout).gsub('class="site-shell"',
-                                                                      'class="site-shell theme-dark"'))
+      default_source = File.binread(default_layout)
+                           .gsub('class="site-shell"', 'class="site-shell theme-dark"')
+                           .gsub('{%- include footer.html -%}', '{% include footer.html %}')
+      File.binwrite(default_layout, default_source)
+      stylesheet = File.join(root, 'docs/assets/main.scss')
+      stylesheet_source = File.binread(stylesheet)
+                              .gsub('@media (max-width: 850px)', '@media(max-width:850px)')
+                              .gsub('@media (max-width: 560px)', '@media ( max-width : 560px )')
+                              .gsub('@media (prefers-reduced-motion: reduce)',
+                                    '@media(prefers-reduced-motion:reduce)')
+      File.binwrite(stylesheet, stylesheet_source)
 
       expect(validate(root).errors).to eq([])
     end

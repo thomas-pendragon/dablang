@@ -215,7 +215,8 @@ module Dab::PublicSite
         @errors << "default layout must include the #{name}" unless default_layout.match?(class_pattern)
       end
       @errors << 'default layout must include the main content landmark' unless default_layout.include?('id="main-content"')
-      @errors << 'default layout must include the shared footer' unless default_layout.include?('{%- include footer.html -%}')
+      footer_include = /\{%-?\s*include\s+footer\.html\s*-?%\}/
+      @errors << 'default layout must include the shared footer' unless default_layout.match?(footer_include)
 
       unless home_layout.include?('layout: default') && home_layout.include?('class="home-page"')
         @errors << 'home layout must use the shared editorial shell'
@@ -236,10 +237,14 @@ module Dab::PublicSite
       unless @config['author_bio'].is_a?(String) && !@config['author_bio'].strip.empty?
         @errors << 'Jekyll author_bio must be a non-empty string'
       end
-      unless stylesheet.include?('@media (max-width: 850px)') && stylesheet.include?('@media (max-width: 560px)')
+      responsive_breakpoints = [850, 560].all? do |width|
+        stylesheet.match?(/@media\s*\(\s*max-width\s*:\s*#{width}px\s*\)/)
+      end
+      unless responsive_breakpoints
         @errors << 'public-site stylesheet must define both responsive breakpoints'
       end
-      unless stylesheet.include?(':focus-visible') && stylesheet.include?('@media (prefers-reduced-motion: reduce)')
+      reduced_motion = /@media\s*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/
+      unless stylesheet.match?(/:focus-visible\b/) && stylesheet.match?(reduced_motion)
         @errors << 'public-site stylesheet must preserve focus and reduced-motion handling'
       end
     end
