@@ -8,8 +8,8 @@ tests as the source of truth for current behavior. Design documents, the README,
 and historical TODO items describe intent; they are not proof that a feature is
 implemented.
 
-The project is being modernized incrementally under the Scenario B charter in
-[`docs/governance/scenario-b-charter.md`](docs/governance/scenario-b-charter.md).
+The project is being modernized incrementally under the Scenario B charter and
+work log in the [English GitHub Wiki](https://github.com/thomas-pendragon/dablang/wiki/Scenario-B-Modernization).
 That is an owner decision, not an assertion that the audit recommended this
 path. Preserve the distinction in code, documentation, reviews, and planning.
 
@@ -42,8 +42,8 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
   record a decision question and acceptance criteria; do not infer semantics
   from aspirational text such as `Type?`, `Type!`, general type inference, or
   Rings cache claims.
-- Every intentional semantic change needs a decision record in the Scenario B
-  charter or a linked ADR before implementation. It must name the prior
+- Every intentional semantic change needs a decision record in the canonical
+  Scenario B Wiki or a linked ADR before implementation. It must name the prior
   behavior, target behavior, compatibility impact, migration or rejection
   policy, and tests.
 - Prefer characterization tests, golden artifacts, and negative tests to broad

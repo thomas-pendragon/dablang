@@ -141,9 +141,6 @@ pages:
   - source: design/type-system.md
     output: design/type-system.html
     classification: repository_only
-  - source: governance/scenario-b-charter.md
-    output: governance/scenario-b-charter.md
-    classification: repository_only
   - source: legacy-source-vm-smoke.md
     output: legacy-source-vm-smoke.html
     classification: repository_only
