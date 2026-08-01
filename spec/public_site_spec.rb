@@ -72,6 +72,18 @@ describe Dab::PublicSite::Contract do
     end
   end
 
+  it 'reports one stable schema error when navigation is not an array' do
+    ['Dab 0.1', {'title' => 'Dab 0.1'}].each do |invalid_navigation|
+      with_docs_copy do |root|
+        manifest = read_manifest(root)
+        manifest['navigation'] = invalid_navigation
+        write_manifest(root, manifest)
+
+        expect(validate(root).errors).to eq(['navigation must be an array'])
+      end
+    end
+  end
+
   it 'accepts formatting changes while still requiring public-content cross-links' do
     with_docs_copy do |root|
       readme = File.join(root, 'README.md')

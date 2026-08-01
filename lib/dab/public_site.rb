@@ -197,7 +197,10 @@ module Dab::PublicSite
         end
       end
 
-      actual_navigation = @manifest.fetch('navigation', []).filter_map do |item|
+      navigation = @manifest['navigation']
+      return unless navigation.is_a?(Array)
+
+      actual_navigation = navigation.filter_map do |item|
         next unless item.is_a?(Hash)
 
         [item['title'], item['target']]
