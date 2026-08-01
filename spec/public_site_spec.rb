@@ -67,6 +67,60 @@ describe Dab::PublicSite::Contract do
     end
   end
 
+  it 'requires the responsive editorial shell and accessibility hooks' do
+    with_docs_copy do |root|
+      default_layout = File.join(root, 'docs/_layouts/default.html')
+      default_source = File.binread(default_layout)
+                           .gsub('class="skip-link"', 'class="removed"')
+                           .gsub('tabindex="-1"', 'tabindex="0"')
+      File.binwrite(default_layout, default_source)
+      stylesheet = File.join(root, 'docs/assets/main.scss')
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('@media (prefers-reduced-motion: reduce)', '@media print'))
+      header = File.join(root, 'docs/_includes/header.html')
+      File.binwrite(header, File.binread(header).gsub('/vm/opcodes.html', '/removed.html'))
+      footer = File.join(root, 'docs/_includes/footer.html')
+      File.binwrite(footer, File.binread(footer).gsub('{{ site.author_bio | escape }}', 'Biography removed'))
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('background: transparent;',
+                                                              'background: #eef;'))
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('margin-bottom: 0;',
+                                                              'margin-bottom: 15px;'))
+      config_path = File.join(root, 'docs/_config.yml')
+      config = YAML.safe_load(File.binread(config_path), aliases: false)
+      config.delete('author_bio')
+      File.binwrite(config_path, YAML.dump(config))
+
+      expect(validate(root).errors).to include(
+        'default layout must include the skip link',
+        'default layout must include a focusable main content landmark',
+        'mobile header must link to the VM opcode reference',
+        'shared footer must include the author biography and profile links',
+        'Jekyll author_bio must be a non-empty string',
+        'public-site stylesheet must reset nested code styling',
+        'public-site stylesheet must collapse nested code-block spacing',
+        'public-site stylesheet must preserve focus and reduced-motion handling'
+      )
+    end
+  end
+
+  it 'allows required shell hooks to coexist with additional classes' do
+    with_docs_copy do |root|
+      default_layout = File.join(root, 'docs/_layouts/default.html')
+      default_source = File.binread(default_layout)
+                           .gsub('class="site-shell"', 'class="site-shell theme-dark"')
+                           .gsub('{%- include footer.html -%}', '{% include footer.html %}')
+      File.binwrite(default_layout, default_source)
+      stylesheet = File.join(root, 'docs/assets/main.scss')
+      stylesheet_source = File.binread(stylesheet)
+                              .gsub('@media (max-width: 850px)', '@media(max-width:850px)')
+                              .gsub('@media (max-width: 560px)', '@media ( max-width : 560px )')
+                              .gsub('@media (prefers-reduced-motion: reduce)',
+                                    '@media(prefers-reduced-motion:reduce)')
+      File.binwrite(stylesheet, stylesheet_source)
+
+      expect(validate(root).errors).to eq([])
+    end
+  end
+
   it 'rejects an internal page that is emitted or top-level navigable' do
     with_docs_copy do |root|
       config_path = File.join(root, 'docs/_config.yml')

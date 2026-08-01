@@ -1,42 +1,25 @@
 <footer class="site-footer">
-
-  <div class="wrapper">
-
-    <h2 class="footer-heading">{{ site.title | escape }}</h2>
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li>
-            {% if site.author %}
-              {{ site.author | escape }}
-            {% else %}
-              {{ site.title | escape }}
-            {% endif %}
-            </li>
-            {% if site.email %}
-            <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-            {% endif %}
-            
-          {% if site.github_username %}
-          <li>
-            {% include icon-github.html username=site.github_username %}
-          </li>
-          {% endif %}
-
-          {% if site.twitter_username %}
-          <li>
-            {% include icon-twitter.html username=site.twitter_username %}
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-
-      <div class="footer-col footer-col-3">
-        <p>{{ site.description | escape }}</p>
-      </div>
-    </div>
-
+  <div class="footer-signature" aria-label="Created by Thomas Pendragon">
+    <p class="footer-kicker">Created by</p>
+    <p class="footer-author-name"><span>Thomas</span> <em>Pendragon</em></p>
   </div>
 
+  <div class="footer-author-details">
+    <p class="footer-biography">{{ site.author_bio | escape }}</p>
+
+    <nav class="footer-links" aria-label="Thomas Pendragon online">
+      {% if site.github_username %}
+        <div class="footer-social-row">
+          {% include icon-github.html username=site.github_username %}
+          <span aria-hidden="true">→</span>
+        </div>
+      {% endif %}
+      {% if site.twitter_username %}
+        <div class="footer-social-row">
+          {% include icon-twitter.html username=site.twitter_username %}
+          <span aria-hidden="true">→</span>
+        </div>
+      {% endif %}
+    </nav>
+  </div>
 </footer>

@@ -39,6 +39,7 @@ module Dab::PublicSite
       validate_exclusions(pages)
       validate_domain
       validate_header
+      validate_visual_shell
       validate_ci
       validate_generated_documentation(pages)
       Result.new(@errors.uniq.sort, pages.length)
@@ -194,6 +195,77 @@ module Dab::PublicSite
       end
     rescue Errno::ENOENT => e
       @errors << "Jekyll header could not be read: #{e.message}"
+    end
+
+    def validate_visual_shell
+      default_layout = read_site_source('_layouts/default.html', 'default layout')
+      home_layout = read_site_source('_layouts/home.html', 'home layout')
+      page_layout = read_site_source('_layouts/page.html', 'page layout')
+      header = read_site_source('_includes/header.html', 'Jekyll header')
+      footer = read_site_source('_includes/footer.html', 'site footer')
+      stylesheet = read_site_source('assets/main.scss', 'public-site stylesheet')
+      return unless default_layout && home_layout && page_layout && header && footer && stylesheet
+
+      {
+        'site shell' => 'site-shell',
+        'project rail' => 'site-rail',
+        'skip link' => 'skip-link',
+      }.each do |name, class_name|
+        class_pattern = /class="(?:[^"]*\s)?#{Regexp.escape(class_name)}(?:\s[^"]*)?"/
+        @errors << "default layout must include the #{name}" unless default_layout.match?(class_pattern)
+      end
+      main_landmark = /<main\b(?=[^>]*\bid="main-content")(?=[^>]*\btabindex="-1")[^>]*>/
+      unless default_layout.match?(main_landmark)
+        @errors << 'default layout must include a focusable main content landmark'
+      end
+      footer_include = /\{%-?\s*include\s+footer\.html\s*-?%\}/
+      @errors << 'default layout must include the shared footer' unless default_layout.match?(footer_include)
+
+      unless home_layout.include?('layout: default') && home_layout.include?('class="home-page"')
+        @errors << 'home layout must use the shared editorial shell'
+      end
+      unless page_layout.include?('layout: default') && page_layout.include?('class="document-page"')
+        @errors << 'page layout must use the shared editorial shell'
+      end
+      {
+        'VM opcode reference' => 'href="{{ "/vm/opcodes.html" | relative_url }}"',
+        'license' => 'href="{{ "/license.html" | relative_url }}"',
+      }.each do |name, marker|
+        @errors << "mobile header must link to the #{name}" unless header.include?(marker)
+      end
+      unless footer.include?('{{ site.author_bio | escape }}') &&
+             footer.include?('icon-github.html') && footer.include?('icon-twitter.html')
+        @errors << 'shared footer must include the author biography and profile links'
+      end
+      unless @config['author_bio'].is_a?(String) && !@config['author_bio'].strip.empty?
+        @errors << 'Jekyll author_bio must be a non-empty string'
+      end
+      nested_code = stylesheet[/\.document-body\s+pre\s*>\s*code\s*\{([^}]*)\}/m, 1]
+      unless nested_code&.match?(/\bbackground\s*:\s*transparent\s*;/) &&
+             nested_code&.match?(/\bcolor\s*:\s*inherit\s*;/)
+        @errors << 'public-site stylesheet must reset nested code styling'
+      end
+      highlighted_pre = stylesheet.scan(/\.document-body\s+\.highlight\s+pre\s*\{([^}]*)\}/m).flatten
+      unless highlighted_pre.any? { |rules| rules.match?(/\bmargin-bottom\s*:\s*0\s*;/) }
+        @errors << 'public-site stylesheet must collapse nested code-block spacing'
+      end
+      responsive_breakpoints = [850, 560].all? do |width|
+        stylesheet.match?(/@media\s*\(\s*max-width\s*:\s*#{width}px\s*\)/)
+      end
+      unless responsive_breakpoints
+        @errors << 'public-site stylesheet must define both responsive breakpoints'
+      end
+      reduced_motion = /@media\s*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/
+      unless stylesheet.match?(/:focus-visible\b/) && stylesheet.match?(reduced_motion)
+        @errors << 'public-site stylesheet must preserve focus and reduced-motion handling'
+      end
+    end
+
+    def read_site_source(relative, name)
+      File.binread(File.join(@docs, relative))
+    rescue Errno::ENOENT => e
+      @errors << "#{name} could not be read: #{e.message}"
+      nil
     end
 
     def validate_ci
