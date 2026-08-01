@@ -93,7 +93,7 @@ describe 'test harness subprocess timeouts' do
           ready_output: 'child-ready',
           startup_timeout: 2
         )
-      end.to raise_error(SystemCommandError, /Command timed out/)
+      end.to raise_error(SystemCommandError, /Command timed out/) { |error| expect(error.timeout).to eq(0.25) }
 
       child_pid = Integer(File.read(child_pid_file))
       wait_until_stopped(child_pid)

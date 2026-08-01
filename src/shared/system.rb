@@ -193,9 +193,9 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
     selected = IO.select(fdlist, nil, nil, wait_time)
     next unless selected
 
-    ready = selected[0]
+    ready_fds = selected[0]
     data = false
-    ready.each do |fd|
+    ready_fds.each do |fd|
       command.try_update(fd) do |line, is_stderr|
         if is_stderr
           DabTestOutput.emit(line, stream: :stderr, display: :stderr) if show_stderr
