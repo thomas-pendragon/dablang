@@ -1,5 +1,5 @@
 #include "cvm.h"
-
+#include "../cshared/bytecode_string_validation.h"
 #include "../cshared/opcode_validation.h"
 #include "../cshared/version.h"
 
@@ -198,6 +198,17 @@ int DabVM::run(std::vector<Stream> &inputs)
 
     if (!options.bare)
     {
+        for (size_t index = 0; index < inputs.size(); index++)
+        {
+            std::string validation_error;
+            if (!validate_bytecode_string_data(inputs[index], parsed_headers[index],
+                                               DabStringDataConsumer::VM, validation_error,
+                                               &instructions))
+            {
+                throw DabRuntimeError("invalid bytecode String/symbol data: " + validation_error);
+            }
+        }
+
         for (size_t index = 0; index < inputs.size(); index++)
         {
             load_newformat(parsed_headers[index]);

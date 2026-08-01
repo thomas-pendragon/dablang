@@ -78,11 +78,27 @@ class DabBinReader
   end
 
   def parse_symbols(symd, symd_start, symb, base_offset)
+    raise ArgumentError.new('truncated symbol table') unless (symb.length % 8).zero?
+
     count = symb.length / 8
     addresses = symb.unpack("Q<#{count}")
-    addresses.map do |address|
-      offset = address - symd_start - base_offset
-      symd.unpack("@#{offset}Z*").first
+    artifact_start = symd_start + base_offset
+    addresses.each_with_index.map do |address, index|
+      if address < artifact_start
+        raise ArgumentError.new("symbol reference #{index} starts before the artifact")
+      end
+
+      offset = address - artifact_start
+      if offset >= symd.bytesize
+        raise ArgumentError.new("symbol reference #{index} is outside the artifact")
+      end
+
+      terminator = symd.index("\0", offset)
+      unless terminator
+        raise ArgumentError.new("symbol #{index} is not NUL-terminated within the artifact")
+      end
+
+      symd.byteslice(offset, terminator - offset)
     end
   end
 

@@ -112,6 +112,33 @@ describe DabBinReader, readbin: true do
     expect(result).to eq(expected)
   end
 
+  it 'preserves a valid symbol reference into the middle of NUL-terminated data' do
+    symd = "notcount\0"
+    symb = [3].pack('Q<')
+
+    expect(DabBinReader.new.parse_symbols(symd, 0, symb, 0)).to eq(['count'])
+  end
+
+  it 'rejects a truncated symbol reference record' do
+    expect { DabBinReader.new.parse_symbols("name\0", 0, "\0" * 7, 0) }
+      .to raise_error(ArgumentError, 'truncated symbol table')
+  end
+
+  it 'rejects a symbol reference below the artifact base offset' do
+    expect { DabBinReader.new.parse_symbols("name\0", 0, [99].pack('Q<'), 100) }
+      .to raise_error(ArgumentError, 'symbol reference 0 starts before the artifact')
+  end
+
+  it 'rejects a symbol reference outside the artifact' do
+    expect { DabBinReader.new.parse_symbols("name\0", 0, [5].pack('Q<'), 0) }
+      .to raise_error(ArgumentError, 'symbol reference 0 is outside the artifact')
+  end
+
+  it 'rejects a symbol without a terminating NUL byte' do
+    expect { DabBinReader.new.parse_symbols('name', 0, [0].pack('Q<'), 0) }
+      .to raise_error(ArgumentError, 'symbol 0 is not NUL-terminated within the artifact')
+  end
+
   xit 'parses functions' do
     symbols = ['!', '!=', '+', '-', '==', '[]', 'count', 'each', 'each_with_index',
                'first', 'is', 'last', 'length', 'main', 'puts', 'to_bool']
