@@ -29,6 +29,10 @@ func level2()
   bar();
 }
 
+## SNAPSHOT CONTRACT
+
+latest-code-data-and-next-ring
+
 ## EXPECT
 
 hello world

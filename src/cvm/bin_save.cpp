@@ -80,6 +80,12 @@ enum
     TEMP_NEW_DATA_SECTION = 5,
 };
 
+static void snapshot_write_error(const char *message)
+{
+    fprintf(stderr, "vm/binsave: snapshot-writing stage failed: %s\n", message);
+    exit(1);
+}
+
 void DabVM::dump_vm(FILE *out)
 {
     BinDabHeader            dump_header;
@@ -114,8 +120,8 @@ void DabVM::dump_vm(FILE *out)
     //            aa++;
     //        }
     //    }
-    auto last_code_index = -1;
-    auto last_data_index = -1;
+    auto latest_code_index = -1;
+    auto latest_data_index = -1;
 
     for (int i = 0; i < (int)dump_sections.size(); i++)
     {
@@ -123,24 +129,26 @@ void DabVM::dump_vm(FILE *out)
         std::string name    = section.name;
 
         if (name == "code")
-            last_code_index = std::max(last_code_index, i);
+            latest_code_index = i;
 
         if (name == "data")
-            last_data_index = std::max(last_data_index, i);
+            latest_data_index = i;
     }
 
-    fprintf(stderr, "vm/binsave: last code = %d last data = %d\n", last_code_index,
-            last_data_index);
+    fprintf(stderr, "vm/binsave: last code = %d last data = %d\n", latest_code_index,
+            latest_data_index);
 
-    auto base_code_offset =
-        dump_sections[last_code_index].pos + dump_sections[last_code_index].length;
+    if (latest_code_index < 0)
+        snapshot_write_error("no code section available");
 
-    const auto latest_code_index = last_code_index;
-    const auto latest_data_index = last_data_index;
+    const auto base_code_offset =
+        dump_sections[latest_code_index].pos + dump_sections[latest_code_index].length;
 
-    for (int i = 0, section_index = 0; i < (int)dump_sections.size(); i++, section_index++)
+    std::vector<BinSection> latest_sections;
+    latest_sections.reserve(dump_sections.size());
+    for (int section_index = 0; section_index < (int)dump_sections.size(); section_index++)
     {
-        auto       &section = dump_sections[i];
+        const auto &section = dump_sections[section_index];
         std::string name    = section.name;
 
         bool previous_code = name == "code" && section_index != latest_code_index;
@@ -151,19 +159,12 @@ void DabVM::dump_vm(FILE *out)
         {
             fprintf(stderr, "vm/binsave: remove previous section %d '%s'\n", section_index,
                     name.c_str());
-            if (i < last_code_index)
-                last_code_index--;
-            if (i < last_data_index)
-                last_data_index--;
-            dump_sections.erase(dump_sections.begin() + i);
-            i--;
+            continue;
         }
+
+        latest_sections.push_back(section);
     }
-
-    (void)last_code_index;
-    (void)last_data_index;
-
-    auto &code_section = dump_sections[last_code_index];
+    dump_sections.swap(latest_sections);
 
     BinSection class_section = {};
     memcpy(class_section.name, "clas", 4);
@@ -232,7 +233,6 @@ void DabVM::dump_vm(FILE *out)
             bin_func.flags         = fundata.flags;
             if (fun.new_method)
             {
-                (void)code_section;
                 bin_func.address += base_code_offset;
             }
             fprintf(stderr, "vm/binsave: readjust address to %d\n", (int)bin_func.address);
