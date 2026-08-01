@@ -18,7 +18,9 @@ The normalized side-by-side comparison shows the same defining composition as
 the selected visual: a narrow project rail, a ruled primary navigation row, an
 oversized horizontally extended display title, a high-contrast serif
 description, two large underlined calls to action, and a three-part author and
-project footer. The implementation deliberately retains the repository's real
+project footer. Owner review refined that footer into a smaller two-part author
+module: a compact signature followed by a short biography with GitHub and
+Twitter links. The implementation deliberately retains the repository's real
 CI badge, public navigation contract, and existing project destinations.
 
 The implementation omits the mock's dotted field and red ornamental marks.
@@ -70,7 +72,11 @@ social marks, and CTA treatment legible at the same time.
 3. Owner review identified `Design` as ideation placeholder copy. The hero and
    document title now use `Dab`, and the desktop and mobile evidence was
    recaptured against the LAN-served implementation.
-4. The post-fix desktop comparison and 390 by 844 home/document captures show no
+4. Owner review identified the footer signature as oversized and the standalone
+   profile list as under-informative. The signature is now subordinate to the
+   page, and a concise author biography and both profile links form one compact,
+   responsive block.
+5. The post-fix desktop comparison and 390 by 844 home/document captures show no
    remaining actionable P0, P1, or P2 mismatch.
 
 ## Findings

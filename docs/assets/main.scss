@@ -394,44 +394,70 @@ summary:focus-visible {
 }
 
 .site-footer {
-  align-items: stretch;
+  align-items: center;
   border-top: 1px solid $ink;
   display: grid;
   gap: 0;
   grid-column: 1 / -1;
   grid-row: 2;
-  grid-template-columns: 1.2fr 0.8fr 1.2fr;
+  grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.28fr);
   margin-top: 1.5rem;
-  min-height: 9rem;
 }
 
 .footer-signature,
-.footer-description,
-.footer-links {
-  padding: 1.3rem 1rem;
+.footer-author-details {
+  padding: 1.15rem 1rem;
 }
 
 .footer-signature {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
-  font-family: $sans;
-  font-size: clamp(3.2rem, 5.2vw, 5.5rem);
-  font-weight: 700;
-  letter-spacing: -0.06em;
-  line-height: 0.68;
+  justify-content: center;
 }
 
-.footer-signature em {
+.footer-kicker {
+  color: $blue;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin: 0 0 0.45rem;
+  text-transform: uppercase;
+}
+
+.footer-author-name {
+  font-family: $sans;
+  font-size: clamp(2rem, 3vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.82;
+  margin: 0;
+}
+
+.footer-author-name span,
+.footer-author-name em {
+  display: block;
+}
+
+.footer-author-name em {
   font-family: $serif;
   font-weight: 400;
 }
 
-.footer-description {
+.footer-author-details {
+  align-items: center;
   border-left: 1px solid $rule;
-  border-right: 1px solid $rule;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.75fr);
+}
+
+.footer-biography {
   font-family: $serif;
+  font-size: 1.03rem;
   line-height: 1.45;
   margin: 0;
+  max-width: 38rem;
 }
 
 .footer-links {
@@ -533,17 +559,16 @@ summary:focus-visible {
   }
 
   .site-footer {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(11rem, 0.55fr) minmax(0, 1.45fr);
     margin-top: 3rem;
   }
 
-  .footer-description {
-    border-right: 0;
+  .footer-author-details {
+    display: block;
   }
 
   .footer-links {
-    border-top: 1px solid $rule;
-    grid-column: 1 / -1;
+    margin-top: 1rem;
   }
 }
 
@@ -602,12 +627,8 @@ summary:focus-visible {
     display: block;
   }
 
-  .footer-description {
+  .footer-author-details {
     border-left: 0;
-    border-top: 1px solid $rule;
-  }
-
-  .footer-links {
     border-top: 1px solid $rule;
   }
 }

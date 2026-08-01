@@ -202,8 +202,9 @@ module Dab::PublicSite
       home_layout = read_site_source('_layouts/home.html', 'home layout')
       page_layout = read_site_source('_layouts/page.html', 'page layout')
       header = read_site_source('_includes/header.html', 'site header')
+      footer = read_site_source('_includes/footer.html', 'site footer')
       stylesheet = read_site_source('assets/main.scss', 'public-site stylesheet')
-      return unless default_layout && home_layout && page_layout && header && stylesheet
+      return unless default_layout && home_layout && page_layout && header && footer && stylesheet
 
       {
         'site shell' => 'site-shell',
@@ -227,6 +228,13 @@ module Dab::PublicSite
         'license' => 'href="{{ "/license.html" | relative_url }}"',
       }.each do |name, marker|
         @errors << "mobile header must link to the #{name}" unless header.include?(marker)
+      end
+      unless footer.include?('{{ site.author_bio | escape }}') &&
+             footer.include?('icon-github.html') && footer.include?('icon-twitter.html')
+        @errors << 'shared footer must include the author biography and profile links'
+      end
+      unless @config['author_bio'].is_a?(String) && !@config['author_bio'].strip.empty?
+        @errors << 'Jekyll author_bio must be a non-empty string'
       end
       unless stylesheet.include?('@media (max-width: 850px)') && stylesheet.include?('@media (max-width: 560px)')
         @errors << 'public-site stylesheet must define both responsive breakpoints'
