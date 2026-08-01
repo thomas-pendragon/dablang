@@ -2,6 +2,10 @@ schema_version: 1
 canonical_domain: dablang.net
 
 navigation:
+  - title: Dab 0.1
+    target: /dab-0.1.html
+  - title: Wordfreq
+    target: /wordfreq.html
   - title: Building
     target: /building.html
   - title: Examples
@@ -12,6 +16,12 @@ navigation:
 pages:
   - source: index.md
     output: index.html
+    classification: public_product
+  - source: dab-0.1.md
+    output: dab-0.1.html
+    classification: public_product
+  - source: wordfreq.md
+    output: wordfreq.html
     classification: public_product
   - source: building.md
     output: building.html
