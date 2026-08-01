@@ -8,6 +8,7 @@ require 'stringio'
 
 require_relative 'legacy_source_vm_smoke'
 require_relative 'toolchain_preflight'
+require_relative 'unsafe_ffi_capability_smoke'
 
 module Dab
   module UndefinedBehaviorSanitizerGate
@@ -146,6 +147,7 @@ module Dab
         run_undefined_behavior_canary
         run_string_intptr_lifetime_regression
         run_native_tool_smoke
+        run_unsafe_ffi_capability_smoke
         run_legacy_source_vm_smoke
         announce(@output, 'UndefinedBehaviorSanitizer gate: PASSED')
         0
@@ -476,6 +478,25 @@ module Dab
             "expected stdout #{expected.dump} and empty stderr; got #{result.stdout.dump} / #{result.stderr.dump}"
           )
         end
+      end
+
+      def run_unsafe_ffi_capability_smoke
+        announce(@output, 'UndefinedBehaviorSanitizer gate: instrumented unsafe FFI capability smoke')
+        commands = UnsafeFfiCapabilitySmoke::Commands.new(
+          root: @root,
+          binary_directory: @profile.fetch('binary_directory')
+        )
+        status = UnsafeFfiCapabilitySmoke::Runner.new(
+          root: @root,
+          commands: commands,
+          environment: sanitizer_environment,
+          output: @output,
+          error: @error,
+          windows: false
+        ).run
+        return if status.zero?
+
+        contract_failure('instrumented unsafe FFI capability smoke', "capability smoke returned #{status}")
       end
 
       def run_legacy_source_vm_smoke

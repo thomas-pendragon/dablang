@@ -1464,6 +1464,11 @@ void DabRunOptions::parse(const std::vector<std::string> &args)
         this->bare = true;
     }
 
+    if (flags["--allow-unsafe-ffi"])
+    {
+        this->allow_unsafe_ffi = true;
+    }
+
     if (flags["--cov"])
     {
         this->coverage_testing = true;

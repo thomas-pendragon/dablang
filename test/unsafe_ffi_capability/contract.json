@@ -1,0 +1,19 @@
+{
+  "allowed": {
+    "unix": {
+      "exit_status": 0,
+      "stderr_line": "vm: readjust 'unsafe_ffi_abs' to libc function 'abs'",
+      "stdout": "19"
+    },
+    "windows": {
+      "exit_status": 1,
+      "stderr_line": "vm: function import not supported on windows yet.",
+      "stdout": ""
+    }
+  },
+  "denied": {
+    "exit_status": 1,
+    "stderr_line": "vm: unsafe FFI is disabled; use --allow-unsafe-ffi only for trusted local code.",
+    "stdout": ""
+  }
+}

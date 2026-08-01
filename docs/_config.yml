@@ -43,3 +43,4 @@ exclude:
   - test-suite-manifest.md
   - toolchain-preflight.md
   - undefined-behavior-sanitizer.md
+  - unsafe-ffi.md

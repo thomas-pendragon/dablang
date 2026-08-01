@@ -15,7 +15,8 @@ The command runs these stages once and in this order:
 2. supported-toolchain preflight;
 3. the inherited `bundle exec rake` build, fixture-test, and documentation
    gate, including the reproducible [legacy source-to-VM smoke](/legacy-source-vm-smoke.html)
-   exactly once and without omitting any of its current tasks; and
+   and the [unsafe FFI capability contract](/unsafe-ffi.html) exactly once and
+   without omitting any of its current tasks; and
 4. the Ruby RSpec suite (`bundle exec rspec`).
 
 Each stage is announced before it runs. Failures stop the command immediately,
@@ -85,6 +86,16 @@ bundle exec rake legacy_source_vm_smoke
 Its Rake dependency builds the platform-native VM before two independent
 external compiler, assembler, and VM runs. The smoke uses its own stage limits;
 it does not alter the fixture harness limits above.
+
+The denied-by-default and explicit-opt-in FFI contract is available directly
+as:
+
+```shell
+bundle exec rake unsafe_ffi_capability_spec
+```
+
+It validates raw `__dlimport` behavior and the platform boundary; it does not
+claim that explicitly enabled FFI is sandboxed or safe.
 
 The dedicated [AddressSanitizer validation](/address-sanitizer.html) and
 [UndefinedBehaviorSanitizer validation](/undefined-behavior-sanitizer.html)
