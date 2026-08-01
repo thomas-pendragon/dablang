@@ -203,7 +203,9 @@ module Dab
         unless disasm.stdout.lines.any? { |line| line.include?(opcode_name) }
           fail_contract("cdisasm did not decode highest valid opcode #{highest} (#{opcode_name})")
         end
-        fail_contract('cdumpcov control output changed') unless dumpcov.stdout == "[]\n"
+        unless dumpcov.stdout.match?(/\A\[\]\r?\n\z/)
+          fail_contract('cdumpcov control output changed')
+        end
         [vm, verbose, disasm, dumpcov].each { |result| reject_sanitizer_report(result) }
       end
 
@@ -274,7 +276,7 @@ module Dab
       end
 
       def unknown_lines(stderr)
-        stderr.lines.grep(/unknown opcode/)
+        stderr.gsub("\r\n", "\n").lines.grep(/unknown opcode/)
       end
 
       def validate_unknown_stdout(stdout, consumer, stage)
