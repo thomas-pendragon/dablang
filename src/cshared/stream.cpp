@@ -1,6 +1,7 @@
 #include "stream.h"
 
 #include <limits>
+#include <new>
 #include <utility>
 
 Stream Stream::section_stream(uint64_t section_index)
@@ -73,29 +74,43 @@ bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &e
         return false;
     }
 
-    ValidatedBinHeader parsed;
-    parsed.header = header;
-    if (header.section_count > parsed.sections.max_size())
+    try
     {
-        error = "section count exceeds container limits";
-        return false;
-    }
-    parsed.sections.reserve((size_t)header.section_count);
-
-    const byte *section_data = buffer.data + fixed_header_size;
-    for (uint64_t index = 0; index < header.section_count; index++)
-    {
-        BinSection section = {};
-        memcpy(&section, section_data + index * section_size, sizeof(section));
-        if (section.zero1 != 0 || section.zero2 != 0 || section.special_index != 0)
+        ValidatedBinHeader parsed;
+        parsed.header = header;
+        if (header.section_count > parsed.sections.max_size())
         {
-            error = "section " + std::to_string(index) + " reserved fields must be zero";
+            error = "section count exceeds container limits";
             return false;
         }
-        parsed.sections.push_back(section);
+        parsed.sections.reserve((size_t)header.section_count);
+
+        const byte *section_data = buffer.data + fixed_header_size;
+        for (uint64_t index = 0; index < header.section_count; index++)
+        {
+            BinSection section = {};
+            memcpy(&section, section_data + index * section_size, sizeof(section));
+            if (section.zero1 != 0 || section.zero2 != 0 || section.special_index != 0)
+            {
+                error = "section " + std::to_string(index) + " reserved fields must be zero";
+                return false;
+            }
+            parsed.sections.push_back(section);
+        }
+
+        validated = std::move(parsed);
+    }
+    catch (const std::length_error &)
+    {
+        error = "section table exceeds container limits";
+        return false;
+    }
+    catch (const std::bad_alloc &)
+    {
+        error = "section table allocation failed";
+        return false;
     }
 
-    validated = std::move(parsed);
     error.clear();
     return true;
 }
