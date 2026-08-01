@@ -223,6 +223,11 @@ struct Stream
     Buffer   buffer;
     uint64_t _position = 0;
 
+    mutable bool               _section_header_cache_set   = false;
+    mutable bool               _section_header_cache_valid = false;
+    mutable ValidatedBinHeader _section_header_cache;
+    mutable std::string        _section_header_cache_error;
+
     byte *data() const;
 
     template <typename T>

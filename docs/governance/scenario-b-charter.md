@@ -168,6 +168,39 @@ Reassess if supported FFI needs to retain pointers asynchronously or if
 `IntPtr` gains a general ownership protocol. Dab remains a trusted-local
 prototype, and raw FFI remains explicitly unsafe.
 
+### Dab 0.0.22 version 3 section-payload decision
+
+**Status:** proposed<br>
+**Owner:** Scenario B MASTER THREAD<br>
+**Compatibility:** preserving safety repair
+
+A version 3 artifact consists of its fixed header, complete section table, and
+the exact number of payload bytes declared by `size_of_data`. Section positions
+are absolute addresses: subtracting `header.offset` maps a validated position
+to the corresponding byte in that artifact. The loader previously trusted
+those values after validating only the header and table. In particular,
+`section.pos < header.offset` wrapped the subtraction in `section_stream`, and
+the VM accepted payload ranges outside `size_of_data`, mismatched declared
+sizes, and overlapping sections.
+
+Before publishing a validated header, appending any input, slicing a section,
+or dispatching a payload consumer, the loader rejects arithmetic wrap in the
+declared artifact or absolute payload range. The input size must equal
+`size_of_header + size_of_data`. Every section's half-open range must fit in
+the absolute payload range, and non-empty section ranges must not overlap.
+Zero-length sections may sit anywhere in the payload including its end;
+non-overlapping sections may contain gaps or appear in any table order. These
+rules preserve the current version 3 layout and native-byte-order behavior.
+
+Malformed artifacts use the existing deterministic VM boundary: stderr names
+the failed bytecode-header condition and the VM exits with status 1. All inputs
+validate before any is appended or changes VM section state. Acceptance
+requires valid offset, gap, ordering, adjacency, and zero-length controls;
+negative boundary, underflow, overflow, membership, overlap, and transactional
+contracts; the compatibility and complete gates; and focused ASan and UBSan
+proof. This decision does not validate opcode identity, String or symbol
+content, FFI, Rings semantics, or hostile bytecode generally.
+
 ## 7. Ordered stages and gates
 
 | Stage | Objective | Entry dependencies | Exit gate |

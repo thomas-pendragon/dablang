@@ -2,6 +2,8 @@
 
 void DabVM::load_newformat(const ValidatedBinHeader &parsed_header)
 {
+    // read_validated_header proves every section's absolute half-open range belongs to this
+    // artifact's declared payload before run() appends any input or reaches these consumers.
     const auto &header             = parsed_header.header;
     auto        offset             = header.offset;
     auto        size_of_header     = header.size_of_header;

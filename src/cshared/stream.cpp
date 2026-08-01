@@ -1,17 +1,87 @@
 #include "stream.h"
 
+#include <algorithm>
 #include <limits>
 #include <new>
+#include <stdexcept>
 #include <utility>
 
 Stream Stream::section_stream(uint64_t section_index)
 {
+    const uint64_t fixed_header_size = sizeof(BinDabHeader);
+    const uint64_t section_size      = sizeof(BinSection);
+    const uint64_t maximum_uint64    = std::numeric_limits<uint64_t>::max();
+
+    if (buffer.length < fixed_header_size)
+    {
+        throw std::invalid_argument("section stream header is truncated");
+    }
+
+    BinDabHeader header = {};
+    memcpy(&header, buffer.data, sizeof(header));
+
+    BinSection section = {};
+    if (header.version == 3)
+    {
+        if (!_section_header_cache_set)
+        {
+            ValidatedBinHeader parsed_header;
+            std::string        validation_error;
+            _section_header_cache_valid = read_validated_header(parsed_header, validation_error);
+            if (_section_header_cache_valid)
+            {
+                _section_header_cache = std::move(parsed_header);
+                _section_header_cache_error.clear();
+            }
+            else
+            {
+                _section_header_cache_error = std::move(validation_error);
+            }
+            _section_header_cache_set = true;
+        }
+        if (!_section_header_cache_valid)
+        {
+            throw std::invalid_argument("invalid bytecode header: " + _section_header_cache_error);
+        }
+        if (section_index >= _section_header_cache.sections.size())
+        {
+            throw std::out_of_range("section index exceeds validated section table");
+        }
+        header  = _section_header_cache.header;
+        section = _section_header_cache.sections[(size_t)section_index];
+    }
+    else
+    {
+        if (header.section_count > (maximum_uint64 - fixed_header_size) / section_size)
+        {
+            throw std::invalid_argument("section stream table size overflows uint64");
+        }
+        const uint64_t table_end = fixed_header_size + header.section_count * section_size;
+        if (table_end > buffer.length)
+        {
+            throw std::invalid_argument("section stream table exceeds input");
+        }
+        if (section_index >= header.section_count)
+        {
+            throw std::out_of_range("section index exceeds section table");
+        }
+        memcpy(&section, buffer.data + fixed_header_size + section_index * section_size,
+               sizeof(section));
+        if (section.pos < header.offset)
+        {
+            throw std::invalid_argument("section position precedes header offset");
+        }
+        const uint64_t local_start = section.pos - header.offset;
+        if (local_start > buffer.length || section.length > buffer.length - local_start)
+        {
+            throw std::invalid_argument("section range exceeds input");
+        }
+    }
+
     Stream ret;
-    auto   header  = peek_header();
-    auto   section = header->sections[section_index];
-    auto   start   = section.pos - header->header.offset;
-    auto   length  = section.length;
-    ret.buffer     = Buffer(this->buffer, start, length);
+    auto   start  = section.pos - header.offset;
+    auto   length = section.length;
+    ret.buffer    = Buffer(this->buffer, start, length);
     return ret;
 }
 
@@ -24,6 +94,7 @@ bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &e
 {
     const uint64_t fixed_header_size = sizeof(BinDabHeader);
     const uint64_t section_size      = sizeof(BinSection);
+    const uint64_t maximum_uint64    = std::numeric_limits<uint64_t>::max();
 
     if (buffer.length < fixed_header_size)
     {
@@ -73,9 +144,41 @@ bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &e
         error = "declared section table exceeds input";
         return false;
     }
+    if (header.size_of_data > maximum_uint64 - header.size_of_header)
+    {
+        error = "declared bytecode size overflows uint64";
+        return false;
+    }
+
+    const uint64_t declared_bytecode_size = header.size_of_header + header.size_of_data;
+    if (declared_bytecode_size != buffer.length)
+    {
+        error = "size_of_header and size_of_data do not match input size";
+        return false;
+    }
+    if (header.offset > maximum_uint64 - header.size_of_header)
+    {
+        error = "section payload start overflows uint64";
+        return false;
+    }
+
+    const uint64_t payload_start = header.offset + header.size_of_header;
+    if (header.size_of_data > maximum_uint64 - payload_start)
+    {
+        error = "section payload end overflows uint64";
+        return false;
+    }
+    const uint64_t payload_end = payload_start + header.size_of_data;
 
     try
     {
+        struct SectionRange
+        {
+            uint64_t start;
+            uint64_t end;
+            uint64_t index;
+        };
+
         ValidatedBinHeader parsed;
         parsed.header = header;
         if (header.section_count > parsed.sections.max_size())
@@ -84,6 +187,8 @@ bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &e
             return false;
         }
         parsed.sections.reserve((size_t)header.section_count);
+        std::vector<SectionRange> nonempty_ranges;
+        nonempty_ranges.reserve((size_t)header.section_count);
 
         const byte *section_data = buffer.data + fixed_header_size;
         for (uint64_t index = 0; index < header.section_count; index++)
@@ -95,7 +200,57 @@ bool Stream::read_validated_header(ValidatedBinHeader &validated, std::string &e
                 error = "section " + std::to_string(index) + " reserved fields must be zero";
                 return false;
             }
+            if (section.pos < header.offset)
+            {
+                error = "section " + std::to_string(index) + " position precedes header offset";
+                return false;
+            }
+            if (section.pos < payload_start)
+            {
+                error = "section " + std::to_string(index) + " starts before declared payload";
+                return false;
+            }
+            if (section.pos > payload_end)
+            {
+                error = "section " + std::to_string(index) + " starts after declared payload";
+                return false;
+            }
+            if (section.length > maximum_uint64 - section.pos)
+            {
+                error = "section " + std::to_string(index) + " range overflows uint64";
+                return false;
+            }
+            if (section.length > payload_end - section.pos)
+            {
+                error = "section " + std::to_string(index) + " range exceeds declared payload";
+                return false;
+            }
+            if (section.length != 0)
+            {
+                nonempty_ranges.push_back({section.pos, section.pos + section.length, index});
+            }
             parsed.sections.push_back(section);
+        }
+
+        std::sort(nonempty_ranges.begin(), nonempty_ranges.end(),
+                  [](const SectionRange &left, const SectionRange &right)
+                  {
+                      if (left.start != right.start)
+                          return left.start < right.start;
+                      if (left.end != right.end)
+                          return left.end < right.end;
+                      return left.index < right.index;
+                  });
+        for (size_t index = 1; index < nonempty_ranges.size(); index++)
+        {
+            const auto &previous = nonempty_ranges[index - 1];
+            const auto &current  = nonempty_ranges[index];
+            if (current.start < previous.end)
+            {
+                error = "section " + std::to_string(previous.index) + " overlaps section " +
+                        std::to_string(current.index);
+                return false;
+            }
         }
 
         validated = std::move(parsed);
@@ -250,6 +405,10 @@ std::string Stream::read_cstring()
 
 void Stream::append(const byte *data, uint64_t length)
 {
+    _section_header_cache_set   = false;
+    _section_header_cache_valid = false;
+    _section_header_cache       = {};
+    _section_header_cache_error.clear();
     buffer.append(data, length);
 }
 
