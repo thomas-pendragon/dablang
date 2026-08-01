@@ -147,10 +147,11 @@ For only that conversion, the VM copies the string bytes, including the
 terminating null byte, into storage shared by all copies of the returned
 `DabValue`. The pointer is valid until the last copy of that value is released,
 destroyed, or assigned another value. Releasing the last copy frees the storage
-exactly once. The conversion supplies a writable, null-terminated snapshot for
-a synchronous trusted-local FFI call. Foreign code must not retain the pointer
-beyond the lifetime of an owning `DabValue`; later source-string changes do not
-change the snapshot.
+exactly once. Copy assignment retains the incoming owner before releasing the
+displaced value, while self-assignment is a no-op. The conversion supplies a
+writable, null-terminated snapshot for a synchronous trusted-local FFI call.
+Foreign code must not retain the pointer beyond the lifetime of an owning
+`DabValue`; later source-string changes do not change the snapshot.
 
 Borrowing from the source was rejected because source destruction or
 reallocation would invalidate the pointer. `strdup` was rejected because it

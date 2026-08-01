@@ -42,14 +42,10 @@ smoke twice through `bin/address-sanitizer/cvm`, with bounded stage timeouts.
 Build failures, missing tools, timeouts, signals, sanitizer reports, metadata
 mismatches, and output-contract mismatches are attributed and return nonzero.
 
-Leak detection is enabled for the canary and for an explicit characterization
-run of the trusted-local legacy VM smoke. That smoke currently has a
-machine-checked baseline of 160 leaked bytes in four allocations. The gate must
-observe exactly that leak-only fingerprint and no core address error; it then
-runs the same external smoke with only leak detection disabled so the clean
-source-to-VM contract can exercise all core AddressSanitizer checks. This narrow
-second-run choice records leak remediation as later memory-ownership work rather
-than hiding it with a global setting or suppression file.
+Leak detection is enabled for the canary and for the trusted-local legacy VM
+smoke. The smoke must finish without an address or leak report. This exercises
+the source-to-VM contract under all configured AddressSanitizer checks without a
+global setting or suppression file.
 
 The profile does not disable bounds, use-after-free, use-after-scope, stack, or
 global detection. Runtime reports keep raw frame addresses because symbolizer
@@ -60,9 +56,10 @@ trusted-local execution check; it does not make hostile source or bytecode safe.
 The `CLASS_STRING` to `CLASS_INTPTR` repair has a focused native regression that
 proves copied pointer owners keep a null-terminated snapshot alive and that the
 last owner releases it. This profile executes that regression with full address
-and leak detection. Its bounded legacy smoke still does not claim to exercise
-FFI or every runtime ownership path. Any sanitizer finding in the executed
-scope remains a gate failure.
+and leak detection and runs the legacy smoke with leak detection enabled. Its
+bounded legacy smoke still does not claim to exercise FFI or every runtime
+ownership path. Any sanitizer finding in the executed scope remains a gate
+failure.
 
 Successful runs leave the isolated AddressSanitizer build and binary trees for
 inspection. A later run removes only those two task-owned trees before

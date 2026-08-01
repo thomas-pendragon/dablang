@@ -73,8 +73,7 @@ describe Dab::TestSuiteManifest::Validator do
     expect(entries.first.fetch('in_complete_gate')).to be(false)
     expect(topology.gate_task?('address_sanitizer_spec')).to be(false)
     expect(topology.task_inputs('address_sanitizer_spec')).to include(
-      'test/address_sanitizer/heap_buffer_overflow.cpp',
-      'test/address_sanitizer/legacy_smoke_leak_contract.json'
+      'test/address_sanitizer/heap_buffer_overflow.cpp'
     )
   end
 

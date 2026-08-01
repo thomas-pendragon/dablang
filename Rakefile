@@ -262,7 +262,6 @@ address_sanitizer_files = [
   'script/address_sanitizer_gate.rb',
   'lib/dab/address_sanitizer_gate.rb',
   'test/address_sanitizer/heap_buffer_overflow.cpp',
-  'test/address_sanitizer/legacy_smoke_leak_contract.json',
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
 ]

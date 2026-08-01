@@ -134,7 +134,6 @@ module Dab
         run_memory_error_canary
         run_string_intptr_lifetime_regression
         run_native_tool_smoke
-        characterize_legacy_smoke_leak
         run_legacy_source_vm_smoke
         announce(@output, 'AddressSanitizer gate: PASSED')
         0
@@ -419,7 +418,7 @@ module Dab
 
       def run_legacy_source_vm_smoke
         announce(@output, 'AddressSanitizer gate: instrumented legacy source-to-VM smoke')
-        status, smoke_output, smoke_error = capture_legacy_smoke(detect_leaks: false)
+        status, smoke_output, smoke_error = capture_legacy_smoke(detect_leaks: true)
         @output.write(smoke_output.string)
         @error.write(smoke_error.string)
         @output.flush
@@ -438,39 +437,6 @@ module Dab
           stage: 'instrumented legacy source-to-VM smoke',
           details: "legacy smoke returned #{status}",
           exit_code: status
-        )
-      end
-
-      def characterize_legacy_smoke_leak
-        announce(@output, 'AddressSanitizer gate: exact legacy-smoke LeakSanitizer boundary')
-        contract_path = File.join(@root, 'test/address_sanitizer/legacy_smoke_leak_contract.json')
-        contract = JSON.parse(File.binread(contract_path))
-        expected_fields = %w[expected_exit_status expected_summary reason schema_version]
-        unless contract.keys.sort == expected_fields && contract['schema_version'] == 1
-          contract_failure(
-            'legacy-smoke LeakSanitizer contract',
-            "#{relative(contract_path)} must contain exactly schema version 1 and #{expected_fields.join(', ')}"
-          )
-        end
-        status, smoke_output, smoke_error = capture_legacy_smoke(detect_leaks: true)
-        diagnostics = smoke_output.string + smoke_error.string
-        leak_marker = 'ERROR: LeakSanitizer: detected memory leaks'
-        core_address_error = diagnostics.match?(/ERROR: AddressSanitizer:/)
-        matches = status == contract.fetch('expected_exit_status') &&
-                  diagnostics.scan(leak_marker).length == 1 &&
-                  diagnostics.include?(contract.fetch('expected_summary')) &&
-                  !core_address_error
-        if matches
-          announce(@output, 'AddressSanitizer gate: known legacy-smoke leak fingerprint confirmed')
-          return
-        end
-
-        @output.write(smoke_output.string)
-        @error.write(smoke_error.string)
-        contract_failure(
-          'legacy-smoke LeakSanitizer contract',
-          "expected only #{contract.fetch('expected_summary').dump} with exit " \
-          "#{contract.fetch('expected_exit_status')}; got exit #{status}"
         )
       end
 

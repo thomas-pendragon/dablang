@@ -84,10 +84,10 @@ hello worldIP = 223
 >      223: NOP 
        224: RETURN RNIL
 Registers:
-R0: CSTR "hello world" [4 strong]
+R0: CSTR "hello world" [1 strong]
 IP = 224
        216: SYSCALL RNIL, 0, R0
        223: NOP 
 >      224: RETURN RNIL
 Registers:
-R0: CSTR "hello world" [4 strong]
+R0: CSTR "hello world" [1 strong]

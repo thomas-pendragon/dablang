@@ -1,0 +1,51 @@
+## CODE
+
+W_HEADER 3
+W_SECTION DATA, "data"
+W_SECTION CODE, "code"
+W_SECTION SYMBOLS, "symb"
+W_SECTION FUNC, "fext"
+W_END_HEADER
+
+DATA:
+  W_STRING "___"
+
+SYM_MAIN:
+  W_STRING "main"
+
+SYMBOLS:
+  W_SYMBOL SYM_MAIN
+
+CODE:
+  NOP
+
+Fmain:
+STACK_RESERVE 0
+NEW_ARRAY R0
+NEW_ARRAY R1
+MOV R0, R1
+MOV R1, R1
+RELEASE R0
+RELEASE R1
+RETURN RNIL
+
+FUNC:
+  W_METHOD 0, -1, Fmain, 0, 0, 0
+  W_METHOD_ARG 0, 0
+
+## COMMENT
+
+Overwriting R0 must release its original array. Self-assigning R1 must not retain
+it again. Releasing the final two register owners must free both arrays.
+
+## OPTIONS
+
+--noraw
+
+## TESTCASE
+
+$leaktest
+
+## EXPECT
+
+leaktest: no leaks

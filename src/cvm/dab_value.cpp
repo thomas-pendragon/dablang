@@ -522,9 +522,15 @@ DabValue::DabValue(const DabValue &other)
 
 DabValue &DabValue::operator=(const DabValue &other)
 {
-    set_data(other.data);
-    string_intptr_storage = other.string_intptr_storage;
-    localblock            = other.localblock;
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    DabValue copy(other);
+    std::swap(data, copy.data);
+    std::swap(string_intptr_storage, copy.string_intptr_storage);
+    std::swap(localblock, copy.localblock);
     return *this;
 }
 

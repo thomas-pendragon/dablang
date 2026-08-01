@@ -9,8 +9,12 @@ describe 'String-to-IntPtr lifetime contract' do
 
     expect(implementation).to include('return DabValue::allocate_string_intptr(value.string());')
     expect(implementation).not_to include('copy.data.intptr = (void *)value.string().c_str();')
-    expect(value_implementation.scan('string_intptr_storage = other.string_intptr_storage;').length).to eq(2)
+    expect(value_implementation.scan('string_intptr_storage = other.string_intptr_storage;').length).to eq(1)
     expect(value_implementation).to include('string_intptr_storage.reset();')
+    expect(value_implementation).to include('if (this == &other)')
+    expect(value_implementation).to include('DabValue copy(other);')
+    expect(value_implementation).to include('std::swap(data, copy.data);')
+    expect(value_implementation).to include('std::swap(string_intptr_storage, copy.string_intptr_storage);')
 
     expect(implementation).to include('auto cstr        = strdup(str.c_str());')
     expect(implementation).to include('copy.data.intptr = &value.bytebuffer()[0];')
