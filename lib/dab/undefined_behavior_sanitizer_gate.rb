@@ -144,6 +144,7 @@ module Dab
         verify_target_instrumentation
         build_and_verify_canary_binaries
         run_undefined_behavior_canary
+        run_string_intptr_lifetime_regression
         run_native_tool_smoke
         run_legacy_source_vm_smoke
         announce(@output, 'UndefinedBehaviorSanitizer gate: PASSED')
@@ -428,6 +429,33 @@ module Dab
                   "and stack trace; got exit #{result.exit_code}, timed_out=#{result.timed_out}, " \
                   "stdout=#{result.stdout.dump}, stderr=#{result.stderr.dump}"
         raise ContractFailure.new(stage: 'controlled UndefinedBehaviorSanitizer canary', details: details)
+      end
+
+      def run_string_intptr_lifetime_regression
+        regression_directory = File.join(@root, @profile.fetch('build_directory'), 'regressions')
+        FileUtils.mkdir_p(regression_directory)
+        binary = File.join(regression_directory, 'string-intptr-lifetime')
+        source = File.join(@root, 'test/native/string_intptr_lifetime.cpp')
+        common_flags = %w[-std=c++11 -Wall -Wextra -Werror -pedantic -g -O1]
+        execute_required(
+          'String-to-IntPtr lifetime regression build',
+          [
+            @profile.fetch('compiler'),
+            *@profile.fetch('compile_flags'),
+            *common_flags,
+            source,
+            *@profile.fetch('link_flags'),
+            '-o', binary
+          ],
+          timeout: TOOL_TIMEOUT
+        )
+        verify_instrumented(relative(binary))
+        execute_required(
+          'String-to-IntPtr lifetime regression',
+          [binary],
+          timeout: TOOL_TIMEOUT,
+          environment: sanitizer_environment
+        )
       end
 
       def run_native_tool_smoke

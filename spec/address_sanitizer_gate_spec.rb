@@ -194,7 +194,7 @@ describe Dab::AddressSanitizerGate::Runner do
     expect(error.string).to include('exit status: 139')
   end
 
-  it 'records the exact leak-only boundary without suppressing the known dangling-pointer source' do
+  it 'records the exact leak-only boundary and keeps the repaired lifetime path in scope' do
     contract = JSON.parse(File.binread(File.join(root, 'test/address_sanitizer/legacy_smoke_leak_contract.json')))
     source = File.binread(File.join(root, 'src/cvm/main.cpp'))
     documentation = File.binread(File.join(root, 'docs/address-sanitizer.md'))
@@ -202,8 +202,9 @@ describe Dab::AddressSanitizerGate::Runner do
     expect(contract.fetch('expected_summary')).to eq(
       'SUMMARY: AddressSanitizer: 160 byte(s) leaked in 4 allocation(s).'
     )
-    expect(source).to include('copy.data.intptr = (void *)value.string().c_str();')
-    expect(documentation).to include('neither fixes nor suppresses that path')
+    expect(source).to include('return DabValue::allocate_string_intptr(value.string());')
+    expect(source).not_to include('copy.data.intptr = (void *)value.string().c_str();')
+    expect(documentation).to match(/executes that regression with full address\s+and leak detection/)
     expect(documentation).to include('only leak detection disabled')
   end
 end

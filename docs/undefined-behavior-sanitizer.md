@@ -67,8 +67,7 @@ artifacts available for inspection. Temporary legacy-smoke workspaces are
 removed by their owning runner even on failure.
 
 This remains a trusted-local execution check, not a sandbox or hostile-bytecode
-claim. The audit's known `CLASS_STRING` to `CLASS_INTPTR` temporary `c_str()`
-lifetime path in `src/cvm/main.cpp` belongs to the later dangling-pointer
-roadmap item. This work neither fixes nor suppresses that path. The bounded
-legacy smoke does not exercise FFI or claim coverage of every runtime ownership
-path; any UBSan finding in the executed scope remains a gate failure.
+claim. The gate compiles and runs the focused `CLASS_STRING` to `CLASS_INTPTR`
+owner-copy and release regression with UBSan enabled. The bounded legacy smoke
+does not exercise FFI or claim coverage of every runtime ownership path; any
+UBSan finding in the executed scope remains a gate failure.

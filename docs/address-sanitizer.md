@@ -57,11 +57,12 @@ processes can hang independently of sanitizer detection; the binaries retain
 debug symbols and frame pointers for offline attribution. The gate remains a
 trusted-local execution check; it does not make hostile source or bytecode safe.
 
-The audit's known `CLASS_STRING` to `CLASS_INTPTR` temporary `c_str()` lifetime
-path in `src/cvm/main.cpp` belongs to the later dangling-pointer remediation
-item. This profile neither fixes nor suppresses that path, and its bounded
-legacy smoke does not claim to exercise FFI or every runtime ownership path.
-Any sanitizer finding in the executed scope remains a gate failure.
+The `CLASS_STRING` to `CLASS_INTPTR` repair has a focused native regression that
+proves copied pointer owners keep a null-terminated snapshot alive and that the
+last owner releases it. This profile executes that regression with full address
+and leak detection. Its bounded legacy smoke still does not claim to exercise
+FFI or every runtime ownership path. Any sanitizer finding in the executed
+scope remains a gate failure.
 
 Successful runs leave the isolated AddressSanitizer build and binary trees for
 inspection. A later run removes only those two task-owned trees before

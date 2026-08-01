@@ -130,6 +130,43 @@ or IDE visibility claim is allowed until it is represented by tested artifact
 metadata and a reproducibility gate. Raw FFI remains an explicit unsafe
 capability; it must not become a transitive default of a normal program.
 
+### Dab 0.0.18 String-to-IntPtr lifetime decision
+
+**Status:** proposed<br>
+**Owner:** Scenario B MASTER THREAD<br>
+**Compatibility:** preserving safety repair
+
+`LiteralString` and `DynamicString` values use the VM's reference-counted
+object proxy. `IntPtr` values are otherwise raw, borrowed pointers with no
+general release protocol. The `CLASS_STRING` to `CLASS_INTPTR` conversion
+instead took `c_str()` from the temporary `std::string` returned by
+`DabValue::string()`. The temporary was destroyed before the returned pointer
+could be used, so the conversion had no valid lifetime.
+
+For only that conversion, the VM copies the string bytes, including the
+terminating null byte, into storage shared by all copies of the returned
+`DabValue`. The pointer is valid until the last copy of that value is released,
+destroyed, or assigned another value. Releasing the last copy frees the storage
+exactly once. The conversion supplies a writable, null-terminated snapshot for
+a synchronous trusted-local FFI call. Foreign code must not retain the pointer
+beyond the lifetime of an owning `DabValue`; later source-string changes do not
+change the snapshot.
+
+Borrowing from the source was rejected because source destruction or
+reallocation would invalidate the pointer. `strdup` was rejected because it
+would require a manual release protocol and repeat the separate
+`DynamicString` leak. A general owning-pointer redesign would exceed this item.
+Other `IntPtr` sources keep their prior borrowed behavior; this decision does
+not change `DynamicString` or `ByteBuffer` to `IntPtr`, or pointer-to-string
+conversions.
+
+No bytecode, result class, diagnostics, or supported synchronous FFI call
+changes. Acceptance requires a native temporary/copy/last-release regression,
+focused Ruby contracts, both sanitizer gates, and every normal platform CI job.
+Reassess if supported FFI needs to retain pointers asynchronously or if
+`IntPtr` gains a general ownership protocol. Dab remains a trusted-local
+prototype, and raw FFI remains explicitly unsafe.
+
 ## 7. Ordered stages and gates
 
 | Stage | Objective | Entry dependencies | Exit gate |

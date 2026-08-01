@@ -132,6 +132,7 @@ module Dab
         build_targets
         verify_target_instrumentation
         run_memory_error_canary
+        run_string_intptr_lifetime_regression
         run_native_tool_smoke
         characterize_legacy_smoke_leak
         run_legacy_source_vm_smoke
@@ -370,6 +371,29 @@ module Dab
         details = "expected exit #{CANARY_EXIT_CODE} and heap-buffer-overflow report; " \
                   "got exit #{result.exit_code}, timed_out=#{result.timed_out}, stderr=#{result.stderr.dump}"
         raise ContractFailure.new(stage: 'controlled AddressSanitizer canary', details: details)
+      end
+
+      def run_string_intptr_lifetime_regression
+        regression_directory = File.join(@root, @profile.fetch('build_directory'), 'regressions')
+        FileUtils.mkdir_p(regression_directory)
+        binary = File.join(regression_directory, 'string-intptr-lifetime')
+        source = File.join(@root, 'test/native/string_intptr_lifetime.cpp')
+        command = [
+          @profile.fetch('compiler'),
+          *@profile.fetch('compile_flags'),
+          '-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-g', '-O1',
+          source,
+          *@profile.fetch('link_flags'),
+          '-o', binary
+        ]
+        execute_required('String-to-IntPtr lifetime regression build', command, timeout: TOOL_TIMEOUT)
+        verify_instrumented(relative(binary))
+        execute_required(
+          'String-to-IntPtr lifetime regression',
+          [binary],
+          timeout: TOOL_TIMEOUT,
+          environment: sanitizer_environment
+        )
       end
 
       def run_native_tool_smoke
