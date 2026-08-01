@@ -13,8 +13,8 @@ This public reference reproduces the accepted provisional program so language
 and standard-library discussions can critique complete code. It is a planned
 Dab 0.1 acceptance specimen, not proof of current prototype behavior or of a
 final API. The bounded target is described in the
-[planned Dab 0.1 acceptance contract](/dab-0.1.html); the canonical design
-source remains the [English Wiki page](https://github.com/thomas-pendragon/dablang/wiki/Wordfreq-Bare-CLI-Provisional).
+[planned Dab 0.1 acceptance contract](/dab-0.1.html). The complete public
+specimen and its open decisions are recorded directly on this page.
 
 The source deliberately proposes names for APIs that have not been finalized.
 Their presence below is not confirmation that the current prototype implements
@@ -400,6 +400,5 @@ This specimen makes several concrete choices solely so it can be complete:
   and escaping resource forms.
 
 These are now reviewable lines of code rather than abstract questions. The
-[planned Dab 0.1 acceptance contract](/dab-0.1.html) and the
-[canonical Wiki source](https://github.com/thomas-pendragon/dablang/wiki/Wordfreq-Bare-CLI-Provisional)
-give the governing design context.
+[planned Dab 0.1 acceptance contract](/dab-0.1.html) gives the governing public
+design context.

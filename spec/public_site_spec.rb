@@ -96,6 +96,26 @@ describe Dab::PublicSite::Contract do
     end
   end
 
+  it 'keeps the product tagline and essential design context on the public surfaces' do
+    with_docs_copy do |root|
+      readme = File.join(root, 'README.md')
+      File.binwrite(readme, File.binread(readme)
+                                   .sub(Dab::PublicSite::PUBLIC_TAGLINE, 'A language project.')
+                                   .concat("\nScenario B\n"))
+      index = File.join(root, 'docs/index.md')
+      File.binwrite(index, File.binread(index)
+                                  .sub('Everything is an object', 'Objects are useful')
+                                  .concat("\n[Planning details](https://github.com/thomas-pendragon/dablang/wiki/Plan)\n"))
+
+      expect(validate(root).errors).to include(
+        'public content must retain the Dab tagline: README.md',
+        'public content must not expose internal scenario names: README.md',
+        'public content must not delegate essential context to the project Wiki: docs/index.md',
+        'public homepage must explain "Everything is an object" directly'
+      )
+    end
+  end
+
   it 'fails closed when a new documentation page is unclassified' do
     with_docs_copy do |root|
       File.binwrite(File.join(root, 'docs/new-page.md'), "---\ntitle: New page\n---\n")

@@ -25,9 +25,12 @@ ordered public navigation and the public-content contract: the current 0.0.x
 prototype, planned Dab 0.1 acceptance target, and Dab 1.0 design vision must
 remain distinct; the acceptance and provisional `wordfreq` pages must remain
 public and cross-linked; and aspirational README copy cannot stand in for
-implementation evidence. It builds the site in a disposable directory and
-checks the expected output, navigation, canonical URLs, and local links. It
-does not write `docs/_site` or any tracked generated documentation.
+implementation evidence. The README and public product pages carry their key
+language and release information directly: they do not expose internal
+coordination names or send readers to the project Wiki for essential context.
+The validator builds the site in a disposable directory and checks the
+expected output, navigation, canonical URLs, and local links. It does not write
+`docs/_site` or any tracked generated documentation.
 
 The public pages share a responsive editorial shell defined by the local
 layouts and `docs/assets/main.scss`. On wide screens it uses a persistent

@@ -32,6 +32,16 @@ module Dab::PublicSite
     'dab-0.1.md' => %w[/wordfreq.html],
     'wordfreq.md' => %w[/dab-0.1.html],
   }.freeze
+  PUBLIC_COPY_SOURCES = %w[README.md docs/index.md docs/dab-0.1.md docs/wordfreq.md].freeze
+  PUBLIC_TAGLINE = 'Dab is an experimental, highly optimised dynamic language.'.freeze
+  HOMEPAGE_DESIGN_TERMS = [
+    'Everything is an object',
+    'optional static types',
+    'one superclass',
+    'Rings',
+    'wordfreq',
+    '.dabm',
+  ].freeze
   STATE_HEADINGS = [
     'Current 0.0.x prototype',
     'Planned Dab 0.1',
@@ -235,6 +245,41 @@ module Dab::PublicSite
       acceptance = read_project_source('docs/dab-0.1.md', 'Dab 0.1 acceptance source')
       if acceptance && !acceptance.match?(/planned.*not\s+implemented\s+or\s+released/im)
         @errors << 'Dab 0.1 acceptance page must remain explicitly planned'
+      end
+
+      validate_public_copy
+    end
+
+    def validate_public_copy
+      %w[README.md docs/index.md].each do |relative|
+        source = read_project_source(relative, 'public content source')
+        next unless source
+
+        unless source.include?(PUBLIC_TAGLINE)
+          @errors << "public content must retain the Dab tagline: #{relative}"
+        end
+      end
+
+      PUBLIC_COPY_SOURCES.each do |relative|
+        source = read_project_source(relative, 'public content source')
+        next unless source
+
+        if source.match?(/Scenario[ -]B/i)
+          @errors << "public content must not expose internal scenario names: #{relative}"
+        end
+        if markdown_links(source).any? { |target| target.match?(%r{github\.com/[^/]+/[^/]+/wiki(?:/|\z)}i) }
+          @errors << "public content must not delegate essential context to the project Wiki: #{relative}"
+        end
+      end
+
+      homepage = read_project_source('docs/index.md', 'public homepage source')
+      return unless homepage
+
+      HOMEPAGE_DESIGN_TERMS.each do |term|
+        pattern = term.split.map { |word| Regexp.escape(word) }.join('\\s+')
+        unless homepage.match?(/#{pattern}/i)
+          @errors << "public homepage must explain #{term.inspect} directly"
+        end
       end
     end
 

@@ -7,9 +7,8 @@ title: Planned Dab 0.1 acceptance contract
 
 **Status:** planned evolution target; not implemented or released.
 
-This page is a concise public guide to the planned Dab 0.1 finish line. It is
-design content derived from the accepted Scenario B Wiki decisions; it does
-not establish present compiler, VM, standard-library, Rings, or safety
+This page is the concise public guide to the planned Dab 0.1 finish line. It
+does not establish present compiler, VM, standard-library, Rings, or safety
 behavior.
 
 ## The acceptance target
@@ -40,16 +39,11 @@ or implemented. It excludes, among other future work, a new backend, a full
 rewrite, general-purpose production claims, unrestricted unsafe execution, and
 unaccepted API semantics.
 
-## Canonical design inputs
+## Public contract
 
-The English GitHub Wiki remains the detailed design source:
-
-- [Dab 0.1 Language Design Decisions](https://github.com/thomas-pendragon/dablang/wiki/Dab-0.1-Language-Design-Decisions)
-- [Dab 0.1 Evolution Plan](https://github.com/thomas-pendragon/dablang/wiki/Dab-0.1-Evolution-Plan)
-- [Dab 0.1 Standard Library and Acceptance Programs](https://github.com/thomas-pendragon/dablang/wiki/Dab-0.1-Standard-Library-and-Acceptance-Programs)
-- [Wordfreq Bare CLI Provisional](https://github.com/thomas-pendragon/dablang/wiki/Wordfreq-Bare-CLI-Provisional)
-
-For the implementation truth, use the repository source and tests. For the
-longer horizon, see the [Dab 1.0 design vision](/). The Scenario B charter
-governs the evidence, compatibility, safety, and stop conditions for making
-this plan real.
+This page and the complete [provisional `wordfreq` program](/wordfreq.html)
+carry the public Dab 0.1 plan directly; readers do not need a separate planning
+Wiki to understand the target. For implementation truth, use the repository
+source and tests. For the longer horizon, see the [Dab 1.0 design vision](/).
+Every step toward this contract must preserve explicit evidence,
+compatibility decisions, safety boundaries, and stop conditions.
