@@ -5,6 +5,8 @@
 #include "../cshared/opcodes_debug.h"
 #include "../cshared/version.h"
 
+#include <new>
+#include <stdexcept>
 #include <utility>
 
 DabVM *$VM = nullptr;
@@ -159,16 +161,28 @@ int DabVM::run(std::vector<Stream> &inputs)
     std::vector<ValidatedBinHeader> parsed_headers;
     if (!options.bare)
     {
-        parsed_headers.reserve(inputs.size());
-        for (const auto &stream : inputs)
+        try
         {
-            ValidatedBinHeader parsed_header;
-            std::string        validation_error;
-            if (!stream.read_validated_header(parsed_header, validation_error))
+            parsed_headers.resize(inputs.size());
+        }
+        catch (const std::length_error &)
+        {
+            throw DabRuntimeError(
+                "invalid bytecode header: validated header table exceeds container limits");
+        }
+        catch (const std::bad_alloc &)
+        {
+            throw DabRuntimeError(
+                "invalid bytecode header: validated header table allocation failed");
+        }
+
+        for (size_t index = 0; index < inputs.size(); index++)
+        {
+            std::string validation_error;
+            if (!inputs[index].read_validated_header(parsed_headers[index], validation_error))
             {
                 throw DabRuntimeError("invalid bytecode header: " + validation_error);
             }
-            parsed_headers.push_back(std::move(parsed_header));
         }
     }
 
