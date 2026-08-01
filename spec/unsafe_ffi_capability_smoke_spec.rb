@@ -74,6 +74,7 @@ describe Dab::UnsafeFfiCapabilitySmoke::Runner do
   def allowed_windows_result
     result(
       stderr: "VM options: autorun yes raw no cov no\n" \
+              "vm: newformat: section 0: name 'data' address 00000000000000e8/232 length 10\n" \
               "vm: function import not supported on windows yet.\n",
       exit_code: 1
     )

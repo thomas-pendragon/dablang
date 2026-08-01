@@ -120,7 +120,7 @@ module Dab
         /\AVM options: autorun yes raw no cov no\z/,
         /\Avm: newformat: h: \d+, d: \d+, s: \d+\z/,
         /\Avm: offset is \d+\z/,
-        /\Avm: newformat: section \d+: name '[a-z]+' address 0x[0-9a-f]+\/\d+ length \d+\z/,
+        /\Avm: newformat: section \d+: name '[a-z]+' address (?:0x)?[0-9a-f]+\/\d+ length \d+\z/,
         /\Areadbin: \d+ symbol\(s\) to read\z/,
         /\Avm: add function <(?:__init_0|import_unsafe_ffi|main|unsafe_ffi_abs)>\.\z/,
         /\Avm: seek initial code pointer to \d+\z/,
