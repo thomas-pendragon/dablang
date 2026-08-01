@@ -14,6 +14,39 @@ module Dab::PublicSite
   MANIFEST_PATH = 'docs/_data/public_site.yml'.freeze
   CI_JOB = 'public-site'.freeze
   CI_COMMAND = 'bundle exec ruby script/public_site.rb'.freeze
+  PUBLIC_CONTENT_PAGES = {
+    'index.md' => {'output' => 'index.html', 'classification' => 'public_product'},
+    'dab-0.1.md' => {'output' => 'dab-0.1.html', 'classification' => 'public_product'},
+    'wordfreq.md' => {'output' => 'wordfreq.html', 'classification' => 'public_product'},
+  }.freeze
+  PUBLIC_NAVIGATION = [
+    ['Dab 0.1', '/dab-0.1.html'],
+    ['Wordfreq', '/wordfreq.html'],
+    ['Building', '/building.html'],
+    ['Examples', '/examples.html'],
+    ['Classes', '/classes.html'],
+  ].freeze
+  PUBLIC_CONTENT_LINKS = {
+    'README.md' => %w[docs/dab-0.1.md docs/wordfreq.md],
+    'index.md' => %w[/dab-0.1.html /wordfreq.html],
+    'dab-0.1.md' => %w[/wordfreq.html],
+    'wordfreq.md' => %w[/dab-0.1.html],
+  }.freeze
+  PUBLIC_COPY_SOURCES = %w[README.md docs/index.md docs/dab-0.1.md docs/wordfreq.md].freeze
+  PUBLIC_TAGLINE = 'Dab is an experimental, highly optimised dynamic language.'.freeze
+  HOMEPAGE_DESIGN_TERMS = [
+    'Everything is an object',
+    'optional static types',
+    'one superclass',
+    'Rings',
+    'wordfreq',
+    '.dabm',
+  ].freeze
+  STATE_HEADINGS = [
+    'Current 0.0.x prototype',
+    'Planned Dab 0.1',
+    'Dab 1.0 design vision',
+  ].freeze
 
   Result = Struct.new(:errors, :page_count) do
     def success?
@@ -36,6 +69,7 @@ module Dab::PublicSite
       validate_schema
       pages = validate_pages
       validate_navigation(pages)
+      validate_public_content(pages)
       validate_exclusions(pages)
       validate_domain
       validate_header
@@ -156,6 +190,132 @@ module Dab::PublicSite
       if target.start_with?('//') || target.include?('\\') || target.include?('?') || target.include?('#') || target.split('/').include?('..')
         @errors << "navigation[#{index}].target is unsafe: #{target.inspect}"
       end
+    end
+
+    def validate_public_content(pages)
+      PUBLIC_CONTENT_PAGES.each do |source, expected|
+        page = pages[source]
+        if page.nil?
+          @errors << "public content page is not classified: #{source}"
+          next
+        end
+
+        expected.each do |field, value|
+          unless page[field] == value
+            @errors << "public content page has wrong #{field}: #{source}"
+          end
+        end
+      end
+
+      navigation = @manifest['navigation']
+      return unless navigation.is_a?(Array)
+
+      actual_navigation = navigation.filter_map do |item|
+        next unless item.is_a?(Hash)
+
+        [item['title'], item['target']]
+      end
+      unless actual_navigation == PUBLIC_NAVIGATION
+        @errors << 'public navigation must preserve the declared product order'
+      end
+
+      validate_state_distinctions
+      validate_public_content_links
+    end
+
+    def validate_state_distinctions
+      %w[README.md docs/index.md].each do |relative|
+        source = read_project_source(relative, 'public content source')
+        next unless source
+
+        STATE_HEADINGS.each do |heading|
+          unless markdown_heading?(source, heading)
+            @errors << "public content must distinguish #{heading.inspect}: #{relative}"
+          end
+        end
+        unless source.match?(/not\s+(?:be\s+read\s+as\s+)?implementation\s+proof/i)
+          @errors << "public content must reject aspirational implementation claims: #{relative}"
+        end
+      end
+
+      wordfreq = read_project_source('docs/wordfreq.md', 'wordfreq reference source')
+      if wordfreq && !wordfreq.match?(/not\s+implemented.*not\s+yet\s+canonical/im)
+        @errors << 'wordfreq reference must remain explicitly provisional and unimplemented'
+      end
+      acceptance = read_project_source('docs/dab-0.1.md', 'Dab 0.1 acceptance source')
+      if acceptance && !acceptance.match?(/planned.*not\s+implemented\s+or\s+released/im)
+        @errors << 'Dab 0.1 acceptance page must remain explicitly planned'
+      end
+
+      validate_public_copy
+    end
+
+    def validate_public_copy
+      %w[README.md docs/index.md].each do |relative|
+        source = read_project_source(relative, 'public content source')
+        next unless source
+
+        unless source.include?(PUBLIC_TAGLINE)
+          @errors << "public content must retain the Dab tagline: #{relative}"
+        end
+      end
+
+      PUBLIC_COPY_SOURCES.each do |relative|
+        source = read_project_source(relative, 'public content source')
+        next unless source
+
+        if source.match?(/Scenario[ -]B/i)
+          @errors << "public content must not expose internal scenario names: #{relative}"
+        end
+        if markdown_links(source).any? { |target| target.match?(%r{github\.com/[^/]+/[^/]+/wiki(?:/|\z)}i) }
+          @errors << "public content must not delegate essential context to the project Wiki: #{relative}"
+        end
+      end
+
+      homepage = read_project_source('docs/index.md', 'public homepage source')
+      return unless homepage
+
+      HOMEPAGE_DESIGN_TERMS.each do |term|
+        pattern = term.split.map { |word| Regexp.escape(word) }.join('\\s+')
+        unless homepage.match?(/#{pattern}/i)
+          @errors << "public homepage must explain #{term.inspect} directly"
+        end
+      end
+    end
+
+    def validate_public_content_links
+      PUBLIC_CONTENT_LINKS.each do |relative, expected_targets|
+        source = read_project_source(documentation_source_path(relative), 'public content source')
+        next unless source
+
+        links = markdown_links(source)
+        expected_targets.each do |target|
+          unless links.include?(target)
+            @errors << "public content cross-link is missing: #{relative} -> #{target}"
+          end
+        end
+      end
+    end
+
+    def markdown_heading?(source, heading)
+      source.match?(/^\s{0,3}\#{1,6}\s+#{Regexp.escape(heading)}\s*\#*\s*$/i)
+    end
+
+    def markdown_links(source)
+      source.scan(/!?\[[^\]]*\]\(\s*<?([^\s)>]+)>?(?:\s+['"][^)]*['"])?\s*\)/).flatten
+    end
+
+    def documentation_source_path(relative)
+      return relative if relative == 'README.md' || relative.start_with?('docs/')
+
+      File.join('docs', relative)
+    end
+
+    def read_project_source(relative, name)
+      File.binread(File.join(@root, relative))
+    rescue Errno::ENOENT => e
+      @errors << "#{name} could not be read: #{e.message}"
+      nil
     end
 
     def validate_exclusions(pages)

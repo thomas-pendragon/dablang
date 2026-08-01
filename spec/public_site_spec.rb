@@ -12,6 +12,7 @@ describe Dab::PublicSite::Contract do
   def with_docs_copy
     Dir.mktmpdir('dab-public-site-contract') do |root|
       FileUtils.cp_r(File.join(project_root, 'docs'), root)
+      FileUtils.cp(File.join(project_root, 'README.md'), root)
       workflow = File.join(root, '.github/workflows')
       FileUtils.mkdir_p(workflow)
       FileUtils.cp(File.join(project_root, '.github/workflows/ruby.yml'), workflow)
@@ -42,6 +43,77 @@ describe Dab::PublicSite::Contract do
     expect(result.page_count).to eq(
       Dir[File.join(project_root, 'docs/**/*.md')].reject { |path| path.include?('/_') }.length
     )
+  end
+
+  it 'keeps the planned public content classified, linked, ordered, and explicitly provisional' do
+    result = validate(project_root)
+
+    expect(result.errors).to eq([])
+  end
+
+  it 'fails closed when the planned public content loses its product status, order, links, or state boundary' do
+    with_docs_copy do |root|
+      manifest = read_manifest(root)
+      manifest.fetch('pages').find { |page| page['source'] == 'wordfreq.md' }['classification'] = 'public_reference'
+      manifest['navigation'].reverse!
+      write_manifest(root, manifest)
+
+      index = File.join(root, 'docs/index.md')
+      File.binwrite(index, File.binread(index).sub('## Planned Dab 0.1', '## Dab roadmap'))
+      wordfreq = File.join(root, 'docs/wordfreq.md')
+      File.binwrite(wordfreq, File.binread(wordfreq).sub('not implemented and not yet canonical Dab 0.1 source', 'an accepted source'))
+
+      expect(validate(root).errors).to include(
+        'public content page has wrong classification: wordfreq.md',
+        'public navigation must preserve the declared product order',
+        'public content must distinguish "Planned Dab 0.1": docs/index.md',
+        'wordfreq reference must remain explicitly provisional and unimplemented'
+      )
+    end
+  end
+
+  it 'reports one stable schema error when navigation is not an array' do
+    ['Dab 0.1', {'title' => 'Dab 0.1'}].each do |invalid_navigation|
+      with_docs_copy do |root|
+        manifest = read_manifest(root)
+        manifest['navigation'] = invalid_navigation
+        write_manifest(root, manifest)
+
+        expect(validate(root).errors).to eq(['navigation must be an array'])
+      end
+    end
+  end
+
+  it 'accepts formatting changes while still requiring public-content cross-links' do
+    with_docs_copy do |root|
+      readme = File.join(root, 'README.md')
+      File.binwrite(readme, File.binread(readme).gsub(
+                              '[planned Dab 0.1 acceptance contract](docs/dab-0.1.md)',
+                              '[planned Dab 0.1 acceptance contract]( <docs/dab-0.1.md> )'
+                            ))
+
+      expect(validate(root).errors).to eq([])
+    end
+  end
+
+  it 'keeps the product tagline and essential design context on the public surfaces' do
+    with_docs_copy do |root|
+      readme = File.join(root, 'README.md')
+      File.binwrite(readme, File.binread(readme)
+                                   .sub(Dab::PublicSite::PUBLIC_TAGLINE, 'A language project.')
+                                   .concat("\nScenario B\n"))
+      index = File.join(root, 'docs/index.md')
+      File.binwrite(index, File.binread(index)
+                                  .sub('Everything is an object', 'Objects are useful')
+                                  .concat("\n[Planning details](https://github.com/thomas-pendragon/dablang/wiki/Plan)\n"))
+
+      expect(validate(root).errors).to include(
+        'public content must retain the Dab tagline: README.md',
+        'public content must not expose internal scenario names: README.md',
+        'public content must not delegate essential context to the project Wiki: docs/index.md',
+        'public homepage must explain "Everything is an object" directly'
+      )
+    end
   end
 
   it 'fails closed when a new documentation page is unclassified' do
@@ -155,7 +227,7 @@ describe Dab::PublicSite::Contract do
       expect(validate(root).errors).to include(
         'duplicate navigation target: "/building.html"',
         'navigation target does not name a classified page: "/missing.html"',
-        'navigation[5].target is unsafe: "//other.example/page"'
+        'navigation[7].target is unsafe: "//other.example/page"'
       )
     end
   end
