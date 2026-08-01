@@ -84,6 +84,16 @@ describe Dab::PublicSite::Contract do
     end
   end
 
+  it 'allows required shell hooks to coexist with additional classes' do
+    with_docs_copy do |root|
+      default_layout = File.join(root, 'docs/_layouts/default.html')
+      File.binwrite(default_layout, File.binread(default_layout).gsub('class="site-shell"',
+                                                                      'class="site-shell theme-dark"'))
+
+      expect(validate(root).errors).to eq([])
+    end
+  end
+
   it 'rejects an internal page that is emitted or top-level navigable' do
     with_docs_copy do |root|
       config_path = File.join(root, 'docs/_config.yml')
