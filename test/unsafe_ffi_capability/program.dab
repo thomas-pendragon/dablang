@@ -1,0 +1,12 @@
+func import_unsafe_ffi(method)
+{
+	__dlimport("$LIBC", method, "abs");
+}
+
+[import_unsafe_ffi]
+func unsafe_ffi_abs<Int32>(value<Int32>) {}
+
+func main()
+{
+	print(unsafe_ffi_abs(-19));
+}

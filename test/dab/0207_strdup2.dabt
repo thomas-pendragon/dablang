@@ -19,7 +19,7 @@ func main()
 
 ## RUN OPTIONS
 
---with-attributes --with-reflection
+--with-attributes --with-reflection --allow-unsafe-ffi
 
 ## SKIP
 

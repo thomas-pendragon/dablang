@@ -156,3 +156,6 @@ pages:
   - source: undefined-behavior-sanitizer.md
     output: undefined-behavior-sanitizer.html
     classification: repository_only
+  - source: unsafe-ffi.md
+    output: unsafe-ffi.html
+    classification: repository_only

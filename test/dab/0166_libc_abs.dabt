@@ -15,7 +15,7 @@ func main()
 
 ## RUN OPTIONS
 
---with-attributes
+--with-attributes --allow-unsafe-ffi
 
 ## SKIP
 

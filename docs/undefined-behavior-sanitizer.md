@@ -68,6 +68,8 @@ removed by their owning runner even on failure.
 
 This remains a trusted-local execution check, not a sandbox or hostile-bytecode
 claim. The gate compiles and runs the focused `CLASS_STRING` to `CLASS_INTPTR`
-owner-copy and release regression with UBSan enabled. The bounded legacy smoke
-does not exercise FFI or claim coverage of every runtime ownership path; any
-UBSan finding in the executed scope remains a gate failure.
+owner-copy and release regression with UBSan enabled. It also runs the
+[unsafe FFI capability contract](/unsafe-ffi.html) through the instrumented VM,
+proving default denial and one explicitly enabled libc call. That bounded call
+does not claim general ABI or pointer-ownership coverage; any UBSan finding in
+the executed scope remains a gate failure.

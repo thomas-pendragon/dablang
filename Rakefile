@@ -253,6 +253,18 @@ legacy_source_vm_smoke_files = [
   'test/legacy_source_vm_smoke/program.dab',
 ]
 
+unsafe_ffi_capability_files = [
+  'script/unsafe_ffi_capability_smoke.rb',
+  'lib/dab/unsafe_ffi_capability_smoke.rb',
+  'test/unsafe_ffi_capability/contract.json',
+  'test/unsafe_ffi_capability/program.dab',
+]
+
+desc 'Validate denied-by-default and explicit-opt-in unsafe FFI behavior'
+task unsafe_ffi_capability_spec: [cvm, *unsafe_ffi_capability_files] do
+  sh RbConfig.ruby, 'script/unsafe_ffi_capability_smoke.rb'
+end
+
 desc 'Compile, assemble, and execute the reproducible legacy source smoke'
 task legacy_source_vm_smoke: [cvm, *legacy_source_vm_smoke_files] do
   sh RbConfig.ruby, 'script/legacy_source_vm_smoke.rb'
@@ -264,6 +276,7 @@ address_sanitizer_files = [
   'test/address_sanitizer/heap_buffer_overflow.cpp',
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
+  *unsafe_ffi_capability_files,
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 AddressSanitizer profile'
@@ -277,6 +290,7 @@ undefined_behavior_sanitizer_files = [
   'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp',
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
+  *unsafe_ffi_capability_files,
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 UndefinedBehaviorSanitizer profile'
@@ -332,7 +346,7 @@ file ffi_file => [ffi_task] do
 end
 
 task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :string_intptr_lifetime_spec,
-               :legacy_source_vm_smoke, :minitest_spec,
+               :legacy_source_vm_smoke, :unsafe_ffi_capability_spec, :minitest_spec,
                :dab_fixture_spec, :format_spec, :vm_spec,
                :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end

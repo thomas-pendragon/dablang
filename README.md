@@ -56,6 +56,7 @@ describe the current prototype as complete.
 
 - [Public site](https://dablang.net/)
 - [Building the current prototype](docs/building.md)
+- [Unsafe trusted-local FFI capability](docs/unsafe-ffi.md)
 - [Dab 0.1 acceptance contract](docs/dab-0.1.md)
 - [Provisional `wordfreq` reference program](docs/wordfreq.md)
 

@@ -464,6 +464,8 @@ struct DabRunOptions
     bool leaktest = false;
     bool bare     = false;
 
+    bool allow_unsafe_ffi = false;
+
     bool coverage_testing = false;
 
     FILE *output       = stdout;

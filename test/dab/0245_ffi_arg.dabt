@@ -22,6 +22,10 @@ func main()
 
 --no-stdlib
 
+## RUN OPTIONS
+
+--allow-unsafe-ffi
+
 ## SKIP
 
 windows

@@ -51,6 +51,12 @@ dab_function_reg_t import_external_function(void *symbol, const DabFunctionRefle
 
 void DabVM::kernel_dlimport(dab_register_t out_reg, std::vector<dab_register_t> reglist)
 {
+    if (!options.allow_unsafe_ffi)
+    {
+        throw DabRuntimeError(
+            "unsafe FFI is disabled; use --allow-unsafe-ffi only for trusted local code");
+    }
+
     assert(reglist.size() >= 2 && reglist.size() <= 3);
 #ifdef DAB_PLATFORM_WINDOWS
     (void)out_reg;

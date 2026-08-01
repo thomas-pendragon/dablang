@@ -147,6 +147,15 @@
       "in_complete_gate": true
     },
     {
+      "id": "rake-unsafe-ffi-capability",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "unsafe_ffi_capability_spec"],
+      "rake_task": "unsafe_ffi_capability_spec",
+      "source_glob": "test/unsafe_ffi_capability/*",
+      "in_complete_gate": true
+    },
+    {
       "id": "rspec",
       "state": "active",
       "kind": "command",

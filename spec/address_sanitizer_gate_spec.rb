@@ -47,6 +47,7 @@ module AddressSanitizerGateSpecSupport
     def verify_target_instrumentation; end
     def run_memory_error_canary; end
     def run_native_tool_smoke; end
+    def run_unsafe_ffi_capability_smoke; end
     def run_legacy_source_vm_smoke; end
 
     def execute_required(stage, _command, **_arguments)

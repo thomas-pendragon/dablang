@@ -56,10 +56,11 @@ trusted-local execution check; it does not make hostile source or bytecode safe.
 The `CLASS_STRING` to `CLASS_INTPTR` repair has a focused native regression that
 proves copied pointer owners keep a null-terminated snapshot alive and that the
 last owner releases it. This profile executes that regression with full address
-and leak detection and runs the legacy smoke with leak detection enabled. Its
-bounded legacy smoke still does not claim to exercise FFI or every runtime
-ownership path. Any sanitizer finding in the executed scope remains a gate
-failure.
+and leak detection and runs the legacy smoke with leak detection enabled. It
+also runs the [unsafe FFI capability contract](/unsafe-ffi.html) through the
+instrumented VM, proving both default denial and one explicitly enabled libc
+call. That bounded call does not claim general ABI or pointer-ownership
+coverage. Any sanitizer finding in the executed scope remains a gate failure.
 
 Successful runs leave the isolated AddressSanitizer build and binary trees for
 inspection. A later run removes only those two task-owned trees before
