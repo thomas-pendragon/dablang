@@ -1,4 +1,5 @@
 #include "../cshared/shared.h"
+#include "../cshared/bytecode_string_validation.h"
 #include "../cshared/disasm.h"
 #include "../cshared/stream.h"
 #include "../cshared/version.h"
@@ -413,9 +414,37 @@ int unsafe_main(int argc, char **argv)
     }
     else
     {
-        auto base_header = stream.peek_header();
-        auto header      = &base_header->header;
-        auto sections    = base_header->sections;
+        BinHeader         *base_header = nullptr;
+        BinDabHeader      *header      = nullptr;
+        BinSection        *sections    = nullptr;
+        ValidatedBinHeader validated_header;
+        const bool         version_3 = is_version_3_bytecode(stream);
+        if (version_3)
+        {
+            std::string validation_error;
+            if (!stream.read_validated_header(validated_header, validation_error))
+            {
+                fprintf(stderr, "cdisasm: invalid bytecode header: %s.\n",
+                        validation_error.c_str());
+                return 1;
+            }
+            if (!validate_bytecode_string_data(stream, validated_header,
+                                               DabStringDataConsumer::DISASSEMBLER,
+                                               validation_error))
+            {
+                fprintf(stderr, "cdisasm: invalid bytecode String/symbol data: %s.\n",
+                        validation_error.c_str());
+                return 1;
+            }
+            header      = &validated_header.header;
+            base_header = stream.peek_header();
+        }
+        else
+        {
+            base_header = stream.peek_header();
+            header      = &base_header->header;
+            sections    = base_header->sections;
+        }
 
         fprintf(stderr, "cdisasm: %d sections\n", (int)header->section_count);
         if (with_headers)
@@ -425,7 +454,7 @@ int unsafe_main(int argc, char **argv)
 
         for (size_t i = 0; i < header->section_count; i++)
         {
-            auto section = sections[i];
+            auto section = version_3 ? validated_header.sections[i] : sections[i];
             fprintf(stderr, "cdisasm: section[%d] '%s' [address %" PRIu64 " length %" PRIu64 "]\n",
                     (int)i, section.name, section.pos, section.length);
 
@@ -435,29 +464,32 @@ int unsafe_main(int argc, char **argv)
             }
 
             std::string section_name = section.name;
-            auto        substream    = stream.section_stream(i);
-
-            auto start_pos = section.pos;
+            auto        start_pos    = section.pos;
 
             if (section_name == "code")
             {
+                auto substream = stream.section_stream(i);
                 parse_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers &&
                      (section_name == "data" || section_name == "symd" || section_name == "ndat"))
             {
+                auto substream = stream.section_stream(i);
                 parse_data_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "symb")
             {
+                auto substream = stream.section_stream(i);
                 parse_symbol_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "clas")
             {
+                auto substream = stream.section_stream(i);
                 parse_class_substream(substream, start_pos, no_numbers);
             }
             else if (with_headers && section_name == "fext")
             {
+                auto substream = stream.section_stream(i);
                 parse_func_ex_substream(substream, start_pos, no_numbers);
             }
 

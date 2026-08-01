@@ -1,4 +1,5 @@
 #include "../cshared/shared.h"
+#include "../cshared/bytecode_string_validation.h"
 #include "../cshared/opcode_validation.h"
 #include "../cshared/asm_stream.h"
 #include "../cshared/stream.h"
@@ -173,14 +174,39 @@ int unsafe_main(int argc, char **argv)
     Stream stream;
     read_stream(stream, input, close_input);
 
-    auto base_header = stream.peek_header();
-    auto header      = &base_header->header;
-    auto sections    = base_header->sections;
+    BinHeader         *base_header = nullptr;
+    BinDabHeader      *header      = nullptr;
+    BinSection        *sections    = nullptr;
+    ValidatedBinHeader validated_header;
+    const bool         version_3 = is_version_3_bytecode(stream);
+    if (version_3)
+    {
+        std::string validation_error;
+        if (!stream.read_validated_header(validated_header, validation_error))
+        {
+            fprintf(stderr, "cdumpcov: invalid bytecode header: %s.\n", validation_error.c_str());
+            return 1;
+        }
+        if (!validate_bytecode_string_data(
+                stream, validated_header, DabStringDataConsumer::COVERAGE_DUMPER, validation_error))
+        {
+            fprintf(stderr, "cdumpcov: invalid bytecode String/symbol data: %s.\n",
+                    validation_error.c_str());
+            return 1;
+        }
+        header = &validated_header.header;
+    }
+    else
+    {
+        base_header = stream.peek_header();
+        header      = &base_header->header;
+        sections    = base_header->sections;
+    }
 
     fprintf(stderr, "cdumpcov: %d sections\n", (int)header->section_count);
     for (size_t i = 0; i < header->section_count; i++)
     {
-        auto section = sections[i];
+        auto section = version_3 ? validated_header.sections[i] : sections[i];
         fprintf(stderr, "cdumpcov: section[%d] '%s'\n", (int)i, section.name);
         std::string section_name = section.name;
         if (section_name == "cove")
