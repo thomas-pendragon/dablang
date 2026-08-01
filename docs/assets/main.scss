@@ -357,6 +357,10 @@ summary:focus-visible {
   color: #f7f3eb;
 }
 
+.document-body .highlight pre {
+  margin-bottom: 0;
+}
+
 .document-body pre > code {
   background: transparent;
   border: 0;

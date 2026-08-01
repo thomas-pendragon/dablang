@@ -79,6 +79,8 @@ describe Dab::PublicSite::Contract do
       File.binwrite(footer, File.binread(footer).gsub('{{ site.author_bio | escape }}', 'Biography removed'))
       File.binwrite(stylesheet, File.binread(stylesheet).gsub('background: transparent;',
                                                               'background: #eef;'))
+      File.binwrite(stylesheet, File.binread(stylesheet).gsub('margin-bottom: 0;',
+                                                              'margin-bottom: 15px;'))
       config_path = File.join(root, 'docs/_config.yml')
       config = YAML.safe_load(File.binread(config_path), aliases: false)
       config.delete('author_bio')
@@ -90,6 +92,7 @@ describe Dab::PublicSite::Contract do
         'shared footer must include the author biography and profile links',
         'Jekyll author_bio must be a non-empty string',
         'public-site stylesheet must reset nested code styling',
+        'public-site stylesheet must collapse nested code-block spacing',
         'public-site stylesheet must preserve focus and reduced-motion handling'
       )
     end

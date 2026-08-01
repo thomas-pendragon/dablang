@@ -242,6 +242,10 @@ module Dab::PublicSite
              nested_code&.match?(/\bcolor\s*:\s*inherit\s*;/)
         @errors << 'public-site stylesheet must reset nested code styling'
       end
+      highlighted_pre = stylesheet.scan(/\.document-body\s+\.highlight\s+pre\s*\{([^}]*)\}/m).flatten
+      unless highlighted_pre.any? { |rules| rules.match?(/\bmargin-bottom\s*:\s*0\s*;/) }
+        @errors << 'public-site stylesheet must collapse nested code-block spacing'
+      end
       responsive_breakpoints = [850, 560].all? do |width|
         stylesheet.match?(/@media\s*\(\s*max-width\s*:\s*#{width}px\s*\)/)
       end

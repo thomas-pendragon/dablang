@@ -84,7 +84,11 @@ social marks, and CTA treatment legible at the same time.
 6. Owner review found excessive vertical whitespace before second-level document
    sections. The inherited shared heading margin remains for deeper headings,
    while `h2` now uses a tighter editorial rhythm at desktop and mobile widths.
-7. The post-fix desktop comparison and 390 by 844 home/document captures show no
+7. Owner review found a black strip below highlighted code blocks. Minima gave
+   both the outer highlight wrapper and its nested `pre` a bottom margin while
+   the wrapper retained the dark background. The nested margin is now zero;
+   the wrapper keeps the intended spacing after the complete block.
+8. The post-fix desktop comparison and 390 by 844 home/document captures show no
    remaining actionable P0, P1, or P2 mismatch.
 
 ## Findings
