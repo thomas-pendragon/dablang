@@ -1,5 +1,6 @@
 require 'os'
 require 'rbconfig'
+require 'shellwords'
 
 if ENV['COVERAGE']
   require 'simplecov'
@@ -289,9 +290,9 @@ string_intptr_lifetime_binary = "tmp/string_intptr_lifetime_spec#{RbConfig::CONF
 
 file string_intptr_lifetime_binary => [string_intptr_lifetime_source, 'src/cvm/string_intptr_storage.h'] do
   FileUtils.mkdir_p(File.dirname(string_intptr_lifetime_binary))
-  cxx = ENV['CXX'] || RbConfig::CONFIG.fetch('CXX')
-  sh cxx, '-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic',
-     string_intptr_lifetime_source, '-o', string_intptr_lifetime_binary
+  cxx = Shellwords.split(ENV['CXX'] || RbConfig::CONFIG.fetch('CXX'))
+  sh(*cxx, '-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic',
+     string_intptr_lifetime_source, '-o', string_intptr_lifetime_binary)
 end
 
 desc 'Build and run the String-to-IntPtr native lifetime regression'

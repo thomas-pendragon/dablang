@@ -23,6 +23,7 @@ describe 'String-to-IntPtr lifetime contract' do
     undefined_gate = File.binread(File.join(root, 'lib/dab/undefined_behavior_sanitizer_gate.rb'))
 
     expect(rakefile).to include(':string_intptr_lifetime_spec')
+    expect(rakefile).to include("Shellwords.split(ENV['CXX'] || RbConfig::CONFIG.fetch('CXX'))")
     expect(address_gate).to include('run_string_intptr_lifetime_regression')
     expect(undefined_gate).to include('run_string_intptr_lifetime_regression')
   end
