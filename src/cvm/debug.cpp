@@ -166,10 +166,19 @@ void DabVM_debug::prepare_disasm()
 
     uint64_t                            position = 0;
     InstructionsReader                  reader(vm, position);
-    DisasmProcessor<InstructionsReader> processor(reader);
+    DisasmProcessor<InstructionsReader> processor(reader, "cvm", "debug-disassembly",
+                                                  reader.start_position);
 
-    processor.go([this, reader](uint64_t pos, std::string info)
-                 { disasm.push_back(std::make_pair(pos + reader.start_position, info)); });
+    try
+    {
+        processor.go([this, reader](uint64_t pos, std::string info)
+                     { disasm.push_back(std::make_pair(pos + reader.start_position, info)); });
+    }
+    catch (const DabUnknownOpcodeError &)
+    {
+        fprintf(stderr, "\n");
+        throw;
+    }
 }
 
 void DabVM::execute_debug(Stream &input)

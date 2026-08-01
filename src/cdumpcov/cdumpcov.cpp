@@ -1,7 +1,5 @@
 #include "../cshared/shared.h"
-#include "../cshared/opcodes.h"
-#include "../cshared/opcodes_format.h"
-#include "../cshared/opcodes_debug.h"
+#include "../cshared/opcode_validation.h"
 #include "../cshared/asm_stream.h"
 #include "../cshared/stream.h"
 #include "../cshared/version.h"
@@ -79,13 +77,13 @@ void read_stream(Stream &stream, FILE *input, bool close_input)
     }
 }
 
-void parse_stream(Stream &stream, std::function<void(Op)> func)
+void parse_stream(Stream &stream, uint64_t position_offset, std::function<void(Op)> func)
 {
     while (!stream.eof())
     {
-        auto opcode = stream.read_uint8();
-        assert(opcode < countof(g_opcodes));
-        const auto &data = g_opcodes[opcode];
+        auto        position = position_offset + stream.position();
+        auto        opcode   = stream.read_uint8();
+        const auto &data     = dab_opcode_info_or_throw(opcode, "cdumpcov", "decode", position);
         Op          op;
         op.code = opcode;
         for (const auto &arg : data.args)
@@ -143,7 +141,7 @@ void parse_stream(Stream &stream, std::function<void(Op)> func)
     }
 };
 
-int main(int argc, char **argv)
+int unsafe_main(int argc, char **argv)
 {
     if (dab_print_version_if_requested(argc, argv, "coverage dumper"))
     {
@@ -203,7 +201,7 @@ int main(int argc, char **argv)
         if (section_name == "code")
         {
             auto substream = stream.section_stream(i);
-            parse_stream(substream,
+            parse_stream(substream, section.pos,
                          [&lines](Op op)
                          {
                              if (op.code == OP_COV)
@@ -234,4 +232,16 @@ int main(int argc, char **argv)
     printf("]\n");
 
     return 0;
+}
+
+int main(int argc, char **argv)
+{
+    try
+    {
+        return unsafe_main(argc, argv);
+    }
+    catch (const DabUnknownOpcodeError &error)
+    {
+        return dab_report_unknown_opcode(error);
+    }
 }

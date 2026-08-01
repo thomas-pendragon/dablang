@@ -1,9 +1,7 @@
 #pragma once
 
 #include "../cshared/shared.h"
-#include "../cshared/opcodes.h"
-#include "../cshared/opcodes_format.h"
-#include "../cshared/opcodes_debug.h"
+#include "../cshared/opcode_validation.h"
 #include "../cshared/asm_stream.h"
 
 struct EOFError
@@ -239,8 +237,14 @@ struct AsmStream
 template <typename TReader = StdinReader>
 struct DisasmProcessor
 {
-    TReader reader;
-    DisasmProcessor(TReader reader) : reader(reader)
+    TReader     reader;
+    const char *consumer;
+    const char *stage;
+    uint64_t    position_offset;
+
+    DisasmProcessor(TReader reader, const char *consumer, const char *stage,
+                    uint64_t position_offset)
+        : reader(reader), consumer(consumer), stage(stage), position_offset(position_offset)
     {
     }
 
@@ -253,8 +257,8 @@ struct DisasmProcessor
             {
                 auto          pos    = reader.position();
                 unsigned char opcode = stream.read_uint8();
-                assert(opcode < countof(g_opcodes));
-                const auto &data = g_opcodes[opcode];
+                const auto   &data =
+                    dab_opcode_info_or_throw(opcode, consumer, stage, position_offset + pos);
                 std::string info;
                 for (const auto &arg : data.args)
                 {
