@@ -51,7 +51,7 @@ void parse_substream(Stream &stream, uint64_t start, bool no_numbers, bool legac
 {
     uint64_t                      position = 0;
     StreamReader                  reader(stream, position);
-    DisasmProcessor<StreamReader> processor(reader);
+    DisasmProcessor<StreamReader> processor(reader, "cdisasm", "decode", start);
 
     fprintf(stderr, "cdisasm: parse substream %d bytes\n", (int)stream.length());
     processor.go(
@@ -372,7 +372,7 @@ void parse_headers(DisasmContext &context, BinHeader *base_header)
     fprintf(output, "    W_END_HEADER\n\n");
 }
 
-int main(int argc, char **argv)
+int unsafe_main(int argc, char **argv)
 {
     if (dab_print_version_if_requested(argc, argv, "disassembler"))
     {
@@ -469,4 +469,16 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+int main(int argc, char **argv)
+{
+    try
+    {
+        return unsafe_main(argc, argv);
+    }
+    catch (const DabUnknownOpcodeError &error)
+    {
+        return dab_report_unknown_opcode(error);
+    }
 }

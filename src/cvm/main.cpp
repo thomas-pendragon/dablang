@@ -1,8 +1,6 @@
 #include "cvm.h"
 
-#include "../cshared/opcodes.h"
-#include "../cshared/opcodes_format.h"
-#include "../cshared/opcodes_debug.h"
+#include "../cshared/opcode_validation.h"
 #include "../cshared/version.h"
 
 #include <new>
@@ -536,11 +534,13 @@ void DabVM::_reflect(const DabFunction &function, dab_register_t reg, bool outpu
 
 bool DabVM::execute_single(Stream &input)
 {
-    auto pos    = input.position();
-    auto opcode = input.read_uint8();
+    auto        pos         = input.position();
+    auto        opcode      = input.read_uint8();
+    const auto &opcode_info = dab_opcode_info_or_throw(opcode, "cvm", "execute", pos);
     if (options.verbose)
     {
-        fprintf(stderr, "@ %d: %d [%s]\n", (int)pos, (int)opcode, g_opcodes[opcode].name.c_str());
+        fprintf(stderr, "@ %" PRIu64 ": %u [%s]\n", pos, (unsigned int)opcode,
+                opcode_info.name.c_str());
     }
     switch (opcode)
     {
@@ -998,9 +998,8 @@ bool DabVM::execute_single(Stream &input)
         break;
     }
     default:
-        fprintf(stderr, "VM error: Unknown opcode <%02x> (%d).\n", (int)opcode, (int)opcode);
-        exit(1);
-        break;
+        throw DabRuntimeError("valid opcode " + std::to_string((unsigned int)opcode) + " (" +
+                              opcode_info.name + ") is missing a VM implementation");
     }
     return true;
 }
@@ -1557,6 +1556,10 @@ int main(int argc, char **argv)
     try
     {
         return unsafe_main(vm, argc, argv);
+    }
+    catch (const DabUnknownOpcodeError &error)
+    {
+        return dab_report_unknown_opcode(error);
     }
     catch (DabRuntimeError &error)
     {

@@ -1,0 +1,44 @@
+W_HEADER 3
+W_OFFSET 0
+W_SECTION _CODE, "code"
+W_SECTION _SDAT, "symd"
+W_SECTION _SYMB, "symb"
+W_SECTION _FUNC, "fext"
+W_SECTION _NDAT, "ndat"
+W_END_HEADER
+
+_CODE:
+NOP
+SET_CLASSVAR S0, RNIL
+NOP
+
+F__init_0:
+STACK_RESERVE 0
+NOP
+RETURN RNIL
+__F__init_0_END:
+NOP
+
+Fmain:
+STACK_RESERVE 0
+NOP
+RETURN RNIL
+__Fmain_END:
+NOP
+
+_SDAT:
+W_STRING "__init_0"
+W_STRING "main"
+
+_SYMB:
+W_SYMBOL _SDAT + 0
+W_SYMBOL _SDAT + 9
+
+_FUNC:
+W_METHOD 0, -1, F__init_0, 0, __F__init_0_END - F__init_0, 0
+W_METHOD_ARG -1, 0
+W_METHOD 1, -1, Fmain, 0, __Fmain_END - Fmain, 0
+W_METHOD_ARG -1, 0
+
+_NDAT:
+W_BYTE 0
