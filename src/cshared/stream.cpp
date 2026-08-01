@@ -23,18 +23,32 @@ Stream Stream::section_stream(uint64_t section_index)
     BinSection section = {};
     if (header.version == 3)
     {
-        ValidatedBinHeader parsed_header;
-        std::string        validation_error;
-        if (!read_validated_header(parsed_header, validation_error))
+        if (!_section_header_cache_set)
         {
-            throw std::invalid_argument("invalid bytecode header: " + validation_error);
+            ValidatedBinHeader parsed_header;
+            std::string        validation_error;
+            _section_header_cache_valid = read_validated_header(parsed_header, validation_error);
+            if (_section_header_cache_valid)
+            {
+                _section_header_cache = std::move(parsed_header);
+                _section_header_cache_error.clear();
+            }
+            else
+            {
+                _section_header_cache_error = std::move(validation_error);
+            }
+            _section_header_cache_set = true;
         }
-        if (section_index >= parsed_header.sections.size())
+        if (!_section_header_cache_valid)
+        {
+            throw std::invalid_argument("invalid bytecode header: " + _section_header_cache_error);
+        }
+        if (section_index >= _section_header_cache.sections.size())
         {
             throw std::out_of_range("section index exceeds validated section table");
         }
-        header  = parsed_header.header;
-        section = parsed_header.sections[(size_t)section_index];
+        header  = _section_header_cache.header;
+        section = _section_header_cache.sections[(size_t)section_index];
     }
     else
     {
@@ -391,6 +405,10 @@ std::string Stream::read_cstring()
 
 void Stream::append(const byte *data, uint64_t length)
 {
+    _section_header_cache_set   = false;
+    _section_header_cache_valid = false;
+    _section_header_cache       = {};
+    _section_header_cache_error.clear();
     buffer.append(data, length);
 }
 
