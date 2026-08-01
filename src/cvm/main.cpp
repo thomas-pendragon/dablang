@@ -539,7 +539,8 @@ bool DabVM::execute_single(Stream &input)
     const auto &opcode_info = dab_opcode_info_or_throw(opcode, "cvm", "execute", pos);
     if (options.verbose)
     {
-        fprintf(stderr, "@ %d: %d [%s]\n", (int)pos, (int)opcode, opcode_info.name.c_str());
+        fprintf(stderr, "@ %" PRIu64 ": %u [%s]\n", pos, (unsigned int)opcode,
+                opcode_info.name.c_str());
     }
     switch (opcode)
     {
