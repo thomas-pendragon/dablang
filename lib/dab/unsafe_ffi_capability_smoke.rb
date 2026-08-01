@@ -115,6 +115,23 @@ module Dab
       COMPILER_TIMEOUT = 30
       ASSEMBLER_TIMEOUT = 30
       VM_TIMEOUT = 10
+      EXPECTED_RUNTIME_TRACE_PATTERNS = [
+        /\Avm: predefine default classes\z/,
+        /\AVM options: autorun yes raw no cov no\z/,
+        /\Avm: newformat: h: \d+, d: \d+, s: \d+\z/,
+        /\Avm: offset is \d+\z/,
+        /\Avm: newformat: section \d+: name '[a-z]+' address 0x[0-9a-f]+\/\d+ length \d+\z/,
+        /\Areadbin: \d+ symbol\(s\) to read\z/,
+        /\Avm: add function <(?:__init_0|import_unsafe_ffi|main|unsafe_ffi_abs)>\.\z/,
+        /\Avm: seek initial code pointer to \d+\z/,
+        /\Avm: define defaults\z/,
+        /\Avm: define default classes\z/,
+        /\Avm: define default functions\z/,
+        /\Avm: trying to initialize attributes\z/,
+        /\Avm: initialize attributes \(__init_0\)\z/,
+        /\Avm: VM destroyed!\z/,
+        /\Avm: reset \$VM pointer\z/,
+      ].freeze
 
       def initialize(root:, executor: SystemExecutor.new, commands: nil, environment: {},
                      temporary_directory_factory: nil, output: $stdout, error: $stderr,
@@ -223,15 +240,19 @@ module Dab
       def validate_result(stage, actual, expected)
         expected_stderr_line = expected.fetch('stderr_line').b
         stderr_lines = actual.stderr.lines(chomp: true)
+        unexpected_stderr_lines = stderr_lines.reject do |line|
+          line == expected_stderr_line || EXPECTED_RUNTIME_TRACE_PATTERNS.any? { |pattern| pattern.match?(line) }
+        end
         matches = !actual.timed_out && actual.exit_code == expected.fetch('exit_status') &&
                   actual.stdout == expected.fetch('stdout').b &&
-                  stderr_lines.count(expected_stderr_line) == 1
+                  stderr_lines.count(expected_stderr_line) == 1 && unexpected_stderr_lines.empty?
         return if matches
 
         raise ContractFailure.new(
           stage: stage,
           details: "expected exit #{expected.fetch('exit_status')}, stdout #{dump(expected.fetch('stdout'))}, " \
-                   "one stderr line #{dump(expected_stderr_line)}; got exit #{actual.exit_code}, " \
+                   "one stderr line #{dump(expected_stderr_line)} and no unexpected diagnostics; " \
+                   "got exit #{actual.exit_code}, " \
                    "timed_out=#{actual.timed_out}, stdout #{dump(actual.stdout)}, stderr #{dump(actual.stderr)}"
         )
       end

@@ -145,6 +145,21 @@ describe Dab::UnsafeFfiCapabilitySmoke::Runner do
     expect(error.string).to include('different denial')
   end
 
+  it 'fails when the VM emits an unexpected additional diagnostic' do
+    denied_with_extra_stderr = denied_result
+    denied_with_extra_stderr.stderr << "vm: unexpected warning\n"
+    status, executor = run_with([
+                                  result(stdout: 'assembly'),
+                                  result(stdout: 'bytecode'),
+                                  denied_with_extra_stderr,
+                                ])
+
+    expect(status).to eq(1)
+    expect(executor.calls.length).to eq(3)
+    expect(error.string).to include('FAILED during denied-by-default runtime contract')
+    expect(error.string).to include('vm: unexpected warning')
+  end
+
   it 'passes the selected sanitizer environment to every external stage' do
     environment = {'ASAN_OPTIONS' => 'strict-contract'}
     status, executor = run_with(
