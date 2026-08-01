@@ -201,7 +201,7 @@ module Dab::PublicSite
       default_layout = read_site_source('_layouts/default.html', 'default layout')
       home_layout = read_site_source('_layouts/home.html', 'home layout')
       page_layout = read_site_source('_layouts/page.html', 'page layout')
-      header = read_site_source('_includes/header.html', 'site header')
+      header = read_site_source('_includes/header.html', 'Jekyll header')
       footer = read_site_source('_includes/footer.html', 'site footer')
       stylesheet = read_site_source('assets/main.scss', 'public-site stylesheet')
       return unless default_layout && home_layout && page_layout && header && footer && stylesheet
