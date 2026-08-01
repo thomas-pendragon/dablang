@@ -29,8 +29,8 @@ supported Unix hosts. It is not a sandbox, permission system, ABI validator, or
 claim that native calls are memory-safe. It does not validate signatures,
 manage pointers retained by foreign code, narrow the trusted-local input
 boundary, or add native entry points. FFI remains unavailable on Windows: with
-the opt-in present, the VM retains the existing `function import not supported
-on windows yet` failure.
+the opt-in present, the VM retains the existing
+`vm: function import not supported on windows yet.` failure.
 
 The ordinary complete gate runs the focused capability contract:
 
