@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'stringio'
+require 'tmpdir'
 
 require_relative '../src/compiler/_requires'
 
@@ -266,5 +267,34 @@ describe DabCompilerFrontend do
       'compiler: program.dabm:1:0: error: ' \
       "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
     ]
+  end
+
+  it 'compiles one zero-byte Modern upper Ring without constructing a parser' do
+    Dir.mktmpdir('dab-empty-modern-source-unit') do |directory|
+      source_path = File.join(directory, 'application.dabm')
+      File.binwrite(source_path, ''.b)
+      source_unit = DabSourceUnit.new(
+        input: source_path,
+        syntax_profile: DabSyntaxProfile::MODERN
+      )
+      lower_ring = File.join(directory, 'stdlib.dabcb')
+      lower_program = DabNodeUnit.new
+      lower_program.start_offset = 123
+      reader = instance_double(DabBinReader)
+      allow(DabBinReader).to receive(:new).and_return(reader)
+      allow(reader).to receive(:parse_ring).with(lower_ring, [], 0).and_return([lower_program, []])
+      expect(DabProgramStream).not_to receive(:new)
+
+      result = compile_result(
+        'ignored stdin',
+        source_units: [source_unit],
+        settings: {inputs: [source_path], ring_base: [lower_ring]}
+      )
+
+      expect(result.first).to eq 0
+      expect(result.last).to eq ''
+      expect(result[1]).to include('W_OFFSET 123')
+      expect(source_unit.syntax_profile).to equal(DabSyntaxProfile::MODERN)
+    end
   end
 end

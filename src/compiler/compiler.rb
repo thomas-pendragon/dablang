@@ -23,7 +23,7 @@ begin
     explicit: syntax_profile_explicit,
     inputs: settings[:inputs]
   )
-  DabModernSyntaxDiagnostics.validate_source_units!(source_units)
+  DabModernSyntaxDiagnostics.validate_source_units!(source_units, ring_bases: settings[:ring_base])
 rescue DabCompilerSyntaxOptionError => e
   warn "compiler: #{e.message}"
   exit 2

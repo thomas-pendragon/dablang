@@ -38,13 +38,24 @@ mismatched status or stream. The shared Dab reporter keeps successful fixtures
 concise, shows action details under `DAB_TEST_VERBOSE=1`, and replays attributed
 per-fixture details on failure.
 
-The diagnostic corpus contains one compiler fixture because every Modern source
-currently reaches the same syntax-neutral parser-entry rejection. Adding source
-content variants would duplicate that observable contract. The fixture proves
+The diagnostic corpus contains one compiler fixture because every non-empty
+Modern source currently reaches the same syntax-neutral parser-entry rejection.
+Adding source content variants would duplicate that observable contract. The
+fixture proves
 status `2`, empty standard output, and exact standard error including its stable
 fixture-derived filename and zero-width entry location at offset `0`, line `1`,
 column `0`. Modern tokens, grammar, AST/IR, code generation, and runtime behavior
 remain unimplemented and outside this format contract.
+
+Version 0.0.34 adds one multi-artifact exception that this single-source fixture
+schema cannot express: exactly one zero-byte file-backed Modern unit may compile
+as an upper Ring layer when a separately compiled lower Ring is supplied. The
+end-to-end contract in `spec/modern_legacy_stdlib_ring_spec.rb` compiles the
+Legacy standard library, compiles and assembles that empty upper layer twice,
+inspects the combined Ring environment, and exercises missing and corrupt lower
+artifacts. This does not add another Modern fixture format. This fixture remains
+non-empty and continues to lock the exact version-0.0.33 diagnostic for all
+Modern content.
 
 ## Diagnostic boundary
 
@@ -72,7 +83,9 @@ is the exact frozen object selected by filename inference, an explicit CLI
 profile, or the compiler API. Its location is a zero-width frontend entry point;
 it is not evidence that a token was scanned. In a mixed invocation, the first
 Modern unit in input order supplies the diagnostic identity while every input,
-Ring, scanner, Legacy parser, and compiler remains untouched.
+Ring, scanner, Legacy parser, and compiler remains untouched. The separately
+specified zero-byte Ring-layer path inspects only the empty byte boundary and
+constructs no scanner or parser.
 
 Direct `DabProgramStream` construction remains a lower-level parser-support
 validation boundary. It raises `DabUnsupportedSyntaxProfileError` with the

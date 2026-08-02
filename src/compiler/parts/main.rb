@@ -25,7 +25,7 @@ class DabCompilerFrontend
 
   def run(settings, context)
     @source_units ||= source_units_for(settings)
-    DabModernSyntaxDiagnostics.validate_source_units!(@source_units)
+    DabModernSyntaxDiagnostics.validate_source_units!(@source_units, ring_bases: settings[:ring_base])
     @settings = settings
 
     ring_base = settings[:ring_base]
@@ -68,6 +68,12 @@ class DabCompilerFrontend
       dab_benchmark('parse') do
         source_units.each do |source_unit|
           content = source_unit.input == :stdin ? context.stdin.read : File.binread(source_unit.input)
+          if source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
+            DabModernSyntaxDiagnostics.validate_source_content!(source_unit, content)
+            program ||= DabNodeUnit.new
+            next
+          end
+
           stream = DabProgramStream.new(content, true, source_unit: source_unit)
           compiler = DabCompiler.new(stream)
           streams[source_unit.filename] = stream
