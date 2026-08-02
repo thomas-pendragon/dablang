@@ -17,6 +17,7 @@ describe 'shared scanner and source locations' do
     expect(start_location.source_unit).to equal(legacy_source_unit)
     expect(span.source_unit).to equal(legacy_source_unit)
     expect(span.start_location).to equal(start_location)
+    expect(scanner.location_at(start_location.offset)).to equal(start_location)
     expect(span.end_location.offset).to eq 10
     expect(start_location).to be_frozen
     expect(span).to be_frozen

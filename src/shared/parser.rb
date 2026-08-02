@@ -89,10 +89,7 @@ class DabParser < DabScanner
   end
 
   def character_in_line_with_char(char, type)
-    line = @lines[char]
-    @lines.each_index.select do |index|
-      @lines[index] == line
-    end.send(type)
+    line_range_for(char).send(type)
   end
 
   def annotated_node(source)

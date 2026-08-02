@@ -12,7 +12,7 @@ class DabScanner
     @position = 0
     @length = @content.length
     @source_unit = DabSourceUnit.validate(source_unit)
-    build_location_index
+    build_coordinate_index
   end
 
   def filename
@@ -24,7 +24,19 @@ class DabScanner
       raise DabSourceLocationError.new('source location offset is outside scanner content')
     end
 
-    @locations[offset]
+    line, column =
+      if offset == @length
+        [@eof_line, @eof_column]
+      else
+        [@lines[offset], @columns[offset]]
+      end
+
+    @location_cache[offset] ||= DabSourceLocation.new(
+      source_unit: source_unit,
+      offset: offset,
+      line: line,
+      column: column
+    )
   end
 
   def current_location
@@ -70,13 +82,23 @@ class DabScanner
     @position += length
   end
 
+protected
+
+  def line_range_for(offset)
+    line = @lines[offset]
+    @lines.each_index.select do |index|
+      @lines[index] == line
+    end
+  end
+
 private
 
-  def build_location_index
+  def build_coordinate_index
     line = 1
     column = 0
     @lines = []
-    @locations = []
+    @columns = []
+    @location_cache = {}
 
     (0...@length).each do |offset|
       if @content[offset] == "\n"
@@ -85,22 +107,13 @@ private
       end
 
       @lines << line
-      @locations << DabSourceLocation.new(
-        source_unit: source_unit,
-        offset: offset,
-        line: line,
-        column: column
-      )
+      @columns << column
       column += 1 unless @content[offset] == "\n"
     end
 
-    @locations << DabSourceLocation.new(
-      source_unit: source_unit,
-      offset: @length,
-      line: line,
-      column: column
-    )
+    @eof_line = line
+    @eof_column = column
     @lines.freeze
-    @locations.freeze
+    @columns.freeze
   end
 end
