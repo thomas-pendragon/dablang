@@ -29,9 +29,10 @@ class DabSyntaxProfileCompilerContext
 end
 
 describe DabSyntaxProfile do
-  it 'provides one stable canonical legacy identity' do
+  it 'provides stable canonical legacy and modern identities' do
     expect(described_class.fetch('legacy')).to equal(described_class::LEGACY)
-    expect(described_class.available).to eq [described_class::LEGACY]
+    expect(described_class.fetch('modern')).to equal(described_class::MODERN)
+    expect(described_class.available).to eq [described_class::LEGACY, described_class::MODERN]
     expect(described_class.available).to be_frozen
   end
 
@@ -45,8 +46,8 @@ describe DabSyntaxProfile do
   end
 
   it 'rejects unknown profile names deterministically' do
-    expect { described_class.fetch('modern') }
-      .to raise_error(DabSyntaxProfileError, 'unknown Dab syntax profile "modern"; available profiles: legacy')
+    expect { described_class.fetch('future') }
+      .to raise_error(DabSyntaxProfileError, 'unknown Dab syntax profile "future"; available profiles: legacy, modern')
   end
 
   it 'rejects invalid profile names deterministically' do
@@ -76,6 +77,14 @@ describe DabProgramStream do
     expect(stream.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
     expect(stream.filename).to eq 'sample.dab'
     expect(stream.read_identifier).to eq 'identifier'
+  end
+
+  it 'rejects modern before legacy parsing can begin' do
+    expect { described_class.new('func main() {}', syntax_profile: DabSyntaxProfile::MODERN) }
+      .to raise_error(
+        DabUnsupportedSyntaxProfileError,
+        'unsupported Dab syntax profile "modern": parser is not implemented'
+      )
   end
 
   it 'rejects an invalid profile before parsing' do
@@ -114,6 +123,8 @@ describe DabCompilerFrontend do
     expect(described_class.new.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
     expect(described_class.new(syntax_profile: DabSyntaxProfile::LEGACY).syntax_profile)
       .to equal(DabSyntaxProfile::LEGACY)
+    expect(described_class.new(syntax_profile: DabSyntaxProfile::MODERN).syntax_profile)
+      .to equal(DabSyntaxProfile::MODERN)
   end
 
   it 'produces byte-identical compiler output for default and explicit legacy invocations' do
@@ -134,5 +145,13 @@ describe DabCompilerFrontend do
   it 'fails closed before compiler invocation for an invalid profile' do
     expect { described_class.new(syntax_profile: 'legacy') }
       .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile; expected a registered DabSyntaxProfile')
+  end
+
+  it 'reports the unsupported modern parser profile with stable status' do
+    expect(compile_result('this is not legacy syntax', syntax_profile: DabSyntaxProfile::MODERN)).to eq [
+      2,
+      '',
+      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+    ]
   end
 end
