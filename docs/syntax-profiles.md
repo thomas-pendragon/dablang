@@ -7,7 +7,7 @@ title: Syntax profiles
 
 The source parser has one explicit, finite syntax-profile model. A profile is a
 `DabSyntaxProfile` value retained by each `DabProgramStream`; it is not mutable
-process-global state, environment state, or a value inferred from a filename.
+process-global or environment state.
 
 The only registered profile is `DabSyntaxProfile::LEGACY`. Omitting the
 `syntax_profile:` keyword when constructing a program stream or compiler
@@ -49,15 +49,27 @@ specified at most once`. Empty and unknown values, including
 `--syntax=` and `--syntax=modern`, exit with status 2 using the canonical
 unknown-profile diagnostic. No modern profile is registered.
 
+When `--syntax=legacy` is absent, the exact lowercase `.dab` filename extension
+selects `DabSyntaxProfile::LEGACY` automatically. The explicit option takes
+precedence over filename inference. Standard input, `.dabm`, uppercase `.DAB`,
+and other unrecognized filename extensions do not infer a profile; they retain
+the existing canonical legacy fallback.
+
+The compiler continues to resolve one profile for the whole invocation. Any
+`.dab` input in a multiple-input invocation selects that same canonical legacy
+profile for every source stream. This is sufficient because `.dab` is the only
+recognized filename mapping and cannot create a mixed-profile conflict. It does
+not add mutable global state or per-source-unit profile selection.
+
 ## Current construction paths
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
-| Production compiler frontend | One `DabProgramStream` per input | The compiler CLI resolves at most one `--syntax=PROFILE` option to one validated invocation-level profile passed explicitly to every stream; the default is legacy. |
+| Production compiler frontend | One `DabProgramStream` per input | The compiler CLI gives an explicit `--syntax=PROFILE` option precedence, otherwise infers legacy from any exact `.dab` input, then passes one validated invocation-level profile to every stream. Unrecognized names and standard input retain the legacy fallback. |
 | Source formatter and format fixtures | `DabProgramStream` | The parser API default selects legacy. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
 | Parser specifications and direct Ruby callers | `DabProgramStream` | Callers may omit the profile for legacy compatibility or pass `DabSyntaxProfile::LEGACY` explicitly. |
 
 There is no selectable Modern Dab profile yet. In particular, this model adds
-no `.dab` or `.dabm` inference, per-source-unit selection, second parser,
-grammar, token, or diagnostic behavior. Those remain separate roadmap work.
+no `.dabm` inference, per-source-unit selection, second parser, grammar, token,
+or diagnostic behavior. Those remain separate roadmap work.
