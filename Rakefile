@@ -277,6 +277,7 @@ address_sanitizer_files = [
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
   *unsafe_ffi_capability_files,
+  *legacy_source_vm_smoke_files,
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 AddressSanitizer profile'
@@ -291,11 +292,25 @@ undefined_behavior_sanitizer_files = [
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
   *unsafe_ffi_capability_files,
+  *legacy_source_vm_smoke_files,
 ]
 
 desc 'Build and validate the dedicated Linux x86_64 UndefinedBehaviorSanitizer profile'
 task undefined_behavior_sanitizer_spec: undefined_behavior_sanitizer_files do
   sh RbConfig.ruby, 'script/undefined_behavior_sanitizer_gate.rb'
+end
+
+combined_sanitizer_files = [
+  'script/combined_sanitizer_gate.rb',
+  'lib/dab/combined_sanitizer_gate.rb',
+  'config/combined_sanitizer_gate.json',
+  *address_sanitizer_files,
+  *undefined_behavior_sanitizer_files,
+]
+
+desc 'Run the supported Linux x86_64 sanitizer gates in their checked order'
+task combined_sanitizer_spec: combined_sanitizer_files do
+  sh RbConfig.ruby, 'script/combined_sanitizer_gate.rb'
 end
 
 string_intptr_lifetime_source = 'test/native/string_intptr_lifetime.cpp'

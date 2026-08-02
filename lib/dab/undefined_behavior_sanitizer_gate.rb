@@ -12,6 +12,19 @@ require_relative 'unsafe_ffi_capability_smoke'
 
 module Dab
   module UndefinedBehaviorSanitizerGate
+    SUPPORTED_TRUSTED_ARTIFACTS = %w[
+      native-target:cvm
+      native-target:cdisasm
+      native-target:cdumpcov
+      native-target:cffitest
+      source:test/undefined_behavior_sanitizer/signed_integer_overflow.cpp
+      source:test/native/string_intptr_lifetime.cpp
+      normal-control:signed-integer-overflow
+      smoke:native-tool-version
+      smoke:unsafe-ffi-default-denial-and-explicit-opt-in
+      smoke:legacy-source-vm
+    ].freeze
+
     CommandResult = Struct.new(:stdout, :stderr, :exit_code, :timed_out) do
       def success?
         exit_code.zero? && !timed_out

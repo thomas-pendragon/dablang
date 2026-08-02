@@ -16,6 +16,10 @@ GitHub-hosted `ubuntu-24.04`. It is independent from the five normal CI runs
 and the AddressSanitizer job. No macOS or Windows UndefinedBehaviorSanitizer
 support is claimed.
 
+The [combined sanitizer command](/combined-sanitizer.html) invokes this complete
+gate after the AddressSanitizer gate. It does not replace this profile, alter its
+evidence, or combine the two sanitizer instrumentations into one binary.
+
 The command validates the test-suite and supported-toolchain manifests, checks
 the profile-specific host, compilers, build driver, ELF metadata reader,
 offline symbolizer, Premake version, and workflow contract, and then generates
