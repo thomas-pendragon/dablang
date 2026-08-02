@@ -32,17 +32,21 @@ module DabCompilerSyntaxOptions
   end
 
   def self.infer_from_filenames(inputs)
-    Array(inputs).each do |input|
-      profile = profile_for_filename(input)
-      return profile if profile
+    profiles = Array(inputs).filter_map { |input| profile_for_filename(input) }.uniq
+    if profiles.length > 1
+      names = profiles.map(&:name).sort.join(', ')
+      raise DabCompilerSyntaxOptionError.new(
+        "input filenames select multiple Dab syntax profiles: #{names}; use --syntax=PROFILE to select one explicitly"
+      )
     end
 
-    nil
+    profiles.first
   end
 
   def self.profile_for_filename(filename)
     return unless filename.is_a?(String)
     return DabSyntaxProfile::LEGACY if File.extname(filename) == '.dab'
+    return DabSyntaxProfile::MODERN if File.extname(filename) == '.dabm'
 
     nil
   end

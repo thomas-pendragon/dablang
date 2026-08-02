@@ -1,6 +1,9 @@
 class DabSyntaxProfileError < ArgumentError
 end
 
+class DabUnsupportedSyntaxProfileError < DabSyntaxProfileError
+end
+
 class DabSyntaxProfile
   attr_reader :name
 
@@ -10,7 +13,8 @@ class DabSyntaxProfile
   end
 
   LEGACY = new('legacy')
-  PROFILES = [LEGACY].freeze
+  MODERN = new('modern')
+  PROFILES = [LEGACY, MODERN].freeze
   PROFILES_BY_NAME = PROFILES.map { |profile| [profile.name, profile] }.to_h.freeze
 
   private_class_method :new
@@ -34,6 +38,14 @@ class DabSyntaxProfile
 
   def self.available
     PROFILES
+  end
+
+  def require_parser_support!
+    return self if equal?(LEGACY)
+
+    raise DabUnsupportedSyntaxProfileError.new(
+      "unsupported Dab syntax profile #{name.inspect}: parser is not implemented"
+    )
   end
 
   def ==(other)

@@ -13,14 +13,22 @@ rescue DabCompilerSyntaxOptionError => e
   exit 2
 end
 
-require_relative 'compiler_noautorun'
+require_relative '../shared/args_noautorun'
 
-settings = read_args!(arguments)
-syntax_profile = DabCompilerSyntaxOptions.resolve(
-  syntax_profile: syntax_profile,
-  explicit: syntax_profile_explicit,
-  inputs: settings[:inputs]
-)
+begin
+  settings = read_args!(arguments)
+  syntax_profile = DabCompilerSyntaxOptions.resolve(
+    syntax_profile: syntax_profile,
+    explicit: syntax_profile_explicit,
+    inputs: settings[:inputs]
+  )
+  syntax_profile.require_parser_support!
+rescue DabCompilerSyntaxOptionError, DabUnsupportedSyntaxProfileError => e
+  warn "compiler: #{e.message}"
+  exit 2
+end
+
+require_relative 'compiler_noautorun'
 
 class CompilerContext
   def stdin

@@ -494,6 +494,7 @@ class DabProgramStream < DabParser
 
   def initialize(content, nl_is_whitespace = true, filename = '<input>', syntax_profile: DabSyntaxProfile::LEGACY)
     @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
+    @syntax_profile.require_parser_support!
     super(content, nl_is_whitespace, filename)
   end
 end

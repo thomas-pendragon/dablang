@@ -14,10 +14,10 @@ describe 'Dab compiler --syntax option' do
     Open3.capture3(RbConfig.ruby, compiler, *arguments, chdir: project_root)
   end
 
-  def with_sources(*sources)
+  def with_sources(*sources, extension: '.dab')
     Dir.mktmpdir('dab-compiler-syntax-option') do |directory|
       paths = sources.each_with_index.map do |source, index|
-        path = File.join(directory, "program#{index + 1}.dab")
+        path = File.join(directory, "program#{index + 1}#{extension}")
         File.binwrite(path, source)
         path
       end
@@ -25,8 +25,8 @@ describe 'Dab compiler --syntax option' do
     end
   end
 
-  def with_source(source, &block)
-    with_sources(source, &block)
+  def with_source(source, extension: '.dab', &block)
+    with_sources(source, extension: extension, &block)
   end
 
   it 'resolves explicit legacy to the canonical profile and removes only its option' do
@@ -47,11 +47,13 @@ describe 'Dab compiler --syntax option' do
     expect(explicit).to be false
   end
 
-  it 'maps only the exact .dab extension to the canonical legacy profile' do
+  it 'maps exact lowercase source extensions to their canonical profiles' do
     expect(DabCompilerSyntaxOptions.profile_for_filename('source.dab'))
       .to equal(DabSyntaxProfile::LEGACY)
-    expect(DabCompilerSyntaxOptions.profile_for_filename('source.dabm')).to be_nil
+    expect(DabCompilerSyntaxOptions.profile_for_filename('source.dabm'))
+      .to equal(DabSyntaxProfile::MODERN)
     expect(DabCompilerSyntaxOptions.profile_for_filename('source.DAB')).to be_nil
+    expect(DabCompilerSyntaxOptions.profile_for_filename('source.DABM')).to be_nil
     expect(DabCompilerSyntaxOptions.profile_for_filename(:stdin)).to be_nil
   end
 
@@ -63,6 +65,31 @@ describe 'Dab compiler --syntax option' do
         inputs: ['library.dab', 'program.dab']
       )
     ).to equal(DabSyntaxProfile::LEGACY)
+  end
+
+  it 'infers one invocation-level modern profile across multiple .dabm inputs' do
+    expect(
+      DabCompilerSyntaxOptions.resolve(
+        syntax_profile: DabSyntaxProfile::LEGACY,
+        explicit: false,
+        inputs: ['library.dabm', 'program.dabm']
+      )
+    ).to equal(DabSyntaxProfile::MODERN)
+  end
+
+  it 'rejects mixed inferred profiles without selecting an input order winner' do
+    [['library.dab', 'program.dabm'], ['library.dabm', 'program.dab']].each do |inputs|
+      expect do
+        DabCompilerSyntaxOptions.resolve(
+          syntax_profile: DabSyntaxProfile::LEGACY,
+          explicit: false,
+          inputs: inputs
+        )
+      end.to raise_error(
+        DabCompilerSyntaxOptionError,
+        'input filenames select multiple Dab syntax profiles: legacy, modern; use --syntax=PROFILE to select one explicitly'
+      )
+    end
   end
 
   it 'gives an explicit profile precedence without consulting filenames' do
@@ -78,7 +105,7 @@ describe 'Dab compiler --syntax option' do
   end
 
   it 'retains the legacy fallback for stdin and unrecognized extensions' do
-    [nil, [:stdin], ['source.dabm'], ['source.txt']].each do |inputs|
+    [nil, [:stdin], ['source.DAB'], ['source.DABM'], ['source.txt']].each do |inputs|
       resolved = DabCompilerSyntaxOptions.resolve(
         syntax_profile: DabSyntaxProfile::LEGACY,
         explicit: false,
@@ -86,6 +113,67 @@ describe 'Dab compiler --syntax option' do
       )
 
       expect(resolved).to equal(DabSyntaxProfile::LEGACY)
+    end
+  end
+
+  it 'rejects inferred modern syntax before legacy parsing' do
+    with_source('this could otherwise reach the legacy parser', extension: '.dabm') do |source|
+      stdout, stderr, status = invoke(source)
+
+      expect([stdout, stderr, status.exitstatus]).to eq [
+        '',
+        "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+        2,
+      ]
+    end
+  end
+
+  it 'allows explicit legacy to override .dabm inference' do
+    with_source("func main()\n{\n\tprint(42);\n}\n", extension: '.dabm') do |source|
+      stdout, _stderr, status = invoke('--syntax=legacy', source)
+
+      expect(status).to be_success
+      expect(stdout).not_to be_empty
+    end
+  end
+
+  it 'retains the legacy fallback for uppercase .DABM' do
+    with_source("func main()\n{\n\tprint(42);\n}\n", extension: '.DABM') do |source|
+      expect(invoke(source).last).to be_success
+    end
+  end
+
+  it 'rejects mixed .dab and .dabm inputs before parsing either profile' do
+    with_sources('not legacy source', 'also not legacy source') do |legacy_source, modern_source|
+      inferred_modern_source = modern_source.sub(/\.dab\z/, '.dabm')
+      File.rename(modern_source, inferred_modern_source)
+
+      [
+        [legacy_source, inferred_modern_source],
+        [inferred_modern_source, legacy_source],
+      ].each do |inputs|
+        stdout, stderr, status = invoke(*inputs)
+        diagnostic = 'compiler: input filenames select multiple Dab syntax profiles: ' \
+                     'legacy, modern; use --syntax=PROFILE to select one explicitly'
+
+        expect([stdout, stderr, status.exitstatus]).to eq [
+          '',
+          "#{diagnostic}\n",
+          2,
+        ]
+      end
+    end
+  end
+
+  it 'allows explicit legacy to override a mixed-extension invocation' do
+    library = "func answer()\n{\n\treturn 42;\n}\n"
+    program = "func main()\n{\n\tprint(answer());\n}\n"
+
+    with_sources(library, program) do |legacy_source, modern_source|
+      forced_legacy_source = modern_source.sub(/\.dab\z/, '.dabm')
+      File.rename(modern_source, forced_legacy_source)
+
+      expect(invoke('--syntax=legacy', legacy_source, forced_legacy_source).last).to be_success
     end
   end
 
@@ -123,8 +211,8 @@ describe 'Dab compiler --syntax option' do
 
   it 'fails closed for unregistered and empty profiles' do
     {
-      '--syntax=modern' => 'compiler: unknown Dab syntax profile "modern"; available profiles: legacy',
-      '--syntax=' => 'compiler: unknown Dab syntax profile ""; available profiles: legacy',
+      '--syntax=future' => 'compiler: unknown Dab syntax profile "future"; available profiles: legacy, modern',
+      '--syntax=' => 'compiler: unknown Dab syntax profile ""; available profiles: legacy, modern',
     }.each do |argument, diagnostic|
       stdout, stderr, status = invoke(argument)
 
@@ -132,11 +220,22 @@ describe 'Dab compiler --syntax option' do
     end
   end
 
+  it 'accepts explicit modern identity but reports its parser as unsupported' do
+    stdout, stderr, status = invoke('--syntax=modern')
+
+    expect([stdout, stderr, status.exitstatus]).to eq [
+      '',
+      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+      2,
+    ]
+  end
+
   it 'rejects malformed, separated, and repeated syntax options before inputs' do
     {
       ['--syntax'] => 'compiler: --syntax requires the --syntax=PROFILE spelling',
       ['--syntax', 'legacy'] => 'compiler: --syntax requires the --syntax=PROFILE spelling',
       ['--syntax=legacy', '--syntax=legacy'] => 'compiler: --syntax may be specified at most once',
+      ['--syntax=modern', '--syntax=modern'] => 'compiler: --syntax may be specified at most once',
     }.each do |arguments, diagnostic|
       stdout, stderr, status = invoke(*arguments)
 
