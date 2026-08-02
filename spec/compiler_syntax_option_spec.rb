@@ -57,62 +57,52 @@ describe 'Dab compiler --syntax option' do
     expect(DabCompilerSyntaxOptions.profile_for_filename(:stdin)).to be_nil
   end
 
-  it 'infers one invocation-level legacy profile across multiple .dab inputs' do
-    expect(
-      DabCompilerSyntaxOptions.resolve(
-        syntax_profile: DabSyntaxProfile::LEGACY,
-        explicit: false,
-        inputs: ['library.dab', 'program.dab']
-      )
-    ).to equal(DabSyntaxProfile::LEGACY)
-  end
+  it 'assigns canonical inferred profiles independently to every source unit' do
+    inputs = ['library.dab', 'program.dabm', 'fallback.DABM', :stdin]
+    source_units = DabCompilerSyntaxOptions.resolve_inputs(
+      syntax_profile: DabSyntaxProfile::LEGACY,
+      explicit: false,
+      inputs: inputs
+    )
 
-  it 'infers one invocation-level modern profile across multiple .dabm inputs' do
-    expect(
-      DabCompilerSyntaxOptions.resolve(
-        syntax_profile: DabSyntaxProfile::LEGACY,
-        explicit: false,
-        inputs: ['library.dabm', 'program.dabm']
-      )
-    ).to equal(DabSyntaxProfile::MODERN)
-  end
-
-  it 'rejects mixed inferred profiles without selecting an input order winner' do
-    [['library.dab', 'program.dabm'], ['library.dabm', 'program.dab']].each do |inputs|
-      expect do
-        DabCompilerSyntaxOptions.resolve(
-          syntax_profile: DabSyntaxProfile::LEGACY,
-          explicit: false,
-          inputs: inputs
-        )
-      end.to raise_error(
-        DabCompilerSyntaxOptionError,
-        'input filenames select multiple Dab syntax profiles: legacy, modern; use --syntax=PROFILE to select one explicitly'
-      )
-    end
+    expect(source_units.map(&:input)).to eq inputs
+    expect(source_units.map(&:syntax_profile)).to eq [
+      DabSyntaxProfile::LEGACY,
+      DabSyntaxProfile::MODERN,
+      DabSyntaxProfile::LEGACY,
+      DabSyntaxProfile::LEGACY,
+    ]
+    expect(source_units.map(&:filename)).to eq [
+      'library.dab',
+      'program.dabm',
+      'fallback.DABM',
+      '<input>',
+    ]
   end
 
   it 'gives an explicit profile precedence without consulting filenames' do
-    expect(DabCompilerSyntaxOptions).not_to receive(:infer_from_filenames)
+    expect(DabCompilerSyntaxOptions).not_to receive(:profile_for_filename)
 
-    resolved = DabCompilerSyntaxOptions.resolve(
-      syntax_profile: DabSyntaxProfile::LEGACY,
-      explicit: true,
-      inputs: ['program.dab']
-    )
+    [DabSyntaxProfile::LEGACY, DabSyntaxProfile::MODERN].each do |profile|
+      source_units = DabCompilerSyntaxOptions.resolve_inputs(
+        syntax_profile: profile,
+        explicit: true,
+        inputs: ['program.dab', 'program.dabm']
+      )
 
-    expect(resolved).to equal(DabSyntaxProfile::LEGACY)
+      expect(source_units.map(&:syntax_profile)).to all(equal(profile))
+    end
   end
 
   it 'retains the legacy fallback for stdin and unrecognized extensions' do
     [nil, [:stdin], ['source.DAB'], ['source.DABM'], ['source.txt']].each do |inputs|
-      resolved = DabCompilerSyntaxOptions.resolve(
+      source_units = DabCompilerSyntaxOptions.resolve_inputs(
         syntax_profile: DabSyntaxProfile::LEGACY,
         explicit: false,
         inputs: inputs
       )
 
-      expect(resolved).to equal(DabSyntaxProfile::LEGACY)
+      expect(source_units.map(&:syntax_profile)).to all(equal(DabSyntaxProfile::LEGACY))
     end
   end
 
@@ -143,7 +133,7 @@ describe 'Dab compiler --syntax option' do
     end
   end
 
-  it 'rejects mixed .dab and .dabm inputs before parsing either profile' do
+  it 'accepts mixed profile assignment but rejects Modern before parsing any source' do
     with_sources('not legacy source', 'also not legacy source') do |legacy_source, modern_source|
       inferred_modern_source = modern_source.sub(/\.dab\z/, '.dabm')
       File.rename(modern_source, inferred_modern_source)
@@ -153,12 +143,9 @@ describe 'Dab compiler --syntax option' do
         [inferred_modern_source, legacy_source],
       ].each do |inputs|
         stdout, stderr, status = invoke(*inputs)
-        diagnostic = 'compiler: input filenames select multiple Dab syntax profiles: ' \
-                     'legacy, modern; use --syntax=PROFILE to select one explicitly'
-
         expect([stdout, stderr, status.exitstatus]).to eq [
           '',
-          "#{diagnostic}\n",
+          "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
           2,
         ]
       end

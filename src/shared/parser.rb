@@ -1,4 +1,5 @@
 require_relative 'syntax_profile'
+require_relative 'source_unit'
 
 class String
   def to_stringy
@@ -490,11 +491,25 @@ class DabParser
 end
 
 class DabProgramStream < DabParser
-  attr_reader :syntax_profile
+  SYNTAX_PROFILE_UNSPECIFIED = Object.new.freeze
 
-  def initialize(content, nl_is_whitespace = true, filename = '<input>', syntax_profile: DabSyntaxProfile::LEGACY)
-    @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
-    @syntax_profile.require_parser_support!
-    super(content, nl_is_whitespace, filename)
+  attr_reader :source_unit, :syntax_profile
+
+  def initialize(content, nl_is_whitespace = true, filename = '<input>',
+                 source_unit: nil, syntax_profile: SYNTAX_PROFILE_UNSPECIFIED)
+    if source_unit
+      unless syntax_profile.equal?(SYNTAX_PROFILE_UNSPECIFIED)
+        raise DabSourceUnitError.new('DabProgramStream accepts source_unit: or syntax_profile:, not both')
+      end
+
+      @source_unit = DabSourceUnit.validate(source_unit)
+    else
+      syntax_profile = DabSyntaxProfile::LEGACY if syntax_profile.equal?(SYNTAX_PROFILE_UNSPECIFIED)
+      input = filename == '<input>' ? :stdin : filename
+      @source_unit = DabSourceUnit.new(input: input, filename: filename, syntax_profile: syntax_profile)
+    end
+    @syntax_profile = @source_unit.syntax_profile
+    @source_unit.require_parser_support!
+    super(content, nl_is_whitespace, @source_unit.filename)
   end
 end

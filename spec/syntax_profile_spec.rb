@@ -79,6 +79,18 @@ describe DabProgramStream do
     expect(stream.read_identifier).to eq 'identifier'
   end
 
+  it 'retains the complete explicit source unit through parser construction' do
+    source_unit = DabSourceUnit.new(
+      input: 'sample.dab',
+      syntax_profile: DabSyntaxProfile::LEGACY
+    )
+    stream = described_class.new('identifier', source_unit: source_unit)
+
+    expect(stream.source_unit).to equal(source_unit)
+    expect(stream.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(stream.filename).to eq 'sample.dab'
+  end
+
   it 'rejects modern before legacy parsing can begin' do
     expect { described_class.new('func main() {}', syntax_profile: DabSyntaxProfile::MODERN) }
       .to raise_error(
@@ -92,6 +104,21 @@ describe DabProgramStream do
       .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile; expected a registered DabSyntaxProfile')
   end
 
+  it 'rejects ambiguous source-unit and profile arguments' do
+    source_unit = DabSourceUnit.new(input: :stdin, syntax_profile: DabSyntaxProfile::LEGACY)
+
+    expect do
+      described_class.new(
+        'identifier',
+        source_unit: source_unit,
+        syntax_profile: DabSyntaxProfile::LEGACY
+      )
+    end.to raise_error(
+      DabSourceUnitError,
+      'DabProgramStream accepts source_unit: or syntax_profile:, not both'
+    )
+  end
+
   it 'does not leak profile state across parser instances' do
     first = described_class.new('first', syntax_profile: DabSyntaxProfile::LEGACY)
     expect { described_class.new('invalid', syntax_profile: :modern) }.to raise_error(DabSyntaxProfileError)
@@ -102,16 +129,57 @@ describe DabProgramStream do
   end
 end
 
+describe DabSourceUnit do
+  it 'retains an immutable canonical profile and input identity' do
+    source_unit = described_class.new(
+      input: 'program.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    expect(source_unit.input).to eq 'program.dabm'
+    expect(source_unit.filename).to eq 'program.dabm'
+    expect(source_unit.syntax_profile).to equal(DabSyntaxProfile::MODERN)
+    expect(source_unit).to be_frozen
+  end
+
+  it 'uses the characterized stdin filename and rejects invalid profiles' do
+    source_unit = described_class.new(input: :stdin, syntax_profile: DabSyntaxProfile::LEGACY)
+
+    expect(source_unit.filename).to eq '<input>'
+    expect do
+      described_class.new(input: 'program.dab', syntax_profile: 'legacy')
+    end.to raise_error(
+      DabSyntaxProfileError,
+      'invalid Dab syntax profile; expected a registered DabSyntaxProfile'
+    )
+  end
+
+  it 'rejects an invalid diagnostic filename with a source-unit error' do
+    expect do
+      described_class.new(
+        input: 'program.dab',
+        filename: :program,
+        syntax_profile: DabSyntaxProfile::LEGACY
+      )
+    end.to raise_error(
+      DabSourceUnitError,
+      'invalid Dab source unit filename; expected a String'
+    )
+  end
+end
+
 describe DabCompilerFrontend do
-  def compile_result(source, syntax_profile: nil)
+  def compile_result(source, syntax_profile: nil, source_units: nil, settings: {inputs: [:stdin]})
     context = DabSyntaxProfileCompilerContext.new(source)
-    settings = {inputs: [:stdin]}
     status = 0
     begin
-      if syntax_profile
-        run_dab_compiler(settings, context, syntax_profile: syntax_profile)
-      else
+      options = {}
+      options[:syntax_profile] = syntax_profile if syntax_profile
+      options[:source_units] = source_units if source_units
+      if options.empty?
         run_dab_compiler(settings, context)
+      else
+        run_dab_compiler(settings, context, **options)
       end
     rescue DabSyntaxProfileCompilerExit => e
       status = e.code
@@ -149,6 +217,27 @@ describe DabCompilerFrontend do
 
   it 'reports the unsupported modern parser profile with stable status' do
     expect(compile_result('this is not legacy syntax', syntax_profile: DabSyntaxProfile::MODERN)).to eq [
+      2,
+      '',
+      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+    ]
+  end
+
+  it 'validates every source unit before Ring loading or parser construction' do
+    source_units = [
+      DabSourceUnit.new(input: 'library.dab', syntax_profile: DabSyntaxProfile::LEGACY),
+      DabSourceUnit.new(input: 'program.dabm', syntax_profile: DabSyntaxProfile::MODERN),
+    ]
+    expect(DabBinReader).not_to receive(:new)
+    expect(DabProgramStream).not_to receive(:new)
+
+    result = compile_result(
+      'this input must not be consumed',
+      source_units: source_units,
+      settings: {inputs: source_units.map(&:input), ring_base: ['must-not-load.dabcb']}
+    )
+
+    expect(result).to eq [
       2,
       '',
       "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",

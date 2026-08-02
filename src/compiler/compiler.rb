@@ -17,12 +17,12 @@ require_relative '../shared/args_noautorun'
 
 begin
   settings = read_args!(arguments)
-  syntax_profile = DabCompilerSyntaxOptions.resolve(
+  source_units = DabCompilerSyntaxOptions.resolve_inputs(
     syntax_profile: syntax_profile,
     explicit: syntax_profile_explicit,
     inputs: settings[:inputs]
   )
-  syntax_profile.require_parser_support!
+  source_units.each(&:require_parser_support!)
 rescue DabCompilerSyntaxOptionError, DabUnsupportedSyntaxProfileError => e
   warn "compiler: #{e.message}"
   exit 2
@@ -48,4 +48,4 @@ class CompilerContext
   end
 end
 
-run_dab_compiler(settings, CompilerContext.new, syntax_profile: syntax_profile)
+run_dab_compiler(settings, CompilerContext.new, source_units: source_units)
