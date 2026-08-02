@@ -1,3 +1,5 @@
+require_relative 'syntax_profile'
+
 class String
   def to_stringy
     self
@@ -488,4 +490,10 @@ class DabParser
 end
 
 class DabProgramStream < DabParser
+  attr_reader :syntax_profile
+
+  def initialize(content, nl_is_whitespace = true, filename = '<input>', syntax_profile: DabSyntaxProfile::LEGACY)
+    @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
+    super(content, nl_is_whitespace, filename)
+  end
 end

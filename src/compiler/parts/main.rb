@@ -1,4 +1,10 @@
 class DabCompilerFrontend
+  attr_reader :syntax_profile
+
+  def initialize(syntax_profile: DabSyntaxProfile::LEGACY)
+    @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
+  end
+
   def debug_check!(settings, program, type)
     if $debug
       err ''
@@ -66,7 +72,7 @@ class DabCompilerFrontend
             file = File.open(input, 'rb')
             filename = input
           end
-          stream = DabProgramStream.new(file.read, true, filename)
+          stream = DabProgramStream.new(file.read, true, filename, syntax_profile: syntax_profile)
           compiler = DabCompiler.new(stream)
           streams[filename] = stream
           classes = []
@@ -273,6 +279,6 @@ class DabCompilerFrontend
   end
 end
 
-def run_dab_compiler(settings, context)
-  DabCompilerFrontend.new.run(settings, context)
+def run_dab_compiler(settings, context, syntax_profile: DabSyntaxProfile::LEGACY)
+  DabCompilerFrontend.new(syntax_profile: syntax_profile).run(settings, context)
 end

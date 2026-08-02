@@ -150,6 +150,9 @@ pages:
   - source: public-site.md
     output: public-site.html
     classification: repository_only
+  - source: syntax-profiles.md
+    output: syntax-profiles.html
+    classification: repository_only
   - source: test-suite-manifest.md
     output: test-suite-manifest.html
     classification: repository_only
