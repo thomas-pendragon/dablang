@@ -83,7 +83,7 @@ is the exact frozen object selected by filename inference, an explicit CLI
 profile, or the compiler API. Its location is a zero-width frontend entry point;
 it is not evidence that a token was scanned. In a mixed invocation, the first
 Modern unit in input order supplies the diagnostic identity while every input,
-Ring, scanner, Legacy parser, and compiler remains untouched. The separately
+Ring, scanner, Legacy parser, and compiler remain untouched. The separately
 specified zero-byte Ring-layer path inspects only the empty byte boundary and
 constructs no scanner or parser.
 
