@@ -1,8 +1,9 @@
 class DabCompilerFrontend
-  attr_reader :syntax_profile
+  attr_reader :source_units, :syntax_profile
 
-  def initialize(syntax_profile: DabSyntaxProfile::LEGACY)
+  def initialize(syntax_profile: DabSyntaxProfile::LEGACY, source_units: nil)
     @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
+    @source_units = source_units&.map { |source_unit| DabSourceUnit.validate(source_unit) }&.freeze
   end
 
   def debug_check!(settings, program, type)
@@ -23,7 +24,8 @@ class DabCompilerFrontend
   def nop; end
 
   def run(settings, context)
-    syntax_profile.require_parser_support!
+    @source_units ||= source_units_for(settings)
+    @source_units.each(&:require_parser_support!)
     @settings = settings
 
     ring_base = settings[:ring_base]
@@ -62,20 +64,13 @@ class DabCompilerFrontend
       $no_autorelease = settings[:no_autorelease]
       $multipass = settings[:multipass]
 
-      inputs = settings[:inputs] || [:stdin]
-
       streams = {}
       dab_benchmark('parse') do
-        inputs.each do |input|
-          file = context.stdin
-          filename = '<input>'
-          if input != :stdin
-            file = File.open(input, 'rb')
-            filename = input
-          end
-          stream = DabProgramStream.new(file.read, true, filename, syntax_profile: syntax_profile)
+        source_units.each do |source_unit|
+          content = source_unit.input == :stdin ? context.stdin.read : File.binread(source_unit.input)
+          stream = DabProgramStream.new(content, true, source_unit: source_unit)
           compiler = DabCompiler.new(stream)
-          streams[filename] = stream
+          streams[source_unit.filename] = stream
           classes = []
           classes = program.class_names if program
           new_program = compiler.program(classes, parent_unit: program)
@@ -199,6 +194,14 @@ class DabCompilerFrontend
     end
   end
 
+  def source_units_for(settings)
+    inputs = Array(settings[:inputs])
+    inputs = [:stdin] if inputs.empty?
+    inputs.map do |input|
+      DabSourceUnit.new(input: input, syntax_profile: syntax_profile)
+    end.freeze
+  end
+
   def process_node(program)
     if $multipass
       process_node_single_phase(program, false)
@@ -280,8 +283,8 @@ class DabCompilerFrontend
   end
 end
 
-def run_dab_compiler(settings, context, syntax_profile: DabSyntaxProfile::LEGACY)
-  DabCompilerFrontend.new(syntax_profile: syntax_profile).run(settings, context)
+def run_dab_compiler(settings, context, syntax_profile: DabSyntaxProfile::LEGACY, source_units: nil)
+  DabCompilerFrontend.new(syntax_profile: syntax_profile, source_units: source_units).run(settings, context)
 rescue DabUnsupportedSyntaxProfileError => e
   context.stderr.puts "compiler: #{e.message}"
   context.exit(2)

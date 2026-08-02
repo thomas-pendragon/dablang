@@ -1,6 +1,8 @@
 class DabCompilerSyntaxOptionError < ArgumentError
 end
 
+require_relative '../shared/source_unit'
+
 module DabCompilerSyntaxOptions
   def self.parse(arguments)
     syntax_options = arguments.select do |argument|
@@ -24,23 +26,14 @@ module DabCompilerSyntaxOptions
     raise DabCompilerSyntaxOptionError.new(e.message)
   end
 
-  def self.resolve(syntax_profile:, explicit:, inputs:)
+  def self.resolve_inputs(syntax_profile:, explicit:, inputs:)
     syntax_profile = DabSyntaxProfile.validate(syntax_profile)
-    return syntax_profile if explicit
-
-    infer_from_filenames(inputs) || syntax_profile
-  end
-
-  def self.infer_from_filenames(inputs)
-    profiles = Array(inputs).filter_map { |input| profile_for_filename(input) }.uniq
-    if profiles.length > 1
-      names = profiles.map(&:name).sort.join(', ')
-      raise DabCompilerSyntaxOptionError.new(
-        "input filenames select multiple Dab syntax profiles: #{names}; use --syntax=PROFILE to select one explicitly"
-      )
-    end
-
-    profiles.first
+    inputs = Array(inputs)
+    inputs = [:stdin] if inputs.empty?
+    inputs.map do |input|
+      profile = explicit ? syntax_profile : (profile_for_filename(input) || syntax_profile)
+      DabSourceUnit.new(input: input, syntax_profile: profile)
+    end.freeze
   end
 
   def self.profile_for_filename(filename)
