@@ -171,7 +171,14 @@ end
 
 describe DabModernSyntaxDiagnostics do
   it 'raises one typed zero-width entry diagnostic retaining the exact source identity' do
-    source_unit = DabSourceUnit.new(
+    parser_support_calls = 0
+    instrumented_source_unit = Class.new(DabSourceUnit) do
+      define_method(:require_parser_support!) do
+        parser_support_calls += 1
+        super()
+      end
+    end
+    source_unit = instrumented_source_unit.new(
       input: 'physical-source.dabm',
       filename: 'diagnostic-source.dabm',
       syntax_profile: DabSyntaxProfile::MODERN
@@ -187,6 +194,7 @@ describe DabModernSyntaxDiagnostics do
         'unsupported Dab syntax profile "modern": parser is not implemented'
       )
     end
+    expect(parser_support_calls).to eq 1
   end
 end
 
