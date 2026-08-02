@@ -249,7 +249,7 @@ describe Dab::CombinedSanitizerGate::Contract do
     profile_drift = contract_data
     profile_drift.fetch('validations').first['profile'] = 'undefined_behavior_sanitizer'
     output_drift = contract_data
-    output_drift.fetch('validations').first['owned_directories'] = ['build', 'bin']
+    output_drift.fetch('validations').first['owned_directories'] = %w[build bin]
 
     expect { validate(malformed) }.to raise_error(
       Dab::CombinedSanitizerGate::ContractFailure,
@@ -295,21 +295,48 @@ describe Dab::CombinedSanitizerGate::Contract do
     end
   end
 
+  it 'rejects relevant and unrelated duplicate manifest suite IDs deterministically' do
+    with_contract_repository do |temporary_root|
+      path = File.join(temporary_root, 'config/test_suites.json')
+      manifest = JSON.parse(File.binread(path))
+      suites = manifest.fetch('suites')
+      suites << suites.find { |suite| suite['id'] == 'rake-address-sanitizer' }.dup
+      suites << suites.find { |suite| suite['id'] == 'rake-minitest' }.dup
+      File.binwrite(path, JSON.pretty_generate(manifest))
+
+      expect { validate(contract_data, validation_root: temporary_root) }.to raise_error(
+        Dab::CombinedSanitizerGate::ContractFailure
+      ) do |failure|
+        expect(failure.details.split('; ')).to include(
+          'test-suite manifest contains duplicate suite id: rake-address-sanitizer',
+          'test-suite manifest contains duplicate suite id: rake-minitest'
+        )
+        address_index = failure.details.index('rake-address-sanitizer')
+        minitest_index = failure.details.index('rake-minitest')
+        expect(address_index).to be < minitest_index
+      end
+    end
+  end
+
   it 'rejects duplicate child execution or a redundant combined CI invocation' do
     with_contract_repository do |temporary_root|
       path = File.join(temporary_root, '.github/workflows/ruby.yml')
       workflow = File.binread(path)
       workflow = workflow.sub(
         'run: bundle exec rake undefined_behavior_sanitizer_spec',
-        "run: bundle exec rake undefined_behavior_sanitizer_spec\n" \
-        "      - name: Redundant combined gate\n" \
-        '        run: bundle exec rake combined_sanitizer_spec'
+        [
+          'run: bundle exec rake undefined_behavior_sanitizer_spec',
+          '      - name: Redundant combined gate',
+          '        run: bundle exec rake combined_sanitizer_spec',
+        ].join("\n")
       )
       workflow = workflow.sub(
         'run: bundle exec rake address_sanitizer_spec',
-        "run: bundle exec rake address_sanitizer_spec\n" \
-        "      - name: Duplicate AddressSanitizer\n" \
-        '        run: bundle exec rake address_sanitizer_spec'
+        [
+          'run: bundle exec rake address_sanitizer_spec',
+          '      - name: Duplicate AddressSanitizer',
+          '        run: bundle exec rake address_sanitizer_spec',
+        ].join("\n")
       )
       File.binwrite(path, workflow)
 

@@ -12,7 +12,7 @@ module Dab
       attr_reader :details
 
       def initialize(details)
-        super(details)
+        super
         @details = details
       end
     end
@@ -56,7 +56,7 @@ module Dab
       def validate!(root:, toolchain:)
         errors = shape_errors
         errors.concat(linkage_errors(root, toolchain)) if errors.empty?
-        raise ContractFailure, errors.sort.join('; ') unless errors.empty?
+        raise ContractFailure.new(errors.sort.join('; ')) unless errors.empty?
 
         self
       end
@@ -139,7 +139,7 @@ module Dab
         expected_label = EXPECTED_LABELS.fetch(id)
         errors << "#{id} label must remain #{expected_label}" unless validation['label'] == expected_label
         errors << "#{id} platform must match #{platform}" unless profile['platform'] == platform
-        expected_command = profile.fetch('ci').fetch('command').split(' ')
+        expected_command = profile.fetch('ci').fetch('command').split
         errors << "#{id} command must match its independent gate" unless validation['command'] == expected_command
         expected_directories = [profile['build_directory'], profile['binary_directory']]
         unless validation['owned_directories'] == expected_directories
@@ -175,8 +175,11 @@ module Dab
           File.binread(File.join(root, '.github/workflows/ruby.yml')),
           aliases: false
         )
-        suite_commands = manifest.fetch('suites').to_h do |suite|
-          [suite.fetch('id'), suite.fetch('command')]
+        suites_by_id = manifest.fetch('suites').group_by do |suite|
+          suite.fetch('id')
+        end
+        suites_by_id.select { |_id, suites| suites.length > 1 }.keys.sort.each do |id|
+          errors << "test-suite manifest contains duplicate suite id: #{id}"
         end
         expected_suite_commands = {
           'rake-address-sanitizer' => %w[bundle exec rake address_sanitizer_spec],
@@ -185,7 +188,10 @@ module Dab
           'rake-combined-sanitizer' => %w[bundle exec rake combined_sanitizer_spec],
         }
         expected_suite_commands.each do |id, command|
-          errors << "test-suite manifest command drifted for #{id}" unless suite_commands[id] == command
+          suites = suites_by_id.fetch(id, [])
+          next unless suites.one?
+
+          errors << "test-suite manifest command drifted for #{id}" unless suites.first['command'] == command
         end
 
         workflow_runs = workflow.fetch('jobs').values.flat_map do |job|
@@ -263,7 +269,7 @@ module Dab
         actual = "#{@host_os}-#{@host_cpu}"
         return if actual == contract.platform
 
-        raise ContractFailure, "supported #{contract.platform}; current #{actual}"
+        raise ContractFailure.new("supported #{contract.platform}; current #{actual}")
       end
 
       def run_validation(validation)
