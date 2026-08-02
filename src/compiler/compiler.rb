@@ -5,6 +5,7 @@ end
 
 require_relative '../shared/syntax_profile'
 require_relative 'syntax_options'
+require_relative 'modern_syntax_diagnostics'
 
 begin
   syntax_profile, arguments, syntax_profile_explicit = DabCompilerSyntaxOptions.parse(ARGV)
@@ -22,9 +23,12 @@ begin
     explicit: syntax_profile_explicit,
     inputs: settings[:inputs]
   )
-  source_units.each(&:require_parser_support!)
-rescue DabCompilerSyntaxOptionError, DabUnsupportedSyntaxProfileError => e
+  DabModernSyntaxDiagnostics.validate_source_units!(source_units)
+rescue DabCompilerSyntaxOptionError => e
   warn "compiler: #{e.message}"
+  exit 2
+rescue DabModernSyntaxDiagnosticError => e
+  warn "compiler: #{e.diagnostic}"
   exit 2
 end
 
