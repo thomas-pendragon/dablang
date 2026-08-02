@@ -126,6 +126,9 @@ pages:
   - source: address-sanitizer.md
     output: address-sanitizer.html
     classification: repository_only
+  - source: combined-sanitizer.md
+    output: combined-sanitizer.html
+    classification: repository_only
   - source: complete-validation.md
     output: complete-validation.html
     classification: repository_only

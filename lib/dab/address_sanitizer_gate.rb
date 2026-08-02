@@ -12,6 +12,18 @@ require_relative 'unsafe_ffi_capability_smoke'
 
 module Dab
   module AddressSanitizerGate
+    SUPPORTED_TRUSTED_ARTIFACTS = %w[
+      native-target:cvm
+      native-target:cdisasm
+      native-target:cdumpcov
+      native-target:cffitest
+      source:test/address_sanitizer/heap_buffer_overflow.cpp
+      source:test/native/string_intptr_lifetime.cpp
+      smoke:native-tool-version
+      smoke:unsafe-ffi-default-denial-and-explicit-opt-in
+      smoke:legacy-source-vm
+    ].freeze
+
     CommandResult = Struct.new(:stdout, :stderr, :exit_code, :timed_out) do
       def success?
         exit_code.zero? && !timed_out

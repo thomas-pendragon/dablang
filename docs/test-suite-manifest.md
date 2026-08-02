@@ -17,7 +17,8 @@ also name their real Rake task. The state vocabulary is closed:
 - `active` means that the suite has executable repository wiring. Active does
   not imply complete-gate membership; `compiler_performance_spec` is deliberately
   manual, while `address_sanitizer_spec` and
-  `undefined_behavior_sanitizer_spec` each have one dedicated manual/CI path.
+  `undefined_behavior_sanitizer_spec` each have one dedicated manual/CI path
+  and `combined_sanitizer_spec` provides one checked operator sequence.
 - `pending` means that evidence is collected but deliberately not executed on
   at least one represented path.
 - `disabled` means that repository evidence deliberately excludes the suite or
@@ -50,7 +51,10 @@ records it as disabled and outside the complete gate.
 The active `address_sanitizer_spec` and `undefined_behavior_sanitizer_spec`
 tasks are each represented once and remain outside the complete gate. Their
 repository-root commands are also the commands used by their independent
-blocking Linux x86_64 sanitizer CI jobs.
+blocking Linux x86_64 sanitizer CI jobs. The active `combined_sanitizer_spec`
+task is also outside the complete gate. It invokes those two suites once in
+their machine-checked order, while CI contract-checks the combined topology and
+does not add a redundant third sanitizer job.
 
 Current non-active evidence remains recorded without enabling or deleting it:
 

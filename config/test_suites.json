@@ -128,6 +128,15 @@
       "in_complete_gate": false
     },
     {
+      "id": "rake-combined-sanitizer",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "combined_sanitizer_spec"],
+      "rake_task": "combined_sanitizer_spec",
+      "source_glob": "test/{address_sanitizer,undefined_behavior_sanitizer,native,unsafe_ffi_capability,legacy_source_vm_smoke}/*",
+      "in_complete_gate": false
+    },
+    {
       "id": "rake-build-examples",
       "state": "disabled",
       "kind": "rake",

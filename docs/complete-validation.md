@@ -100,5 +100,8 @@ claim that explicitly enabled FFI is sandboxed or safe.
 The dedicated [AddressSanitizer validation](/address-sanitizer.html) and
 [UndefinedBehaviorSanitizer validation](/undefined-behavior-sanitizer.html)
 remain active manual and CI suites outside this ordinary complete gate. Each
-has one independent Linux x86_64 job and repository-root command. They are not
-combined or multiplied through the Ruby and operating-system matrix.
+has one independent Linux x86_64 job and repository-root command. The
+[combined sanitizer command](/combined-sanitizer.html) runs those two commands
+in checked order for operators; CI retains the independent blocking jobs and
+does not multiply sanitizer execution through the Ruby or operating-system
+matrix.

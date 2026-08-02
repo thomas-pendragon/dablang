@@ -15,8 +15,9 @@ runs it once in the blocking `address-sanitizer` job on GitHub-hosted
 matrix and the normal macOS and Windows jobs. No macOS or Windows sanitizer
 support is claimed for this profile. The independently runnable
 [UndefinedBehaviorSanitizer profile](/undefined-behavior-sanitizer.html) has its
-own build state, runtime contract, and blocking job; the two sanitizers are not
-combined.
+own build state, runtime contract, and blocking job. The
+[combined sanitizer command](/combined-sanitizer.html) orchestrates both
+independent gates without replacing either profile or CI job.
 
 The command validates the test-suite and supported-toolchain manifests, checks
 the profile-specific host and tools, and then generates only

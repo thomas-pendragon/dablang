@@ -35,6 +35,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - address-sanitizer.md
+  - combined-sanitizer.md
   - complete-validation.md
   - design
   - governance

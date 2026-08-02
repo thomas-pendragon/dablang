@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "platform": "linux-x86_64",
+  "execution_policy": "fail-fast",
+  "ci_policy": "independent-blocking-jobs",
+  "validations": [
+    {
+      "id": "address-sanitizer",
+      "label": "AddressSanitizer",
+      "profile": "address_sanitizer",
+      "command": ["bundle", "exec", "rake", "address_sanitizer_spec"],
+      "timeout_seconds": 600,
+      "pass_marker": "AddressSanitizer gate: PASSED",
+      "owned_directories": ["build/address-sanitizer", "bin/address-sanitizer"],
+      "trusted_artifacts": [
+        "native-target:cvm",
+        "native-target:cdisasm",
+        "native-target:cdumpcov",
+        "native-target:cffitest",
+        "source:test/address_sanitizer/heap_buffer_overflow.cpp",
+        "source:test/native/string_intptr_lifetime.cpp",
+        "smoke:native-tool-version",
+        "smoke:unsafe-ffi-default-denial-and-explicit-opt-in",
+        "smoke:legacy-source-vm"
+      ]
+    },
+    {
+      "id": "undefined-behavior-sanitizer",
+      "label": "UndefinedBehaviorSanitizer",
+      "profile": "undefined_behavior_sanitizer",
+      "command": ["bundle", "exec", "rake", "undefined_behavior_sanitizer_spec"],
+      "timeout_seconds": 600,
+      "pass_marker": "UndefinedBehaviorSanitizer gate: PASSED",
+      "owned_directories": [
+        "build/undefined-behavior-sanitizer",
+        "bin/undefined-behavior-sanitizer"
+      ],
+      "trusted_artifacts": [
+        "native-target:cvm",
+        "native-target:cdisasm",
+        "native-target:cdumpcov",
+        "native-target:cffitest",
+        "source:test/undefined_behavior_sanitizer/signed_integer_overflow.cpp",
+        "source:test/native/string_intptr_lifetime.cpp",
+        "normal-control:signed-integer-overflow",
+        "smoke:native-tool-version",
+        "smoke:unsafe-ffi-default-denial-and-explicit-opt-in",
+        "smoke:legacy-source-vm"
+      ]
+    }
+  ]
+}
