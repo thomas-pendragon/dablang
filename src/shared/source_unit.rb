@@ -10,6 +10,9 @@ class DabSourceUnit
     unless input == :stdin || input.is_a?(String)
       raise DabSourceUnitError.new('invalid Dab source unit input; expected :stdin or a filename String')
     end
+    unless filename.nil? || filename.is_a?(String)
+      raise DabSourceUnitError.new('invalid Dab source unit filename; expected a String')
+    end
 
     @input = input.is_a?(String) ? input.dup.freeze : input
     @filename = (filename || default_filename).dup.freeze

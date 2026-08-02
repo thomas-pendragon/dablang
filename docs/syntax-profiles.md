@@ -54,8 +54,8 @@ ruby src/compiler/compiler.rb --syntax=legacy SOURCE
 `--syntax=legacy` may appear before or after source paths, as other existing
 compiler options may. The compiler removes that command-line option before its
 normal argument parser sees inputs, resolves `legacy` with
-`DabSyntaxProfile.fetch`, and passes the resulting canonical profile to the
-every compiler source unit. Omitting the option remains byte-for-byte
+`DabSyntaxProfile.fetch`, and passes the resulting canonical profile to every
+compiler source unit. Omitting the option remains byte-for-byte
 compatible with the legacy fallback.
 
 The separated spelling `--syntax legacy` is not supported. Supplying it, or

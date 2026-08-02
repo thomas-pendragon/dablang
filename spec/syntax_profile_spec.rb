@@ -153,6 +153,19 @@ describe DabSourceUnit do
       'invalid Dab syntax profile; expected a registered DabSyntaxProfile'
     )
   end
+
+  it 'rejects an invalid diagnostic filename with a source-unit error' do
+    expect do
+      described_class.new(
+        input: 'program.dab',
+        filename: :program,
+        syntax_profile: DabSyntaxProfile::LEGACY
+      )
+    end.to raise_error(
+      DabSourceUnitError,
+      'invalid Dab source unit filename; expected a String'
+    )
+  end
 end
 
 describe DabCompilerFrontend do
