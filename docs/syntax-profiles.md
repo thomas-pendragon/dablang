@@ -13,11 +13,12 @@ process-global, class-global, environment, thread-local, or invocation-global
 state.
 
 The registered identities are `DabSyntaxProfile::LEGACY` and
-`DabSyntaxProfile::MODERN`. Modern grammar is not implemented: selecting the
-Modern identity fails before parsing rather than sending Modern source through
-the legacy parser. Compiler frontends report the selected source unit at the
-zero-width entry location (offset `0`, line `1`, column `0`) without reading its
-content. Direct callers can provide a complete source unit:
+`DabSyntaxProfile::MODERN`. Modern grammar is not implemented: Modern content
+fails before parsing rather than being sent through the legacy parser. Compiler
+frontends report the selected source unit at the zero-width entry location
+(offset `0`, line `1`, column `0`). The only accepted Modern boundary is the
+zero-byte Ring-layer case described below; it recognizes no token or statement.
+Direct callers can provide a complete source unit:
 
 ```ruby
 source_unit = DabSourceUnit.new(
@@ -68,8 +69,9 @@ diagnostic `compiler: --syntax requires the --syntax=PROFILE spelling`.
 Repeated syntax options exit with status 2 and `compiler: --syntax may be
 specified at most once`. Empty and unknown values, including `--syntax=` and
 `--syntax=future`, exit with status 2 using the canonical unknown-profile
-diagnostic. `--syntax=modern` resolves the canonical identity, then exits with
-status `2`, empty standard output, and
+diagnostic. `--syntax=modern` resolves the canonical identity. Standard input
+and invocations without a Ring base still exit with status `2`, empty standard
+output, and
 `compiler: SOURCE:1:0: error: unsupported Dab syntax profile "modern": parser is
 not implemented` on standard error. Standard input uses the established
 `<input>` diagnostic filename.
@@ -77,8 +79,9 @@ not implemented` on standard error. Standard input uses the established
 When no syntax option is explicit, exact lowercase `.dab` selects
 `DabSyntaxProfile::LEGACY` and exact lowercase `.dabm` selects
 `DabSyntaxProfile::MODERN`. Modern selection then produces the stable
-unsupported-parser diagnostic above; it does not claim compilation. An
-explicit option takes precedence over filename inference, so
+unsupported-parser diagnostic above unless it meets the exact zero-byte
+Ring-layer contract below. An explicit option takes precedence over filename
+inference, so
 `--syntax=legacy FILE.dabm` intentionally remains a forced legacy parse.
 Standard input, uppercase `.DAB` or `.DABM`, and other unrecognized filename
 extensions retain the existing canonical legacy fallback.
@@ -86,20 +89,54 @@ extensions retain the existing canonical legacy fallback.
 Without an explicit option, each source unit selects its profile independently.
 Mixing `.dab` and `.dabm` therefore no longer fails merely because the profiles
 differ: the `.dab` unit retains Legacy and the `.dabm` unit retains Modern,
-regardless of input order. Before the frontend opens or parses any source (and
-before it loads Ring bases), it validates parser support for the complete source
-unit list. A mixed invocation therefore fails transactionally with status 2 and
-the stable source-attributed unsupported-Modern diagnostic. The first Modern
-unit in input order supplies its filename and exact `DabSourceLocation`. No
-source input is read and no Legacy input is partially parsed or compiled first.
-With `--syntax=legacy` or `--syntax=modern`, the selected canonical identity is
-instead assigned to every source unit before the same validation.
+regardless of input order. The empty Ring-layer allowance requires exactly one
+Modern source unit, so a mixed upper source list still fails transactionally
+with status 2 and the stable source-attributed unsupported-Modern diagnostic.
+No Legacy input is partially parsed or compiled first. With `--syntax=legacy`
+or `--syntax=modern`, the selected canonical identity is instead assigned to
+every source unit before the same validation.
+
+## Empty Modern application over a Legacy Ring
+
+The compiler accepts exactly one file-backed Modern source unit only when its
+retained content is exactly zero bytes and at least one `--ring-base[]=PATH` is
+present. The intended lower input is the existing `tmp/stdlib.dabcb` artifact,
+which `src/frontend/frontend_stdlib.rb` produces by compiling the repository's
+`stdlib/*.dab` sources through the Legacy frontend and assembling the result.
+The standard library therefore remains Legacy source and a separately compiled
+Ring; it is not reparsed or reclassified as Modern.
+
+The frontend checks the zero-byte boundary before loading a Ring, loads each
+lower compiled Ring through the existing `DabBinReader` path, reads the source,
+and checks the retained bytes again before compilation. It does not construct a
+`DabScanner`, `DabProgramStream`, Legacy parser, Modern parser, AST, or IR for the
+empty unit. The canonical `DabSourceUnit` continues to retain
+`DabSyntaxProfile::MODERN` throughout the invocation.
+
+Compilation emits the normal deterministic upper Ring layer. Its DAB header
+offset equals the byte length of the lower Ring, and its symbol/class/method
+environment comes from the parsed lower artifact. The existing compiler may
+regenerate upper metadata such as class records and the offset-derived
+initialization function, but it does not copy the lower code or data sections.
+The upper artifact is not a standalone flattened image: consumers must keep the
+existing lower-then-upper Ring order. The DAB format, snapshot writer, loader,
+VM, and trusted-local artifact boundary are unchanged.
+
+Removing the lower Ring makes the empty Modern unit unsupported again. A
+malformed lower artifact still fails through the existing Ring reader, and a
+different lower artifact changes the upper offset or available environment.
+Any nonzero source byte, including a space, LF, NUL, comment marker, identifier,
+or declaration, retains the exact status-2 source-attributed diagnostic from
+version 0.0.33. Standard input, a missing file, more than one upper source unit,
+and an empty Modern file without a Ring base also retain that rejection. No
+useful Modern program can be written at this stage; `def main` belongs to the
+next roadmap item.
 
 ## Current construction paths
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
-| Production compiler frontend | One `DabSourceUnit`, shared `DabScanner` foundation, and `DabProgramStream` per input | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. All units are validated before any is parsed. |
+| Production compiler frontend | One `DabSourceUnit` per input; shared `DabScanner` and `DabProgramStream` only for Legacy parsing | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. The sole zero-byte Modern Ring layer bypasses scanner/parser construction; every other Modern boundary rejects before parsing. |
 | Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. The typed entry diagnostic retains that exact source identity and a zero-width location. It does not infer or mutate profile state. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |

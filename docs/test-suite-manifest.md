@@ -44,7 +44,10 @@ The default `bundle exec rake` task reaches these active Rake suites:
   reproducibility check.
 
 The complete gate runs that default Rake task and then the active standalone
-RSpec suite exactly once. The active `compiler_performance_spec` task is manual
+RSpec suite exactly once. The RSpec suite includes the mixed-profile Ring
+contract that compiles the Legacy standard library and a zero-byte Modern upper
+layer in independent temporary directories; this adds no new fixture type or
+Rake-suite topology. The active `compiler_performance_spec` task is manual
 and is not in the complete gate. Rake also declares `build_examples_spec`, but
 its default-task dependency is explicitly commented out; the manifest therefore
 records it as disabled and outside the complete gate.
