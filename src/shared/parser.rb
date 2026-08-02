@@ -1,5 +1,6 @@
 require_relative 'syntax_profile'
 require_relative 'source_unit'
+require_relative 'scanner'
 
 class String
   def to_stringy
@@ -22,27 +23,50 @@ class Symbol
 end
 
 class SourceString < String
-  attr_accessor :source_file
-  attr_accessor :source_line
-  attr_accessor :source_cstart
-  attr_accessor :source_cend
+  attr_reader :source_span
 
-  def initialize(source, file, line, cstart, cend)
+  def initialize(source, source_span)
     super(source)
     @source = source
-    @source_file = file
-    @source_line = line
-    @source_cstart = cstart
-    @source_cend = cend
+    @source_span = DabSourceSpan.validate(source_span)
+  end
+
+  def source_file
+    source_span.filename
+  end
+
+  def source_line
+    source_span.start_location.line
+  end
+
+  def source_column
+    source_span.start_location.column
+  end
+
+  def source_cstart
+    source_span.start_offset
+  end
+
+  def source_cend
+    source_span.end_offset
   end
 
   def +(other)
-    params = [@source_file, @source_line, @source_cstart, @source_cend]
+    span = source_span
     if other.is_a? SourceString
-      params[2] = [params[2], other.source_cstart].min
-      params[3] = [params[3], other.source_cend].max
+      start_location = if source_cstart <= other.source_cstart
+                         source_span.start_location
+                       else
+                         other.source_span.start_location
+                       end
+      end_location = if source_cend >= other.source_cend
+                       source_span.end_location
+                     else
+                       other.source_span.end_location
+                     end
+      span = DabSourceSpan.new(start_location: start_location, end_location: end_location)
     end
-    SourceString.new(super, *params)
+    SourceString.new(super, span)
   end
 
   def source_inspect
@@ -54,40 +78,20 @@ class SourceString < String
   end
 end
 
-class DabEndOfStreamError < RuntimeError
-end
-
-class DabParser
-  attr_reader :position
-  attr_reader :nl_is_whitespace
-  attr_reader :content
-  attr_reader :filename
-
-  def initialize(content, nl_is_whitespace = true, filename = '<input>')
-    @nl_is_whitespace = nl_is_whitespace
-    @content = content.freeze
-    @position = 0
-    @length = @content.length
-    @filename = filename
-
-    line = 1
-    @lines = (0...content.length).map do |n|
-      c = content[n]
-      if c == "\n"
-        line += 1
-      end
-      [n, line]
-    end.to_h
+class DabParser < DabScanner
+  def initialize(content, nl_is_whitespace = true, filename = '<input>', source_unit: nil)
+    source_unit ||= DabSourceUnit.new(
+      input: filename == '<input>' ? :stdin : filename,
+      filename: filename,
+      syntax_profile: DabSyntaxProfile::LEGACY
+    )
+    super(content, nl_is_whitespace, source_unit: source_unit)
   end
 
   def character_in_line_with_char(char, type)
     line = @lines[char]
-    @lines.map do |k, v|
-      [k, v]
-    end.select do |(_k, v)|
-      v == line
-    end.map do |(k, _v)|
-      k
+    @lines.each_index.select do |index|
+      @lines[index] == line
     end.send(type)
   end
 
@@ -114,28 +118,6 @@ class DabParser
     "#{list}\n"
   end
 
-  def eof?
-    @position == @length
-  end
-
-  def merge!(substream)
-    @position = substream.position
-  end
-
-  def debug(info = '')
-    STDERR.printf("[%-32s] pos %5d next: [%s]\n", info, @position, safe_lookup(32)) if $debug
-  end
-
-  def safe_lookup(n)
-    ret = lookup(n).gsub(/[\n\r\t]/, '.')
-    ret += '.' while ret.length < n
-    ret
-  end
-
-  def lookup(n = 1)
-    @content[@position...(@position + n)]
-  end
-
   def read_keyword(keyword)
     skip_whitespace
     start_pos = @position
@@ -150,7 +132,7 @@ class DabParser
   end
 
   def _return_source(string, start_pos)
-    SourceString.new(string, filename, @lines[start_pos], start_pos, @position)
+    SourceString.new(string, source_span(start_pos, @position))
   end
 
   def read_identifier(options = nil)
@@ -478,22 +460,12 @@ class DabParser
   def current_char_identifier_extended?
     current_char == '%'
   end
-
-  def current_char(offset = 0)
-    @content[@position + offset]
-  end
-
-  def advance!(length = 1)
-    raise DabEndOfStreamError.new if eof? || (@position + length) > @length
-
-    @position += length
-  end
 end
 
 class DabProgramStream < DabParser
   SYNTAX_PROFILE_UNSPECIFIED = Object.new.freeze
 
-  attr_reader :source_unit, :syntax_profile
+  attr_reader :syntax_profile
 
   def initialize(content, nl_is_whitespace = true, filename = '<input>',
                  source_unit: nil, syntax_profile: SYNTAX_PROFILE_UNSPECIFIED)
@@ -510,6 +482,6 @@ class DabProgramStream < DabParser
     end
     @syntax_profile = @source_unit.syntax_profile
     @source_unit.require_parser_support!
-    super(content, nl_is_whitespace, @source_unit.filename)
+    super(content, nl_is_whitespace, @source_unit.filename, source_unit: @source_unit)
   end
 end

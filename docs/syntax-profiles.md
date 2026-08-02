@@ -92,12 +92,58 @@ validation.
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
-| Production compiler frontend | One `DabSourceUnit` and `DabProgramStream` per input | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. All units are validated before any is parsed. |
+| Production compiler frontend | One `DabSourceUnit`, shared `DabScanner` foundation, and `DabProgramStream` per input | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. All units are validated before any is parsed. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
 | Parser specifications and direct Ruby callers | `DabProgramStream` | Callers can pass `source_unit:` to preserve a complete input identity or `syntax_profile:` to derive one. Omitting both remains a narrow single-source Legacy compatibility path. Passing both is rejected rather than guessing precedence. |
 
+## Shared scanner and source locations
+
+`DabScanner` is the syntax-neutral cursor and location boundary below the
+existing `DabParser`. The production Legacy `DabProgramStream` uses that
+scanner through inheritance; the scanner is not an unused Modern-only API.
+Every scanner receives one frozen `DabSourceUnit`, and every location and span
+retains that exact source-unit object and therefore its filename and canonical
+syntax profile. A scanner may carry a Modern source unit so a future parser can
+reuse this boundary, but `DabProgramStream` still rejects Modern before any
+Legacy token rule runs.
+
+`DabSourceLocation` is a frozen value containing the source unit, offset, line,
+and column. `DabSourceSpan` is a frozen half-open range between two locations
+from the same source-unit identity. Existing Legacy token readers still return
+`SourceString` values, now with one canonical `source_span`; the established
+`source_file`, `source_line`, `source_cstart`, and `source_cend` accessors
+delegate to that span. Compiler nodes, coverage metadata, module dumps, and
+diagnostics therefore continue to consume the same token values and observable
+coordinates.
+
+The extracted scanner preserves the current Legacy accounting rather than
+normalizing source:
+
+- source content and its Ruby `String` encoding are retained unchanged;
+  production file inputs come from `File.binread`, while standard input and
+  direct callers retain the encoding supplied by their `String`;
+- offsets index the retained Ruby `String`, so binary file input is byte-indexed
+  while a non-binary direct string follows Ruby's character indexing; no
+  universal byte-offset or Unicode display-column claim is made;
+- ordinary scanner lines are one-based and columns are zero-based; LF advances
+  the line, CR does not, CRLF advances once, and tabs and CR each consume one
+  column without tab-stop expansion;
+- for compatibility, the LF character itself belongs to the following line at
+  column zero, as does the first character after it; token starts occur after
+  whitespace, so Legacy token attribution remains unchanged;
+- the cursor exposes the location at EOF, lookahead uses cloned scanner state,
+  failed speculative parses retain the parent position, and an accepted parse
+  commits only the child position through `merge!`;
+- unterminated block, `#`, and `//` comments retain their existing
+  `DabEndOfStreamError` boundary, and the compiler's established unknown-token
+  and unexpected-EOF fallback diagnostics remain attributed to line and offset
+  zero.
+
+These rules characterize compatibility, not a redesigned text model. This
+foundation adds no tab expansion, Unicode-width policy, newline normalization,
+Modern token definitions, grammar, source fixtures, AST/IR behavior, bytecode,
+or runtime behavior.
+
 The Modern identity, `.dabm` selection, and per-source-unit retention are
-present, but Modern parsing is not. This change adds no second parser, grammar,
-scanner/token rules, Modern fixtures, AST or IR behavior, bytecode, or runtime
-changes. Those remain separate roadmap work.
+present, but Modern parsing is not. Those remain separate roadmap work.
