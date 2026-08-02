@@ -295,6 +295,20 @@ describe Dab::CombinedSanitizerGate::Contract do
     end
   end
 
+  it 'rejects a missing required manifest suite ID' do
+    with_contract_repository do |temporary_root|
+      path = File.join(temporary_root, 'config/test_suites.json')
+      manifest = JSON.parse(File.binread(path))
+      manifest.fetch('suites').reject! { |suite| suite['id'] == 'rake-combined-sanitizer' }
+      File.binwrite(path, JSON.pretty_generate(manifest))
+
+      expect { validate(contract_data, validation_root: temporary_root) }.to raise_error(
+        Dab::CombinedSanitizerGate::ContractFailure,
+        /test-suite manifest is missing required suite id: rake-combined-sanitizer/
+      )
+    end
+  end
+
   it 'rejects relevant and unrelated duplicate manifest suite IDs deterministically' do
     with_contract_repository do |temporary_root|
       path = File.join(temporary_root, 'config/test_suites.json')

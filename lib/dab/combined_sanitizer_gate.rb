@@ -189,6 +189,10 @@ module Dab
         }
         expected_suite_commands.each do |id, command|
           suites = suites_by_id.fetch(id, [])
+          if suites.empty?
+            errors << "test-suite manifest is missing required suite id: #{id}"
+            next
+          end
           next unless suites.one?
 
           errors << "test-suite manifest command drifted for #{id}" unless suites.first['command'] == command
