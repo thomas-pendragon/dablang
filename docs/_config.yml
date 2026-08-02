@@ -41,6 +41,7 @@ exclude:
   - governance
   - legacy-source-vm-smoke.md
   - public-site.md
+  - syntax-profiles.md
   - test-suite-manifest.md
   - toolchain-preflight.md
   - undefined-behavior-sanitizer.md

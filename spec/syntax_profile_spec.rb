@@ -1,0 +1,138 @@
+require 'spec_helper'
+require 'stringio'
+
+require_relative '../src/compiler/_requires'
+
+def dab_benchmark_print!; end
+
+class DabSyntaxProfileCompilerExit < RuntimeError
+  attr_reader :code
+
+  def initialize(code)
+    @code = code
+    super()
+  end
+end
+
+class DabSyntaxProfileCompilerContext
+  attr_reader :stdin, :stdout, :stderr
+
+  def initialize(source)
+    @stdin = StringIO.new(source)
+    @stdout = StringIO.new
+    @stderr = StringIO.new
+  end
+
+  def exit(code)
+    raise DabSyntaxProfileCompilerExit.new(code)
+  end
+end
+
+describe DabSyntaxProfile do
+  it 'provides one stable canonical legacy identity' do
+    expect(described_class.fetch('legacy')).to equal(described_class::LEGACY)
+    expect(described_class.available).to eq [described_class::LEGACY]
+    expect(described_class.available).to be_frozen
+  end
+
+  it 'has stable value equality and hashing' do
+    legacy = described_class.fetch('legacy')
+
+    expect(legacy).to eq described_class::LEGACY
+    expect(legacy.eql?(described_class::LEGACY)).to be true
+    expect(legacy.hash).to eq described_class::LEGACY.hash
+    expect(legacy.to_s).to eq 'legacy'
+  end
+
+  it 'rejects unknown profile names deterministically' do
+    expect { described_class.fetch('modern') }
+      .to raise_error(DabSyntaxProfileError, 'unknown Dab syntax profile "modern"; available profiles: legacy')
+  end
+
+  it 'rejects invalid profile names deterministically' do
+    expect { described_class.fetch(:legacy) }
+      .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile name; expected a String')
+  end
+
+  it 'rejects values that are not registered profile objects' do
+    [nil, 'legacy', :legacy, true].each do |invalid|
+      expect { described_class.validate(invalid) }
+        .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile; expected a registered DabSyntaxProfile')
+    end
+  end
+end
+
+describe DabProgramStream do
+  it 'defaults to the legacy profile without changing legacy parsing' do
+    stream = described_class.new('identifier')
+
+    expect(stream.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(stream.read_identifier).to eq 'identifier'
+  end
+
+  it 'retains an explicit legacy profile' do
+    stream = described_class.new('identifier', true, 'sample.dab', syntax_profile: DabSyntaxProfile::LEGACY)
+
+    expect(stream.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(stream.filename).to eq 'sample.dab'
+    expect(stream.read_identifier).to eq 'identifier'
+  end
+
+  it 'rejects an invalid profile before parsing' do
+    expect { described_class.new('identifier', syntax_profile: 'legacy') }
+      .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile; expected a registered DabSyntaxProfile')
+  end
+
+  it 'does not leak profile state across parser instances' do
+    first = described_class.new('first', syntax_profile: DabSyntaxProfile::LEGACY)
+    expect { described_class.new('invalid', syntax_profile: :modern) }.to raise_error(DabSyntaxProfileError)
+    second = described_class.new('second')
+
+    expect(first.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(second.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+  end
+end
+
+describe DabCompilerFrontend do
+  def compile_result(source, syntax_profile: nil)
+    context = DabSyntaxProfileCompilerContext.new(source)
+    settings = {inputs: [:stdin]}
+    status = 0
+    begin
+      if syntax_profile
+        run_dab_compiler(settings, context, syntax_profile: syntax_profile)
+      else
+        run_dab_compiler(settings, context)
+      end
+    rescue DabSyntaxProfileCompilerExit => e
+      status = e.code
+    end
+    [status, context.stdout.string, context.stderr.string]
+  end
+
+  it 'retains the default and explicit invocation profiles' do
+    expect(described_class.new.syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(described_class.new(syntax_profile: DabSyntaxProfile::LEGACY).syntax_profile)
+      .to equal(DabSyntaxProfile::LEGACY)
+  end
+
+  it 'produces byte-identical compiler output for default and explicit legacy invocations' do
+    source = "func main()\n{\n\tprint(42);\n}\n"
+
+    expect(compile_result(source, syntax_profile: DabSyntaxProfile::LEGACY)).to eq compile_result(source)
+  end
+
+  it 'produces byte-identical diagnostics for default and explicit legacy invocations' do
+    source = "func main()\n{\n\tmissing_identifier;\n}\n"
+
+    explicit = compile_result(source, syntax_profile: DabSyntaxProfile::LEGACY)
+    expect(explicit).to eq compile_result(source)
+    expect(explicit.first).to eq 1
+    expect(explicit.last).not_to be_empty
+  end
+
+  it 'fails closed before compiler invocation for an invalid profile' do
+    expect { described_class.new(syntax_profile: 'legacy') }
+      .to raise_error(DabSyntaxProfileError, 'invalid Dab syntax profile; expected a registered DabSyntaxProfile')
+  end
+end
