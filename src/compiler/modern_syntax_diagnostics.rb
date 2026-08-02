@@ -19,13 +19,13 @@ module_function
 
   def validate_source_units!(source_units, ring_bases: [])
     source_units.each do |source_unit|
+      if empty_modern_application?(source_unit, source_units: source_units, ring_bases: ring_bases)
+        next
+      end
+
       begin
         source_unit.require_parser_support!
       rescue DabUnsupportedSyntaxProfileError => e
-        if empty_modern_application?(source_unit, source_units: source_units, ring_bases: ring_bases)
-          next
-        end
-
         raise_diagnostic(source_unit, e)
       end
     end

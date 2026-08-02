@@ -281,7 +281,14 @@ describe DabCompilerFrontend do
     Dir.mktmpdir('dab-empty-modern-source-unit') do |directory|
       source_path = File.join(directory, 'application.dabm')
       File.binwrite(source_path, ''.b)
-      source_unit = DabSourceUnit.new(
+      parser_support_calls = 0
+      instrumented_source_unit = Class.new(DabSourceUnit) do
+        define_method(:require_parser_support!) do
+          parser_support_calls += 1
+          super()
+        end
+      end
+      source_unit = instrumented_source_unit.new(
         input: source_path,
         syntax_profile: DabSyntaxProfile::MODERN
       )
@@ -303,6 +310,7 @@ describe DabCompilerFrontend do
       expect(result.last).to eq ''
       expect(result[1]).to include('W_OFFSET 123')
       expect(source_unit.syntax_profile).to equal(DabSyntaxProfile::MODERN)
+      expect(parser_support_calls).to eq 0
     end
   end
 end
