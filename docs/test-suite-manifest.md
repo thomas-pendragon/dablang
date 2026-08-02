@@ -36,6 +36,7 @@ The default `bundle exec rake` task reaches these active Rake suites:
 
 - `minitest_spec`;
 - `dab_fixture_spec` (the public alias for the generated `dab` task);
+- `modern_source_spec`, the strict versioned Modern compiler-fixture format;
 - `format_spec`, `vm_spec`, `disasm_spec`, and `asm_spec`;
 - `dumpcov_spec`, `cov_spec`, and `debug_spec`;
 - `multidab_spec` and `decompile_spec`; and

@@ -20,6 +20,15 @@
       "in_complete_gate": true
     },
     {
+      "id": "rake-modern-source-fixtures",
+      "state": "active",
+      "kind": "rake",
+      "command": ["bundle", "exec", "rake", "modern_source_spec"],
+      "rake_task": "modern_source_spec",
+      "source_glob": "test/modern_source/*.dabmtest",
+      "in_complete_gate": true
+    },
+    {
       "id": "rake-format",
       "state": "active",
       "kind": "rake",

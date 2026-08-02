@@ -19,6 +19,7 @@ require_relative 'src/frontend/frontend_format'
 require_relative 'src/frontend/frontend_vm'
 require_relative 'src/frontend/frontend_debug'
 require_relative 'src/frontend/frontend_minitest'
+require_relative 'src/frontend/frontend_modern_source'
 
 $sources = Dir.glob('src/**/*.rb')
 
@@ -234,6 +235,7 @@ end
 
 setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)
 setup_tests('dab', 'dabt', 'frontend', [cvm, cffitest], 'dab', DabSpec, stdlib: compiled_stdlib)
+setup_tests('modern_source', 'dabmtest', nil, [], nil, ModernSourceSpec)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])
@@ -362,7 +364,7 @@ end
 
 task default: [opcode_docs_file, classes_docs_file, cvm, cdisasm, :string_intptr_lifetime_spec,
                :legacy_source_vm_smoke, :unsafe_ffi_capability_spec, :minitest_spec,
-               :dab_fixture_spec, :format_spec, :vm_spec,
+               :dab_fixture_spec, :modern_source_spec, :format_spec, :vm_spec,
                :disasm_spec, :asm_spec, :dumpcov_spec, :cov_spec, :debug_spec, :multidab_spec, :decompile_spec] do
 end
 

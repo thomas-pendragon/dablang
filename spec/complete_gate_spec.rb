@@ -390,6 +390,7 @@ describe 'complete validation gate contract' do
     expect(rakefile).to include('task dab_fixture_spec: :dab')
     expect(rakefile).to match(/task\s+:spec\s+do\s+psystem\(['\"]bundle exec rspec['\"]\)\s+end/)
     expect(rakefile.scan(':legacy_source_vm_smoke').count).to eq(1)
-    expect(rakefile).to include(':dab_fixture_spec, :format_spec')
+    expect(rakefile.scan(':modern_source_spec').count).to eq(1)
+    expect(rakefile).to include(':dab_fixture_spec, :modern_source_spec, :format_spec')
   end
 end

@@ -93,6 +93,7 @@ validation.
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
 | Production compiler frontend | One `DabSourceUnit`, shared `DabScanner` foundation, and `DabProgramStream` per input | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. All units are validated before any is parsed. |
+| Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. It does not infer or mutate profile state. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
 | Parser specifications and direct Ruby callers | `DabProgramStream` | Callers can pass `source_unit:` to preserve a complete input identity or `syntax_profile:` to derive one. Omitting both remains a narrow single-source Legacy compatibility path. Passing both is rejected rather than guessing precedence. |
@@ -142,8 +143,11 @@ normalizing source:
 
 These rules characterize compatibility, not a redesigned text model. This
 foundation adds no tab expansion, Unicode-width policy, newline normalization,
-Modern token definitions, grammar, source fixtures, AST/IR behavior, bytecode,
+Modern token definitions, grammar, AST/IR behavior, bytecode,
 or runtime behavior.
 
-The Modern identity, `.dabm` selection, and per-source-unit retention are
-present, but Modern parsing is not. Those remain separate roadmap work.
+The dedicated Modern-source fixture format is active under
+`test/modern_source/*.dabmtest`; its schema and exact comparison contract are
+documented in that directory. The initial control fixture proves only the
+existing unsupported-parser boundary. Modern parsing and exact Modern syntax
+diagnostic fixtures remain separate roadmap work.

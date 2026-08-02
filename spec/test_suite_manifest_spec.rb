@@ -63,6 +63,24 @@ describe Dab::TestSuiteManifest::Validator do
     )
   end
 
+  it 'represents the Modern-source fixture suite exactly once in the complete gate' do
+    document = manifest
+    topology = Dab::TestSuiteManifest::Topology.new(root: root)
+    entries = document.fetch('suites').select do |entry|
+      entry['rake_task'] == 'modern_source_spec'
+    end
+
+    expect(entries.length).to eq(1)
+    expect(entries.first.fetch('state')).to eq('active')
+    expect(entries.first.fetch('source_glob')).to eq('test/modern_source/*.dabmtest')
+    expect(entries.first.fetch('in_complete_gate')).to be(true)
+    expect(topology.task_prerequisites('default').count('modern_source_spec')).to eq(1)
+    expect(topology.gate_task?('modern_source_spec')).to be(true)
+    expect(topology.task_inputs('modern_source_spec')).to include(
+      'test/modern_source/0001_unsupported_modern.dabmtest'
+    )
+  end
+
   it 'represents the dedicated AddressSanitizer suite exactly once outside the complete gate' do
     document = manifest
     topology = Dab::TestSuiteManifest::Topology.new(root: root)
