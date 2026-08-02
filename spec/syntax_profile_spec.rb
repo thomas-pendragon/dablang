@@ -168,6 +168,27 @@ describe DabSourceUnit do
   end
 end
 
+describe DabModernSyntaxDiagnostics do
+  it 'raises one typed zero-width entry diagnostic retaining the exact source identity' do
+    source_unit = DabSourceUnit.new(
+      input: 'physical-source.dabm',
+      filename: 'diagnostic-source.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    expect do
+      described_class.validate_source_units!([source_unit])
+    end.to raise_error(DabModernSyntaxDiagnosticError) do |error|
+      expect(error.source_location.source_unit).to equal(source_unit)
+      expect(error.source_location.to_h).to eq(offset: 0, line: 1, column: 0)
+      expect(error.diagnostic).to eq(
+        'diagnostic-source.dabm:1:0: error: ' \
+        'unsupported Dab syntax profile "modern": parser is not implemented'
+      )
+    end
+  end
+end
+
 describe DabCompilerFrontend do
   def compile_result(source, syntax_profile: nil, source_units: nil, settings: {inputs: [:stdin]})
     context = DabSyntaxProfileCompilerContext.new(source)
@@ -219,7 +240,8 @@ describe DabCompilerFrontend do
     expect(compile_result('this is not legacy syntax', syntax_profile: DabSyntaxProfile::MODERN)).to eq [
       2,
       '',
-      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+      'compiler: <input>:1:0: error: ' \
+      "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
     ]
   end
 
@@ -230,6 +252,7 @@ describe DabCompilerFrontend do
     ]
     expect(DabBinReader).not_to receive(:new)
     expect(DabProgramStream).not_to receive(:new)
+    expect(File).not_to receive(:binread)
 
     result = compile_result(
       'this input must not be consumed',
@@ -240,7 +263,8 @@ describe DabCompilerFrontend do
     expect(result).to eq [
       2,
       '',
-      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+      'compiler: program.dabm:1:0: error: ' \
+      "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
     ]
   end
 end

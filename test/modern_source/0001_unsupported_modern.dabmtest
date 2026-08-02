@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": 2,
   "stdout": "",
-  "stderr": "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+  "stderr": "compiler: 0001_unsupported_modern.dabm:1:0: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
 }
 --- SOURCE ---
 this is intentionally unsupported Modern source

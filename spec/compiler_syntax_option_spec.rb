@@ -112,7 +112,27 @@ describe 'Dab compiler --syntax option' do
 
       expect([stdout, stderr, status.exitstatus]).to eq [
         '',
-        "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+        "compiler: #{source.tr('\\', '/')}:1:0: error: " \
+        "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+        2,
+      ]
+    end
+  end
+
+  it 'attributes inferred and explicit Modern diagnostics without reading missing inputs' do
+    cases = [
+      ['missing-inferred.dabm'],
+      ['--syntax=modern', 'missing-explicit.dab'],
+    ]
+
+    cases.each do |arguments|
+      filename = arguments.last
+      stdout, stderr, status = invoke(*arguments)
+
+      expect([stdout, stderr, status.exitstatus]).to eq [
+        '',
+        "compiler: #{filename}:1:0: error: " \
+        "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
         2,
       ]
     end
@@ -145,7 +165,8 @@ describe 'Dab compiler --syntax option' do
         stdout, stderr, status = invoke(*inputs)
         expect([stdout, stderr, status.exitstatus]).to eq [
           '',
-          "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+          "compiler: #{inferred_modern_source.tr('\\', '/')}:1:0: error: " \
+          "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
           2,
         ]
       end
@@ -212,7 +233,8 @@ describe 'Dab compiler --syntax option' do
 
     expect([stdout, stderr, status.exitstatus]).to eq [
       '',
-      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+      'compiler: <input>:1:0: error: ' \
+      "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
       2,
     ]
   end

@@ -15,7 +15,9 @@ state.
 The registered identities are `DabSyntaxProfile::LEGACY` and
 `DabSyntaxProfile::MODERN`. Modern grammar is not implemented: selecting the
 Modern identity fails before parsing rather than sending Modern source through
-the legacy parser. Direct callers can provide a complete source unit:
+the legacy parser. Compiler frontends report the selected source unit at the
+zero-width entry location (offset `0`, line `1`, column `0`) without reading its
+content. Direct callers can provide a complete source unit:
 
 ```ruby
 source_unit = DabSourceUnit.new(
@@ -40,7 +42,9 @@ return their canonical frozen identities. Unknown names raise
 `DabSyntaxProfileError`, and parser or frontend construction rejects strings,
 symbols, booleans, `nil`, and other unregistered values rather than guessing or
 falling back. A `DabProgramStream` given the canonical Modern identity raises
-`DabUnsupportedSyntaxProfileError` before consuming source.
+`DabUnsupportedSyntaxProfileError` before consuming source. This lower-level
+boundary retains the generic exception without adding a compiler-formatted
+filename or location.
 
 ## Compiler command line
 
@@ -65,8 +69,10 @@ Repeated syntax options exit with status 2 and `compiler: --syntax may be
 specified at most once`. Empty and unknown values, including `--syntax=` and
 `--syntax=future`, exit with status 2 using the canonical unknown-profile
 diagnostic. `--syntax=modern` resolves the canonical identity, then exits with
-status 2 and `compiler: unsupported Dab syntax profile "modern": parser is not
-implemented`.
+status `2`, empty standard output, and
+`compiler: SOURCE:1:0: error: unsupported Dab syntax profile "modern": parser is
+not implemented` on standard error. Standard input uses the established
+`<input>` diagnostic filename.
 
 When no syntax option is explicit, exact lowercase `.dab` selects
 `DabSyntaxProfile::LEGACY` and exact lowercase `.dabm` selects
@@ -83,17 +89,18 @@ differ: the `.dab` unit retains Legacy and the `.dabm` unit retains Modern,
 regardless of input order. Before the frontend opens or parses any source (and
 before it loads Ring bases), it validates parser support for the complete source
 unit list. A mixed invocation therefore fails transactionally with status 2 and
-the stable unsupported-Modern diagnostic. No Legacy input is partially parsed
-or compiled first. With `--syntax=legacy` or `--syntax=modern`, the selected
-canonical identity is instead assigned to every source unit before the same
-validation.
+the stable source-attributed unsupported-Modern diagnostic. The first Modern
+unit in input order supplies its filename and exact `DabSourceLocation`. No
+source input is read and no Legacy input is partially parsed or compiled first.
+With `--syntax=legacy` or `--syntax=modern`, the selected canonical identity is
+instead assigned to every source unit before the same validation.
 
 ## Current construction paths
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
 | Production compiler frontend | One `DabSourceUnit`, shared `DabScanner` foundation, and `DabProgramStream` per input | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. All units are validated before any is parsed. |
-| Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. It does not infer or mutate profile state. |
+| Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. The typed entry diagnostic retains that exact source identity and a zero-width location. It does not infer or mutate profile state. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
 | Parser specifications and direct Ruby callers | `DabProgramStream` | Callers can pass `source_unit:` to preserve a complete input identity or `syntax_profile:` to derive one. Omitting both remains a narrow single-source Legacy compatibility path. Passing both is rejected rather than guessing precedence. |
@@ -148,6 +155,7 @@ or runtime behavior.
 
 The dedicated Modern-source fixture format is active under
 `test/modern_source/*.dabmtest`; its schema and exact comparison contract are
-documented in that directory. The initial control fixture proves only the
-existing unsupported-parser boundary. Modern parsing and exact Modern syntax
-diagnostic fixtures remain separate roadmap work.
+documented in that directory. Its non-duplicative diagnostic corpus locks the
+unsupported parser-entry status, streams, portable filename, and zero-width
+location. Modern tokenization, grammar, AST/IR, code generation, and runtime
+behavior remain unimplemented.

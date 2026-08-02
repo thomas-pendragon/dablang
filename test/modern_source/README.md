@@ -38,9 +38,53 @@ mismatched status or stream. The shared Dab reporter keeps successful fixtures
 concise, shows action details under `DAB_TEST_VERBOSE=1`, and replays attributed
 per-fixture details on failure.
 
-The initial fixture proves only the existing deterministic unsupported-Modern
-boundary. Modern tokens, grammar, diagnostic design, AST/IR, code generation,
-and runtime behavior remain unimplemented and outside this format contract.
+The diagnostic corpus contains one compiler fixture because every Modern source
+currently reaches the same syntax-neutral parser-entry rejection. Adding source
+content variants would duplicate that observable contract. The fixture proves
+status `2`, empty standard output, and exact standard error including its stable
+fixture-derived filename and zero-width entry location at offset `0`, line `1`,
+column `0`. Modern tokens, grammar, AST/IR, code generation, and runtime behavior
+remain unimplemented and outside this format contract.
+
+## Diagnostic boundary
+
+Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
+`--syntax=modern`, the
+per-source-unit compiler API, and mixed Legacy/Modern compiler invocations all
+returned status `2`, empty standard output, and exactly
+`compiler: unsupported Dab syntax profile "modern": parser is not implemented`
+plus a newline. The frontend retained the selected `DabSourceUnit`, but the
+diagnostic exposed no filename or location. Validation happened before reading
+any input, loading a Ring, constructing a scanner or parser, or compiling an
+earlier Legacy unit. Input order therefore had no visible effect on the generic
+message.
+
+The source-attributed contract keeps the same status, streams, message text, and
+no-input-read transaction boundary, but adds the first unsupported source unit's
+portable filename and the syntax-neutral entry location:
+
+```text
+compiler: SOURCE.dabm:1:0: error: unsupported Dab syntax profile "modern": parser is not implemented
+```
+
+`DabModernSyntaxDiagnosticError` carries a `DabSourceLocation` whose source unit
+is the exact frozen object selected by filename inference, an explicit CLI
+profile, or the compiler API. Its location is a zero-width frontend entry point;
+it is not evidence that a token was scanned. In a mixed invocation, the first
+Modern unit in input order supplies the diagnostic identity while every input,
+Ring, scanner, Legacy parser, and compiler remains untouched.
+
+Direct `DabProgramStream` construction remains a lower-level parser-support
+validation boundary. It raises `DabUnsupportedSyntaxProfileError` with the
+unchanged generic message and no process status or stream. Direct `DabScanner`
+construction remains syntax-neutral: it can carry the same Modern source-unit
+identity and produce locations, but emits no diagnostic and accepts no grammar.
+
+Fixture schema failures remain separate and happen before
+`DabModernSourceCompiler` is constructed. A valid schema always reaches the
+compiler and a result mismatch raises `DabModernSourceExpectationError` only
+after exact status, stdout, and stderr capture. The reporter's concise success,
+verbose action detail, and attributed failure replay behavior is unchanged.
 
 ## Owned harness boundary
 

@@ -27,7 +27,8 @@ describe DabModernSourceFixture do
       'schema_version' => 1,
       'status' => 2,
       'stdout' => '',
-      'stderr' => "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n",
+      'stderr' => 'compiler: fixture.dabm:1:0: error: ' \
+                  "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
     }
   end
 
@@ -39,7 +40,8 @@ describe DabModernSourceFixture do
     expect(fixture.expected_status).to eq(2)
     expect(fixture.expected_stdout).to eq('')
     expect(fixture.expected_stderr).to eq(
-      "compiler: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+      'compiler: 0001_unsupported_modern.dabm:1:0: error: ' \
+      "unsupported Dab syntax profile \"modern\": parser is not implemented\n"
     )
   end
 

@@ -25,7 +25,7 @@ class DabCompilerFrontend
 
   def run(settings, context)
     @source_units ||= source_units_for(settings)
-    @source_units.each(&:require_parser_support!)
+    DabModernSyntaxDiagnostics.validate_source_units!(@source_units)
     @settings = settings
 
     ring_base = settings[:ring_base]
@@ -285,6 +285,9 @@ end
 
 def run_dab_compiler(settings, context, syntax_profile: DabSyntaxProfile::LEGACY, source_units: nil)
   DabCompilerFrontend.new(syntax_profile: syntax_profile, source_units: source_units).run(settings, context)
+rescue DabModernSyntaxDiagnosticError => e
+  context.stderr.puts "compiler: #{e.diagnostic}"
+  context.exit(2)
 rescue DabUnsupportedSyntaxProfileError => e
   context.stderr.puts "compiler: #{e.message}"
   context.exit(2)
