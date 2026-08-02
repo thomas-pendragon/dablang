@@ -14,19 +14,79 @@ describe 'Dab compiler --syntax option' do
     Open3.capture3(RbConfig.ruby, compiler, *arguments, chdir: project_root)
   end
 
-  def with_source(source)
+  def with_sources(*sources)
     Dir.mktmpdir('dab-compiler-syntax-option') do |directory|
-      path = File.join(directory, 'program.dab')
-      File.binwrite(path, source)
-      yield path
+      paths = sources.each_with_index.map do |source, index|
+        path = File.join(directory, "program#{index + 1}.dab")
+        File.binwrite(path, source)
+        path
+      end
+      yield(*paths)
     end
   end
 
+  def with_source(source, &block)
+    with_sources(source, &block)
+  end
+
   it 'resolves explicit legacy to the canonical profile and removes only its option' do
-    syntax_profile, arguments = DabCompilerSyntaxOptions.parse(['source.dab', '--syntax=legacy', '--no-opt'])
+    syntax_profile, arguments, explicit = DabCompilerSyntaxOptions.parse(
+      ['source.dab', '--syntax=legacy', '--no-opt']
+    )
 
     expect(syntax_profile).to equal(DabSyntaxProfile::LEGACY)
     expect(arguments).to eq ['source.dab', '--no-opt']
+    expect(explicit).to be true
+  end
+
+  it 'preserves the absent-option profile while marking it for filename resolution' do
+    syntax_profile, arguments, explicit = DabCompilerSyntaxOptions.parse(['source.dab', '--no-opt'])
+
+    expect(syntax_profile).to equal(DabSyntaxProfile::LEGACY)
+    expect(arguments).to eq ['source.dab', '--no-opt']
+    expect(explicit).to be false
+  end
+
+  it 'maps only the exact .dab extension to the canonical legacy profile' do
+    expect(DabCompilerSyntaxOptions.profile_for_filename('source.dab'))
+      .to equal(DabSyntaxProfile::LEGACY)
+    expect(DabCompilerSyntaxOptions.profile_for_filename('source.dabm')).to be_nil
+    expect(DabCompilerSyntaxOptions.profile_for_filename('source.DAB')).to be_nil
+    expect(DabCompilerSyntaxOptions.profile_for_filename(:stdin)).to be_nil
+  end
+
+  it 'infers one invocation-level legacy profile across multiple .dab inputs' do
+    expect(
+      DabCompilerSyntaxOptions.resolve(
+        syntax_profile: DabSyntaxProfile::LEGACY,
+        explicit: false,
+        inputs: ['library.dab', 'program.dab']
+      )
+    ).to equal(DabSyntaxProfile::LEGACY)
+  end
+
+  it 'gives an explicit profile precedence without consulting filenames' do
+    expect(DabCompilerSyntaxOptions).not_to receive(:infer_from_filenames)
+
+    resolved = DabCompilerSyntaxOptions.resolve(
+      syntax_profile: DabSyntaxProfile::LEGACY,
+      explicit: true,
+      inputs: ['program.dab']
+    )
+
+    expect(resolved).to equal(DabSyntaxProfile::LEGACY)
+  end
+
+  it 'retains the legacy fallback for stdin and unrecognized extensions' do
+    [nil, [:stdin], ['source.dabm'], ['source.txt']].each do |inputs|
+      resolved = DabCompilerSyntaxOptions.resolve(
+        syntax_profile: DabSyntaxProfile::LEGACY,
+        explicit: false,
+        inputs: inputs
+      )
+
+      expect(resolved).to equal(DabSyntaxProfile::LEGACY)
+    end
   end
 
   it 'keeps valid legacy output byte-identical when legacy is explicit' do
@@ -46,6 +106,18 @@ describe 'Dab compiler --syntax option' do
       expect(invoke('--syntax=legacy', source)).to eq default
       expect(invoke(source, '--syntax=legacy')).to eq default
       expect(default.last.exitstatus).to eq 1
+    end
+  end
+
+  it 'keeps multiple .dab inputs byte-identical when legacy is explicit' do
+    library = "func answer()\n{\n\treturn 42;\n}\n"
+    program = "func main()\n{\n\tprint(answer());\n}\n"
+
+    with_sources(library, program) do |*sources|
+      inferred = invoke(*sources)
+
+      expect(invoke('--syntax=legacy', *sources)).to eq inferred
+      expect(inferred.last).to be_success
     end
   end
 
