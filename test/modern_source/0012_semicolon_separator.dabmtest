@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "status": 2,
+  "stdout": "",
+  "stderr": "compiler: 0012_semicolon_separator.dabm:1:8: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+}
+--- SOURCE ---
+def main;
+end

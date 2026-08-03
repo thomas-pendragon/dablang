@@ -68,6 +68,17 @@ and corrupt lower Rings. Its canonical standalone source is
 `test/modern_minimal_main/program.dabm`. This is not general `def` parsing and
 the body cannot contain statements.
 
+Version 0.0.36 treats one or more LF bytes as a Modern separator run around
+that existing declaration. `0010_newline_separators.dabmtest` proves leading
+and body blank separator lines compile to the same assembly as the canonical
+source. The focused contract also proves trailing separators, an LF-only unit,
+and other separator variants remain deterministic. `0011` and `0012` keep a
+newline inside the `def main` header and a semicolon fail-closed with exact
+source locations; focused coverage does the same for a space-only body line.
+The compiler does not normalize CR or CRLF source. Comments, statements,
+additional declarations, and every other Modern syntax feature remain
+unsupported.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

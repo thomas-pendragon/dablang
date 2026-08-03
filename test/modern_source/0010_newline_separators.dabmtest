@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "status": 0,
+  "stdout": "/* Dab dev 2    */                \n \n                                 W_HEADER 3\n                                 W_OFFSET 4589\n                                 W_SECTION _CODE, \"code\"\n                                 W_SECTION _CLAS, \"clas\"\n                                 W_SECTION _SDAT, \"symd\"\n                                 W_SECTION _SYMB, \"symb\"\n                                 W_SECTION _FUNC, \"fext\"\n                                 W_SECTION _NDAT, \"ndat\"\n                                 W_END_HEADER \n \n                   _CODE:\n                                 NOP \n \n                   F__init_4589:\n                                 STACK_RESERVE 0\n                                 RETURN RNIL\n                   __F__init_4589_END:\n                                 NOP \n \n                   Fmain:\n                                 STACK_RESERVE 0\n                                 RETURN RNIL\n                   __Fmain_END:\n                                 NOP \n \n                   _CLAS:\n/* Set          */               W_CLASS 256, 0, 6\n/* __block_join */               W_CLASS 257, 14, 8\n \n                   _SDAT:\n                                 W_STRING \"__init_4589\" \n                                 W_STRING \"main\" \n \n                   _SYMB:\n/* __init_4589  */               W_SYMBOL _SDAT + 0 \n/* main         */               W_SYMBOL _SDAT + 12 \n \n                   _FUNC:\n/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0\n/* $ret<Object> */               W_METHOD_ARG -1, 0\n/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0\n/* $ret<Object> */               W_METHOD_ARG -1, 0\n \n                   _NDAT:\n                                 W_BYTE 0 \n \n",
+  "stderr": ""
+}
+--- SOURCE ---
+
+def main
+
+end
