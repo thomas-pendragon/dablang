@@ -176,6 +176,9 @@ blocks the finish line, report `review-blocked`, `dependency-blocked`, or
 One MASTER THREAD owns the Scenario B sequence, cross-cutting decisions, and
 the canonical planning view. A SUBWORK has one bounded deliverable, one branch
 or no branch for read-only work, and no authority to broaden the charter.
+Every SUBWORK is a new, durable Codex chat created on the designated
+`codex-codex` Codex host. A local subagent of the MASTER THREAD is not a
+SUBWORK and must not be used to execute one.
 
 Before starting a SUBWORK, the MASTER THREAD records it in the **TABELKA**
 (the compact coordination table in the Scenario B Wiki work log) with: ID,
