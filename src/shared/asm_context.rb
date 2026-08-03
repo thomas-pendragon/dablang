@@ -98,7 +98,11 @@ class DabAsmContext < DabBaseContext
   end
 
   def read_arg_base
-    read_identifier_fname || read_floatnum || read_fixnum || read_string
+    read_identifier_fname || read_floatnum || read_fixnum || read_assembly_string
+  end
+
+  def read_assembly_string
+    @stream.read_string(escaped_quotes: true)
   end
 
   def read_arg_minus

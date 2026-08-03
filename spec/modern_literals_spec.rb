@@ -159,7 +159,6 @@ describe 'Modern bootstrap literals' do
       'binary number' => ["def main\n0b1\nend\n", 10],
       'numeric underscore' => ["def main\n1_0\nend\n", 10],
       'integer overflow' => ["def main\n9223372036854775808\nend\n", 9],
-      'string' => ["def main\n\"text\"\nend\n", 9],
       'binary operator' => ["def main\n1+2\nend\n", 10],
       'binding' => ["def main\nlet value = 1\nend\n", 9],
       'call' => ["def main\nvalue()\nend\n", 9],

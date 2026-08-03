@@ -238,7 +238,7 @@ class DabParser < DabScanner
     ret
   end
 
-  def read_string
+  def read_string(escaped_quotes: false)
     skip_whitespace
     start_pos = @position
     debug('string ?')
@@ -249,8 +249,13 @@ class DabParser < DabScanner
     until input_match('"')
       break unless current_char
 
-      ret += current_char
-      advance!
+      if escaped_quotes && input_match('\\"')
+        ret += '"'
+        advance!(2)
+      else
+        ret += current_char
+        advance!
+      end
     end
     return false unless input_match('"')
 

@@ -127,6 +127,19 @@ non-LF body bytes, separate LF tokens, exact comment spans and locations, and
 rejection of CR/CRLF structural separators, body statements, and second
 declarations. Comments remain separator syntax rather than general whitespace.
 
+Version 0.0.41 admits basic single-line double-quoted Strings only as literal
+entries in the existing single-`main` body. Source bytes between the delimiters
+must be valid UTF-8 and cannot contain NUL, LF, or CR. Exactly `\"`, `\n`, and
+`\r` are decoded; every other backslash sequence fails closed. The unescaped
+`#{` opener is reserved and rejected at the marker because interpolation is a
+later roadmap row. `0023_basic_strings.dabmtest` covers empty, plain UTF-8, and
+all three accepted escapes while preserving the existing assembly. `0024`
+through `0026` lock representative unknown-escape, reserved-interpolation, and
+physical-newline diagnostics. Focused contracts cover invalid UTF-8, NUL, CR,
+unterminated delimiters, doubled backslashes, exact byte spans, transactional
+failure, and the reused Legacy String AST, assembly, bytecode, and runtime path.
+Legacy parsing remains unchanged.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
