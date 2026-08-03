@@ -79,6 +79,9 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 - Use one clean isolated worktree and one `tomasz/` branch per SUBWORK. Never
   modify the shared launch checkout, another agent's worktree, or an unrelated
   dirty branch.
+- Run every SUBWORK on the `codex-codex` host, regardless of where the MASTER
+  THREAD runs. If that host is unavailable, report a blocker instead of running
+  the SUBWORK on another host.
 - Use the `ship-feature-pr` workflow for implementation PRs and the GitHub
   workflow for live PR state when those skills are available. Local confidence
   never replaces exact-head GitHub evidence.
