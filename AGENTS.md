@@ -13,6 +13,21 @@ work log in the [English GitHub Wiki](https://github.com/thomas-pendragon/dablan
 That is an owner decision, not an assertion that the audit recommended this
 path. Preserve the distinction in code, documentation, reviews, and planning.
 
+## Roadmap and version bookkeeping
+
+- Treat every `Original #` in the evolution plan as immutable and render it as
+  a bare integer, separate from the version. Inserted maintenance work uses `—`
+  in that column; never renumber later original items to make room.
+- Advance the root `VERSION` sequentially in merge order, even when roadmap
+  items are implemented out of original-number order. Rebase a ready branch on
+  the current exact `master`, then assign the next unmerged version before the
+  final validation cycle.
+- `VERSION` is the sole current-version authority. Tools must read or receive
+  it through the build; tests may validate its format or derive expected output
+  from it, but must not pin the current release literal.
+- Fill the evolution plan's date and PR columns only after the change is
+  merged. Render pull-request links as `[#NN]`, never `PR #NN`.
+
 ## Repository map
 
 | Area | Purpose | Change discipline |
@@ -48,9 +63,29 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
   policy, and tests.
 - Prefer characterization tests, golden artifacts, and negative tests to broad
   refactors. Keep source, bytecode, and VM changes separable where possible.
+- Extend Modern syntax one roadmap row at a time. Preserve every previously
+  accepted source's assembly/runtime behavior and every intentionally rejected
+  near miss unless the current row explicitly changes it; do not generalize a
+  bootstrap parser into adjacent literals, operators, statements, or types.
 - Do not start syntax expansion, a package manager, a new backend, a full
   rewrite, or general-purpose-language marketing before the charter gates allow
   it.
+
+## Work isolation and live-state checks
+
+- For mutable work, confirm GitHub authentication, fetch the intended base,
+  and verify both its exact SHA and root `VERSION` before editing. Stop and
+  report drift instead of silently selecting a newer base.
+- Use one clean isolated worktree and one `tomasz/` branch per SUBWORK. Never
+  modify the shared launch checkout, another agent's worktree, or an unrelated
+  dirty branch.
+- Use the `ship-feature-pr` workflow for implementation PRs and the GitHub
+  workflow for live PR state when those skills are available. Local confidence
+  never replaces exact-head GitHub evidence.
+- Before any approved squash merge, re-read the PR head, required checks,
+  mergeability, review state, and unresolved threads. Use a head-match guard
+  when the merge tool supports it, then verify the resulting `master` SHA and
+  root `VERSION`.
 
 ## Build and test guidance
 
@@ -68,11 +103,23 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 - Run the smallest relevant task first, then the required gate. For semantic
   work, run affected fixture tests and `bundle exec rspec`; for native boundary
   work, add the appropriate malformed-input or sanitizer proof.
+- Use `ruby script/toolchain_preflight.rb` for the fast read-only environment
+  check. Use `ruby script/complete_gate.rb` as the authoritative normal gate;
+  prefer a disposable exact-head checkout when preserving a feature worktree's
+  generated-file state matters.
+- A fresh worktree may not contain `bin/cvm`, `bin/cdisasm`, or `bin/cdumpcov`.
+  In that state, a broad bare RSpec failure is not authoritative: run focused
+  Ruby contracts first and let the complete gate build native tools before the
+  full suite.
 - Always run `git diff --check`. Documentation-only changes require Markdown
   link and structure review; they do not justify changing generated files.
 - Fixture and VM test output is concise by default. Use `DAB_TEST_VERBOSE=1`
   when detailed successful-test compiler, assembler, VM, and diagnostic output
   is needed; failures replay the captured per-test details automatically.
+- Keep binary pipes and byte fixtures in binary mode on Windows; Ruby text mode
+  can translate byte `0x0a` and corrupt artifacts. Use narrowly scoped
+  `.gitattributes` LF rules for canonical source fixtures rather than changing
+  line-ending policy globally.
 
 ## Documentation and pull requests
 
@@ -84,9 +131,41 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 - Keep PRs small and single-purpose. State the exact base SHA, behavioral or
   governance decision, test evidence, generated-file status, and any known
   limitations. Do not merge your own work unless explicitly authorized.
-- Repository settings are out of scope for ordinary changes. As of the live
-  baseline on 2026-07-29, `master` was unprotected; report governance gaps but
-  do not alter settings without explicit authorization.
+- Public-site publication is controlled by `docs/_data/public_site.yml` and
+  validated with `BUNDLE_GEMFILE=docs/Gemfile bundle exec ruby
+  script/public_site.rb`. Do not publish governance, CI, sanitizer, toolchain,
+  or test-harness pages merely because they live under `docs/`.
+- Keep the public README and `dablang.net` pages self-contained; visitors must
+  not need the internal Wiki for the project's central product story, and
+  internal labels such as “Scenario B” must not appear as public product
+  language. Use the product-design workflow and rendered browser evidence for
+  visual site work. Bind local preview servers to `0.0.0.0` and report the LAN
+  URL when review happens from another machine.
+- Repository settings are out of scope for ordinary changes. Verify live
+  governance state when it matters, report gaps, and do not alter settings
+  without explicit authorization.
+
+### PR finish line
+
+A PR is ready only when all of the following are true on the same exact head:
+
+1. The PR is ready/non-draft, correctly labeled, conflict-free, and reports
+   `MERGEABLE` / `CLEAN`.
+2. Every job required by the current workflow is green, including supported
+   Linux Ruby, macOS, Windows, public-site, ASan, and UBSan coverage where the
+   workflow defines them.
+3. Copilot has reviewed the current head and every changed file. Inspect both
+   visible comments and the review body for suppressed findings; a review on a
+   stale commit does not count.
+4. GraphQL review-thread readback shows zero unresolved threads, no actionable
+   top-level or inline comment remains, no review request is pending, and the
+   feature worktree is clean.
+
+Request a fresh review with `gh pr edit <number> --add-reviewer @copilot` when
+needed and compare the submitted review's commit OID with the live head. If
+service delay, dependency order, unrelated CI failure, or an unresolved finding
+blocks the finish line, report `review-blocked`, `dependency-blocked`, or
+`CI-blocked` precisely instead of calling the work done.
 
 ## MASTER THREAD, SUBWORK, and TABELKA
 
@@ -101,13 +180,19 @@ owner, status, branch/PR or issue link, validation required, and blocker.
 
 SUBWORK rules:
 
-1. Read this file and the charter, then claim exactly one TABELKA row.
+1. Read this file and the canonical English Wiki pages read-only, then claim
+   exactly one TABELKA row.
 2. Preserve unknown semantics as a decision request with acceptance criteria.
 3. Report the exact base and head SHA, changed paths, evidence, test state,
-   risks, and blocker back to the MASTER THREAD; update only the claimed row.
+   risks, and blocker back to the MASTER THREAD. Do not edit the Wiki/TABELKA.
 4. Do not create parallel work that overlaps a claimed row, silently reopen a
    completed gate, or mark a gate complete without its checkable evidence.
-5. The MASTER THREAD alone advances a stage, accepts a compatibility decision,
+5. Send a concise START/CLAIM callback immediately after verifying the base,
+   worktree, branch, and scope. Send the structured completion or blocker
+   callback without waiting for the user to ask for status.
+6. Do not merge, edit repository settings, create releases/tags, or expand into
+   a later roadmap row unless the owner explicitly authorizes that action.
+7. The MASTER THREAD alone advances a stage, accepts a compatibility decision,
    and moves the persistent Wiki work log forward after verifying evidence.
 
 TABELKA is coordination metadata, not a replacement for tests, decision
