@@ -373,9 +373,15 @@ module Dab
 
       def check_workflow_guards(errors, workflow_text, workflow, jobs)
         trigger_block = workflow_text[/^on:\n(?:[ \t].*(?:\n|\z))*/]
-        expected_trigger_block = "on:\n  pull_request:\n    branches: [master]\n"
+        expected_trigger_block = <<~YAML
+          on:
+            pull_request:
+              branches: [master]
+              paths-ignore:
+                - '**.md'
+        YAML
         unless trigger_block == expected_trigger_block
-          errors << 'CI trigger drifted; keep the workflow pull-request-only for master'
+          errors << 'CI trigger drifted; keep the master pull-request workflow disabled only for all-Markdown changes'
         end
 
         permissions = workflow.fetch('permissions', {})
