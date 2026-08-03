@@ -50,15 +50,16 @@ class SystemRunCommand
   end
 
   def try_update(fd)
-    return unless streams.include?(fd)
+    return :ignored unless streams.include?(fd)
 
     data = fd.read_nonblock(1024)
     yield(data, fd == @stderr) unless data.empty?
-  rescue IO::WaitReadable
-    nil
+    :data
+  rescue IO::WaitReadable, Errno::EINTR
+    :repoll
   rescue EOFError
     fd.close
-    nil
+    :eof
   end
 
   def finished?
@@ -195,8 +196,9 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
 
     ready_fds = selected[0]
     data = false
+    repoll = false
     ready_fds.each do |fd|
-      command.try_update(fd) do |line, is_stderr|
+      update = command.try_update(fd) do |line, is_stderr|
         if is_stderr
           DabTestOutput.emit(line, stream: :stderr, display: :stderr) if show_stderr
           stderr += line
@@ -209,10 +211,11 @@ def system_with_progress(cmd, input: nil, input_file: nil, show_stderr: true, sh
           timeout_limit = timeout
           deadline = monotonic_time + timeout if timeout
         end
-        data = true
       end
+      data = true if update == :data
+      repoll = true if update == :repoll
     end
-    next if data
+    next if data || repoll
     break if command.finished?
   end
   {
