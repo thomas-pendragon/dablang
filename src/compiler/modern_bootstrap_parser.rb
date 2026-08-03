@@ -46,6 +46,13 @@ class DabModernBootstrapScanner < DabScanner
     when ';'
       advance!
       token(:semicolon, ';', start_offset)
+    when '#'
+      line_comment_token(start_offset)
+    when '/'
+      return line_comment_token(start_offset) if current_char(1) == '/'
+
+      advance!
+      token(:unsupported, '/', start_offset)
     else
       return identifier_token(start_offset) if IDENTIFIER_START.include?(current_char)
 
@@ -69,6 +76,15 @@ private
            else :identifier
            end
     token(kind, text, start_offset)
+  end
+
+  def line_comment_token(start_offset)
+    text = +''.b
+    while !eof? && current_char != "\n"
+      text << current_char
+      advance!
+    end
+    token(:line_comment, text, start_offset)
   end
 
   def token(kind, text, start_offset)
@@ -112,7 +128,7 @@ class DabModernBootstrapMainDeclaration
 end
 
 class DabModernBootstrapParser
-  SEPARATOR_KINDS = %i[line_feed semicolon].freeze
+  SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
 
   def initialize(content, source_unit:)
     @source_unit = DabSourceUnit.validate(source_unit)

@@ -220,9 +220,41 @@ declaration span.
 Semicolon does not replace the required ASCII space between `def` and `main`,
 split or join an identifier or keyword, permit content in the empty body, or
 separate another declaration. Those shapes fail at the first mismatching
-scanner token. Spaces, CR, CRLF, comments, statements,
+scanner token. At version 0.0.38, spaces, CR, CRLF, comments, statements,
 additional declarations, literals, calls, variables, types, and general
 function parsing remain unsupported.
+
+## Modern line comments
+
+Version 0.0.39 adds two exact line-comment markers: byte `0x23` (`#`) and the
+two-byte sequence `0x2f 0x2f` (`//`). The scanner emits one `line_comment`
+token containing the marker and every following non-LF byte. The token ends
+immediately before the next LF or at EOF. It never consumes the LF: that byte
+remains its own `line_feed` token with the shared scanner's existing offset,
+line, column, and half-open span.
+
+A line comment is admitted only as another member of the existing separator
+abstraction. Comments may therefore appear in separator runs before or after
+the one supported empty `main` declaration, between its header and `end`, or
+throughout a separator-only source. A comment may be the required first
+separator after `main` or `end`, including an EOF-terminated comment, so
+`def main# header\nend// trailing` is accepted without treating any ordinary
+space as trivia. If the first separator after `end` is a comment, the
+declaration span ends at that comment's half-open end; a following LF and later
+separators remain outside the declaration.
+
+The two markers have identical separator meaning. Their bodies are opaque and
+may contain the other marker, more copies of their own marker, semicolons,
+spaces, tabs, NUL, CR, or any other non-LF byte. In particular, CR inside a
+comment body remains ordinary body data rather than a line ending; this does
+not normalize or accept CR or CRLF at structural separator positions.
+
+This is not general whitespace or token-internal comment support. A single
+`/` is still unsupported. A marker cannot split or join `def`, `main`, `end`,
+or another identifier, and an ASCII space before a marker remains invalid
+where the prior grammar did not accept a space. Comments do not permit a body
+statement, a second declaration, a literal, an operator or division, a call,
+a variable, a type, a general function, or any later Modern production.
 
 ## Current construction paths
 
