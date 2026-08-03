@@ -238,7 +238,7 @@ class DabParser < DabScanner
     ret
   end
 
-  def read_string(doubled_quotes: false)
+  def read_string(doubled_quotes = false)
     skip_whitespace
     start_pos = @position
     debug('string ?')
