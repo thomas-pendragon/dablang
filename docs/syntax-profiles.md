@@ -256,8 +256,8 @@ Unicode-width policy, newline normalization, general Modern grammar, new
 bytecode, or runtime behavior.
 
 The dedicated Modern-source fixture format is active under
-`test/modern_source/*.dabmtest`; its schema and exact comparison contract are
-documented in that directory. Its diagnostic corpus locks the unsupported
-parser message, streams, portable filenames, entry boundary, and exact
+`test/modern_source/*.dabmtest`; its strict section schema and exact comparison
+contract are documented in that directory. Its diagnostic corpus locks the
+unsupported parser message, streams, portable filenames, entry boundary, and exact
 bootstrap mismatch locations. The focused end-to-end RSpec contract owns the
 minimal-main compiler, Ring, assembler, and VM behavior.

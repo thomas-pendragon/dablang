@@ -1,9 +1,9 @@
-{
-  "schema_version": 1,
-  "status": 2,
-  "stdout": "",
-  "stderr": "compiler: 0003_other_name.dabm:1:4: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
-}
---- SOURCE ---
+## SOURCE
 def worker
 end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0003_other_name.dabm:1:4: error: unsupported Dab syntax profile "modern": parser is not implemented

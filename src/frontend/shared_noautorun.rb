@@ -37,6 +37,58 @@ class InlineCompilerContext
   end
 end
 
+class DabFixtureSectionDocument
+  HEADER = /\A## ([A-Z]+(?: [A-Z]+)*)\n\z/.freeze
+
+  class ParseError < ArgumentError; end
+
+  attr_reader :sections
+
+  def self.parse(content)
+    new(content).tap(&:parse!)
+  end
+
+  def initialize(content)
+    @content = content
+  end
+
+  def parse!
+    headers = collect_headers
+    raise ParseError.new('fixture requires at least one section') if headers.empty?
+
+    duplicate = headers.map { |header| header.fetch(:name) }.tally.find { |_name, count| count > 1 }
+    raise ParseError.new("duplicate section: #{duplicate.first}") if duplicate
+
+    @sections = headers.each_with_index.to_h do |header, index|
+      following_header = headers[index + 1]
+      body_end = following_header ? following_header.fetch(:start) : @content.bytesize
+      [header.fetch(:name), @content.byteslice(header.fetch(:body_start)...body_end)]
+    end
+    self
+  end
+
+private
+
+  def collect_headers
+    headers = []
+    offset = 0
+    @content.each_line do |line|
+      if line.start_with?('##')
+        raise ParseError.new('section header must end with LF') unless line.end_with?("\n")
+
+        match = HEADER.match(line)
+        raise ParseError.new("invalid section header: #{line.delete_suffix("\n")}") unless match
+
+        headers << {name: match[1], start: offset, body_start: offset + line.bytesize}
+      elsif headers.empty?
+        raise ParseError.new('content before first section')
+      end
+      offset += line.bytesize
+    end
+    headers
+  end
+end
+
 module BaseFrontend
   def base_read_test_file(fname)
     ret = {}
