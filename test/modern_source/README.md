@@ -66,10 +66,10 @@ per-fixture details on failure.
 
 The corpus keeps the original parser-entry fixture, adds exact negative
 bootstrap fixtures for empty and non-`main` names, parameters, body content,
-duplicate declarations, comments, and incomplete input, and locks the exact
-successful assembly for the canonical minimal `main`. All fixtures use the
-section format; large assembly stdout expectations are literal multiline bodies
-rather than escaped strings. The negative fixtures
+duplicate declarations, comment-marker near misses, and incomplete input, and
+locks the exact successful assembly for the canonical minimal `main`. All
+fixtures use the section format; large assembly stdout expectations are literal
+multiline bodies rather than escaped strings. The negative fixtures
 prove status `2`, empty standard output, exact standard error, stable
 fixture-derived filenames, and the shared-scanner location of the first
 mismatch. The Rake-owned suite supplies the separately compiled Legacy stdlib
@@ -113,8 +113,19 @@ proves that semicolon does not replace the header space, and `0014` proves that
 it does not make body content valid. Focused coverage also locks single and
 repeated semicolons, the exact `def main;end;` framing, separator-only sources,
 declaration spans, and per-token coordinates where only LF advances the line.
-Comments, statements, additional declarations, and every other Modern syntax
-feature remain unsupported.
+At version 0.0.38, comments, statements, additional declarations, and every
+other Modern syntax feature remain unsupported.
+
+Version 0.0.39 admits exact `#` and `//` line-comment tokens only within those
+same separator runs. `0007_comment.dabmtest` proves both markers around and
+inside the existing empty declaration, including bodies that contain the other
+marker and semicolons, while retaining the canonical assembly exactly. `0015`
+keeps a single `/` fail-closed, and `0016` proves that a comment marker cannot
+split the required `main` identifier. Focused scanner/parser coverage also
+locks marker equivalence, comment-only sources, EOF termination, arbitrary
+non-LF body bytes, separate LF tokens, exact comment spans and locations, and
+rejection of CR/CRLF structural separators, body statements, and second
+declarations. Comments remain separator syntax rather than general whitespace.
 
 ## Diagnostic boundary
 

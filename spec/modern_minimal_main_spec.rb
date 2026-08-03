@@ -29,7 +29,6 @@ describe 'minimal Modern main bootstrap' do
       'duplicate declaration' => ["def main\nend\ndef main\nend\n".b, {offset: 13, line: 3, column: 0}],
       'leading token' => [" def main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'trailing token' => ["def main\nend\nextra\n".b, {offset: 13, line: 3, column: 0}],
-      'comment' => ["# comment\ndef main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'missing end' => ["def main\n".b, {offset: 9, line: 2, column: 0}],
       'incomplete def' => ['de'.b, {offset: 0, line: 1, column: 0}],
       'incomplete end' => ["def main\nen\n".b, {offset: 9, line: 2, column: 0}],
@@ -61,6 +60,23 @@ describe 'minimal Modern main bootstrap' do
   let(:separator_only_sources) do
     [''.b, "\n".b, "\n\n\n".b, ';'.b, ';;;'.b, ";\n;;\n".b]
   end
+  let(:comment_declarations) do
+    [
+      "# leading\ndef main\nend\n".b,
+      "// leading\ndef main\nend\n".b,
+      "# leading // ;\ndef main# header // ;\n// body # ;\nend# trailing // ;".b,
+      "// leading # ;\ndef main// header # ;\n# body // ;\nend// trailing # ;".b,
+      "# arbitrary // ;\0\r\t\xff bytes\ndef main;# body // ;\0\r\t\x80\nend;".b,
+    ]
+  end
+  let(:comment_only_sources) do
+    [
+      '# comment at EOF'.b,
+      '// comment at EOF'.b,
+      "# first\n// second\n".b,
+      ";# first\n;// second\n;".b,
+    ]
+  end
   let(:separator_near_misses) do
     {
       'newline inside the declaration header' => ["def\nmain\nend\n".b, {offset: 3, line: 2, column: 0}],
@@ -78,6 +94,21 @@ describe 'minimal Modern main bootstrap' do
       'inside the end keyword' => ["def main\nen;d\n".b, {offset: 9, line: 2, column: 0}],
       'between body identifier fragments' => ["def main;va;lue\nend;".b, {offset: 9, line: 1, column: 9}],
       'before a duplicate declaration' => ["def main\nend;;def main\nend\n".b, {offset: 14, line: 2, column: 5}],
+    }
+  end
+  let(:comment_near_misses) do
+    {
+      'single slash' => ["/ comment\ndef main\nend\n".b, {offset: 0, line: 1, column: 0}],
+      'hash embedded in def' => ["de# split\nf main\nend\n".b, {offset: 0, line: 1, column: 0}],
+      'slashes embedded in main' => ["def ma// split\nin\nend\n".b, {offset: 4, line: 1, column: 4}],
+      'slash before a hash' => ["def main/# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
+      'body statement after a comment' => ["def main\n# body\nvalue\nend\n".b, {offset: 16, line: 3, column: 0}],
+      'second declaration after a comment' => [
+        "def main\nend\n# between\ndef main\nend\n".b,
+        {offset: 23, line: 4, column: 0},
+      ],
+      'CR before a comment marker' => ["def main\r# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
+      'CRLF before a comment marker' => ["def main\r\n# comment\nend\r\n".b, {offset: 8, line: 1, column: 8}],
     }
   end
 
@@ -251,6 +282,24 @@ describe 'minimal Modern main bootstrap' do
     end
   end
 
+  it 'treats both exact line-comment markers equivalently within existing separator runs' do
+    source_unit = DabSourceUnit.new(
+      input: 'comment-separator-main.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    comment_declarations.each do |source|
+      declaration = DabModernBootstrapParser.new(source, source_unit: source_unit).parse
+      unit = DabNodeUnit.new
+      function = declaration.lower_into(unit)
+
+      expect(function.identifier).to eq 'main'
+      expect(function.arglist).to be_empty
+      expect(function.blocks[0]).to be_empty
+      expect(unit.has_function?('main')).to equal(function)
+    end
+  end
+
   it 'treats an LF-only source as the existing empty Modern upper unit' do
     source_unit = DabSourceUnit.new(
       input: 'separator-only.dabm',
@@ -268,6 +317,17 @@ describe 'minimal Modern main bootstrap' do
     )
 
     separator_only_sources.drop(3).each do |source|
+      expect(DabModernBootstrapParser.new(source, source_unit: source_unit).parse).to be_nil
+    end
+  end
+
+  it 'treats comment-only and comment/separator sources as the existing empty Modern upper unit' do
+    source_unit = DabSourceUnit.new(
+      input: 'comment-separator-only.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    comment_only_sources.each do |source|
       expect(DabModernBootstrapParser.new(source, source_unit: source_unit).parse).to be_nil
     end
   end
@@ -358,6 +418,58 @@ describe 'minimal Modern main bootstrap' do
     expect(declaration.source_span.end_location.to_h).to eq(offset: 14, line: 1, column: 14)
   end
 
+  it 'keeps comment bodies and LF boundaries as exact, separate scanner tokens' do
+    source = "#a//;\0\r\t\xff\n//#;a\0\r\t\x80\n".b
+    source_unit = DabSourceUnit.new(
+      input: 'comment-tokens.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+    scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)
+    tokens = []
+    loop do
+      token = scanner.next_token
+      tokens << token
+      break if token.kind == :eof
+    end
+
+    expect(tokens.map(&:kind)).to eq(%i[line_comment line_feed line_comment line_feed eof])
+    expect(tokens.map(&:text)).to eq(["#a//;\0\r\t\xff".b, "\n".b, "//#;a\0\r\t\x80".b, "\n".b, ''.b])
+    expect(tokens.map { |token| [token.source_span.start_offset, token.source_span.end_offset] }).to eq(
+      [[0, 9], [9, 10], [10, 19], [19, 20], [20, 20]]
+    )
+    expect(tokens.map { |token| token.source_location.to_h }).to eq(
+      [
+        {offset: 0, line: 1, column: 0},
+        {offset: 9, line: 2, column: 0},
+        {offset: 10, line: 2, column: 0},
+        {offset: 19, line: 3, column: 0},
+        {offset: 20, line: 3, column: 0},
+      ]
+    )
+    expect(tokens.map { |token| token.source_span.end_location.to_h }).to eq(
+      [
+        {offset: 9, line: 2, column: 0},
+        {offset: 10, line: 2, column: 0},
+        {offset: 19, line: 3, column: 0},
+        {offset: 20, line: 3, column: 0},
+        {offset: 20, line: 3, column: 0},
+      ]
+    )
+    expect(tokens).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
+  end
+
+  it 'ends a declaration span after an EOF-terminated trailing comment' do
+    source = "# lead\n;def main// header\n# body\n;end# tail".b
+    source_unit = DabSourceUnit.new(
+      input: 'comment-separator-span.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+    declaration = DabModernBootstrapParser.new(source, source_unit: source_unit).parse
+
+    expect(declaration.source_span.start_location.to_h).to eq(offset: 8, line: 2, column: 1)
+    expect(declaration.source_span.end_location.to_h).to eq(offset: 43, line: 4, column: 10)
+  end
+
   it 'rejects non-separator whitespace and later syntax at the first scanner location' do
     source_unit = DabSourceUnit.new(
       input: 'separator-near-miss.dabm',
@@ -382,6 +494,23 @@ describe 'minimal Modern main bootstrap' do
     )
 
     semicolon_near_misses.each do |description, (source, location)|
+      expect do
+        DabModernBootstrapParser.new(source, source_unit: source_unit).parse
+      end.to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.source_location.to_h).to eq(location), description
+        expect(error.source_location.source_unit).to equal(source_unit)
+      }
+    end
+  end
+
+  it 'rejects comment-marker near misses and later syntax at the first scanner location' do
+    source_unit = DabSourceUnit.new(
+      input: 'comment-near-miss.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    comment_near_misses.each do |description, (source, location)|
       expect do
         DabModernBootstrapParser.new(source, source_unit: source_unit).parse
       end.to raise_error(DabModernBootstrapParseError) { |error|
@@ -436,7 +565,8 @@ describe 'minimal Modern main bootstrap' do
   it 'compiles separator variants to the same Modern upper assembly' do
     Dir.mktmpdir('dab-modern-newline-separators') do |directory|
       lower = build_stdlib(directory)
-      assemblies = (lf_separator_declarations + semicolon_separator_declarations).each_with_index.map do |source, index|
+      assemblies = (lf_separator_declarations + semicolon_separator_declarations + comment_declarations)
+                   .each_with_index.map do |source, index|
         path = File.join(directory, "separator-#{index}.dabm")
         File.binwrite(path, source)
         assembly, stderr, status = invoke(
@@ -452,7 +582,7 @@ describe 'minimal Modern main bootstrap' do
 
       expect(assemblies.uniq.length).to eq 1
 
-      empty_assemblies = separator_only_sources.each_with_index.map do |source, index|
+      empty_assemblies = (separator_only_sources + comment_only_sources).each_with_index.map do |source, index|
         path = File.join(directory, "empty-separator-#{index}.dabm")
         File.binwrite(path, source)
         assembly, stderr, status = invoke(
