@@ -130,24 +130,39 @@ describe 'Modern bootstrap String literals' do
     )
   end
 
-  it 'retains the existing CONSTANT_STRING and W_STRING representation for an embedded quote' do
+  it 'represents embedded quotes without changing existing trailing-backslash assembly' do
     stdout = StringIO.new
     output = DabOutput.new(double(stdout: stdout))
-    node = DabNodeLiteralString.new('quote: "'.b)
+    quote = DabNodeLiteralString.new('quote: "'.b)
+    trailing_backslash = DabNodeLiteralString.new('ends \\'.b)
 
-    node.compile_constant(output)
-    node.compile_string(output)
+    quote.compile_constant(output)
+    quote.compile_string(output)
+    trailing_backslash.compile_string(output)
 
-    expect(stdout.string).to include('CONSTANT_STRING "quote: \\""')
-    expect(stdout.string).to include('W_STRING "quote: \\""')
+    expect(stdout.string).to include('CONSTANT_STRING "quote: """')
+    expect(stdout.string).to include('W_STRING "quote: """')
+    expect(stdout.string).to include('W_STRING "ends \\"')
 
-    raw, stderr, status = invoke(
+    quote_raw, quote_stderr, quote_status = invoke(
       RbConfig.ruby,
       assembler,
       '--raw',
-      input: "W_STRING \"quote: \\\"\"\n"
+      input: "W_STRING \"quote: \"\"\"\n"
     )
-    expect([status.exitstatus, tool_stderr(stderr), raw.b]).to eq([0, '', "quote: \"\0".b])
+    expect([quote_status.exitstatus, tool_stderr(quote_stderr), quote_raw.b]).to eq(
+      [0, '', "quote: \"\0".b]
+    )
+
+    backslash_raw, backslash_stderr, backslash_status = invoke(
+      RbConfig.ruby,
+      assembler,
+      '--raw',
+      input: "W_STRING \"ends \\\"\n"
+    )
+    expect([backslash_status.exitstatus, tool_stderr(backslash_stderr), backslash_raw.b]).to eq(
+      [0, '', "ends \\\0".b]
+    )
   end
 
   it 'rejects invalid bytes, NUL, physical newlines, unterminated text, unknown escapes, and interpolation at the marker' do

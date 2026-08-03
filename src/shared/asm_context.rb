@@ -102,7 +102,7 @@ class DabAsmContext < DabBaseContext
   end
 
   def read_assembly_string
-    @stream.read_string(escaped_quotes: true)
+    @stream.read_string(doubled_quotes: true)
   end
 
   def read_arg_minus

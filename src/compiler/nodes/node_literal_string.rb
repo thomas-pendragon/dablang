@@ -43,7 +43,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
 private
 
   def assembly_literal
-    escaped = string.gsub('"') { '\\"' }
+    escaped = string.gsub('"') { '""' }
     "\"#{escaped}\""
   end
 end
