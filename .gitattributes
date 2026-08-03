@@ -1,1 +1,2 @@
 /test/modern_minimal_main/program.dabm text eol=lf
+/test/modern_source/*.dabmtest whitespace=-trailing-space

@@ -2,26 +2,52 @@
 
 Files with the exact lowercase `.dabmtest` extension are versioned, single-source
 compiler fixtures owned by the `modern_source_spec` Rake task. Each file contains
-one JSON metadata object, one exact `--- SOURCE ---` delimiter line, and the raw
-Modern source after that delimiter:
+repository-native `## NAME` sections. The canonical order is required source,
+schema version, and status, followed by stdout and stderr only when those exact
+expected streams are nonempty:
 
 ```text
-{
-  "schema_version": 1,
-  "status": 2,
-  "stdout": "",
-  "stderr": "compiler diagnostic followed by an escaped newline\n"
-}
---- SOURCE ---
+## SOURCE
 future Modern source
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler diagnostic followed by a literal newline
 ```
 
-Schema version `1` allows exactly four metadata fields. `status` is the expected
-compiler exit status from `0` through `255`; `stdout` and `stderr` are exact
-expected strings, including every newline represented by JSON escapes. Missing,
-unknown, or mistyped fields are fixture-schema failures. CRLF used to transport
-the fixture is normalized to LF before parsing so the same committed fixture has
-one source and expectation contract on Linux, macOS, and Windows.
+`SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT` and
+`STDERR` are optional, but an empty output section is invalid: omit it to expect
+an empty stream. The parser resolves sections by name, so input order does not
+change meaning, while committed fixtures use the canonical order above. The
+document must start with a section header. Headers are LF-terminated, begin in
+column zero, and use one of the exact uppercase names above; leading or trailing
+header whitespace, alternate spelling, duplicate sections, and unknown sections
+are schema failures.
+
+A section body starts immediately after its header LF and continues through the
+byte before the next column-zero `##` header or through end of file. Body bytes
+are not stripped: leading blank lines, trailing spaces, and the LF before a
+following header all belong to that body. Therefore no decorative blank line is
+inserted between sections. A body line beginning with `##` is section syntax and
+must name a supported section. This ownership rule makes source and multiline
+stream expectations readable without escaping while preserving their exact
+bytes. `SCHEMA VERSION` is the exact decimal integer `1`; `STATUS` is a decimal
+integer from `0` through `255`; neither scalar accepts surrounding whitespace or
+extra blank lines. One final LF is permitted because it is the scalar section's
+owned line ending.
+
+CRLF used to transport the whole fixture is normalized to LF before section
+parsing, matching the original harness contract. Lone CR bytes remain body data.
+After that transport normalization, source, stdout, and stderr bodies are retained
+exactly, so the same committed fixture has one source and expectation contract on
+Linux, macOS, and Windows.
+
+Some exact assembly expectations contain significant trailing spaces and a final
+blank line inherited from compiler stdout. The path-scoped `.gitattributes`
+whitespace rule keeps `git diff --check` meaningful for the rest of the repository
+without misclassifying those fixture-owned bytes as formatting defects.
 
 The source becomes one extracted `.dabm` input. Its stable diagnostic filename is
 the fixture basename with `.dabmtest` replaced by `.dabm`. The harness constructs
@@ -41,7 +67,9 @@ per-fixture details on failure.
 The corpus keeps the original parser-entry fixture, adds exact negative
 bootstrap fixtures for empty and non-`main` names, parameters, body content,
 duplicate declarations, comments, and incomplete input, and locks the exact
-successful assembly for the canonical minimal `main`. The negative fixtures
+successful assembly for the canonical minimal `main`. All fixtures use the
+section format; large assembly stdout expectations are literal multiline bodies
+rather than escaped strings. The negative fixtures
 prove status `2`, empty standard output, exact standard error, stable
 fixture-derived filenames, and the shared-scanner location of the first
 mismatch. The Rake-owned suite supplies the separately compiled Legacy stdlib
@@ -134,6 +162,12 @@ input/output fixtures, and the assembly, VM, disassembly, coverage, debug,
 multilevel Ring, and decompile formats. The new `.dabmtest` parser does not
 reinterpret those sections or change their source, expected-output,
 expected-failure, option, platform-library-extension, or path behavior.
+
+The inherited reader deliberately remains loose: it trims header names and
+bodies, normalizes names for consumers, accepts sections in any order, and does
+not reject unknown or repeated names. The Modern fixture boundary reuses the
+same column-zero `## NAME` layout but needs a separate strict reader because its
+source and compiler streams are byte-exact and its schema is closed.
 
 `Rakefile` discovers exact lowercase `test/modern_source/*.dabmtest` files
 through the existing `setup_tests` owner. It supplies the separately compiled

@@ -14,22 +14,25 @@ describe DabModernSourceFixture do
     File.expand_path('../test/modern_source/0001_unsupported_modern.dabmtest', __dir__)
   end
 
-  def write_fixture(directory, metadata:, source: "future source\n", extension: '.dabmtest')
+  def write_fixture(directory, sections: valid_sections, extension: '.dabmtest')
     FileUtils.mkdir_p(directory)
     path = File.join(directory, "fixture#{extension}")
-    body = "#{JSON.pretty_generate(metadata)}\n--- SOURCE ---\n#{source}"
-    File.binwrite(path, body)
+    File.binwrite(path, section_document(sections))
     path
   end
 
-  def valid_metadata
+  def valid_sections
     {
-      'schema_version' => 1,
-      'status' => 2,
-      'stdout' => '',
-      'stderr' => 'compiler: fixture.dabm:1:0: error: ' \
+      'SOURCE' => "future source\n",
+      'SCHEMA VERSION' => "1\n",
+      'STATUS' => "2\n",
+      'STDERR' => 'compiler: fixture.dabm:1:0: error: ' \
                   "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
     }
+  end
+
+  def section_document(sections)
+    sections.map { |name, body| "## #{name}\n#{body}" }.join
   end
 
   it 'loads the committed versioned fixture with exact source and stream expectations' do
@@ -45,9 +48,27 @@ describe DabModernSourceFixture do
     )
   end
 
-  it 'normalizes fixture transport CRLF while retaining exact expected stream strings' do
+  it 'uses exact section bodies and treats absent stream sections as empty' do
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|
-      path = write_fixture(directory, metadata: valid_metadata, source: "line one\nline two\n")
+      sections = {
+        'STATUS' => "0\n",
+        'SOURCE' => "line one\nline two\n",
+        'SCHEMA VERSION' => "1\n",
+        'STDOUT' => "first line\nsecond line\n",
+      }
+      fixture = described_class.load(write_fixture(directory, sections: sections))
+
+      expect(fixture.source).to eq("line one\nline two\n")
+      expect(fixture.expected_status).to eq(0)
+      expect(fixture.expected_stdout).to eq("first line\nsecond line\n")
+      expect(fixture.expected_stderr).to eq('')
+    end
+  end
+
+  it 'normalizes fixture transport CRLF while retaining exact section bodies' do
+    Dir.mktmpdir('dab-modern-source-fixture') do |directory|
+      sections = valid_sections.merge('SOURCE' => "line one\nline two\n")
+      path = write_fixture(directory, sections: sections)
       content = File.binread(path).gsub("\n", "\r\n")
       File.binwrite(path, content)
 
@@ -58,17 +79,19 @@ describe DabModernSourceFixture do
     end
   end
 
-  it 'rejects schema defects separately with the fixture path and field attribution' do
+  it 'rejects missing, duplicate, unknown, and wrongly named sections deterministically' do
     cases = {
-      {'schema_version' => 2, 'status' => 2, 'stdout' => '', 'stderr' => ''} => 'schema_version',
-      {'schema_version' => 1, 'status' => -1, 'stdout' => '', 'stderr' => ''} => 'status',
-      {'schema_version' => 1, 'status' => 2, 'stdout' => [], 'stderr' => ''} => 'stdout',
-      {'schema_version' => 1, 'status' => 2, 'stdout' => '', 'stderr' => '', 'extra' => true} => 'unsupported fields',
+      section_document(valid_sections.reject { |name| name == 'STATUS' }) => 'missing sections: STATUS',
+      "#{section_document(valid_sections)}## STATUS\n2\n" => 'duplicate section: STATUS',
+      section_document(valid_sections.merge('EXTRA' => "value\n")) => 'unsupported section: EXTRA',
+      section_document(valid_sections).sub('## STATUS', '## status') => 'invalid section header: ## status',
+      "preamble\n#{section_document(valid_sections)}" => 'content before first section',
     }
 
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|
-      cases.each_with_index do |(metadata, diagnostic), index|
-        path = write_fixture(File.join(directory, index.to_s), metadata: metadata)
+      cases.each_with_index do |(body, diagnostic), index|
+        path = File.join(directory, "#{index}.dabmtest")
+        File.binwrite(path, body)
 
         expect { described_class.load(path) }.to raise_error(
           DabModernSourceFixture::SchemaError,
@@ -78,18 +101,36 @@ describe DabModernSourceFixture do
     end
   end
 
-  it 'rejects malformed metadata, missing delimiters, and the wrong fixture extension' do
+  it 'rejects invalid scalar and empty optional-stream sections' do
+    cases = {
+      valid_sections.merge('SCHEMA VERSION' => "2\n") => 'SCHEMA VERSION must be 1, got 2',
+      valid_sections.merge('SCHEMA VERSION' => " 1\n") => 'SCHEMA VERSION must be an integer',
+      valid_sections.merge('STATUS' => "-1\n") => 'STATUS must be an Integer from 0 through 255',
+      valid_sections.merge('STATUS' => "256\n") => 'STATUS must be an Integer from 0 through 255',
+      valid_sections.merge('STATUS' => "2\n\n") => 'STATUS must be an integer',
+      valid_sections.merge('STDOUT' => '') => 'STDOUT must be omitted when its expected stream is empty',
+    }
+
+    Dir.mktmpdir('dab-modern-source-fixture') do |directory|
+      cases.each_with_index do |(sections, diagnostic), index|
+        path = write_fixture(File.join(directory, index.to_s), sections: sections)
+
+        expect { described_class.load(path) }.to raise_error(
+          DabModernSourceFixture::SchemaError,
+          /#{Regexp.escape(diagnostic)}/
+        )
+      end
+    end
+  end
+
+  it 'rejects malformed section documents and the wrong fixture extension' do
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|
       malformed = File.join(directory, 'malformed.dabmtest')
-      File.binwrite(malformed, "{\n--- SOURCE ---\nsource\n")
-      missing_delimiter = File.join(directory, 'missing.dabmtest')
-      File.binwrite(missing_delimiter, JSON.generate(valid_metadata))
-      wrong_extension = write_fixture(directory, metadata: valid_metadata, extension: '.DABMTEST')
+      File.binwrite(malformed, '## SOURCE')
+      wrong_extension = write_fixture(directory, extension: '.DABMTEST')
 
       expect { described_class.load(malformed) }
-        .to raise_error(DabModernSourceFixture::SchemaError, /metadata is not valid JSON/)
-      expect { described_class.load(missing_delimiter) }
-        .to raise_error(DabModernSourceFixture::SchemaError, /requires exactly one --- SOURCE --- delimiter/)
+        .to raise_error(DabModernSourceFixture::SchemaError, /section header must end with LF/)
       expect { described_class.load(wrong_extension) }
         .to raise_error(DabModernSourceFixture::SchemaError, /must use the exact lowercase \.dabmtest extension/)
     end
@@ -190,14 +231,13 @@ describe ModernSourceSpec do
     Dir.mktmpdir('dab-modern-source-runner') do |directory|
       output = StringIO.new
       error = StringIO.new
-      metadata = {
-        'schema_version' => 1,
-        'status' => 0,
-        'stdout' => '',
-        'stderr' => '',
+      sections = {
+        'SOURCE' => "future source\n",
+        'SCHEMA VERSION' => "1\n",
+        'STATUS' => "0\n",
       }
       path = File.join(directory, 'unexpected.dabmtest')
-      File.binwrite(path, "#{JSON.pretty_generate(metadata)}\n--- SOURCE ---\nfuture source\n")
+      File.binwrite(path, sections.map { |name, body| "## #{name}\n#{body}" }.join)
 
       expect do
         settings = {
@@ -221,7 +261,7 @@ describe ModernSourceSpec do
   it 'fails at the attributed schema stage without invoking the compiler boundary' do
     Dir.mktmpdir('dab-modern-source-runner') do |directory|
       path = File.join(directory, 'malformed.dabmtest')
-      File.binwrite(path, "{}\n--- SOURCE ---\nfuture source\n")
+      File.binwrite(path, "## SOURCE\nfuture source\n")
       output = StringIO.new
       error = StringIO.new
       settings = {
@@ -234,12 +274,12 @@ describe ModernSourceSpec do
       expect(DabModernSourceCompiler).not_to receive(:new)
       expect do
         described_class.new.run_test(settings, output: output, error: error)
-      end.to raise_error(DabModernSourceFixture::SchemaError, /metadata is missing fields/)
+      end.to raise_error(DabModernSourceFixture::SchemaError, /missing sections: SCHEMA VERSION, STATUS/)
 
       expect(error.string).to include(
         'exception: DabModernSourceFixture::SchemaError:',
         'stage: fixture schema',
-        'metadata is missing fields: schema_version, status, stderr, stdout'
+        'missing sections: SCHEMA VERSION, STATUS'
       )
       expect(error.string).not_to include('stage: compile Modern source')
     end

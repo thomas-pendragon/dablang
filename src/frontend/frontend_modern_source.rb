@@ -1,4 +1,3 @@
-require 'json'
 require 'pathname'
 
 require_relative 'shared_noautorun'
@@ -8,8 +7,9 @@ $autorun = true if $autorun.nil?
 class DabModernSourceFixture
   SCHEMA_VERSION = 1
   EXTENSION = '.dabmtest'.freeze
-  DELIMITER = "\n--- SOURCE ---\n".freeze
-  FIELDS = %w[schema_version status stdout stderr].freeze
+  REQUIRED_SECTIONS = ['SOURCE', 'SCHEMA VERSION', 'STATUS'].freeze
+  OPTIONAL_SECTIONS = %w[STDOUT STDERR].freeze
+  SECTIONS = (REQUIRED_SECTIONS + OPTIONAL_SECTIONS).freeze
 
   class SchemaError < ArgumentError; end
 
@@ -25,14 +25,14 @@ class DabModernSourceFixture
 
   def load!
     validate_extension!
-    metadata_text, @source = split_document(normalized_content)
-    metadata = parse_metadata(metadata_text)
-    validate_metadata!(metadata)
+    sections = parse_sections(normalized_content)
+    validate_sections!(sections)
 
+    @source = sections.fetch('SOURCE')
     @source_filename = "#{File.basename(path, EXTENSION)}.dabm"
-    @expected_status = metadata.fetch('status')
-    @expected_stdout = metadata.fetch('stdout')
-    @expected_stderr = metadata.fetch('stderr')
+    @expected_status = parse_status(sections.fetch('STATUS'))
+    @expected_stdout = sections.fetch('STDOUT', '')
+    @expected_stderr = sections.fetch('STDERR', '')
     self
   rescue Errno::ENOENT, Errno::EACCES => e
     schema_error("fixture is not readable: #{e.message}")
@@ -50,41 +50,43 @@ private
     schema_error("fixture must use the exact lowercase #{EXTENSION} extension")
   end
 
-  def split_document(content)
-    parts = content.split(DELIMITER, -1)
-    schema_error('fixture requires exactly one --- SOURCE --- delimiter') unless parts.length == 2
-    parts
+  def parse_sections(content)
+    DabFixtureSectionDocument.parse(content).sections
+  rescue DabFixtureSectionDocument::ParseError => e
+    schema_error(e.message)
   end
 
-  def parse_metadata(text)
-    JSON.parse(text)
-  rescue JSON::ParserError => e
-    schema_error("metadata is not valid JSON: #{e.message}")
-  end
+  def validate_sections!(sections)
+    missing = REQUIRED_SECTIONS - sections.keys
+    unknown = sections.keys - SECTIONS
+    schema_error("missing sections: #{missing.join(', ')}") unless missing.empty?
+    schema_error("unsupported section: #{unknown.join(', ')}") unless unknown.empty?
 
-  def validate_metadata!(metadata)
-    schema_error("metadata must be an object, got #{type_name(metadata)}") unless metadata.is_a?(Hash)
-
-    missing = FIELDS - metadata.keys
-    unknown = metadata.keys - FIELDS
-    schema_error("metadata is missing fields: #{missing.sort.join(', ')}") unless missing.empty?
-    schema_error("metadata has unsupported fields: #{unknown.sort.join(', ')}") unless unknown.empty?
-
-    unless metadata['schema_version'] == SCHEMA_VERSION
-      schema_error("schema_version must be #{SCHEMA_VERSION}, got #{metadata['schema_version'].inspect}")
+    schema_version = parse_integer('SCHEMA VERSION', sections.fetch('SCHEMA VERSION'))
+    unless schema_version == SCHEMA_VERSION
+      schema_error("SCHEMA VERSION must be #{SCHEMA_VERSION}, got #{schema_version}")
     end
-    status = metadata['status']
-    unless status.is_a?(Integer) && status.between?(0, 255)
-      schema_error("status must be an Integer from 0 through 255, got #{status.inspect}")
-    end
-    %w[stdout stderr].each do |field|
-      value = metadata[field]
-      schema_error("#{field} must be a String, got #{type_name(value)}") unless value.is_a?(String)
+
+    OPTIONAL_SECTIONS.each do |name|
+      next unless sections.key?(name) && sections.fetch(name).empty?
+
+      schema_error("#{name} must be omitted when its expected stream is empty")
     end
   end
 
-  def type_name(value)
-    value.nil? ? 'null' : value.class.name
+  def parse_status(text)
+    status = parse_integer('STATUS', text)
+    unless status.between?(0, 255)
+      schema_error("STATUS must be an Integer from 0 through 255, got #{status}")
+    end
+    status
+  end
+
+  def parse_integer(name, text)
+    unless /\A-?(?:0|[1-9][0-9]*)\n?\z/.match?(text)
+      schema_error("#{name} must be an integer without surrounding whitespace, got #{text.inspect}")
+    end
+    Integer(text, 10)
   end
 
   def schema_error(message)
