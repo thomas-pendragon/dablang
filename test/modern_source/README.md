@@ -38,14 +38,15 @@ mismatched status or stream. The shared Dab reporter keeps successful fixtures
 concise, shows action details under `DAB_TEST_VERBOSE=1`, and replays attributed
 per-fixture details on failure.
 
-The diagnostic corpus contains one compiler fixture because every non-empty
-Modern source currently reaches the same syntax-neutral parser-entry rejection.
-Adding source content variants would duplicate that observable contract. The
-fixture proves
-status `2`, empty standard output, and exact standard error including its stable
-fixture-derived filename and zero-width entry location at offset `0`, line `1`,
-column `0`. Modern tokens, grammar, AST/IR, code generation, and runtime behavior
-remain unimplemented and outside this format contract.
+The corpus keeps the original parser-entry fixture, adds exact negative
+bootstrap fixtures for empty and non-`main` names, parameters, body content,
+duplicate declarations, comments, and incomplete input, and locks the exact
+successful assembly for the canonical minimal `main`. The negative fixtures
+prove status `2`, empty standard output, exact standard error, stable
+fixture-derived filenames, and the shared-scanner location of the first
+mismatch. The Rake-owned suite supplies the separately compiled Legacy stdlib
+Ring so every fixture reaches the version-0.0.35 bootstrap boundary. This format
+still owns compiler results only; it does not run the assembler or VM.
 
 Version 0.0.34 adds one multi-artifact exception that this single-source fixture
 schema cannot express: exactly one zero-byte file-backed Modern unit may compile
@@ -53,9 +54,19 @@ as an upper Ring layer when a separately compiled lower Ring is supplied. The
 end-to-end contract in `spec/modern_legacy_stdlib_ring_spec.rb` compiles the
 Legacy standard library, compiles and assembles that empty upper layer twice,
 inspects the combined Ring environment, and exercises missing and corrupt lower
-artifacts. This does not add another Modern fixture format. This fixture remains
-non-empty and continues to lock the exact version-0.0.33 diagnostic for all
-Modern content.
+artifacts. This does not add another Modern fixture format. The original fixture
+remains nonempty and continues to lock the version-0.0.33 entry message and
+location.
+
+Version 0.0.35 accepts one additional byte-exact source over that same lower
+Ring: `def main`, LF, `end`, LF. `0009_minimal_main.dabmtest` owns its exact
+compiler status, assembly stdout, and empty diagnostic stream. The focused
+contract in `spec/modern_minimal_main_spec.rb` separately compiles the lower
+Legacy stdlib and upper Modern artifact, assembles both, inspects Ring offsets
+and method tables, executes the native VM twice, and probes removed, reversed,
+and corrupt lower Rings. Its canonical standalone source is
+`test/modern_minimal_main/program.dabm`. This is not general `def` parsing and
+the body cannot contain statements.
 
 ## Diagnostic boundary
 
@@ -80,18 +91,22 @@ compiler: SOURCE.dabm:1:0: error: unsupported Dab syntax profile "modern": parse
 
 `DabModernSyntaxDiagnosticError` carries a `DabSourceLocation` whose source unit
 is the exact frozen object selected by filename inference, an explicit CLI
-profile, or the compiler API. Its location is a zero-width frontend entry point;
-it is not evidence that a token was scanned. In a mixed invocation, the first
-Modern unit in input order supplies the diagnostic identity while every input,
-Ring, scanner, Legacy parser, and compiler remain untouched. The separately
-specified zero-byte Ring-layer path inspects only the empty byte boundary and
-constructs no scanner or parser.
+profile, or the compiler API. A Modern unit rejected before a supported
+Ring/application boundary retains the zero-width entry point. A single
+file-backed Modern unit over a lower Ring instead uses the bootstrap scanner and
+attributes a mismatch to its first unsupported token or byte. In a mixed
+invocation, the first Modern unit in input order still supplies the entry
+diagnostic while every input and Ring remain untouched. The zero-byte Ring layer
+still constructs no scanner or parser.
 
-Direct `DabProgramStream` construction remains a lower-level parser-support
+Direct `DabProgramStream` construction remains a lower-level Legacy parser-support
 validation boundary. It raises `DabUnsupportedSyntaxProfileError` with the
 unchanged generic message and no process status or stream. Direct `DabScanner`
 construction remains syntax-neutral: it can carry the same Modern source-unit
 identity and produce locations, but emits no diagnostic and accepts no grammar.
+`DabModernBootstrapScanner` and `DabModernBootstrapParser` build the one exact
+bootstrap production directly on that shared cursor without changing
+`DabProgramStream`.
 
 Fixture schema failures remain separate and happen before
 `DabModernSourceCompiler` is constructed. A valid schema always reaches the
@@ -110,9 +125,10 @@ reinterpret those sections or change their source, expected-output,
 expected-failure, option, platform-library-extension, or path behavior.
 
 `Rakefile` discovers exact lowercase `test/modern_source/*.dabmtest` files
-through the existing `setup_tests` owner. That creates `modern_source_spec` and
-its reverse task, portable output names under `tmp/`, one completion marker per
-fixture, and the established concise reporter boundary. The suite has one
+through the existing `setup_tests` owner. It supplies the separately compiled
+Legacy stdlib Ring, creates `modern_source_spec` and its reverse task, portable
+output names under `tmp/`, one completion marker per fixture, and the established
+concise reporter boundary. The suite has one
 active entry in `config/test_suites.json` and one dependency from the default
 Rake task. Therefore the inherited Rake stage, every effective normal CI job,
 and the complete gate reach it exactly once. It is not added to the separate

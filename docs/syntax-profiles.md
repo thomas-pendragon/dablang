@@ -13,11 +13,11 @@ process-global, class-global, environment, thread-local, or invocation-global
 state.
 
 The registered identities are `DabSyntaxProfile::LEGACY` and
-`DabSyntaxProfile::MODERN`. Modern grammar is not implemented: Modern content
-fails before parsing rather than being sent through the legacy parser. Compiler
-frontends report the selected source unit at the zero-width entry location
-(offset `0`, line `1`, column `0`). The only accepted Modern boundary is the
-zero-byte Ring-layer case described below; it recognizes no token or statement.
+`DabSyntaxProfile::MODERN`. General Modern grammar is not implemented: Modern
+content outside the two narrow Ring-layer cases described below fails rather
+than being sent through the legacy parser. Compiler frontends report a Modern
+unit rejected before bootstrap scanning at the zero-width entry location
+(offset `0`, line `1`, column `0`).
 Direct callers can provide a complete source unit:
 
 ```ruby
@@ -125,19 +125,59 @@ VM, and trusted-local artifact boundary are unchanged.
 Removing the lower Ring makes the empty Modern unit unsupported again. A
 malformed lower artifact still fails through the existing Ring reader, and a
 different lower artifact changes the upper offset or available environment.
-Any nonzero source byte, including a space, LF, NUL, comment marker, identifier,
-or declaration, retains the exact status-2 source-attributed diagnostic from
-version 0.0.33. Standard input, a missing file, more than one upper source unit,
-and an empty Modern file without a Ring base also retain that rejection. No
-useful Modern program can be written at this stage; `def main` belongs to the
-next roadmap item.
+Any nonzero source not matching the exact minimal-main production below retains
+the status-2 source-attributed diagnostic from version 0.0.33. Standard input, a
+missing file, more than one upper source unit, and an empty Modern file without
+a Ring base also retain that rejection.
+
+## Minimal Modern main over a Legacy Ring
+
+Version 0.0.35 accepts one additional Modern upper Ring. Its file content must
+be exactly these bytes, including LF after both lines and no other byte:
+
+```text
+def main
+end
+```
+
+A dedicated bootstrap scanner and parser, built on `DabScanner`,
+`DabSourceLocation`, and `DabSourceSpan`, recognize the six structural tokens:
+`def`, one ASCII space, the exact ASCII identifier `main`, LF, `end`, and final
+LF. The structural LFs are part of this single production; they do not establish
+general newline-as-statement-separator semantics. A typed bootstrap declaration
+lowers into the existing `DabNodeFunction` boundary with no arguments and an
+empty body. Existing compiler passes add the implicit Nil return, so the emitted
+`main` method contains `RETURN RNIL` and no application output or warning call.
+
+The same application boundary as the zero-byte case applies: exactly one
+file-backed Modern source and at least one lower Ring are required. The intended
+lower Ring is the separately compiled Legacy standard library. The upper header
+offset equals the lower artifact's byte length, and the upper artifact contains
+the callable `main` method without flattening lower code, data, classes, or
+stdlib functions. The existing VM must receive the lower Ring before the upper
+Ring. A successful run exits with process status 0 and writes exactly zero bytes
+to the application channel selected by `--out=PATH`.
+
+Raw process stderr is not the application stderr channel. The current VM writes
+loader, startup, initialization, and teardown diagnostics there on successful
+runs. The end-to-end contract captures that stream separately and accepts only
+the characterized line categories in their exact order; unexpected lines,
+application warnings, errors, and sanitizer reports fail the contract.
+
+This is not general `def` parsing. It accepts no other function name, additional
+declaration, parameter or parentheses, return annotation, statement, literal,
+call, variable, type, comment, semicolon, leading or trailing token, CR-only
+line ending, CRLF line ending, or missing final LF. Near misses retain the
+version-0.0.33 message and are attributed to the first mismatching location from
+the shared scanner. General definitions, body statements, and newline separator
+semantics remain later roadmap work.
 
 ## Current construction paths
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
-| Production compiler frontend | One `DabSourceUnit` per input; shared `DabScanner` and `DabProgramStream` only for Legacy parsing | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. The sole zero-byte Modern Ring layer bypasses scanner/parser construction; every other Modern boundary rejects before parsing. |
-| Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. The typed entry diagnostic retains that exact source identity and a zero-width location. It does not infer or mutate profile state. |
+| Production compiler frontend | One `DabSourceUnit` per input; shared `DabScanner` and `DabProgramStream` for Legacy parsing, plus the narrow Modern bootstrap scanner/parser | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. The zero-byte Modern Ring layer bypasses scanner/parser construction. The exact minimal-main production uses only the Modern bootstrap boundary; every other Modern boundary rejects. |
+| Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture, compiled over the Legacy stdlib Ring | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. Bootstrap mismatches retain that exact source identity and shared-scanner location. It does not infer or mutate profile state, assemble artifacts, or run the VM. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
 | Parser specifications and direct Ruby callers | `DabProgramStream` | Callers can pass `source_unit:` to preserve a complete input identity or `syntax_profile:` to derive one. Omitting both remains a narrow single-source Legacy compatibility path. Passing both is rejected rather than guessing precedence. |
@@ -149,9 +189,9 @@ existing `DabParser`. The production Legacy `DabProgramStream` uses that
 scanner through inheritance; the scanner is not an unused Modern-only API.
 Every scanner receives one frozen `DabSourceUnit`, and every location and span
 retains that exact source-unit object and therefore its filename and canonical
-syntax profile. A scanner may carry a Modern source unit so a future parser can
-reuse this boundary, but `DabProgramStream` still rejects Modern before any
-Legacy token rule runs.
+syntax profile. A scanner may carry a Modern source unit, and the minimal-main
+bootstrap scanner now reuses this boundary. `DabProgramStream` still rejects
+Modern before any Legacy token rule runs.
 
 `DabSourceLocation` is a frozen value containing the source unit, offset, line,
 and column. `DabSourceSpan` is a frozen half-open range between two locations
@@ -185,14 +225,13 @@ normalizing source:
   and unexpected-EOF fallback diagnostics remain attributed to line and offset
   zero.
 
-These rules characterize compatibility, not a redesigned text model. This
-foundation adds no tab expansion, Unicode-width policy, newline normalization,
-Modern token definitions, grammar, AST/IR behavior, bytecode,
-or runtime behavior.
+These rules characterize compatibility, not a redesigned text model. The
+minimal-main production adds no tab expansion, Unicode-width policy, newline
+normalization, general Modern grammar, new bytecode, or runtime behavior.
 
 The dedicated Modern-source fixture format is active under
 `test/modern_source/*.dabmtest`; its schema and exact comparison contract are
-documented in that directory. Its non-duplicative diagnostic corpus locks the
-unsupported parser-entry status, streams, portable filename, and zero-width
-location. Modern tokenization, grammar, AST/IR, code generation, and runtime
-behavior remain unimplemented.
+documented in that directory. Its diagnostic corpus locks the unsupported
+parser message, streams, portable filenames, entry boundary, and exact
+bootstrap mismatch locations. The focused end-to-end RSpec contract owns the
+minimal-main compiler, Ring, assembler, and VM behavior.
