@@ -134,10 +134,16 @@ describe 'empty Modern application over a compiled Legacy standard-library Ring'
     end
   end
 
-  it 'rejects every non-empty Modern byte sequence with the exact 0.0.33 diagnostic' do
+  it 'keeps the unsupported diagnostic while attributing non-bootstrap bytes through the scanner' do
     Dir.mktmpdir('dab-modern-stdlib-ring-nonempty') do |directory|
       lower = build_stdlib(directory)
-      ["\n".b, ' '.b, "\0".b, "func main() {}\n".b].each_with_index do |source, index|
+      cases = [
+        ["\n".b, [2, 0]],
+        [' '.b, [1, 0]],
+        ["\0".b, [1, 0]],
+        ["func main() {}\n".b, [1, 0]],
+      ]
+      cases.each_with_index do |(source, (line, column)), index|
         source_path, assembly, artifact, stderr, status = compile_application(
           directory,
           ring: lower,
@@ -149,7 +155,7 @@ describe 'empty Modern application over a compiled Legacy standard-library Ring'
           2,
           '',
           nil,
-          "compiler: #{source_path}:1:0: error: " \
+          "compiler: #{source_path}:#{line}:#{column}: error: " \
           "unsupported Dab syntax profile \"modern\": parser is not implemented\n",
         ]
       end

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "status": 2,
+  "stdout": "",
+  "stderr": "compiler: 0006_duplicate_declaration.dabm:3:0: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+}
+--- SOURCE ---
+def main
+end
+def main
+end

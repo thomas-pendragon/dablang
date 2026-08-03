@@ -235,7 +235,7 @@ end
 
 setup_tests('minitest', 'dab', 'frontend_minitest', [cvm], nil, MinitestSpec)
 setup_tests('dab', 'dabt', 'frontend', [cvm, cffitest], 'dab', DabSpec, stdlib: compiled_stdlib)
-setup_tests('modern_source', 'dabmtest', nil, [], nil, ModernSourceSpec)
+setup_tests('modern_source', 'dabmtest', nil, [], nil, ModernSourceSpec, stdlib: compiled_stdlib)
 setup_tests('format', 'dabft', 'frontend_format', [], nil, FormatSpec)
 setup_tests('vm', 'vmt', 'frontend_vm', [cvm, cdisasm], nil, VMFrontend)
 setup_tests('disasm', 'dat', 'frontend_disasm', [cdisasm])

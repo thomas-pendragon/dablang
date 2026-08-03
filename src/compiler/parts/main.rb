@@ -69,8 +69,9 @@ class DabCompilerFrontend
         source_units.each do |source_unit|
           content = source_unit.input == :stdin ? context.stdin.read : File.binread(source_unit.input)
           if source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
-            DabModernSyntaxDiagnostics.validate_source_content!(source_unit, content)
+            declaration = DabModernSyntaxDiagnostics.validate_source_content!(source_unit, content)
             program ||= DabNodeUnit.new
+            declaration&.lower_into(program)
             next
           end
 

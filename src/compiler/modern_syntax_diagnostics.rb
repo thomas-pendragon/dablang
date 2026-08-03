@@ -1,4 +1,5 @@
 require_relative '../shared/source_location'
+require_relative 'modern_bootstrap_parser'
 
 class DabModernSyntaxDiagnosticError < DabUnsupportedSyntaxProfileError
   attr_reader :source_location
@@ -19,11 +20,11 @@ module_function
 
   def validate_source_units!(source_units, ring_bases: [])
     source_units.each do |source_unit|
-      if empty_modern_application?(source_unit, source_units: source_units, ring_bases: ring_bases)
-        next
-      end
-
       begin
+        if supported_modern_application?(source_unit, source_units: source_units, ring_bases: ring_bases)
+          next
+        end
+
         source_unit.require_parser_support!
       rescue DabUnsupportedSyntaxProfileError => e
         raise_diagnostic(source_unit, e)
@@ -35,29 +36,47 @@ module_function
 
   def validate_source_content!(source_unit, content)
     return source_unit unless source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
-    return source_unit if content.empty?
+    return nil if content.empty?
 
-    source_unit.require_parser_support!
+    DabModernBootstrapParser.new(content, source_unit: source_unit).parse
   rescue DabUnsupportedSyntaxProfileError => e
     raise_diagnostic(source_unit, e)
   end
 
-  def empty_modern_application?(source_unit, source_units:, ring_bases:)
+  def supported_modern_application?(source_unit, source_units:, ring_bases:)
+    return false unless modern_application_candidate?(
+      source_unit,
+      source_units: source_units,
+      ring_bases: ring_bases
+    )
+    return true if File.zero?(source_unit.input)
+
+    DabModernBootstrapParser.new(File.binread(source_unit.input), source_unit: source_unit).parse
+    true
+  rescue SystemCallError
+    false
+  end
+
+  def modern_application_candidate?(source_unit, source_units:, ring_bases:)
     return false unless source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
     return false unless source_units.one?
     return false if Array(ring_bases).empty?
     return false unless source_unit.input.is_a?(String)
 
-    File.file?(source_unit.input) && File.zero?(source_unit.input)
+    File.file?(source_unit.input)
   end
 
   def raise_diagnostic(source_unit, error)
-    location = DabSourceLocation.new(
-      source_unit: source_unit,
-      offset: 0,
-      line: 1,
-      column: 0
-    )
+    location = if error.respond_to?(:source_location)
+                 error.source_location
+               else
+                 DabSourceLocation.new(
+                   source_unit: source_unit,
+                   offset: 0,
+                   line: 1,
+                   column: 0
+                 )
+               end
     raise DabModernSyntaxDiagnosticError.new(error.message, source_location: location)
   end
 end

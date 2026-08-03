@@ -107,13 +107,15 @@ class DabModernSourceCompiler
     )
   end
 
-  def compile(fixture, source_path:)
+  def compile(fixture, source_path:, ring_base: nil)
     context = InlineCompilerContext.new
     source_unit = build_source_unit(fixture, source_path)
     status = 0
+    settings = {inputs: [source_path]}
+    settings[:ring_base] = [ring_base] if ring_base
 
     begin
-      run_dab_compiler({inputs: [source_path]}, context, source_units: [source_unit])
+      run_dab_compiler(settings, context, source_units: [source_unit])
     rescue InlineCompilerExit => e
       status = e.code
     end
@@ -132,7 +134,7 @@ class ModernSourceSpec
     DabTestOutput.with_test(input, output: output, error: error) { run(settings) }
   end
 
-  def run(_settings)
+  def run(settings)
     FileUtils.mkdir_p(test_output_dir)
     output_marker = temp_file('out')
     FileUtils.rm_f(output_marker)
@@ -148,7 +150,8 @@ class ModernSourceSpec
       'compile Modern source',
       "compile #{fixture.source_filename} with DabSyntaxProfile::MODERN"
     ) do
-      DabModernSourceCompiler.new.compile(fixture, source_path: source_path)
+      ring_base = settings[:stdlib] || Array(settings[:ring_base]).first
+      DabModernSourceCompiler.new.compile(fixture, source_path: source_path, ring_base: ring_base)
     end
     with_harness_action('compare compiler result', "compare exact status/stdout/stderr for #{portable_path(input)}") do
       compare_result(fixture, result)
