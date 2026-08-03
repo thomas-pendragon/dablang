@@ -305,12 +305,15 @@ describe 'minimal Modern main bootstrap' do
         [first.fetch(:upper).fetch(:artifact), first.fetch(:lower)],
         basename: 'reversed-rings'
       )
+      # The POSIX handler maps this existing loader crash to exit 1. Windows
+      # reports the native abnormal termination without a normal exit status.
       expect(reversed.slice(:status, :process_stdout, :application_stdout)).to eq(
-        status: 1,
+        status: Gem.win_platform? ? nil : 1,
         process_stdout: '',
         application_stdout: ''
       )
       expect(reversed.fetch(:host_stderr)).to include('Error: signal') unless Gem.win_platform?
+      expect(reversed.fetch(:host_stderr)).not_to match(/sanitizer|warning|KERNEL_WARN/i)
       expect(reversed.fetch(:host_stderr)).not_to include('vm: initialize attributes', 'vm: add function <main>.')
 
       corrupt_lower = File.join(first.fetch(:directory), 'corrupt-stdlib.dabcb')
