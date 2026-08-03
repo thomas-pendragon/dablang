@@ -132,9 +132,10 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
   governance decision, test evidence, generated-file status, and any known
   limitations. Do not merge your own work unless explicitly authorized.
 - Public-site publication is controlled by `docs/_data/public_site.yml` and
-  validated with `BUNDLE_GEMFILE=docs/Gemfile bundle exec ruby
-  script/public_site.rb`. Do not publish governance, CI, sanitizer, toolchain,
-  or test-harness pages merely because they live under `docs/`.
+  validated with
+  `BUNDLE_GEMFILE=docs/Gemfile bundle exec ruby script/public_site.rb`. Do not
+  publish governance, CI, sanitizer, toolchain, or test-harness pages merely
+  because they live under `docs/`.
 - Keep the public README and `dablang.net` pages self-contained; visitors must
   not need the internal Wiki for the project's central product story, and
   internal labels such as “Scenario B” must not appear as public product
