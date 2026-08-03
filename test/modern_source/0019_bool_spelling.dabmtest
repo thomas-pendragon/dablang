@@ -1,0 +1,10 @@
+## SOURCE
+def main
+TRUE
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0019_bool_spelling.dabm:2:0: error: unsupported Dab syntax profile "modern": parser is not implemented

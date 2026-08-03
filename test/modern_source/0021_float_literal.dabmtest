@@ -1,0 +1,10 @@
+## SOURCE
+def main
+1.0
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0021_float_literal.dabm:2:1: error: unsupported Dab syntax profile "modern": parser is not implemented

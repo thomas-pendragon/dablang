@@ -55,6 +55,7 @@ class DabModernBootstrapScanner < DabScanner
       token(:unsupported, '/', start_offset)
     else
       return identifier_token(start_offset) if IDENTIFIER_START.include?(current_char)
+      return integer_token(start_offset) if digit?(current_char)
 
       text = current_char
       advance!
@@ -73,9 +74,25 @@ private
     kind = case text
            when 'def' then :def
            when 'end' then :end
+           when 'nil' then :nil
+           when 'true' then :boolean_true
+           when 'false' then :boolean_false
            else :identifier
            end
     token(kind, text, start_offset)
+  end
+
+  def integer_token(start_offset)
+    text = +''
+    while !eof? && digit?(current_char)
+      text << current_char
+      advance!
+    end
+    token(:integer, text, start_offset)
+  end
+
+  def digit?(character)
+    character && character >= '0' && character <= '9'
   end
 
   def line_comment_token(start_offset)
@@ -97,11 +114,12 @@ private
 end
 
 class DabModernBootstrapMainDeclaration
-  attr_reader :source_unit, :source_span
+  attr_reader :source_unit, :source_span, :body_tokens
 
-  def initialize(def_token:, name_token:, end_token:, final_separator:)
+  def initialize(def_token:, name_token:, body_tokens:, end_token:, final_separator:)
     @def_token = def_token
     @name_token = name_token
+    @body_tokens = body_tokens.freeze
     @end_token = end_token
     @source_unit = def_token.source_span.source_unit
     @source_span = DabSourceSpan.new(
@@ -116,7 +134,11 @@ class DabModernBootstrapMainDeclaration
       raise ArgumentError.new('Modern bootstrap lowering requires a DabNodeUnit')
     end
 
-    function = DabNodeFunction.new(@name_token.source_string, DabNodeTreeBlock.new, nil)
+    body = DabNodeTreeBlock.new
+    @body_tokens.each do |body_token|
+      body.insert(lower_literal(body_token))
+    end
+    function = DabNodeFunction.new(@name_token.source_string, body, nil)
     function.add_source_parts(
       @def_token.source_string,
       @name_token.source_string,
@@ -125,10 +147,28 @@ class DabModernBootstrapMainDeclaration
     unit.add_function(function)
     function
   end
+
+private
+
+  def lower_literal(token)
+    node = case token.kind
+           when :nil then DabNodeLiteralNil.new
+           when :boolean_true then DabNodeLiteralBoolean.new(true)
+           when :boolean_false then DabNodeLiteralBoolean.new(false)
+           when :integer then DabNodeLiteralNumber.new(Integer(token.text, 10))
+           else raise ArgumentError.new("unsupported Modern bootstrap literal token #{token.kind.inspect}")
+           end
+    node.add_source_part(token.source_string)
+    node
+  end
 end
 
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
+  LITERAL_KINDS = %i[nil boolean_true boolean_false integer].freeze
+  # This is the checked-in VM Fixnum representation boundary, not a broader
+  # decision about the future Dab Numeric contract.
+  MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
 
   def initialize(content, source_unit:)
     @source_unit = DabSourceUnit.validate(source_unit)
@@ -148,7 +188,7 @@ class DabModernBootstrapParser
     name_token = expect(:identifier)
     reject(name_token) unless name_token.text == 'main'
     expect_separator
-    skip_separators
+    body_tokens = parse_body
     end_token = expect(:end)
     final_separator = expect_separator
     skip_separators
@@ -157,6 +197,7 @@ class DabModernBootstrapParser
     DabModernBootstrapMainDeclaration.new(
       def_token: def_token,
       name_token: name_token,
+      body_tokens: body_tokens,
       end_token: end_token,
       final_separator: final_separator
     )
@@ -184,6 +225,28 @@ private
     token = next_token
     reject(token) unless separator?(token)
     token
+  end
+
+  def parse_body
+    tokens = []
+    loop do
+      skip_separators
+      break if peek_token.kind == :end
+
+      token = next_token
+      reject(token) unless LITERAL_KINDS.include?(token.kind)
+      reject(token) if token.kind == :integer && integer_overflow?(token.text)
+      tokens << token
+      expect_separator
+    end
+    tokens
+  end
+
+  def integer_overflow?(text)
+    significant = text.sub(/\A0+/, '')
+    significant = '0' if significant.empty?
+    significant.length > MAX_LEGACY_FIXNUM_DECIMAL.length ||
+      (significant.length == MAX_LEGACY_FIXNUM_DECIMAL.length && significant > MAX_LEGACY_FIXNUM_DECIMAL)
   end
 
   def skip_separators
