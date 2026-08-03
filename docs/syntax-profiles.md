@@ -169,8 +169,33 @@ declaration, parameter or parentheses, return annotation, statement, literal,
 call, variable, type, comment, semicolon, leading or trailing token, CR-only
 line ending, CRLF line ending, or missing final LF. Near misses retain the
 version-0.0.33 message and are attributed to the first mismatching location from
-the shared scanner. General definitions, body statements, and newline separator
-semantics remain later roadmap work.
+the shared scanner. General definitions and body statements remain later
+roadmap work.
+
+## Modern newline separators
+
+Version 0.0.36 gives the existing LF token one syntax meaning: one or more LF
+bytes form a Modern statement-separator run. Separator runs may appear before
+or after the currently supported top-level declaration and as blank lines in
+its empty body. A source containing only LF separators is equivalent to the
+already supported zero-byte Modern upper unit. The canonical 0.0.35 source
+remains accepted without changes and compiles to the same upper assembly and
+runtime behavior.
+
+The `def main` header and its closing `end` must each be followed by at least
+one LF separator. The declaration span still starts at `def` and ends after the
+first LF following `end`; leading and additional trailing separators are not
+part of the declaration. Every separator retains its shared-scanner offset,
+line, column, source-unit identity, and half-open span.
+
+Only byte `0x0a` is a separator. ASCII spaces do not make a blank separator
+line, and CR or CRLF input is not normalized by the compiler. Semicolons remain
+unsupported until their separate roadmap item, and comments, body content,
+additional declarations, literals, calls, variables, types, and general
+function parsing remain rejected at the first mismatching scanner location.
+Because the current subset has no body statement, this version establishes
+blank-line and empty-unit separator behavior without inventing a statement
+production.
 
 ## Current construction paths
 
@@ -226,8 +251,9 @@ normalizing source:
   zero.
 
 These rules characterize compatibility, not a redesigned text model. The
-minimal-main production adds no tab expansion, Unicode-width policy, newline
-normalization, general Modern grammar, new bytecode, or runtime behavior.
+minimal-main and newline-separator productions add no tab expansion,
+Unicode-width policy, newline normalization, general Modern grammar, new
+bytecode, or runtime behavior.
 
 The dedicated Modern-source fixture format is active under
 `test/modern_source/*.dabmtest`; its schema and exact comparison contract are

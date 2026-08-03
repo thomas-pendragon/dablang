@@ -134,11 +134,20 @@ describe 'empty Modern application over a compiled Legacy standard-library Ring'
     end
   end
 
-  it 'keeps the unsupported diagnostic while attributing non-bootstrap bytes through the scanner' do
+  it 'accepts LF-only separators while attributing other non-bootstrap bytes through the scanner' do
     Dir.mktmpdir('dab-modern-stdlib-ring-nonempty') do |directory|
       lower = build_stdlib(directory)
+      _source, empty_assembly, empty_artifact, empty_stderr, empty_status =
+        compile_application(directory, ring: lower, source: ''.b, basename: 'empty')
+      _source, separator_assembly, separator_artifact, separator_stderr, separator_status =
+        compile_application(directory, ring: lower, source: "\n\n".b, basename: 'separators')
+      expect([empty_status.exitstatus, separator_status.exitstatus]).to eq [0, 0]
+      expect(separator_stderr).to eq empty_stderr
+      expect(separator_stderr).not_to include('compiler:', 'exception:', 'FAILED')
+      expect(separator_assembly).to eq empty_assembly
+      expect(File.binread(separator_artifact)).to eq File.binread(empty_artifact)
+
       cases = [
-        ["\n".b, [2, 0]],
         [' '.b, [1, 0]],
         ["\0".b, [1, 0]],
         ["func main() {}\n".b, [1, 0]],

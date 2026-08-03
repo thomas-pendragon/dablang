@@ -119,13 +119,18 @@ class DabModernBootstrapParser
   end
 
   def parse
+    skip_separators
+    return nil if peek_token.kind == :eof
+
     def_token = expect(:def)
     expect(:space)
     name_token = expect(:identifier)
     reject(name_token) unless name_token.text == 'main'
-    expect(:line_feed)
+    expect_separator
+    skip_separators
     end_token = expect(:end)
-    final_line_feed = expect(:line_feed)
+    final_line_feed = expect_separator
+    skip_separators
     expect(:eof)
 
     DabModernBootstrapMainDeclaration.new(
@@ -145,7 +150,21 @@ private
   end
 
   def next_token
-    @scanner.next_token
+    token = @peek_token
+    @peek_token = nil
+    token || @scanner.next_token
+  end
+
+  def peek_token
+    @peek_token ||= @scanner.next_token
+  end
+
+  def expect_separator
+    expect(:line_feed)
+  end
+
+  def skip_separators
+    next_token while peek_token.kind == :line_feed
   end
 
   def reject(token)
