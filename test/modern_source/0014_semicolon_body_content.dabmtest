@@ -1,0 +1,8 @@
+## SOURCE
+def main;value;end;
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0014_semicolon_body_content.dabm:1:9: error: unsupported Dab syntax profile "modern": parser is not implemented

@@ -164,13 +164,14 @@ runs. The end-to-end contract captures that stream separately and accepts only
 the characterized line categories in their exact order; unexpected lines,
 application warnings, errors, and sanitizer reports fail the contract.
 
-This is not general `def` parsing. It accepts no other function name, additional
-declaration, parameter or parentheses, return annotation, statement, literal,
-call, variable, type, comment, semicolon, leading or trailing token, CR-only
-line ending, CRLF line ending, or missing final LF. Near misses retain the
-version-0.0.33 message and are attributed to the first mismatching location from
-the shared scanner. General definitions and body statements remain later
-roadmap work.
+At version 0.0.35 this was not general `def` parsing. It accepted no other
+function name, additional declaration, parameter or parentheses, return
+annotation, statement, literal, call, variable, type, comment, semicolon,
+leading or trailing token, CR-only line ending, CRLF line ending, or missing
+final LF. Later separator versions extend only the positions described below.
+Other near misses retain the version-0.0.33 message and are attributed to the
+first mismatching location from the shared scanner. General definitions and
+body statements remain later roadmap work.
 
 ## Modern newline separators
 
@@ -188,14 +189,40 @@ first LF following `end`; leading and additional trailing separators are not
 part of the declaration. Every separator retains its shared-scanner offset,
 line, column, source-unit identity, and half-open span.
 
-Only byte `0x0a` is a separator. ASCII spaces do not make a blank separator
-line, and CR or CRLF input is not normalized by the compiler. Semicolons remain
-unsupported until their separate roadmap item, and comments, body content,
+In version 0.0.36 only byte `0x0a` is a separator. ASCII spaces do not make a
+blank separator line, and CR or CRLF input is not normalized by the compiler.
+Comments, body content, additional declarations, literals, calls, variables,
+types, and general function parsing remain rejected at the first mismatching
+scanner location. Because the current subset has no body statement, this
+version establishes blank-line and empty-unit separator behavior without
+inventing a statement production.
+
+## Modern semicolon separators
+
+Version 0.0.38 adds byte `0x3b` (`;`) as the alternative token accepted by the
+same separator abstraction. One or more LF or semicolon tokens, in any mix,
+form a separator run only where the version-0.0.36 grammar already accepted an
+LF run: before or after the single supported declaration, within its empty
+body, and throughout a separator-only source. The required separators after
+the `def main` header and after `end` may also be semicolons, so
+`def main;end;` is the smallest semicolon-framed declaration. The canonical
+0.0.35 source and every 0.0.36 LF-only form remain accepted and compile to the
+same upper assembly and runtime behavior.
+
+A semicolon remains syntax rather than whitespace. The scanner emits each one
+as its own token with its exact offset, line, column, half-open span, and source
+unit. It consumes one column and does not advance the line; only LF changes line
+coordinates. The declaration span still starts at `def` and ends after the
+first separator following `end`, whether that separator is LF or semicolon.
+Leading separators and every additional trailing separator remain outside the
+declaration span.
+
+Semicolon does not replace the required ASCII space between `def` and `main`,
+split or join an identifier or keyword, permit content in the empty body, or
+separate another declaration. Those shapes fail at the first mismatching
+scanner token. Spaces, CR, CRLF, comments, statements,
 additional declarations, literals, calls, variables, types, and general
-function parsing remain rejected at the first mismatching scanner location.
-Because the current subset has no body statement, this version establishes
-blank-line and empty-unit separator behavior without inventing a statement
-production.
+function parsing remain unsupported.
 
 ## Current construction paths
 
@@ -251,9 +278,9 @@ normalizing source:
   zero.
 
 These rules characterize compatibility, not a redesigned text model. The
-minimal-main and newline-separator productions add no tab expansion,
-Unicode-width policy, newline normalization, general Modern grammar, new
-bytecode, or runtime behavior.
+minimal-main and separator productions add no tab expansion, Unicode-width
+policy, newline normalization, general Modern grammar, new bytecode, or runtime
+behavior.
 
 The dedicated Modern-source fixture format is active under
 `test/modern_source/*.dabmtest`; its strict section schema and exact comparison
