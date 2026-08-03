@@ -165,6 +165,12 @@ describe 'Modern bootstrap String literals' do
     )
   end
 
+  it 'forwards the assembly-only doubled-quote option through parser contexts' do
+    context = DabBaseContext.new(DabParser.new('"quote: """'))
+
+    expect(context.read_string(doubled_quotes: true)).to eq('quote: "')
+  end
+
   it 'rejects invalid bytes, NUL, physical newlines, unterminated text, unknown escapes, and interpolation at the marker' do
     cases = {
       'invalid UTF-8 lead' => ["def main\n\"ok \xC3(\"\nend\n".b, 13],

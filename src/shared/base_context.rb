@@ -23,8 +23,8 @@ class DabBaseContext
     @stream.read_any_operator(*args)
   end
 
-  def read_string(*args)
-    @stream.read_string(*args)
+  def read_string(*args, **kwargs)
+    @stream.read_string(*args, **kwargs)
   end
 
   def read_number(*args)
