@@ -34,6 +34,10 @@ class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
   STRING_ESCAPES = {'"' => '"', 'n' => "\n", 'r' => "\r"}.freeze
 
+  def initialize(content, nl_is_whitespace = true, source_unit:)
+    super(content.b, nl_is_whitespace, source_unit: source_unit)
+  end
+
   def next_token
     start_offset = position
     return token(:eof, '', start_offset) if eof?

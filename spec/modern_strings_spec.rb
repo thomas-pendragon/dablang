@@ -115,6 +115,17 @@ describe 'Modern bootstrap String literals' do
     expect(strings).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
   end
 
+  it 'normalizes text-mode Modern input to byte offsets before scanning' do
+    source = "def main\n\"Zażółć 🐉\"\n+\nend\n"
+    scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)
+    token = nil
+    token = scanner.next_token until token&.kind == :unsupported
+
+    expect(scanner.content.encoding).to eq(Encoding::BINARY)
+    expect(token.text).to eq('+'.b)
+    expect(token.source_location.offset).to eq(source.b.index('+'))
+  end
+
   it 'lowers every accepted String through DabNodeLiteralString with the full delimiter span' do
     declaration = parse_modern(string_source)
     unit = DabNodeUnit.new
