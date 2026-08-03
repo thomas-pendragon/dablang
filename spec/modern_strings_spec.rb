@@ -13,6 +13,7 @@ describe 'Modern bootstrap String literals' do
   let(:root) { File.expand_path('..', __dir__) }
   let(:compiler) { File.join(root, 'src/compiler/compiler.rb') }
   let(:assembler) { File.join(root, 'src/tobinary/tobinary.rb') }
+  let(:decompiler) { File.join(root, 'src/decompile/decompile.rb') }
   let(:stdlib_frontend) { File.join(root, 'src/frontend/frontend_stdlib.rb') }
   let(:vm) { File.join(root, "bin/cvm#{RbConfig::CONFIG.fetch('EXEEXT')}") }
   let(:source_unit) do
@@ -174,6 +175,44 @@ describe 'Modern bootstrap String literals' do
     expect([backslash_status.exitstatus, tool_stderr(backslash_stderr), backslash_raw.b]).to eq(
       [0, '', "ends \\\0".b]
     )
+  end
+
+  it 'renders formatter and decompiler Strings with stable R35 escapes' do
+    values = [
+      'quote: "'.b,
+      "carriage\rreturn".b,
+      "line\nfeed".b,
+      "adjacent\"\r\nend".b,
+    ]
+
+    values.each do |value|
+      rendered = DabNodeLiteralString.new(value).formatted_source({})
+      declaration = parse_modern("def main\n#{rendered}\nend\n".b)
+      body = declaration.lower_into(DabNodeUnit.new).blocks[0]
+
+      expect(body.map(&:constant_value)).to eq([value])
+    end
+
+    expect(DabNodeLiteralString.new('raw \\ and \\n \\r'.b).formatted_source({})).to eq(
+      '"raw \\ and \\n \\r"'.b
+    )
+  end
+
+  it 'escapes quote and line controls in decompiled bytecode Strings' do
+    Dir.mktmpdir('dab-modern-string-decompile') do |directory|
+      source = File.join(directory, 'string.dab')
+      File.binwrite(source, 'func main(){return "abcde";}')
+      assembly, compiler_stderr, compiler_status = invoke(RbConfig.ruby, compiler, source)
+      expect([compiler_status.exitstatus, tool_stderr(compiler_stderr)]).to eq [0, '']
+      assembly = assembly.sub('W_STRING "abcde"', 'W_STRING "q""\\r\\nx"')
+
+      bytecode, assembler_stderr, assembler_status = invoke(RbConfig.ruby, assembler, input: assembly)
+      expect([assembler_status.exitstatus, tool_stderr(assembler_stderr)]).to eq [0, '']
+
+      decompiled, decompiler_stderr, decompiler_status = invoke(RbConfig.ruby, decompiler, input: bytecode)
+      expect(decompiler_status.exitstatus).to eq(0), decompiler_stderr
+      expect(decompiled).to include('return "q\\"\\r\\nx";')
+    end
   end
 
   it 'forwards the assembly-only doubled-quote option through parser contexts' do

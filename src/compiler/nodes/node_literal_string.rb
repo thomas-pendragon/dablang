@@ -33,7 +33,8 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def formatted_source(_options)
-    "\"#{string.gsub("\n", '\\n')}\""
+    escaped = string.gsub('"', '\\"').gsub("\r", '\\r').gsub("\n", '\\n')
+    "\"#{escaped}\""
   end
 
   def constant_value
