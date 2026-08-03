@@ -100,12 +100,21 @@ Version 0.0.36 treats one or more LF bytes as a Modern separator run around
 that existing declaration. `0010_newline_separators.dabmtest` proves leading
 and body blank separator lines compile to the same assembly as the canonical
 source. The focused contract also proves trailing separators, an LF-only unit,
-and other separator variants remain deterministic. `0011` and `0012` keep a
-newline inside the `def main` header and a semicolon fail-closed with exact
-source locations; focused coverage does the same for a space-only body line.
-The compiler does not normalize CR or CRLF source. Comments, statements,
-additional declarations, and every other Modern syntax feature remain
-unsupported.
+and other separator variants remain deterministic. `0011` keeps a newline
+inside the `def main` header fail-closed with an exact source location. The
+compiler does not normalize CR or CRLF source.
+
+Version 0.0.38 lets the same separator runs contain LF, semicolon, or both.
+Runs remain limited to the existing leading, trailing, and empty-body positions,
+and the required separators after `main` and `end` may each be semicolons.
+`0012_semicolon_separator.dabmtest` covers repeated and mixed runs around and
+within the declaration while retaining the canonical assembly exactly. `0013`
+proves that semicolon does not replace the header space, and `0014` proves that
+it does not make body content valid. Focused coverage also locks single and
+repeated semicolons, the exact `def main;end;` framing, separator-only sources,
+declaration spans, and per-token coordinates where only LF advances the line.
+Comments, statements, additional declarations, and every other Modern syntax
+feature remain unsupported.
 
 ## Diagnostic boundary
 

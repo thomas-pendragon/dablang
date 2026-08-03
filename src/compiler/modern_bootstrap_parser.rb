@@ -43,6 +43,9 @@ class DabModernBootstrapScanner < DabScanner
     when "\n"
       advance!
       token(:line_feed, "\n", start_offset)
+    when ';'
+      advance!
+      token(:semicolon, ';', start_offset)
     else
       return identifier_token(start_offset) if IDENTIFIER_START.include?(current_char)
 
@@ -80,14 +83,14 @@ end
 class DabModernBootstrapMainDeclaration
   attr_reader :source_unit, :source_span
 
-  def initialize(def_token:, name_token:, end_token:, final_line_feed:)
+  def initialize(def_token:, name_token:, end_token:, final_separator:)
     @def_token = def_token
     @name_token = name_token
     @end_token = end_token
     @source_unit = def_token.source_span.source_unit
     @source_span = DabSourceSpan.new(
       start_location: def_token.source_span.start_location,
-      end_location: final_line_feed.source_span.end_location
+      end_location: final_separator.source_span.end_location
     )
     freeze
   end
@@ -109,6 +112,8 @@ class DabModernBootstrapMainDeclaration
 end
 
 class DabModernBootstrapParser
+  SEPARATOR_KINDS = %i[line_feed semicolon].freeze
+
   def initialize(content, source_unit:)
     @source_unit = DabSourceUnit.validate(source_unit)
     unless @source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
@@ -129,7 +134,7 @@ class DabModernBootstrapParser
     expect_separator
     skip_separators
     end_token = expect(:end)
-    final_line_feed = expect_separator
+    final_separator = expect_separator
     skip_separators
     expect(:eof)
 
@@ -137,7 +142,7 @@ class DabModernBootstrapParser
       def_token: def_token,
       name_token: name_token,
       end_token: end_token,
-      final_line_feed: final_line_feed
+      final_separator: final_separator
     )
   end
 
@@ -160,11 +165,17 @@ private
   end
 
   def expect_separator
-    expect(:line_feed)
+    token = next_token
+    reject(token) unless separator?(token)
+    token
   end
 
   def skip_separators
-    next_token while peek_token.kind == :line_feed
+    next_token while separator?(peek_token)
+  end
+
+  def separator?(token)
+    SEPARATOR_KINDS.include?(token.kind)
   end
 
   def reject(token)
