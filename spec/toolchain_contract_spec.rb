@@ -27,6 +27,12 @@ describe Dab::ToolchainPreflight::RepositoryContract do
     end
   end
 
+  def workflow_runs_for?(changed_paths, ignored_patterns)
+    changed_paths.any? do |path|
+      ignored_patterns.none? { |pattern| File.fnmatch?(pattern, path, File::FNM_DOTMATCH) }
+    end
+  end
+
   it 'keeps five normal runs, two independent sanitizer runs, and the public-site job consistent' do
     with_contract_repository(project_root) do |root, contract|
       errors = described_class.new(root: root, contract: contract).errors
@@ -126,8 +132,18 @@ describe Dab::ToolchainPreflight::RepositoryContract do
 
       errors = described_class.new(root: root, contract: contract).errors
 
-      expect(errors).to include('CI trigger drifted; keep the workflow pull-request-only for master')
+      expect(errors).to include(
+        'CI trigger drifted; keep the master pull-request workflow disabled only for all-Markdown changes'
+      )
     end
+  end
+
+  it 'starts CI unless every changed path ends in .md' do
+    ignored_patterns = ['**.md']
+
+    expect(workflow_runs_for?(%w[README.md docs/building.md], ignored_patterns)).to be(false)
+    expect(workflow_runs_for?(%w[README.md src/compiler/compiler.rb], ignored_patterns)).to be(true)
+    expect(workflow_runs_for?(%w[.github/workflows/ruby.yml], ignored_patterns)).to be(true)
   end
 
   it 'detects Rake tool-selection drift' do
