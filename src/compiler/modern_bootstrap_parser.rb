@@ -231,6 +231,8 @@ private
   end
 
   def invalid_literal_identifier_message(text)
+    return if %w[nil true false].include?(text)
+
     lowercase = text.downcase
     return "invalid Modern nil literal #{text.inspect}; use \"nil\"" if %w[nil null].include?(lowercase)
     return "invalid Modern Bool literal #{text.inspect}; use #{lowercase.inspect}" if %w[true false].include?(lowercase)

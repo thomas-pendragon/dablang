@@ -94,6 +94,7 @@ describe 'Modern bootstrap literals' do
         {offset: 46, line: 3, column: 11},
       ]
     )
+    expect(literals.map(&:diagnostic_message)).to all(be_nil)
     expect(literals).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
   end
 
