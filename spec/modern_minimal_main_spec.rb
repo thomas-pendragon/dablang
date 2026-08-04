@@ -221,6 +221,42 @@ describe 'minimal Modern main bootstrap' do
         span: [8, 10],
         location: {offset: 8, line: 1, column: 8},
       },
+      'lone CR after spaces following main' => {
+        source: "def main \rend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [9, 10],
+        location: {offset: 9, line: 1, column: 9},
+      },
+      'CRLF after spaces following main' => {
+        source: "def main \r\nend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [9, 11],
+        location: {offset: 9, line: 1, column: 9},
+      },
+      'lone CR after spaces following literal' => {
+        source: "def main\nnil \rend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 14],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'CRLF after spaces following literal' => {
+        source: "def main\nnil \r\nend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 15],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'lone CR after spaces following end' => {
+        source: "def main\nend \r".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 14],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'CRLF after spaces following end' => {
+        source: "def main\nend \r\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 15],
+        location: {offset: 13, line: 2, column: 4},
+      },
     }
   end
 
@@ -748,7 +784,7 @@ describe 'minimal Modern main bootstrap' do
       'closing end after consumed separators and comment',
       'separator after closing end at EOF',
       'extra end',
-      'CRLF separator',
+      'CRLF after spaces following main',
     ]
 
     Dir.mktmpdir('dab-modern-structural-diagnostics') do |directory|

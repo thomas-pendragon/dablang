@@ -610,6 +610,7 @@ private
     reject_invalid_separator(token)
     return token if separator?(token)
 
+    reject_invalid_separator_after_spaces(token)
     if token.kind == :space && implemented_shell_token_after_spaces?
       reject(token, EXPECT_MAIN_SEPARATOR_MESSAGE)
     end
@@ -625,6 +626,7 @@ private
     reject_invalid_separator(token)
     return token if separator?(token)
 
+    reject_invalid_separator_after_spaces(token)
     if token.kind == :space && body_boundary_token_after_spaces?
       reject(token, EXPECT_LITERAL_SEPARATOR_MESSAGE)
     end
@@ -638,6 +640,7 @@ private
   def expect_end_separator
     token = next_token
     reject_invalid_separator(token)
+    reject_invalid_separator_after_spaces(token)
     reject(token, EXPECT_END_SEPARATOR_MESSAGE) unless separator?(token)
     token
   end
@@ -708,6 +711,10 @@ private
 
   def reject_invalid_separator(token)
     reject(token, INVALID_CR_SEPARATOR_MESSAGE) if token.kind == :carriage_return
+  end
+
+  def reject_invalid_separator_after_spaces(token)
+    reject_invalid_separator(token_after_spaces) if token.kind == :space
   end
 
   def reject(token, message = DabModernBootstrapParseError::GENERIC_MESSAGE)
