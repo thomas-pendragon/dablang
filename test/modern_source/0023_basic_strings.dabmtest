@@ -6,6 +6,9 @@ def main
 "quote: \""
 "line\nfeed"
 "carriage\rreturn"
+"slash \\ tab \t bs \b ff \f vt \v bell \a escape \e"
+"literal \#{marker}"
+"copyright \u00A9 dragon \u{1F409} noncharacter \uFFFF"
 end
 ## SCHEMA VERSION
 1

@@ -1,11 +1,13 @@
 require_relative 'node_extractable_literal'
+require_relative '../modern_string_escapes'
 
 class DabNodeLiteralString < DabNodeExtractableLiteral
   attr_reader :string
 
-  def initialize(string)
+  def initialize(string, modern_source: false)
     super()
     @string = string
+    @modern_source = modern_source
   end
 
   def extra_dump
@@ -17,7 +19,12 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def compile_string(output)
-    output.print("W_STRING #{assembly_literal}")
+    if safe_modern_assembly?
+      string.each_byte { |byte| output.print('W_BYTE', byte) }
+      output.print('W_BYTE', 0)
+    else
+      output.print("W_STRING #{assembly_literal}")
+    end
   end
 
   def asm_length
@@ -28,11 +35,21 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
     extra_dump
   end
 
+  def constant_table_key
+    return extra_value unless safe_modern_assembly?
+
+    [extra_value, :modern_byte_assembly]
+  end
+
   def my_type
     DabConcreteType.new(DabTypeString.new)
   end
 
-  def formatted_source(_options)
+  def formatted_source(options)
+    if options && options[:syntax_profile].equal?(DabSyntaxProfile::MODERN)
+      return DabModernStringEscapes.encode(string)
+    end
+
     escaped = string.gsub('"', '\\"').gsub("\r", '\\r').gsub("\n", '\\n')
     "\"#{escaped}\""
   end
@@ -42,6 +59,10 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
 private
+
+  def safe_modern_assembly?
+    @modern_source && string.include?('\\')
+  end
 
   def assembly_literal
     escaped = string.gsub('"') { '""' }

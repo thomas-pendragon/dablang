@@ -1,4 +1,5 @@
 require_relative '../shared/parser'
+require_relative 'modern_string_escapes'
 
 class DabModernBootstrapParseError < DabUnsupportedSyntaxProfileError
   GENERIC_MESSAGE = 'unsupported Dab syntax profile "modern": parser is not implemented'.freeze
@@ -35,7 +36,23 @@ end
 class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_START = ('A'..'Z').to_a.concat(('a'..'z').to_a).push('_').freeze
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
-  STRING_ESCAPES = {'"' => '"', 'n' => "\n", 'r' => "\r"}.freeze
+  STRING_ESCAPES = {
+    '"' => '"',
+    '\\' => '\\',
+    'n' => "\n",
+    'r' => "\r",
+    't' => "\t",
+    'b' => "\b",
+    'f' => "\f",
+    'v' => "\v",
+    'a' => "\a",
+    'e' => "\e",
+  }.freeze
+  FIXED_UNICODE_MESSAGE =
+    'invalid Modern Unicode escape: expected exactly 4 hexadecimal digits after "\\u"'.freeze
+  BRACED_UNICODE_MESSAGE =
+    'invalid Modern Unicode escape: expected exactly one code point written as 1..6 hexadecimal ' \
+    'digits inside "\\u{...}"'.freeze
 
   def initialize(content, nl_is_whitespace = true, source_unit:)
     super(content.b, nl_is_whitespace, source_unit: source_unit)
@@ -150,11 +167,48 @@ private
           )
         end
 
+        return line_continuation_token(marker_offset) if %W[\n \r].include?(current_char)
+
+        if current_char == "\0"
+          return unsupported_token(
+            position,
+            diagnostic_message: 'invalid Modern String literal: NUL is not allowed'
+          )
+        end
+        return nul_escape_token(marker_offset) if current_char == '0'
+
+        if current_char == 'x'
+          return unsupported_escape_token(
+            marker_offset,
+            2,
+            'invalid Modern String literal: hexadecimal byte escapes are not supported'
+          )
+        end
+        if current_char&.between?('1', '7')
+          return unsupported_escape_token(
+            marker_offset,
+            2,
+            'invalid Modern String literal: octal escapes are not supported'
+          )
+        end
+        if current_char == 'u'
+          invalid_unicode = unicode_escape_token(raw, value, marker_offset)
+          return invalid_unicode if invalid_unicode
+
+          next
+        end
+        if current_char == '#' && current_char(1) == '{'
+          raw << '#{'.b
+          value << '#{'.b
+          advance!(2)
+          next
+        end
+
         escape = current_char
         decoded = STRING_ESCAPES[escape]
         unless decoded
           message = "invalid Modern String literal escape #{string_escape_description(escape)}; " \
-                    'supported escapes are \", \\n, and \\r'
+                    'escape is not in the Dab 0.0.43 closed set'
           return unsupported_token(marker_offset, 2, diagnostic_message: message)
         end
 
@@ -191,6 +245,102 @@ private
         advance!(length)
       end
     end
+  end
+
+  def unicode_escape_token(raw, value, marker_offset)
+    return braced_unicode_escape_token(raw, value, marker_offset) if current_char(1) == '{'
+
+    digits = content.byteslice(position + 1, 4)
+    unless digits&.length == 4 && digits.each_byte.all? { |byte| hexadecimal_byte?(byte) }
+      return malformed_unicode_token(marker_offset, position + 1, 4, FIXED_UNICODE_MESSAGE)
+    end
+
+    source = content.byteslice(position, 5)
+    append_unicode_escape(raw, value, marker_offset, source, digits.to_i(16), source.length)
+  end
+
+  def braced_unicode_escape_token(raw, value, marker_offset)
+    digit_offset = position + 2
+    index = digit_offset
+    digit_count = 0
+    while index < content.length && hexadecimal_byte?(content.getbyte(index))
+      digit_count += 1
+      if digit_count > 6
+        return unsupported_escape_token(marker_offset, index - marker_offset + 1, BRACED_UNICODE_MESSAGE)
+      end
+
+      index += 1
+    end
+
+    unless digit_count.between?(1, 6) && content.getbyte(index) == '}'.ord
+      end_offset = index < content.length ? index + 1 : index
+      return unsupported_escape_token(marker_offset, end_offset - marker_offset, BRACED_UNICODE_MESSAGE)
+    end
+
+    digits = content.byteslice(digit_offset, digit_count)
+    source = content.byteslice(position, index - position + 1)
+    append_unicode_escape(raw, value, marker_offset, source, digits.to_i(16), source.length)
+  end
+
+  def malformed_unicode_token(marker_offset, digit_offset, digit_count, message)
+    index = digit_offset
+    digit_count.times do
+      break if index >= content.length
+      break unless hexadecimal_byte?(content.getbyte(index))
+
+      index += 1
+    end
+    index += 1 if index < content.length
+    unsupported_escape_token(marker_offset, index - marker_offset, message)
+  end
+
+  def append_unicode_escape(raw, value, marker_offset, source, codepoint, length_after_slash)
+    if codepoint.zero?
+      return unsupported_escape_token(
+        marker_offset,
+        length_after_slash + 1,
+        'invalid Modern String literal: escape decodes to NUL, which is not allowed'
+      )
+    end
+    if codepoint.between?(0xd800, 0xdfff)
+      message = sprintf('invalid Modern Unicode escape: U+%04X is not a Unicode scalar value', codepoint)
+      return unsupported_escape_token(marker_offset, length_after_slash + 1, message)
+    end
+    if codepoint > 0x10ffff
+      message = sprintf('invalid Modern Unicode escape: U+%X is outside Unicode range', codepoint)
+      return unsupported_escape_token(marker_offset, length_after_slash + 1, message)
+    end
+
+    raw << source
+    value << [codepoint].pack('U').b
+    advance!(length_after_slash)
+    nil
+  end
+
+  def line_continuation_token(marker_offset)
+    length = current_char == "\r" && current_char(1) == "\n" ? 3 : 2
+    unsupported_escape_token(
+      marker_offset,
+      length,
+      'invalid Modern String literal: backslash line continuation is not allowed'
+    )
+  end
+
+  def nul_escape_token(marker_offset)
+    unsupported_escape_token(
+      marker_offset,
+      2,
+      'invalid Modern String literal: escape decodes to NUL, which is not allowed'
+    )
+  end
+
+  def unsupported_escape_token(marker_offset, length, message)
+    unsupported_token(marker_offset, length, diagnostic_message: message)
+  end
+
+  def hexadecimal_byte?(byte)
+    byte && (byte.between?('0'.ord, '9'.ord) || byte.between?('A'.ord, 'F'.ord) ||
+      byte.between?('a'.ord, 'f'.ord))
   end
 
   def utf8_sequence_length(offset)
@@ -351,7 +501,7 @@ private
            when :boolean_true then DabNodeLiteralBoolean.new(true)
            when :boolean_false then DabNodeLiteralBoolean.new(false)
            when :integer then DabNodeLiteralNumber.new(Integer(token.text, 10))
-           when :string then DabNodeLiteralString.new(token.value)
+           when :string then DabNodeLiteralString.new(token.value, modern_source: true)
            else raise ArgumentError.new("unsupported Modern bootstrap literal token #{token.kind.inspect}")
            end
     node.add_source_part(token.source_string)

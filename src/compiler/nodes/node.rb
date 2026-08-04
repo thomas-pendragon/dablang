@@ -144,6 +144,10 @@ class DabNode
     ''
   end
 
+  def constant_table_key
+    extra_value
+  end
+
   def all_nodes(klass = nil)
     ret = _get_children_cache
     return ret unless klass
