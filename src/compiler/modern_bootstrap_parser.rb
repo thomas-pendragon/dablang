@@ -10,11 +10,12 @@ class DabModernBootstrapParseError < DabUnsupportedSyntaxProfileError
 end
 
 class DabModernBootstrapToken
-  attr_reader :kind, :text, :source_span
+  attr_reader :kind, :text, :value, :source_span
 
-  def initialize(kind:, text:, source_span:)
+  def initialize(kind:, text:, source_span:, value: text)
     @kind = kind
     @text = text.freeze
+    @value = value.freeze
     @source_span = DabSourceSpan.validate(source_span)
     freeze
   end
@@ -31,6 +32,11 @@ end
 class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_START = ('A'..'Z').to_a.concat(('a'..'z').to_a).push('_').freeze
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
+  STRING_ESCAPES = {'"' => '"', 'n' => "\n", 'r' => "\r"}.freeze
+
+  def initialize(content, nl_is_whitespace = true, source_unit:)
+    super(content.b, nl_is_whitespace, source_unit: source_unit)
+  end
 
   def next_token
     start_offset = position
@@ -46,6 +52,8 @@ class DabModernBootstrapScanner < DabScanner
     when ';'
       advance!
       token(:semicolon, ';', start_offset)
+    when '"'
+      string_token(start_offset)
     when '#'
       line_comment_token(start_offset)
     when '/'
@@ -91,6 +99,93 @@ private
     token(:integer, text, start_offset)
   end
 
+  def string_token(start_offset)
+    raw = +'"'.b
+    value = +''.b
+    advance!
+
+    loop do
+      return unsupported_token(position) if eof?
+
+      marker_offset = position
+      case current_char
+      when '"'
+        raw << current_char
+        advance!
+        return token(:string, raw, start_offset, value: value)
+      when "\n", "\r", "\0"
+        return unsupported_token(marker_offset)
+      when '\\'
+        raw << current_char
+        advance!
+        return unsupported_token(marker_offset) if eof?
+
+        escape = current_char
+        decoded = STRING_ESCAPES[escape]
+        return unsupported_token(marker_offset, 2) unless decoded
+
+        raw << escape
+        value << decoded
+        advance!
+      when '#'
+        return unsupported_token(marker_offset, 2) if current_char(1) == '{'
+
+        raw << current_char
+        value << current_char
+        advance!
+      else
+        length = utf8_sequence_length(marker_offset)
+        return unsupported_token(marker_offset) unless length
+
+        bytes = if content.encoding == Encoding::BINARY
+                  content.byteslice(marker_offset, length)
+                else
+                  content[marker_offset, length].b
+                end
+        raw << bytes
+        value << bytes
+        advance!(length)
+      end
+    end
+  end
+
+  def utf8_sequence_length(offset)
+    unless content.encoding == Encoding::BINARY
+      character = current_char&.b
+      return 1 if character&.force_encoding(Encoding::UTF_8)&.valid_encoding?
+
+      return nil
+    end
+
+    first = content.getbyte(offset)
+    return 1 if first && first <= 0x7f
+    return 2 if first&.between?(0xc2, 0xdf) && continuation_byte?(offset + 1)
+
+    if first == 0xe0
+      return 3 if continuation_byte?(offset + 1, 0xa0..0xbf) && continuation_byte?(offset + 2)
+    elsif first&.between?(0xe1, 0xec) || first&.between?(0xee, 0xef)
+      return 3 if continuation_byte?(offset + 1) && continuation_byte?(offset + 2)
+    elsif first == 0xed
+      return 3 if continuation_byte?(offset + 1, 0x80..0x9f) && continuation_byte?(offset + 2)
+    elsif first == 0xf0
+      return 4 if continuation_byte?(offset + 1, 0x90..0xbf) &&
+                  continuation_byte?(offset + 2) && continuation_byte?(offset + 3)
+    elsif first&.between?(0xf1, 0xf3)
+      return 4 if continuation_byte?(offset + 1) && continuation_byte?(offset + 2) &&
+                  continuation_byte?(offset + 3)
+    elsif first == 0xf4
+      return 4 if continuation_byte?(offset + 1, 0x80..0x8f) &&
+                  continuation_byte?(offset + 2) && continuation_byte?(offset + 3)
+    end
+
+    nil
+  end
+
+  def continuation_byte?(offset, range = 0x80..0xbf)
+    byte = content.getbyte(offset)
+    byte && range.cover?(byte)
+  end
+
   def digit?(character)
     character && character >= '0' && character <= '9'
   end
@@ -104,10 +199,21 @@ private
     token(:line_comment, text, start_offset)
   end
 
-  def token(kind, text, start_offset)
+  def unsupported_token(start_offset, length = 1)
+    length = 0 if start_offset == content.length
+    text = content.byteslice(start_offset, length) || ''.b
+    DabModernBootstrapToken.new(
+      kind: :unsupported,
+      text: text,
+      source_span: source_span(start_offset, start_offset + length)
+    )
+  end
+
+  def token(kind, text, start_offset, value: text)
     DabModernBootstrapToken.new(
       kind: kind,
       text: text,
+      value: value,
       source_span: source_span(start_offset, position)
     )
   end
@@ -156,6 +262,7 @@ private
            when :boolean_true then DabNodeLiteralBoolean.new(true)
            when :boolean_false then DabNodeLiteralBoolean.new(false)
            when :integer then DabNodeLiteralNumber.new(Integer(token.text, 10))
+           when :string then DabNodeLiteralString.new(token.value)
            else raise ArgumentError.new("unsupported Modern bootstrap literal token #{token.kind.inspect}")
            end
     node.add_source_part(token.source_string)
@@ -165,7 +272,7 @@ end
 
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
-  LITERAL_KINDS = %i[nil boolean_true boolean_false integer].freeze
+  LITERAL_KINDS = %i[nil boolean_true boolean_false integer string].freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze

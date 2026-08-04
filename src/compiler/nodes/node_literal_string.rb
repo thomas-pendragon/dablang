@@ -13,11 +13,11 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def compile_constant(output)
-    output.print('CONSTANT_STRING', extra_dump)
+    output.print('CONSTANT_STRING', assembly_literal)
   end
 
   def compile_string(output)
-    output.print("W_STRING \"#{string}\"")
+    output.print("W_STRING #{assembly_literal}")
   end
 
   def asm_length
@@ -33,10 +33,18 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def formatted_source(_options)
-    "\"#{string.gsub("\n", '\\n')}\""
+    escaped = string.gsub('"', '\\"').gsub("\r", '\\r').gsub("\n", '\\n')
+    "\"#{escaped}\""
   end
 
   def constant_value
     @string
+  end
+
+private
+
+  def assembly_literal
+    escaped = string.gsub('"') { '""' }
+    "\"#{escaped}\""
   end
 end
