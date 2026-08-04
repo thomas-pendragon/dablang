@@ -204,6 +204,7 @@ describe 'Modern bootstrap literals' do
 
   it 'keeps signs, operators, other literal families, and later grammar on the generic fallback' do
     cases = {
+      'literal spelling in function-name position' => ["def Nil\nnil\nend\n", 4],
       'positive sign' => ["def main\n+1\nend\n", 9],
       'negative sign' => ["def main\n-1\nend\n", 9],
       'binary operator' => ["def main\n1+2\nend\n", 10],

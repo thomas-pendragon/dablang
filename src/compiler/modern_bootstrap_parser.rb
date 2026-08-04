@@ -430,7 +430,9 @@ private
       break if peek_token.kind == :end
 
       token = next_token
-      reject(token) unless LITERAL_KINDS.include?(token.kind)
+      unless LITERAL_KINDS.include?(token.kind)
+        reject(token, token.diagnostic_message || DabModernBootstrapParseError::GENERIC_MESSAGE)
+      end
       if token.kind == :integer && integer_overflow?(token.text)
         reject(
           token,
@@ -458,8 +460,7 @@ private
     SEPARATOR_KINDS.include?(token.kind)
   end
 
-  def reject(token, message = token.diagnostic_message)
-    message ||= DabModernBootstrapParseError::GENERIC_MESSAGE
+  def reject(token, message = DabModernBootstrapParseError::GENERIC_MESSAGE)
     raise DabModernBootstrapParseError.new(message, source_location: token.source_location)
   end
 end
