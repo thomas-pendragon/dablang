@@ -7,4 +7,4 @@ end
 ## STATUS
 2
 ## STDERR
-compiler: 0024_unknown_string_escape.dabm:2:8: error: invalid Modern String literal escape "\\q"; supported escapes are \", \n, and \r
+compiler: 0024_unknown_string_escape.dabm:2:8: error: invalid Modern String literal escape "\\q"; escape is not in the Dab 0.0.43 closed set

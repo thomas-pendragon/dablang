@@ -73,7 +73,7 @@ class DabNodeUnit < DabNode
   end
 
   def add_constant(literal)
-    const = @constant_table[literal.extra_value] || _create_constant(literal)
+    const = @constant_table[literal.constant_table_key] || _create_constant(literal)
     ret = DabNodeConstantReference.new(const)
     ret.clone_source_parts_from(literal)
     ret
@@ -98,14 +98,15 @@ class DabNodeUnit < DabNode
         node.upper_ring? ? 0 : 1,
         node.source_ring_index || 0,
         text,
+        node.constant_table_key.to_s,
       ]
     end
-    @constant_table[literal.extra_value] = const
+    @constant_table[literal.constant_table_key] = const
     const
   end
 
   def will_remove_constant(constant)
-    @constant_table.delete(constant.extra_value)
+    @constant_table.delete(constant.constant_table_key)
   end
 
   def add_function(function)

@@ -76,7 +76,7 @@ describe 'Modern bootstrap String literals' do
     )
   end
 
-  it 'scans empty, plain UTF-8, and exactly the three accepted escapes with delimiter spans' do
+  it 'preserves the basic String spellings and delimiter spans' do
     strings = scan(string_source).select { |token| token.kind == :string }
 
     expect(strings.map(&:text)).to eq(
@@ -114,6 +114,50 @@ describe 'Modern bootstrap String literals' do
     )
     expect(strings).to all(satisfy { |token| token.value.encoding == Encoding::BINARY })
     expect(strings).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
+  end
+
+  it 'decodes the closed named and Unicode escape set to canonical UTF-8' do
+    named = {
+      '"' => '"',
+      '\\' => '\\',
+      'n' => "\n",
+      'r' => "\r",
+      't' => "\t",
+      'b' => "\b",
+      'f' => "\f",
+      'v' => "\v",
+      'a' => "\a",
+      'e' => "\e",
+      '#{' => '#{',
+    }
+    named.each do |marker, decoded|
+      source = "\"\\#{marker}\"".b
+      token = scan(source).first
+
+      expect([token.kind, token.text, token.value]).to eq([:string, source, decoded.b]), marker
+    end
+
+    unicode = {
+      '"\\u0041"'.b => 'A'.b,
+      '"\\u00a9"'.b => '©'.b,
+      '"\\u{1F409}"'.b => '🐉'.b,
+      '"\\u{000041}"'.b => 'A'.b,
+      '"\\uFFFF"'.b => [0xffff].pack('U').b,
+      '"\\u{10FFFF}"'.b => [0x10ffff].pack('U').b,
+      '"\\u0041F"'.b => 'AF'.b,
+    }
+    unicode.each do |source, decoded|
+      token = scan(source).first
+
+      expect([token.kind, token.text, token.value]).to eq([:string, source, decoded]), source
+      expect(token.value.dup.force_encoding(Encoding::UTF_8)).to be_valid_encoding
+    end
+
+    raw_controls = ('"'.b + [0x01, 0x07, 0x08, 0x09, 0x0b, 0x0c, 0x1b, 0x7f, 0xc2, 0x85].pack('C*') + '"'.b)
+    raw_token = scan(raw_controls).first
+    expect([raw_token.kind, raw_token.text, raw_token.value]).to eq(
+      [:string, raw_controls, raw_controls.byteslice(1, raw_controls.bytesize - 2)]
+    )
   end
 
   it 'normalizes text-mode Modern input to byte offsets before scanning' do
@@ -198,6 +242,95 @@ describe 'Modern bootstrap String literals' do
     )
   end
 
+  it 'selects canonical Modern rendering explicitly and normalizes equivalent spellings' do
+    value = [0x22, 0x5c, 0x0a, 0x0d, 0x09, 0x08, 0x0c, 0x0b, 0x07, 0x1b].pack('C*').b
+    value << '#{'.b << [0x01, 0x7f, 0x85].pack('U*').b << '🐉'.b
+    expected = '"'.b
+    expected << ['\\"', '\\\\', '\\n', '\\r', '\\t', '\\b', '\\f', '\\v', '\\a', '\\e'].join.b
+    expected << '\\#{\\u{1}\\u{7F}\\u{85}🐉"'.b
+
+    rendered = DabNodeLiteralString.new(value).formatted_source(syntax_profile: DabSyntaxProfile::MODERN)
+    expect(rendered).to eq(expected)
+    expect(DabNodeLiteralString.new('raw \\ and \\n \\r'.b).formatted_source({})).to eq(
+      '"raw \\ and \\n \\r"'.b
+    )
+
+    ['"A"', '"\\u0041"', '"\\u{41}"'].each do |source|
+      decoded = scan(source.b).first.value
+      expect(DabNodeLiteralString.new(decoded).formatted_source(syntax_profile: DabSyntaxProfile::MODERN))
+        .to eq('"A"'.b)
+    end
+    ['"\\n"', '"\\u000A"', '"\\u{A}"'].each do |source|
+      decoded = scan(source.b).first.value
+      expect(DabNodeLiteralString.new(decoded).formatted_source(syntax_profile: DabSyntaxProfile::MODERN))
+        .to eq('"\\n"'.b)
+    end
+  end
+
+  it 'rejects invalid values only when the explicit Modern renderer is selected' do
+    invalid_utf8 = DabNodeLiteralString.new("\xFF".b)
+    nul = DabNodeLiteralString.new("a\0b".b)
+
+    expect(invalid_utf8.formatted_source({})).to eq("\"\xFF\"".b)
+    expect(nul.formatted_source({})).to eq("\"a\0b\"".b)
+    expect do
+      invalid_utf8.formatted_source(syntax_profile: DabSyntaxProfile::MODERN)
+    end.to raise_error(ArgumentError, 'Modern String rendering requires valid UTF-8')
+    expect do
+      nul.formatted_source(syntax_profile: DabSyntaxProfile::MODERN)
+    end.to raise_error(ArgumentError, 'Modern String rendering does not allow NUL')
+  end
+
+  it 'emits Modern-origin backslash values as bytes without reinterpreting W_STRING' do
+    value = 'literal \\n and \\r'.b
+    modern = DabNodeLiteralString.new(value, modern_source: true)
+    legacy = DabNodeLiteralString.new(value)
+    modern_stdout = StringIO.new
+    legacy_stdout = StringIO.new
+
+    modern.compile_string(DabOutput.new(double(stdout: modern_stdout)))
+    legacy.compile_string(DabOutput.new(double(stdout: legacy_stdout)))
+
+    expect(modern_stdout.string).not_to include('W_STRING')
+    expect(modern_stdout.string.scan('W_BYTE').length).to eq(value.bytesize + 1)
+    expect(legacy_stdout.string).to include('W_STRING "literal \\n and \\r"')
+
+    raw, stderr, status = invoke(RbConfig.ruby, assembler, '--raw', input: modern_stdout.string)
+    expect([status.exitstatus, tool_stderr(stderr), raw.b]).to eq([0, '', value + "\0".b])
+
+    unit = DabNodeUnit.new
+    reference = unit.add_constant(modern)
+    reference.target.asm_position = 7
+    load_stdout = StringIO.new
+    reference.compile_as_ssa(DabOutput.new(double(stdout: load_stdout)), 3)
+    expect(load_stdout.string).to include("LOAD_STRING R3, _DATA + 7, #{value.bytesize}")
+
+    constant_stdout = StringIO.new
+    modern.compile_constant(DabOutput.new(double(stdout: constant_stdout)))
+    expect(constant_stdout.string).to include('CONSTANT_STRING')
+  end
+
+  it 'separates only Modern constants that require byte-safe assembly' do
+    unit = DabNodeUnit.new
+    legacy_backslash = unit.add_constant(DabNodeLiteralString.new('same \\n'.b)).target
+    modern_backslash = unit.add_constant(
+      DabNodeLiteralString.new('same \\n'.b, modern_source: true)
+    ).target
+    repeated_modern = unit.add_constant(
+      DabNodeLiteralString.new('same \\n'.b, modern_source: true)
+    ).target
+    legacy_plain = unit.add_constant(DabNodeLiteralString.new('plain'.b)).target
+    modern_plain = unit.add_constant(DabNodeLiteralString.new('plain'.b, modern_source: true)).target
+
+    expect(modern_backslash).not_to equal(legacy_backslash)
+    expect(repeated_modern).to equal(modern_backslash)
+    expect(modern_plain).to equal(legacy_plain)
+    expect(modern_backslash.constant_value).to eq(legacy_backslash.constant_value)
+    expect(unit.constants.to_a.map(&:constant_table_key)).to eq(
+      unit.constants.to_a.map(&:constant_table_key).sort_by(&:to_s)
+    )
+  end
+
   it 'escapes quote and line controls in decompiled bytecode Strings' do
     Dir.mktmpdir('dab-modern-string-decompile') do |directory|
       source = File.join(directory, 'string.dab')
@@ -234,7 +367,6 @@ describe 'Modern bootstrap String literals' do
   end
 
   it 'rejects invalid bytes, NUL, physical newlines, unterminated text, unknown escapes, and interpolation at the marker' do
-    supported_escapes = 'supported escapes are \", \\n, and \\r'
     cases = {
       'invalid UTF-8 lead' => [
         "def main\n\"ok \xC3(\"\nend\n".b,
@@ -271,6 +403,11 @@ describe 'Modern bootstrap String literals' do
         11,
         'invalid Modern String literal: NUL is not allowed',
       ],
+      'NUL after backslash' => [
+        "def main\n\"a\\\0b\"\nend\n".b,
+        12,
+        'invalid Modern String literal: NUL is not allowed',
+      ],
       'literal LF' => [
         "def main\n\"a\nb\"\nend\n".b,
         11,
@@ -292,14 +429,9 @@ describe 'Modern bootstrap String literals' do
         'unterminated Modern String literal escape',
       ],
       'unknown escape' => [
-        "def main\n\"a\\tb\"\nend\n".b,
+        "def main\n\"a\\qb\"\nend\n".b,
         11,
-        "invalid Modern String literal escape \"\\\\t\"; #{supported_escapes}",
-      ],
-      'doubled backslash' => [
-        "def main\n\"a\\\\b\"\nend\n".b,
-        11,
-        "invalid Modern String literal escape \"\\\\\\\\\"; #{supported_escapes}",
+        'invalid Modern String literal escape "\\\\q"; escape is not in the Dab 0.0.43 closed set',
       ],
       'reserved interpolation' => [
         "def main\n\"a\#{value}\"\nend\n".b,
@@ -322,6 +454,99 @@ describe 'Modern bootstrap String literals' do
         expect(error.source_location.offset).to eq(offset), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
+    end
+  end
+
+  it 'rejects every excluded or malformed escape family with exact spans and messages' do
+    fixed = 'invalid Modern Unicode escape: expected exactly 4 hexadecimal digits after "\\u"'
+    braced = 'invalid Modern Unicode escape: expected exactly one code point written as 1..6 ' \
+             'hexadecimal digits inside "\\u{...}"'
+    unknown = lambda do |escape|
+      "invalid Modern String literal escape #{escape.inspect}; escape is not in the Dab 0.0.43 closed set"
+    end
+    cases = {
+      'fixed truncated EOF' => ['"\\u12'.b, '\\u12'.b, fixed],
+      'fixed truncated at delimiter' => ['"\\u12"'.b, '\\u12"'.b, fixed],
+      'fixed invalid digit' => ['"\\u12G4"'.b, '\\u12G'.b, fixed],
+      'braced empty' => ['"\\u{}"'.b, '\\u{}'.b, braced],
+      'braced unclosed EOF' => ['"\\u{41'.b, '\\u{41'.b, braced],
+      'braced unclosed at delimiter' => ['"\\u{41"'.b, '\\u{41"'.b, braced],
+      'braced whitespace' => ['"\\u{41 42}"'.b, '\\u{41 '.b, braced],
+      'braced multiple' => ['"\\u{41,42}"'.b, '\\u{41,'.b, braced],
+      'braced sign' => ['"\\u{-1}"'.b, '\\u{-'.b, braced],
+      'braced prefix' => ['"\\u{0x41}"'.b, '\\u{0x'.b, braced],
+      'braced underscore' => ['"\\u{00_41}"'.b, '\\u{00_'.b, braced],
+      'braced overlong' => ['"\\u{1234567}"'.b, '\\u{1234567'.b, braced],
+      'fixed surrogate' => [
+        '"\\uD800"'.b,
+        '\\uD800'.b,
+        'invalid Modern Unicode escape: U+D800 is not a Unicode scalar value',
+      ],
+      'braced surrogate' => [
+        '"\\u{DFFF}"'.b,
+        '\\u{DFFF}'.b,
+        'invalid Modern Unicode escape: U+DFFF is not a Unicode scalar value',
+      ],
+      'Unicode overflow' => [
+        '"\\u{110000}"'.b,
+        '\\u{110000}'.b,
+        'invalid Modern Unicode escape: U+110000 is outside Unicode range',
+      ],
+      'short NUL' => [
+        '"\\0"'.b,
+        '\\0'.b,
+        'invalid Modern String literal: escape decodes to NUL, which is not allowed',
+      ],
+      'fixed NUL' => [
+        '"\\u0000"'.b,
+        '\\u0000'.b,
+        'invalid Modern String literal: escape decodes to NUL, which is not allowed',
+      ],
+      'braced NUL' => [
+        '"\\u{0}"'.b,
+        '\\u{0}'.b,
+        'invalid Modern String literal: escape decodes to NUL, which is not allowed',
+      ],
+      'hexadecimal byte' => [
+        '"\\x41"'.b,
+        '\\x'.b,
+        'invalid Modern String literal: hexadecimal byte escapes are not supported',
+      ],
+      'octal' => [
+        '"\\123"'.b,
+        '\\1'.b,
+        'invalid Modern String literal: octal escapes are not supported',
+      ],
+      'space escape' => ['"\\s"'.b, '\\s'.b, unknown.call('\\s')],
+      'control escape' => ['"\\cA"'.b, '\\c'.b, unknown.call('\\c')],
+      'meta escape' => ['"\\M-A"'.b, '\\M'.b, unknown.call('\\M')],
+      'uppercase Unicode' => ['"\\U0041"'.b, '\\U'.b, unknown.call('\\U')],
+      'generic hash escape' => ['"\\#x"'.b, '\\#'.b, unknown.call('\\#')],
+      'LF continuation' => [
+        "\"\\\n\"".b,
+        "\\\n".b,
+        'invalid Modern String literal: backslash line continuation is not allowed',
+      ],
+      'CR continuation' => [
+        "\"\\\r\"".b,
+        "\\\r".b,
+        'invalid Modern String literal: backslash line continuation is not allowed',
+      ],
+      'CRLF continuation' => [
+        "\"\\\r\n\"".b,
+        "\\\r\n".b,
+        'invalid Modern String literal: backslash line continuation is not allowed',
+      ],
+    }
+
+    cases.each do |description, (source, token_text, message)|
+      token = scan(source).first
+      expect(token.kind).to eq(:unsupported), description
+      expect(token.text).to eq(token_text), description
+      expect([token.source_span.start_offset, token.source_span.end_offset])
+        .to eq([1, 1 + token_text.bytesize]), description
+      expect(token.source_location.to_h).to eq({offset: 1, line: 1, column: 1}), description
+      expect(token.diagnostic_message).to eq(message), description
     end
   end
 

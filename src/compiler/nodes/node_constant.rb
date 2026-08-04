@@ -58,6 +58,10 @@ class DabNodeConstant < DabNode
     value.extra_value
   end
 
+  def constant_table_key
+    value.constant_table_key
+  end
+
   def real_value
     value.real_value
   end
