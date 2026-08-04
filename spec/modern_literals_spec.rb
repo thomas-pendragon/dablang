@@ -147,19 +147,67 @@ describe 'Modern bootstrap literals' do
     end
   end
 
-  it 'rejects non-literals, unsupported literal families, signs, operators, and malformed numbers exactly' do
+  it 'diagnoses exact invalid literal spellings and malformed numeric forms contextually' do
     cases = {
-      'nil spelling' => ["def main\nNil\nend\n", 9],
-      'null spelling' => ["def main\nnull\nend\n", 9],
-      'true spelling' => ["def main\nTrue\nend\n", 9],
-      'false spelling' => ["def main\nFALSE\nend\n", 9],
+      'nil case' => ["def main\nNil\nend\n", 9, 'invalid Modern nil literal "Nil"; use "nil"'],
+      'nil synonym' => ["def main\nnull\nend\n", 9, 'invalid Modern nil literal "null"; use "nil"'],
+      'true case' => ["def main\nTrue\nend\n", 9, 'invalid Modern Bool literal "True"; use "true"'],
+      'false case' => ["def main\nFALSE\nend\n", 9, 'invalid Modern Bool literal "FALSE"; use "false"'],
+      'decimal fraction' => [
+        "def main\n1.0\nend\n",
+        10,
+        'invalid Modern numeric literal: decimal fractions are not implemented',
+      ],
+      'binary prefix' => [
+        "def main\n0b1\nend\n",
+        10,
+        'invalid Modern numeric literal: base prefixes are not implemented',
+      ],
+      'octal prefix' => [
+        "def main\n0o7\nend\n",
+        10,
+        'invalid Modern numeric literal: base prefixes are not implemented',
+      ],
+      'hexadecimal prefix' => [
+        "def main\n0xFF\nend\n",
+        10,
+        'invalid Modern numeric literal: base prefixes are not implemented',
+      ],
+      'numeric underscore' => [
+        "def main\n1_0\nend\n",
+        10,
+        'invalid Modern numeric literal: digit separators are not implemented',
+      ],
+      'numeric exponent' => [
+        "def main\n1e+2\nend\n",
+        10,
+        'invalid Modern numeric literal: exponents are not implemented',
+      ],
+      'integer overflow' => [
+        "def main\n9223372036854775808\nend\n",
+        9,
+        'Modern integer literal is outside supported range 0..9223372036854775807',
+      ],
+    }
+
+    cases.each do |description, (source, offset, message)|
+      expect do
+        parse_modern(source)
+      end.to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq(message), description
+        expect(error.source_location.offset).to eq(offset), description
+        expect(error.source_location.source_unit).to equal(source_unit)
+      }
+    end
+  end
+
+  it 'keeps signs, operators, other literal families, and later grammar on the generic fallback' do
+    cases = {
       'positive sign' => ["def main\n+1\nend\n", 9],
       'negative sign' => ["def main\n-1\nend\n", 9],
-      'float' => ["def main\n1.0\nend\n", 10],
-      'binary number' => ["def main\n0b1\nend\n", 10],
-      'numeric underscore' => ["def main\n1_0\nend\n", 10],
-      'integer overflow' => ["def main\n9223372036854775808\nend\n", 9],
       'binary operator' => ["def main\n1+2\nend\n", 10],
+      'nil predicate' => ["def main\nnil?\nend\n", 12],
+      'identifier' => ["def main\nvalue\nend\n", 9],
       'binding' => ["def main\nlet value = 1\nend\n", 9],
       'call' => ["def main\nvalue()\nend\n", 9],
       'return' => ["def main\nreturn 1\nend\n", 9],
@@ -171,7 +219,7 @@ describe 'Modern bootstrap literals' do
       expect do
         parse_modern(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE)
         expect(error.source_location.offset).to eq(offset), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -197,7 +245,8 @@ describe 'Modern bootstrap literals' do
       expect(compiler_status.exitstatus).to eq 2
       expect(output).to eq ''
       expect(tool_stderr(compiler_stderr)).to eq(
-        "compiler: #{path}:3:0: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+        "compiler: #{path}:3:0: error: " \
+        "Modern integer literal is outside supported range 0..9223372036854775807\n"
       )
     end
   end

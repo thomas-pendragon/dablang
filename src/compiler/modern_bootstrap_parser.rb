@@ -1,22 +1,25 @@
 require_relative '../shared/parser'
 
 class DabModernBootstrapParseError < DabUnsupportedSyntaxProfileError
+  GENERIC_MESSAGE = 'unsupported Dab syntax profile "modern": parser is not implemented'.freeze
+
   attr_reader :source_location
 
-  def initialize(source_location:)
+  def initialize(message = GENERIC_MESSAGE, source_location:)
     @source_location = source_location
-    super('unsupported Dab syntax profile "modern": parser is not implemented')
+    super(message)
   end
 end
 
 class DabModernBootstrapToken
-  attr_reader :kind, :text, :value, :source_span
+  attr_reader :kind, :text, :value, :source_span, :diagnostic_message
 
-  def initialize(kind:, text:, source_span:, value: text)
+  def initialize(kind:, text:, source_span:, value: text, diagnostic_message: nil)
     @kind = kind
     @text = text.freeze
     @value = value.freeze
     @source_span = DabSourceSpan.validate(source_span)
+    @diagnostic_message = diagnostic_message&.freeze
     freeze
   end
 
@@ -79,15 +82,16 @@ private
       text << current_char
       advance!
     end
+    diagnostic_message = invalid_literal_identifier_message(text)
     kind = case text
            when 'def' then :def
            when 'end' then :end
            when 'nil' then :nil
            when 'true' then :boolean_true
            when 'false' then :boolean_false
-           else :identifier
+           else diagnostic_message ? :invalid_literal : :identifier
            end
-    token(kind, text, start_offset)
+    token(kind, text, start_offset, diagnostic_message: diagnostic_message)
   end
 
   def integer_token(start_offset)
@@ -96,6 +100,9 @@ private
       text << current_char
       advance!
     end
+    diagnostic_message = invalid_numeric_suffix_message(text)
+    return unsupported_token(position, diagnostic_message: diagnostic_message) if diagnostic_message
+
     token(:integer, text, start_offset)
   end
 
@@ -105,7 +112,12 @@ private
     advance!
 
     loop do
-      return unsupported_token(position) if eof?
+      if eof?
+        return unsupported_token(
+          position,
+          diagnostic_message: 'unterminated Modern String literal'
+        )
+      end
 
       marker_offset = position
       case current_char
@@ -113,29 +125,61 @@ private
         raw << current_char
         advance!
         return token(:string, raw, start_offset, value: value)
-      when "\n", "\r", "\0"
-        return unsupported_token(marker_offset)
+      when "\n"
+        return unsupported_token(
+          marker_offset,
+          diagnostic_message: 'invalid Modern String literal: literal LF is not allowed; use "\\n"'
+        )
+      when "\r"
+        return unsupported_token(
+          marker_offset,
+          diagnostic_message: 'invalid Modern String literal: literal CR is not allowed; use "\\r"'
+        )
+      when "\0"
+        return unsupported_token(
+          marker_offset,
+          diagnostic_message: 'invalid Modern String literal: NUL is not allowed'
+        )
       when '\\'
         raw << current_char
         advance!
-        return unsupported_token(marker_offset) if eof?
+        if eof?
+          return unsupported_token(
+            marker_offset,
+            diagnostic_message: 'unterminated Modern String literal escape'
+          )
+        end
 
         escape = current_char
         decoded = STRING_ESCAPES[escape]
-        return unsupported_token(marker_offset, 2) unless decoded
+        unless decoded
+          message = "invalid Modern String literal escape #{string_escape_description(escape)}; " \
+                    'supported escapes are \", \\n, and \\r'
+          return unsupported_token(marker_offset, 2, diagnostic_message: message)
+        end
 
         raw << escape
         value << decoded
         advance!
       when '#'
-        return unsupported_token(marker_offset, 2) if current_char(1) == '{'
+        if current_char(1) == '{'
+          return unsupported_token(
+            marker_offset,
+            2,
+            diagnostic_message: 'invalid Modern String literal: interpolation marker "#{" is reserved'
+          )
+        end
 
         raw << current_char
         value << current_char
         advance!
       else
         length = utf8_sequence_length(marker_offset)
-        return unsupported_token(marker_offset) unless length
+        unless length
+          byte = content.getbyte(marker_offset)
+          message = sprintf('invalid UTF-8 byte 0x%02X in Modern String literal', byte)
+          return unsupported_token(marker_offset, diagnostic_message: message)
+        end
 
         bytes = if content.encoding == Encoding::BINARY
                   content.byteslice(marker_offset, length)
@@ -186,6 +230,47 @@ private
     byte && range.cover?(byte)
   end
 
+  def invalid_literal_identifier_message(text)
+    lowercase = text.downcase
+    return "invalid Modern nil literal #{text.inspect}; use \"nil\"" if %w[nil null].include?(lowercase)
+    return "invalid Modern Bool literal #{text.inspect}; use #{lowercase.inspect}" if %w[true false].include?(lowercase)
+
+    nil
+  end
+
+  def invalid_numeric_suffix_message(integer_text)
+    if current_char == '.' && digit?(current_char(1))
+      'invalid Modern numeric literal: decimal fractions are not implemented'
+    elsif current_char == '_' && digit?(current_char(1))
+      'invalid Modern numeric literal: digit separators are not implemented'
+    elsif integer_text == '0' && %w[b B o O x X].include?(current_char) &&
+          identifier_continue?(current_char(1))
+      'invalid Modern numeric literal: base prefixes are not implemented'
+    elsif %w[e E].include?(current_char) && exponent_digits_follow?
+      'invalid Modern numeric literal: exponents are not implemented'
+    end
+  end
+
+  def exponent_digits_follow?
+    index = 1
+    index += 1 if %w[+ -].include?(current_char(index))
+    digit?(current_char(index))
+  end
+
+  def identifier_continue?(character)
+    IDENTIFIER_CONTINUE.include?(character)
+  end
+
+  def string_escape_description(escape)
+    byte = escape&.getbyte(0)
+    escaped = if byte&.between?(0x20, 0x7e)
+                "\\#{escape}"
+              else
+                sprintf('\\x%02X', byte)
+              end
+    escaped.inspect
+  end
+
   def digit?(character)
     character && character >= '0' && character <= '9'
   end
@@ -199,22 +284,24 @@ private
     token(:line_comment, text, start_offset)
   end
 
-  def unsupported_token(start_offset, length = 1)
+  def unsupported_token(start_offset, length = 1, diagnostic_message: nil)
     length = 0 if start_offset == content.length
     text = content.byteslice(start_offset, length) || ''.b
     DabModernBootstrapToken.new(
       kind: :unsupported,
       text: text,
-      source_span: source_span(start_offset, start_offset + length)
+      source_span: source_span(start_offset, start_offset + length),
+      diagnostic_message: diagnostic_message
     )
   end
 
-  def token(kind, text, start_offset, value: text)
+  def token(kind, text, start_offset, value: text, diagnostic_message: nil)
     DabModernBootstrapToken.new(
       kind: kind,
       text: text,
       value: value,
-      source_span: source_span(start_offset, position)
+      source_span: source_span(start_offset, position),
+      diagnostic_message: diagnostic_message
     )
   end
 end
@@ -342,7 +429,12 @@ private
 
       token = next_token
       reject(token) unless LITERAL_KINDS.include?(token.kind)
-      reject(token) if token.kind == :integer && integer_overflow?(token.text)
+      if token.kind == :integer && integer_overflow?(token.text)
+        reject(
+          token,
+          'Modern integer literal is outside supported range 0..9223372036854775807'
+        )
+      end
       tokens << token
       expect_separator
     end
@@ -364,7 +456,8 @@ private
     SEPARATOR_KINDS.include?(token.kind)
   end
 
-  def reject(token)
-    raise DabModernBootstrapParseError.new(source_location: token.source_location)
+  def reject(token, message = token.diagnostic_message)
+    message ||= DabModernBootstrapParseError::GENERIC_MESSAGE
+    raise DabModernBootstrapParseError.new(message, source_location: token.source_location)
   end
 end

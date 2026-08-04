@@ -234,32 +234,91 @@ describe 'Modern bootstrap String literals' do
   end
 
   it 'rejects invalid bytes, NUL, physical newlines, unterminated text, unknown escapes, and interpolation at the marker' do
+    supported_escapes = 'supported escapes are \", \\n, and \\r'
     cases = {
-      'invalid UTF-8 lead' => ["def main\n\"ok \xC3(\"\nend\n".b, 13],
-      'invalid UTF-8 continuation' => ["def main\n\"ok \x80\"\nend\n".b, 13],
-      'overlong UTF-8' => ["def main\n\"ok \xC0\xAF\"\nend\n".b, 13],
-      'UTF-8 surrogate' => ["def main\n\"ok \xED\xA0\x80\"\nend\n".b, 13],
-      'UTF-8 above Unicode range' => ["def main\n\"ok \xF4\x90\x80\x80\"\nend\n".b, 13],
-      'truncated UTF-8 sequence' => ["def main\n\"ok \xE2".b, 13],
-      'NUL' => ["def main\n\"a\0b\"\nend\n".b, 11],
-      'literal LF' => ["def main\n\"a\nb\"\nend\n".b, 11],
-      'literal CR' => ["def main\n\"a\rb\"\nend\n".b, 11],
-      'unterminated' => ["def main\n\"text".b, 14],
-      'unknown escape' => ["def main\n\"a\\tb\"\nend\n".b, 11],
-      'doubled backslash' => ["def main\n\"a\\\\b\"\nend\n".b, 11],
-      'reserved interpolation' => ["def main\n\"a\#{value}\"\nend\n".b, 11],
+      'invalid UTF-8 lead' => [
+        "def main\n\"ok \xC3(\"\nend\n".b,
+        13,
+        'invalid UTF-8 byte 0xC3 in Modern String literal',
+      ],
+      'invalid UTF-8 continuation' => [
+        "def main\n\"ok \x80\"\nend\n".b,
+        13,
+        'invalid UTF-8 byte 0x80 in Modern String literal',
+      ],
+      'overlong UTF-8' => [
+        "def main\n\"ok \xC0\xAF\"\nend\n".b,
+        13,
+        'invalid UTF-8 byte 0xC0 in Modern String literal',
+      ],
+      'UTF-8 surrogate' => [
+        "def main\n\"ok \xED\xA0\x80\"\nend\n".b,
+        13,
+        'invalid UTF-8 byte 0xED in Modern String literal',
+      ],
+      'UTF-8 above Unicode range' => [
+        "def main\n\"ok \xF4\x90\x80\x80\"\nend\n".b,
+        13,
+        'invalid UTF-8 byte 0xF4 in Modern String literal',
+      ],
+      'truncated UTF-8 sequence' => [
+        "def main\n\"ok \xE2".b,
+        13,
+        'invalid UTF-8 byte 0xE2 in Modern String literal',
+      ],
+      'NUL' => [
+        "def main\n\"a\0b\"\nend\n".b,
+        11,
+        'invalid Modern String literal: NUL is not allowed',
+      ],
+      'literal LF' => [
+        "def main\n\"a\nb\"\nend\n".b,
+        11,
+        'invalid Modern String literal: literal LF is not allowed; use "\\n"',
+      ],
+      'literal CR' => [
+        "def main\n\"a\rb\"\nend\n".b,
+        11,
+        'invalid Modern String literal: literal CR is not allowed; use "\\r"',
+      ],
+      'unterminated' => [
+        "def main\n\"text".b,
+        14,
+        'unterminated Modern String literal',
+      ],
+      'unterminated escape' => [
+        "def main\n\"text\\".b,
+        14,
+        'unterminated Modern String literal escape',
+      ],
+      'unknown escape' => [
+        "def main\n\"a\\tb\"\nend\n".b,
+        11,
+        "invalid Modern String literal escape \"\\\\t\"; #{supported_escapes}",
+      ],
+      'doubled backslash' => [
+        "def main\n\"a\\\\b\"\nend\n".b,
+        11,
+        "invalid Modern String literal escape \"\\\\\\\\\"; #{supported_escapes}",
+      ],
+      'reserved interpolation' => [
+        "def main\n\"a\#{value}\"\nend\n".b,
+        11,
+        'invalid Modern String literal: interpolation marker "#{" is reserved',
+      ],
     }
 
-    cases.each do |description, (source, offset)|
+    cases.each do |description, (source, offset, message)|
       token = scan(source).last
       expect(token.kind).to eq(:unsupported), description
       expect(token.source_span.start_offset).to eq(offset), description
       expect(token.source_location.offset).to eq(offset), description
+      expect(token.diagnostic_message).to eq(message), description
 
       expect do
         parse_modern(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(message), description
         expect(error.source_location.offset).to eq(offset), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -280,6 +339,7 @@ describe 'Modern bootstrap String literals' do
       expect do
         parse_modern(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE), description
         expect(error.source_location.offset).to eq(offset), description
       }
     end
@@ -304,7 +364,8 @@ describe 'Modern bootstrap String literals' do
 
       expect([compiler_status.exitstatus, output]).to eq [2, '']
       expect(tool_stderr(compiler_stderr)).to eq(
-        "compiler: #{invalid}:2:10: error: unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+        "compiler: #{invalid}:2:10: error: " \
+        "invalid Modern String literal: interpolation marker \"\#{\" is reserved\n"
       )
       expect(File.binread(lower)).to eq(lower_before)
 
