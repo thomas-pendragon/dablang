@@ -208,6 +208,8 @@ describe 'Modern bootstrap String literals' do
 
       bytecode, assembler_stderr, assembler_status = invoke(
         RbConfig.ruby,
+        '-e',
+        'STDOUT.binmode; load ARGV.shift',
         assembler,
         input: assembly,
         binmode: true
