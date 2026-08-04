@@ -1,0 +1,9 @@
+## SOURCE
+def main
+1end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0030_missing_literal_separator.dabm:2:1: error: invalid Modern main body: expected a separator (LF, semicolon, or line comment) after literal

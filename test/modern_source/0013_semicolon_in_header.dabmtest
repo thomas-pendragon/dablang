@@ -6,4 +6,4 @@ end
 ## STATUS
 2
 ## STDERR
-compiler: 0013_semicolon_in_header.dabm:1:3: error: unsupported Dab syntax profile "modern": parser is not implemented
+compiler: 0013_semicolon_in_header.dabm:1:3: error: invalid Modern main declaration: expected one ASCII space after "def"
