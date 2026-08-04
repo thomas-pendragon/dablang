@@ -38,8 +38,8 @@ describe 'Modern bootstrap String literals' do
     tokens
   end
 
-  def invoke(*command, input: nil)
-    Open3.capture3(*command, stdin_data: input, chdir: root)
+  def invoke(*command, input: nil, binmode: false)
+    Open3.capture3(*command, stdin_data: input, binmode: binmode, chdir: root)
   end
 
   def tool_stderr(stderr)
@@ -206,10 +206,20 @@ describe 'Modern bootstrap String literals' do
       expect([compiler_status.exitstatus, tool_stderr(compiler_stderr)]).to eq [0, '']
       assembly = assembly.sub('W_STRING "abcde"', 'W_STRING "q""\\r\\nx"')
 
-      bytecode, assembler_stderr, assembler_status = invoke(RbConfig.ruby, assembler, input: assembly)
+      bytecode, assembler_stderr, assembler_status = invoke(
+        RbConfig.ruby,
+        assembler,
+        input: assembly,
+        binmode: true
+      )
       expect([assembler_status.exitstatus, tool_stderr(assembler_stderr)]).to eq [0, '']
 
-      decompiled, decompiler_stderr, decompiler_status = invoke(RbConfig.ruby, decompiler, input: bytecode)
+      decompiled, decompiler_stderr, decompiler_status = invoke(
+        RbConfig.ruby,
+        decompiler,
+        input: bytecode,
+        binmode: true
+      )
       expect(decompiler_status.exitstatus).to eq(0), decompiler_stderr
       expect(decompiled).to include('return "q\\"\\r\\nx";')
     end
