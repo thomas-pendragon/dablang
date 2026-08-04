@@ -140,6 +140,17 @@ unterminated delimiters, doubled backslashes, exact byte spans, transactional
 failure, and the reused Legacy String AST, assembly, bytecode, and runtime path.
 Legacy parsing remains unchanged.
 
+Version 0.0.42 replaces the generic parser fallback only when the existing
+scanner can attribute a rejected form to an already implemented Modern literal.
+Exact invalid spellings of `nil`, `true`, and `false`, unsupported numeric
+forms, integer overflow, and invalid bytes or markers inside an opened String
+now receive concise literal-specific errors at the same offending byte or
+marker. `0018`, `0019`, `0021`, `0022`, and `0024` through `0026` lock the
+representative compiler diagnostics. Signs remain future operator syntax, and
+identifiers, calls, bindings, control flow, adjacent Strings, single quotes,
+and every other unimplemented grammar form retain the generic parser fallback.
+Accepted Modern output and all Legacy behavior remain unchanged.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
