@@ -1,0 +1,19 @@
+## CODE
+
+func ready?()
+{
+  return 123;
+}
+
+func main()
+{
+  print(ready?());
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+123

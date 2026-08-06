@@ -1,0 +1,17 @@
+## INPUT
+
+func ready?(){return 123;}func main(){print(ready?());}
+
+## OPTIONS
+
+## OUTPUT
+
+func ready?()
+{
+  return 123;
+}
+
+func main()
+{
+  print(ready?());
+}
