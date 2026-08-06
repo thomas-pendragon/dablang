@@ -6,4 +6,4 @@ def main
 ## STATUS
 2
 ## STDERR
-compiler: 0030_missing_literal_separator.dabm:2:1: error: invalid Modern main body: expected a separator (LF, semicolon, or line comment) after literal
+compiler: 0030_missing_literal_separator.dabm:2:1: error: invalid Modern function body: expected a separator (LF, semicolon, or line comment) after literal

@@ -538,12 +538,12 @@ private
   end
 end
 
-class DabModernBootstrapMainDeclaration
-  attr_reader :source_unit, :source_span, :body_tokens
+class DabModernBootstrapFunctionDeclaration
+  attr_reader :source_unit, :source_span, :callable_name, :body_tokens
 
-  def initialize(def_token:, name_token:, body_tokens:, end_token:, final_separator:)
+  def initialize(def_token:, callable_name:, body_tokens:, end_token:, final_separator:)
     @def_token = def_token
-    @name_token = name_token
+    @callable_name = callable_name
     @body_tokens = body_tokens.freeze
     @end_token = end_token
     @source_unit = def_token.source_span.source_unit
@@ -563,10 +563,10 @@ class DabModernBootstrapMainDeclaration
     @body_tokens.each do |body_token|
       body.insert(lower_literal(body_token))
     end
-    function = DabNodeFunction.new(@name_token.source_string, body, nil)
+    function = DabNodeFunction.new(@callable_name.source_string, body, nil)
     function.add_source_parts(
       @def_token.source_string,
-      @name_token.source_string,
+      *@callable_name.source_parts,
       @end_token.source_string
     )
     unit.add_function(function)
@@ -589,22 +589,70 @@ private
   end
 end
 
+class DabModernBootstrapDocument
+  attr_reader :source_unit, :source_span, :declarations
+
+  def initialize(declarations)
+    unless declarations.is_a?(Array) && !declarations.empty?
+      raise ArgumentError.new('Modern bootstrap document requires one or more declarations')
+    end
+
+    @declarations = declarations.freeze
+    @source_unit = declarations.fetch(0).source_unit
+    unless declarations.all? { |declaration| declaration.source_unit.equal?(@source_unit) }
+      raise ArgumentError.new('Modern bootstrap declarations must share one DabSourceUnit identity')
+    end
+
+    @source_span = DabSourceSpan.new(
+      start_location: declarations.fetch(0).source_span.start_location,
+      end_location: declarations.fetch(-1).source_span.end_location
+    )
+    freeze
+  end
+
+  def lower_into(unit)
+    unless unit.is_a?(DabNodeUnit)
+      raise ArgumentError.new('Modern bootstrap lowering requires a DabNodeUnit')
+    end
+
+    preflight_names!(unit)
+    functions = @declarations.map { |declaration| declaration.lower_into(unit) }
+    functions.one? ? functions.fetch(0) : functions.freeze
+  end
+
+private
+
+  def preflight_names!(unit)
+    seen = {}
+    @declarations.each do |declaration|
+      name = declaration.callable_name.text
+      if seen.key?(name) || unit.has_function?(name)
+        raise DabModernBootstrapParseError.new(
+          source_span: declaration.callable_name.source_span
+        )
+      end
+
+      seen[name] = true
+    end
+  end
+end
+
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
   LITERAL_KINDS = %i[nil boolean_true boolean_false integer string].freeze
   EXPECT_SPACE_MESSAGE =
-    'invalid Modern main declaration: expected one ASCII space after "def"'.freeze
-  EXPECT_MAIN_MESSAGE =
-    'invalid Modern main declaration: expected "main" after "def "'.freeze
-  EXPECT_MAIN_SEPARATOR_MESSAGE =
-    'invalid Modern main declaration: expected a separator (LF, semicolon, or line comment) after "main"'.freeze
+    'invalid Modern function declaration: expected one ASCII space after "def"'.freeze
+  EXPECT_CALLABLE_NAME_MESSAGE =
+    'invalid Modern function declaration: expected a callable name after "def "'.freeze
+  EXPECT_NAME_SEPARATOR_MESSAGE =
+    'invalid Modern function declaration: expected a separator (LF, semicolon, or line comment) after callable name'.freeze
   EXPECT_LITERAL_SEPARATOR_MESSAGE =
-    'invalid Modern main body: expected a separator (LF, semicolon, or line comment) after literal'.freeze
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after literal'.freeze
   EXPECT_END_MESSAGE =
-    'unterminated Modern main declaration: expected closing "end" before end of file'.freeze
+    'unterminated Modern function declaration: expected closing "end" before end of file'.freeze
   EXPECT_END_SEPARATOR_MESSAGE =
-    'invalid Modern main declaration: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
-  UNEXPECTED_END_MESSAGE = 'unexpected Modern "end": no open main declaration'.freeze
+    'invalid Modern function declaration: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
+  UNEXPECTED_END_MESSAGE = 'unexpected Modern "end": no open function declaration'.freeze
   INVALID_CR_SEPARATOR_MESSAGE = 'invalid Modern separator: CR and CRLF are not supported; use LF'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
@@ -624,29 +672,35 @@ class DabModernBootstrapParser
     skip_separators
     return nil if peek_token.kind == :eof
 
-    reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
+    declarations = []
+    until peek_token.kind == :eof
+      reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
+      declarations << parse_declaration
+      skip_separators
+    end
 
+    DabModernBootstrapDocument.new(declarations)
+  end
+
+private
+
+  def parse_declaration
     def_token = expect(:def)
     expect_space_after_def
-    name_token = expect_main_name
-    expect_main_separator
+    callable_name = expect_callable_name
+    expect_name_separator
     body_tokens = parse_body
     end_token = expect(:end)
     final_separator = expect_end_separator
-    skip_separators
-    reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
-    expect(:eof)
 
-    DabModernBootstrapMainDeclaration.new(
+    DabModernBootstrapFunctionDeclaration.new(
       def_token: def_token,
-      name_token: name_token,
+      callable_name: callable_name,
       body_tokens: body_tokens,
       end_token: end_token,
       final_separator: final_separator
     )
   end
-
-private
 
   def expect(kind)
     token = next_token
@@ -660,23 +714,16 @@ private
     token
   end
 
-  def expect_main_name
+  def expect_callable_name
     token = next_token
     if token.kind == :identifier
-      callable_name = compose_callable_name(token)
-      return token if callable_name.text == 'main'
-
-      if token.text == 'main'
-        reject(callable_name.suffix_token)
-      else
-        reject(token)
-      end
+      return compose_callable_name(token)
     end
 
     if token.kind == :invalid_literal
       reject(token)
     else
-      reject(token, EXPECT_MAIN_MESSAGE)
+      reject(token, EXPECT_CALLABLE_NAME_MESSAGE)
     end
   end
 
@@ -697,17 +744,17 @@ private
     @callable_name_composer.compose(base_token, suffix_token)
   end
 
-  def expect_main_separator
+  def expect_name_separator
     token = next_token
     reject_invalid_separator(token)
     return token if separator?(token)
 
     reject_invalid_separator_after_spaces(token)
     if token.kind == :space && implemented_shell_token_after_spaces?
-      reject(token, EXPECT_MAIN_SEPARATOR_MESSAGE)
+      reject(token, EXPECT_NAME_SEPARATOR_MESSAGE)
     end
     if %i[eof nil boolean_true boolean_false integer string end].include?(token.kind)
-      reject(token, EXPECT_MAIN_SEPARATOR_MESSAGE)
+      reject(token, EXPECT_NAME_SEPARATOR_MESSAGE)
     end
 
     reject(token)

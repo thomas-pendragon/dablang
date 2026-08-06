@@ -22,11 +22,9 @@ describe 'minimal Modern main bootstrap' do
   let(:near_misses) do
     {
       'empty name' => ["def \nend\n".b, {offset: 4, line: 2, column: 0}],
-      'another name' => ["def worker\nend\n".b, {offset: 4, line: 1, column: 4}],
       'parentheses and parameters' => ["def main()\nend\n".b, {offset: 8, line: 1, column: 8}],
       'return annotation' => ["def main: Object\nend\n".b, {offset: 8, line: 1, column: 8}],
       'body content' => ["def main\nvalue\nend\n".b, {offset: 9, line: 2, column: 0}],
-      'duplicate declaration' => ["def main\nend\ndef main\nend\n".b, {offset: 13, line: 3, column: 0}],
       'leading token' => [" def main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'trailing token' => ["def main\nend\nextra\n".b, {offset: 13, line: 3, column: 0}],
       'missing end' => ["def main\n".b, {offset: 9, line: 2, column: 0}],
@@ -89,24 +87,19 @@ describe 'minimal Modern main bootstrap' do
     {
       'inside the def keyword' => ["de;f main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'between def and its required space' => ["def;main\nend\n".b, {offset: 3, line: 1, column: 3}],
-      'inside the main identifier' => ["def ma;in\nend\n".b, {offset: 4, line: 1, column: 4}],
+      'semicolon after a shorter callable name' => ["def ma;in\nend\n".b, {offset: 7, line: 1, column: 7}],
       'after a space following main' => ["def main ;end\n".b, {offset: 8, line: 1, column: 8}],
       'inside the end keyword' => ["def main\nen;d\n".b, {offset: 9, line: 2, column: 0}],
       'between body identifier fragments' => ["def main;va;lue\nend;".b, {offset: 9, line: 1, column: 9}],
-      'before a duplicate declaration' => ["def main\nend;;def main\nend\n".b, {offset: 14, line: 2, column: 5}],
     }
   end
   let(:comment_near_misses) do
     {
       'single slash' => ["/ comment\ndef main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'hash embedded in def' => ["de# split\nf main\nend\n".b, {offset: 0, line: 1, column: 0}],
-      'slashes embedded in main' => ["def ma// split\nin\nend\n".b, {offset: 4, line: 1, column: 4}],
+      'comment after a shorter callable name' => ["def ma// split\nin\nend\n".b, {offset: 15, line: 2, column: 0}],
       'slash before a hash' => ["def main/# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
       'body statement after a comment' => ["def main\n# body\nvalue\nend\n".b, {offset: 16, line: 3, column: 0}],
-      'second declaration after a comment' => [
-        "def main\nend\n# between\ndef main\nend\n".b,
-        {offset: 23, line: 4, column: 0},
-      ],
       'CR before a comment marker' => ["def main\r# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
       'CRLF before a comment marker' => ["def main\r\n# comment\nend\r\n".b, {offset: 8, line: 1, column: 8}],
     }
@@ -127,31 +120,31 @@ describe 'minimal Modern main bootstrap' do
       },
       'main after def-space at EOF' => {
         source: 'def '.b,
-        message: DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+        message: DabModernBootstrapParser::EXPECT_CALLABLE_NAME_MESSAGE,
         span: [4, 4],
         location: {offset: 4, line: 1, column: 4},
       },
       'main after def-space before LF' => {
         source: "def \n".b,
-        message: DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+        message: DabModernBootstrapParser::EXPECT_CALLABLE_NAME_MESSAGE,
         span: [4, 5],
         location: {offset: 4, line: 2, column: 0},
       },
       'separator after main at EOF' => {
         source: 'def main'.b,
-        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        message: DabModernBootstrapParser::EXPECT_NAME_SEPARATOR_MESSAGE,
         span: [8, 8],
         location: {offset: 8, line: 1, column: 8},
       },
       'separator after main before a literal' => {
         source: "def main\"body\"\nend\n".b,
-        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        message: DabModernBootstrapParser::EXPECT_NAME_SEPARATOR_MESSAGE,
         span: [8, 14],
         location: {offset: 8, line: 1, column: 8},
       },
       'separator after main before a spaced end' => {
         source: "def main end\n".b,
-        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        message: DabModernBootstrapParser::EXPECT_NAME_SEPARATOR_MESSAGE,
         span: [8, 9],
         location: {offset: 8, line: 1, column: 8},
       },
@@ -270,7 +263,7 @@ describe 'minimal Modern main bootstrap' do
 
   def expected_rejection_message(description)
     structural = {
-      'empty name' => DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+      'empty name' => DabModernBootstrapParser::EXPECT_CALLABLE_NAME_MESSAGE,
       'missing end' => DabModernBootstrapParser::EXPECT_END_MESSAGE,
       'CR-only' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
       'CRLF' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
@@ -278,7 +271,7 @@ describe 'minimal Modern main bootstrap' do
       'newline inside the declaration header' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
       'CRLF separators' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
       'between def and its required space' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
-      'after a space following main' => DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+      'after a space following main' => DabModernBootstrapParser::EXPECT_NAME_SEPARATOR_MESSAGE,
       'CR before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
       'CRLF before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
     }
@@ -660,7 +653,6 @@ describe 'minimal Modern main bootstrap' do
       syntax_profile: DabSyntaxProfile::MODERN
     )
     cases = {
-      'other function name' => 'def worker'.b,
       'parameters' => "def main()\nend\n".b,
       'spaced parameters' => "def main ()\nend\n".b,
       'return annotation' => "def main: Object\nend\n".b,
@@ -668,7 +660,6 @@ describe 'minimal Modern main bootstrap' do
       'operator expression' => "def main\n1+2\nend\n".b,
       'spaced operator expression' => "def main\n1 + 2\nend\n".b,
       'call expression' => "def main\nvalue()\nend\n".b,
-      'additional declaration' => "def main\nend\ndef main\nend\n".b,
       'trailing top-level form' => "def main\nend\nextra\n".b,
       'incomplete identifier' => 'de'.b,
       'incomplete expression or end' => "def main\nen\n".b,

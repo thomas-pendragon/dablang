@@ -176,7 +176,7 @@ describe 'Modern bootstrap String literals' do
     unit = DabNodeUnit.new
     body = declaration.lower_into(unit).blocks[0]
 
-    expect(declaration.body_tokens.map(&:kind)).to eq([:string] * 6)
+    expect(declaration.declarations.fetch(0).body_tokens.map(&:kind)).to eq([:string] * 6)
     expect(body.map(&:class)).to eq([DabNodeLiteralString] * 6)
     expect(body.map(&:constant_value)).to eq(
       ['', 'plain', 'Zażółć 🐉', 'quote: "', "line\nfeed", "carriage\rreturn"].map(&:b)

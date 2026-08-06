@@ -1,5 +1,12 @@
 ## SOURCE
-def worker
+def save!
+"saved"
+end
+def ready?
+true
+end
+def main
+nil
 end
 ## SCHEMA VERSION
 1
@@ -27,10 +34,22 @@ end
                    __F__init_4589_END:
                                  NOP 
  
-                   Fworker:
+                   Fmain:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __Fworker_END:
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fready%QUEST:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fready%QUEST_END:
+                                 NOP 
+ 
+                   Fsave%BANG:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fsave%BANG_END:
                                  NOP 
  
                    _CLAS:
@@ -39,16 +58,24 @@ end
  
                    _SDAT:
                                  W_STRING "__init_4589" 
-                                 W_STRING "worker" 
+                                 W_STRING "main" 
+                                 W_STRING "ready?" 
+                                 W_STRING "save!" 
  
                    _SYMB:
 /* __init_4589  */               W_SYMBOL _SDAT + 0 
-/* worker       */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 12 
+/* ready?       */               W_SYMBOL _SDAT + 17 
+/* save!        */               W_SYMBOL _SDAT + 24 
  
                    _FUNC:
 /* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* worker       */               W_METHOD 54, -1, Fworker, 0, __Fworker_END - Fworker, 0
+/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* ready?       */               W_METHOD 55, -1, Fready%QUEST, 0, __Fready%QUEST_END - Fready%QUEST, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* save!        */               W_METHOD 56, -1, Fsave%BANG, 0, __Fsave%BANG_END - Fsave%BANG, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:

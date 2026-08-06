@@ -43,6 +43,12 @@ module_function
     raise_diagnostic(source_unit, e)
   end
 
+  def lower_document!(document, unit)
+    document.lower_into(unit)
+  rescue DabUnsupportedSyntaxProfileError => e
+    raise_diagnostic(document.source_unit, e)
+  end
+
   def supported_modern_application?(source_unit, source_units:, ring_bases:)
     return false unless modern_application_candidate?(
       source_unit,

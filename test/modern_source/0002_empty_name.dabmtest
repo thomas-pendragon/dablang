@@ -6,4 +6,4 @@ end
 ## STATUS
 2
 ## STDERR
-compiler: 0002_empty_name.dabm:2:0: error: invalid Modern main declaration: expected one ASCII space after "def"
+compiler: 0002_empty_name.dabm:2:0: error: invalid Modern function declaration: expected one ASCII space after "def"

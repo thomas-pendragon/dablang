@@ -1,5 +1,5 @@
 ## SOURCE
-def worker
+def main!
 end
 ## SCHEMA VERSION
 1
@@ -27,10 +27,10 @@ end
                    __F__init_4589_END:
                                  NOP 
  
-                   Fworker:
+                   Fmain%BANG:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __Fworker_END:
+                   __Fmain%BANG_END:
                                  NOP 
  
                    _CLAS:
@@ -39,16 +39,16 @@ end
  
                    _SDAT:
                                  W_STRING "__init_4589" 
-                                 W_STRING "worker" 
+                                 W_STRING "main!" 
  
                    _SYMB:
 /* __init_4589  */               W_SYMBOL _SDAT + 0 
-/* worker       */               W_SYMBOL _SDAT + 12 
+/* main!        */               W_SYMBOL _SDAT + 12 
  
                    _FUNC:
 /* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* worker       */               W_METHOD 54, -1, Fworker, 0, __Fworker_END - Fworker, 0
+/* main!        */               W_METHOD 54, -1, Fmain%BANG, 0, __Fmain%BANG_END - Fmain%BANG, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
  
                    _NDAT:
