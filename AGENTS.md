@@ -180,6 +180,38 @@ Every SUBWORK is a new, durable Codex chat created on the designated
 `codex-codex` Codex host. A local subagent of the MASTER THREAD is not a
 SUBWORK and must not be used to execute one.
 
+### Dynamic MASTER task title
+
+Only the MASTER THREAD renames the MASTER Codex task. Its title consists of an
+optional state prefix, the stable base title `🌍 DABLANG`, and one very short
+bracketed descriptor for each current worker, for example
+`⏳ 🌍 DABLANG [New CLI options]`. Once a worker has a pull request, include its
+number in that descriptor, for example `[#1234 New CLI options]`.
+
+Choose the single prefix for the highest-priority global MASTER state:
+
+1. Use the highest applicable attention state: `‼️` for a critical, safety,
+   data-loss, or work-invalidating intervention; `❗️` for a concrete blocker or
+   error needing owner action; `⁉️` for an urgent or ambiguous owner decision;
+   or `❓` for an ordinary owner decision.
+2. Otherwise use `⏳` while one or more workers are active.
+3. Otherwise use `✅` when work finished correctly and MASTER is waiting for
+   owner direction.
+4. Otherwise use no prefix when idle.
+
+When workers have mixed states, `attention > active > completed-waiting > idle`
+still selects one global prefix, while the descriptors continue to list every
+current worker. Update the title whenever a worker is dispatched or claimed,
+becomes blocked or requires a decision, publishes a pull request, completes,
+is resolved, is merged or closed, or the worker set otherwise changes. Remove
+stale worker descriptors immediately; keep descriptions extremely short and
+omit SHAs, branch names, task IDs, and verbose status.
+
+A SUBWORK reports state and pull-request transitions through its callbacks; it
+never renames the MASTER task itself. The dynamic title is transient
+coordination metadata and never replaces TABELKA, callbacks, tests, decision
+records, or GitHub evidence.
+
 Before starting a SUBWORK, the MASTER THREAD records it in the **TABELKA**
 (the compact coordination table in the Scenario B Wiki work log) with: ID,
 stage/gate, objective, repository area, prerequisite decision/evidence,
