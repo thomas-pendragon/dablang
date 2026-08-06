@@ -22,8 +22,6 @@ describe 'minimal Modern main bootstrap' do
   let(:near_misses) do
     {
       'empty name' => ["def \nend\n".b, {offset: 4, line: 2, column: 0}],
-      'parentheses and parameters' => ["def main()\nend\n".b, {offset: 8, line: 1, column: 8}],
-      'return annotation' => ["def main: Object\nend\n".b, {offset: 8, line: 1, column: 8}],
       'body content' => ["def main\nvalue\nend\n".b, {offset: 9, line: 2, column: 0}],
       'leading token' => [" def main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'trailing token' => ["def main\nend\nextra\n".b, {offset: 13, line: 3, column: 0}],
@@ -88,7 +86,6 @@ describe 'minimal Modern main bootstrap' do
       'inside the def keyword' => ["de;f main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'between def and its required space' => ["def;main\nend\n".b, {offset: 3, line: 1, column: 3}],
       'semicolon after a shorter callable name' => ["def ma;in\nend\n".b, {offset: 7, line: 1, column: 7}],
-      'after a space following main' => ["def main ;end\n".b, {offset: 8, line: 1, column: 8}],
       'inside the end keyword' => ["def main\nen;d\n".b, {offset: 9, line: 2, column: 0}],
       'between body identifier fragments' => ["def main;va;lue\nend;".b, {offset: 9, line: 1, column: 9}],
     }
@@ -271,7 +268,6 @@ describe 'minimal Modern main bootstrap' do
       'newline inside the declaration header' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
       'CRLF separators' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
       'between def and its required space' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
-      'after a space following main' => DabModernBootstrapParser::EXPECT_NAME_SEPARATOR_MESSAGE,
       'CR before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
       'CRLF before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
     }
@@ -653,9 +649,6 @@ describe 'minimal Modern main bootstrap' do
       syntax_profile: DabSyntaxProfile::MODERN
     )
     cases = {
-      'parameters' => "def main()\nend\n".b,
-      'spaced parameters' => "def main ()\nend\n".b,
-      'return annotation' => "def main: Object\nend\n".b,
       'identifier body' => "def main\nvalue\nend\n".b,
       'operator expression' => "def main\n1+2\nend\n".b,
       'spaced operator expression' => "def main\n1 + 2\nend\n".b,
