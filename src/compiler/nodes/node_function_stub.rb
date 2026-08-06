@@ -1,12 +1,13 @@
 require_relative 'node'
 
 class DabNodeFunctionStub < DabNode
-  attr_reader :identifier
+  attr_reader :identifier, :ring_signature
 
-  def initialize(identifier, _arglist = nil, is_static:)
+  def initialize(identifier, _arglist = nil, is_static:, ring_signature: nil)
     super()
     @identifier = identifier
     @is_static = is_static
+    @ring_signature = ring_signature
   end
 
   def concreteified?

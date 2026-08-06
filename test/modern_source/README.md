@@ -207,6 +207,22 @@ bindings, statements, defaults, generics, variadics, keyword invocation,
 inference, overloads, aliases, nominal types, Modern formatting, and new
 bytecode or runtime invocation behavior remain deferred.
 
+Version 0.0.48 adds direct calls as body items without introducing a general
+expression grammar. Calls accept only the existing literal families as
+arguments, use optional ASCII space or TAB around their punctuation, require an
+immediate LF, semicolon, or line-comment body separator, and discard their
+results through the existing `RNIL` path. Fixture `0039` locks the unknown-call
+diagnostic after a complete direct-call parse. Same-document functions support
+forward calls and recursion with exact arity and current assignability checks;
+`print` remains variadic; and free lower-Ring `puts` is accepted only when its
+artifact metadata confirms the exact one-argument `Object` signature. Every
+other builtin, Ring function, class or method, internal syscall, unsafe target,
+and FFI-adjacent target remains unsupported. Focused contracts own the five
+syntax and four semantic diagnostic families, exact spans, transactional
+preflight, suffix targets, existing assembly, and native execution. Nested
+calls, result use, body references, dot/property calls, bindings, statements,
+operators, and all later expression rows remain deferred.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
