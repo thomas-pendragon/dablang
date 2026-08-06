@@ -1,0 +1,9 @@
+## SOURCE
+def 
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0028_missing_main.dabm:2:0: error: invalid Modern main declaration: expected "main" after "def "

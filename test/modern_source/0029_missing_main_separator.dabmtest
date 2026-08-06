@@ -1,0 +1,9 @@
+## SOURCE
+def main"body"
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0029_missing_main_separator.dabm:1:8: error: invalid Modern main declaration: expected a separator (LF, semicolon, or line comment) after "main"

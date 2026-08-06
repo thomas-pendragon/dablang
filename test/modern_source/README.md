@@ -151,6 +151,20 @@ identifiers, calls, bindings, control flow, adjacent Strings, single quotes,
 and every other unimplemented grammar form retain the generic parser fallback.
 Accepted Modern output and all Legacy behavior remain unchanged.
 
+Version 0.0.44 replaces the generic parser fallback with structural diagnostics
+only after the parser recognizes an invalid state of the implemented
+fixed single-`main` shell. `0002`, `0008`, `0011`, and `0013` plus `0028`
+through `0032` cover missing fixed-header tokens, required separators, missing
+closing `end`, and leading `end`. Focused parser/compiler contracts additionally
+cover zero-width EOF attribution, extra `end`, lone CR, and a two-byte CRLF
+scanner span. CRLF cannot be represented as source data in this fixture format
+because transport normalization deliberately converts every CRLF pair to LF;
+lone CR remains representable but is covered beside CRLF in the byte-exact
+focused contract. Other function names, parameters, return annotations,
+identifiers, expressions, calls, operators, extra declarations, trailing forms,
+and all later grammar retain the generic parser fallback. This row changes no
+accepted Modern or Legacy source, output, Ring, bytecode, or runtime behavior.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

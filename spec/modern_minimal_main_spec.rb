@@ -111,6 +111,154 @@ describe 'minimal Modern main bootstrap' do
       'CRLF before a comment marker' => ["def main\r\n# comment\nend\r\n".b, {offset: 8, line: 1, column: 8}],
     }
   end
+  let(:structural_diagnostic_cases) do
+    {
+      'space after def at EOF' => {
+        source: 'def'.b,
+        message: DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
+        span: [3, 3],
+        location: {offset: 3, line: 1, column: 3},
+      },
+      'space after def before LF' => {
+        source: "def\n".b,
+        message: DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
+        span: [3, 4],
+        location: {offset: 3, line: 2, column: 0},
+      },
+      'main after def-space at EOF' => {
+        source: 'def '.b,
+        message: DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+        span: [4, 4],
+        location: {offset: 4, line: 1, column: 4},
+      },
+      'main after def-space before LF' => {
+        source: "def \n".b,
+        message: DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+        span: [4, 5],
+        location: {offset: 4, line: 2, column: 0},
+      },
+      'separator after main at EOF' => {
+        source: 'def main'.b,
+        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        span: [8, 8],
+        location: {offset: 8, line: 1, column: 8},
+      },
+      'separator after main before a literal' => {
+        source: "def main\"body\"\nend\n".b,
+        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        span: [8, 14],
+        location: {offset: 8, line: 1, column: 8},
+      },
+      'separator after main before a spaced end' => {
+        source: "def main end\n".b,
+        message: DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+        span: [8, 9],
+        location: {offset: 8, line: 1, column: 8},
+      },
+      'separator after literal at EOF' => {
+        source: "def main\nnil".b,
+        message: DabModernBootstrapParser::EXPECT_LITERAL_SEPARATOR_MESSAGE,
+        span: [12, 12],
+        location: {offset: 12, line: 2, column: 3},
+      },
+      'separator after literal before end' => {
+        source: "def main\n1end\n".b,
+        message: DabModernBootstrapParser::EXPECT_LITERAL_SEPARATOR_MESSAGE,
+        span: [10, 13],
+        location: {offset: 10, line: 2, column: 1},
+      },
+      'separator after literal before a spaced end' => {
+        source: "def main\nnil end\n".b,
+        message: DabModernBootstrapParser::EXPECT_LITERAL_SEPARATOR_MESSAGE,
+        span: [12, 13],
+        location: {offset: 12, line: 2, column: 3},
+      },
+      'closing end at EOF' => {
+        source: "def main\n".b,
+        message: DabModernBootstrapParser::EXPECT_END_MESSAGE,
+        span: [9, 9],
+        location: {offset: 9, line: 2, column: 0},
+      },
+      'closing end after consumed separators and comment' => {
+        source: "def main\nnil\n# missing".b,
+        message: DabModernBootstrapParser::EXPECT_END_MESSAGE,
+        span: [22, 22],
+        location: {offset: 22, line: 3, column: 9},
+      },
+      'separator after closing end at EOF' => {
+        source: "def main\nend".b,
+        message: DabModernBootstrapParser::EXPECT_END_SEPARATOR_MESSAGE,
+        span: [12, 12],
+        location: {offset: 12, line: 2, column: 3},
+      },
+      'separator after closing end before a token' => {
+        source: "def main\nend\"x\"".b,
+        message: DabModernBootstrapParser::EXPECT_END_SEPARATOR_MESSAGE,
+        span: [12, 15],
+        location: {offset: 12, line: 2, column: 3},
+      },
+      'leading end' => {
+        source: "end\n".b,
+        message: DabModernBootstrapParser::UNEXPECTED_END_MESSAGE,
+        span: [0, 3],
+        location: {offset: 0, line: 1, column: 0},
+      },
+      'extra end' => {
+        source: "def main\nend\nend\n".b,
+        message: DabModernBootstrapParser::UNEXPECTED_END_MESSAGE,
+        span: [13, 16],
+        location: {offset: 13, line: 3, column: 0},
+      },
+      'lone CR separator' => {
+        source: "def main\rend\r".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [8, 9],
+        location: {offset: 8, line: 1, column: 8},
+      },
+      'CRLF separator' => {
+        source: "def main\r\nend\r\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [8, 10],
+        location: {offset: 8, line: 1, column: 8},
+      },
+      'lone CR after spaces following main' => {
+        source: "def main \rend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [9, 10],
+        location: {offset: 9, line: 1, column: 9},
+      },
+      'CRLF after spaces following main' => {
+        source: "def main \r\nend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [9, 11],
+        location: {offset: 9, line: 1, column: 9},
+      },
+      'lone CR after spaces following literal' => {
+        source: "def main\nnil \rend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 14],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'CRLF after spaces following literal' => {
+        source: "def main\nnil \r\nend\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 15],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'lone CR after spaces following end' => {
+        source: "def main\nend \r".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 14],
+        location: {offset: 13, line: 2, column: 4},
+      },
+      'CRLF after spaces following end' => {
+        source: "def main\nend \r\n".b,
+        message: DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+        span: [13, 15],
+        location: {offset: 13, line: 2, column: 4},
+      },
+    }
+  end
 
   def invoke(*command, input: nil)
     Open3.capture3(*command, stdin_data: input, chdir: root)
@@ -118,6 +266,23 @@ describe 'minimal Modern main bootstrap' do
 
   def tool_stderr(stderr)
     stderr.delete_prefix(clipboard_fallback)
+  end
+
+  def expected_rejection_message(description)
+    structural = {
+      'empty name' => DabModernBootstrapParser::EXPECT_MAIN_MESSAGE,
+      'missing end' => DabModernBootstrapParser::EXPECT_END_MESSAGE,
+      'CR-only' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+      'CRLF' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+      'missing final LF' => DabModernBootstrapParser::EXPECT_END_SEPARATOR_MESSAGE,
+      'newline inside the declaration header' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
+      'CRLF separators' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+      'between def and its required space' => DabModernBootstrapParser::EXPECT_SPACE_MESSAGE,
+      'after a space following main' => DabModernBootstrapParser::EXPECT_MAIN_SEPARATOR_MESSAGE,
+      'CR before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+      'CRLF before a comment marker' => DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE,
+    }
+    structural.fetch(description, DabModernBootstrapParseError::GENERIC_MESSAGE)
   end
 
   def build_stdlib(directory)
@@ -470,6 +635,54 @@ describe 'minimal Modern main bootstrap' do
     expect(declaration.source_span.end_location.to_h).to eq(offset: 43, line: 4, column: 10)
   end
 
+  it 'reports the eight recognized-main diagnostics with exact scanner or zero-width EOF spans' do
+    source_unit = DabSourceUnit.new(
+      input: 'structural-diagnostic.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+
+    structural_diagnostic_cases.each do |description, test_case|
+      expect do
+        DabModernBootstrapParser.new(test_case.fetch(:source), source_unit: source_unit).parse
+      end.to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq(test_case.fetch(:message)), description
+        expect([error.source_span.start_offset, error.source_span.end_offset])
+          .to eq(test_case.fetch(:span)), description
+        expect(error.source_location.to_h).to eq(test_case.fetch(:location)), description
+        expect(error.source_span.source_unit).to equal(source_unit)
+      }
+    end
+  end
+
+  it 'keeps deferred header, expression, declaration, and top-level syntax on the generic fallback' do
+    source_unit = DabSourceUnit.new(
+      input: 'deferred-modern-syntax.dabm',
+      syntax_profile: DabSyntaxProfile::MODERN
+    )
+    cases = {
+      'other function name' => 'def worker'.b,
+      'parameters' => "def main()\nend\n".b,
+      'spaced parameters' => "def main ()\nend\n".b,
+      'return annotation' => "def main: Object\nend\n".b,
+      'identifier body' => "def main\nvalue\nend\n".b,
+      'operator expression' => "def main\n1+2\nend\n".b,
+      'spaced operator expression' => "def main\n1 + 2\nend\n".b,
+      'call expression' => "def main\nvalue()\nend\n".b,
+      'additional declaration' => "def main\nend\ndef main\nend\n".b,
+      'trailing top-level form' => "def main\nend\nextra\n".b,
+      'incomplete identifier' => 'de'.b,
+      'incomplete expression or end' => "def main\nen\n".b,
+    }
+
+    cases.each do |description, source|
+      expect do
+        DabModernBootstrapParser.new(source, source_unit: source_unit).parse
+      end.to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE), description
+      }
+    end
+  end
+
   it 'rejects non-separator whitespace and later syntax at the first scanner location' do
     source_unit = DabSourceUnit.new(
       input: 'separator-near-miss.dabm',
@@ -480,7 +693,7 @@ describe 'minimal Modern main bootstrap' do
       expect do
         DabModernBootstrapParser.new(source, source_unit: source_unit).parse
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(expected_rejection_message(description))
         expect(error.source_location.to_h).to eq(location), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -497,7 +710,7 @@ describe 'minimal Modern main bootstrap' do
       expect do
         DabModernBootstrapParser.new(source, source_unit: source_unit).parse
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(expected_rejection_message(description))
         expect(error.source_location.to_h).to eq(location), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -514,7 +727,7 @@ describe 'minimal Modern main bootstrap' do
       expect do
         DabModernBootstrapParser.new(source, source_unit: source_unit).parse
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(expected_rejection_message(description))
         expect(error.source_location.to_h).to eq(location), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -531,7 +744,7 @@ describe 'minimal Modern main bootstrap' do
       expect do
         DabModernBootstrapParser.new(source, source_unit: source_unit).parse
       end.to raise_error(DabModernBootstrapParseError) { |error|
-        expect(error.message).to eq 'unsupported Dab syntax profile "modern": parser is not implemented'
+        expect(error.message).to eq(expected_rejection_message(description))
         expect(error.source_location.to_h).to eq(location), description
         expect(error.source_location.source_unit).to equal(source_unit)
       }
@@ -553,12 +766,71 @@ describe 'minimal Modern main bootstrap' do
         )
         expected =
           "compiler: #{path}:#{location.fetch(:line)}:#{location.fetch(:column)}: error: " \
-          "unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+          "#{expected_rejection_message(description)}\n"
 
         aggregate_failures(description) do
           expect([status.exitstatus, stdout, tool_stderr(stderr)]).to eq [2, '', expected]
         end
       end
+    end
+  end
+
+  it 'reports each structural diagnostic transactionally without changing the lower Ring' do
+    representatives = [
+      'space after def before LF',
+      'main after def-space before LF',
+      'separator after main before a literal',
+      'separator after literal at EOF',
+      'closing end after consumed separators and comment',
+      'separator after closing end at EOF',
+      'extra end',
+      'CRLF after spaces following main',
+    ]
+
+    Dir.mktmpdir('dab-modern-structural-diagnostics') do |directory|
+      lower = build_stdlib(directory)
+      lower_before = File.binread(lower)
+
+      representatives.each_with_index do |description, index|
+        test_case = structural_diagnostic_cases.fetch(description)
+        path = File.join(directory, sprintf('structural-%02d.dabm', index))
+        File.binwrite(path, test_case.fetch(:source))
+        stdout, stderr, status = invoke(
+          RbConfig.ruby,
+          compiler,
+          path,
+          "--ring-base[]=#{lower}"
+        )
+        location = test_case.fetch(:location)
+        expected =
+          "compiler: #{path}:#{location.fetch(:line)}:#{location.fetch(:column)}: error: " \
+          "#{test_case.fetch(:message)}\n"
+
+        aggregate_failures(description) do
+          expect([status.exitstatus, stdout, tool_stderr(stderr)]).to eq [2, '', expected]
+          expect(File.binread(lower)).to eq(lower_before)
+        end
+      end
+    end
+  end
+
+  it 'reports a recognized structural error before loading a missing lower Ring' do
+    Dir.mktmpdir('dab-modern-structural-before-ring') do |directory|
+      path = File.join(directory, 'missing-end.dabm')
+      missing_lower = File.join(directory, 'missing-stdlib.dabcb')
+      File.binwrite(path, "def main\n")
+
+      stdout, stderr, status = invoke(
+        RbConfig.ruby,
+        compiler,
+        path,
+        "--ring-base[]=#{missing_lower}"
+      )
+      expected =
+        "compiler: #{path}:2:0: error: #{DabModernBootstrapParser::EXPECT_END_MESSAGE}\n"
+
+      expect([status.exitstatus, stdout, tool_stderr(stderr)]).to eq [2, '', expected]
+      expect(File).not_to exist(missing_lower)
     end
   end
 

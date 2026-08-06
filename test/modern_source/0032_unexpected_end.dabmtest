@@ -1,0 +1,8 @@
+## SOURCE
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0032_unexpected_end.dabm:1:0: error: unexpected Modern "end": no open main declaration

@@ -4,10 +4,11 @@ require_relative 'modern_string_escapes'
 class DabModernBootstrapParseError < DabUnsupportedSyntaxProfileError
   GENERIC_MESSAGE = 'unsupported Dab syntax profile "modern": parser is not implemented'.freeze
 
-  attr_reader :source_location
+  attr_reader :source_location, :source_span
 
-  def initialize(message = GENERIC_MESSAGE, source_location:)
-    @source_location = source_location
+  def initialize(message = GENERIC_MESSAGE, source_span:)
+    @source_span = DabSourceSpan.validate(source_span)
+    @source_location = @source_span.start_location
     super(message)
   end
 end
@@ -69,6 +70,11 @@ class DabModernBootstrapScanner < DabScanner
     when "\n"
       advance!
       token(:line_feed, "\n", start_offset)
+    when "\r"
+      length = current_char(1) == "\n" ? 2 : 1
+      text = content.byteslice(start_offset, length)
+      advance!(length)
+      token(:carriage_return, text, start_offset)
     when ';'
       advance!
       token(:semicolon, ';', start_offset)
@@ -512,6 +518,20 @@ end
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
   LITERAL_KINDS = %i[nil boolean_true boolean_false integer string].freeze
+  EXPECT_SPACE_MESSAGE =
+    'invalid Modern main declaration: expected one ASCII space after "def"'.freeze
+  EXPECT_MAIN_MESSAGE =
+    'invalid Modern main declaration: expected "main" after "def "'.freeze
+  EXPECT_MAIN_SEPARATOR_MESSAGE =
+    'invalid Modern main declaration: expected a separator (LF, semicolon, or line comment) after "main"'.freeze
+  EXPECT_LITERAL_SEPARATOR_MESSAGE =
+    'invalid Modern main body: expected a separator (LF, semicolon, or line comment) after literal'.freeze
+  EXPECT_END_MESSAGE =
+    'unterminated Modern main declaration: expected closing "end" before end of file'.freeze
+  EXPECT_END_SEPARATOR_MESSAGE =
+    'invalid Modern main declaration: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
+  UNEXPECTED_END_MESSAGE = 'unexpected Modern "end": no open main declaration'.freeze
+  INVALID_CR_SEPARATOR_MESSAGE = 'invalid Modern separator: CR and CRLF are not supported; use LF'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -529,15 +549,17 @@ class DabModernBootstrapParser
     skip_separators
     return nil if peek_token.kind == :eof
 
+    reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
+
     def_token = expect(:def)
-    expect(:space)
-    name_token = expect(:identifier)
-    reject(name_token) unless name_token.text == 'main'
-    expect_separator
+    expect_space_after_def
+    name_token = expect_main_name
+    expect_main_separator
     body_tokens = parse_body
     end_token = expect(:end)
-    final_separator = expect_separator
+    final_separator = expect_end_separator
     skip_separators
+    reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
     expect(:eof)
 
     DabModernBootstrapMainDeclaration.new(
@@ -557,19 +579,69 @@ private
     token
   end
 
-  def next_token
-    token = @peek_token
-    @peek_token = nil
-    token || @scanner.next_token
-  end
-
-  def peek_token
-    @peek_token ||= @scanner.next_token
-  end
-
-  def expect_separator
+  def expect_space_after_def
     token = next_token
-    reject(token) unless separator?(token)
+    reject(token, EXPECT_SPACE_MESSAGE) unless token.kind == :space
+    token
+  end
+
+  def expect_main_name
+    token = next_token
+    return token if token.kind == :identifier && token.text == 'main'
+
+    if %i[identifier invalid_literal].include?(token.kind)
+      reject(token)
+    else
+      reject(token, EXPECT_MAIN_MESSAGE)
+    end
+  end
+
+  def next_token
+    token_buffer.shift || @scanner.next_token
+  end
+
+  def peek_token(distance = 0)
+    token_buffer << @scanner.next_token while token_buffer.length <= distance
+    token_buffer.fetch(distance)
+  end
+
+  def expect_main_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    if token.kind == :space && implemented_shell_token_after_spaces?
+      reject(token, EXPECT_MAIN_SEPARATOR_MESSAGE)
+    end
+    if %i[eof nil boolean_true boolean_false integer string end].include?(token.kind)
+      reject(token, EXPECT_MAIN_SEPARATOR_MESSAGE)
+    end
+
+    reject(token)
+  end
+
+  def expect_literal_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    if token.kind == :space && body_boundary_token_after_spaces?
+      reject(token, EXPECT_LITERAL_SEPARATOR_MESSAGE)
+    end
+    if %i[eof end].include?(token.kind)
+      reject(token, EXPECT_LITERAL_SEPARATOR_MESSAGE)
+    end
+
+    reject(token)
+  end
+
+  def expect_end_separator
+    token = next_token
+    reject_invalid_separator(token)
+    reject_invalid_separator_after_spaces(token)
+    reject(token, EXPECT_END_SEPARATOR_MESSAGE) unless separator?(token)
     token
   end
 
@@ -578,6 +650,8 @@ private
     loop do
       skip_separators
       break if peek_token.kind == :end
+
+      reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
 
       token = next_token
       unless LITERAL_KINDS.include?(token.kind)
@@ -590,7 +664,7 @@ private
         )
       end
       tokens << token
-      expect_separator
+      expect_literal_separator
     end
     tokens
   end
@@ -603,14 +677,47 @@ private
   end
 
   def skip_separators
-    next_token while separator?(peek_token)
+    loop do
+      reject_invalid_separator(peek_token)
+      break unless separator?(peek_token)
+
+      next_token
+    end
   end
 
   def separator?(token)
     SEPARATOR_KINDS.include?(token.kind)
   end
 
+  def token_buffer
+    @token_buffer ||= []
+  end
+
+  def token_after_spaces
+    distance = 0
+    distance += 1 while peek_token(distance).kind == :space
+    peek_token(distance)
+  end
+
+  def implemented_shell_token_after_spaces?
+    token = token_after_spaces
+    separator?(token) || %i[eof carriage_return nil boolean_true boolean_false integer string end].include?(token.kind)
+  end
+
+  def body_boundary_token_after_spaces?
+    token = token_after_spaces
+    separator?(token) || %i[eof carriage_return end].include?(token.kind)
+  end
+
+  def reject_invalid_separator(token)
+    reject(token, INVALID_CR_SEPARATOR_MESSAGE) if token.kind == :carriage_return
+  end
+
+  def reject_invalid_separator_after_spaces(token)
+    reject_invalid_separator(token_after_spaces) if token.kind == :space
+  end
+
   def reject(token, message = DabModernBootstrapParseError::GENERIC_MESSAGE)
-    raise DabModernBootstrapParseError.new(message, source_location: token.source_location)
+    raise DabModernBootstrapParseError.new(message, source_span: token.source_span)
   end
 end
