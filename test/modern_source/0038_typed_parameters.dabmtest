@@ -1,5 +1,5 @@
 ## SOURCE
-def main()
+def typed(first : Int32, second:String) : Boolean
 end
 ## SCHEMA VERSION
 1
@@ -27,10 +27,10 @@ end
                    __F__init_4589_END:
                                  NOP 
  
-                   Fmain:
+                   Ftyped:
                                  STACK_RESERVE 0
                                  RETURN RNIL
-                   __Fmain_END:
+                   __Ftyped_END:
                                  NOP 
  
                    _CLAS:
@@ -39,17 +39,21 @@ end
  
                    _SDAT:
                                  W_STRING "__init_4589" 
-                                 W_STRING "main" 
+                                 W_STRING "second" 
+                                 W_STRING "typed" 
  
                    _SYMB:
 /* __init_4589  */               W_SYMBOL _SDAT + 0 
-/* main         */               W_SYMBOL _SDAT + 12 
+/* second       */               W_SYMBOL _SDAT + 12 
+/* typed        */               W_SYMBOL _SDAT + 19 
  
                    _FUNC:
 /* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
 /* $ret<Object> */               W_METHOD_ARG -1, 0
-/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0
-/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* typed        */               W_METHOD 55, -1, Ftyped, 2, __Ftyped_END - Ftyped, 0
+/* first<Int32> */               W_METHOD_ARG 24, 12
+/* second<Strin */               W_METHOD_ARG 54, 1
+/* $ret<Boolean */               W_METHOD_ARG -1, 3
  
                    _NDAT:
                                  W_BYTE 0 

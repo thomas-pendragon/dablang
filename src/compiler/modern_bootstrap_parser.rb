@@ -102,6 +102,61 @@ private
   end
 end
 
+class DabModernBootstrapTypeName
+  attr_reader :token
+
+  def initialize(token)
+    unless token.is_a?(DabModernBootstrapToken) && token.kind == :identifier
+      raise ArgumentError.new('Modern type name requires an identifier token')
+    end
+
+    @token = token
+    freeze
+  end
+
+  def text
+    token.text
+  end
+
+  def source_span
+    token.source_span
+  end
+
+  def lower
+    DabNodeType.new(token.source_string).tap do |node|
+      node.add_source_part(token.source_string)
+    end
+  end
+end
+
+class DabModernBootstrapParameter
+  attr_reader :name_token, :colon_token, :type_name
+
+  def initialize(name_token:, colon_token:, type_name:)
+    @name_token = name_token
+    @colon_token = colon_token
+    @type_name = type_name
+    freeze
+  end
+
+  def name
+    name_token.text
+  end
+
+  def source_span
+    DabSourceSpan.new(
+      start_location: name_token.source_span.start_location,
+      end_location: type_name.source_span.end_location
+    )
+  end
+
+  def lower(index)
+    DabNodeArgDefinition.new(index, name_token.source_string, type_name.lower, nil).tap do |node|
+      node.add_source_parts(name_token.source_string, colon_token.source_string, type_name.token.source_string)
+    end
+  end
+end
+
 class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_START = ('A'..'Z').to_a.concat(('a'..'z').to_a).push('_').freeze
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
@@ -135,6 +190,9 @@ class DabModernBootstrapScanner < DabScanner
     when ' '
       advance!
       token(:space, ' ', start_offset)
+    when "\t"
+      advance!
+      token(:tab, "\t", start_offset)
     when "\n"
       advance!
       token(:line_feed, "\n", start_offset)
@@ -146,6 +204,18 @@ class DabModernBootstrapScanner < DabScanner
     when ';'
       advance!
       token(:semicolon, ';', start_offset)
+    when '('
+      advance!
+      token(:left_parenthesis, '(', start_offset)
+    when ')'
+      advance!
+      token(:right_parenthesis, ')', start_offset)
+    when ','
+      advance!
+      token(:comma, ',', start_offset)
+    when ':'
+      advance!
+      token(:colon, ':', start_offset)
     when '?'
       advance!
       token(:question_mark, '?', start_offset)
@@ -539,11 +609,23 @@ private
 end
 
 class DabModernBootstrapFunctionDeclaration
-  attr_reader :source_unit, :source_span, :callable_name, :body_tokens
+  attr_reader :source_unit, :source_span, :callable_name, :parameters, :return_type, :body_tokens
 
-  def initialize(def_token:, callable_name:, body_tokens:, end_token:, final_separator:)
+  def initialize(
+    def_token:,
+    callable_name:,
+    parameters:,
+    return_type:,
+    header_tokens:,
+    body_tokens:,
+    end_token:,
+    final_separator:
+  )
     @def_token = def_token
     @callable_name = callable_name
+    @parameters = parameters.freeze
+    @return_type = return_type
+    @header_tokens = header_tokens.freeze
     @body_tokens = body_tokens.freeze
     @end_token = end_token
     @source_unit = def_token.source_span.source_unit
@@ -563,10 +645,22 @@ class DabModernBootstrapFunctionDeclaration
     @body_tokens.each do |body_token|
       body.insert(lower_literal(body_token))
     end
-    function = DabNodeFunction.new(@callable_name.source_string, body, nil)
+    arglist = DabNode.new
+    @parameters.each_with_index do |parameter, index|
+      arglist.insert(parameter.lower(index))
+    end
+    function = DabNodeFunction.new(
+      @callable_name.source_string,
+      body,
+      arglist,
+      false,
+      nil,
+      @return_type&.lower
+    )
     function.add_source_parts(
       @def_token.source_string,
       *@callable_name.source_parts,
+      *@header_tokens.map(&:source_string),
       @end_token.source_string
     )
     unit.add_function(function)
@@ -640,6 +734,11 @@ end
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
   LITERAL_KINDS = %i[nil boolean_true boolean_false integer string].freeze
+  HORIZONTAL_WHITESPACE_KINDS = %i[space tab].freeze
+  SUPPORTED_TYPE_NAMES = %w[
+    String Fixnum Boolean Uint8 Uint16 Uint32 Uint64
+    Int8 Int16 Int32 Int64 IntPtr NilClass Float
+  ].freeze
   EXPECT_SPACE_MESSAGE =
     'invalid Modern function declaration: expected one ASCII space after "def"'.freeze
   EXPECT_CALLABLE_NAME_MESSAGE =
@@ -654,6 +753,20 @@ class DabModernBootstrapParser
     'invalid Modern function declaration: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
   UNEXPECTED_END_MESSAGE = 'unexpected Modern "end": no open function declaration'.freeze
   INVALID_CR_SEPARATOR_MESSAGE = 'invalid Modern separator: CR and CRLF are not supported; use LF'.freeze
+  EXPECT_PARAMETER_OR_CLOSE_MESSAGE =
+    'invalid Modern parameter list: expected a parameter name or closing ")"'.freeze
+  EXPECT_PARAMETER_COLON_MESSAGE =
+    'invalid Modern parameter declaration: expected ":" after parameter name'.freeze
+  EXPECT_PARAMETER_TYPE_MESSAGE =
+    'invalid Modern parameter declaration: expected a supported type name after ":"'.freeze
+  EXPECT_PARAMETER_SEPARATOR_MESSAGE =
+    'invalid Modern parameter list: expected "," or closing ")" after parameter'.freeze
+  EXPECT_PARAMETER_AFTER_COMMA_MESSAGE =
+    'invalid Modern parameter list: expected a parameter name after ","'.freeze
+  EXPECT_PARAMETER_CLOSE_MESSAGE =
+    'unterminated Modern parameter list: expected closing ")" before end of file'.freeze
+  EXPECT_RETURN_TYPE_MESSAGE =
+    'invalid Modern return contract: expected a supported type name after ":"'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -688,6 +801,7 @@ private
     def_token = expect(:def)
     expect_space_after_def
     callable_name = expect_callable_name
+    parameters, return_type, header_tokens = parse_declaration_header
     expect_name_separator
     body_tokens = parse_body
     end_token = expect(:end)
@@ -696,6 +810,9 @@ private
     DabModernBootstrapFunctionDeclaration.new(
       def_token: def_token,
       callable_name: callable_name,
+      parameters: parameters,
+      return_type: return_type,
+      header_tokens: header_tokens,
       body_tokens: body_tokens,
       end_token: end_token,
       final_separator: final_separator
@@ -742,6 +859,143 @@ private
                      next_token
                    end
     @callable_name_composer.compose(base_token, suffix_token)
+  end
+
+  def parse_declaration_header
+    parameters = []
+    return_type = nil
+    header_tokens = []
+
+    consume_header_whitespace(header_tokens, before: %i[left_parenthesis colon])
+    if peek_token.kind == :left_parenthesis
+      parameters, parameter_tokens = parse_parameter_clause
+      header_tokens.concat(parameter_tokens)
+    end
+
+    consume_header_whitespace(header_tokens, before: [:colon])
+    if peek_token.kind == :colon
+      return_type, return_tokens = parse_return_contract
+      header_tokens.concat(return_tokens)
+    end
+
+    consume_header_whitespace(header_tokens, before: [])
+    [parameters.freeze, return_type, header_tokens.freeze]
+  end
+
+  def parse_parameter_clause
+    tokens = [expect(:left_parenthesis)]
+    tokens.concat(consume_horizontal_whitespace)
+    parameters = []
+    seen = {}
+
+    if peek_token.kind == :right_parenthesis
+      tokens << next_token
+      return [parameters.freeze, tokens.freeze]
+    end
+    reject_invalid_separator(peek_token)
+    reject(peek_token, EXPECT_PARAMETER_CLOSE_MESSAGE) if peek_token.kind == :eof
+
+    loop do
+      parameter, parameter_tokens = parse_parameter(
+        parameters.empty? ? EXPECT_PARAMETER_OR_CLOSE_MESSAGE : EXPECT_PARAMETER_AFTER_COMMA_MESSAGE
+      )
+      if seen.key?(parameter.name)
+        reject(parameter.name_token, %(duplicate Modern parameter "#{parameter.name}"))
+      end
+      seen[parameter.name] = true
+      parameters << parameter
+      tokens.concat(parameter_tokens)
+      tokens.concat(consume_horizontal_whitespace)
+
+      token = peek_token
+      reject_invalid_separator(token)
+      case token.kind
+      when :right_parenthesis
+        tokens << next_token
+        return [parameters.freeze, tokens.freeze]
+      when :comma
+        tokens << next_token
+        tokens.concat(consume_horizontal_whitespace)
+        reject_invalid_separator(peek_token)
+        reject(peek_token, EXPECT_PARAMETER_AFTER_COMMA_MESSAGE) if peek_token.kind == :eof
+      when :eof
+        reject(token, EXPECT_PARAMETER_CLOSE_MESSAGE)
+      else
+        reject(token, EXPECT_PARAMETER_SEPARATOR_MESSAGE)
+      end
+    end
+  end
+
+  def parse_parameter(name_message)
+    tokens = []
+    name_token = next_token
+    reject_invalid_separator(name_token)
+    reject(name_token, name_message) unless name_token.kind == :identifier
+    tokens << name_token
+    tokens.concat(consume_horizontal_whitespace)
+
+    colon_token = next_token
+    reject_invalid_separator(colon_token)
+    reject(colon_token, EXPECT_PARAMETER_COLON_MESSAGE) unless colon_token.kind == :colon
+    tokens << colon_token
+    tokens.concat(consume_horizontal_whitespace)
+
+    type_name = parse_type_name(EXPECT_PARAMETER_TYPE_MESSAGE)
+    tokens << type_name.token
+    [
+      DabModernBootstrapParameter.new(
+        name_token: name_token,
+        colon_token: colon_token,
+        type_name: type_name
+      ),
+      tokens.freeze,
+    ]
+  end
+
+  def parse_return_contract
+    tokens = [expect(:colon)]
+    tokens.concat(consume_horizontal_whitespace)
+    type_name = parse_type_name(EXPECT_RETURN_TYPE_MESSAGE)
+    tokens << type_name.token
+    [type_name, tokens.freeze]
+  end
+
+  def parse_type_name(expectation_message)
+    token = next_token
+    reject_invalid_separator(token)
+    reject(token, expectation_message) unless token.kind == :identifier
+    unless SUPPORTED_TYPE_NAMES.include?(token.text)
+      reject(
+        token,
+        %(unknown Modern type "#{token.text}"; supported types are ) \
+        "#{SUPPORTED_TYPE_NAMES[0...-1].join(', ')}, and #{SUPPORTED_TYPE_NAMES.fetch(-1)}"
+      )
+    end
+    DabModernBootstrapTypeName.new(token)
+  end
+
+  def consume_header_whitespace(tokens, before:)
+    return unless horizontal_whitespace?(peek_token)
+
+    following = token_after_horizontal_whitespace
+    accepted_after = before + SEPARATOR_KINDS + %i[carriage_return eof]
+    tokens.concat(consume_horizontal_whitespace) if accepted_after.include?(following.kind)
+  end
+
+  def consume_horizontal_whitespace
+    tokens = []
+    tokens << next_token while horizontal_whitespace?(peek_token)
+    tokens
+  end
+
+  def horizontal_whitespace?(token)
+    HORIZONTAL_WHITESPACE_KINDS.include?(token.kind)
+  end
+
+  def token_after_horizontal_whitespace
+    distance = 0
+    distance += 1 while horizontal_whitespace?(peek_token(distance))
+    peek_token(distance)
   end
 
   def expect_name_separator

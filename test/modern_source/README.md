@@ -65,7 +65,7 @@ concise, shows action details under `DAB_TEST_VERBOSE=1`, and replays attributed
 per-fixture details on failure.
 
 The corpus keeps the original parser-entry fixture, adds exact negative
-bootstrap fixtures for empty and non-`main` names, parameters, body content,
+bootstrap fixtures for empty and non-`main` names, body content,
 duplicate declarations, comment-marker near misses, and incomplete input, and
 locks the exact successful assembly for the canonical minimal `main`. All
 fixtures use the section format; large assembly stdout expectations are literal
@@ -186,6 +186,26 @@ diagnostics. Parameters, return contracts, calls, dot calls, statements,
 bindings, control flow, types, operators, nested declarations, top-level values,
 overload or replacement rules, forward-reference behavior, and formatter
 support remain outside this grammar.
+
+Version 0.0.47 accepts optional typed parameter clauses and return contracts on
+those declarations. Bare zero-parameter headers and explicit empty `()` are
+both valid. ASCII spaces and TABs are optional and repeatable around
+parentheses, commas, colons, parameters, and the return contract; LF and
+comments retain their separator role, while CR and CRLF remain invalid.
+`0004_parameters.dabmtest` now locks the explicit-empty compatibility form,
+`0037` locks an excluded type diagnostic, and `0038` locks typed parameter and
+return metadata in successful assembly.
+
+The accepted type spellings are exactly `String`, `Fixnum`, `Boolean`,
+`Uint8`, `Uint16`, `Uint32`, `Uint64`, `Int8`, `Int16`, `Int32`, `Int64`,
+`IntPtr`, `NilClass`, and `Float`. Focused contracts cover ordered AST and
+metadata lowering, all nine contextual diagnostic families, exact spans,
+duplicate names, unknown and excluded types, complete-document and pre-Ring
+transactionality, assembly, bytecode metadata, native loading, and unchanged
+callable collision behavior. Calls, dot calls, body parameter references,
+bindings, statements, defaults, generics, variadics, keyword invocation,
+inference, overloads, aliases, nominal types, Modern formatting, and new
+bytecode or runtime invocation behavior remain deferred.
 
 ## Diagnostic boundary
 

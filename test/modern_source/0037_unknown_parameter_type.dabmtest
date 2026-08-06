@@ -1,0 +1,9 @@
+## SOURCE
+def typed(value : Object)
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0037_unknown_parameter_type.dabm:1:18: error: unknown Modern type "Object"; supported types are String, Fixnum, Boolean, Uint8, Uint16, Uint32, Uint64, Int8, Int16, Int32, Int64, IntPtr, NilClass, and Float
