@@ -100,17 +100,13 @@ describe 'Modern callable suffix lexical infrastructure' do
     end
   end
 
-  it 'keeps every deferred suffix boundary on the generic fallback with its prior exact span' do
+  it 'keeps suffix uses outside declaration names on the generic fallback with their prior exact spans' do
     cases = {
-      'fixed main question suffix' => ["def main?\nend\n", [8, 9]],
-      'fixed main bang suffix' => ["def main!\nend\n", [8, 9]],
-      'deferred declaration question suffix' => ["def ready?\nend\n", [4, 9]],
-      'deferred declaration bang suffix' => ["def ready!\nend\n", [4, 9]],
       'deferred direct question call' => ["def main\nready?()\nend\n", [9, 14]],
       'deferred direct bang call' => ["def main\nready!()\nend\n", [9, 14]],
       'literal predicate' => ["def main\nnil?\nend\n", [12, 13]],
       'unary bang' => ["def main\n!false\nend\n", [9, 10]],
-      'repeated suffix' => ["def main??\nend\n", [8, 9]],
+      'repeated suffix' => ["def main??\nend\n", [9, 10]],
       'spaced suffix' => ["def main ?\nend\n", [8, 9]],
       'setter-like boundary' => ["def main\nfoo?=\nend\n", [9, 12]],
       'bang before identifier' => ["def main\nfoo!bar\nend\n", [9, 12]],

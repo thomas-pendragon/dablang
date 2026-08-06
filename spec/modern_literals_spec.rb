@@ -103,7 +103,7 @@ describe 'Modern bootstrap literals' do
     unit = DabNodeUnit.new
     body = declaration.lower_into(unit).blocks[0]
 
-    expect(declaration.body_tokens.map(&:kind)).to eq(
+    expect(declaration.declarations.fetch(0).body_tokens.map(&:kind)).to eq(
       %i[nil boolean_true boolean_false integer integer integer]
     )
     expect(body.map(&:class)).to eq(
@@ -144,7 +144,9 @@ describe 'Modern bootstrap literals' do
     ]
 
     sources.each do |source|
-      expect(parse_modern(source).body_tokens.map(&:kind)).to eq(%i[nil boolean_true boolean_false integer])
+      document = parse_modern(source)
+      expect(document.declarations.fetch(0).body_tokens.map(&:kind))
+        .to eq(%i[nil boolean_true boolean_false integer])
     end
   end
 
@@ -214,7 +216,6 @@ describe 'Modern bootstrap literals' do
       'call' => ["def main\nvalue()\nend\n", 9],
       'return' => ["def main\nreturn 1\nend\n", 9],
       'control flow' => ["def main\nif true\nend\nend\n", 9],
-      'second declaration' => ["def main\nnil\nend\ndef main\nend\n", 17],
     }
 
     cases.each do |description, (source, offset)|

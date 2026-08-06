@@ -165,6 +165,28 @@ identifiers, expressions, calls, operators, extra declarations, trailing forms,
 and all later grammar retain the generic parser fallback. This row changes no
 accepted Modern or Legacy source, output, Ring, bytecode, or runtime behavior.
 
+Version 0.0.46 activates general names and multiple declarations within that
+closed shell. A document may contain zero or more distinct no-argument
+top-level declarations. Callable names use the Original #36 ASCII identifier
+boundary with an optional adjacent `?` or `!`; `def`, `end`, `nil`, `true`, and
+`false` remain reserved. Bodies remain limited to the existing literal set and
+the established LF, semicolon, and line-comment separators. Every closing
+`end`, including the last one in the file, still requires a following
+separator. Fixtures `0003`, `0033`, and `0034` now lock successful plain and
+suffixed declarations. Fixtures `0035` and `0036` lock the same three
+declarations in both source orders and prove deterministic sorted assembly.
+
+The compiler parses the complete document and preflights all names before it
+adds a function. Same-document duplicates, builtins, and lower-Ring functions
+reject transactionally with the generic diagnostic at the complete colliding
+name. `0006` locks the same-document compiler boundary, while focused contracts
+cover all three collision classes, complete-document precedence, composite
+spans, source order, lowering, and the uniform function-level structural
+diagnostics. Parameters, return contracts, calls, dot calls, statements,
+bindings, control flow, types, operators, nested declarations, top-level values,
+overload or replacement rules, forward-reference behavior, and formatter
+support remain outside this grammar.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
@@ -205,13 +227,14 @@ identity and produce locations, but emits no diagnostic and accepts no grammar.
 bootstrap production directly on that shared cursor without changing
 `DabProgramStream`.
 
-Original #36 adds only lexical infrastructure. Outside Strings and comments,
+Original #36 added only lexical infrastructure. Outside Strings and comments,
 the scanner emits one-byte `question_mark` and `bang` tokens. A contextual
 callable-name helper can compose zero or one immediately adjacent suffix while
 retaining the base, suffix, and composite source spans. Fixtures `0033` and
-`0034` prove that this row still rejects suffixed `main` declarations with the
-same generic diagnostic, status, streams, and suffix location; later declaration,
-call, and selector rows remain responsible for activating their grammar slots.
+`0034` proved that row still rejected suffixed `main` declarations with the
+same generic diagnostic, status, streams, and suffix location. Version 0.0.46
+now activates that declaration-name slot only; call and selector rows remain
+responsible for their separate grammar positions.
 
 Fixture schema failures remain separate and happen before
 `DabModernSourceCompiler` is constructed. A valid schema always reaches the

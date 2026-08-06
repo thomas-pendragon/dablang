@@ -14,7 +14,7 @@ state.
 
 The registered identities are `DabSyntaxProfile::LEGACY` and
 `DabSyntaxProfile::MODERN`. General Modern grammar is not implemented: Modern
-content outside the two narrow Ring-layer cases described below fails rather
+content outside the narrow Ring-layer grammar described below fails rather
 than being sent through the legacy parser. Compiler frontends report a Modern
 unit rejected before bootstrap scanning at the zero-width entry location
 (offset `0`, line `1`, column `0`).
@@ -256,11 +256,45 @@ where the prior grammar did not accept a space. Comments do not permit a body
 statement, a second declaration, a literal, an operator or division, a call,
 a variable, a type, a general function, or any later Modern production.
 
+## Modern top-level function declarations
+
+Version 0.0.46 generalizes the established fixed `def main ... end` shell to a
+complete document containing zero or more distinct, no-argument top-level
+function declarations. A callable name is the existing ASCII identifier plus
+zero or one immediately adjacent `?` or `!`. The scanner reserves only the
+already established `def`, `end`, `nil`, `true`, and `false` tokens; other
+identifier spellings are eligible callable names.
+
+Each header still requires exactly one ASCII space after `def` and one LF,
+semicolon, or line-comment separator after its callable name. Each body remains
+limited to the already implemented Nil, Bool, nonnegative integer, and String
+literals, with an established separator after every literal. A closing `end`
+and a separator after that `end` are mandatory for every declaration, including
+the final declaration at end of file. Leading, inter-declaration, and trailing
+separator runs remain accepted. CR and CRLF remain invalid structural
+separators.
+
+The parser consumes the complete document before lowering. It then checks every
+composite callable name before adding any function. A duplicate in the same
+document, a builtin collision, or a function already supplied by a lower Ring
+rejects the source transactionally with the generic Modern parser diagnostic at
+the full colliding name span. Distinct plain, `?`, and `!` names do not collide.
+After this preflight, declarations lower through the existing function and
+literal AST path. Compiler sorting keeps assembly, bytecode, and runtime symbol
+order deterministic independently of declaration order; suffixes retain the
+established `%QUEST` and `%BANG` assembly spelling.
+
+This version adds no parameters, return annotations, calls, dot calls,
+statements, bindings, control flow, types, operators, nested declarations,
+top-level values, overload or replacement rule, forward-reference behavior, or
+formatter support. The assembler, bytecode format, VM, runtime semantics, and
+Legacy parser remain unchanged.
+
 ## Current construction paths
 
 | Consumer | Parser construction | Current profile contract |
 | --- | --- | --- |
-| Production compiler frontend | One `DabSourceUnit` per input; shared `DabScanner` and `DabProgramStream` for Legacy parsing, plus the narrow Modern bootstrap scanner/parser | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. The zero-byte Modern Ring layer bypasses scanner/parser construction. The exact minimal-main production uses only the Modern bootstrap boundary; every other Modern boundary rejects. |
+| Production compiler frontend | One `DabSourceUnit` per input; shared `DabScanner` and `DabProgramStream` for Legacy parsing, plus the narrow Modern bootstrap scanner/parser | An explicit `--syntax=PROFILE` applies to every unit. Otherwise, each unit independently infers Legacy from exact `.dab` or Modern from exact `.dabm`; standard input and unrecognized extensions derive the Legacy fallback. The zero-byte Modern Ring layer bypasses scanner/parser construction. Supported Modern declarations use only the closed bootstrap grammar above; every other Modern boundary rejects. |
 | Modern-source fixture harness | One extracted source and explicit `DabSourceUnit` per `.dabmtest` fixture, compiled over the Legacy stdlib Ring | The harness always passes `DabSyntaxProfile::MODERN` through the source-unit API, derives a stable `.dabm` diagnostic filename, and exactly compares expected compiler status, stdout, and stderr. Bootstrap mismatches retain that exact source identity and shared-scanner location. It does not infer or mutate profile state, assemble artifacts, or run the VM. |
 | Source formatter and format fixtures | One direct `DabProgramStream` | These practical single-source callers derive a Legacy source unit through the parser API compatibility default. |
 | Assembler and decompiler assembly reader | `DabParser` | These consume assembly text through lower-level scanner helpers, not a Dab source-syntax profile. |
