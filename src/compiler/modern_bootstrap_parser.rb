@@ -664,10 +664,13 @@ private
     token = next_token
     if token.kind == :identifier
       callable_name = compose_callable_name(token)
-      return callable_name if callable_name.text == 'main'
+      return token if callable_name.text == 'main'
 
-      reject(callable_name.suffix_token) if token.text == 'main'
-      reject(token)
+      if token.text == 'main'
+        reject(callable_name.suffix_token)
+      else
+        reject(token)
+      end
     end
 
     if token.kind == :invalid_literal
