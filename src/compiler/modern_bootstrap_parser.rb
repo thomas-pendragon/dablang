@@ -34,6 +34,74 @@ class DabModernBootstrapToken
   end
 end
 
+class DabModernCallableName
+  attr_reader :base_token, :suffix_token, :source_span
+
+  def initialize(base_token:, suffix_token: nil)
+    @base_token = base_token
+    @suffix_token = suffix_token
+    @source_span = DabSourceSpan.new(
+      start_location: base_token.source_span.start_location,
+      end_location: (suffix_token || base_token).source_span.end_location
+    )
+    freeze
+  end
+
+  def text
+    base_token.text + (suffix_token&.text || '')
+  end
+
+  def base_source_span
+    base_token.source_span
+  end
+
+  def suffix_source_span
+    suffix_token&.source_span
+  end
+
+  def source_parts
+    [base_token.source_string, suffix_token&.source_string].compact.freeze
+  end
+
+  def source_string
+    SourceString.new(text, source_span)
+  end
+end
+
+class DabModernCallableNameComposer
+  SUFFIXES = {
+    question_mark: '?',
+    bang: '!',
+  }.freeze
+
+  def adjacent_suffix?(base_token, suffix_token)
+    valid_base?(base_token) && valid_suffix?(suffix_token) &&
+      base_token.source_span.source_unit.equal?(suffix_token.source_span.source_unit) &&
+      base_token.source_span.end_offset == suffix_token.source_span.start_offset
+  end
+
+  def compose(base_token, suffix_token = nil)
+    unless valid_base?(base_token)
+      raise ArgumentError.new('Modern callable name base must be an identifier token')
+    end
+    if suffix_token && !adjacent_suffix?(base_token, suffix_token)
+      raise ArgumentError.new('Modern callable name suffix must be one adjacent question_mark or bang token')
+    end
+
+    DabModernCallableName.new(base_token: base_token, suffix_token: suffix_token)
+  end
+
+private
+
+  def valid_base?(token)
+    token.is_a?(DabModernBootstrapToken) && token.kind == :identifier
+  end
+
+  def valid_suffix?(token)
+    token.is_a?(DabModernBootstrapToken) && SUFFIXES[token.kind] == token.text
+  end
+end
+
 class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_START = ('A'..'Z').to_a.concat(('a'..'z').to_a).push('_').freeze
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
@@ -78,6 +146,12 @@ class DabModernBootstrapScanner < DabScanner
     when ';'
       advance!
       token(:semicolon, ';', start_offset)
+    when '?'
+      advance!
+      token(:question_mark, '?', start_offset)
+    when '!'
+      advance!
+      token(:bang, '!', start_offset)
     when '"'
       string_token(start_offset)
     when '#'
@@ -543,6 +617,7 @@ class DabModernBootstrapParser
     end
 
     @scanner = DabModernBootstrapScanner.new(content, source_unit: @source_unit)
+    @callable_name_composer = DabModernCallableNameComposer.new
   end
 
   def parse
@@ -587,9 +662,18 @@ private
 
   def expect_main_name
     token = next_token
-    return token if token.kind == :identifier && token.text == 'main'
+    if token.kind == :identifier
+      callable_name = compose_callable_name(token)
+      return token if callable_name.text == 'main'
 
-    if %i[identifier invalid_literal].include?(token.kind)
+      if token.text == 'main'
+        reject(callable_name.suffix_token)
+      else
+        reject(token)
+      end
+    end
+
+    if token.kind == :invalid_literal
       reject(token)
     else
       reject(token, EXPECT_MAIN_MESSAGE)
@@ -603,6 +687,14 @@ private
   def peek_token(distance = 0)
     token_buffer << @scanner.next_token while token_buffer.length <= distance
     token_buffer.fetch(distance)
+  end
+
+  def compose_callable_name(base_token)
+    suffix_token = peek_token
+    suffix_token = if @callable_name_composer.adjacent_suffix?(base_token, suffix_token)
+                     next_token
+                   end
+    @callable_name_composer.compose(base_token, suffix_token)
   end
 
   def expect_main_separator

@@ -205,6 +205,14 @@ identity and produce locations, but emits no diagnostic and accepts no grammar.
 bootstrap production directly on that shared cursor without changing
 `DabProgramStream`.
 
+Original #36 adds only lexical infrastructure. Outside Strings and comments,
+the scanner emits one-byte `question_mark` and `bang` tokens. A contextual
+callable-name helper can compose zero or one immediately adjacent suffix while
+retaining the base, suffix, and composite source spans. Fixtures `0033` and
+`0034` prove that this row still rejects suffixed `main` declarations with the
+same generic diagnostic, status, streams, and suffix location; later declaration,
+call, and selector rows remain responsible for activating their grammar slots.
+
 Fixture schema failures remain separate and happen before
 `DabModernSourceCompiler` is constructed. A valid schema always reaches the
 compiler and a result mismatch raises `DabModernSourceExpectationError` only
