@@ -1,0 +1,12 @@
+## SOURCE
+def sink(value:String)
+end
+def main
+sink("abc".length)
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0051_member_argument_type_mismatch.dabm:4:5: error: cannot pass Modern argument of type Int32 to parameter "value" of type String in call "sink"

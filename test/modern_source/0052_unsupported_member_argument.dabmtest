@@ -1,0 +1,10 @@
+## SOURCE
+def main
+print("abc".upcase)
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0052_unsupported_member_argument.dabm:2:12: error: unsupported Modern member target "String#upcase" in the R40 dot/property-call subset

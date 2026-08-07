@@ -5,10 +5,11 @@ class DabNodeModernMemberResult < DabNode
 
   attr_reader :output_register, :result_type
 
-  def initialize(value)
+  def initialize(value, consumed: false)
     super()
     @output_register = nil
     @result_type = DabType.parse('Int32').freeze
+    @consumed = consumed
     insert(value)
   end
 
@@ -31,6 +32,12 @@ class DabNodeModernMemberResult < DabNode
     value.compile_as_ssa(output, output_register)
   end
 
+  def compile_as_ssa(output, output_register)
+    return compile(output) if output_register.nil?
+
+    value.compile_as_ssa(output, output_register)
+  end
+
   def formatted_source(options)
     value.formatted_source(options)
   end
@@ -38,6 +45,7 @@ class DabNodeModernMemberResult < DabNode
 private
 
   def allocate_result_register!
+    return if @consumed
     return unless output_register.nil?
 
     @output_register = function.allocate_ssa

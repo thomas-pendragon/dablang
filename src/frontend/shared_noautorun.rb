@@ -189,10 +189,10 @@ module BaseFrontend
     raise SystemCommandError.new('Compile error', context.stderr.string)
   end
 
-  def assemble(input, output, assemble_options = '')
+  def assemble(input, output, assemble_options = '', binary_input: false)
     cmd_replacement = "ruby src/tobinary/tobinary.rb #{assemble_options} < #{input} > #{output}"
     describe_action_with_replacement(input, output, 'assemble', cmd_replacement) do
-      input = File.open(input, 'r')
+      input = File.open(input, binary_input ? 'rb' : 'r')
       output = File.open(output, 'wb')
       options = read_args!(assemble_options.split)
       raw = options[:raw]

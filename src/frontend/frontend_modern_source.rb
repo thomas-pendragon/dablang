@@ -129,7 +129,7 @@ class DabModernSourceCompiler
       status = e.code
     end
 
-    Result.new(status: status, stdout: context.stdout.string, stderr: context.stderr.string)
+    Result.new(status: status, stdout: context.stdout.string.b, stderr: context.stderr.string.b)
   end
 end
 
@@ -204,7 +204,7 @@ private
     with_harness_action('prepare application', "write #{portable_path(assembly_path)}") do
       File.binwrite(assembly_path, result.stdout)
     end
-    assemble(assembly_path, upper_ring)
+    assemble(assembly_path, upper_ring, binary_input: true)
     execute([ring_base, upper_ring], application_stdout, '--entry=main')
     with_harness_action(
       'compare application output',

@@ -310,7 +310,8 @@ describe ModernSourceSpec do
         DabModernSourceCompiler::Result.new(status: 0, stdout: "assembly\n", stderr: '')
       )
       runner = described_class.new
-      allow(runner).to receive(:assemble) do |_assembly, upper|
+      allow(runner).to receive(:assemble) do |_assembly, upper, binary_input:|
+        expect(binary_input).to be(true)
         File.binwrite(upper, 'bytecode')
       end
       allow(runner).to receive(:execute) do |_rings, output, _options|
