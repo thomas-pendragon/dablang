@@ -279,11 +279,11 @@ literal-only `print()` or multi-argument `print` acceptance.
 Fixtures `0046` through `0049` provide the primary positive compiler and native
 contracts, including exact outputs `3`, multibyte byte count `2`, `puts`, exact
 Int32 same-document consumption, and multi-argument left-to-right registers.
-Fixtures `0050` through `0054` lock outer arity, full-expression type mismatch,
-unsupported-member, second-dot, and Int32 byte-range failures. Because a real
-overflowing literal would require more than 2 GiB of decoded fixture data,
-`MEMBER RESULT BYTE LIMIT` is a core-harness-only stricter threshold used by
-`0054`; production compilation always uses `2147483647`. Nested call results,
+Fixtures `0050` through `0053` lock outer arity, full-expression type mismatch,
+unsupported-member, and second-dot failures. Production compilation rejects a
+decoded String byte count above exact `Int32` maximum `2147483647`; supplementary
+unit coverage locks that boundary without exposing test configuration in this
+core source format or allocating a multi-gigabyte literal. Nested call results,
 chaining, bindings, returns, assignment, operators, parameter/local receivers,
 broader members, general expressions, and runtime or artifact changes remain
 unsupported.

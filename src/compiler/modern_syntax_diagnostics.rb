@@ -34,19 +34,11 @@ module_function
     source_units
   end
 
-  def validate_source_content!(
-    source_unit,
-    content,
-    member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX
-  )
+  def validate_source_content!(source_unit, content)
     return source_unit unless source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
     return nil if content.empty?
 
-    DabModernBootstrapParser.new(
-      content,
-      source_unit: source_unit,
-      member_result_byte_limit: member_result_byte_limit
-    ).parse
+    DabModernBootstrapParser.new(content, source_unit: source_unit).parse
   rescue DabUnsupportedSyntaxProfileError => e
     raise_diagnostic(source_unit, e)
   end

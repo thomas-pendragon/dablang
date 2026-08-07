@@ -64,23 +64,6 @@ describe DabModernSourceFixture do
       expect(fixture.expected_stdout).to eq("first line\nsecond line\n")
       expect(fixture.expected_stderr).to eq('')
       expect(fixture.expected_application_stdout).to eq("application output\n")
-      expect(fixture.member_result_byte_limit).to eq(DabModernBootstrapDocument::INT32_MAX)
-    end
-  end
-
-  it 'supports a bounded member-result byte limit only for overflow fixture proof' do
-    Dir.mktmpdir('dab-modern-source-fixture') do |directory|
-      sections = valid_sections.merge('MEMBER RESULT BYTE LIMIT' => "3\n")
-      fixture = described_class.load(write_fixture(directory, sections: sections))
-      expect(fixture.member_result_byte_limit).to eq(3)
-
-      invalid = valid_sections.merge('MEMBER RESULT BYTE LIMIT' => "2147483648\n")
-      expect do
-        described_class.load(write_fixture(directory, sections: invalid))
-      end.to raise_error(
-        DabModernSourceFixture::SchemaError,
-        /MEMBER RESULT BYTE LIMIT must be from 0 through 2147483647/
-      )
     end
   end
 
@@ -318,8 +301,7 @@ describe ModernSourceSpec do
         expected_status: 0,
         expected_stdout: "assembly\n",
         expected_stderr: '',
-        expected_application_stdout: "output\n",
-        member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX
+        expected_application_stdout: "output\n"
       )
       allow(DabModernSourceFixture).to receive(:load).and_return(fixture)
       compiler = instance_double(DabModernSourceCompiler)

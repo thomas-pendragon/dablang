@@ -17,12 +17,8 @@ describe 'Modern one-level member-result arguments' do
     }.freeze
   end
 
-  def parse(source, member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX)
-    DabModernBootstrapParser.new(
-      source.b,
-      source_unit: source_unit,
-      member_result_byte_limit: member_result_byte_limit
-    ).parse
+  def parse(source)
+    DabModernBootstrapParser.new(source.b, source_unit: source_unit).parse
   end
 
   def puts_stub
@@ -136,22 +132,14 @@ describe 'Modern one-level member-result arguments' do
     )
   end
 
-  it 'rejects decoded byte counts beyond exact Int32 before lowering with the full expression span' do
+  it 'keeps the production decoded byte-count predicate at the exact Int32 boundary' do
     expect(DabModernBootstrapDocument::INT32_MAX).to eq(2_147_483_647)
-    source = "def main\nprint(\"abcd\".length)\nend\n"
-    expect(parse(source).lower_into(DabNodeUnit.new)).to be_a(DabNodeFunction)
+    document = parse("def main\nend\n")
 
-    expect do
-      parse(source, member_result_byte_limit: 3).lower_into(DabNodeUnit.new)
-    end.to raise_error(DabModernBootstrapParseError) { |error|
-      expect(error.message).to eq(
-        'Modern String#length result exceeds exact Int32 byte-count range 0..2147483647'
-      )
-      expression = '"abcd".length'
-      expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
-        [source.index(expression), source.index(expression) + expression.bytesize]
-      )
-    }
+    expect(document.send(:member_result_byte_count_in_range?, 0)).to be(true)
+    expect(document.send(:member_result_byte_count_in_range?, DabModernBootstrapDocument::INT32_MAX - 1)).to be(true)
+    expect(document.send(:member_result_byte_count_in_range?, DabModernBootstrapDocument::INT32_MAX)).to be(true)
+    expect(document.send(:member_result_byte_count_in_range?, DabModernBootstrapDocument::INT32_MAX + 1)).to be(false)
   end
 
   it 'keeps standalone M7 allocation while consumed results defer ownership to the outer argument register' do

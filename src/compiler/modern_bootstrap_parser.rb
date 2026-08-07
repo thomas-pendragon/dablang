@@ -819,17 +819,12 @@ class DabModernBootstrapDocument
 
   attr_reader :source_unit, :source_span, :declarations
 
-  def initialize(declarations, member_result_byte_limit: INT32_MAX)
+  def initialize(declarations)
     unless declarations.is_a?(Array) && !declarations.empty?
       raise ArgumentError.new('Modern bootstrap document requires one or more declarations')
     end
 
     @declarations = declarations.freeze
-    unless member_result_byte_limit.is_a?(Integer) && member_result_byte_limit.between?(0, INT32_MAX)
-      raise ArgumentError.new("Modern member-result byte limit must be an Integer from 0 through #{INT32_MAX}")
-    end
-
-    @member_result_byte_limit = member_result_byte_limit
     @source_unit = declarations.fetch(0).source_unit
     unless declarations.all? { |declaration| declaration.source_unit.equal?(@source_unit) }
       raise ArgumentError.new('Modern bootstrap declarations must share one DabSourceUnit identity')
@@ -965,13 +960,17 @@ private
 
   def preflight_member_result_range!(call)
     return unless call.receiver_token.kind == :string
-    return if call.receiver_token.value.bytesize <= @member_result_byte_limit
+    return if member_result_byte_count_in_range?(call.receiver_token.value.bytesize)
 
     reject_call(
       call,
       "Modern String#length result exceeds exact Int32 byte-count range 0..#{INT32_MAX}",
       call.source_span
     )
+  end
+
+  def member_result_byte_count_in_range?(byte_count)
+    byte_count.between?(0, INT32_MAX)
   end
 
   def preflight_puts_call!(call, unit)
@@ -1105,7 +1104,7 @@ class DabModernBootstrapParser
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
 
-  def initialize(content, source_unit:, member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX)
+  def initialize(content, source_unit:)
     @source_unit = DabSourceUnit.validate(source_unit)
     unless @source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
       raise DabSourceUnitError.new('Modern bootstrap parser requires DabSyntaxProfile::MODERN')
@@ -1113,7 +1112,6 @@ class DabModernBootstrapParser
 
     @scanner = DabModernBootstrapScanner.new(content, source_unit: @source_unit)
     @callable_name_composer = DabModernCallableNameComposer.new
-    @member_result_byte_limit = member_result_byte_limit
   end
 
   def parse
@@ -1127,10 +1125,7 @@ class DabModernBootstrapParser
       skip_separators
     end
 
-    DabModernBootstrapDocument.new(
-      declarations,
-      member_result_byte_limit: @member_result_byte_limit
-    )
+    DabModernBootstrapDocument.new(declarations)
   end
 
 private
