@@ -452,7 +452,13 @@ describe 'Modern ordinary parenthesized calls' do
     Dir.mktmpdir('dab-modern-call-assembly') do |directory|
       lower = build_stdlib(directory)
       lower_unit, = DabBinReader.new.parse_ring(lower, [])
-      expect(lower_unit.has_function?('puts').ring_signature).to eq(puts_signature)
+      signature = lower_unit.has_function?('puts').ring_signature
+      expect(signature).to eq(puts_signature)
+      expect(signature[:return_type]).to be_frozen
+      expect(signature[:arguments].first.values).to all(be_frozen)
+      expect do
+        signature[:arguments].first[:type].replace('String')
+      end.to raise_error(FrozenError)
       expect do
         parse("def main\nmissing()\nend\n").lower_into(lower_unit)
       end.to raise_error(DabModernBootstrapParseError, 'unknown Modern call target "missing"')

@@ -44,11 +44,11 @@ class DabBinReader
       ring_signature = {
         arguments: function.fetch(:args).map do |argument|
           {
-            name: argument.fetch(:symbol),
-            type: argument.fetch(:klass),
+            name: argument.fetch(:symbol).dup.freeze,
+            type: argument.fetch(:klass).dup.freeze,
           }.freeze
         end.freeze,
-        return_type: function.fetch(:ret).fetch(:klass),
+        return_type: function.fetch(:ret).fetch(:klass).dup.freeze,
       }.freeze
       node = DabNodeFunctionStub.new(
         name,
