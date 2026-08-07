@@ -197,13 +197,13 @@ class DabModernBootstrapDirectCall
   end
 
   def lower
-    DabNodeCall.new(
-      callable_name.source_string,
-      arguments.map { |argument| lower_argument(argument) },
-      nil
-    ).tap do |node|
-      node.add_source_parts(*source_tokens.map(&:source_string))
-    end
+    lower_call(arguments)
+  end
+
+  def lower_body_items
+    return [lower] unless literal_only_print? && arguments.length != 1
+
+    arguments.map { |argument| lower_call([argument]) }
   end
 
   def member_result_argument?
@@ -211,6 +211,22 @@ class DabModernBootstrapDirectCall
   end
 
 private
+
+  def lower_call(call_arguments)
+    DabNodeCall.new(
+      callable_name.source_string,
+      call_arguments.map { |argument| lower_argument(argument) },
+      nil
+    ).tap do |node|
+      node.add_source_parts(*source_tokens.map(&:source_string))
+    end
+  end
+
+  def literal_only_print?
+    callable_name.text == 'print' && arguments.all? do |argument|
+      argument.is_a?(DabModernBootstrapToken)
+    end
+  end
 
   def lower_argument(argument)
     return argument.lower(consumed: true) if argument.is_a?(DabModernBootstrapLiteralMemberCall)
@@ -773,7 +789,11 @@ class DabModernBootstrapFunctionDeclaration
 
     body = DabNodeTreeBlock.new
     @body_items.each do |body_item|
-      body.insert(lower_body_item(body_item))
+      if body_item.is_a?(DabModernBootstrapDirectCall)
+        body_item.lower_body_items.each { |lowered_item| body.insert(lowered_item) }
+      else
+        body.insert(lower_body_item(body_item))
+      end
     end
     arglist = DabNode.new
     @parameters.each_with_index do |parameter, index|
@@ -804,8 +824,7 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
-    if body_item.is_a?(DabModernBootstrapDirectCall) ||
-       body_item.is_a?(DabModernBootstrapLiteralMemberCall)
+    if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
       return body_item.lower
     end
 
