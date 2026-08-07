@@ -207,6 +207,56 @@ class DabModernBootstrapDirectCall
   end
 end
 
+class DabModernBootstrapLiteralMemberCall
+  RECEIVER_TYPE_NAMES = {
+    nil: 'NilClass',
+    boolean_true: 'Boolean',
+    boolean_false: 'Boolean',
+    integer: 'Fixnum',
+    string: 'String',
+  }.freeze
+
+  attr_reader :receiver_token, :dot_token, :callable_name, :arguments, :source_span, :source_tokens
+
+  def initialize(receiver_token:, dot_token:, callable_name:, arguments:, source_tokens:, closing_parenthesis: nil)
+    @receiver_token = receiver_token
+    @dot_token = dot_token
+    @callable_name = callable_name
+    @arguments = arguments.freeze
+    @source_tokens = source_tokens.freeze
+    @closing_parenthesis = closing_parenthesis
+    @source_span = DabSourceSpan.new(
+      start_location: receiver_token.source_span.start_location,
+      end_location: (closing_parenthesis || callable_name).source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :literal_member_call
+  end
+
+  def property_style?
+    @closing_parenthesis.nil?
+  end
+
+  def receiver_type_name
+    RECEIVER_TYPE_NAMES.fetch(receiver_token.kind)
+  end
+
+  def lower
+    receiver = DabModernBootstrapLiterals.lower(receiver_token)
+    arguments = @arguments.map { |argument| DabModernBootstrapLiterals.lower(argument) }
+    node = if property_style?
+             DabNodePropertyGet.new(receiver, callable_name.source_string)
+           else
+             DabNodeInstanceCall.new(receiver, callable_name.source_string, arguments, nil)
+           end
+    node.add_source_parts(*source_tokens.map(&:source_string))
+    node
+  end
+end
+
 class DabModernBootstrapScanner < DabScanner
   IDENTIFIER_START = ('A'..'Z').to_a.concat(('a'..'z').to_a).push('_').freeze
   IDENTIFIER_CONTINUE = (IDENTIFIER_START + ('0'..'9').to_a).freeze
@@ -266,6 +316,9 @@ class DabModernBootstrapScanner < DabScanner
     when ':'
       advance!
       token(:colon, ':', start_offset)
+    when '.'
+      advance!
+      token(:dot, '.', start_offset)
     when '?'
       advance!
       token(:question_mark, '?', start_offset)
@@ -724,7 +777,10 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
-    return body_item.lower if body_item.is_a?(DabModernBootstrapDirectCall)
+    if body_item.is_a?(DabModernBootstrapDirectCall) ||
+       body_item.is_a?(DabModernBootstrapLiteralMemberCall)
+      return body_item.lower
+    end
 
     DabModernBootstrapLiterals.lower(body_item)
   end
@@ -782,10 +838,38 @@ private
     declarations_by_name = @declarations.to_h { |declaration| [declaration.callable_name.text, declaration] }
     @declarations.each do |declaration|
       declaration.body_items.each do |body_item|
-        next unless body_item.is_a?(DabModernBootstrapDirectCall)
-
-        preflight_call!(body_item, unit, declarations_by_name)
+        case body_item
+        when DabModernBootstrapDirectCall
+          preflight_call!(body_item, unit, declarations_by_name)
+        when DabModernBootstrapLiteralMemberCall
+          preflight_member_call!(body_item, unit)
+        end
       end
+    end
+  end
+
+  def preflight_member_call!(call, unit)
+    receiver = call.receiver_type_name
+    name = call.callable_name.text
+    target = "#{receiver}##{name}"
+
+    if receiver == 'String' && name == 'length'
+      if lower_ring_defines_string_length?(unit)
+        reject_call(
+          call,
+          %(unsupported Modern member target "#{target}" in the R40 dot/property-call subset),
+          call.callable_name.source_span
+        )
+      end
+      preflight_member_arity!(call, target, 0)
+    elsif known_member_target?(unit, receiver, name)
+      reject_call(
+        call,
+        %(unsupported Modern member target "#{target}" in the R40 dot/property-call subset),
+        call.callable_name.source_span
+      )
+    else
+      reject_call(call, %(unknown Modern member target "#{target}"), call.callable_name.source_span)
     end
   end
 
@@ -847,6 +931,17 @@ private
     )
   end
 
+  def preflight_member_arity!(call, target, expected)
+    actual = call.arguments.length
+    return if actual == expected
+
+    reject_call(
+      call,
+      %(incorrect Modern member-call arity for "#{target}": got #{actual}, expected #{expected}),
+      call.source_span
+    )
+  end
+
   def approved_puts_target?(target)
     return false unless target.is_a?(DabNodeFunctionStub) && !target.is_static?
 
@@ -863,6 +958,22 @@ private
   def known_target?(unit, name)
     BUILTINS.include?(name) || unit.has_function?(name) || unit.classes.to_a.any? do |klass|
       klass.functions.to_a.any? { |function| function.identifier.to_s == name }
+    end
+  end
+
+  def known_member_target?(unit, receiver, name)
+    DabType.parse(receiver).has_function?(name) || unit.classes.to_a.any? do |klass|
+      klass.identifier.to_s == receiver && klass.functions.to_a.any? do |function|
+        !function.is_static? && function.identifier.to_s == name
+      end
+    end
+  end
+
+  def lower_ring_defines_string_length?(unit)
+    unit.classes.to_a.any? do |klass|
+      klass.identifier.to_s == 'String' && klass.functions.to_a.any? do |function|
+        !function.is_static? && function.identifier.to_s == 'length'
+      end
     end
   end
 
@@ -917,6 +1028,12 @@ class DabModernBootstrapParser
     'unterminated Modern call: expected closing ")" before end of file'.freeze
   EXPECT_CALL_BODY_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after call'.freeze
+  EXPECT_DOT_CALLABLE_NAME_MESSAGE =
+    'invalid Modern dot call: expected a callable name immediately after "."'.freeze
+  EXPECT_MEMBER_TAIL_MESSAGE =
+    'invalid Modern dot/property call: expected "(" or a separator (LF, semicolon, or line comment) after member name'.freeze
+  EXPECT_MEMBER_CALL_BODY_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after member call'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -1196,6 +1313,11 @@ private
 
       reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
 
+      if literal_member_start?
+        items << parse_literal_member
+        next
+      end
+
       if direct_call_start?
         items << parse_direct_call
         expect_call_body_separator
@@ -1229,6 +1351,58 @@ private
     peek_token(distance).kind == :left_parenthesis
   end
 
+  def literal_member_start?
+    receiver = peek_token
+    dot = peek_token(1)
+    LITERAL_KINDS.include?(receiver.kind) && dot.kind == :dot &&
+      receiver.source_span.end_offset == dot.source_span.start_offset
+  end
+
+  def parse_literal_member
+    source_tokens = []
+    receiver_token = next_token
+    reject_integer_overflow(receiver_token)
+    source_tokens << receiver_token
+    dot_token = expect(:dot)
+    source_tokens << dot_token
+
+    base_token = next_token
+    reject(base_token, EXPECT_DOT_CALLABLE_NAME_MESSAGE) unless base_token.kind == :identifier
+    source_tokens << base_token
+    callable_name = compose_callable_name(base_token)
+    source_tokens << callable_name.suffix_token if callable_name.suffix_token
+
+    if separator?(peek_token)
+      next_token
+      return build_literal_member_call(
+        receiver_token,
+        dot_token,
+        callable_name,
+        [],
+        source_tokens
+      )
+    end
+
+    if horizontal_whitespace?(peek_token)
+      reject(peek_token, EXPECT_MEMBER_TAIL_MESSAGE) unless token_after_horizontal_whitespace.kind == :left_parenthesis
+
+      source_tokens.concat(consume_horizontal_whitespace)
+    end
+
+    reject(peek_token, EXPECT_MEMBER_TAIL_MESSAGE) unless peek_token.kind == :left_parenthesis
+    arguments, closing_parenthesis = parse_call_arguments(source_tokens)
+    member_call = build_literal_member_call(
+      receiver_token,
+      dot_token,
+      callable_name,
+      arguments,
+      source_tokens,
+      closing_parenthesis: closing_parenthesis
+    )
+    expect_member_call_body_separator
+    member_call
+  end
+
   def parse_direct_call
     source_tokens = []
     base_token = next_token
@@ -1236,6 +1410,11 @@ private
     callable_name = compose_callable_name(base_token)
     source_tokens << callable_name.suffix_token if callable_name.suffix_token
     source_tokens.concat(consume_horizontal_whitespace)
+    arguments, closing_parenthesis = parse_call_arguments(source_tokens)
+    build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
+  end
+
+  def parse_call_arguments(source_tokens)
     source_tokens << expect(:left_parenthesis)
     source_tokens.concat(consume_horizontal_whitespace)
     arguments = []
@@ -1243,7 +1422,7 @@ private
     if peek_token.kind == :right_parenthesis
       closing_parenthesis = next_token
       source_tokens << closing_parenthesis
-      return build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
+      return [arguments.freeze, closing_parenthesis]
     end
     reject(peek_token, EXPECT_CALL_CLOSE_MESSAGE) if peek_token.kind == :eof
 
@@ -1260,7 +1439,7 @@ private
       when :right_parenthesis
         closing_parenthesis = next_token
         source_tokens << closing_parenthesis
-        return build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
+        return [arguments.freeze, closing_parenthesis]
       when :comma
         source_tokens << next_token
         source_tokens.concat(consume_horizontal_whitespace)
@@ -1296,7 +1475,25 @@ private
   end
 
   def deferred_call_argument_start?(token)
-    %i[identifier left_parenthesis question_mark bang unsupported].include?(token.kind)
+    %i[identifier left_parenthesis question_mark bang dot unsupported].include?(token.kind)
+  end
+
+  def build_literal_member_call(
+    receiver_token,
+    dot_token,
+    callable_name,
+    arguments,
+    source_tokens,
+    closing_parenthesis: nil
+  )
+    DabModernBootstrapLiteralMemberCall.new(
+      receiver_token: receiver_token,
+      dot_token: dot_token,
+      callable_name: callable_name,
+      arguments: arguments,
+      source_tokens: source_tokens,
+      closing_parenthesis: closing_parenthesis
+    )
   end
 
   def build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
@@ -1314,6 +1511,20 @@ private
     return token if separator?(token)
 
     reject(token, EXPECT_CALL_BODY_SEPARATOR_MESSAGE)
+  end
+
+  def expect_member_call_body_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject(token, EXPECT_MEMBER_CALL_BODY_SEPARATOR_MESSAGE)
+  end
+
+  def reject_integer_overflow(token)
+    return unless token.kind == :integer && integer_overflow?(token.text)
+
+    reject(token, 'Modern integer literal is outside supported range 0..9223372036854775807')
   end
 
   def integer_overflow?(text)

@@ -1,0 +1,10 @@
+## SOURCE
+def main
+"abc".()
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0042_missing_member_name.dabm:2:6: error: invalid Modern dot call: expected a callable name immediately after "."

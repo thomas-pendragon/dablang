@@ -1,0 +1,10 @@
+## SOURCE
+def main
+"abc".length(1)
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0045_member_wrong_arity.dabm:2:0: error: incorrect Modern member-call arity for "String#length": got 1, expected 0
