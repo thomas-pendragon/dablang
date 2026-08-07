@@ -848,11 +848,16 @@ private
   end
 
   def approved_puts_target?(target)
-    target.is_a?(DabNodeFunctionStub) && !target.is_static? &&
-      target.ring_signature == {
-        arguments: [{name: 'string', type: 'Object'}.freeze].freeze,
-        return_type: 'Object',
-      }.freeze
+    return false unless target.is_a?(DabNodeFunctionStub) && !target.is_static?
+
+    signature = target.ring_signature
+    return false unless signature.is_a?(Hash)
+
+    arguments = signature[:arguments]
+    return false unless arguments.is_a?(Array) && arguments.one?
+
+    argument = arguments.fetch(0)
+    argument.is_a?(Hash) && argument[:type] == 'Object' && signature[:return_type] == 'Object'
   end
 
   def known_target?(unit, name)

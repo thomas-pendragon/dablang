@@ -50,8 +50,8 @@ describe 'Modern ordinary parenthesized calls' do
     artifact
   end
 
-  def puts_stub(signature: puts_signature)
-    DabNodeFunctionStub.new('puts', nil, is_static: false, ring_signature: signature)
+  def puts_stub(signature: puts_signature, is_static: false)
+    DabNodeFunctionStub.new('puts', nil, is_static: is_static, ring_signature: signature)
   end
 
   def compile(source_path, lower)
@@ -280,6 +280,49 @@ describe 'Modern ordinary parenthesized calls' do
     )
     expect do
       parse("def main\nputs(\"x\")\nend\n").lower_into(invalid_unit)
+    end.to raise_error(DabModernBootstrapParseError, /unsupported Modern call target "puts"/)
+
+    renamed_argument_unit = DabNodeUnit.new
+    renamed_argument_unit.add_function(
+      puts_stub(
+        signature: {
+          arguments: [{name: 'value', type: 'Object'}.freeze].freeze,
+          return_type: 'Object',
+        }.freeze
+      )
+    )
+    expect(parse("def main\nputs(\"x\")\nend\n").lower_into(renamed_argument_unit).identifier).to eq('main')
+
+    wrong_type_unit = DabNodeUnit.new
+    wrong_type_unit.add_function(
+      puts_stub(
+        signature: {
+          arguments: [{name: 'string', type: 'String'}.freeze].freeze,
+          return_type: 'Object',
+        }.freeze
+      )
+    )
+    expect do
+      parse("def main\nputs(\"x\")\nend\n").lower_into(wrong_type_unit)
+    end.to raise_error(DabModernBootstrapParseError, /unsupported Modern call target "puts"/)
+
+    wrong_return_unit = DabNodeUnit.new
+    wrong_return_unit.add_function(
+      puts_stub(
+        signature: {
+          arguments: [{name: 'string', type: 'Object'}.freeze].freeze,
+          return_type: 'NilClass',
+        }.freeze
+      )
+    )
+    expect do
+      parse("def main\nputs(\"x\")\nend\n").lower_into(wrong_return_unit)
+    end.to raise_error(DabModernBootstrapParseError, /unsupported Modern call target "puts"/)
+
+    static_unit = DabNodeUnit.new
+    static_unit.add_function(puts_stub(is_static: true))
+    expect do
+      parse("def main\nputs(\"x\")\nend\n").lower_into(static_unit)
     end.to raise_error(DabModernBootstrapParseError, /unsupported Modern call target "puts"/)
 
     valid_unit = DabNodeUnit.new
