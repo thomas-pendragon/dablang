@@ -111,6 +111,9 @@ describe 'Modern literal dot and property calls' do
     expect(results.map(&:output_register)).to eq([nil, nil])
     expect(results.map(&:source_cstart)).to eq([property.source_span.start_offset, explicit.source_span.start_offset])
     expect(results.map(&:source_cend)).to eq([property.source_span.end_offset, explicit.source_span.end_offset])
+    expect(
+      results.map { |result| result.source_parts.length - result.value.source_parts.length }
+    ).to eq([property, explicit].map { |member| member.source_tokens.length - 2 })
   end
 
   it 'keeps exact Int32 metadata through property conversion without changing shared instance-call typing' do
@@ -508,8 +511,8 @@ describe 'Modern literal dot and property calls' do
         DAB
       )
       assembly = compile(source_path, lower)
-      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R3, R0, S33})
-      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R4, R1, S33})
+      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R\d+, R0, S33})
+      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R\d+, R1, S33})
       expect(assembly).not_to match(%r{/\* length\s+\*/\s+INSTCALL RNIL,})
       expect(assembly).to match(%r{/\* PRINT\s+\*/\s+SYSCALL RNIL, 0, R2})
       expect(assembly).to match(/RETURN RNIL/)

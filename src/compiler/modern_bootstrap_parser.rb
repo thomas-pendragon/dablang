@@ -256,7 +256,7 @@ class DabModernBootstrapLiteralMemberCall
     return call unless approved_result_value?
 
     DabNodeModernMemberResult.new(call).tap do |result|
-      result.clone_source_parts_from(call)
+      result.add_source_parts(*result_source_parts)
     end
   end
 
@@ -264,6 +264,11 @@ private
 
   def approved_result_value?
     receiver_type_name == 'String' && callable_name.text == 'length' && arguments.empty?
+  end
+
+  def result_source_parts
+    represented_tokens = [receiver_token, callable_name.base_token, callable_name.suffix_token, *arguments].compact
+    source_tokens.reject { |token| represented_tokens.include?(token) }.map(&:source_string)
   end
 end
 
