@@ -247,13 +247,28 @@ class DabModernBootstrapLiteralMemberCall
   def lower
     receiver = DabModernBootstrapLiterals.lower(receiver_token)
     arguments = @arguments.map { |argument| DabModernBootstrapLiterals.lower(argument) }
-    node = if property_style?
+    call = if property_style?
              DabNodePropertyGet.new(receiver, callable_name.source_string)
            else
              DabNodeInstanceCall.new(receiver, callable_name.source_string, arguments, nil)
            end
-    node.add_source_parts(*source_tokens.map(&:source_string))
-    node
+    call.add_source_parts(*source_tokens.map(&:source_string))
+    return call unless approved_result_value?
+
+    DabNodeModernMemberResult.new(call).tap do |result|
+      result.add_source_parts(*result_source_parts)
+    end
+  end
+
+private
+
+  def approved_result_value?
+    receiver_type_name == 'String' && callable_name.text == 'length' && arguments.empty?
+  end
+
+  def result_source_parts
+    represented_tokens = [receiver_token, callable_name.base_token, callable_name.suffix_token, *arguments].compact
+    source_tokens.reject { |token| represented_tokens.include?(token) }.map(&:source_string)
   end
 end
 

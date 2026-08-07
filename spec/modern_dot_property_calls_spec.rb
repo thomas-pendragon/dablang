@@ -103,6 +103,54 @@ describe 'Modern literal dot and property calls' do
     expect([explicit_node.source_cstart, explicit_node.source_cend]).to eq(
       [explicit.source_span.start_offset, explicit.source_span.end_offset]
     )
+
+    results = function.blocks[0].all_nodes(DabNodeModernMemberResult)
+    expect(results.map(&:value)).to eq([property_node, explicit_node])
+    expect(results.map { |result| result.result_type.type_string }).to eq(%w[Int32 Int32])
+    expect(results.map(&:my_type)).to all(be_frozen)
+    expect(results.map(&:output_register)).to eq([nil, nil])
+    expect(results.map(&:source_cstart)).to eq([property.source_span.start_offset, explicit.source_span.start_offset])
+    expect(results.map(&:source_cend)).to eq([property.source_span.end_offset, explicit.source_span.end_offset])
+    expect(
+      results.map { |result| result.source_parts.length - result.value.source_parts.length }
+    ).to eq([property, explicit].map { |member| member.source_tokens.length - 2 })
+  end
+
+  it 'keeps exact Int32 metadata through property conversion without changing shared instance-call typing' do
+    function = parse("def main\n\"abc\".length\n\"xyz\".length()\nend\n").lower_into(DabNodeUnit.new)
+    property_result, explicit_result = function.blocks[0].all_nodes(DabNodeModernMemberResult)
+    property = property_result.value
+
+    expect(property).to be_a(DabNodePropertyGet)
+    expect(property_result.formatted_source({})).to eq('"abc".length')
+    expect(explicit_result.formatted_source({})).to eq('"xyz".length()')
+    expect(property_result.result_type.type_string).to eq('Int32')
+    expect(property_result.result_type).to be_frozen
+    expect(property_result).not_to respond_to(:result_type=)
+
+    property.convert_to_call
+    expect(property_result.value).to be_a(DabNodeInstanceCall)
+    expect(property_result.formatted_source({})).to eq('"abc".length()')
+    expect(property_result.my_type.type_string).to eq('Int32')
+    expect(property_result.all_nodes(DabNodeLiteralString).length).to eq(1)
+    expect(explicit_result.all_nodes(DabNodeLiteralString).length).to eq(1)
+
+    shared_call = DabNodeInstanceCall.new(DabNodeLiteralString.new('x'), :length, [], nil)
+    expect(shared_call.my_type.type_string).to eq('Object')
+  end
+
+  it 'allocates deterministic enclosing-function result registers without a source consumer' do
+    function = parse("def main\n\"abc\".length\n\"xyz\".length()\nend\n").lower_into(DabNodeUnit.new)
+    results = function.blocks[0].all_nodes(DabNodeModernMemberResult)
+
+    expect(results.map(&:output_register)).to eq([nil, nil])
+    loop do
+      break unless function.run_late_lower_processors!
+    end
+
+    expect(results.map(&:output_register)).to eq([0, 1])
+    expect(results.map(&:function)).to all(equal(function))
+    expect(function.run_late_lower_processors!).to be(false)
   end
 
   it 'accepts only immediate property separators and explicit-call horizontal whitespace' do
@@ -446,7 +494,7 @@ describe 'Modern literal dot and property calls' do
     end
   end
 
-  it 'emits existing INSTCALL RNIL and executes both spellings with discarded results', :native do
+  it 'emits deterministic dormant result registers and executes both spellings without source consumption', :native do
     expect(File).to exist(vm)
 
     Dir.mktmpdir('dab-modern-member-runtime') do |directory|
@@ -463,8 +511,11 @@ describe 'Modern literal dot and property calls' do
         DAB
       )
       assembly = compile(source_path, lower)
-      expect(assembly.scan(%r{/\* length\s+\*/\s+INSTCALL RNIL,}).length).to eq(2)
-      expect(assembly).not_to match(/INSTCALL R\d/)
+      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R\d+, R0, S33})
+      expect(assembly).to match(%r{/\* length\s+\*/\s+INSTCALL R\d+, R1, S33})
+      expect(assembly).not_to match(%r{/\* length\s+\*/\s+INSTCALL RNIL,})
+      expect(assembly).to match(%r{/\* PRINT\s+\*/\s+SYSCALL RNIL, 0, R2})
+      expect(assembly).to match(/RETURN RNIL/)
 
       bytecode, assembler_stderr, assembler_status = invoke(RbConfig.ruby, assembler, input: assembly)
       expect([assembler_status.exitstatus, tool_stderr(assembler_stderr)]).to eq([0, ''])
