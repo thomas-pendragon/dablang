@@ -1,0 +1,66 @@
+## SOURCE
+def main
+print("é".length)
+end
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "é" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "é"         */               LOAD_STRING R0, _DATA + 0, 2
+/* length       */               INSTCALL R1, R0, S33
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 12 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
+## APPLICATION STDOUT
+2

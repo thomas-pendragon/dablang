@@ -199,11 +199,23 @@ class DabModernBootstrapDirectCall
   def lower
     DabNodeCall.new(
       callable_name.source_string,
-      arguments.map { |argument| DabModernBootstrapLiterals.lower(argument) },
+      arguments.map { |argument| lower_argument(argument) },
       nil
     ).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
+  end
+
+  def member_result_argument?
+    arguments.any? { |argument| argument.is_a?(DabModernBootstrapLiteralMemberCall) }
+  end
+
+private
+
+  def lower_argument(argument)
+    return argument.lower(consumed: true) if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+
+    DabModernBootstrapLiterals.lower(argument)
   end
 end
 
@@ -244,7 +256,7 @@ class DabModernBootstrapLiteralMemberCall
     RECEIVER_TYPE_NAMES.fetch(receiver_token.kind)
   end
 
-  def lower
+  def lower(consumed: false)
     receiver = DabModernBootstrapLiterals.lower(receiver_token)
     arguments = @arguments.map { |argument| DabModernBootstrapLiterals.lower(argument) }
     call = if property_style?
@@ -255,7 +267,7 @@ class DabModernBootstrapLiteralMemberCall
     call.add_source_parts(*source_tokens.map(&:source_string))
     return call unless approved_result_value?
 
-    DabNodeModernMemberResult.new(call).tap do |result|
+    DabNodeModernMemberResult.new(call, consumed: consumed).tap do |result|
       result.add_source_parts(*result_source_parts)
     end
   end
@@ -802,14 +814,22 @@ private
 end
 
 class DabModernBootstrapDocument
+  MEMBER_RESULT_TYPE_NAMES = %w[Int32 Object].freeze
+  INT32_MAX = (1 << 31) - 1
+
   attr_reader :source_unit, :source_span, :declarations
 
-  def initialize(declarations)
+  def initialize(declarations, member_result_byte_limit: INT32_MAX)
     unless declarations.is_a?(Array) && !declarations.empty?
       raise ArgumentError.new('Modern bootstrap document requires one or more declarations')
     end
 
     @declarations = declarations.freeze
+    unless member_result_byte_limit.is_a?(Integer) && member_result_byte_limit.between?(0, INT32_MAX)
+      raise ArgumentError.new("Modern member-result byte limit must be an Integer from 0 through #{INT32_MAX}")
+    end
+
+    @member_result_byte_limit = member_result_byte_limit
     @source_unit = declarations.fetch(0).source_unit
     unless declarations.all? { |declaration| declaration.source_unit.equal?(@source_unit) }
       raise ArgumentError.new('Modern bootstrap declarations must share one DabSourceUnit identity')
@@ -877,6 +897,7 @@ private
         )
       end
       preflight_member_arity!(call, target, 0)
+      preflight_member_result_range!(call)
     elsif known_member_target?(unit, receiver, name)
       reject_call(
         call,
@@ -892,11 +913,13 @@ private
     name = call.callable_name.text
     target = declarations_by_name[name]
     if target
-      preflight_same_document_call!(call, target)
+      preflight_same_document_call!(call, target, unit)
     elsif name == 'print'
-      nil
+      preflight_arity!(call, 1) if call.member_result_argument?
+      preflight_member_arguments!(call, unit)
     elsif name == 'puts'
       preflight_puts_call!(call, unit)
+      preflight_member_arguments!(call, unit)
     elsif known_target?(unit, name)
       reject_call(call, %(unsupported Modern call target "#{name}" in the R39 ordinary-call subset), call.callable_name.source_span)
     else
@@ -904,22 +927,51 @@ private
     end
   end
 
-  def preflight_same_document_call!(call, target)
+  def preflight_same_document_call!(call, target, unit)
     expected = target.parameters.length
     preflight_arity!(call, expected)
     call.arguments.zip(target.parameters).each do |argument, parameter|
+      if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+        preflight_member_call!(argument, unit)
+        next if MEMBER_RESULT_TYPE_NAMES.include?(parameter.type_name.text)
+
+        reject_argument_type!(call, argument, parameter, DabType.parse('Int32'))
+      end
+
       actual_type = DabModernBootstrapLiterals.type(argument)
       expected_type = DabType.parse(parameter.type_name.text)
       next if expected_type.can_assign_from?(actual_type)
 
-      reject_call(
-        call,
-        "cannot pass Modern argument of type #{actual_type.type_string} to parameter " \
-        "\"#{parameter.name}\" of type #{expected_type.type_string} in call " \
-        "\"#{call.callable_name.text}\"",
-        argument.source_span
-      )
+      reject_argument_type!(call, argument, parameter, actual_type)
     end
+  end
+
+  def preflight_member_arguments!(call, unit)
+    call.arguments.each do |argument|
+      preflight_member_call!(argument, unit) if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+    end
+  end
+
+  def reject_argument_type!(call, argument, parameter, actual_type)
+    expected_type = DabType.parse(parameter.type_name.text)
+    reject_call(
+      call,
+      "cannot pass Modern argument of type #{actual_type.type_string} to parameter " \
+      "\"#{parameter.name}\" of type #{expected_type.type_string} in call " \
+      "\"#{call.callable_name.text}\"",
+      argument.source_span
+    )
+  end
+
+  def preflight_member_result_range!(call)
+    return unless call.receiver_token.kind == :string
+    return if call.receiver_token.value.bytesize <= @member_result_byte_limit
+
+    reject_call(
+      call,
+      "Modern String#length result exceeds exact Int32 byte-count range 0..#{INT32_MAX}",
+      call.source_span
+    )
   end
 
   def preflight_puts_call!(call, unit)
@@ -1053,7 +1105,7 @@ class DabModernBootstrapParser
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
 
-  def initialize(content, source_unit:)
+  def initialize(content, source_unit:, member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX)
     @source_unit = DabSourceUnit.validate(source_unit)
     unless @source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
       raise DabSourceUnitError.new('Modern bootstrap parser requires DabSyntaxProfile::MODERN')
@@ -1061,6 +1113,7 @@ class DabModernBootstrapParser
 
     @scanner = DabModernBootstrapScanner.new(content, source_unit: @source_unit)
     @callable_name_composer = DabModernCallableNameComposer.new
+    @member_result_byte_limit = member_result_byte_limit
   end
 
   def parse
@@ -1074,7 +1127,10 @@ class DabModernBootstrapParser
       skip_separators
     end
 
-    DabModernBootstrapDocument.new(declarations)
+    DabModernBootstrapDocument.new(
+      declarations,
+      member_result_byte_limit: @member_result_byte_limit
+    )
   end
 
 private
@@ -1373,7 +1429,7 @@ private
       receiver.source_span.end_offset == dot.source_span.start_offset
   end
 
-  def parse_literal_member
+  def parse_literal_member(argument: false)
     source_tokens = []
     receiver_token = next_token
     reject_integer_overflow(receiver_token)
@@ -1386,6 +1442,16 @@ private
     source_tokens << base_token
     callable_name = compose_callable_name(base_token)
     source_tokens << callable_name.suffix_token if callable_name.suffix_token
+
+    if argument && nested_property_tail?
+      return build_literal_member_call(
+        receiver_token,
+        dot_token,
+        callable_name,
+        [],
+        source_tokens
+      )
+    end
 
     reject_invalid_separator(peek_token)
     if separator?(peek_token)
@@ -1406,7 +1472,7 @@ private
     end
 
     reject(peek_token, EXPECT_MEMBER_TAIL_MESSAGE) unless peek_token.kind == :left_parenthesis
-    arguments, closing_parenthesis = parse_call_arguments(source_tokens)
+    arguments, closing_parenthesis = parse_call_arguments(source_tokens, allow_member_results: false)
     member_call = build_literal_member_call(
       receiver_token,
       dot_token,
@@ -1415,7 +1481,7 @@ private
       source_tokens,
       closing_parenthesis: closing_parenthesis
     )
-    expect_member_call_body_separator
+    expect_member_call_body_separator unless argument
     member_call
   end
 
@@ -1426,11 +1492,11 @@ private
     callable_name = compose_callable_name(base_token)
     source_tokens << callable_name.suffix_token if callable_name.suffix_token
     source_tokens.concat(consume_horizontal_whitespace)
-    arguments, closing_parenthesis = parse_call_arguments(source_tokens)
+    arguments, closing_parenthesis = parse_call_arguments(source_tokens, allow_member_results: true)
     build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
   end
 
-  def parse_call_arguments(source_tokens)
+  def parse_call_arguments(source_tokens, allow_member_results:)
     source_tokens << expect(:left_parenthesis)
     source_tokens.concat(consume_horizontal_whitespace)
     arguments = []
@@ -1444,9 +1510,9 @@ private
 
     expectation = EXPECT_CALL_ARGUMENT_OR_CLOSE_MESSAGE
     loop do
-      argument = parse_call_argument(expectation)
+      argument = parse_call_argument(expectation, allow_member_results: allow_member_results)
       arguments << argument
-      source_tokens << argument
+      source_tokens.concat(argument_source_tokens(argument))
       source_tokens.concat(consume_horizontal_whitespace)
       token = peek_token
       reject_invalid_separator(token)
@@ -1468,7 +1534,7 @@ private
     end
   end
 
-  def parse_call_argument(expectation)
+  def parse_call_argument(expectation, allow_member_results:)
     token = peek_token
     reject_invalid_separator(token)
     if token.kind == :eof
@@ -1477,6 +1543,10 @@ private
     if token.diagnostic_message
       reject(token, token.diagnostic_message)
     end
+    if allow_member_results && literal_member_start?
+      return parse_literal_member(argument: true)
+    end
+
     unless LITERAL_KINDS.include?(token.kind)
       reject(token) if deferred_call_argument_start?(token)
 
@@ -1488,6 +1558,19 @@ private
       reject(token, 'Modern integer literal is outside supported range 0..9223372036854775807')
     end
     token
+  end
+
+  def argument_source_tokens(argument)
+    return argument.source_tokens if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+
+    [argument]
+  end
+
+  def nested_property_tail?
+    return false if peek_token.kind == :left_parenthesis
+    return false if horizontal_whitespace?(peek_token) && token_after_horizontal_whitespace.kind == :left_parenthesis
+
+    true
   end
 
   def deferred_call_argument_start?(token)

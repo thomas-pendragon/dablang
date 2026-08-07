@@ -8,13 +8,13 @@ class DabModernSourceFixture
   SCHEMA_VERSION = 1
   EXTENSION = '.dabmtest'.freeze
   REQUIRED_SECTIONS = ['SOURCE', 'SCHEMA VERSION', 'STATUS'].freeze
-  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', 'APPLICATION STDOUT'].freeze
+  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', 'APPLICATION STDOUT', 'MEMBER RESULT BYTE LIMIT'].freeze
   SECTIONS = (REQUIRED_SECTIONS + OPTIONAL_SECTIONS).freeze
 
   class SchemaError < ArgumentError; end
 
   attr_reader :path, :source, :source_filename, :expected_status, :expected_stdout, :expected_stderr,
-              :expected_application_stdout
+              :expected_application_stdout, :member_result_byte_limit
 
   def self.load(path)
     new(path).tap(&:load!)
@@ -35,6 +35,7 @@ class DabModernSourceFixture
     @expected_stdout = sections.fetch('STDOUT', '')
     @expected_stderr = sections.fetch('STDERR', '')
     @expected_application_stdout = sections['APPLICATION STDOUT']
+    @member_result_byte_limit = parse_member_result_byte_limit(sections['MEMBER RESULT BYTE LIMIT'])
     self
   rescue Errno::ENOENT, Errno::EACCES => e
     schema_error("fixture is not readable: #{e.message}")
@@ -89,6 +90,18 @@ private
     status
   end
 
+  def parse_member_result_byte_limit(text)
+    return DabModernBootstrapDocument::INT32_MAX unless text
+
+    limit = parse_integer('MEMBER RESULT BYTE LIMIT', text)
+    unless limit.between?(0, DabModernBootstrapDocument::INT32_MAX)
+      schema_error(
+        "MEMBER RESULT BYTE LIMIT must be from 0 through #{DabModernBootstrapDocument::INT32_MAX}, got #{limit}"
+      )
+    end
+    limit
+  end
+
   def parse_integer(name, text)
     unless /\A-?(?:0|[1-9][0-9]*)\n?\z/.match?(text)
       schema_error("#{name} must be an integer without surrounding whitespace, got #{text.inspect}")
@@ -124,12 +137,17 @@ class DabModernSourceCompiler
     settings[:ring_base] = [ring_base] if ring_base
 
     begin
-      run_dab_compiler(settings, context, source_units: [source_unit])
+      run_dab_compiler(
+        settings,
+        context,
+        source_units: [source_unit],
+        modern_member_result_byte_limit: fixture.member_result_byte_limit
+      )
     rescue InlineCompilerExit => e
       status = e.code
     end
 
-    Result.new(status: status, stdout: context.stdout.string, stderr: context.stderr.string)
+    Result.new(status: status, stdout: context.stdout.string.b, stderr: context.stderr.string.b)
   end
 end
 
@@ -204,7 +222,7 @@ private
     with_harness_action('prepare application', "write #{portable_path(assembly_path)}") do
       File.binwrite(assembly_path, result.stdout)
     end
-    assemble(assembly_path, upper_ring)
+    assemble(assembly_path, upper_ring, binary_input: true)
     execute([ring_base, upper_ring], application_stdout, '--entry=main')
     with_harness_action(
       'compare application output',

@@ -1,0 +1,103 @@
+## SOURCE
+def sink(value:Int32)
+end
+def pair(first:Int32,second:Int32)
+end
+def main
+sink("abc".length)
+pair("a".length,"bb".length())
+end
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "a" 
+                                 W_STRING "abc" 
+                                 W_STRING "bb" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "abc"        */               LOAD_STRING R0, _DATA + 2, 3
+/* length       */               INSTCALL R1, R0, S33
+/* sink         */               CALL RNIL, S57, R1
+/* "a"          */               LOAD_STRING R2, _DATA + 0, 1
+/* length       */               INSTCALL R3, R2, S33
+/* "bb"         */               LOAD_STRING R4, _DATA + 6, 2
+/* length       */               INSTCALL R5, R4, S33
+/* pair         */               CALL RNIL, S55, R3, R5
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fpair:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fpair_END:
+                                 NOP 
+ 
+                   Fsink:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fsink_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "main" 
+                                 W_STRING "pair" 
+                                 W_STRING "second" 
+                                 W_STRING "sink" 
+                                 W_STRING "value" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 12 
+/* pair         */               W_SYMBOL _SDAT + 17 
+/* second       */               W_SYMBOL _SDAT + 22 
+/* sink         */               W_SYMBOL _SDAT + 29 
+/* value        */               W_SYMBOL _SDAT + 34 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* pair         */               W_METHOD 55, -1, Fpair, 2, __Fpair_END - Fpair, 0
+/* first<Int32> */               W_METHOD_ARG 24, 12
+/* second<Int32 */               W_METHOD_ARG 56, 12
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* sink         */               W_METHOD 57, -1, Fsink, 1, __Fsink_END - Fsink, 0
+/* value<Int32> */               W_METHOD_ARG 58, 12
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

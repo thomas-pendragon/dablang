@@ -258,12 +258,35 @@ metadata and a deterministic function-owned `INSTCALL Rn` destination. The
 result remains dormant: no source construct can consume it, and the containing
 function still returns implicit Nil. Fixture `0041` now locks both non-`RNIL`
 destinations with unchanged native application output and final `RETURN RNIL`.
-Fixture `0046` keeps `print("abc".length)` rejected at the existing argument-
+Fixture `0046` kept `print("abc".length)` rejected at the existing argument-
 separator diagnostic until the separately owned nested-call row. Current UTF-8
-byte-count and host integer narrowing remain implementation truth rather than a
-future grapheme-length promise. Direct calls, bindings, returns, assignment,
-operators, chaining, local or parameter receivers, broader members, and general
-expressions remain unsupported.
+byte-count and host integer narrowing remained implementation truth rather than
+a future grapheme-length promise at this version. Direct calls, bindings,
+returns, assignment, operators, chaining, local or parameter receivers, broader
+members, and general expressions remained unsupported.
+
+Version 0.0.51 admits that approved M7 result in exactly one additional grammar
+position: an R39 ordinary-call argument. The receiver is still an exact String
+literal, the member is still zero-argument `length` or `length()`, and the
+result is now source-visible exact `Int32` UTF-8 byte count. Consumed results
+write directly to their outer argument registers in left-to-right order;
+standalone M7 register allocation is unchanged. The approved targets remain
+one-total-argument `print`, artifact-confirmed one-Object-argument `puts`, and
+same-document functions whose corresponding parameter is exact `Int32` (or an
+otherwise approved Object parameter). This does not change inherited
+literal-only `print()` or multi-argument `print` acceptance.
+
+Fixtures `0046` through `0049` provide the primary positive compiler and native
+contracts, including exact outputs `3`, multibyte byte count `2`, `puts`, exact
+Int32 same-document consumption, and multi-argument left-to-right registers.
+Fixtures `0050` through `0054` lock outer arity, full-expression type mismatch,
+unsupported-member, second-dot, and Int32 byte-range failures. Because a real
+overflowing literal would require more than 2 GiB of decoded fixture data,
+`MEMBER RESULT BYTE LIMIT` is a core-harness-only stricter threshold used by
+`0054`; production compilation always uses `2147483647`. Nested call results,
+chaining, bindings, returns, assignment, operators, parameter/local receivers,
+broader members, general expressions, and runtime or artifact changes remain
+unsupported.
 
 ## Diagnostic boundary
 

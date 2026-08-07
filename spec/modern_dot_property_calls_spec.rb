@@ -396,11 +396,6 @@ describe 'Modern literal dot and property calls' do
         DabModernBootstrapParseError::GENERIC_MESSAGE,
         'value.length',
       ],
-      'nested member result' => [
-        "def main\nprint(\"x\".length)\nend\n",
-        DabModernBootstrapParser::EXPECT_CALL_ARGUMENT_SEPARATOR_MESSAGE,
-        '.',
-      ],
       'safe-navigation near miss' => [
         "def main\n\"x\"&.length\nend\n",
         DabModernBootstrapParseError::GENERIC_MESSAGE,

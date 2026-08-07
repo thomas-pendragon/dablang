@@ -1,9 +1,14 @@
 class DabCompilerFrontend
   attr_reader :source_units, :syntax_profile
 
-  def initialize(syntax_profile: DabSyntaxProfile::LEGACY, source_units: nil)
+  def initialize(
+    syntax_profile: DabSyntaxProfile::LEGACY,
+    source_units: nil,
+    modern_member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX
+  )
     @syntax_profile = DabSyntaxProfile.validate(syntax_profile)
     @source_units = source_units&.map { |source_unit| DabSourceUnit.validate(source_unit) }&.freeze
+    @modern_member_result_byte_limit = modern_member_result_byte_limit
   end
 
   def debug_check!(settings, program, type)
@@ -69,7 +74,11 @@ class DabCompilerFrontend
         source_units.each do |source_unit|
           content = source_unit.input == :stdin ? context.stdin.read : File.binread(source_unit.input)
           if source_unit.syntax_profile.equal?(DabSyntaxProfile::MODERN)
-            document = DabModernSyntaxDiagnostics.validate_source_content!(source_unit, content)
+            document = DabModernSyntaxDiagnostics.validate_source_content!(
+              source_unit,
+              content,
+              member_result_byte_limit: @modern_member_result_byte_limit
+            )
             program ||= DabNodeUnit.new
             DabModernSyntaxDiagnostics.lower_document!(document, program) if document
             next
@@ -290,8 +299,18 @@ class DabCompilerFrontend
   end
 end
 
-def run_dab_compiler(settings, context, syntax_profile: DabSyntaxProfile::LEGACY, source_units: nil)
-  DabCompilerFrontend.new(syntax_profile: syntax_profile, source_units: source_units).run(settings, context)
+def run_dab_compiler(
+  settings,
+  context,
+  syntax_profile: DabSyntaxProfile::LEGACY,
+  source_units: nil,
+  modern_member_result_byte_limit: DabModernBootstrapDocument::INT32_MAX
+)
+  DabCompilerFrontend.new(
+    syntax_profile: syntax_profile,
+    source_units: source_units,
+    modern_member_result_byte_limit: modern_member_result_byte_limit
+  ).run(settings, context)
 rescue DabModernSyntaxDiagnosticError => e
   context.stderr.puts "compiler: #{e.diagnostic}"
   context.exit(2)
