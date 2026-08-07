@@ -1372,6 +1372,7 @@ private
     callable_name = compose_callable_name(base_token)
     source_tokens << callable_name.suffix_token if callable_name.suffix_token
 
+    reject_invalid_separator(peek_token)
     if separator?(peek_token)
       next_token
       return build_literal_member_call(

@@ -121,6 +121,8 @@ describe 'Modern literal dot and property calls' do
       'space before dot' => ["def main\n\"x\" .length\nend\n", DabModernBootstrapParseError::GENERIC_MESSAGE, ' '],
       'space after dot' => ["def main\n\"x\". length\nend\n", DabModernBootstrapParser::EXPECT_DOT_CALLABLE_NAME_MESSAGE, ' '],
       'space before property separator' => ["def main\n\"x\".length \nend\n", DabModernBootstrapParser::EXPECT_MEMBER_TAIL_MESSAGE, ' '],
+      'CR property separator' => ["def main\n\"x\".length\rend\n", DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE, "\r"],
+      'CRLF property separator' => ["def main\n\"x\".length\r\nend\n", DabModernBootstrapParser::INVALID_CR_SEPARATOR_MESSAGE, "\r\n"],
       'second property dot' => ["def main\n\"x\".length.other\nend\n", DabModernBootstrapParser::EXPECT_MEMBER_TAIL_MESSAGE, '.'],
       'second explicit dot' => ["def main\n\"x\".length().other\nend\n", DabModernBootstrapParser::EXPECT_MEMBER_CALL_BODY_SEPARATOR_MESSAGE, '.'],
     }
