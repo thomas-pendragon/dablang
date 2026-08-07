@@ -1,0 +1,10 @@
+## SOURCE
+def main
+"abc".missing
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0043_unknown_member.dabm:2:6: error: unknown Modern member target "String#missing"

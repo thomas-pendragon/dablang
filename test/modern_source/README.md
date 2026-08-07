@@ -235,6 +235,23 @@ the exact compiler assembly expectation, and opts into the normal harness's
 successful native application-output comparison. The detailed RSpec coverage
 remains supplementary rather than the sole positive runtime proof.
 
+Version 0.0.49 adds a closed literal-member body item with strict adjacent
+receiver-dot-member spelling. The only approved capability is zero-argument
+`String#length`; both property `"abc".length` and explicit
+`"abc".length()` spellings discard their result through the existing
+`INSTCALL RNIL` path. Fixture `0041` locks both spellings in exact assembly and
+executes them before comparing byte-exact native application output. Fixtures
+`0042` through `0045` respectively own the missing callable name, unknown
+member, recognized-but-unsupported member, and wrong-arity diagnostics.
+
+Receivers and explicit arguments remain limited to existing literals. Any
+loaded lower Ring definition of instance `String#length` rejects the capability
+fail-closed. Fields, assignment, chaining, safe navigation, operators, class or
+parameter receivers, result use, nesting/general expressions, and all later
+rows remain unsupported. Focused RSpec supplements the core fixtures with
+scanner spans, whitespace and suffix matrices, conservative override scanning,
+transactionality, precedence, immutable source parts, and exact lowering.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
