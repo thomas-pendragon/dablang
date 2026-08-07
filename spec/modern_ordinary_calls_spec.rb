@@ -111,8 +111,8 @@ describe 'Modern ordinary parenthesized calls' do
     functions = parse(source).lower_into(DabNodeUnit.new)
     calls = functions.fetch(0).blocks[0].all_nodes(DabNodeCall)
 
-    expect(calls.map(&:real_identifier)).to eq(%w[zero many print print])
-    expect(calls.map { |call| call.args.length }).to eq([0, 4, 0, 4])
+    expect(calls.map(&:real_identifier)).to eq(%w[zero many print print print print])
+    expect(calls.map { |call| call.args.length }).to eq([0, 4, 1, 1, 1, 1])
   end
 
   it 'uses all five direct-call syntax diagnostics with first-unmet-production spans' do
@@ -265,7 +265,7 @@ describe 'Modern ordinary parenthesized calls' do
     )
 
     print_function = parse("def main\nprint()\nprint(nil,true,1,\"x\")\nend\n").lower_into(DabNodeUnit.new)
-    expect(print_function.blocks[0].all_nodes(DabNodeCall).map { |call| call.args.length }).to eq([0, 4])
+    expect(print_function.blocks[0].all_nodes(DabNodeCall).map { |call| call.args.length }).to eq([1, 1, 1, 1])
 
     expect do
       parse("def main\nputs(\"x\")\nend\n").lower_into(DabNodeUnit.new)
@@ -334,6 +334,23 @@ describe 'Modern ordinary parenthesized calls' do
       'incorrect Modern call arity for "puts": got 0, expected 1'
     )
     expect(parse("def main\nputs(nil)\nend\n").lower_into(valid_unit).identifier).to eq('main')
+  end
+
+  it 'lowers literal-only print arity to ordered unary calls with exact source spans' do
+    source = "def main\nprint();print(nil,true,1,\"x\")\nend\n"
+    document = parse(source)
+    empty_call, multiple_call = document.declarations.fetch(0).body_items
+    calls = document.lower_into(DabNodeUnit.new).blocks[0].all_nodes(DabNodeCall)
+
+    expect(empty_call.arguments).to be_empty
+    expect(calls.map(&:real_identifier)).to eq(%w[print print print print])
+    expect(calls.map { |call| call.args.map(&:constant_value) }).to eq([[nil], [true], [1], ['x']])
+    expect(calls.map { |call| [call.source_cstart, call.source_cend] }).to all(
+      eq([multiple_call.source_span.start_offset, multiple_call.source_span.end_offset])
+    )
+    expect(calls.map { |call| [call.args.fetch(0).source_cstart, call.args.fetch(0).source_cend] }).to eq(
+      multiple_call.arguments.map { |argument| [argument.source_span.start_offset, argument.source_span.end_offset] }
+    )
   end
 
   it 'preflights every call before mutating the lower-Ring unit' do
@@ -483,6 +500,8 @@ describe 'Modern ordinary parenthesized calls' do
         <<~DAB
           def main
           helper(1,"H",true)
+          print()
+          print(nil,true,1,"M")
           print("P")
           puts("Q")
           ready?()
@@ -503,6 +522,9 @@ describe 'Modern ordinary parenthesized calls' do
 
       expect(assembly).to match(%r{/\* helper\s+\*/\s+CALL RNIL,})
       expect(assembly).to match(%r{/\* PRINT\s+\*/\s+SYSCALL RNIL, 0,})
+      print_syscalls = assembly.lines.grep(%r{/\* PRINT\s+\*/})
+      expect(print_syscalls.length).to eq(5)
+      expect(print_syscalls).to all(match(/SYSCALL RNIL, 0, R\d+\n\z/))
       expect(assembly).to match(%r{/\* puts\s+\*/\s+CALL RNIL,})
       expect(assembly).to match(%r{/\* ready\?\s+\*/\s+CALL RNIL,})
       expect(assembly).to match(%r{/\* save!\s+\*/\s+CALL RNIL,})
