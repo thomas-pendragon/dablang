@@ -288,6 +288,23 @@ chaining, bindings, returns, assignment, operators, parameter/local receivers,
 broader members, general expressions, and runtime or artifact changes remain
 unsupported.
 
+Version 0.0.53 permits zero or more ASCII spaces only at the start of an
+LF-started logical line inside a Modern function body. The spaces may precede
+an existing body item, line comment, spaces-only blank LF, closing `end`, or a
+still-unsupported token; the parser omits them from the retained AST source
+parts and lowering. Fixture `0056` locks the exact P01 helper-call source,
+assembly, and native output `hello\n`. Fixtures `0057` and `0058` keep TAB body
+indentation and top-level ASCII-space indentation rejected.
+
+This narrow indentation rule applies to the first body line and every later
+LF-started body line. It does not admit TAB, CR or CRLF indentation, spaces
+after a same-line semicolon, trailing spaces, an indented semicolon, or general
+whitespace. Diagnostics for unsupported indented syntax now point at the first
+real token, so P02 `let` remains on the generic fallback at `let`. Function
+semantics, call resolution, deterministic sorting, result discard, implicit
+Nil, Legacy parsing, Rings, bytecode, native execution, formatting, and the
+trusted-artifact boundary are unchanged.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

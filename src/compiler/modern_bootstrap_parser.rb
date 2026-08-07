@@ -1393,7 +1393,7 @@ private
   def parse_body
     items = []
     loop do
-      skip_separators
+      skip_body_separators
       break if peek_token.kind == :end
 
       reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
@@ -1654,6 +1654,24 @@ private
 
       next_token
     end
+  end
+
+  def skip_body_separators
+    loop do
+      indented = consume_body_line_indentation
+      reject(peek_token) if indented && peek_token.kind == :semicolon
+      reject_invalid_separator(peek_token)
+      break unless separator?(peek_token)
+
+      next_token
+    end
+  end
+
+  def consume_body_line_indentation
+    return false unless peek_token.kind == :space && peek_token.source_location.column.zero?
+
+    next_token while peek_token.kind == :space
+    true
   end
 
   def separator?(token)
