@@ -1,0 +1,10 @@
+## SOURCE
+def main
+print("abc".length)
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0046_nested_member_result_argument_rejected.dabm:2:11: error: invalid Modern call argument list: expected "," or closing ")" after argument

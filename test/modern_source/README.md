@@ -238,7 +238,7 @@ remains supplementary rather than the sole positive runtime proof.
 Version 0.0.49 adds a closed literal-member body item with strict adjacent
 receiver-dot-member spelling. The only approved capability is zero-argument
 `String#length`; both property `"abc".length` and explicit
-`"abc".length()` spellings discard their result through the existing
+`"abc".length()` spellings initially discarded their result through the
 `INSTCALL RNIL` path. Fixture `0041` locks both spellings in exact assembly and
 executes them before comparing byte-exact native application output. Fixtures
 `0042` through `0045` respectively own the missing callable name, unknown
@@ -251,6 +251,19 @@ parameter receivers, result use, nesting/general expressions, and all later
 rows remain unsupported. Focused RSpec supplements the core fixtures with
 scanner spans, whitespace and suffix matrices, conservative override scanning,
 transactionality, precedence, immutable source parts, and exact lowering.
+
+Version 0.0.50 keeps that source grammar unchanged while giving each approved
+standalone String-literal `length` call immutable Modern-only `Int32` result
+metadata and a deterministic function-owned `INSTCALL Rn` destination. The
+result remains dormant: no source construct can consume it, and the containing
+function still returns implicit Nil. Fixture `0041` now locks both non-`RNIL`
+destinations with unchanged native application output and final `RETURN RNIL`.
+Fixture `0046` keeps `print("abc".length)` rejected at the existing argument-
+separator diagnostic until the separately owned nested-call row. Current UTF-8
+byte-count and host integer narrowing remain implementation truth rather than a
+future grapheme-length promise. Direct calls, bindings, returns, assignment,
+operators, chaining, local or parameter receivers, broader members, and general
+expressions remain unsupported.
 
 ## Diagnostic boundary
 

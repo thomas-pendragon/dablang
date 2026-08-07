@@ -40,9 +40,9 @@ end
                    Fmain:
                                  STACK_RESERVE 0
 /* "abc"        */               LOAD_STRING R0, _DATA + 10, 3
-/* length       */               INSTCALL RNIL, R0, S33
+/* length       */               INSTCALL R3, R0, S33
 /* "xyz"        */               LOAD_STRING R1, _DATA + 14, 3
-/* length       */               INSTCALL RNIL, R1, S33
+/* length       */               INSTCALL R4, R1, S33
 /* "R40 core."  */               LOAD_STRING R2, _DATA + 0, 9
 /* PRINT        */               SYSCALL RNIL, 0, R2
                                  RETURN RNIL
