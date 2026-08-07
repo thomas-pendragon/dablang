@@ -41,7 +41,21 @@ class DabBinReader
     data[:functions].each do |function|
       name = function[:symbol]
       arglist = nil
-      node = DabNodeFunctionStub.new(name, arglist, is_static: function[:static])
+      ring_signature = {
+        arguments: function.fetch(:args).map do |argument|
+          {
+            name: argument.fetch(:symbol).dup.freeze,
+            type: argument.fetch(:klass).dup.freeze,
+          }.freeze
+        end.freeze,
+        return_type: function.fetch(:ret).fetch(:klass).dup.freeze,
+      }.freeze
+      node = DabNodeFunctionStub.new(
+        name,
+        arglist,
+        is_static: function[:static],
+        ring_signature: ring_signature
+      )
       if function[:klass].nil?
         unit.add_function(node)
       else

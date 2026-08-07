@@ -100,10 +100,8 @@ describe 'Modern callable suffix lexical infrastructure' do
     end
   end
 
-  it 'keeps suffix uses outside declaration names on the generic fallback with their prior exact spans' do
+  it 'keeps excluded suffix uses on the generic fallback with their prior exact spans' do
     cases = {
-      'deferred direct question call' => ["def main\nready?()\nend\n", [9, 14]],
-      'deferred direct bang call' => ["def main\nready!()\nend\n", [9, 14]],
       'literal predicate' => ["def main\nnil?\nend\n", [12, 13]],
       'unary bang' => ["def main\n!false\nend\n", [9, 10]],
       'repeated suffix' => ["def main??\nend\n", [9, 10]],

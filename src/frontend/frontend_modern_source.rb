@@ -8,12 +8,13 @@ class DabModernSourceFixture
   SCHEMA_VERSION = 1
   EXTENSION = '.dabmtest'.freeze
   REQUIRED_SECTIONS = ['SOURCE', 'SCHEMA VERSION', 'STATUS'].freeze
-  OPTIONAL_SECTIONS = %w[STDOUT STDERR].freeze
+  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', 'APPLICATION STDOUT'].freeze
   SECTIONS = (REQUIRED_SECTIONS + OPTIONAL_SECTIONS).freeze
 
   class SchemaError < ArgumentError; end
 
-  attr_reader :path, :source, :source_filename, :expected_status, :expected_stdout, :expected_stderr
+  attr_reader :path, :source, :source_filename, :expected_status, :expected_stdout, :expected_stderr,
+              :expected_application_stdout
 
   def self.load(path)
     new(path).tap(&:load!)
@@ -33,6 +34,7 @@ class DabModernSourceFixture
     @expected_status = parse_status(sections.fetch('STATUS'))
     @expected_stdout = sections.fetch('STDOUT', '')
     @expected_stderr = sections.fetch('STDERR', '')
+    @expected_application_stdout = sections['APPLICATION STDOUT']
     self
   rescue Errno::ENOENT, Errno::EACCES => e
     schema_error("fixture is not readable: #{e.message}")
@@ -72,6 +74,11 @@ private
 
       schema_error("#{name} must be omitted when its expected stream is empty")
     end
+
+    return unless sections.key?('APPLICATION STDOUT')
+
+    schema_error('APPLICATION STDOUT requires STATUS 0') unless parse_status(sections.fetch('STATUS')).zero?
+    schema_error('APPLICATION STDOUT requires a STDOUT assembly expectation') unless sections.key?('STDOUT')
   end
 
   def parse_status(text)
@@ -158,6 +165,7 @@ class ModernSourceSpec
     with_harness_action('compare compiler result', "compare exact status/stdout/stderr for #{portable_path(input)}") do
       compare_result(fixture, result)
     end
+    run_application(fixture, result, settings) if fixture.expected_application_stdout
 
     File.binwrite(output_marker, '1')
   end
@@ -178,6 +186,40 @@ private
     compare_field('status', result.status, fixture.expected_status)
     compare_field('stdout', result.stdout, fixture.expected_stdout)
     compare_field('stderr', result.stderr, fixture.expected_stderr)
+  end
+
+  def run_application(fixture, result, settings)
+    ring_base = settings[:stdlib] || Array(settings[:ring_base]).first
+    unless ring_base
+      raise DabModernSourceExpectationError.new(
+        "#{portable_path(input)}: application expectation: lower Ring is required"
+      )
+    end
+
+    assembly_path = temp_file('asm')
+    upper_ring = temp_file('dabcb')
+    application_stdout = temp_file('application.stdout')
+    FileUtils.rm_f(application_stdout)
+
+    with_harness_action('prepare application', "write #{portable_path(assembly_path)}") do
+      File.binwrite(assembly_path, result.stdout)
+    end
+    assemble(assembly_path, upper_ring)
+    execute([ring_base, upper_ring], application_stdout, '--entry=main')
+    with_harness_action(
+      'compare application output',
+      "compare exact application stdout for #{portable_path(input)}"
+    ) do
+      actual = File.binread(application_stdout)
+      next if actual == fixture.expected_application_stdout
+
+      raise DabModernSourceExpectationError.new(
+        "#{portable_path(input)}: application expectation: " \
+        "expected stdout #{fixture.expected_application_stdout.inspect} " \
+        "(#{fixture.expected_application_stdout.bytesize} bytes), " \
+        "got #{actual.inspect} (#{actual.bytesize} bytes)"
+      )
+    end
   end
 
   def compare_field(field, actual, expected)

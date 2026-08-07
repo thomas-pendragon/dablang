@@ -652,7 +652,6 @@ describe 'minimal Modern main bootstrap' do
       'identifier body' => "def main\nvalue\nend\n".b,
       'operator expression' => "def main\n1+2\nend\n".b,
       'spaced operator expression' => "def main\n1 + 2\nend\n".b,
-      'call expression' => "def main\nvalue()\nend\n".b,
       'trailing top-level form' => "def main\nend\nextra\n".b,
       'incomplete identifier' => 'de'.b,
       'incomplete expression or end' => "def main\nen\n".b,

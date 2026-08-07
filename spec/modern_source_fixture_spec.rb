@@ -55,6 +55,7 @@ describe DabModernSourceFixture do
         'SOURCE' => "line one\nline two\n",
         'SCHEMA VERSION' => "1\n",
         'STDOUT' => "first line\nsecond line\n",
+        'APPLICATION STDOUT' => "application output\n",
       }
       fixture = described_class.load(write_fixture(directory, sections: sections))
 
@@ -62,6 +63,7 @@ describe DabModernSourceFixture do
       expect(fixture.expected_status).to eq(0)
       expect(fixture.expected_stdout).to eq("first line\nsecond line\n")
       expect(fixture.expected_stderr).to eq('')
+      expect(fixture.expected_application_stdout).to eq("application output\n")
     end
   end
 
@@ -109,6 +111,11 @@ describe DabModernSourceFixture do
       valid_sections.merge('STATUS' => "256\n") => 'STATUS must be an Integer from 0 through 255',
       valid_sections.merge('STATUS' => "2\n\n") => 'STATUS must be an integer',
       valid_sections.merge('STDOUT' => '') => 'STDOUT must be omitted when its expected stream is empty',
+      valid_sections.merge('APPLICATION STDOUT' => '') =>
+        'APPLICATION STDOUT must be omitted when its expected stream is empty',
+      valid_sections.merge('APPLICATION STDOUT' => "output\n") => 'APPLICATION STDOUT requires STATUS 0',
+      valid_sections.merge('STATUS' => "0\n", 'APPLICATION STDOUT' => "output\n") =>
+        'APPLICATION STDOUT requires a STDOUT assembly expectation',
     }
 
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|
@@ -282,6 +289,52 @@ describe ModernSourceSpec do
         'missing sections: SCHEMA VERSION, STATUS'
       )
       expect(error.string).not_to include('stage: compile Modern source')
+    end
+  end
+
+  it 'assembles and executes fixtures with an application-output contract' do
+    Dir.mktmpdir('dab-modern-source-runner') do |directory|
+      fixture = instance_double(
+        DabModernSourceFixture,
+        source: "def main\nprint(\"output\\n\")\nend\n",
+        source_filename: 'runtime.dabm',
+        expected_status: 0,
+        expected_stdout: "assembly\n",
+        expected_stderr: '',
+        expected_application_stdout: "output\n"
+      )
+      allow(DabModernSourceFixture).to receive(:load).and_return(fixture)
+      compiler = instance_double(DabModernSourceCompiler)
+      allow(DabModernSourceCompiler).to receive(:new).and_return(compiler)
+      allow(compiler).to receive(:compile).and_return(
+        DabModernSourceCompiler::Result.new(status: 0, stdout: "assembly\n", stderr: '')
+      )
+      runner = described_class.new
+      allow(runner).to receive(:assemble) do |_assembly, upper|
+        File.binwrite(upper, 'bytecode')
+      end
+      allow(runner).to receive(:execute) do |_rings, output, _options|
+        File.binwrite(output, "output\n")
+      end
+
+      runner.run_test(
+        {
+          input: File.join(directory, 'runtime.dabmtest'),
+          inputs: [File.join(directory, 'runtime.dabmtest')],
+          test_output_prefix: 'modern_',
+          test_output_dir: directory,
+          stdlib: File.join(directory, 'stdlib.dabcb'),
+        },
+        output: StringIO.new,
+        error: StringIO.new
+      )
+
+      expect(runner).to have_received(:assemble).once
+      expect(runner).to have_received(:execute).with(
+        [File.join(directory, 'stdlib.dabcb'), kind_of(String)],
+        kind_of(String),
+        '--entry=main'
+      ).once
     end
   end
 end

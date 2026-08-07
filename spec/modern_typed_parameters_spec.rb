@@ -174,7 +174,6 @@ describe 'Modern typed parameters and return contracts' do
       'generic' => ["def f(a:Array[String])\nend\n", /unknown Modern type "Array"/],
       'variadic' => ["def f(*a:Int32)\nend\n", /expected a parameter name or closing "\)"/],
       'body reference' => ["def f(a:Int32)\na\nend\n", /parser is not implemented/],
-      'call' => ["def f(a:Int32)\nvalue()\nend\n", /parser is not implemented/],
     }
 
     cases.each do |description, (source, message)|

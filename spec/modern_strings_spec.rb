@@ -556,7 +556,6 @@ describe 'Modern bootstrap String literals' do
       'single quotes' => ["def main\n'a'\nend\n", 9],
       'String operator' => ["def main\n\"a\"+\"b\"\nend\n", 12],
       'String binding' => ["def main\nlet value = \"a\"\nend\n", 9],
-      'String call argument' => ["def main\nprint(\"a\")\nend\n", 9],
       'String return' => ["def main\nreturn \"a\"\nend\n", 9],
     }
 

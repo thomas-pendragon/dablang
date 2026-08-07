@@ -3,8 +3,9 @@
 Files with the exact lowercase `.dabmtest` extension are versioned, single-source
 compiler fixtures owned by the `modern_source_spec` Rake task. Each file contains
 repository-native `## NAME` sections. The canonical order is required source,
-schema version, and status, followed by stdout and stderr only when those exact
-expected streams are nonempty:
+schema version, and status, followed by compiler stdout and stderr only when
+those exact expected streams are nonempty. A successful fixture may then add
+`APPLICATION STDOUT` to opt into assembly and native execution:
 
 ```text
 ## SOURCE
@@ -17,10 +18,12 @@ future Modern source
 compiler diagnostic followed by a literal newline
 ```
 
-`SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT` and
-`STDERR` are optional, but an empty output section is invalid: omit it to expect
-an empty stream. The parser resolves sections by name, so input order does not
-change meaning, while committed fixtures use the canonical order above. The
+`SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT`,
+`STDERR`, and `APPLICATION STDOUT` are optional, but an empty output section is
+invalid: omit it to expect an empty compiler stream or no application run.
+`APPLICATION STDOUT` requires status `0` and a `STDOUT` assembly expectation.
+The parser resolves sections by name, so input order does not change meaning,
+while committed fixtures use the canonical order above. The
 document must start with a section header. Headers are LF-terminated, begin in
 column zero, and use one of the exact uppercase names above; leading or trailing
 header whitespace, alternate spelling, duplicate sections, and unknown sections
@@ -40,9 +43,9 @@ owned line ending.
 
 CRLF used to transport the whole fixture is normalized to LF before section
 parsing, matching the original harness contract. Lone CR bytes remain body data.
-After that transport normalization, source, stdout, and stderr bodies are retained
-exactly, so the same committed fixture has one source and expectation contract on
-Linux, macOS, and Windows.
+After that transport normalization, source, compiler streams, and application
+stdout bodies are retained exactly, so the same committed fixture has one source
+and expectation contract on Linux, macOS, and Windows.
 
 Some exact assembly expectations contain significant trailing spaces and a final
 blank line inherited from compiler stdout. The path-scoped `.gitattributes`
@@ -73,8 +76,11 @@ multiline bodies rather than escaped strings. The negative fixtures
 prove status `2`, empty standard output, exact standard error, stable
 fixture-derived filenames, and the shared-scanner location of the first
 mismatch. The Rake-owned suite supplies the separately compiled Legacy stdlib
-Ring so every fixture reaches the version-0.0.35 bootstrap boundary. This format
-still owns compiler results only; it does not run the assembler or VM.
+Ring so every fixture reaches the version-0.0.35 bootstrap boundary. Compiler
+results remain the default boundary. A fixture with `APPLICATION STDOUT`
+additionally assembles its already-matched compiler output, executes the native
+VM over that Ring, requires successful exit, and compares application output
+byte-for-byte.
 
 Version 0.0.34 adds one multi-artifact exception that this single-source fixture
 schema cannot express: exactly one zero-byte file-backed Modern unit may compile
@@ -207,6 +213,28 @@ bindings, statements, defaults, generics, variadics, keyword invocation,
 inference, overloads, aliases, nominal types, Modern formatting, and new
 bytecode or runtime invocation behavior remain deferred.
 
+Version 0.0.48 adds direct calls as body items without introducing a general
+expression grammar. Calls accept only the existing literal families as
+arguments, use optional ASCII space or TAB around their punctuation, require an
+immediate LF, semicolon, or line-comment body separator, and discard their
+results through the existing `RNIL` path. Fixture `0039` locks the unknown-call
+diagnostic after a complete direct-call parse. Same-document functions support
+forward calls and recursion with exact arity and current assignability checks;
+`print` remains variadic; and free lower-Ring `puts` is accepted only when its
+artifact metadata confirms the exact one-argument `Object` signature. Every
+other builtin, Ring function, class or method, internal syscall, unsafe target,
+and FFI-adjacent target remains unsupported. Focused contracts own the five
+syntax and four semantic diagnostic families, exact spans, transactional
+preflight, suffix targets, existing assembly, and native execution. Nested
+calls, result use, body references, dot/property calls, bindings, statements,
+operators, and all later expression rows remain deferred.
+
+Fixture `0040` supplies the positive core-suite execution contract for this
+row. It calls variadic builtin `print` with one existing String literal, retains
+the exact compiler assembly expectation, and opts into the normal harness's
+successful native application-output comparison. The detailed RSpec coverage
+remains supplementary rather than the sole positive runtime proof.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
@@ -280,11 +308,11 @@ source and compiler streams are byte-exact and its schema is closed.
 
 `Rakefile` discovers exact lowercase `test/modern_source/*.dabmtest` files
 through the existing `setup_tests` owner. It supplies the separately compiled
-Legacy stdlib Ring, creates `modern_source_spec` and its reverse task, portable
-output names under `tmp/`, one completion marker per fixture, and the established
-concise reporter boundary. The suite has one
+Legacy stdlib Ring and native VM, creates `modern_source_spec` and its reverse
+task, portable output names under `tmp/`, one completion marker per fixture, and
+the established concise reporter boundary. The suite has one
 active entry in `config/test_suites.json` and one dependency from the default
 Rake task. Therefore the inherited Rake stage, every effective normal CI job,
 and the complete gate reach it exactly once. It is not added to the separate
-sanitizer tasks because it is a Ruby compiler-fixture contract, not a native
-runtime safety claim.
+sanitizer tasks because its optional native execution is a language-result
+contract over trusted generated artifacts, not a malformed-input safety claim.
