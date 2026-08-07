@@ -1,0 +1,9 @@
+## SOURCE
+  def main()
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0058_top_level_indentation.dabm:1:0: error: unsupported Dab syntax profile "modern": parser is not implemented

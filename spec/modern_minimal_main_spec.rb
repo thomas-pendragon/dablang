@@ -76,7 +76,7 @@ describe 'minimal Modern main bootstrap' do
   let(:separator_near_misses) do
     {
       'newline inside the declaration header' => ["def\nmain\nend\n".b, {offset: 3, line: 2, column: 0}],
-      'space-only body line' => ["def main\n \nend\n".b, {offset: 9, line: 2, column: 0}],
+      'TAB-only body line' => ["def main\n\t\nend\n".b, {offset: 9, line: 2, column: 0}],
       'body content after separators' => ["def main\n\nvalue\nend\n".b, {offset: 10, line: 3, column: 0}],
       'CRLF separators' => ["def main\r\nend\r\n".b, {offset: 8, line: 1, column: 8}],
     }
