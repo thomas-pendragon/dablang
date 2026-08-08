@@ -1674,7 +1674,7 @@ private
       if contextual_var_start?(local_kinds)
         binding = parse_mutable_local_binding
         items << binding
-        local_kinds[binding.name] ||= :var
+        local_kinds[binding.name] = :var
         next
       end
 

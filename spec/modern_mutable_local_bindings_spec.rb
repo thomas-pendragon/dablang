@@ -194,6 +194,23 @@ describe 'Modern mutable local bindings' do
       }
     end
 
+    let_then_var_then_write = <<~DAB
+      def main()
+      let value = 1
+      var value = 2
+      value = 3
+      end
+    DAB
+    expect do
+      parse(let_then_var_then_write)
+    end.to raise_error(DabModernBootstrapParseError) { |error|
+      expect(error.message).to eq('duplicate Modern local binding "value"')
+      declaration = let_then_var_then_write.index('value', let_then_var_then_write.index('var value'))
+      expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+        [declaration, declaration + 5]
+      )
+    }
+
     parameter = "def main(value:String)\nvar value = \"local\"\nend\n"
     expect do
       parse(parameter)
