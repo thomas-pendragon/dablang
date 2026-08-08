@@ -89,8 +89,12 @@ describe DabModernSourceFixture do
       0071_p02_bind_and_print_local.dabmtest
       0072_mutable_local_reassignment.dabmtest
     ]
-    paths = Dir[File.expand_path('../test/modern_source/*.dabmtest', __dir__)].select do |path|
-      File.binread(path).include?("## EXPECTED APPLICATION STDOUT\n")
+    fixture_directory = File.expand_path('../test/modern_source', __dir__)
+    paths = Dir.children(fixture_directory).filter_map do |basename|
+      next unless basename.end_with?('.dabmtest')
+
+      path = File.join(fixture_directory, basename)
+      path if File.binread(path).include?("## EXPECTED APPLICATION STDOUT\n")
     end.sort
 
     expect(paths.map { |path| File.basename(path) }).to eq(expected_basenames)
