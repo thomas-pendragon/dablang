@@ -252,7 +252,6 @@ describe 'Modern fixed local bindings' do
     end
 
     generic_cases = {
-      'var' => ["def main()\nvar value = nil\nend\n", 'var'],
       'reassignment' => ["def main()\nlet value = nil\nvalue = true\nend\n", 'value'],
       'annotation' => ["def main()\nlet value : String = \"x\"\nend\n", ':'],
       'nonliteral initializer' => ["def main()\nlet value = other\nend\n", 'other'],

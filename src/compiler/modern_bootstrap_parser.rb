@@ -160,6 +160,14 @@ end
 module DabModernBootstrapLiterals
 module_function
 
+  FLOW_TYPE_NAMES = {
+    nil: 'NilClass',
+    boolean_true: 'Boolean',
+    boolean_false: 'Boolean',
+    integer: 'Fixnum',
+    string: 'String',
+  }.freeze
+
   def lower(token)
     node = case token.kind
            when :nil then DabNodeLiteralNil.new
@@ -175,6 +183,10 @@ module_function
 
   def type(token)
     lower(token).my_type
+  end
+
+  def flow_type(token)
+    DabType.parse(FLOW_TYPE_NAMES.fetch(token.kind))
   end
 end
 
@@ -209,6 +221,77 @@ class DabModernBootstrapLocalBinding
   def lower
     value = DabModernBootstrapLiterals.lower(initializer_token)
     DabNodeDefineLocalVar.new(name_token.source_string, value).tap do |node|
+      node.add_source_parts(*source_tokens.map(&:source_string))
+    end
+  end
+end
+
+class DabModernBootstrapMutableLocalBinding
+  attr_reader :var_token, :name_token, :equal_token, :initializer_token, :source_tokens, :source_span
+
+  def initialize(var_token:, name_token:, equal_token:, initializer_token:, source_tokens:)
+    @var_token = var_token
+    @name_token = name_token
+    @equal_token = equal_token
+    @initializer_token = initializer_token
+    @source_tokens = source_tokens.freeze
+    @source_span = DabSourceSpan.new(
+      start_location: var_token.source_span.start_location,
+      end_location: initializer_token.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :var_binding
+  end
+
+  def name
+    name_token.text
+  end
+
+  def initializer_type
+    DabModernBootstrapLiterals.flow_type(initializer_token)
+  end
+
+  def lower
+    value = DabModernBootstrapLiterals.lower(initializer_token)
+    DabNodeDefineLocalVar.new(name_token.source_string, value).tap do |node|
+      node.add_source_parts(*source_tokens.map(&:source_string))
+    end
+  end
+end
+
+class DabModernBootstrapLocalReassignment
+  attr_reader :name_token, :equal_token, :value_token, :source_tokens, :source_span
+
+  def initialize(name_token:, equal_token:, value_token:, source_tokens:)
+    @name_token = name_token
+    @equal_token = equal_token
+    @value_token = value_token
+    @source_tokens = source_tokens.freeze
+    @source_span = DabSourceSpan.new(
+      start_location: name_token.source_span.start_location,
+      end_location: value_token.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :var_reassignment
+  end
+
+  def name
+    name_token.text
+  end
+
+  def initializer_type
+    DabModernBootstrapLiterals.flow_type(value_token)
+  end
+
+  def lower
+    value = DabModernBootstrapLiterals.lower(value_token)
+    DabNodeSetLocalVar.new(name_token.source_string, value).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
   end
@@ -902,7 +985,9 @@ private
     if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
       return body_item.lower
     end
-    if body_item.is_a?(DabModernBootstrapLocalBinding)
+    if body_item.is_a?(DabModernBootstrapLocalBinding) ||
+       body_item.is_a?(DabModernBootstrapMutableLocalBinding) ||
+       body_item.is_a?(DabModernBootstrapLocalReassignment)
       return body_item.lower
     end
 
@@ -955,9 +1040,19 @@ private
       bindings = {}
       declaration.body_items.each do |body_item|
         case body_item
-        when DabModernBootstrapLocalBinding
+        when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
           preflight_local_binding!(body_item, bindings, parameter_names)
-          bindings[body_item.name] = body_item
+          bindings[body_item.name] = {
+            declaration: body_item,
+            latest_write: body_item,
+          }
+        when DabModernBootstrapLocalReassignment
+          binding = bindings[body_item.name]
+          unless binding && binding.fetch(:declaration).is_a?(DabModernBootstrapMutableLocalBinding)
+            raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
+          end
+
+          binding[:latest_write] = body_item
         when DabModernBootstrapDirectCall
           body_item.arguments.each do |argument|
             next unless argument.is_a?(DabModernBootstrapLocalReference)
@@ -967,7 +1062,7 @@ private
               raise DabModernBootstrapParseError.new(source_span: argument.source_span)
             end
 
-            bindings_by_reference[argument] = binding
+            bindings_by_reference[argument] = binding.fetch(:latest_write)
           end
         end
       end
@@ -1259,6 +1354,20 @@ class DabModernBootstrapParser
     'invalid Modern let binding: expected a literal initializer after "="'.freeze
   EXPECT_LET_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after let binding'.freeze
+  EXPECT_VAR_SPACE_MESSAGE =
+    'invalid Modern var binding: expected one ASCII space after "var"'.freeze
+  EXPECT_VAR_NAME_MESSAGE =
+    'invalid Modern var binding: expected a binding name after "var "'.freeze
+  EXPECT_VAR_EQUAL_MESSAGE =
+    'invalid Modern var binding: expected "=" after binding name'.freeze
+  EXPECT_VAR_INITIALIZER_MESSAGE =
+    'invalid Modern var binding: expected a literal initializer after "="'.freeze
+  EXPECT_VAR_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after var binding'.freeze
+  EXPECT_REASSIGNMENT_VALUE_MESSAGE =
+    'invalid Modern local reassignment: expected a literal value after "="'.freeze
+  EXPECT_REASSIGNMENT_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after local reassignment'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -1532,6 +1641,7 @@ private
 
   def parse_body
     items = []
+    local_kinds = {}
     loop do
       skip_body_separators
       break if peek_token.kind == :end
@@ -1549,8 +1659,22 @@ private
         next
       end
 
+      if local_reassignment_start?(local_kinds)
+        items << parse_local_reassignment
+        next
+      end
+
       if contextual_let_start?
-        items << parse_local_binding
+        binding = parse_local_binding
+        items << binding
+        local_kinds[binding.name] ||= :let
+        next
+      end
+
+      if contextual_var_start?(local_kinds)
+        binding = parse_mutable_local_binding
+        items << binding
+        local_kinds[binding.name] = :var
         next
       end
 
@@ -1584,6 +1708,37 @@ private
   def contextual_let_start?
     token = peek_token
     token.kind == :identifier && token.text == 'let'
+  end
+
+  def contextual_var_start?(local_kinds)
+    token = peek_token
+    return false unless token.kind == :identifier && token.text == 'var'
+    return true unless local_kinds.key?('var')
+
+    token_after_name_horizontal_whitespace.kind != :equal
+  end
+
+  def local_reassignment_start?(local_kinds)
+    name_token = peek_token
+    return false unless name_token.kind == :identifier && local_kinds[name_token.text] == :var
+
+    equal_distance = distance_after_horizontal_whitespace(1)
+    return false unless peek_token(equal_distance).kind == :equal
+
+    value_distance = distance_after_horizontal_whitespace(equal_distance + 1)
+    value_token = peek_token(value_distance)
+    return true unless value_token.kind == :equal
+
+    peek_token(equal_distance).source_span.end_offset != value_token.source_span.start_offset
+  end
+
+  def token_after_name_horizontal_whitespace
+    peek_token(distance_after_horizontal_whitespace(1))
+  end
+
+  def distance_after_horizontal_whitespace(distance)
+    distance += 1 while horizontal_whitespace?(peek_token(distance))
+    distance
   end
 
   def parse_local_binding
@@ -1632,6 +1787,85 @@ private
       name_token: name_token,
       equal_token: equal_token,
       initializer_token: initializer_token,
+      source_tokens: source_tokens
+    )
+  end
+
+  def parse_mutable_local_binding
+    source_tokens = []
+    var_token = next_token
+    source_tokens << var_token
+
+    space_token = next_token
+    reject(space_token, EXPECT_VAR_SPACE_MESSAGE) unless space_token.kind == :space
+    source_tokens << space_token
+
+    name_token = next_token
+    reject_invalid_separator(name_token)
+    reject(name_token, EXPECT_VAR_NAME_MESSAGE) unless name_token.kind == :identifier
+    source_tokens << name_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    equal_token = next_token
+    reject_invalid_separator(equal_token)
+    unless equal_token.kind == :equal
+      if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
+        reject(equal_token, EXPECT_VAR_EQUAL_MESSAGE)
+      end
+      reject(equal_token)
+    end
+    source_tokens << equal_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    initializer_token = next_token
+    reject_invalid_separator(initializer_token)
+    reject(initializer_token, initializer_token.diagnostic_message) if initializer_token.diagnostic_message
+    unless LITERAL_KINDS.include?(initializer_token.kind)
+      if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
+        reject(initializer_token, EXPECT_VAR_INITIALIZER_MESSAGE)
+      end
+      reject(initializer_token)
+    end
+    reject_integer_overflow(initializer_token)
+    source_tokens << initializer_token
+
+    expect_local_body_separator(EXPECT_VAR_SEPARATOR_MESSAGE)
+    DabModernBootstrapMutableLocalBinding.new(
+      var_token: var_token,
+      name_token: name_token,
+      equal_token: equal_token,
+      initializer_token: initializer_token,
+      source_tokens: source_tokens
+    )
+  end
+
+  def parse_local_reassignment
+    source_tokens = []
+    name_token = next_token
+    source_tokens << name_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    equal_token = expect(:equal)
+    source_tokens << equal_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    value_token = next_token
+    reject_invalid_separator(value_token)
+    reject(value_token, value_token.diagnostic_message) if value_token.diagnostic_message
+    unless LITERAL_KINDS.include?(value_token.kind)
+      if %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
+        reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
+      end
+      reject(value_token)
+    end
+    reject_integer_overflow(value_token)
+    source_tokens << value_token
+
+    expect_local_body_separator(EXPECT_REASSIGNMENT_SEPARATOR_MESSAGE)
+    DabModernBootstrapLocalReassignment.new(
+      name_token: name_token,
+      equal_token: equal_token,
+      value_token: value_token,
       source_tokens: source_tokens
     )
   end
@@ -1873,6 +2107,25 @@ private
     end
     if %i[eof end nil boolean_true boolean_false integer string].include?(token.kind)
       reject(token, EXPECT_LET_SEPARATOR_MESSAGE)
+    end
+
+    reject(token)
+  end
+
+  def expect_local_body_separator(message)
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    if token.kind == :space
+      reject_invalid_separator_after_spaces(token)
+      following = token_after_spaces
+      if separator?(following) || %i[eof end carriage_return].include?(following.kind)
+        reject(token, message)
+      end
+    end
+    if %i[eof end nil boolean_true boolean_false integer string].include?(token.kind)
+      reject(token, message)
     end
 
     reject(token)

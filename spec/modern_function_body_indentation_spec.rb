@@ -122,13 +122,13 @@ describe 'Modern function-body indentation' do
       }
     end
 
-    source = "def main()\n  var value = nil\nend\n"
+    source = "def main()\n  return nil\nend\n"
     expect do
       parse(source)
     end.to raise_error(DabModernBootstrapParseError) { |error|
       expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE)
       expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
-        [source.index('var'), source.index('var') + 3]
+        [source.index('return'), source.index('return') + 6]
       )
     }
   end
