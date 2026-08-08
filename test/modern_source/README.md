@@ -390,7 +390,17 @@ The implementation adds no opcode, bytecode field, assembler, VM, Ring, FFI,
 native, formatter, disassembler, or trust-boundary behavior. Typed locals,
 local/member/call right-hand values, standalone local reads, receivers,
 general expressions and operators, control flow, explicit returns, classes,
-fields, and P03 remain deferred.
+fields, and later rows remain deferred.
+
+Version 0.0.57 completes executable ladder P03 without expanding the 0.0.56
+mutable-local contract. Fixture `0073` locks the exact canonical source that
+binds `"first\n"` to a mutable `message`, reassigns `"second\n"`, and prints
+the final local value. The normal Modern harness requires the byte-exact
+established assembly, including existing dead-value elimination of the
+overwritten first literal, and native application stdout `second\n`. This is an
+integration and release-version contract only: syntax, diagnostics, lowering,
+transaction order, artifacts, VM behavior, and every deferred local and
+expression form remain unchanged.
 
 ## Diagnostic boundary
 
