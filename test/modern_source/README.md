@@ -340,6 +340,14 @@ calls, assignment, annotations, `var`, operators, control flow, and return
 values remain unsupported. The canonical P02 program is intentionally not a
 0.0.54 fixture: P02 remains the separate 0.0.55 executable ladder row.
 
+Version 0.0.55 completes executable ladder P02 without expanding the 0.0.54
+fixed-local contract. Fixture `0071` locks the exact canonical source that
+binds `"hello\n"` to `message` and prints that local. The normal Modern harness
+requires the byte-exact established assembly and native application stdout
+`hello\n`. This is an integration and release-version contract only: syntax,
+diagnostics, lowering, transaction order, artifacts, VM behavior, and all
+deferred local and expression forms remain unchanged.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
