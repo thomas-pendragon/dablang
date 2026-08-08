@@ -304,7 +304,6 @@ describe 'Modern mutable local bindings' do
       'call RHS' => ["def main()\nvar value = nil\nvalue = make()\nend\n", 'make'],
       'equality' => ["def main()\nvar value = nil\nvalue == true\nend\n", 'value'],
       'member RHS' => ["def main()\nvar value = nil\nvalue = \"x\".length\nend\n", '.'],
-      'typed var' => ["def main()\nvar value : String = \"x\"\nend\n", ':'],
       'standalone read' => ["def main()\nvar value = nil\nvalue\nend\n", 'value'],
       'local receiver' => ["def main()\nvar value = \"x\"\nvalue.length\nend\n", 'value'],
       'nested local call' => ["def main()\nvar value = \"x\"\nprint(value())\nend\n", 'value'],

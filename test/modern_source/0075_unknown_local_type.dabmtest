@@ -1,0 +1,10 @@
+## SOURCE
+def main()
+let value : Object = nil
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0075_unknown_local_type.dabm:2:12: error: unknown Modern type "Object"; supported types are String, Fixnum, Boolean, Uint8, Uint16, Uint32, Uint64, Int8, Int16, Int32, Int64, IntPtr, NilClass, and Float

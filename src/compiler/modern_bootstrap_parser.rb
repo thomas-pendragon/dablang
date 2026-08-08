@@ -1,5 +1,6 @@
 require_relative '../shared/parser'
 require_relative 'modern_string_escapes'
+require_relative 'parts/types'
 
 class DabModernBootstrapParseError < DabUnsupportedSyntaxProfileError
   GENERIC_MESSAGE = 'unsupported Dab syntax profile "modern": parser is not implemented'.freeze
@@ -191,11 +192,12 @@ module_function
 end
 
 class DabModernBootstrapLocalBinding
-  attr_reader :let_token, :name_token, :equal_token, :initializer_token, :source_tokens, :source_span
+  attr_reader :let_token, :name_token, :type_name, :equal_token, :initializer_token, :source_tokens, :source_span
 
-  def initialize(let_token:, name_token:, equal_token:, initializer_token:, source_tokens:)
+  def initialize(let_token:, name_token:, type_name:, equal_token:, initializer_token:, source_tokens:)
     @let_token = let_token
     @name_token = name_token
+    @type_name = type_name
     @equal_token = equal_token
     @initializer_token = initializer_token
     @source_tokens = source_tokens.freeze
@@ -215,23 +217,32 @@ class DabModernBootstrapLocalBinding
   end
 
   def initializer_type
-    DabModernBootstrapLiterals.type(initializer_token)
+    DabModernBootstrapLiterals.flow_type(initializer_token)
+  end
+
+  def annotated?
+    !type_name.nil?
+  end
+
+  def declared_type
+    DabType.parse(type_name.text) if annotated?
   end
 
   def lower
     value = DabModernBootstrapLiterals.lower(initializer_token)
-    DabNodeDefineLocalVar.new(name_token.source_string, value).tap do |node|
+    DabNodeDefineLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
   end
 end
 
 class DabModernBootstrapMutableLocalBinding
-  attr_reader :var_token, :name_token, :equal_token, :initializer_token, :source_tokens, :source_span
+  attr_reader :var_token, :name_token, :type_name, :equal_token, :initializer_token, :source_tokens, :source_span
 
-  def initialize(var_token:, name_token:, equal_token:, initializer_token:, source_tokens:)
+  def initialize(var_token:, name_token:, type_name:, equal_token:, initializer_token:, source_tokens:)
     @var_token = var_token
     @name_token = name_token
+    @type_name = type_name
     @equal_token = equal_token
     @initializer_token = initializer_token
     @source_tokens = source_tokens.freeze
@@ -254,19 +265,28 @@ class DabModernBootstrapMutableLocalBinding
     DabModernBootstrapLiterals.flow_type(initializer_token)
   end
 
+  def annotated?
+    !type_name.nil?
+  end
+
+  def declared_type
+    DabType.parse(type_name.text) if annotated?
+  end
+
   def lower
     value = DabModernBootstrapLiterals.lower(initializer_token)
-    DabNodeDefineLocalVar.new(name_token.source_string, value).tap do |node|
+    DabNodeDefineLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
   end
 end
 
 class DabModernBootstrapLocalReassignment
-  attr_reader :name_token, :equal_token, :value_token, :source_tokens, :source_span
+  attr_reader :name_token, :type_name, :equal_token, :value_token, :source_tokens, :source_span
 
-  def initialize(name_token:, equal_token:, value_token:, source_tokens:)
+  def initialize(name_token:, type_name:, equal_token:, value_token:, source_tokens:)
     @name_token = name_token
+    @type_name = type_name
     @equal_token = equal_token
     @value_token = value_token
     @source_tokens = source_tokens.freeze
@@ -291,7 +311,7 @@ class DabModernBootstrapLocalReassignment
 
   def lower
     value = DabModernBootstrapLiterals.lower(value_token)
-    DabNodeSetLocalVar.new(name_token.source_string, value).tap do |node|
+    DabNodeSetLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
   end
@@ -1042,6 +1062,7 @@ private
         case body_item
         when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
           preflight_local_binding!(body_item, bindings, parameter_names)
+          preflight_typed_local_initializer!(body_item)
           bindings[body_item.name] = {
             declaration: body_item,
             latest_write: body_item,
@@ -1052,6 +1073,7 @@ private
             raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
           end
 
+          preflight_typed_local_write!(body_item, binding.fetch(:declaration))
           binding[:latest_write] = body_item
         when DabModernBootstrapDirectCall
           body_item.arguments.each do |argument|
@@ -1062,7 +1084,12 @@ private
               raise DabModernBootstrapParseError.new(source_span: argument.source_span)
             end
 
-            bindings_by_reference[argument] = binding.fetch(:latest_write)
+            declaration = binding.fetch(:declaration)
+            bindings_by_reference[argument] = if declaration.annotated?
+                                                declaration.declared_type
+                                              else
+                                                binding.fetch(:latest_write).initializer_type
+                                              end
           end
         end
       end
@@ -1082,6 +1109,34 @@ private
     raise DabModernBootstrapParseError.new(
       %(Modern local binding "#{binding.name}" conflicts with parameter "#{binding.name}"),
       source_span: binding.name_token.source_span
+    )
+  end
+
+  def preflight_typed_local_initializer!(binding)
+    return unless binding.annotated?
+
+    declared_type = binding.declared_type
+    actual_type = binding.initializer_type
+    return if declared_type.can_assign_from?(actual_type)
+
+    raise DabModernBootstrapParseError.new(
+      "cannot initialize Modern local \"#{binding.name}\" of type #{declared_type.type_string} " \
+      "with literal of type #{actual_type.type_string}",
+      source_span: binding.initializer_token.source_span
+    )
+  end
+
+  def preflight_typed_local_write!(write, declaration)
+    return unless declaration.annotated?
+
+    declared_type = declaration.declared_type
+    actual_type = write.initializer_type
+    return if declared_type.can_assign_from?(actual_type)
+
+    raise DabModernBootstrapParseError.new(
+      "cannot assign Modern literal of type #{actual_type.type_string} to local " \
+      "\"#{write.name}\" of type #{declared_type.type_string}",
+      source_span: write.value_token.source_span
     )
   end
 
@@ -1179,7 +1234,7 @@ private
 
   def argument_type(argument)
     if argument.is_a?(DabModernBootstrapLocalReference)
-      return @bindings_by_reference.fetch(argument).initializer_type
+      return @bindings_by_reference.fetch(argument)
     end
 
     DabModernBootstrapLiterals.type(argument)
@@ -1350,6 +1405,10 @@ class DabModernBootstrapParser
     'invalid Modern let binding: expected a binding name after "let "'.freeze
   EXPECT_LET_EQUAL_MESSAGE =
     'invalid Modern let binding: expected "=" after binding name'.freeze
+  EXPECT_LOCAL_TYPE_MESSAGE =
+    'invalid Modern local type annotation: expected a supported type name after ":"'.freeze
+  EXPECT_TYPED_LET_EQUAL_MESSAGE =
+    'invalid Modern let binding: expected "=" after local type annotation'.freeze
   EXPECT_LET_INITIALIZER_MESSAGE =
     'invalid Modern let binding: expected a literal initializer after "="'.freeze
   EXPECT_LET_SEPARATOR_MESSAGE =
@@ -1360,6 +1419,8 @@ class DabModernBootstrapParser
     'invalid Modern var binding: expected a binding name after "var "'.freeze
   EXPECT_VAR_EQUAL_MESSAGE =
     'invalid Modern var binding: expected "=" after binding name'.freeze
+  EXPECT_TYPED_VAR_EQUAL_MESSAGE =
+    'invalid Modern var binding: expected "=" after local type annotation'.freeze
   EXPECT_VAR_INITIALIZER_MESSAGE =
     'invalid Modern var binding: expected a literal initializer after "="'.freeze
   EXPECT_VAR_SEPARATOR_MESSAGE =
@@ -1641,7 +1702,7 @@ private
 
   def parse_body
     items = []
-    local_kinds = {}
+    local_bindings = {}
     loop do
       skip_body_separators
       break if peek_token.kind == :end
@@ -1659,22 +1720,22 @@ private
         next
       end
 
-      if local_reassignment_start?(local_kinds)
-        items << parse_local_reassignment
+      if local_reassignment_start?(local_bindings)
+        items << parse_local_reassignment(local_bindings.fetch(peek_token.text))
         next
       end
 
       if contextual_let_start?
         binding = parse_local_binding
         items << binding
-        local_kinds[binding.name] ||= :let
+        local_bindings[binding.name] ||= binding
         next
       end
 
-      if contextual_var_start?(local_kinds)
+      if contextual_var_start?(local_bindings)
         binding = parse_mutable_local_binding
         items << binding
-        local_kinds[binding.name] = :var
+        local_bindings[binding.name] = binding
         next
       end
 
@@ -1710,17 +1771,18 @@ private
     token.kind == :identifier && token.text == 'let'
   end
 
-  def contextual_var_start?(local_kinds)
+  def contextual_var_start?(local_bindings)
     token = peek_token
     return false unless token.kind == :identifier && token.text == 'var'
-    return true unless local_kinds.key?('var')
+    return true unless local_bindings.key?('var')
 
     token_after_name_horizontal_whitespace.kind != :equal
   end
 
-  def local_reassignment_start?(local_kinds)
+  def local_reassignment_start?(local_bindings)
     name_token = peek_token
-    return false unless name_token.kind == :identifier && local_kinds[name_token.text] == :var
+    return false unless name_token.kind == :identifier
+    return false unless local_bindings[name_token.text].is_a?(DabModernBootstrapMutableLocalBinding)
 
     equal_distance = distance_after_horizontal_whitespace(1)
     return false unless peek_token(equal_distance).kind == :equal
@@ -1756,9 +1818,12 @@ private
     source_tokens << name_token
     source_tokens.concat(consume_horizontal_whitespace)
 
+    type_name = parse_local_type_annotation(source_tokens)
+
     equal_token = next_token
     reject_invalid_separator(equal_token)
     unless equal_token.kind == :equal
+      reject(equal_token, EXPECT_TYPED_LET_EQUAL_MESSAGE) if type_name
       if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
         reject(equal_token, EXPECT_LET_EQUAL_MESSAGE)
       end
@@ -1785,6 +1850,7 @@ private
     DabModernBootstrapLocalBinding.new(
       let_token: let_token,
       name_token: name_token,
+      type_name: type_name,
       equal_token: equal_token,
       initializer_token: initializer_token,
       source_tokens: source_tokens
@@ -1806,9 +1872,12 @@ private
     source_tokens << name_token
     source_tokens.concat(consume_horizontal_whitespace)
 
+    type_name = parse_local_type_annotation(source_tokens)
+
     equal_token = next_token
     reject_invalid_separator(equal_token)
     unless equal_token.kind == :equal
+      reject(equal_token, EXPECT_TYPED_VAR_EQUAL_MESSAGE) if type_name
       if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
         reject(equal_token, EXPECT_VAR_EQUAL_MESSAGE)
       end
@@ -1833,13 +1902,25 @@ private
     DabModernBootstrapMutableLocalBinding.new(
       var_token: var_token,
       name_token: name_token,
+      type_name: type_name,
       equal_token: equal_token,
       initializer_token: initializer_token,
       source_tokens: source_tokens
     )
   end
 
-  def parse_local_reassignment
+  def parse_local_type_annotation(source_tokens)
+    return unless peek_token.kind == :colon
+
+    source_tokens << next_token
+    source_tokens.concat(consume_horizontal_whitespace)
+    type_name = parse_type_name(EXPECT_LOCAL_TYPE_MESSAGE)
+    source_tokens << type_name.token
+    source_tokens.concat(consume_horizontal_whitespace)
+    type_name
+  end
+
+  def parse_local_reassignment(binding)
     source_tokens = []
     name_token = next_token
     source_tokens << name_token
@@ -1864,6 +1945,7 @@ private
     expect_local_body_separator(EXPECT_REASSIGNMENT_SEPARATOR_MESSAGE)
     DabModernBootstrapLocalReassignment.new(
       name_token: name_token,
+      type_name: binding.type_name,
       equal_token: equal_token,
       value_token: value_token,
       source_tokens: source_tokens
