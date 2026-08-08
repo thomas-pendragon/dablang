@@ -348,6 +348,38 @@ requires the byte-exact established assembly and native application stdout
 diagnostics, lowering, transaction order, artifacts, VM behavior, and all
 deferred local and expression forms remain unchanged.
 
+Version 0.0.56 adds contextual mutable local bindings as body items. The exact
+declaration form is `var`, one ASCII space, a current base identifier, optional
+ASCII space or TAB, `=`, optional ASCII space or TAB, and one existing Nil,
+Boolean, integer, or String literal. `var` remains an ordinary callable name,
+so `def var()` and `var()` retain direct-call precedence. A later write is only
+an earlier mutable-local name, optional horizontal whitespace, `=`, optional
+horizontal whitespace, and one existing literal. Both forms require the
+existing immediate LF, semicolon, or line-comment separator.
+
+Mutable locals use the 0.0.54 declaration-point scope and uniform duplicate and
+parameter-collision rules. A write may change literal type; only the latest
+preceding literal supplies bounded flow information to an existing
+same-document call. Reads remain limited to direct-call arguments, and a
+local-bearing `print` remains exactly unary. Unknown and read-before targets,
+fixed-`let` assignment, equality, nonliteral right-hand values, and every
+broader expression form remain rejected at their established generic boundary.
+
+Fixture `0065` is accepted mutable-declaration evidence, while fixture `0066`
+continues to lock the generic fixed-`let` reassignment rejection. Fixture
+`0072` is the primary sequential contract: it prints `first\n`, writes a second
+String literal, prints `second\n`, and locks deterministic source-order loads,
+unary prints, implicit Nil return, and native output. Focused RSpec owns
+contextual-name compatibility, every literal kind and type change, latest-write
+flow, scope and collisions, exact diagnostics and spans, transaction ordering,
+immutable source parts, and existing SSA reuse.
+
+The implementation adds no opcode, bytecode field, assembler, VM, Ring, FFI,
+native, formatter, disassembler, or trust-boundary behavior. Typed locals,
+local/member/call right-hand values, standalone local reads, receivers,
+general expressions and operators, control flow, explicit returns, classes,
+fields, and P03 remain deferred.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
