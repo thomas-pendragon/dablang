@@ -7,8 +7,9 @@ $autorun = true if $autorun.nil?
 class DabModernSourceFixture
   SCHEMA_VERSION = 1
   EXTENSION = '.dabmtest'.freeze
+  EXPECTED_APPLICATION_STDOUT_SECTION = 'EXPECTED APPLICATION STDOUT'.freeze
   REQUIRED_SECTIONS = ['SOURCE', 'SCHEMA VERSION', 'STATUS'].freeze
-  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', 'APPLICATION STDOUT'].freeze
+  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', EXPECTED_APPLICATION_STDOUT_SECTION].freeze
   SECTIONS = (REQUIRED_SECTIONS + OPTIONAL_SECTIONS).freeze
 
   class SchemaError < ArgumentError; end
@@ -34,7 +35,7 @@ class DabModernSourceFixture
     @expected_status = parse_status(sections.fetch('STATUS'))
     @expected_stdout = sections.fetch('STDOUT', '')
     @expected_stderr = sections.fetch('STDERR', '')
-    @expected_application_stdout = sections['APPLICATION STDOUT']
+    @expected_application_stdout = decode_application_stdout_expectation(sections)
     self
   rescue Errno::ENOENT, Errno::EACCES => e
     schema_error("fixture is not readable: #{e.message}")
@@ -63,6 +64,7 @@ private
     unknown = sections.keys - SECTIONS
     schema_error("missing sections: #{missing.join(', ')}") unless missing.empty?
     schema_error("unsupported section: #{unknown.join(', ')}") unless unknown.empty?
+    validate_application_stdout_order!(sections)
 
     schema_version = parse_integer('SCHEMA VERSION', sections.fetch('SCHEMA VERSION'))
     unless schema_version == SCHEMA_VERSION
@@ -70,15 +72,49 @@ private
     end
 
     OPTIONAL_SECTIONS.each do |name|
-      next unless sections.key?(name) && sections.fetch(name).empty?
+      next unless sections.key?(name)
+
+      body = if name == EXPECTED_APPLICATION_STDOUT_SECTION
+               parse_expected_application_stdout(sections.fetch(name))
+             else
+               sections.fetch(name)
+             end
+      next unless body.empty?
 
       schema_error("#{name} must be omitted when its expected stream is empty")
     end
 
-    return unless sections.key?('APPLICATION STDOUT')
+    return unless sections.key?(EXPECTED_APPLICATION_STDOUT_SECTION)
 
-    schema_error('APPLICATION STDOUT requires STATUS 0') unless parse_status(sections.fetch('STATUS')).zero?
-    schema_error('APPLICATION STDOUT requires a STDOUT assembly expectation') unless sections.key?('STDOUT')
+    unless parse_status(sections.fetch('STATUS')).zero?
+      schema_error("#{EXPECTED_APPLICATION_STDOUT_SECTION} requires STATUS 0")
+    end
+    unless sections.key?('STDOUT')
+      schema_error("#{EXPECTED_APPLICATION_STDOUT_SECTION} requires a STDOUT assembly expectation")
+    end
+  end
+
+  def validate_application_stdout_order!(sections)
+    output_index = sections.keys.index(EXPECTED_APPLICATION_STDOUT_SECTION)
+    return unless output_index
+    return if output_index == sections.keys.index('SOURCE') + 1
+
+    schema_error("#{EXPECTED_APPLICATION_STDOUT_SECTION} must immediately follow SOURCE")
+  end
+
+  def decode_application_stdout_expectation(sections)
+    encoded = sections[EXPECTED_APPLICATION_STDOUT_SECTION]
+    encoded && parse_expected_application_stdout(encoded)
+  end
+
+  def parse_expected_application_stdout(text)
+    return text if text.empty?
+
+    unless text.end_with?("\n")
+      schema_error("#{EXPECTED_APPLICATION_STDOUT_SECTION} must end with its section-separator LF")
+    end
+
+    text.delete_suffix("\n")
   end
 
   def parse_status(text)

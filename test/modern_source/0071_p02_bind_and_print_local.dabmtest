@@ -3,6 +3,9 @@ def main()
   let message = "hello\n"
   print(message)
 end
+## EXPECTED APPLICATION STDOUT
+hello
+
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -63,5 +66,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-hello

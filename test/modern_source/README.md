@@ -3,9 +3,11 @@
 Files with the exact lowercase `.dabmtest` extension are versioned, single-source
 compiler fixtures owned by the `modern_source_spec` Rake task. Each file contains
 repository-native `## NAME` sections. The canonical order is required source,
-schema version, and status, followed by compiler stdout and stderr only when
-those exact expected streams are nonempty. A successful fixture may then add
-`APPLICATION STDOUT` to opt into assembly and native execution:
+an optional expected application stdout immediately after that complete source
+body, schema version, and status, followed by compiler stdout and stderr only
+when those exact expected streams are nonempty. A successful fixture may add
+`EXPECTED APPLICATION STDOUT` in that position to opt into assembly and native
+execution:
 
 ```text
 ## SOURCE
@@ -19,15 +21,16 @@ compiler diagnostic followed by a literal newline
 ```
 
 `SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT`,
-`STDERR`, and `APPLICATION STDOUT` are optional, but an empty output section is
-invalid: omit it to expect an empty compiler stream or no application run.
-`APPLICATION STDOUT` requires status `0` and a `STDOUT` assembly expectation.
-The parser resolves sections by name, so input order does not change meaning,
-while committed fixtures use the canonical order above. The
-document must start with a section header. Headers are LF-terminated, begin in
-column zero, and use one of the exact uppercase names above; leading or trailing
-header whitespace, alternate spelling, duplicate sections, and unknown sections
-are schema failures.
+`STDERR`, and `EXPECTED APPLICATION STDOUT` are optional, but an empty output
+section is invalid: omit it to expect an empty compiler stream or no application
+run. `EXPECTED APPLICATION STDOUT` requires status `0`, a `STDOUT` assembly
+expectation, and placement immediately after `SOURCE`; the old `APPLICATION
+STDOUT` spelling is unsupported. The parser resolves all other sections by name,
+so their input order does not change meaning. The document must start with a
+section header. Headers are LF-terminated, begin in column zero, and use one of
+the exact uppercase names above; leading or trailing header whitespace,
+alternate spelling, duplicate sections, and unknown sections are schema
+failures.
 
 A section body starts immediately after its header LF and continues through the
 byte before the next column-zero `##` header or through end of file. Body bytes
@@ -41,11 +44,20 @@ integer from `0` through `255`; neither scalar accepts surrounding whitespace or
 extra blank lines. One final LF is permitted because it is the scalar section's
 owned line ending.
 
+`EXPECTED APPLICATION STDOUT` has one framing exception because required
+sections follow it and application output may end with or without LF. Exactly
+one physical LF immediately before the next section header is the section
+separator and is not part of the expected output. Therefore output without a
+final LF is written followed by one separator LF, while output with a final LF
+has an additional empty physical line before the next header. The reader removes
+only the separator LF, retaining every expected output byte exactly.
+
 CRLF used to transport the whole fixture is normalized to LF before section
 parsing, matching the original harness contract. Lone CR bytes remain body data.
-After that transport normalization, source, compiler streams, and application
-stdout bodies are retained exactly, so the same committed fixture has one source
-and expectation contract on Linux, macOS, and Windows.
+After that transport normalization and removal of the one application-output
+section separator LF, source, compiler streams, and decoded application stdout
+are retained exactly, so the same committed fixture has one source and
+expectation contract on Linux, macOS, and Windows.
 
 Some exact assembly expectations contain significant trailing spaces and a final
 blank line inherited from compiler stdout. The path-scoped `.gitattributes`
@@ -77,10 +89,10 @@ prove status `2`, empty standard output, exact standard error, stable
 fixture-derived filenames, and the shared-scanner location of the first
 mismatch. The Rake-owned suite supplies the separately compiled Legacy stdlib
 Ring so every fixture reaches the version-0.0.35 bootstrap boundary. Compiler
-results remain the default boundary. A fixture with `APPLICATION STDOUT`
-additionally assembles its already-matched compiler output, executes the native
-VM over that Ring, requires successful exit, and compares application output
-byte-for-byte.
+results remain the default boundary. A fixture with `EXPECTED APPLICATION
+STDOUT` additionally assembles its already-matched compiler output, executes the
+native VM over that Ring, requires successful exit, and compares application
+output byte-for-byte.
 
 Version 0.0.34 adds one multi-artifact exception that this single-source fixture
 schema cannot express: exactly one zero-byte file-backed Modern unit may compile

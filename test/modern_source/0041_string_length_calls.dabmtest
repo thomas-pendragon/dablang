@@ -4,6 +4,9 @@ def main
 "xyz".length()
 print("R40 core\n")
 end
+## EXPECTED APPLICATION STDOUT
+R40 core
+
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -70,5 +73,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-R40 core
