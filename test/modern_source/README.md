@@ -305,6 +305,41 @@ semantics, call resolution, deterministic sorting, result discard, implicit
 Nil, Legacy parsing, Rings, bytecode, native execution, formatting, and the
 trusted-artifact boundary are unchanged.
 
+Version 0.0.54 adds contextual fixed local bindings as body items. The exact
+binding form is `let`, one ASCII space, a current base identifier, optional
+ASCII space or TAB, `=`, optional ASCII space or TAB, and one existing Nil,
+Boolean, integer, or String literal. The existing immediate LF, semicolon, or
+line-comment body separator remains mandatory. `let` stays an ordinary
+identifier outside that proven body-item form, so `def let()` and `let()`
+remain accepted callable spellings.
+
+A binding becomes visible after its initializer through the end of the same
+flat function. A bare earlier-local reference is accepted only in an existing
+direct-call argument slot. Duplicate bindings and parameter collisions reject
+at the second binding name; separate functions may reuse names, and local
+spellings may match functions, builtins, or lower-Ring callables. Bindings keep
+dynamic `Object` metadata while the initializer literal supplies only the
+bounded flow type used by existing same-document call preflight. A `print`
+containing a local has exactly one total argument.
+
+Fixture `0059` is the primary noncanonical compile, assembly, and native-output
+contract for multiple bindings, a typed same-document call, and unary local
+prints. Fixture `0060` preserves contextual callable `let`. Fixtures `0061`
+through `0070` lock duplicate and parameter collisions, read-before use,
+local-bearing print arity, deferred `var`, reassignment, typed locals,
+nonliteral initializers, the required ASCII space, and lone-CR rejection.
+Focused RSpec additionally owns exact CRLF spans, immutable binding/reference
+wrappers, cross-function scope, callable and Ring-name collisions, literal-flow
+types, complete-document precedence, pre-Ring local validation, and
+transactionality.
+
+The implementation lowers through existing local-definition and local-read IR;
+it adds no opcode, bytecode field, Ring metadata, assembler, VM, FFI, native,
+or formatter behavior. Local initializers, receivers, body-item reads, nested
+calls, assignment, annotations, `var`, operators, control flow, and return
+values remain unsupported. The canonical P02 program is intentionally not a
+0.0.54 fixture: P02 remains the separate 0.0.55 executable ladder row.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

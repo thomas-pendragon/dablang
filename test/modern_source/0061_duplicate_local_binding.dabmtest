@@ -1,0 +1,11 @@
+## SOURCE
+def main()
+let value = 1
+let value = 2
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0061_duplicate_local_binding.dabm:3:4: error: duplicate Modern local binding "value"

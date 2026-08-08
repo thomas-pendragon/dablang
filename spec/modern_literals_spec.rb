@@ -212,7 +212,7 @@ describe 'Modern bootstrap literals' do
       'binary operator' => ["def main\n1+2\nend\n", 10],
       'nil predicate' => ["def main\nnil?\nend\n", 12],
       'identifier' => ["def main\nvalue\nend\n", 9],
-      'binding' => ["def main\nlet value = 1\nend\n", 9],
+      'mutable binding' => ["def main\nvar value = 1\nend\n", 9],
       'return' => ["def main\nreturn 1\nend\n", 9],
       'control flow' => ["def main\nif true\nend\nend\n", 9],
     }

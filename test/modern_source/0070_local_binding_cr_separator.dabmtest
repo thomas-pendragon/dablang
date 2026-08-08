@@ -1,0 +1,9 @@
+## SOURCE
+def main()
+let value = nilend
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0070_local_binding_cr_separator.dabm:2:15: error: invalid Modern separator: CR and CRLF are not supported; use LF
