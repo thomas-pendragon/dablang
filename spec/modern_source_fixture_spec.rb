@@ -94,12 +94,14 @@ describe DabModernSourceFixture do
       next unless basename.end_with?('.dabmtest')
 
       path = File.join(fixture_directory, basename)
-      path if File.binread(path).include?("## EXPECTED APPLICATION STDOUT\n")
+      transport_content = File.binread(path).gsub("\r\n", "\n")
+      path if transport_content.include?("## EXPECTED APPLICATION STDOUT\n")
     end.sort
 
     expect(paths.map { |path| File.basename(path) }).to eq(expected_basenames)
     paths.each do |path|
-      headers = File.binread(path).scan(/^## ([A-Z]+(?: [A-Z]+)*)\n/).flatten
+      transport_content = File.binread(path).gsub("\r\n", "\n")
+      headers = transport_content.scan(/^## ([A-Z]+(?: [A-Z]+)*)\n/).flatten
       expect(headers.first(2)).to eq(['SOURCE', 'EXPECTED APPLICATION STDOUT'])
       expect(described_class.load(path).expected_application_stdout).not_to be_nil
     end
