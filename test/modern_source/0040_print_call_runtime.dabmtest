@@ -2,6 +2,9 @@
 def main
 print("R39 core\n")
 end
+## EXPECTED APPLICATION STDOUT
+R39 core
+
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -62,5 +65,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-R39 core

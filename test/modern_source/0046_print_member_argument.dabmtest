@@ -2,6 +2,8 @@
 def main
 print("abc".length)
 end
+## EXPECTED APPLICATION STDOUT
+3
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -62,5 +64,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-3

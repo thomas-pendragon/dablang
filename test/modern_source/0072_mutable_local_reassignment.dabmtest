@@ -5,6 +5,10 @@ print(value)
 value = "second\n"
 print(value)
 end
+## EXPECTED APPLICATION STDOUT
+first
+second
+
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -69,6 +73,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-first
-second

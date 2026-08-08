@@ -35,6 +35,13 @@ describe DabModernSourceFixture do
     sections.map { |name, body| "## #{name}\n#{body}" }.join
   end
 
+  def with_application_stdout(sections, body:)
+    source = sections.fetch('SOURCE')
+    {'SOURCE' => source, 'EXPECTED APPLICATION STDOUT' => body}.merge(
+      sections.reject { |name| name == 'SOURCE' }
+    )
+  end
+
   it 'loads the committed versioned fixture with exact source and stream expectations' do
     fixture = described_class.load(committed_fixture)
 
@@ -42,6 +49,7 @@ describe DabModernSourceFixture do
     expect(fixture.source_filename).to eq('0001_unsupported_modern.dabm')
     expect(fixture.expected_status).to eq(2)
     expect(fixture.expected_stdout).to eq('')
+    expect(fixture.expected_application_stdout).to be_nil
     expect(fixture.expected_stderr).to eq(
       'compiler: 0001_unsupported_modern.dabm:1:0: error: ' \
       "unsupported Dab syntax profile \"modern\": parser is not implemented\n"
@@ -51,11 +59,11 @@ describe DabModernSourceFixture do
   it 'uses exact section bodies and treats absent stream sections as empty' do
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|
       sections = {
-        'STATUS' => "0\n",
         'SOURCE' => "line one\nline two\n",
+        'EXPECTED APPLICATION STDOUT' => "application output\n\n",
         'SCHEMA VERSION' => "1\n",
+        'STATUS' => "0\n",
         'STDOUT' => "first line\nsecond line\n",
-        'APPLICATION STDOUT' => "application output\n",
       }
       fixture = described_class.load(write_fixture(directory, sections: sections))
 
@@ -65,6 +73,43 @@ describe DabModernSourceFixture do
       expect(fixture.expected_stderr).to eq('')
       expect(fixture.expected_application_stdout).to eq("application output\n")
     end
+  end
+
+  it 'loads the exact migrated runtime inventory with byte-exact output expectations' do
+    expected_basenames = %w[
+      0040_print_call_runtime.dabmtest
+      0041_string_length_calls.dabmtest
+      0046_print_member_argument.dabmtest
+      0047_multibyte_member_argument.dabmtest
+      0048_puts_member_argument.dabmtest
+      0054_print_zero_arity.dabmtest
+      0055_print_multiple_arity.dabmtest
+      0056_p01_helper_call.dabmtest
+      0059_fixed_local_bindings.dabmtest
+      0071_p02_bind_and_print_local.dabmtest
+      0072_mutable_local_reassignment.dabmtest
+    ]
+    fixture_directory = File.expand_path('../test/modern_source', __dir__)
+    paths = Dir.children(fixture_directory).filter_map do |basename|
+      next unless basename.end_with?('.dabmtest')
+
+      path = File.join(fixture_directory, basename)
+      transport_content = File.binread(path).gsub("\r\n", "\n")
+      path if transport_content.include?("## EXPECTED APPLICATION STDOUT\n")
+    end.sort
+
+    expect(paths.map { |path| File.basename(path) }).to eq(expected_basenames)
+    paths.each do |path|
+      transport_content = File.binread(path).gsub("\r\n", "\n")
+      headers = transport_content.scan(/^## ([A-Z]+(?: [A-Z]+)*)\n/).flatten
+      expect(headers.first(2)).to eq(['SOURCE', 'EXPECTED APPLICATION STDOUT'])
+      expect(described_class.load(path).expected_application_stdout).not_to be_nil
+    end
+
+    no_final_lf = described_class.load(paths.fetch(2)).expected_application_stdout
+    final_lf = described_class.load(paths.fetch(4)).expected_application_stdout
+    expect([no_final_lf, no_final_lf.bytes]).to eq(['3', [51]])
+    expect([final_lf, final_lf.bytes]).to eq(["3\n", [51, 10]])
   end
 
   it 'normalizes fixture transport CRLF while retaining exact section bodies' do
@@ -82,10 +127,18 @@ describe DabModernSourceFixture do
   end
 
   it 'rejects missing, duplicate, unknown, and wrongly named sections deterministically' do
+    runtime_sections = with_application_stdout(
+      valid_sections.merge('STATUS' => "0\n", 'STDOUT' => "assembly\n"),
+      body: "output\n"
+    )
     cases = {
       section_document(valid_sections.reject { |name| name == 'STATUS' }) => 'missing sections: STATUS',
       "#{section_document(valid_sections)}## STATUS\n2\n" => 'duplicate section: STATUS',
+      "#{section_document(runtime_sections)}## EXPECTED APPLICATION STDOUT\nother\n" =>
+        'duplicate section: EXPECTED APPLICATION STDOUT',
       section_document(valid_sections.merge('EXTRA' => "value\n")) => 'unsupported section: EXTRA',
+      section_document(runtime_sections).sub('## EXPECTED APPLICATION STDOUT', '## APPLICATION STDOUT') =>
+        'unsupported section: APPLICATION STDOUT',
       section_document(valid_sections).sub('## STATUS', '## status') => 'invalid section header: ## status',
       "preamble\n#{section_document(valid_sections)}" => 'content before first section',
     }
@@ -111,11 +164,14 @@ describe DabModernSourceFixture do
       valid_sections.merge('STATUS' => "256\n") => 'STATUS must be an Integer from 0 through 255',
       valid_sections.merge('STATUS' => "2\n\n") => 'STATUS must be an integer',
       valid_sections.merge('STDOUT' => '') => 'STDOUT must be omitted when its expected stream is empty',
-      valid_sections.merge('APPLICATION STDOUT' => '') =>
-        'APPLICATION STDOUT must be omitted when its expected stream is empty',
-      valid_sections.merge('APPLICATION STDOUT' => "output\n") => 'APPLICATION STDOUT requires STATUS 0',
-      valid_sections.merge('STATUS' => "0\n", 'APPLICATION STDOUT' => "output\n") =>
-        'APPLICATION STDOUT requires a STDOUT assembly expectation',
+      with_application_stdout(valid_sections, body: '') =>
+        'EXPECTED APPLICATION STDOUT must be omitted when its expected stream is empty',
+      with_application_stdout(valid_sections, body: "output\n") =>
+        'EXPECTED APPLICATION STDOUT requires STATUS 0',
+      with_application_stdout(valid_sections.merge('STATUS' => "0\n"), body: "output\n") =>
+        'EXPECTED APPLICATION STDOUT requires a STDOUT assembly expectation',
+      valid_sections.merge('EXPECTED APPLICATION STDOUT' => "misordered\n") =>
+        'EXPECTED APPLICATION STDOUT must immediately follow SOURCE',
     }
 
     Dir.mktmpdir('dab-modern-source-fixture') do |directory|

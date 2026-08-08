@@ -2,6 +2,9 @@
 def main
 print(1, 2);print("\n")
 end
+## EXPECTED APPLICATION STDOUT
+12
+
 ## SCHEMA VERSION
 1
 ## STATUS
@@ -66,5 +69,3 @@ end
                    _NDAT:
                                  W_BYTE 0 
  
-## APPLICATION STDOUT
-12
