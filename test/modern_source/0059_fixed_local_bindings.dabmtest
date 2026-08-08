@@ -1,0 +1,92 @@
+## SOURCE
+def accept(text:String,count:Fixnum)
+end
+def main()
+  let prefix = "fixed "
+  let count = 54
+  let line = "bindings\n"
+  accept(prefix,count)
+  print(prefix)
+  print(line)
+end
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "bindings
+" 
+                                 W_STRING "fixed " 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Faccept:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Faccept_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "fixed "     */               LOAD_STRING R0, _DATA + 10, 6
+/* 54           */               LOAD_NUMBER R1, 54
+/* "bindings."  */               LOAD_STRING R2, _DATA + 0, 9
+/* accept       */               CALL RNIL, S54, R0, R1
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "accept" 
+                                 W_STRING "main" 
+                                 W_STRING "text" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* accept       */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 19 
+/* text         */               W_SYMBOL _SDAT + 24 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* accept       */               W_METHOD 54, -1, Faccept, 2, __Faccept_END - Faccept, 0
+/* text<String> */               W_METHOD_ARG 56, 1
+/* count<Fixnum */               W_METHOD_ARG 18, 2
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
+## APPLICATION STDOUT
+fixed bindings

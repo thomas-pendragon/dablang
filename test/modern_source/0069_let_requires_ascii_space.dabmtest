@@ -1,0 +1,10 @@
+## SOURCE
+def main()
+let	value = nil
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0069_let_requires_ascii_space.dabm:2:3: error: invalid Modern let binding: expected one ASCII space after "let"

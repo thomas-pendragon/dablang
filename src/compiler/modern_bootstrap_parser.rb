@@ -178,6 +178,73 @@ module_function
   end
 end
 
+class DabModernBootstrapLocalBinding
+  attr_reader :let_token, :name_token, :equal_token, :initializer_token, :source_tokens, :source_span
+
+  def initialize(let_token:, name_token:, equal_token:, initializer_token:, source_tokens:)
+    @let_token = let_token
+    @name_token = name_token
+    @equal_token = equal_token
+    @initializer_token = initializer_token
+    @source_tokens = source_tokens.freeze
+    @source_span = DabSourceSpan.new(
+      start_location: let_token.source_span.start_location,
+      end_location: initializer_token.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :let_binding
+  end
+
+  def name
+    name_token.text
+  end
+
+  def initializer_type
+    DabModernBootstrapLiterals.type(initializer_token)
+  end
+
+  def lower
+    value = DabModernBootstrapLiterals.lower(initializer_token)
+    DabNodeDefineLocalVar.new(name_token.source_string, value).tap do |node|
+      node.add_source_parts(*source_tokens.map(&:source_string))
+    end
+  end
+end
+
+class DabModernBootstrapLocalReference
+  attr_reader :name_token
+
+  def initialize(name_token)
+    @name_token = name_token
+    freeze
+  end
+
+  def kind
+    :local_reference
+  end
+
+  def name
+    name_token.text
+  end
+
+  def source_span
+    name_token.source_span
+  end
+
+  def source_tokens
+    [name_token].freeze
+  end
+
+  def lower
+    DabNodeLocalVar.new(name_token.source_string).tap do |node|
+      node.add_source_part(name_token.source_string)
+    end
+  end
+end
+
 class DabModernBootstrapDirectCall
   attr_reader :callable_name, :arguments, :source_span, :source_tokens
 
@@ -210,6 +277,10 @@ class DabModernBootstrapDirectCall
     arguments.any? { |argument| argument.is_a?(DabModernBootstrapLiteralMemberCall) }
   end
 
+  def local_reference_argument?
+    arguments.any? { |argument| argument.is_a?(DabModernBootstrapLocalReference) }
+  end
+
 private
 
   def lower_call(call_arguments)
@@ -230,6 +301,7 @@ private
 
   def lower_argument(argument)
     return argument.lower(consumed: true) if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+    return argument.lower if argument.is_a?(DabModernBootstrapLocalReference)
 
     DabModernBootstrapLiterals.lower(argument)
   end
@@ -359,6 +431,9 @@ class DabModernBootstrapScanner < DabScanner
     when ':'
       advance!
       token(:colon, ':', start_offset)
+    when '='
+      advance!
+      token(:equal, '=', start_offset)
     when '.'
       advance!
       token(:dot, '.', start_offset)
@@ -827,6 +902,9 @@ private
     if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
       return body_item.lower
     end
+    if body_item.is_a?(DabModernBootstrapLocalBinding)
+      return body_item.lower
+    end
 
     DabModernBootstrapLiterals.lower(body_item)
   end
@@ -853,6 +931,7 @@ class DabModernBootstrapDocument
       start_location: declarations.fetch(0).source_span.start_location,
       end_location: declarations.fetch(-1).source_span.end_location
     )
+    @bindings_by_reference = preflight_locals!.freeze
     freeze
   end
 
@@ -868,6 +947,48 @@ class DabModernBootstrapDocument
   end
 
 private
+
+  def preflight_locals!
+    bindings_by_reference = {}
+    @declarations.each do |declaration|
+      parameter_names = declaration.parameters.to_h { |parameter| [parameter.name, true] }
+      bindings = {}
+      declaration.body_items.each do |body_item|
+        case body_item
+        when DabModernBootstrapLocalBinding
+          preflight_local_binding!(body_item, bindings, parameter_names)
+          bindings[body_item.name] = body_item
+        when DabModernBootstrapDirectCall
+          body_item.arguments.each do |argument|
+            next unless argument.is_a?(DabModernBootstrapLocalReference)
+
+            binding = bindings[argument.name]
+            unless binding
+              raise DabModernBootstrapParseError.new(source_span: argument.source_span)
+            end
+
+            bindings_by_reference[argument] = binding
+          end
+        end
+      end
+    end
+    bindings_by_reference
+  end
+
+  def preflight_local_binding!(binding, bindings, parameter_names)
+    if bindings.key?(binding.name)
+      raise DabModernBootstrapParseError.new(
+        %(duplicate Modern local binding "#{binding.name}"),
+        source_span: binding.name_token.source_span
+      )
+    end
+    return unless parameter_names.key?(binding.name)
+
+    raise DabModernBootstrapParseError.new(
+      %(Modern local binding "#{binding.name}" conflicts with parameter "#{binding.name}"),
+      source_span: binding.name_token.source_span
+    )
+  end
 
   def preflight_names!(unit)
     seen = {}
@@ -925,6 +1046,7 @@ private
 
   def preflight_call!(call, unit, declarations_by_name)
     name = call.callable_name.text
+    preflight_arity!(call, 1) if name == 'print' && call.local_reference_argument?
     target = declarations_by_name[name]
     if target
       preflight_same_document_call!(call, target, unit)
@@ -952,12 +1074,20 @@ private
         reject_argument_type!(call, argument, parameter, DabType.parse('Int32'))
       end
 
-      actual_type = DabModernBootstrapLiterals.type(argument)
+      actual_type = argument_type(argument)
       expected_type = DabType.parse(parameter.type_name.text)
       next if expected_type.can_assign_from?(actual_type)
 
       reject_argument_type!(call, argument, parameter, actual_type)
     end
+  end
+
+  def argument_type(argument)
+    if argument.is_a?(DabModernBootstrapLocalReference)
+      return @bindings_by_reference.fetch(argument).initializer_type
+    end
+
+    DabModernBootstrapLiterals.type(argument)
   end
 
   def preflight_member_arguments!(call, unit)
@@ -1119,6 +1249,16 @@ class DabModernBootstrapParser
     'invalid Modern dot/property call: expected "(" or a separator (LF, semicolon, or line comment) after member name'.freeze
   EXPECT_MEMBER_CALL_BODY_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after member call'.freeze
+  EXPECT_LET_SPACE_MESSAGE =
+    'invalid Modern let binding: expected one ASCII space after "let"'.freeze
+  EXPECT_LET_NAME_MESSAGE =
+    'invalid Modern let binding: expected a binding name after "let "'.freeze
+  EXPECT_LET_EQUAL_MESSAGE =
+    'invalid Modern let binding: expected "=" after binding name'.freeze
+  EXPECT_LET_INITIALIZER_MESSAGE =
+    'invalid Modern let binding: expected a literal initializer after "="'.freeze
+  EXPECT_LET_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after let binding'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -1409,6 +1549,11 @@ private
         next
       end
 
+      if contextual_let_start?
+        items << parse_local_binding
+        next
+      end
+
       token = next_token
       unless LITERAL_KINDS.include?(token.kind)
         reject(token, token.diagnostic_message || DabModernBootstrapParseError::GENERIC_MESSAGE)
@@ -1434,6 +1579,61 @@ private
     distance += 1 if @callable_name_composer.adjacent_suffix?(base_token, suffix_token)
     distance += 1 while horizontal_whitespace?(peek_token(distance))
     peek_token(distance).kind == :left_parenthesis
+  end
+
+  def contextual_let_start?
+    token = peek_token
+    token.kind == :identifier && token.text == 'let'
+  end
+
+  def parse_local_binding
+    source_tokens = []
+    let_token = next_token
+    source_tokens << let_token
+
+    space_token = next_token
+    reject(space_token, EXPECT_LET_SPACE_MESSAGE) unless space_token.kind == :space
+    source_tokens << space_token
+
+    name_token = next_token
+    reject_invalid_separator(name_token)
+    reject(name_token, EXPECT_LET_NAME_MESSAGE) unless name_token.kind == :identifier
+    source_tokens << name_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    equal_token = next_token
+    reject_invalid_separator(equal_token)
+    unless equal_token.kind == :equal
+      if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
+        reject(equal_token, EXPECT_LET_EQUAL_MESSAGE)
+      end
+      reject(equal_token)
+    end
+    source_tokens << equal_token
+    source_tokens.concat(consume_horizontal_whitespace)
+
+    initializer_token = next_token
+    reject_invalid_separator(initializer_token)
+    if initializer_token.diagnostic_message
+      reject(initializer_token, initializer_token.diagnostic_message)
+    end
+    unless LITERAL_KINDS.include?(initializer_token.kind)
+      if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
+        reject(initializer_token, EXPECT_LET_INITIALIZER_MESSAGE)
+      end
+      reject(initializer_token)
+    end
+    reject_integer_overflow(initializer_token)
+    source_tokens << initializer_token
+
+    expect_let_body_separator
+    DabModernBootstrapLocalBinding.new(
+      let_token: let_token,
+      name_token: name_token,
+      equal_token: equal_token,
+      initializer_token: initializer_token,
+      source_tokens: source_tokens
+    )
   end
 
   def literal_member_start?
@@ -1486,7 +1686,11 @@ private
     end
 
     reject(peek_token, EXPECT_MEMBER_TAIL_MESSAGE) unless peek_token.kind == :left_parenthesis
-    arguments, closing_parenthesis = parse_call_arguments(source_tokens, allow_member_results: false)
+    arguments, closing_parenthesis = parse_call_arguments(
+      source_tokens,
+      allow_member_results: false,
+      allow_local_references: false
+    )
     member_call = build_literal_member_call(
       receiver_token,
       dot_token,
@@ -1506,11 +1710,15 @@ private
     callable_name = compose_callable_name(base_token)
     source_tokens << callable_name.suffix_token if callable_name.suffix_token
     source_tokens.concat(consume_horizontal_whitespace)
-    arguments, closing_parenthesis = parse_call_arguments(source_tokens, allow_member_results: true)
+    arguments, closing_parenthesis = parse_call_arguments(
+      source_tokens,
+      allow_member_results: true,
+      allow_local_references: true
+    )
     build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
   end
 
-  def parse_call_arguments(source_tokens, allow_member_results:)
+  def parse_call_arguments(source_tokens, allow_member_results:, allow_local_references:)
     source_tokens << expect(:left_parenthesis)
     source_tokens.concat(consume_horizontal_whitespace)
     arguments = []
@@ -1524,7 +1732,11 @@ private
 
     expectation = EXPECT_CALL_ARGUMENT_OR_CLOSE_MESSAGE
     loop do
-      argument = parse_call_argument(expectation, allow_member_results: allow_member_results)
+      argument = parse_call_argument(
+        expectation,
+        allow_member_results: allow_member_results,
+        allow_local_references: allow_local_references
+      )
       arguments << argument
       source_tokens.concat(argument_source_tokens(argument))
       source_tokens.concat(consume_horizontal_whitespace)
@@ -1548,7 +1760,7 @@ private
     end
   end
 
-  def parse_call_argument(expectation, allow_member_results:)
+  def parse_call_argument(expectation, allow_member_results:, allow_local_references:)
     token = peek_token
     reject_invalid_separator(token)
     if token.kind == :eof
@@ -1559,6 +1771,12 @@ private
     end
     if allow_member_results && literal_member_start?
       return parse_literal_member(argument: true)
+    end
+
+    if allow_local_references && token.kind == :identifier
+      reject(token) unless bare_local_reference_argument?
+
+      return DabModernBootstrapLocalReference.new(next_token)
     end
 
     unless LITERAL_KINDS.include?(token.kind)
@@ -1576,6 +1794,7 @@ private
 
   def argument_source_tokens(argument)
     return argument.source_tokens if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+    return argument.source_tokens if argument.is_a?(DabModernBootstrapLocalReference)
 
     [argument]
   end
@@ -1587,8 +1806,14 @@ private
     true
   end
 
+  def bare_local_reference_argument?
+    distance = 1
+    distance += 1 while horizontal_whitespace?(peek_token(distance))
+    %i[comma right_parenthesis].include?(peek_token(distance).kind)
+  end
+
   def deferred_call_argument_start?(token)
-    %i[identifier left_parenthesis question_mark bang dot unsupported].include?(token.kind)
+    %i[identifier left_parenthesis question_mark bang dot equal unsupported].include?(token.kind)
   end
 
   def build_literal_member_call(
@@ -1632,6 +1857,25 @@ private
     return token if separator?(token)
 
     reject(token, EXPECT_MEMBER_CALL_BODY_SEPARATOR_MESSAGE)
+  end
+
+  def expect_let_body_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    if token.kind == :space
+      reject_invalid_separator_after_spaces(token)
+      following = token_after_spaces
+      if separator?(following) || %i[eof end carriage_return].include?(following.kind)
+        reject(token, EXPECT_LET_SEPARATOR_MESSAGE)
+      end
+    end
+    if %i[eof end nil boolean_true boolean_false integer string].include?(token.kind)
+      reject(token, EXPECT_LET_SEPARATOR_MESSAGE)
+    end
+
+    reject(token)
   end
 
   def reject_integer_overflow(token)

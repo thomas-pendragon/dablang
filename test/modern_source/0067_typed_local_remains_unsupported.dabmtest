@@ -1,0 +1,10 @@
+## SOURCE
+def main()
+let value : String = "typed"
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0067_typed_local_remains_unsupported.dabm:2:10: error: unsupported Dab syntax profile "modern": parser is not implemented
