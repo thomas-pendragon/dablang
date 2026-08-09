@@ -383,7 +383,8 @@ fixed-`let` assignment, equality, nonliteral right-hand values, and every
 broader expression form remain rejected at their established generic boundary.
 
 Fixture `0065` is accepted mutable-declaration evidence, while fixture `0066`
-continues to lock the generic fixed-`let` reassignment rejection. Fixture
+is migrated in version 0.0.60 to lock the dedicated fixed-`let` reassignment
+diagnostic without changing its source, schema, status, or empty stdout. Fixture
 `0072` is the primary sequential contract: it prints `first\n`, writes a second
 String literal, prints `second\n`, and locks deterministic source-order loads,
 unary prints, implicit Nil return, and native output. Focused RSpec owns
@@ -444,6 +445,20 @@ Modern harness requires the byte-exact compiler-generated assembly and native
 application stdout `typed\n`. This is an integration and release-version
 contract only: syntax, diagnostics, lowering, transaction order, artifacts, VM
 behavior, and every deferred local and expression form remain unchanged.
+
+Version 0.0.60 recognizes the existing literal-only local-reassignment
+structure for an earlier same-function `let` as well as `var`, then rejects the
+fixed target during source-ordered local preflight with the exact diagnostic
+`cannot reassign Modern let binding "NAME"` over the full target identifier.
+Direct calls retain precedence, adjacent `==` stays outside the production,
+and structural failures still precede local semantics. Fixedness precedes
+typed-RHS compatibility, and all local failures remain before lower-Ring I/O;
+existing post-Ring name and call preflight remains unchanged. Fixture `0066` is
+the primary exact diagnostic contract. Mutable `var` flow/lowering, accepted
+R41/R42/OR-043/PL-004 programs, unknown/read-before targets, annotations on
+reassignment, nonliteral right-hand values, operators, general expressions,
+returns, control flow, classes, fields, and runtime/schema behavior remain
+unchanged.
 
 ## Diagnostic boundary
 

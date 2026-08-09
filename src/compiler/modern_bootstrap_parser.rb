@@ -1069,11 +1069,22 @@ private
           }
         when DabModernBootstrapLocalReassignment
           binding = bindings[body_item.name]
-          unless binding && binding.fetch(:declaration).is_a?(DabModernBootstrapMutableLocalBinding)
+          unless binding
             raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
           end
 
-          preflight_typed_local_write!(body_item, binding.fetch(:declaration))
+          binding_declaration = binding.fetch(:declaration)
+          if binding_declaration.is_a?(DabModernBootstrapLocalBinding)
+            raise DabModernBootstrapParseError.new(
+              %(cannot reassign Modern let binding "#{body_item.name}"),
+              source_span: body_item.name_token.source_span
+            )
+          end
+          unless binding_declaration.is_a?(DabModernBootstrapMutableLocalBinding)
+            raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
+          end
+
+          preflight_typed_local_write!(body_item, binding_declaration)
           binding[:latest_write] = body_item
         when DabModernBootstrapDirectCall
           body_item.arguments.each do |argument|
@@ -1782,7 +1793,7 @@ private
   def local_reassignment_start?(local_bindings)
     name_token = peek_token
     return false unless name_token.kind == :identifier
-    return false unless local_bindings[name_token.text].is_a?(DabModernBootstrapMutableLocalBinding)
+    return false unless local_bindings.key?(name_token.text)
 
     equal_distance = distance_after_horizontal_whitespace(1)
     return false unless peek_token(equal_distance).kind == :equal

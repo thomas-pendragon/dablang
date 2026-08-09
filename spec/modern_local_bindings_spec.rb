@@ -252,7 +252,6 @@ describe 'Modern fixed local bindings' do
     end
 
     generic_cases = {
-      'reassignment' => ["def main()\nlet value = nil\nvalue = true\nend\n", 'value'],
       'nonliteral initializer' => ["def main()\nlet value = other\nend\n", 'other'],
       'nested call initializer' => ["def main()\nlet value = make()\nend\n", 'make'],
     }
@@ -261,11 +260,7 @@ describe 'Modern fixed local bindings' do
         parse(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
         expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE), description
-        start = if description == 'reassignment'
-                  source.rindex(offending)
-                else
-                  source.index(offending, source.index("\n") + 1)
-                end
+        start = source.index(offending, source.index("\n") + 1)
         expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
           [start, start + offending.bytesize]
         ), description
