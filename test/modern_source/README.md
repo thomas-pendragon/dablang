@@ -448,16 +448,17 @@ behavior, and every deferred local and expression form remain unchanged.
 
 Version 0.0.60 recognizes the existing literal-only local-reassignment
 structure for an earlier same-function `let` as well as `var`, then rejects the
-fixed target during source-ordered local preflight with `cannot reassign Modern
-let binding "NAME"` over the full target identifier. Direct calls retain
-precedence, adjacent `==` stays outside the production, and structural failures
-still precede local semantics. Fixedness precedes typed-RHS compatibility and
-all local failures remain before lower-Ring I/O; existing post-Ring name and
-call preflight remains unchanged. Fixture `0066` is the primary exact
-diagnostic contract. Mutable `var` flow/lowering, accepted R41/R42/OR-043/PL-004
-programs, unknown/read-before targets, annotations on reassignment, nonliteral
-right-hand values, operators, general expressions, returns, control flow,
-classes, fields, and runtime/schema behavior remain unchanged.
+fixed target during source-ordered local preflight with the exact diagnostic
+`cannot reassign Modern let binding "NAME"` over the full target identifier.
+Direct calls retain precedence, adjacent `==` stays outside the production,
+and structural failures still precede local semantics. Fixedness precedes
+typed-RHS compatibility, and all local failures remain before lower-Ring I/O;
+existing post-Ring name and call preflight remains unchanged. Fixture `0066` is
+the primary exact diagnostic contract. Mutable `var` flow/lowering, accepted
+R41/R42/OR-043/PL-004 programs, unknown/read-before targets, annotations on
+reassignment, nonliteral right-hand values, operators, general expressions,
+returns, control flow, classes, fields, and runtime/schema behavior remain
+unchanged.
 
 ## Diagnostic boundary
 
