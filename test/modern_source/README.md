@@ -437,6 +437,14 @@ control flow, returns, classes and fields, new call/member forms, inference,
 generics, unions, nullability, defaults, formatter/decompiler work, and later
 rows remain deferred.
 
+Version 0.0.59 completes executable ladder PL-004 without expanding the 0.0.58
+typed-local contract. Fixture `0079` locks the exact canonical source that binds
+`"typed\n"` to `message : String` with `let` and prints that local. The normal
+Modern harness requires the byte-exact compiler-generated assembly and native
+application stdout `typed\n`. This is an integration and release-version
+contract only: syntax, diagnostics, lowering, transaction order, artifacts, VM
+behavior, and every deferred local and expression form remain unchanged.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
