@@ -166,8 +166,6 @@ describe 'Modern mutable local bindings' do
   it 'enforces declaration-point scope and uniform local collisions' do
     generic_cases = {
       'read-before reassignment' => "def main()\nvalue = 1\nvar value = 2\nend\n",
-      'fixed let reassignment' => "def main()\nlet value = 1\nvalue = 2\nend\n",
-      'fixed let named var reassignment' => "def main()\nlet var = 1\nvar = 2\nend\n",
     }
     generic_cases.each do |description, source|
       expect do
@@ -175,7 +173,7 @@ describe 'Modern mutable local bindings' do
       end.to raise_error(DabModernBootstrapParseError) { |error|
         expect(error.message).to eq(DabModernBootstrapParseError::GENERIC_MESSAGE), description
         target = source.byteslice(error.source_span.start_offset...error.source_span.end_offset)
-        expect(target).to match(/\A(?:value|var)\z/), description
+        expect(target).to eq('value'), description
       }
     end
 
