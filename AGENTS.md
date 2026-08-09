@@ -76,15 +76,12 @@ path. Preserve the distinction in code, documentation, reviews, and planning.
 - For mutable work, confirm GitHub authentication, fetch the intended base,
   and verify both its exact SHA and root `VERSION` before editing. Stop and
   report drift instead of silently selecting a newer base.
-- Use one clean isolated worktree and one `tomasz/` branch per SUBWORK. Never
-  modify the shared launch checkout, another agent's worktree, or an unrelated
-  dirty branch.
-- Run every SUBWORK on `codex-codex`, the designated SUBWORK execution host,
-  regardless of where the MASTER THREAD runs. If that host is unavailable,
-  report a blocker instead of running the SUBWORK on another host.
-- Use the `ship-feature-pr` workflow for implementation PRs and the GitHub
-  workflow for live PR state when those skills are available. Local confidence
-  never replaces exact-head GitHub evidence.
+- Use one clean isolated worktree and one `tomasz/` branch per mutable change.
+  Never modify a shared launch checkout, another task's worktree, or an
+  unrelated dirty branch.
+- Use the applicable installed PR workflow and live GitHub state when those
+  capabilities are available. Local confidence never replaces exact-head
+  GitHub evidence.
 - Before any approved squash merge, re-read the PR head, required checks,
   mergeability, review state, and unresolved threads. Use a head-match guard
   when the merge tool supports it, then verify the resulting `master` SHA and
@@ -170,69 +167,3 @@ needed and compare the submitted review's commit OID with the live head. If
 service delay, dependency order, unrelated CI failure, or an unresolved finding
 blocks the finish line, report `review-blocked`, `dependency-blocked`, or
 `CI-blocked` precisely instead of calling the work done.
-
-## MASTER THREAD, SUBWORK, and TABELKA
-
-One MASTER THREAD owns the Scenario B sequence, cross-cutting decisions, and
-the canonical planning view. A SUBWORK has one bounded deliverable, one branch
-or no branch for read-only work, and no authority to broaden the charter.
-Every SUBWORK is a new, durable Codex chat created on the designated
-`codex-codex` Codex host. A local subagent of the MASTER THREAD is not a
-SUBWORK and must not be used to execute one.
-
-### Dynamic MASTER task title
-
-Only the MASTER THREAD renames the MASTER Codex task. Its title consists of an
-optional state prefix, the stable base title `🌍 DABLANG`, and one very short
-bracketed descriptor for each current worker, for example
-`⏳ 🌍 DABLANG [New CLI options]`. Once a worker has a pull request, include its
-number in that descriptor, for example `[#1234 New CLI options]`.
-
-Choose the single prefix for the highest-priority global MASTER state:
-
-1. Use the highest applicable attention state: `‼️` for a critical, safety,
-   data-loss, or work-invalidating intervention; `❗️` for a concrete blocker or
-   error needing owner action; `⁉️` for an urgent or ambiguous owner decision;
-   or `❓` for an ordinary owner decision.
-2. Otherwise use `⏳` while one or more workers are active.
-3. Otherwise use `✅` when work finished correctly and MASTER is waiting for
-   owner direction.
-4. Otherwise use no prefix when idle.
-
-When workers have mixed states, `attention > active > completed-waiting > idle`
-still selects one global prefix, while the descriptors continue to list every
-current worker. Update the title whenever a worker is dispatched or claimed,
-becomes blocked or requires a decision, publishes a pull request, completes,
-is resolved, is merged or closed, or the worker set otherwise changes. Remove
-stale worker descriptors immediately; keep descriptions extremely short and
-omit SHAs, branch names, task IDs, and verbose status.
-
-A SUBWORK reports state and pull-request transitions through its callbacks; it
-never renames the MASTER task itself. The dynamic title is transient
-coordination metadata and never replaces TABELKA, callbacks, tests, decision
-records, or GitHub evidence.
-
-Before starting a SUBWORK, the MASTER THREAD records it in the **TABELKA**
-(the compact coordination table in the Scenario B Wiki work log) with: ID,
-stage/gate, objective, repository area, prerequisite decision/evidence,
-owner, status, branch/PR or issue link, validation required, and blocker.
-
-SUBWORK rules:
-
-1. Read this file and the canonical English Wiki pages read-only, then claim
-   exactly one TABELKA row.
-2. Preserve unknown semantics as a decision request with acceptance criteria.
-3. Report the exact base and head SHA, changed paths, evidence, test state,
-   risks, and blocker back to the MASTER THREAD. Do not edit the Wiki/TABELKA.
-4. Do not create parallel work that overlaps a claimed row, silently reopen a
-   completed gate, or mark a gate complete without its checkable evidence.
-5. Send a concise START/CLAIM callback immediately after verifying the base,
-   worktree, branch, and scope. Send the structured completion or blocker
-   callback without waiting for the user to ask for status.
-6. Do not merge, edit repository settings, create releases/tags, or expand into
-   a later roadmap row unless the owner explicitly authorizes that action.
-7. The MASTER THREAD alone advances a stage, accepts a compatibility decision,
-   and moves the persistent Wiki work log forward after verifying evidence.
-
-TABELKA is coordination metadata, not a replacement for tests, decision
-records, review, or the GitHub Wiki work log.
