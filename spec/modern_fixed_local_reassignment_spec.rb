@@ -276,7 +276,7 @@ describe 'Modern fixed local reassignment diagnostics' do
       root,
       'test/modern_source/0066_local_reassignment_remains_unsupported.dabmtest'
     )
-    content = File.binread(fixture_path)
+    content = File.binread(fixture_path).gsub("\r\n", "\n")
     source, remainder = content.split("## SCHEMA VERSION\n", 2)
     expect(source).to eq(
       "## SOURCE\ndef main()\nlet value = \"fixed\"\nvalue = \"changed\"\nend\n"
