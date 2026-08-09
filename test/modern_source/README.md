@@ -4,10 +4,10 @@ Files with the exact lowercase `.dabmtest` extension are versioned, single-sourc
 compiler fixtures owned by the `modern_source_spec` Rake task. Each file contains
 repository-native `## NAME` sections. The canonical order is required source,
 an optional expected application stdout immediately after that complete source
-body, schema version, and status, followed by compiler stdout and stderr only
-when those exact expected streams are nonempty. A successful fixture may add
-`EXPECTED APPLICATION STDOUT` in that position to opt into assembly and native
-execution:
+body, an optional documentation note, schema version, and status, followed by
+compiler stdout and stderr only when those exact expected streams are nonempty.
+A successful fixture may add `EXPECTED APPLICATION STDOUT` in that position to
+opt into assembly and native execution:
 
 ```text
 ## SOURCE
@@ -21,10 +21,14 @@ compiler diagnostic followed by a literal newline
 ```
 
 `SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT`,
-`STDERR`, and `EXPECTED APPLICATION STDOUT` are optional, but an empty output
+`STDERR`, `EXPECTED APPLICATION STDOUT`, and `NOTE` are optional. An empty output
 section is invalid: omit it to expect an empty compiler stream or no application
-run. `EXPECTED APPLICATION STDOUT` requires status `0`, a `STDOUT` assembly
-expectation, and placement immediately after `SOURCE`; the old `APPLICATION
+run. A present `NOTE` must be nonempty and is exposed as exact documentation-only
+metadata; it does not change source, compilation, stream, assembly, or runtime
+expectations. Canonically it follows `SOURCE`, or follows `EXPECTED APPLICATION
+STDOUT` when that runtime section is present. `EXPECTED APPLICATION STDOUT`
+requires status `0`, a `STDOUT` assembly expectation, and placement immediately
+after `SOURCE`; `NOTE` does not relax that ordering, and the old `APPLICATION
 STDOUT` spelling is unsupported. The parser resolves all other sections by name,
 so their input order does not change meaning. The document must start with a
 section header. Headers are LF-terminated, begin in column zero, and use one of

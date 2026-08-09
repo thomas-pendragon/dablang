@@ -50,9 +50,51 @@ describe DabModernSourceFixture do
     expect(fixture.expected_status).to eq(2)
     expect(fixture.expected_stdout).to eq('')
     expect(fixture.expected_application_stdout).to be_nil
+    expect(fixture.note).to be_nil
     expect(fixture.expected_stderr).to eq(
       'compiler: 0001_unsupported_modern.dabm:1:0: error: ' \
       "unsupported Dab syntax profile \"modern\": parser is not implemented\n"
+    )
+  end
+
+  it 'loads an exact nonempty NOTE as documentation-only metadata without changing expectations' do
+    note = "This fixture documents an incremental compiler boundary.\n"
+    Dir.mktmpdir('dab-modern-source-fixture') do |directory|
+      sections = {
+        'SOURCE' => "line one\nline two\n",
+        'EXPECTED APPLICATION STDOUT' => "application output\n\n",
+        'NOTE' => note,
+        'SCHEMA VERSION' => "1\n",
+        'STATUS' => "0\n",
+        'STDOUT' => "first line\nsecond line\n",
+      }
+      path = write_fixture(directory, sections: sections)
+      fixture = described_class.load(path)
+      headers = File.binread(path).scan(/^## ([A-Z]+(?: [A-Z]+)*)\n/).flatten
+
+      expect(headers.first(3)).to eq(['SOURCE', 'EXPECTED APPLICATION STDOUT', 'NOTE'])
+      expect(fixture.note).to eq(note)
+      expect(fixture.source).to eq("line one\nline two\n")
+      expect(fixture.expected_status).to eq(0)
+      expect(fixture.expected_stdout).to eq("first line\nsecond line\n")
+      expect(fixture.expected_stderr).to eq('')
+      expect(fixture.expected_application_stdout).to eq("application output\n")
+    end
+  end
+
+  it 'loads the exact NOTE on typed-local fixture 0077 without changing its compiler contract' do
+    path = File.expand_path('../test/modern_source/0077_typed_local_reassignment_mismatch.dabmtest', __dir__)
+    fixture = described_class.load(path)
+
+    expect(fixture.note).to eq(
+      'This fixture characterizes an incremental compiler boundary and is not a valid Dab 0.1 program: ' \
+      "a non-nullable String cannot be initialized with nil.\n"
+    )
+    expect(fixture.source).to eq("def main()\nvar value : String = nil\nvalue = 1\nend\n")
+    expect([fixture.expected_status, fixture.expected_stdout]).to eq([2, ''])
+    expect(fixture.expected_stderr).to eq(
+      'compiler: 0077_typed_local_reassignment_mismatch.dabm:3:8: error: ' \
+      "cannot assign Modern literal of type Fixnum to local \"value\" of type String\n"
     )
   end
 
@@ -166,6 +208,7 @@ describe DabModernSourceFixture do
       valid_sections.merge('STATUS' => "256\n") => 'STATUS must be an Integer from 0 through 255',
       valid_sections.merge('STATUS' => "2\n\n") => 'STATUS must be an integer',
       valid_sections.merge('STDOUT' => '') => 'STDOUT must be omitted when its expected stream is empty',
+      valid_sections.merge('NOTE' => '') => 'NOTE must be omitted when empty',
       with_application_stdout(valid_sections, body: '') =>
         'EXPECTED APPLICATION STDOUT must be omitted when its expected stream is empty',
       with_application_stdout(valid_sections, body: "output\n") =>

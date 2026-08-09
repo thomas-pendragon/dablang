@@ -8,14 +8,16 @@ class DabModernSourceFixture
   SCHEMA_VERSION = 1
   EXTENSION = '.dabmtest'.freeze
   EXPECTED_APPLICATION_STDOUT_SECTION = 'EXPECTED APPLICATION STDOUT'.freeze
+  NOTE_SECTION = 'NOTE'.freeze
   REQUIRED_SECTIONS = ['SOURCE', 'SCHEMA VERSION', 'STATUS'].freeze
-  OPTIONAL_SECTIONS = ['STDOUT', 'STDERR', EXPECTED_APPLICATION_STDOUT_SECTION].freeze
+  OPTIONAL_OUTPUT_SECTIONS = ['STDOUT', 'STDERR', EXPECTED_APPLICATION_STDOUT_SECTION].freeze
+  OPTIONAL_SECTIONS = (OPTIONAL_OUTPUT_SECTIONS + [NOTE_SECTION]).freeze
   SECTIONS = (REQUIRED_SECTIONS + OPTIONAL_SECTIONS).freeze
 
   class SchemaError < ArgumentError; end
 
   attr_reader :path, :source, :source_filename, :expected_status, :expected_stdout, :expected_stderr,
-              :expected_application_stdout
+              :expected_application_stdout, :note
 
   def self.load(path)
     new(path).tap(&:load!)
@@ -36,6 +38,7 @@ class DabModernSourceFixture
     @expected_stdout = sections.fetch('STDOUT', '')
     @expected_stderr = sections.fetch('STDERR', '')
     @expected_application_stdout = decode_application_stdout_expectation(sections)
+    @note = sections[NOTE_SECTION]
     self
   rescue Errno::ENOENT, Errno::EACCES => e
     schema_error("fixture is not readable: #{e.message}")
@@ -71,7 +74,7 @@ private
       schema_error("SCHEMA VERSION must be #{SCHEMA_VERSION}, got #{schema_version}")
     end
 
-    OPTIONAL_SECTIONS.each do |name|
+    OPTIONAL_OUTPUT_SECTIONS.each do |name|
       next unless sections.key?(name)
 
       body = if name == EXPECTED_APPLICATION_STDOUT_SECTION
@@ -82,6 +85,10 @@ private
       next unless body.empty?
 
       schema_error("#{name} must be omitted when its expected stream is empty")
+    end
+
+    if sections.key?(NOTE_SECTION) && sections.fetch(NOTE_SECTION).empty?
+      schema_error("#{NOTE_SECTION} must be omitted when empty")
     end
 
     return unless sections.key?(EXPECTED_APPLICATION_STDOUT_SECTION)

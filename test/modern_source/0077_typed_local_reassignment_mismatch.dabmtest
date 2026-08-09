@@ -3,6 +3,8 @@ def main()
 var value : String = nil
 value = 1
 end
+## NOTE
+This fixture characterizes an incremental compiler boundary and is not a valid Dab 0.1 program: a non-nullable String cannot be initialized with nil.
 ## SCHEMA VERSION
 1
 ## STATUS
