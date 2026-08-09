@@ -58,6 +58,9 @@ describe 'Modern fixed local reassignment diagnostics' do
 
     typed = "def main()\nlet value : String = \"fixed\"\nvalue = 1\nend\n"
     expect_parse_error(typed, fixed_message, 'value')
+
+    keyword_name = "def main()\nlet var = 1\nvar = 2\nend\n"
+    expect_parse_error(keyword_name, fixed_message('var'), 'var')
   end
 
   it 'shares reassignment whitespace and separator structure while preserving direct-call precedence' do
