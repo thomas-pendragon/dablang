@@ -4,10 +4,10 @@ Files with the exact lowercase `.dabmtest` extension are versioned, single-sourc
 compiler fixtures owned by the `modern_source_spec` Rake task. Each file contains
 repository-native `## NAME` sections. The canonical order is required source,
 an optional expected application stdout immediately after that complete source
-body, schema version, and status, followed by compiler stdout and stderr only
-when those exact expected streams are nonempty. A successful fixture may add
-`EXPECTED APPLICATION STDOUT` in that position to opt into assembly and native
-execution:
+body, an optional documentation note, schema version, and status, followed by
+compiler stdout and stderr only when those exact expected streams are nonempty.
+A successful fixture may add `EXPECTED APPLICATION STDOUT` in that position to
+opt into assembly and native execution:
 
 ```text
 ## SOURCE
@@ -21,10 +21,14 @@ compiler diagnostic followed by a literal newline
 ```
 
 `SOURCE`, `SCHEMA VERSION`, and `STATUS` are required exactly once. `STDOUT`,
-`STDERR`, and `EXPECTED APPLICATION STDOUT` are optional, but an empty output
+`STDERR`, `EXPECTED APPLICATION STDOUT`, and `NOTE` are optional. An empty output
 section is invalid: omit it to expect an empty compiler stream or no application
-run. `EXPECTED APPLICATION STDOUT` requires status `0`, a `STDOUT` assembly
-expectation, and placement immediately after `SOURCE`; the old `APPLICATION
+run. A present `NOTE` must be nonempty and is exposed as exact documentation-only
+metadata; it does not change source, compilation, stream, assembly, or runtime
+expectations. Canonically it follows `SOURCE`, or follows `EXPECTED APPLICATION
+STDOUT` when that runtime section is present. `EXPECTED APPLICATION STDOUT`
+requires status `0`, a `STDOUT` assembly expectation, and placement immediately
+after `SOURCE`; `NOTE` does not relax that ordering, and the old `APPLICATION
 STDOUT` spelling is unsupported. The parser resolves all other sections by name,
 so their input order does not change meaning. The document must start with a
 section header. Headers are LF-terminated, begin in column zero, and use one of
@@ -338,8 +342,9 @@ Fixture `0059` is the primary noncanonical compile, assembly, and native-output
 contract for multiple bindings, a typed same-document call, and unary local
 prints. Fixture `0060` preserves contextual callable `let`. Fixtures `0061`
 through `0070` lock duplicate and parameter collisions, read-before use,
-local-bearing print arity, deferred `var`, reassignment, typed locals,
+local-bearing print arity, deferred `var` and reassignment at that version,
 nonliteral initializers, the required ASCII space, and lone-CR rejection.
+Fixture `0067` advances to accepted typed-local evidence in version 0.0.58.
 Focused RSpec additionally owns exact CRLF spans, immutable binding/reference
 wrappers, cross-function scope, callable and Ring-name collisions, literal-flow
 types, complete-document precedence, pre-Ring local validation, and
@@ -387,10 +392,10 @@ flow, scope and collisions, exact diagnostics and spans, transaction ordering,
 immutable source parts, and existing SSA reuse.
 
 The implementation adds no opcode, bytecode field, assembler, VM, Ring, FFI,
-native, formatter, disassembler, or trust-boundary behavior. Typed locals,
-local/member/call right-hand values, standalone local reads, receivers,
-general expressions and operators, control flow, explicit returns, classes,
-fields, and later rows remain deferred.
+native, formatter, disassembler, or trust-boundary behavior. At version 0.0.56,
+typed locals remained deferred; local/member/call right-hand values, standalone
+local reads, receivers, general expressions and operators, control flow,
+explicit returns, classes, fields, and later rows remain deferred.
 
 Version 0.0.57 completes executable ladder P03 without expanding the 0.0.56
 mutable-local contract. Fixture `0073` locks the exact canonical source that
@@ -401,6 +406,36 @@ overwritten first literal, and native application stdout `second\n`. This is an
 integration and release-version contract only: syntax, diagnostics, lowering,
 transaction order, artifacts, VM behavior, and every deferred local and
 expression form remain unchanged.
+
+Version 0.0.58 adds optional colon-form type annotations to both contextual
+`let` and `var` bindings. An annotation accepts exactly the fourteen R38 type
+names and is a stable declared contract: the initializer and every later
+mutable literal write must be assignable to it, and an annotated local uses the
+declared type for existing same-document call compatibility. Untyped locals
+retain their established `Object` metadata and latest-preceding-literal flow.
+Horizontal ASCII space or TAB remains optional around the colon and `=`, while
+the one ASCII space after `let` or `var`, mandatory literal initializer, and
+immediate body-item separator remain unchanged. Reassignments do not accept an
+annotation.
+
+Fixture `0074` is the primary noncanonical sequential contract. It combines a
+typed `let`, typed `var`, same-document typed calls, a compatible mutable write,
+dead earlier-value elimination, two unary prints, implicit returns, and exact
+native stdout `fixed\nmutable\n`. Fixture `0067` becomes accepted typed-local
+evidence. Fixtures `0075` through `0078` lock the exact unknown-type,
+initializer mismatch, reassignment mismatch, and declared-type call behavior.
+Focused RSpec owns all fourteen type names and the current literal assignment
+matrix, source parts and spans, whitespace and EOF/CR precedence, typed numeric
+metadata, contextual boundaries, unchanged untyped flow, complete pre-Ring
+validation, and transactionality.
+
+Typed definitions and writes reuse existing local IR and conversion behavior.
+No local type is added to bytecode, Ring metadata, reflection, the VM, FFI, or
+native code. PL-004 remains a separate executable-ladder completion. Nonliteral
+right-hand sides, annotations on reassignment, general expressions, operators,
+control flow, returns, classes and fields, new call/member forms, inference,
+generics, unions, nullability, defaults, formatter/decompiler work, and later
+rows remain deferred.
 
 ## Diagnostic boundary
 

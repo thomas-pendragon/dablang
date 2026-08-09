@@ -1,0 +1,13 @@
+## SOURCE
+def main()
+var value : String = nil
+value = 1
+end
+## NOTE
+This fixture characterizes an incremental compiler boundary and is not a valid Dab 0.1 program: a non-nullable String cannot be initialized with nil.
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0077_typed_local_reassignment_mismatch.dabm:3:8: error: cannot assign Modern literal of type Fixnum to local "value" of type String
