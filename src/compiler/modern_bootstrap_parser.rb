@@ -348,6 +348,31 @@ class DabModernBootstrapLocalReference
   end
 end
 
+class DabModernBootstrapBareReturn
+  attr_reader :keyword_token, :source_parts, :source_span
+
+  def initialize(keyword_token)
+    unless keyword_token.is_a?(DabModernBootstrapToken) && keyword_token.kind == :return
+      raise ArgumentError.new('Modern bare return requires a return token')
+    end
+
+    @keyword_token = keyword_token
+    @source_parts = [keyword_token.source_string].freeze
+    @source_span = keyword_token.source_span
+    freeze
+  end
+
+  def kind
+    :bare_return
+  end
+
+  def lower
+    DabNodeReturn.new(DabNodeLiteralNil.new).tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+end
+
 class DabModernBootstrapDirectCall
   attr_reader :callable_name, :arguments, :source_span, :source_tokens
 
@@ -577,6 +602,7 @@ private
     kind = case text
            when 'def' then :def
            when 'end' then :end
+           when 'return' then :return
            when 'nil' then :nil
            when 'true' then :boolean_true
            when 'false' then :boolean_false
@@ -1002,6 +1028,7 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
+    return body_item.lower if body_item.is_a?(DabModernBootstrapBareReturn)
     if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
       return body_item.lower
     end
@@ -1374,6 +1401,8 @@ class DabModernBootstrapParser
     'invalid Modern function declaration: expected a separator (LF, semicolon, or line comment) after callable name'.freeze
   EXPECT_LITERAL_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after literal'.freeze
+  EXPECT_BARE_RETURN_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after bare return'.freeze
   EXPECT_END_MESSAGE =
     'unterminated Modern function declaration: expected closing "end" before end of file'.freeze
   EXPECT_END_SEPARATOR_MESSAGE =
@@ -1720,6 +1749,11 @@ private
 
       reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
 
+      if peek_token.kind == :return
+        items << parse_bare_return
+        next
+      end
+
       if literal_member_start?
         items << parse_literal_member
         next
@@ -1775,6 +1809,16 @@ private
     distance += 1 if @callable_name_composer.adjacent_suffix?(base_token, suffix_token)
     distance += 1 while horizontal_whitespace?(peek_token(distance))
     peek_token(distance).kind == :left_parenthesis
+  end
+
+  def parse_bare_return
+    keyword_token = expect(:return)
+    token = next_token
+    reject_invalid_separator(token)
+    return DabModernBootstrapBareReturn.new(keyword_token) if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
   end
 
   def contextual_let_start?

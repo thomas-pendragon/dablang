@@ -1,0 +1,87 @@
+## SOURCE
+def helper()
+  print("helper-before\n")
+  return
+  print("helper-after\n")
+end
+def main()
+  helper()
+  print("main-after-helper\n")
+  return
+  print("main-after-return\n")
+end
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "helper-before
+" 
+                                 W_STRING "main-after-helper
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fhelper:
+                                 STACK_RESERVE 0
+/* "helper-befo */               LOAD_STRING R0, _DATA + 0, 14
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fhelper_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* helper       */               CALL RNIL, S54
+/* "main-after- */               LOAD_STRING R0, _DATA + 15, 18
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "helper" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* helper       */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 19 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* helper       */               W_METHOD 54, -1, Fhelper, 0, __Fhelper_END - Fhelper, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

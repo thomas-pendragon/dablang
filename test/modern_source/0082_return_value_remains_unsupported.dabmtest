@@ -1,0 +1,10 @@
+## SOURCE
+def main()
+return value
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0082_return_value_remains_unsupported.dabm:2:6: error: invalid Modern function body: expected a separator (LF, semicolon, or line comment) after bare return
