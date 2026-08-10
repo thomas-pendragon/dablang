@@ -212,7 +212,6 @@ describe 'Modern bootstrap literals' do
       'binary operator' => ["def main\n1+2\nend\n", 10],
       'nil predicate' => ["def main\nnil?\nend\n", 12],
       'identifier' => ["def main\nvalue\nend\n", 9],
-      'return' => ["def main\nreturn 1\nend\n", 9],
       'control flow' => ["def main\nif true\nend\nend\n", 9],
     }
 
@@ -225,6 +224,14 @@ describe 'Modern bootstrap literals' do
         expect(error.source_location.source_unit).to equal(source_unit)
       }
     end
+
+    source = "def main\nreturn 1\nend\n"
+    expect do
+      parse_modern(source)
+    end.to raise_error(DabModernBootstrapParseError) { |error|
+      expect(error.message).to eq(DabModernBootstrapParser::EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
+      expect(error.source_location.offset).to eq(source.index(' ', source.index('return') + 6))
+    }
   end
 
   it 'fails the compiler transactionally at the overflowing literal location' do

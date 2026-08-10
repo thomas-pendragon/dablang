@@ -555,7 +555,6 @@ describe 'Modern bootstrap String literals' do
       'adjacent literals' => ["def main\n\"a\"\"b\"\nend\n", 12],
       'single quotes' => ["def main\n'a'\nend\n", 9],
       'String operator' => ["def main\n\"a\"+\"b\"\nend\n", 12],
-      'String return' => ["def main\nreturn \"a\"\nend\n", 9],
     }
 
     cases.each do |description, (source, offset)|
@@ -566,6 +565,14 @@ describe 'Modern bootstrap String literals' do
         expect(error.source_location.offset).to eq(offset), description
       }
     end
+
+    source = "def main\nreturn \"a\"\nend\n"
+    expect do
+      parse_modern(source)
+    end.to raise_error(DabModernBootstrapParseError) { |error|
+      expect(error.message).to eq(DabModernBootstrapParser::EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
+      expect(error.source_location.offset).to eq(source.index(' ', source.index('return') + 6))
+    }
   end
 
   it 'fails compilation transactionally and leaves the lower Ring reusable' do

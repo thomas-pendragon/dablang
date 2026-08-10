@@ -460,6 +460,31 @@ reassignment, nonliteral right-hand values, operators, general expressions,
 returns, control flow, classes, fields, and runtime/schema behavior remain
 unchanged.
 
+Version 0.0.61 reserves exact lowercase ASCII `return` throughout the Modern
+scanner and adds only a bare-return body item. A bare return must be followed
+immediately by LF, semicolon, or an adjacent `#` or `//` line comment; it
+produces Nil through the existing return node and `RETURN RNIL` instruction,
+allocates no result register, and exits only the current function. The parser
+still validates the complete document and all unreachable body items before
+lowering, Ring-dependent name/call preflight, or dead-tail removal.
+
+Fixture `0080` is the primary sequential contract: a helper prints
+`helper-before\n` and returns to `main`, which prints `main-after-helper\n` and
+then returns normally. Its exact application output omits both unreachable
+tail messages, and its assembly omits tail-only strings, calls, data, and
+register effects. Fixtures `0081` and `0082` lock the reserved function-name
+diagnostic and the dedicated separator rejection for still-unsupported
+`return value`. Existing programs that use exact lowercase `return` in any
+Modern identifier slot must rename the declaration and all uses; there is no
+escape syntax. Case variants and longer identifiers remain unchanged, as does
+all Legacy syntax.
+
+This version adds no returned-value expression or type checking, call-result
+production or consumption, general expression, other control flow, binding,
+class, field, block, opcode, bytecode schema, assembler, VM, Ring, FFI,
+formatter, or decompiler behavior. EX-002, OR-045, EX-003, PL-005, and later
+rows remain deferred.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
