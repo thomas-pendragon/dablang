@@ -284,7 +284,6 @@ describe 'Modern fixed local bindings' do
       'local body item' => ["def main()\nlet value = nil\nvalue\nend\n", 'value'],
       'local initializer' => ["def main()\nlet first = nil\nlet second = first\nend\n", 'first'],
       'local receiver' => ["def main()\nlet value = \"x\"\nvalue.length\nend\n", 'value'],
-      'nested local call' => ["def main()\nlet value = \"x\"\nprint(value())\nend\n", 'value'],
     }
     generic_cases.each do |description, (source, offending)|
       expect do
@@ -294,6 +293,14 @@ describe 'Modern fixed local bindings' do
         expect(source.byteslice(error.source_span.start_offset...error.source_span.end_offset)).to eq(offending), description
       }
     end
+
+    nested_local_call = "def main()\nlet value = \"x\"\nprint(value())\nend\n"
+    expect do
+      parse(nested_local_call).lower_into(DabNodeUnit.new)
+    end.to raise_error(DabModernBootstrapParseError) { |error|
+      expect(error.message).to eq('unknown Modern call target "value"')
+      expect(nested_local_call.byteslice(error.source_span.start_offset...error.source_span.end_offset)).to eq('value')
+    }
   end
 
   it 'parses the complete document before local preflight and performs local preflight before Ring I/O' do

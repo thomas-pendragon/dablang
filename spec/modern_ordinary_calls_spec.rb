@@ -184,9 +184,8 @@ describe 'Modern ordinary parenthesized calls' do
     end
   end
 
-  it 'keeps nested calls, body references, dot calls, operators, and top-level calls deferred' do
+  it 'keeps body references, dot calls, operators, and top-level calls deferred' do
     cases = {
-      'nested call' => ["def main\nprint(other())\nend\n", 15],
       'body reference argument' => ["def main(value:String)\nprint(value)\nend\n", 29],
       'dot call' => ["def main\nvalue.call()\nend\n", 9],
       'operator argument' => ["def main\nprint(+1)\nend\n", 15],

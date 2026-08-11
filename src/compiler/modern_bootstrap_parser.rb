@@ -413,7 +413,8 @@ class DabModernBootstrapValueReturn
   def lower
     lowered_value = if value.is_a?(DabModernBootstrapLiteralMemberCall)
                       value.lower(consumed: true)
-                    elsif value.is_a?(DabModernBootstrapLocalReference)
+                    elsif value.is_a?(DabModernBootstrapLocalReference) ||
+                          value.is_a?(DabModernBootstrapDirectCall)
                       value.lower
                     else
                       DabModernBootstrapLiterals.lower(value)
@@ -460,6 +461,10 @@ class DabModernBootstrapDirectCall
     arguments.any? { |argument| argument.is_a?(DabModernBootstrapLocalReference) }
   end
 
+  def call_result_argument?
+    arguments.any? { |argument| argument.is_a?(DabModernBootstrapDirectCall) }
+  end
+
 private
 
   def lower_call(call_arguments)
@@ -480,7 +485,10 @@ private
 
   def lower_argument(argument)
     return argument.lower(consumed: true) if argument.is_a?(DabModernBootstrapLiteralMemberCall)
-    return argument.lower if argument.is_a?(DabModernBootstrapLocalReference)
+    if argument.is_a?(DabModernBootstrapLocalReference) ||
+       argument.is_a?(DabModernBootstrapDirectCall)
+      return argument.lower
+    end
 
     DabModernBootstrapLiterals.lower(argument)
   end
@@ -1169,22 +1177,11 @@ private
           binding[:latest_write] = body_item
         when DabModernBootstrapValueReturn
           preflight_ring_independent_return!(body_item, declaration, bindings, bindings_by_reference)
-        when DabModernBootstrapDirectCall
-          body_item.arguments.each do |argument|
-            next unless argument.is_a?(DabModernBootstrapLocalReference)
-
-            binding = bindings[argument.name]
-            unless binding
-              raise DabModernBootstrapParseError.new(source_span: argument.source_span)
-            end
-
-            declaration = binding.fetch(:declaration)
-            bindings_by_reference[argument] = if declaration.annotated?
-                                                declaration.declared_type
-                                              else
-                                                binding.fetch(:latest_write).initializer_type
-                                              end
+          if body_item.value.is_a?(DabModernBootstrapDirectCall)
+            preflight_call_local_references!(body_item.value, bindings, bindings_by_reference)
           end
+        when DabModernBootstrapDirectCall
+          preflight_call_local_references!(body_item, bindings, bindings_by_reference)
         end
       end
     end
@@ -1193,7 +1190,8 @@ private
 
   def preflight_ring_independent_return!(value_return, function, bindings, bindings_by_reference)
     value = value_return.value
-    return if value.is_a?(DabModernBootstrapLiteralMemberCall)
+    return if value.is_a?(DabModernBootstrapLiteralMemberCall) ||
+              value.is_a?(DabModernBootstrapDirectCall)
 
     actual_type = if value.is_a?(DabModernBootstrapLocalReference)
                     binding = bindings[value.name]
@@ -1211,6 +1209,26 @@ private
                     DabModernBootstrapLiterals.flow_type(value)
                   end
     preflight_return_type!(value_return, function, actual_type)
+  end
+
+  def preflight_call_local_references!(call, bindings, bindings_by_reference)
+    call.arguments.each do |argument|
+      if argument.is_a?(DabModernBootstrapDirectCall)
+        preflight_call_local_references!(argument, bindings, bindings_by_reference)
+        next
+      end
+      next unless argument.is_a?(DabModernBootstrapLocalReference)
+
+      binding = bindings[argument.name]
+      raise DabModernBootstrapParseError.new(source_span: argument.source_span) unless binding
+
+      declaration = binding.fetch(:declaration)
+      bindings_by_reference[argument] = if declaration.annotated?
+                                          declaration.declared_type
+                                        else
+                                          binding.fetch(:latest_write).initializer_type
+                                        end
+    end
   end
 
   def preflight_return_type!(value_return, function, actual_type)
@@ -1295,9 +1313,11 @@ private
         when DabModernBootstrapLiteralMemberCall
           preflight_member_call!(body_item, unit)
         when DabModernBootstrapValueReturn
-          preflight_member_return!(body_item, declaration, unit) if body_item.value.is_a?(
-            DabModernBootstrapLiteralMemberCall
-          )
+          if body_item.value.is_a?(DabModernBootstrapLiteralMemberCall)
+            preflight_member_return!(body_item, declaration, unit)
+          elsif body_item.value.is_a?(DabModernBootstrapDirectCall)
+            preflight_call_result_return!(body_item, declaration, unit, declarations_by_name)
+          end
         end
       end
     end
@@ -1346,13 +1366,15 @@ private
     preflight_arity!(call, 1) if name == 'print' && call.local_reference_argument?
     target = declarations_by_name[name]
     if target
-      preflight_same_document_call!(call, target, unit)
+      preflight_same_document_call!(call, target, unit, declarations_by_name)
     elsif name == 'print'
-      preflight_arity!(call, 1) if call.member_result_argument?
+      preflight_arity!(call, 1) if call.member_result_argument? || call.call_result_argument?
       preflight_member_arguments!(call, unit)
+      preflight_call_result_arguments!(call, unit, declarations_by_name, DabType.parse(nil))
     elsif name == 'puts'
       preflight_puts_call!(call, unit)
       preflight_member_arguments!(call, unit)
+      preflight_call_result_arguments!(call, unit, declarations_by_name, DabType.parse(nil))
     elsif known_target?(unit, name)
       reject_call(call, %(unsupported Modern call target "#{name}" in the R39 ordinary-call subset), call.callable_name.source_span)
     else
@@ -1360,10 +1382,18 @@ private
     end
   end
 
-  def preflight_same_document_call!(call, target, unit)
+  def preflight_same_document_call!(call, target, unit, declarations_by_name)
     expected = target.parameters.length
     preflight_arity!(call, expected)
     call.arguments.zip(target.parameters).each do |argument, parameter|
+      if argument.is_a?(DabModernBootstrapDirectCall)
+        expected_type = DabType.parse(parameter.type_name.text)
+        actual_type = preflight_call_result!(argument, unit, declarations_by_name)
+        next if exact_call_result_type?(actual_type, expected_type)
+
+        reject_argument_type!(call, argument, parameter, actual_type)
+      end
+
       if argument.is_a?(DabModernBootstrapLiteralMemberCall)
         preflight_member_call!(argument, unit)
         next if MEMBER_RESULT_TYPE_NAMES.include?(parameter.type_name.text)
@@ -1377,6 +1407,47 @@ private
 
       reject_argument_type!(call, argument, parameter, actual_type)
     end
+  end
+
+  def preflight_call_result_return!(value_return, function, unit, declarations_by_name)
+    actual_type = preflight_call_result!(value_return.value, unit, declarations_by_name)
+    expected_type = DabType.parse(function.return_type&.text)
+    return if exact_call_result_type?(actual_type, expected_type)
+
+    reject_return_type!(value_return, function, actual_type, expected_type)
+  end
+
+  def preflight_call_result_arguments!(call, unit, declarations_by_name, expected_type)
+    call.arguments.each do |argument|
+      next unless argument.is_a?(DabModernBootstrapDirectCall)
+
+      actual_type = preflight_call_result!(argument, unit, declarations_by_name)
+      next if exact_call_result_type?(actual_type, expected_type)
+
+      raise DabModernBootstrapParseError.new(source_span: argument.source_span)
+    end
+  end
+
+  def preflight_call_result!(call, unit, declarations_by_name)
+    name = call.callable_name.text
+    target = declarations_by_name[name]
+    unless target
+      if known_target?(unit, name)
+        reject_call(
+          call,
+          %(unsupported Modern call target "#{name}" in the R39 ordinary-call subset),
+          call.callable_name.source_span
+        )
+      end
+      reject_call(call, %(unknown Modern call target "#{name}"), call.callable_name.source_span)
+    end
+
+    preflight_same_document_call!(call, target, unit, declarations_by_name)
+    DabType.parse(target.return_type&.text)
+  end
+
+  def exact_call_result_type?(actual_type, expected_type)
+    expected_type.type_string == 'Object' || expected_type.type_string == actual_type.type_string
   end
 
   def argument_type(argument)
@@ -1948,7 +2019,9 @@ private
     reject(token) if horizontal_whitespace?(token)
     reject(token, token.diagnostic_message) if token.diagnostic_message
 
-    value = if literal_member_start?
+    value = if direct_call_start?
+              parse_direct_call(allow_call_result_arguments: false)
+            elsif literal_member_start?
               parse_literal_member(argument: true)
             elsif LITERAL_KINDS.include?(token.kind)
               next_token.tap { |literal| reject_integer_overflow(literal) }
@@ -2234,7 +2307,7 @@ private
     member_call
   end
 
-  def parse_direct_call
+  def parse_direct_call(allow_call_result_arguments: true)
     source_tokens = []
     base_token = next_token
     source_tokens << base_token
@@ -2244,12 +2317,13 @@ private
     arguments, closing_parenthesis = parse_call_arguments(
       source_tokens,
       allow_member_results: true,
-      allow_local_references: true
+      allow_local_references: true,
+      allow_call_results: allow_call_result_arguments
     )
     build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
   end
 
-  def parse_call_arguments(source_tokens, allow_member_results:, allow_local_references:)
+  def parse_call_arguments(source_tokens, allow_member_results:, allow_local_references:, allow_call_results: false)
     source_tokens << expect(:left_parenthesis)
     source_tokens.concat(consume_horizontal_whitespace)
     arguments = []
@@ -2266,7 +2340,8 @@ private
       argument = parse_call_argument(
         expectation,
         allow_member_results: allow_member_results,
-        allow_local_references: allow_local_references
+        allow_local_references: allow_local_references,
+        allow_call_results: allow_call_results
       )
       arguments << argument
       source_tokens.concat(argument_source_tokens(argument))
@@ -2291,7 +2366,7 @@ private
     end
   end
 
-  def parse_call_argument(expectation, allow_member_results:, allow_local_references:)
+  def parse_call_argument(expectation, allow_member_results:, allow_local_references:, allow_call_results:)
     token = peek_token
     reject_invalid_separator(token)
     if token.kind == :eof
@@ -2302,6 +2377,9 @@ private
     end
     if allow_member_results && literal_member_start?
       return parse_literal_member(argument: true)
+    end
+    if allow_call_results && direct_call_start?
+      return parse_direct_call(allow_call_result_arguments: false)
     end
 
     if allow_local_references && token.kind == :identifier
@@ -2326,6 +2404,7 @@ private
   def argument_source_tokens(argument)
     return argument.source_tokens if argument.is_a?(DabModernBootstrapLiteralMemberCall)
     return argument.source_tokens if argument.is_a?(DabModernBootstrapLocalReference)
+    return argument.source_tokens if argument.is_a?(DabModernBootstrapDirectCall)
 
     [argument]
   end

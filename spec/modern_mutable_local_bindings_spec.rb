@@ -304,7 +304,6 @@ describe 'Modern mutable local bindings' do
       'member RHS' => ["def main()\nvar value = nil\nvalue = \"x\".length\nend\n", '.'],
       'standalone read' => ["def main()\nvar value = nil\nvalue\nend\n", 'value'],
       'local receiver' => ["def main()\nvar value = \"x\"\nvalue.length\nend\n", 'value'],
-      'nested local call' => ["def main()\nvar value = \"x\"\nprint(value())\nend\n", 'value'],
     }
     generic_cases.each do |description, (source, offending)|
       expect do
@@ -314,6 +313,14 @@ describe 'Modern mutable local bindings' do
         expect(source.byteslice(error.source_span.start_offset...error.source_span.end_offset)).to eq(offending)
       }
     end
+
+    nested_local_call = "def main()\nvar value = \"x\"\nprint(value())\nend\n"
+    expect do
+      parse(nested_local_call).lower_into(DabNodeUnit.new)
+    end.to raise_error(DabModernBootstrapParseError) { |error|
+      expect(error.message).to eq('unknown Modern call target "value"')
+      expect(nested_local_call.byteslice(error.source_span.start_offset...error.source_span.end_offset)).to eq('value')
+    }
 
     ["\r", "\r\n"].each do |ending|
       cases = {

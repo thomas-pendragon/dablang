@@ -88,7 +88,7 @@ describe 'Modern return integration' do
     [path, artifact]
   end
 
-  it 'locks fixture 0086 and preserves fixtures 0080 through 0085 byte-for-byte' do
+  it 'locks fixture 0086 and preserves fixtures 0080 through 0084 byte-for-byte' do
     expected_hashes = {
       '0080_bare_return.dabmtest' => 'a26d5bb5c568b1224680f3e29793f4335c92d939ed4290fb94b558f18caff1ce',
       '0081_reserved_return_function_name.dabmtest' =>
@@ -98,8 +98,6 @@ describe 'Modern return integration' do
       '0083_value_return.dabmtest' => 'c3e83c127e8e61c02b6fa1fd1bf9dce59ed3e94935f3a4913f094cf177b5f3a2',
       '0084_return_contract_mismatch.dabmtest' =>
         '8c22b5dedcf8b9e1a3ee914762f3fa1056a13ae6ebc9fe1b6adfcf1e75ba567d',
-      '0085_call_result_return_remains_unsupported.dabmtest' =>
-        '6c2850b6e8d4cc1f2d1c742063e99ee4fea7f11648e193727340e5b8ccd2b3ff',
     }
     directory = File.join(root, 'test/modern_source')
 
@@ -342,13 +340,9 @@ describe 'Modern return integration' do
     expect_parse_error(operator, value_message, '+')
   end
 
-  it 'keeps parameters, call results, member-on-local, and general expressions rejected' do
+  it 'keeps parameters, member-on-local, and general expressions rejected' do
     cases = {
       'parameter' => ["def value(arg:String):String\nreturn arg\nend\n", 'arg'],
-      'call result' => [
-        "def helper():String\nreturn \"x\"\nend\ndef main():String\nreturn helper()\nend\n",
-        'helper',
-      ],
       'member on local' => [
         "def main():Int32\nlet value = \"x\"\nreturn value.length\nend\n",
         'value',
