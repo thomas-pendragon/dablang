@@ -26,9 +26,9 @@ describe 'Modern return integration' do
     DabSourceUnit.new(input: 'return-integration.dabm', syntax_profile: DabSyntaxProfile::MODERN)
   end
 
-  def invoke(*command, input: nil)
+  def invoke(*command, input: nil, binmode: false)
     environment = {'BUNDLE_USER_HOME' => File.join(Dir.tmpdir, 'dablang-return-integration-bundler')}
-    Open3.capture3(environment, *command, stdin_data: input, chdir: root)
+    Open3.capture3(environment, *command, stdin_data: input, binmode: binmode, chdir: root)
   end
 
   def tool_stderr(stderr)
@@ -75,7 +75,14 @@ describe 'Modern return integration' do
   end
 
   def assemble(assembly, directory, basename)
-    artifact, stderr, status = invoke(RbConfig.ruby, assembler, input: assembly)
+    artifact, stderr, status = invoke(
+      RbConfig.ruby,
+      '-e',
+      'STDOUT.binmode; load ARGV.shift',
+      assembler,
+      input: assembly,
+      binmode: true
+    )
     expect([status.exitstatus, tool_stderr(stderr)]).to eq([0, ''])
     path = File.join(directory, "#{basename}.dabcb")
     File.binwrite(path, artifact)
@@ -98,7 +105,8 @@ describe 'Modern return integration' do
     directory = File.join(root, 'test/modern_source')
 
     expected_hashes.each do |basename, expected_hash|
-      expect(Digest::SHA256.file(File.join(directory, basename)).hexdigest).to eq(expected_hash)
+      content = File.binread(File.join(directory, basename)).gsub("\r\n", "\n")
+      expect(Digest::SHA256.hexdigest(content)).to eq(expected_hash)
     end
     expect([fixture.expected_status, fixture.expected_application_stdout]).to eq(
       [0, "bare-before\nafter-bare\nvalue-before\nafter-value\nfallthrough\nafter-fallthrough\n"]
@@ -112,7 +120,8 @@ describe 'Modern return integration' do
   it 'keeps the fixture portable through established CRLF transport normalization' do
     Dir.mktmpdir('dab-return-integration-crlf') do |directory|
       transported = File.join(directory, File.basename(fixture_path))
-      File.binwrite(transported, File.binread(fixture_path).gsub("\n", "\r\n"))
+      content = File.binread(fixture_path).gsub("\r\n", "\n")
+      File.binwrite(transported, content.gsub("\n", "\r\n"))
       loaded = DabModernSourceFixture.load(transported)
 
       expect(loaded.source).to eq(fixture.source)
