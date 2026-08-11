@@ -235,12 +235,11 @@ describe 'Modern value returns' do
     end
   end
 
-  it 'keeps parameters, calls, read-before and broader expressions outside the value subset' do
+  it 'keeps parameters, read-before locals and broader expressions outside the value subset' do
     cases = {
       'parameter' => ["def value(arg:String):String\nreturn arg\nend\n", 'arg'],
       'unknown local' => ["def value():String\nreturn missing\nend\n", 'missing'],
       'read before' => ["def value():String\nreturn later\nlet later = \"x\"\nend\n", 'later'],
-      'ordinary call' => ["def helper():String\nreturn \"x\"\nend\ndef main():String\nreturn helper()\nend\n", 'helper'],
       'member on local' => ["def main():Int32\nlet value = \"x\"\nreturn value.length\nend\n", 'value'],
     }
     cases.each_value do |source, offending|
@@ -323,7 +322,7 @@ describe 'Modern value returns' do
     expect(lowered.value).to be_a(DabNodeLiteralNil)
   end
 
-  it 'locks the migrated 0082 boundary and primary 0083 through 0085 fixtures' do
+  it 'locks the migrated 0082 boundary, value fixtures, and produced-call return fixture 0085' do
     fixtures = (82..85).to_h do |number|
       pattern = File.join(root, sprintf('test/modern_source/%04d_*.dabmtest', number))
       [number, DabModernSourceFixture.load(Dir.glob(pattern).fetch(0))]
@@ -358,9 +357,11 @@ describe 'Modern value returns' do
       'compiler: 0084_return_contract_mismatch.dabm:2:7: error: ' \
       "cannot return Modern value of type Fixnum from function \"main\" with declared return type String\n"
     )
-    expect(call_result.expected_stderr).to eq(
-      'compiler: 0085_call_result_return_remains_unsupported.dabm:5:7: error: ' \
-      "#{DabModernBootstrapParseError::GENERIC_MESSAGE}\n"
+    expect([call_result.expected_status, call_result.expected_application_stdout]).to eq(
+      [0, "before\nproducer\n"]
     )
+    main_assembly = call_result.expected_stdout.match(/Fmain:.*?__Fmain_END:/m).to_s
+    expect(main_assembly).to match(%r{/\* produce\s+\*/\s+CALL (R\d+), S\d+\n\s+RETURN \1})
+    expect(call_result.expected_stdout).not_to include('dead-after-return')
   end
 end

@@ -1,0 +1,15 @@
+## SOURCE
+def produce()
+return "value"
+end
+def consume(value:String)
+end
+def main()
+consume(produce())
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0088_call_result_object_mismatch.dabm:7:8: error: cannot pass Modern argument of type Object to parameter "value" of type String in call "consume"

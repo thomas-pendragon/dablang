@@ -506,15 +506,18 @@ returned identifier. Fixture `0083` is the primary executable contract for
 literal, local, and member values, typed and untyped functions, helper and main
 early exits, dead-tail removal, and exact application output
 `helper-before\nmain-after-helper\n`. Fixture `0084` locks the exact declared
-return mismatch, and fixture `0085` keeps ordinary-call result returns closed.
+return mismatch. Fixture `0085` recorded the then-closed ordinary-call result
+return boundary and is migrated by version 0.0.64.
+
 The compiler still parses and preflights complete unreachable tails before
 lowering and publishes no partial unit or output after any failure.
 
-Parameter references, unknown/read-before/cross-function locals, member calls
-on locals or parameters, ordinary-call results, chaining, operators,
-parenthesized and general expressions remain rejected. This version changes no
-opcode, schema, assembler, VM, native, Ring, FFI, formatter, or decompiler
-behavior. OR-045, EX-003, PL-005, and later rows remain deferred.
+Before version 0.0.64, parameter references,
+unknown/read-before/cross-function locals, member calls on locals or
+parameters, ordinary-call results, chaining, operators, parenthesized and
+general expressions remained rejected. Version 0.0.62 changed no opcode,
+schema, assembler, VM, native, Ring, FFI, formatter, or decompiler behavior.
+At that point OR-045, EX-003, PL-005, and later rows remained deferred.
 
 Version 0.0.63 closes original roadmap objective OR-045 as a fixture-led
 integration gate with no semantic or production-code change. Fixture `0086`
@@ -529,12 +532,46 @@ disassembly, native output, and exit status are deterministic across two
 builds; the primary `main` output is
 `bare-before\nafter-bare\nvalue-before\nafter-value\nfallthrough\nafter-fallthrough\n`.
 
-Focused integration coverage preserves fixtures `0080` through `0085`
-byte-for-byte and retains the complete EX-001 and EX-002 grammar, type, span,
-diagnostic, preflight, transactionality, and CRLF transport boundaries.
-Ordinary-call results, parameter body references, broader expressions, EX-003,
-PL-005, later rows, and all opcode, schema, VM, native, Ring, FFI, formatter,
-and decompiler changes remain deferred.
+Focused integration coverage in version 0.0.63 preserves fixtures `0080`
+through `0085` byte-for-byte and retains the complete EX-001 and EX-002
+grammar, type, span, diagnostic, preflight, transactionality, and CRLF
+transport boundaries. At that version ordinary-call results, parameter body
+references, broader expressions, EX-003, PL-005, later rows, and all opcode,
+schema, VM, native, Ring, FFI, formatter, and decompiler changes remained
+deferred.
+
+Version 0.0.64 adds one closed call-result edge for same-document ordinary
+calls. A producer may be the complete existing returned value or one argument
+of one existing outer same-document call, unary `print`, or approved unary
+`puts`. Producer arguments remain limited to existing literals, earlier locals,
+and the approved one-level String-literal member result. Deeper call nesting,
+bindings, reassignment, member receivers or chaining, operators, interpolation,
+parenthesized/general expressions, and parameter body references remain
+rejected.
+
+The producer's declared return metadata is the only static result type; an
+omitted contract means `Object`. Consumption requires an exact type match or
+an `Object` consumer and performs no cast, conversion, broad assignability, or
+return-path completeness analysis. Standalone calls remain `CALL RNIL`.
+Consumed calls execute once in the consumer-owned register, producing
+`CALL Rn` followed by `RETURN Rn`, outer `CALL RNIL ... Rn`, or
+`SYSCALL RNIL ... Rn`.
+
+Fixture `0085` is the non-PL-005 produced-and-returned acceptance and locks the
+same register across `CALL Rn` and `RETURN Rn`. Fixture `0087` is a separate
+noncanonical sequential argument-consumption program: its exact output is
+`before\nproducer\nconsumer\nafter\n`, and its assembly locks earlier-local and
+String-length producer arguments, left-to-right register ownership, exactly
+one producer execution, and the outer `CALL RNIL`. Fixture `0088` locks the
+omitted-`Object` producer rejection in a concrete `String` parameter slot.
+Focused coverage preserves target/arity/argument/type precedence, full inner-
+call mismatch spans, recursion, complete unreachable-tail preflight,
+transactional failure, deterministic artifacts, and every excluded form.
+
+This version does not consume the canonical PL-005 source and changes no
+opcode, schema, assembler, VM, native, Ring, FFI, formatter, decompiler, or
+trusted-local-input boundary. Parameter references and all later rows remain
+deferred.
 
 ## Diagnostic boundary
 
