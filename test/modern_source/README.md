@@ -573,6 +573,22 @@ opcode, schema, assembler, VM, native, Ring, FFI, formatter, decompiler, or
 trusted-local-input boundary. Parameter references and all later rows remain
 deferred.
 
+Version 0.0.65 closes executable ladder row PL-005 through fixture `0089`,
+using the unchanged canonical program that returns `"returned\n"` from the
+typed `label` helper and prints that call result from `main`. Its exact
+application output is `returned\n`. The committed 2,510-byte golden assembly
+locks a consumer-owned `CALL R0` followed by unary `SYSCALL RNIL, 0, R0`,
+while the helper returns the same String value through `RETURN R0`.
+
+This fixture-led closure adds no production semantic change. It retains the
+complete EX-003 Option A contract, including same-document direct producers,
+exact declared-result or `Object` containment, no conversion, standalone
+`CALL RNIL`, complete transactional preflight, existing diagnostics, and every
+excluded deeper or general expression form. Parameter references, PL-006, and
+all later rows remain deferred. The runtime and generated artifacts remain
+suitable only for trusted local input; no opcode, schema, assembler, VM,
+native, Ring, FFI, formatter, or decompiler boundary changes.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
