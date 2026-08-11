@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 require 'digest'
-require 'fileutils'
 require 'open3'
 require 'rbconfig'
 require 'tmpdir'

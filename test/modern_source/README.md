@@ -520,9 +520,9 @@ Version 0.0.63 closes original roadmap objective OR-045 as a fixture-led
 integration gate with no semantic or production-code change. Fixture `0086`
 combines the already established globally reserved bare Nil return and bounded
 value return in one deterministic executable document. It covers explicit
-`String` and omitted `Object` return contracts, implicit fallthrough, helper
-caller continuation, direct custom entries, and opposite-form returns plus
-tail statements after an earlier return. Its exact assembly contains both
+`String` and omitted `Object` return contracts, implicit fallthrough,
+helper/caller continuation, direct custom entries, and opposite-form returns
+plus tail statements after an earlier return. Its exact assembly contains both
 `RETURN RNIL` and `RETURN Rn`, while omitting every tail-only instruction,
 register, String, and data entry. The committed assembly, assembled artifact,
 disassembly, native output, and exit status are deterministic across two
