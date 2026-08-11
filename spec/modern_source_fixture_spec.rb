@@ -137,6 +137,7 @@ describe DabModernSourceFixture do
       0085_call_result_return.dabmtest
       0086_return_integration.dabmtest
       0087_call_result_argument.dabmtest
+      0089_p05_print_returned_call_value.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|
