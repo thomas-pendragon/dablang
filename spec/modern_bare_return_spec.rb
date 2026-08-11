@@ -150,10 +150,7 @@ describe 'Modern bare return' do
   it 'rejects every other separator and line-ending boundary at the closed span' do
     message = DabModernBootstrapParser::EXPECT_BARE_RETURN_SEPARATOR_MESSAGE
     cases = {
-      'space before LF' => ["def main()\nreturn \nend\n", ' '],
       'TAB before LF' => ["def main()\nreturn\t\nend\n", "\t"],
-      'value' => ["def main()\nreturn value\nend\n", ' '],
-      'integer' => ["def main()\nreturn 1\nend\n", ' '],
       'direct call' => ["def main()\nreturn()\nend\n", '('],
       'question suffix' => ["def main()\nreturn?()\nend\n", '?'],
       'bang suffix' => ["def main()\nreturn!()\nend\n", '!'],
@@ -427,13 +424,13 @@ describe 'Modern bare return' do
     end
   end
 
-  it 'locks the three sequential fixture contracts and exact failure streams' do
+  it 'locks the migrated EX-001 fixture contracts and exact failure streams' do
     success = DabModernSourceFixture.load(File.join(root, 'test/modern_source/0080_bare_return.dabmtest'))
     reserved = DabModernSourceFixture.load(
       File.join(root, 'test/modern_source/0081_reserved_return_function_name.dabmtest')
     )
-    value = DabModernSourceFixture.load(
-      File.join(root, 'test/modern_source/0082_return_value_remains_unsupported.dabmtest')
+    read_before = DabModernSourceFixture.load(
+      File.join(root, 'test/modern_source/0082_return_local_read_before.dabmtest')
     )
 
     expect(success.expected_status).to eq(0)
@@ -446,10 +443,10 @@ describe 'Modern bare return' do
       'compiler: 0081_reserved_return_function_name.dabm:1:4: error: ' \
       "#{DabModernBootstrapParser::EXPECT_CALLABLE_NAME_MESSAGE}\n"
     )
-    expect([value.expected_status, value.expected_stdout]).to eq([2, ''])
-    expect(value.expected_stderr).to eq(
-      'compiler: 0082_return_value_remains_unsupported.dabm:2:6: error: ' \
-      "#{DabModernBootstrapParser::EXPECT_BARE_RETURN_SEPARATOR_MESSAGE}\n"
+    expect([read_before.expected_status, read_before.expected_stdout]).to eq([2, ''])
+    expect(read_before.expected_stderr).to eq(
+      'compiler: 0082_return_local_read_before.dabm:2:7: error: ' \
+      "#{DabModernBootstrapParseError::GENERIC_MESSAGE}\n"
     )
   end
 end

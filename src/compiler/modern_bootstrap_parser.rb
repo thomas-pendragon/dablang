@@ -373,6 +373,57 @@ class DabModernBootstrapBareReturn
   end
 end
 
+class DabModernBootstrapValueReturn
+  attr_reader :keyword_token, :value, :separator_token, :source_parts, :source_span
+
+  def initialize(keyword_token:, space_token:, value:, separator_token:)
+    unless keyword_token.is_a?(DabModernBootstrapToken) && keyword_token.kind == :return
+      raise ArgumentError.new('Modern value return requires a return token')
+    end
+    unless space_token.is_a?(DabModernBootstrapToken) && space_token.kind == :space && space_token.text == ' '
+      raise ArgumentError.new('Modern value return requires exactly one ASCII space after return')
+    end
+    unless separator_token.is_a?(DabModernBootstrapToken) &&
+           DabModernBootstrapParser::SEPARATOR_KINDS.include?(separator_token.kind)
+      raise ArgumentError.new('Modern value return requires a body-item separator token')
+    end
+
+    value_tokens = if value.respond_to?(:source_tokens)
+                     value.source_tokens
+                   elsif value.is_a?(DabModernBootstrapToken)
+                     [value]
+                   else
+                     raise ArgumentError.new('Modern value return requires a supported value')
+                   end
+    @keyword_token = keyword_token
+    @value = value
+    @separator_token = separator_token
+    @source_parts = [keyword_token, space_token, *value_tokens].map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: keyword_token.source_span.start_location,
+      end_location: value.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :value_return
+  end
+
+  def lower
+    lowered_value = if value.is_a?(DabModernBootstrapLiteralMemberCall)
+                      value.lower(consumed: true)
+                    elsif value.is_a?(DabModernBootstrapLocalReference)
+                      value.lower
+                    else
+                      DabModernBootstrapLiterals.lower(value)
+                    end
+    DabNodeReturn.new(lowered_value).tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+end
+
 class DabModernBootstrapDirectCall
   attr_reader :callable_name, :arguments, :source_span, :source_tokens
 
@@ -1028,7 +1079,10 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
-    return body_item.lower if body_item.is_a?(DabModernBootstrapBareReturn)
+    if body_item.is_a?(DabModernBootstrapBareReturn) ||
+       body_item.is_a?(DabModernBootstrapValueReturn)
+      return body_item.lower
+    end
     if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
       return body_item.lower
     end
@@ -1113,6 +1167,8 @@ private
 
           preflight_typed_local_write!(body_item, binding_declaration)
           binding[:latest_write] = body_item
+        when DabModernBootstrapValueReturn
+          preflight_ring_independent_return!(body_item, declaration, bindings, bindings_by_reference)
         when DabModernBootstrapDirectCall
           body_item.arguments.each do |argument|
             next unless argument.is_a?(DabModernBootstrapLocalReference)
@@ -1133,6 +1189,43 @@ private
       end
     end
     bindings_by_reference
+  end
+
+  def preflight_ring_independent_return!(value_return, function, bindings, bindings_by_reference)
+    value = value_return.value
+    return if value.is_a?(DabModernBootstrapLiteralMemberCall)
+
+    actual_type = if value.is_a?(DabModernBootstrapLocalReference)
+                    binding = bindings[value.name]
+                    raise DabModernBootstrapParseError.new(source_span: value.source_span) unless binding
+
+                    declaration = binding.fetch(:declaration)
+                    type = if declaration.annotated?
+                             declaration.declared_type
+                           else
+                             binding.fetch(:latest_write).initializer_type
+                           end
+                    bindings_by_reference[value] = type
+                    type
+                  else
+                    DabModernBootstrapLiterals.flow_type(value)
+                  end
+    preflight_return_type!(value_return, function, actual_type)
+  end
+
+  def preflight_return_type!(value_return, function, actual_type)
+    expected_type = DabType.parse(function.return_type&.text)
+    return if expected_type.can_assign_from?(actual_type)
+
+    reject_return_type!(value_return, function, actual_type, expected_type)
+  end
+
+  def reject_return_type!(value_return, function, actual_type, expected_type)
+    raise DabModernBootstrapParseError.new(
+      "cannot return Modern value of type #{actual_type.type_string} from function " \
+      "\"#{function.callable_name.text}\" with declared return type #{expected_type.type_string}",
+      source_span: value_return.value.source_span
+    )
   end
 
   def preflight_local_binding!(binding, bindings, parameter_names)
@@ -1201,9 +1294,25 @@ private
           preflight_call!(body_item, unit, declarations_by_name)
         when DabModernBootstrapLiteralMemberCall
           preflight_member_call!(body_item, unit)
+        when DabModernBootstrapValueReturn
+          preflight_member_return!(body_item, declaration, unit) if body_item.value.is_a?(
+            DabModernBootstrapLiteralMemberCall
+          )
         end
       end
     end
+  end
+
+  def preflight_member_return!(value_return, function, unit)
+    preflight_member_call!(value_return.value, unit)
+    return if function.return_type.nil? || function.return_type.text == 'Int32'
+
+    reject_return_type!(
+      value_return,
+      function,
+      DabType.parse('Int32'),
+      DabType.parse(function.return_type.text)
+    )
   end
 
   def preflight_member_call!(call, unit)
@@ -1403,6 +1512,8 @@ class DabModernBootstrapParser
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after literal'.freeze
   EXPECT_BARE_RETURN_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after bare return'.freeze
+  EXPECT_VALUE_RETURN_SEPARATOR_MESSAGE =
+    'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after returned value'.freeze
   EXPECT_END_MESSAGE =
     'unterminated Modern function declaration: expected closing "end" before end of file'.freeze
   EXPECT_END_SEPARATOR_MESSAGE =
@@ -1750,7 +1861,7 @@ private
       reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
 
       if peek_token.kind == :return
-        items << parse_bare_return
+        items << parse_return
         next
       end
 
@@ -1811,14 +1922,63 @@ private
     peek_token(distance).kind == :left_parenthesis
   end
 
-  def parse_bare_return
+  def parse_return
     keyword_token = expect(:return)
     token = next_token
     reject_invalid_separator(token)
     return DabModernBootstrapBareReturn.new(keyword_token) if separator?(token)
 
+    if token.kind == :space && value_return_start?
+      return parse_value_return(keyword_token, token)
+    end
+
     reject_invalid_separator_after_spaces(token)
     reject(token, EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
+  end
+
+  def value_return_start?
+    token = peek_token
+    token.kind == :identifier || LITERAL_KINDS.include?(token.kind) ||
+      literal_member_start? || !token.diagnostic_message.nil?
+  end
+
+  def parse_value_return(keyword_token, space_token)
+    token = peek_token
+    reject_invalid_separator(token)
+    reject(token) if horizontal_whitespace?(token)
+    reject(token, token.diagnostic_message) if token.diagnostic_message
+
+    value = if literal_member_start?
+              parse_literal_member(argument: true)
+            elsif LITERAL_KINDS.include?(token.kind)
+              next_token.tap { |literal| reject_integer_overflow(literal) }
+            elsif token.kind == :identifier && bare_return_local_reference?
+              DabModernBootstrapLocalReference.new(next_token)
+            else
+              reject(token)
+            end
+    separator_token = expect_returned_value_separator
+    DabModernBootstrapValueReturn.new(
+      keyword_token: keyword_token,
+      space_token: space_token,
+      value: value,
+      separator_token: separator_token
+    )
+  end
+
+  def bare_return_local_reference?
+    distance = 1
+    distance += 1 while horizontal_whitespace?(peek_token(distance))
+    separator?(peek_token(distance)) || %i[eof end carriage_return].include?(peek_token(distance).kind)
+  end
+
+  def expect_returned_value_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, EXPECT_VALUE_RETURN_SEPARATOR_MESSAGE)
   end
 
   def contextual_let_start?

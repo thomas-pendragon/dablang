@@ -1,0 +1,13 @@
+## SOURCE
+def helper():String
+return "value"
+end
+def main():String
+return helper()
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0085_call_result_return_remains_unsupported.dabm:5:7: error: unsupported Dab syntax profile "modern": parser is not implemented

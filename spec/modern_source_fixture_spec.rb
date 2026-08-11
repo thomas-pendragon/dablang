@@ -133,6 +133,7 @@ describe DabModernSourceFixture do
       0073_p03_reassign_local.dabmtest
       0074_typed_local_bindings.dabmtest
       0079_p04_use_typed_local.dabmtest
+      0083_value_return.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|
