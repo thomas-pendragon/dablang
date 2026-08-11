@@ -516,6 +516,26 @@ parenthesized and general expressions remain rejected. This version changes no
 opcode, schema, assembler, VM, native, Ring, FFI, formatter, or decompiler
 behavior. OR-045, EX-003, PL-005, and later rows remain deferred.
 
+Version 0.0.63 closes original roadmap objective OR-045 as a fixture-led
+integration gate with no semantic or production-code change. Fixture `0086`
+combines the already established globally reserved bare Nil return and bounded
+value return in one deterministic executable document. It covers explicit
+`String` and omitted `Object` return contracts, implicit fallthrough, helper
+caller continuation, direct custom entries, and opposite-form returns plus
+tail statements after an earlier return. Its exact assembly contains both
+`RETURN RNIL` and `RETURN Rn`, while omitting every tail-only instruction,
+register, String, and data entry. The committed assembly, assembled artifact,
+disassembly, native output, and exit status are deterministic across two
+builds; the primary `main` output is
+`bare-before\nafter-bare\nvalue-before\nafter-value\nfallthrough\nafter-fallthrough\n`.
+
+Focused integration coverage preserves fixtures `0080` through `0085`
+byte-for-byte and retains the complete EX-001 and EX-002 grammar, type, span,
+diagnostic, preflight, transactionality, and CRLF transport boundaries.
+Ordinary-call results, parameter body references, broader expressions, EX-003,
+PL-005, later rows, and all opcode, schema, VM, native, Ring, FFI, formatter,
+and decompiler changes remain deferred.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

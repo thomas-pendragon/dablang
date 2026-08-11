@@ -1,0 +1,151 @@
+## SOURCE
+def bare_explicit():String
+  print("bare-before\n")
+  return
+  return "dead-value"
+  print("dead-bare-tail\n")
+end
+def value_explicit():String
+  print("value-before\n")
+  return "value"
+  return
+  print("dead-value-tail\n")
+end
+def fallthrough_explicit():String
+  print("fallthrough\n")
+end
+def main()
+  bare_explicit()
+  print("after-bare\n")
+  value_explicit()
+  print("after-value\n")
+  fallthrough_explicit()
+  print("after-fallthrough\n")
+  return 0
+  return
+  print("dead-main-tail\n")
+end
+## EXPECTED APPLICATION STDOUT
+bare-before
+after-bare
+value-before
+after-value
+fallthrough
+after-fallthrough
+
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "after-bare
+" 
+                                 W_STRING "after-fallthrough
+" 
+                                 W_STRING "after-value
+" 
+                                 W_STRING "bare-before
+" 
+                                 W_STRING "fallthrough
+" 
+                                 W_STRING "value" 
+                                 W_STRING "value-before
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fbare_explicit:
+                                 STACK_RESERVE 0
+/* "bare-before */               LOAD_STRING R0, _DATA + 44, 12
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fbare_explicit_END:
+                                 NOP 
+ 
+                   Ffallthrough_explicit:
+                                 STACK_RESERVE 0
+/* "fallthrough */               LOAD_STRING R0, _DATA + 57, 12
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Ffallthrough_explicit_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* bare_explici */               CALL RNIL, S54
+/* "after-bare. */               LOAD_STRING R0, _DATA + 0, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* value_explic */               CALL RNIL, S57
+/* "after-value */               LOAD_STRING R1, _DATA + 31, 12
+/* PRINT        */               SYSCALL RNIL, 0, R1
+/* fallthrough_ */               CALL RNIL, S55
+/* "after-fallt */               LOAD_STRING R2, _DATA + 12, 18
+/* PRINT        */               SYSCALL RNIL, 0, R2
+/* 0            */               LOAD_NUMBER R3, 0
+                                 RETURN R3
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fvalue_explicit:
+                                 STACK_RESERVE 0
+/* "value-befor */               LOAD_STRING R0, _DATA + 76, 13
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "value"      */               LOAD_STRING R1, _DATA + 70, 5
+                                 RETURN R1
+                   __Fvalue_explicit_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "bare_explicit" 
+                                 W_STRING "fallthrough_explicit" 
+                                 W_STRING "main" 
+                                 W_STRING "value_explicit" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* bare_explici */               W_SYMBOL _SDAT + 12 
+/* fallthrough_ */               W_SYMBOL _SDAT + 26 
+/* main         */               W_SYMBOL _SDAT + 47 
+/* value_explic */               W_SYMBOL _SDAT + 52 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* bare_explici */               W_METHOD 54, -1, Fbare_explicit, 0, __Fbare_explicit_END - Fbare_explicit, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* fallthrough_ */               W_METHOD 55, -1, Ffallthrough_explicit, 0, __Ffallthrough_explicit_END - Ffallthrough_explicit, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 56, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* value_explic */               W_METHOD 57, -1, Fvalue_explicit, 0, __Fvalue_explicit_END - Fvalue_explicit, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
