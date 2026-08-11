@@ -1,0 +1,10 @@
+## SOURCE
+def main():String
+return 1
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0084_return_contract_mismatch.dabm:2:7: error: cannot return Modern value of type Fixnum from function "main" with declared return type String

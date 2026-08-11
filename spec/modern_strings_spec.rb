@@ -567,12 +567,10 @@ describe 'Modern bootstrap String literals' do
     end
 
     source = "def main\nreturn \"a\"\nend\n"
-    expect do
-      parse_modern(source)
-    end.to raise_error(DabModernBootstrapParseError) { |error|
-      expect(error.message).to eq(DabModernBootstrapParser::EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
-      expect(error.source_location.offset).to eq(source.index(' ', source.index('return') + 6))
-    }
+    value_return = parse_modern(source).declarations.fetch(0).body_items.fetch(0)
+    expect(value_return).to be_a(DabModernBootstrapValueReturn)
+    expect(value_return.value.kind).to eq(:string)
+    expect(value_return.value.value).to eq('a')
   end
 
   it 'fails compilation transactionally and leaves the lower Ring reusable' do

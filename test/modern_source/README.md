@@ -485,6 +485,37 @@ class, field, block, opcode, bytecode schema, assembler, VM, Ring, FFI,
 formatter, or decompiler behavior. EX-002, OR-045, EX-003, PL-005, and later
 rows remain deferred.
 
+Version 0.0.62 adds bounded Modern value returns for existing Nil, Boolean,
+integer, and String literals; earlier same-function `let` and `var` locals;
+and the approved one-level String-literal `length` or `length()` result. Exactly
+one ASCII space follows `return`, and the returned value must be followed
+immediately by LF, semicolon, or an adjacent line comment. Bare return remains
+unchanged.
+
+Literal and local returns use the established literal-flow or declared-local
+type plus current assignability. Annotated locals use their declared type;
+unannotated locals use their latest preceding literal-flow type. String length
+results remain contained to exact `Int32` or an omitted `Object` return
+contract. Return checking never inserts a cast or conversion, and lowering
+evaluates the source value exactly once through the existing literal, local,
+or consumed-member path. Nil emits `RETURN RNIL`; other values use one SSA
+destination and `RETURN Rn`.
+
+Fixture `0082` now locks the generic earlier-local read-before boundary at the
+returned identifier. Fixture `0083` is the primary executable contract for
+literal, local, and member values, typed and untyped functions, helper and main
+early exits, dead-tail removal, and exact application output
+`helper-before\nmain-after-helper\n`. Fixture `0084` locks the exact declared
+return mismatch, and fixture `0085` keeps ordinary-call result returns closed.
+The compiler still parses and preflights complete unreachable tails before
+lowering and publishes no partial unit or output after any failure.
+
+Parameter references, unknown/read-before/cross-function locals, member calls
+on locals or parameters, ordinary-call results, chaining, operators,
+parenthesized and general expressions remain rejected. This version changes no
+opcode, schema, assembler, VM, native, Ring, FFI, formatter, or decompiler
+behavior. OR-045, EX-003, PL-005, and later rows remain deferred.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

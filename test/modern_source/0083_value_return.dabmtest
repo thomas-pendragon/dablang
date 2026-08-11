@@ -1,0 +1,223 @@
+## SOURCE
+def nil_value():NilClass
+  return nil
+  print("nil-tail\n")
+end
+def boolean_value():Boolean
+  return true
+  print("boolean-tail\n")
+end
+def integer_value():Int32
+  return 1
+  print("integer-tail\n")
+end
+def string_value():String
+  return "value"
+  print("string-tail\n")
+end
+def fixed_local():String
+  let value = "fixed"
+  return value
+  print("fixed-tail\n")
+end
+def mutable_local():String
+  var value = nil
+  value = "mutable"
+  return value
+  print("mutable-tail\n")
+end
+def property_length():Int32
+  return "abc".length
+  print("property-tail\n")
+end
+def call_length():Int32
+  return "é".length()
+  print("call-tail\n")
+end
+def helper()
+  print("helper-before\n")
+  return "helper-value"
+  print("helper-after\n")
+end
+def main()
+  helper()
+  print("main-after-helper\n")
+  return 0
+  print("main-after-return\n")
+end
+## EXPECTED APPLICATION STDOUT
+helper-before
+main-after-helper
+
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "abc" 
+                                 W_STRING "fixed" 
+                                 W_STRING "helper-before
+" 
+                                 W_STRING "helper-value" 
+                                 W_STRING "main-after-helper
+" 
+                                 W_STRING "mutable" 
+                                 W_STRING "value" 
+                                 W_STRING "é" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fboolean_value:
+                                 STACK_RESERVE 0
+                                 LOAD_TRUE R0
+                                 RETURN R0
+                   __Fboolean_value_END:
+                                 NOP 
+ 
+                   Fcall_length:
+                                 STACK_RESERVE 0
+/* "é"         */               LOAD_STRING R0, _DATA + 71, 2
+/* length       */               INSTCALL R1, R0, S33
+                                 RETURN R1
+                   __Fcall_length_END:
+                                 NOP 
+ 
+                   Ffixed_local:
+                                 STACK_RESERVE 0
+/* "fixed"      */               LOAD_STRING R0, _DATA + 4, 5
+                                 RETURN R0
+                   __Ffixed_local_END:
+                                 NOP 
+ 
+                   Fhelper:
+                                 STACK_RESERVE 0
+/* "helper-befo */               LOAD_STRING R0, _DATA + 10, 14
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "helper-valu */               LOAD_STRING R1, _DATA + 25, 12
+                                 RETURN R1
+                   __Fhelper_END:
+                                 NOP 
+ 
+                   Finteger_value:
+                                 STACK_RESERVE 0
+/* 1            */               LOAD_NUMBER R0, 1
+                                 RETURN R0
+                   __Finteger_value_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* helper       */               CALL RNIL, S57
+/* "main-after- */               LOAD_STRING R0, _DATA + 38, 18
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* 0            */               LOAD_NUMBER R1, 0
+                                 RETURN R1
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fmutable_local:
+                                 STACK_RESERVE 0
+/* "mutable"    */               LOAD_STRING R0, _DATA + 57, 7
+                                 RETURN R0
+                   __Fmutable_local_END:
+                                 NOP 
+ 
+                   Fnil_value:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __Fnil_value_END:
+                                 NOP 
+ 
+                   Fproperty_length:
+                                 STACK_RESERVE 0
+/* "abc"        */               LOAD_STRING R0, _DATA + 0, 3
+/* length       */               INSTCALL R1, R0, S33
+                                 RETURN R1
+                   __Fproperty_length_END:
+                                 NOP 
+ 
+                   Fstring_value:
+                                 STACK_RESERVE 0
+/* "value"      */               LOAD_STRING R0, _DATA + 65, 5
+                                 RETURN R0
+                   __Fstring_value_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "boolean_value" 
+                                 W_STRING "call_length" 
+                                 W_STRING "fixed_local" 
+                                 W_STRING "helper" 
+                                 W_STRING "integer_value" 
+                                 W_STRING "main" 
+                                 W_STRING "mutable_local" 
+                                 W_STRING "nil_value" 
+                                 W_STRING "property_length" 
+                                 W_STRING "string_value" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* boolean_valu */               W_SYMBOL _SDAT + 12 
+/* call_length  */               W_SYMBOL _SDAT + 26 
+/* fixed_local  */               W_SYMBOL _SDAT + 38 
+/* helper       */               W_SYMBOL _SDAT + 50 
+/* integer_valu */               W_SYMBOL _SDAT + 57 
+/* main         */               W_SYMBOL _SDAT + 71 
+/* mutable_loca */               W_SYMBOL _SDAT + 76 
+/* nil_value    */               W_SYMBOL _SDAT + 90 
+/* property_len */               W_SYMBOL _SDAT + 100 
+/* string_value */               W_SYMBOL _SDAT + 116 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* boolean_valu */               W_METHOD 54, -1, Fboolean_value, 0, __Fboolean_value_END - Fboolean_value, 0
+/* $ret<Boolean */               W_METHOD_ARG -1, 3
+/* call_length  */               W_METHOD 55, -1, Fcall_length, 0, __Fcall_length_END - Fcall_length, 0
+/* $ret<Int32>  */               W_METHOD_ARG -1, 12
+/* fixed_local  */               W_METHOD 56, -1, Ffixed_local, 0, __Ffixed_local_END - Ffixed_local, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* helper       */               W_METHOD 57, -1, Fhelper, 0, __Fhelper_END - Fhelper, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* integer_valu */               W_METHOD 58, -1, Finteger_value, 0, __Finteger_value_END - Finteger_value, 0
+/* $ret<Int32>  */               W_METHOD_ARG -1, 12
+/* main         */               W_METHOD 59, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* mutable_loca */               W_METHOD 60, -1, Fmutable_local, 0, __Fmutable_local_END - Fmutable_local, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* nil_value    */               W_METHOD 61, -1, Fnil_value, 0, __Fnil_value_END - Fnil_value, 0
+/* $ret<NilClas */               W_METHOD_ARG -1, 4
+/* property_len */               W_METHOD 62, -1, Fproperty_length, 0, __Fproperty_length_END - Fproperty_length, 0
+/* $ret<Int32>  */               W_METHOD_ARG -1, 12
+/* string_value */               W_METHOD 63, -1, Fstring_value, 0, __Fstring_value_END - Fstring_value, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
