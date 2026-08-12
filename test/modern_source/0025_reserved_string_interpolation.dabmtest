@@ -1,10 +1,11 @@
 ## SOURCE
 def main
 "value #{name}"
+let name = "later"
 end
 ## SCHEMA VERSION
 1
 ## STATUS
 2
 ## STDERR
-compiler: 0025_reserved_string_interpolation.dabm:2:7: error: invalid Modern String literal: interpolation marker "#{" is reserved
+compiler: 0025_reserved_string_interpolation.dabm:2:9: error: unknown Modern interpolation local "name"; expected an earlier same-function local binding

@@ -35,6 +35,71 @@ class DabModernBootstrapToken
   end
 end
 
+class DabModernBootstrapInterpolationSplice
+  attr_reader :opener_token, :name_token, :closer_token, :source_tokens, :source_span
+
+  def initialize(opener_token:, name_token:, closer_token:)
+    @opener_token = opener_token
+    @name_token = name_token
+    @closer_token = closer_token
+    @source_tokens = [opener_token, name_token, closer_token].freeze
+    @source_span = DabSourceSpan.new(
+      start_location: opener_token.source_span.start_location,
+      end_location: closer_token.source_span.end_location
+    )
+    freeze
+  end
+
+  def name
+    name_token.text
+  end
+end
+
+class DabModernBootstrapInterpolatedString
+  attr_reader :opening_quote, :parts, :closing_quote, :source_tokens, :source_span
+
+  def initialize(opening_quote:, parts:, closing_quote:)
+    @opening_quote = opening_quote
+    @parts = parts.freeze
+    @closing_quote = closing_quote
+    @source_tokens = [
+      opening_quote,
+      *parts.flat_map { |part| part.respond_to?(:source_tokens) ? part.source_tokens : [part] },
+      closing_quote,
+    ].freeze
+    @source_span = DabSourceSpan.new(
+      start_location: opening_quote.source_span.start_location,
+      end_location: closing_quote.source_span.end_location
+    )
+    freeze
+  end
+
+  def splices
+    parts.grep(DabModernBootstrapInterpolationSplice)
+  end
+
+  def lower(consumed:)
+    components = parts.filter_map do |part|
+      if part.is_a?(DabModernBootstrapInterpolationSplice)
+        DabNodeLocalVar.new(part.name_token.source_string).tap do |node|
+          node.add_source_part(part.name_token.source_string)
+        end
+      elsif !part.value.empty?
+        DabNodeLiteralString.new(part.value, modern_source: true).tap do |node|
+          node.add_source_part(part.source_string)
+        end
+      end
+    end
+    DabNodeModernInterpolatedString.new(
+      components,
+      source: source_tokens.map(&:text).join,
+      consumed: consumed
+    ).tap do |node|
+      node.add_source_parts(*source_tokens.map(&:source_string))
+    end
+  end
+end
+
 class DabModernCallableName
   attr_reader :base_token, :suffix_token, :source_span
 
@@ -169,7 +234,11 @@ module_function
     string: 'String',
   }.freeze
 
-  def lower(token)
+  def lower(token, consumed: false)
+    if token.kind == :interpolated_string
+      return token.value.lower(consumed: consumed)
+    end
+
     node = case token.kind
            when :nil then DabNodeLiteralNil.new
            when :boolean_true then DabNodeLiteralBoolean.new(true)
@@ -187,6 +256,8 @@ module_function
   end
 
   def flow_type(token)
+    return DabType.parse('String') if token.kind == :interpolated_string
+
     DabType.parse(FLOW_TYPE_NAMES.fetch(token.kind))
   end
 end
@@ -229,7 +300,7 @@ class DabModernBootstrapLocalBinding
   end
 
   def lower
-    value = DabModernBootstrapLiterals.lower(initializer_token)
+    value = DabModernBootstrapLiterals.lower(initializer_token, consumed: true)
     DabNodeDefineLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
@@ -274,7 +345,7 @@ class DabModernBootstrapMutableLocalBinding
   end
 
   def lower
-    value = DabModernBootstrapLiterals.lower(initializer_token)
+    value = DabModernBootstrapLiterals.lower(initializer_token, consumed: true)
     DabNodeDefineLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
@@ -310,7 +381,7 @@ class DabModernBootstrapLocalReassignment
   end
 
   def lower
-    value = DabModernBootstrapLiterals.lower(value_token)
+    value = DabModernBootstrapLiterals.lower(value_token, consumed: true)
     DabNodeSetLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
@@ -417,7 +488,7 @@ class DabModernBootstrapValueReturn
                           value.is_a?(DabModernBootstrapDirectCall)
                       value.lower
                     else
-                      DabModernBootstrapLiterals.lower(value)
+                      DabModernBootstrapLiterals.lower(value, consumed: true)
                     end
     DabNodeReturn.new(lowered_value).tap do |node|
       node.add_source_parts(*source_parts)
@@ -490,7 +561,7 @@ private
       return argument.lower
     end
 
-    DabModernBootstrapLiterals.lower(argument)
+    DabModernBootstrapLiterals.lower(argument, consumed: true)
   end
 end
 
@@ -579,6 +650,11 @@ class DabModernBootstrapScanner < DabScanner
   BRACED_UNICODE_MESSAGE =
     'invalid Modern Unicode escape: expected exactly one code point written as 1..6 hexadecimal ' \
     'digits inside "\\u{...}"'.freeze
+  EXPECT_INTERPOLATION_IDENTIFIER_MESSAGE =
+    'invalid Modern String interpolation: expected an ASCII local identifier immediately after "#{"'.freeze
+  EXPECT_INTERPOLATION_CLOSE_MESSAGE =
+    'invalid Modern String interpolation: expected "}" immediately after local identifier'.freeze
+  INTERPOLATION_RESERVED_NAMES = %w[def end return nil true false].freeze
 
   def initialize(content, nl_is_whitespace = true, source_unit:)
     super(content.b, nl_is_whitespace, source_unit: source_unit)
@@ -685,6 +761,9 @@ private
   def string_token(start_offset)
     raw = +'"'.b
     value = +''.b
+    parts = []
+    segment_start_offset = start_offset + 1
+    opening_quote = string_part_token(:string_quote, '"'.b, start_offset, start_offset + 1)
     advance!
 
     loop do
@@ -698,9 +777,19 @@ private
       marker_offset = position
       case current_char
       when '"'
+        closing_offset = position
         raw << current_char
         advance!
-        return token(:string, raw, start_offset, value: value)
+        return token(:string, raw, start_offset, value: value) if parts.empty?
+
+        parts << string_part_token(:string_text, raw.byteslice(segment_start_offset - start_offset, closing_offset - segment_start_offset), segment_start_offset, closing_offset, value: value)
+        closing_quote = string_part_token(:string_quote, '"'.b, closing_offset, closing_offset + 1)
+        interpolation = DabModernBootstrapInterpolatedString.new(
+          opening_quote: opening_quote,
+          parts: parts,
+          closing_quote: closing_quote
+        )
+        return token(:interpolated_string, raw, start_offset, value: interpolation)
       when "\n"
         return unsupported_token(
           marker_offset,
@@ -776,11 +865,55 @@ private
         advance!
       when '#'
         if current_char(1) == '{'
-          return unsupported_token(
+          segment_text = content.byteslice(segment_start_offset, marker_offset - segment_start_offset) || ''.b
+          parts << string_part_token(
+            :string_text,
+            segment_text,
+            segment_start_offset,
             marker_offset,
-            2,
-            diagnostic_message: 'invalid Modern String literal: interpolation marker "#{" is reserved'
+            value: value
           )
+          value = +''.b
+
+          raw << '#{'.b
+          opener = string_part_token(:interpolation_opener, '#{'.b, marker_offset, marker_offset + 2)
+          advance!(2)
+
+          name_start = position
+          unless IDENTIFIER_START.include?(current_char)
+            return interpolation_structure_error(name_start, EXPECT_INTERPOLATION_IDENTIFIER_MESSAGE)
+          end
+
+          name = +''.b
+          while !eof? && IDENTIFIER_CONTINUE.include?(current_char)
+            name << current_char
+            raw << current_char
+            advance!
+          end
+          if INTERPOLATION_RESERVED_NAMES.include?(name)
+            return unsupported_token(
+              name_start,
+              name.bytesize,
+              diagnostic_message: EXPECT_INTERPOLATION_IDENTIFIER_MESSAGE
+            )
+          end
+          name_token = string_part_token(:identifier, name, name_start, position)
+
+          unless current_char == '}'
+            return interpolation_structure_error(position, EXPECT_INTERPOLATION_CLOSE_MESSAGE)
+          end
+
+          closer_offset = position
+          raw << '}'.b
+          advance!
+          closer = string_part_token(:interpolation_closer, '}'.b, closer_offset, closer_offset + 1)
+          parts << DabModernBootstrapInterpolationSplice.new(
+            opener_token: opener,
+            name_token: name_token,
+            closer_token: closer
+          )
+          segment_start_offset = position
+          next
         end
 
         raw << current_char
@@ -804,6 +937,43 @@ private
         advance!(length)
       end
     end
+  end
+
+  def interpolation_structure_error(offset, message)
+    if current_char == "\n"
+      return unsupported_token(
+        offset,
+        diagnostic_message: 'invalid Modern String literal: literal LF is not allowed; use "\\n"'
+      )
+    end
+    if current_char == "\r"
+      return unsupported_token(
+        offset,
+        diagnostic_message: 'invalid Modern String literal: literal CR is not allowed; use "\\r"'
+      )
+    end
+    if current_char == "\0"
+      return unsupported_token(
+        offset,
+        diagnostic_message: 'invalid Modern String literal: NUL is not allowed'
+      )
+    end
+    if !eof? && content.getbyte(offset) >= 0x80 && !utf8_sequence_length(offset)
+      message = sprintf('invalid UTF-8 byte 0x%02X in Modern String literal', content.getbyte(offset))
+      return unsupported_token(offset, diagnostic_message: message)
+    end
+
+    length = eof? ? 0 : (utf8_sequence_length(offset) || 1)
+    unsupported_token(offset, length, diagnostic_message: message)
+  end
+
+  def string_part_token(kind, text, start_offset, end_offset, value: text)
+    DabModernBootstrapToken.new(
+      kind: kind,
+      text: text,
+      value: value,
+      source_span: source_span(start_offset, end_offset)
+    )
   end
 
   def unicode_escape_token(raw, value, marker_offset)
@@ -1151,6 +1321,7 @@ private
         case body_item
         when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
           preflight_local_binding!(body_item, bindings, parameter_names)
+          preflight_interpolations!(body_item, bindings, parameter_names)
           preflight_typed_local_initializer!(body_item)
           bindings[body_item.name] = {
             declaration: body_item,
@@ -1173,19 +1344,82 @@ private
             raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
           end
 
+          preflight_interpolations!(body_item, bindings, parameter_names)
           preflight_typed_local_write!(body_item, binding_declaration)
           binding[:latest_write] = body_item
         when DabModernBootstrapValueReturn
+          unless body_item.value.is_a?(DabModernBootstrapDirectCall)
+            preflight_interpolations!(body_item, bindings, parameter_names)
+          end
           preflight_ring_independent_return!(body_item, declaration, bindings, bindings_by_reference)
           if body_item.value.is_a?(DabModernBootstrapDirectCall)
-            preflight_call_local_references!(body_item.value, bindings, bindings_by_reference)
+            preflight_call_values!(
+              body_item.value,
+              bindings,
+              bindings_by_reference,
+              parameter_names
+            )
           end
         when DabModernBootstrapDirectCall
-          preflight_call_local_references!(body_item, bindings, bindings_by_reference)
+          preflight_call_values!(body_item, bindings, bindings_by_reference, parameter_names)
+        else
+          preflight_interpolations!(body_item, bindings, parameter_names)
         end
       end
     end
     bindings_by_reference
+  end
+
+  def preflight_interpolations!(value, bindings, parameter_names)
+    interpolation_tokens(value).each do |token|
+      token.value.splices.each do |splice|
+        name = splice.name
+        if parameter_names.key?(name)
+          raise DabModernBootstrapParseError.new(
+            "unsupported Modern interpolation value \"#{name}\": function parameters are not part of simple interpolation",
+            source_span: splice.name_token.source_span
+          )
+        end
+
+        binding = bindings[name]
+        unless binding
+          raise DabModernBootstrapParseError.new(
+            "unknown Modern interpolation local \"#{name}\"; expected an earlier same-function local binding",
+            source_span: splice.name_token.source_span
+          )
+        end
+
+        actual_type = binding.fetch(:latest_write).initializer_type
+        next if actual_type.type_string == 'String'
+
+        raise DabModernBootstrapParseError.new(
+          "cannot interpolate Modern local \"#{name}\" of type #{actual_type.type_string}; " \
+          'simple interpolation requires exact String',
+          source_span: splice.name_token.source_span
+        )
+      end
+    end
+  end
+
+  def interpolation_tokens(value)
+    if value.is_a?(DabModernBootstrapToken)
+      return value.kind == :interpolated_string ? [value] : []
+    end
+    if value.is_a?(DabModernBootstrapLocalBinding) ||
+       value.is_a?(DabModernBootstrapMutableLocalBinding)
+      return interpolation_tokens(value.initializer_token)
+    end
+    if value.is_a?(DabModernBootstrapLocalReassignment)
+      return interpolation_tokens(value.value_token)
+    end
+    if value.is_a?(DabModernBootstrapValueReturn)
+      return interpolation_tokens(value.value)
+    end
+    if value.is_a?(DabModernBootstrapDirectCall)
+      return value.arguments.flat_map { |argument| interpolation_tokens(argument) }
+    end
+
+    []
   end
 
   def preflight_ring_independent_return!(value_return, function, bindings, bindings_by_reference)
@@ -1211,10 +1445,14 @@ private
     preflight_return_type!(value_return, function, actual_type)
   end
 
-  def preflight_call_local_references!(call, bindings, bindings_by_reference)
+  def preflight_call_values!(call, bindings, bindings_by_reference, parameter_names)
     call.arguments.each do |argument|
       if argument.is_a?(DabModernBootstrapDirectCall)
-        preflight_call_local_references!(argument, bindings, bindings_by_reference)
+        preflight_call_values!(argument, bindings, bindings_by_reference, parameter_names)
+        next
+      end
+      if argument.is_a?(DabModernBootstrapToken) && argument.kind == :interpolated_string
+        preflight_interpolations!(argument, bindings, parameter_names)
         next
       end
       next unless argument.is_a?(DabModernBootstrapLocalReference)
@@ -1568,6 +1806,7 @@ end
 class DabModernBootstrapParser
   SEPARATOR_KINDS = %i[line_feed semicolon line_comment].freeze
   LITERAL_KINDS = %i[nil boolean_true boolean_false integer string].freeze
+  VALUE_KINDS = (LITERAL_KINDS + [:interpolated_string]).freeze
   HORIZONTAL_WHITESPACE_KINDS = %i[space tab].freeze
   SUPPORTED_TYPE_NAMES = %w[
     String Fixnum Boolean Uint8 Uint16 Uint32 Uint64
@@ -1891,7 +2130,7 @@ private
     if token.kind == :space && implemented_shell_token_after_spaces?
       reject(token, EXPECT_NAME_SEPARATOR_MESSAGE)
     end
-    if %i[eof nil boolean_true boolean_false integer string end].include?(token.kind)
+    if (%i[eof end] + VALUE_KINDS).include?(token.kind)
       reject(token, EXPECT_NAME_SEPARATOR_MESSAGE)
     end
 
@@ -1967,7 +2206,7 @@ private
       end
 
       token = next_token
-      unless LITERAL_KINDS.include?(token.kind)
+      unless VALUE_KINDS.include?(token.kind)
         reject(token, token.diagnostic_message || DabModernBootstrapParseError::GENERIC_MESSAGE)
       end
       if token.kind == :integer && integer_overflow?(token.text)
@@ -2009,7 +2248,7 @@ private
 
   def value_return_start?
     token = peek_token
-    token.kind == :identifier || LITERAL_KINDS.include?(token.kind) ||
+    token.kind == :identifier || VALUE_KINDS.include?(token.kind) ||
       literal_member_start? || !token.diagnostic_message.nil?
   end
 
@@ -2023,7 +2262,7 @@ private
               parse_direct_call(allow_call_result_arguments: false)
             elsif literal_member_start?
               parse_literal_member(argument: true)
-            elsif LITERAL_KINDS.include?(token.kind)
+            elsif VALUE_KINDS.include?(token.kind)
               next_token.tap { |literal| reject_integer_overflow(literal) }
             elsif token.kind == :identifier && bare_return_local_reference?
               DabModernBootstrapLocalReference.new(next_token)
@@ -2112,7 +2351,7 @@ private
     reject_invalid_separator(equal_token)
     unless equal_token.kind == :equal
       reject(equal_token, EXPECT_TYPED_LET_EQUAL_MESSAGE) if type_name
-      if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
+      if (%i[eof end line_feed semicolon line_comment] + VALUE_KINDS).include?(equal_token.kind)
         reject(equal_token, EXPECT_LET_EQUAL_MESSAGE)
       end
       reject(equal_token)
@@ -2125,7 +2364,7 @@ private
     if initializer_token.diagnostic_message
       reject(initializer_token, initializer_token.diagnostic_message)
     end
-    unless LITERAL_KINDS.include?(initializer_token.kind)
+    unless VALUE_KINDS.include?(initializer_token.kind)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_LET_INITIALIZER_MESSAGE)
       end
@@ -2166,7 +2405,7 @@ private
     reject_invalid_separator(equal_token)
     unless equal_token.kind == :equal
       reject(equal_token, EXPECT_TYPED_VAR_EQUAL_MESSAGE) if type_name
-      if %i[eof end line_feed semicolon line_comment nil boolean_true boolean_false integer string].include?(equal_token.kind)
+      if (%i[eof end line_feed semicolon line_comment] + VALUE_KINDS).include?(equal_token.kind)
         reject(equal_token, EXPECT_VAR_EQUAL_MESSAGE)
       end
       reject(equal_token)
@@ -2177,7 +2416,7 @@ private
     initializer_token = next_token
     reject_invalid_separator(initializer_token)
     reject(initializer_token, initializer_token.diagnostic_message) if initializer_token.diagnostic_message
-    unless LITERAL_KINDS.include?(initializer_token.kind)
+    unless VALUE_KINDS.include?(initializer_token.kind)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_VAR_INITIALIZER_MESSAGE)
       end
@@ -2221,7 +2460,7 @@ private
     value_token = next_token
     reject_invalid_separator(value_token)
     reject(value_token, value_token.diagnostic_message) if value_token.diagnostic_message
-    unless LITERAL_KINDS.include?(value_token.kind)
+    unless VALUE_KINDS.include?(value_token.kind)
       if %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
         reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
       end
@@ -2293,7 +2532,8 @@ private
     arguments, closing_parenthesis = parse_call_arguments(
       source_tokens,
       allow_member_results: false,
-      allow_local_references: false
+      allow_local_references: false,
+      allow_interpolated_strings: false
     )
     member_call = build_literal_member_call(
       receiver_token,
@@ -2318,12 +2558,19 @@ private
       source_tokens,
       allow_member_results: true,
       allow_local_references: true,
-      allow_call_results: allow_call_result_arguments
+      allow_call_results: allow_call_result_arguments,
+      allow_interpolated_strings: true
     )
     build_direct_call(callable_name, arguments, source_tokens, closing_parenthesis)
   end
 
-  def parse_call_arguments(source_tokens, allow_member_results:, allow_local_references:, allow_call_results: false)
+  def parse_call_arguments(
+    source_tokens,
+    allow_member_results:,
+    allow_local_references:,
+    allow_interpolated_strings:,
+    allow_call_results: false
+  )
     source_tokens << expect(:left_parenthesis)
     source_tokens.concat(consume_horizontal_whitespace)
     arguments = []
@@ -2341,7 +2588,8 @@ private
         expectation,
         allow_member_results: allow_member_results,
         allow_local_references: allow_local_references,
-        allow_call_results: allow_call_results
+        allow_call_results: allow_call_results,
+        allow_interpolated_strings: allow_interpolated_strings
       )
       arguments << argument
       source_tokens.concat(argument_source_tokens(argument))
@@ -2366,7 +2614,13 @@ private
     end
   end
 
-  def parse_call_argument(expectation, allow_member_results:, allow_local_references:, allow_call_results:)
+  def parse_call_argument(
+    expectation,
+    allow_member_results:,
+    allow_local_references:,
+    allow_call_results:,
+    allow_interpolated_strings:
+  )
     token = peek_token
     reject_invalid_separator(token)
     if token.kind == :eof
@@ -2388,7 +2642,11 @@ private
       return DabModernBootstrapLocalReference.new(next_token)
     end
 
-    unless LITERAL_KINDS.include?(token.kind)
+    if token.kind == :interpolated_string && !allow_interpolated_strings
+      reject(token, expectation)
+    end
+
+    unless VALUE_KINDS.include?(token.kind)
       reject(token) if deferred_call_argument_start?(token)
 
       reject(token, expectation)

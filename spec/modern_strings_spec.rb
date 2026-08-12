@@ -366,7 +366,7 @@ describe 'Modern bootstrap String literals' do
     expect(context.read_string(true)).to eq('quote: "')
   end
 
-  it 'rejects invalid bytes, NUL, physical newlines, unterminated text, unknown escapes, and interpolation at the marker' do
+  it 'rejects invalid bytes, NUL, physical newlines, unterminated text, and unknown escapes' do
     cases = {
       'invalid UTF-8 lead' => [
         "def main\n\"ok \xC3(\"\nend\n".b,
@@ -432,11 +432,6 @@ describe 'Modern bootstrap String literals' do
         "def main\n\"a\\qb\"\nend\n".b,
         11,
         'invalid Modern String literal escape "\\\\q"; escape is not in the Dab 0.0.43 closed set',
-      ],
-      'reserved interpolation' => [
-        "def main\n\"a\#{value}\"\nend\n".b,
-        11,
-        'invalid Modern String literal: interpolation marker "#{" is reserved',
       ],
     }
 
@@ -592,8 +587,8 @@ describe 'Modern bootstrap String literals' do
 
       expect([compiler_status.exitstatus, output]).to eq [2, '']
       expect(tool_stderr(compiler_stderr)).to eq(
-        "compiler: #{invalid}:2:10: error: " \
-        "invalid Modern String literal: interpolation marker \"\#{\" is reserved\n"
+        "compiler: #{invalid}:2:12: error: " \
+        "unknown Modern interpolation local \"value\"; expected an earlier same-function local binding\n"
       )
       expect(File.binread(lower)).to eq(lower_before)
 
