@@ -149,14 +149,14 @@ non-LF body bytes, separate LF tokens, exact comment spans and locations, and
 rejection of CR/CRLF structural separators, body statements, and second
 declarations. Comments remain separator syntax rather than general whitespace.
 
-Version 0.0.41 admits basic single-line double-quoted Strings only as literal
+Version 0.0.41 admitted basic single-line double-quoted Strings only as literal
 entries in the existing single-`main` body. Source bytes between the delimiters
 must be valid UTF-8 and cannot contain NUL, LF, or CR. Exactly `\"`, `\n`, and
-`\r` are decoded; every other backslash sequence fails closed. The unescaped
-`#{` opener is reserved and rejected at the marker because interpolation is a
-later roadmap row. `0023_basic_strings.dabmtest` covers empty, plain UTF-8, and
+`\r` are decoded; every other backslash sequence fails closed. Before version
+0.0.66, the unescaped `#{` opener was reserved and rejected at the marker.
+`0023_basic_strings.dabmtest` covers empty, plain UTF-8, and
 all three accepted escapes while preserving the existing assembly. `0024`
-through `0026` lock representative unknown-escape, reserved-interpolation, and
+through `0026` lock representative unknown-escape, interpolation-local, and
 physical-newline diagnostics. Focused contracts cover invalid UTF-8, NUL, CR,
 unterminated delimiters, doubled backslashes, exact byte spans, transactional
 failure, and the reused Legacy String AST, assembly, bytecode, and runtime path.
@@ -588,6 +588,31 @@ excluded deeper or general expression form. Parameter references, PL-006, and
 all later rows remain deferred. The runtime and generated artifacts remain
 suitable only for trusted local input; no opcode, schema, assembler, VM,
 native, Ring, FFI, formatter, or decompiler boundary changes.
+
+Version 0.0.66 adds bounded Modern String interpolation for exact
+`#{IDENTIFIER}` splices. Each name must resolve at that source point to an
+earlier same-function `let` or `var` whose latest preceding value is exactly
+String. Parameters, unknown/read-before/cross-function names, non-String flow,
+internal whitespace, calls, members, operators, nesting, and general
+expressions remain rejected. Exact `\#{` remains literal text, existing escape
+and UTF-8 rules are unchanged, and decoded escapes are never rescanned.
+
+Interpolation is accepted only in the existing String value slots: body,
+local initializer, reassignment right-hand side, direct-call argument, and
+value return. Composition reads every occurrence once from left to right and
+uses only existing String `+`; it performs no conversion or constant folding,
+emits no empty text constant, and does not enable interpolated member
+receivers. Complete pre-Ring local/type validation and post-Ring call/member
+validation remain transactional.
+
+Fixture `0025` now locks unknown/read-before-local rejection. Fixture `0090`
+is the sequential runtime contract for multiple and repeated String-local
+splices, prior-value reassignment, deterministic left-to-right `INSTCALL`
+composition, and exact output `first second first\nsecond+first\n`. Fixture
+`0091` locks latest-flow non-String rejection. This row changes no opcode,
+bytecode schema, assembler, VM, native class, Ring, FFI, formatter, decompiler,
+or trusted-local-input boundary. EX-004, PL-006, IN-014, EX-011 through EX-013,
+conversion, nesting, broader expressions, and later rows remain deferred.
 
 ## Diagnostic boundary
 
