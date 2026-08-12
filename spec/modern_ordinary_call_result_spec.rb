@@ -306,14 +306,17 @@ describe 'Modern one-level ordinary-call results' do
     expect { lower(source) }.not_to raise_error
   end
 
-  it 'keeps deeper calls, bindings, member receivers, operators, parentheses, and parameters excluded' do
+  it 'admits a parameter leaf while keeping deeper calls and broader expression forms excluded' do
+    parameter = "def producer(value:String):String\nreturn value\nend\n" \
+                "def main(value:String):String\nreturn producer(value)\nend\n"
+    expect { lower(parameter) }.not_to raise_error
+
     cases = {
       'deeper call' => "def nested():String\nreturn \"n\"\nend\ndef producer(value:String):String\nreturn value\nend\ndef sink(value:String)\nend\ndef main()\nsink(producer(nested()))\nend\n",
       'binding' => "def producer():String\nreturn \"x\"\nend\ndef main()\nlet value = producer()\nend\n",
       'member receiver' => "def producer():String\nreturn \"x\"\nend\ndef main():String\nreturn producer().length\nend\n",
       'operator' => "def producer():Fixnum\nreturn 1\nend\ndef main():Fixnum\nreturn producer()+1\nend\n",
       'parentheses' => "def producer():String\nreturn \"x\"\nend\ndef main():String\nreturn (producer())\nend\n",
-      'parameter' => "def producer(value:String):String\nreturn \"x\"\nend\ndef main(value:String):String\nreturn producer(value)\nend\n",
     }
 
     cases.each do |description, source|

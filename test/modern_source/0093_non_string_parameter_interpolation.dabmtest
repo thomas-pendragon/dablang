@@ -1,0 +1,10 @@
+## SOURCE
+def reject(value:Int32)
+  print("#{value}")
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0093_non_string_parameter_interpolation.dabm:2:11: error: cannot interpolate Modern parameter "value" of type Int32; simple interpolation requires exact String
