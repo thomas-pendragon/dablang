@@ -660,10 +660,10 @@ unchanged.
 
 Runtime and generated artifacts remain suitable only for trusted local input.
 This row changes no opcode, schema, assembler, VM, native, Ring, FFI, formatter,
-decompiler, or trust boundary. IN-014, broader literal-expression folding,
-EX-011 through EX-013, conversion, nested or general interpolation, local
-right-hand-side expansion, new call or member forms, control flow, operators,
-PL-007, and later rows remain separate.
+decompiler, or trusted-local-input boundary. IN-014, broader literal-expression
+folding, EX-011 through EX-013, conversion, nested or general interpolation,
+local right-hand-side expansion, new call or member forms, control flow,
+operators, PL-007, and later rows remain separate.
 
 ## Diagnostic boundary
 
