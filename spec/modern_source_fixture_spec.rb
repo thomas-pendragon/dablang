@@ -142,6 +142,7 @@ describe DabModernSourceFixture do
       0092_parameter_references.dabmtest
       0094_p06_interpolate_parameter.dabmtest
       0095_static_string_interpolation_folding.dabmtest
+      0096_structured_if_else.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|

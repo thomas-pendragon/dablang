@@ -204,7 +204,7 @@ describe 'Modern bootstrap literals' do
     end
   end
 
-  it 'keeps signs, operators, other literal families, and later grammar on the generic fallback' do
+  it 'keeps signs, operators, other literal families, and later non-if grammar on the generic fallback' do
     cases = {
       'literal spelling in function-name position' => ["def Nil\nnil\nend\n", 4],
       'positive sign' => ["def main\n+1\nend\n", 9],
@@ -212,7 +212,6 @@ describe 'Modern bootstrap literals' do
       'binary operator' => ["def main\n1+2\nend\n", 10],
       'nil predicate' => ["def main\nnil?\nend\n", 12],
       'identifier' => ["def main\nvalue\nend\n", 9],
-      'control flow' => ["def main\nif true\nend\nend\n", 9],
     }
 
     cases.each do |description, (source, offset)|
