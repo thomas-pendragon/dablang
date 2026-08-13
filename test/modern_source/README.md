@@ -706,6 +706,28 @@ trusted-local-input boundary. `elsif`, `unless`, postfix guards, branch-local
 bindings or writes, truthiness, general expressions and operators, loops,
 classes, blocks, closures, and later rows remain separate.
 
+Version 0.0.71 closes executable ladder row PL-007 through fixture `0097`,
+using the unchanged canonical program that selects and returns `"yes\n"` or
+`"no\n"` from `choose` through the bounded OR-046 `if`/`else`, then prints the
+consumed helper result from `main`. Its exact application output is `yes\n`.
+The generated golden assembly owns one parameter `LOAD_ARG`, one `JMP_IF`,
+explicit String returns from both branches, and the consumer-owned `CALL`
+result passed unchanged to unary `SYSCALL`.
+
+This fixture-led closure adds no production semantic change. It retains the
+complete OR-046 contextual Boolean-condition and no-branch-mutation contract,
+EX-004 immutable parameter references, EX-002 bounded value returns, and
+EX-003 one-level ordinary-call result consumption. Complete-document and
+dead-tail validation, existing diagnostics, transaction ordering, register
+ownership, and declaration-order-independent output remain unchanged.
+
+Runtime and generated artifacts remain suitable only for trusted local input.
+This row changes no parser, backend, opcode, schema, assembler, VM, native,
+Ring, FFI, formatter, or decompiler behavior. `elsif`, `unless`, postfix
+guards, PL-008, branch bindings or writes, scope, definite assignment, flow
+merge, SSA phi semantics, truthiness, general expressions and operators,
+loops, classes, blocks, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
