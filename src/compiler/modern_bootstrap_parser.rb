@@ -496,6 +496,97 @@ class DabModernBootstrapValueReturn
   end
 end
 
+class DabModernBootstrapIfStatement
+  attr_reader :if_token, :space_token, :condition, :condition_separator,
+              :if_true, :else_token, :else_separator, :if_false, :end_token,
+              :final_separator, :source_tokens, :source_parts, :source_span
+
+  def initialize(
+    if_token:,
+    space_token:,
+    condition:,
+    condition_separator:,
+    if_true:,
+    else_token:,
+    else_separator:,
+    if_false:,
+    end_token:,
+    final_separator:
+  )
+    @if_token = if_token
+    @space_token = space_token
+    @condition = condition
+    @condition_separator = condition_separator
+    @if_true = if_true.freeze
+    @else_token = else_token
+    @else_separator = else_separator
+    @if_false = if_false&.freeze
+    @end_token = end_token
+    @final_separator = final_separator
+    @source_tokens = [
+      if_token,
+      space_token,
+      condition_token,
+      condition_separator,
+      else_token,
+      else_separator,
+      end_token,
+      final_separator,
+    ].compact.freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: if_token.source_span.start_location,
+      end_location: final_separator.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :if_statement
+  end
+
+  def branch_items
+    if_true + (if_false || [])
+  end
+
+  def lower
+    DabNodeIf.new(
+      lower_condition,
+      lower_branch(if_true),
+      if_false && lower_branch(if_false)
+    ).tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+
+private
+
+  def condition_token
+    condition.is_a?(DabModernBootstrapLocalReference) ? condition.name_token : condition
+  end
+
+  def lower_condition
+    return condition.lower if condition.is_a?(DabModernBootstrapLocalReference)
+
+    DabModernBootstrapLiterals.lower(condition, consumed: true)
+  end
+
+  def lower_branch(items)
+    DabNodeTreeBlock.new.tap do |block|
+      items.each do |item|
+        lowered = if item.is_a?(DabModernBootstrapDirectCall)
+                    item.lower_body_items
+                  elsif item.respond_to?(:lower)
+                    [item.lower]
+                  else
+                    [DabModernBootstrapLiterals.lower(item)]
+                  end
+        lowered.each { |node| block.insert(node) }
+      end
+    end
+  end
+end
+
 class DabModernBootstrapDirectCall
   attr_reader :callable_name, :arguments, :source_span, :source_tokens
 
@@ -1257,6 +1348,7 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
+    return body_item.lower if body_item.is_a?(DabModernBootstrapIfStatement)
     if body_item.is_a?(DabModernBootstrapBareReturn) ||
        body_item.is_a?(DabModernBootstrapValueReturn)
       return body_item.lower
@@ -1317,63 +1409,117 @@ private
     @declarations.each do |declaration|
       parameters_by_name = declaration.parameters.to_h { |parameter| [parameter.name, parameter] }
       bindings = {}
-      declaration.body_items.each do |body_item|
-        case body_item
-        when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
-          preflight_local_binding!(body_item, bindings, parameters_by_name)
-          preflight_interpolations!(body_item, bindings, parameters_by_name)
-          preflight_typed_local_initializer!(body_item)
-          bindings[body_item.name] = {
-            declaration: body_item,
-            latest_write: body_item,
-          }
-        when DabModernBootstrapLocalReassignment
-          binding = bindings[body_item.name]
-          unless binding
-            raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
-          end
+      preflight_body_items!(
+        declaration.body_items,
+        declaration,
+        bindings,
+        bindings_by_reference,
+        parameters_by_name
+      )
+    end
+    bindings_by_reference
+  end
 
-          binding_declaration = binding.fetch(:declaration)
-          if binding_declaration.is_a?(DabModernBootstrapLocalBinding)
-            raise DabModernBootstrapParseError.new(
-              %(cannot reassign Modern let binding "#{body_item.name}"),
-              source_span: body_item.name_token.source_span
-            )
-          end
-          unless binding_declaration.is_a?(DabModernBootstrapMutableLocalBinding)
-            raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
-          end
-
-          preflight_interpolations!(body_item, bindings, parameters_by_name)
-          preflight_typed_local_write!(body_item, binding_declaration)
-          binding[:latest_write] = body_item
-        when DabModernBootstrapValueReturn
-          unless body_item.value.is_a?(DabModernBootstrapDirectCall)
-            preflight_interpolations!(body_item, bindings, parameters_by_name)
-          end
-          preflight_ring_independent_return!(
-            body_item,
+  def preflight_body_items!(
+    body_items,
+    declaration,
+    bindings,
+    bindings_by_reference,
+    parameters_by_name
+  )
+    body_items.each do |body_item|
+      case body_item
+      when DabModernBootstrapIfStatement
+        preflight_if_condition!(body_item, bindings, bindings_by_reference, parameters_by_name)
+        preflight_body_items!(
+          body_item.if_true,
+          declaration,
+          bindings.dup,
+          bindings_by_reference,
+          parameters_by_name
+        )
+        if body_item.if_false
+          preflight_body_items!(
+            body_item.if_false,
             declaration,
+            bindings.dup,
+            bindings_by_reference,
+            parameters_by_name
+          )
+        end
+      when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
+        preflight_local_binding!(body_item, bindings, parameters_by_name)
+        preflight_interpolations!(body_item, bindings, parameters_by_name)
+        preflight_typed_local_initializer!(body_item)
+        bindings[body_item.name] = {
+          declaration: body_item,
+          latest_write: body_item,
+        }
+      when DabModernBootstrapLocalReassignment
+        binding = bindings[body_item.name]
+        unless binding
+          raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
+        end
+
+        binding_declaration = binding.fetch(:declaration)
+        if binding_declaration.is_a?(DabModernBootstrapLocalBinding)
+          raise DabModernBootstrapParseError.new(
+            %(cannot reassign Modern let binding "#{body_item.name}"),
+            source_span: body_item.name_token.source_span
+          )
+        end
+        unless binding_declaration.is_a?(DabModernBootstrapMutableLocalBinding)
+          raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
+        end
+
+        preflight_interpolations!(body_item, bindings, parameters_by_name)
+        preflight_typed_local_write!(body_item, binding_declaration)
+        binding[:latest_write] = body_item
+      when DabModernBootstrapValueReturn
+        unless body_item.value.is_a?(DabModernBootstrapDirectCall)
+          preflight_interpolations!(body_item, bindings, parameters_by_name)
+        end
+        preflight_ring_independent_return!(
+          body_item,
+          declaration,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name
+        )
+        if body_item.value.is_a?(DabModernBootstrapDirectCall)
+          preflight_call_values!(
+            body_item.value,
             bindings,
             bindings_by_reference,
             parameters_by_name
           )
-          if body_item.value.is_a?(DabModernBootstrapDirectCall)
-            preflight_call_values!(
-              body_item.value,
-              bindings,
-              bindings_by_reference,
-              parameters_by_name
-            )
-          end
-        when DabModernBootstrapDirectCall
-          preflight_call_values!(body_item, bindings, bindings_by_reference, parameters_by_name)
-        else
-          preflight_interpolations!(body_item, bindings, parameters_by_name)
         end
+      when DabModernBootstrapDirectCall
+        preflight_call_values!(body_item, bindings, bindings_by_reference, parameters_by_name)
+      else
+        preflight_interpolations!(body_item, bindings, parameters_by_name)
       end
     end
-    bindings_by_reference
+  end
+
+  def preflight_if_condition!(if_statement, bindings, bindings_by_reference, parameters_by_name)
+    condition = if_statement.condition
+    return if condition.is_a?(DabModernBootstrapToken)
+
+    binding = bindings[condition.name]
+    parameter = parameters_by_name[condition.name]
+    actual_type = if binding
+                    binding.fetch(:latest_write).initializer_type
+                  elsif parameter
+                    DabType.parse(parameter.type_name.text)
+                  end
+    unless actual_type&.type_string == 'Boolean'
+      raise DabModernBootstrapParseError.new(
+        DabModernBootstrapParser::EXPECT_IF_CONDITION_MESSAGE,
+        source_span: condition.source_span
+      )
+    end
+    bindings_by_reference[condition] = actual_type
   end
 
   def preflight_interpolations!(value, bindings, parameters_by_name)
@@ -1428,6 +1574,9 @@ private
     end
     if value.is_a?(DabModernBootstrapDirectCall)
       return value.arguments.flat_map { |argument| interpolation_tokens(argument) }
+    end
+    if value.is_a?(DabModernBootstrapIfStatement)
+      return value.branch_items.flat_map { |item| interpolation_tokens(item) }
     end
 
     []
@@ -1575,18 +1724,27 @@ private
   def preflight_calls!(unit)
     declarations_by_name = @declarations.to_h { |declaration| [declaration.callable_name.text, declaration] }
     @declarations.each do |declaration|
-      declaration.body_items.each do |body_item|
-        case body_item
-        when DabModernBootstrapDirectCall
-          preflight_call!(body_item, unit, declarations_by_name)
-        when DabModernBootstrapLiteralMemberCall
-          preflight_member_call!(body_item, unit)
-        when DabModernBootstrapValueReturn
-          if body_item.value.is_a?(DabModernBootstrapLiteralMemberCall)
-            preflight_member_return!(body_item, declaration, unit)
-          elsif body_item.value.is_a?(DabModernBootstrapDirectCall)
-            preflight_call_result_return!(body_item, declaration, unit, declarations_by_name)
-          end
+      preflight_calls_in_items!(declaration.body_items, declaration, unit, declarations_by_name)
+    end
+  end
+
+  def preflight_calls_in_items!(items, declaration, unit, declarations_by_name)
+    items.each do |body_item|
+      case body_item
+      when DabModernBootstrapIfStatement
+        preflight_calls_in_items!(body_item.if_true, declaration, unit, declarations_by_name)
+        if body_item.if_false
+          preflight_calls_in_items!(body_item.if_false, declaration, unit, declarations_by_name)
+        end
+      when DabModernBootstrapDirectCall
+        preflight_call!(body_item, unit, declarations_by_name)
+      when DabModernBootstrapLiteralMemberCall
+        preflight_member_call!(body_item, unit)
+      when DabModernBootstrapValueReturn
+        if body_item.value.is_a?(DabModernBootstrapLiteralMemberCall)
+          preflight_member_return!(body_item, declaration, unit)
+        elsif body_item.value.is_a?(DabModernBootstrapDirectCall)
+          preflight_call_result_return!(body_item, declaration, unit, declarations_by_name)
         end
       end
     end
@@ -1921,6 +2079,21 @@ class DabModernBootstrapParser
     'invalid Modern local reassignment: expected a literal value after "="'.freeze
   EXPECT_REASSIGNMENT_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after local reassignment'.freeze
+  EXPECT_IF_SPACE_MESSAGE =
+    'invalid Modern if statement: expected exactly one ASCII space after "if"'.freeze
+  EXPECT_IF_CONDITION_MESSAGE =
+    'invalid Modern if condition: expected true, false, or an earlier Boolean parameter/local'.freeze
+  EXPECT_IF_CONDITION_SEPARATOR_MESSAGE =
+    'invalid Modern if statement: expected a separator (LF, semicolon, or line comment) after condition'.freeze
+  EXPECT_ELSE_SEPARATOR_MESSAGE =
+    'invalid Modern else clause: expected a separator (LF, semicolon, or line comment) after "else"'.freeze
+  EXPECT_IF_END_SEPARATOR_MESSAGE =
+    'invalid Modern if statement: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
+  UNEXPECTED_ELSE_MESSAGE = 'unexpected Modern "else": no open if statement'.freeze
+  DUPLICATE_ELSE_MESSAGE = 'unexpected Modern "else": if statement already has an else branch'.freeze
+  EXPECT_IF_END_MESSAGE = 'unterminated Modern if statement: expected closing "end"'.freeze
+  BRANCH_BINDING_MESSAGE = 'Modern if branches do not yet support local bindings'.freeze
+  BRANCH_REASSIGNMENT_MESSAGE = 'Modern if branches do not yet support local reassignment'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -1942,6 +2115,7 @@ class DabModernBootstrapParser
     declarations = []
     until peek_token.kind == :eof
       reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
+      reject(peek_token, UNEXPECTED_ELSE_MESSAGE) if contextual_else_candidate?
       declarations << parse_declaration
       skip_separators
     end
@@ -1957,7 +2131,7 @@ private
     callable_name = expect_callable_name
     parameters, return_type, header_tokens = parse_declaration_header
     expect_name_separator
-    body_items = parse_body
+    body_items = parse_body(local_bindings: {}, in_if_branch: false)
     end_token = expect(:end)
     final_separator = expect_end_separator
 
@@ -2192,14 +2366,25 @@ private
     token
   end
 
-  def parse_body
+  def parse_body(local_bindings:, in_if_branch:, stop_at_else: false)
     items = []
-    local_bindings = {}
     loop do
       skip_body_separators
       break if peek_token.kind == :end
+      break if stop_at_else && contextual_else_candidate?
 
-      reject(peek_token, EXPECT_END_MESSAGE) if peek_token.kind == :eof
+      if contextual_else_candidate?
+        reject(peek_token, in_if_branch ? DUPLICATE_ELSE_MESSAGE : UNEXPECTED_ELSE_MESSAGE)
+      end
+
+      if peek_token.kind == :eof
+        reject(peek_token, in_if_branch ? EXPECT_IF_END_MESSAGE : EXPECT_END_MESSAGE)
+      end
+
+      if contextual_if_candidate?
+        items << parse_if_statement(local_bindings)
+        next
+      end
 
       if peek_token.kind == :return
         items << parse_return
@@ -2218,11 +2403,13 @@ private
       end
 
       if local_reassignment_start?(local_bindings)
+        reject(peek_token, BRANCH_REASSIGNMENT_MESSAGE) if in_if_branch
         items << parse_local_reassignment(local_bindings.fetch(peek_token.text))
         next
       end
 
       if contextual_let_start?
+        reject(peek_token, BRANCH_BINDING_MESSAGE) if in_if_branch
         binding = parse_local_binding
         items << binding
         local_bindings[binding.name] ||= binding
@@ -2230,6 +2417,7 @@ private
       end
 
       if contextual_var_start?(local_bindings)
+        reject(peek_token, BRANCH_BINDING_MESSAGE) if in_if_branch
         binding = parse_mutable_local_binding
         items << binding
         local_bindings[binding.name] = binding
@@ -2250,6 +2438,102 @@ private
       expect_literal_separator
     end
     items.freeze
+  end
+
+  def parse_if_statement(local_bindings)
+    if_token = next_token
+    space_token = next_token
+    reject(space_token, EXPECT_IF_SPACE_MESSAGE) unless space_token.kind == :space
+    reject(peek_token, EXPECT_IF_SPACE_MESSAGE) if peek_token.kind == :space
+
+    condition_token = next_token
+    reject_invalid_separator(condition_token)
+    condition = if %i[boolean_true boolean_false].include?(condition_token.kind)
+                  condition_token
+                elsif condition_token.kind == :identifier
+                  DabModernBootstrapLocalReference.new(condition_token)
+                else
+                  reject_if_condition_form(condition_token)
+                end
+    condition_separator = expect_if_condition_separator(condition_token)
+    if_true = parse_body(
+      local_bindings: local_bindings,
+      in_if_branch: true,
+      stop_at_else: true
+    )
+
+    else_token = nil
+    else_separator = nil
+    if_false = nil
+    if contextual_else_candidate?
+      else_token = next_token
+      else_separator = expect_if_separator(EXPECT_ELSE_SEPARATOR_MESSAGE)
+      if_false = parse_body(
+        local_bindings: local_bindings,
+        in_if_branch: true,
+        stop_at_else: false
+      )
+    end
+
+    reject(peek_token, EXPECT_IF_END_MESSAGE) if peek_token.kind == :eof
+    end_token = expect(:end)
+    final_separator = expect_if_separator(EXPECT_IF_END_SEPARATOR_MESSAGE)
+    DabModernBootstrapIfStatement.new(
+      if_token: if_token,
+      space_token: space_token,
+      condition: condition,
+      condition_separator: condition_separator,
+      if_true: if_true,
+      else_token: else_token,
+      else_separator: else_separator,
+      if_false: if_false,
+      end_token: end_token,
+      final_separator: final_separator
+    )
+  end
+
+  def expect_if_separator(message)
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, message)
+  end
+
+  def expect_if_condition_separator(condition_token)
+    token = peek_token
+    reject_invalid_separator(token)
+    return next_token if separator?(token)
+
+    if horizontal_whitespace?(token)
+      return expect_if_separator(EXPECT_IF_CONDITION_SEPARATOR_MESSAGE)
+    end
+
+    reject_if_condition_form(condition_token)
+  end
+
+  def reject_if_condition_form(first_token)
+    last_token = first_token
+    last_token = next_token until separator?(peek_token) ||
+                                  %i[eof end carriage_return].include?(peek_token.kind)
+    source_span = DabSourceSpan.new(
+      start_location: first_token.source_span.start_location,
+      end_location: last_token.source_span.end_location
+    )
+    raise DabModernBootstrapParseError.new(EXPECT_IF_CONDITION_MESSAGE, source_span: source_span)
+  end
+
+  def contextual_if_candidate?
+    token = peek_token
+    return false unless token.kind == :identifier && token.text == 'if'
+
+    peek_token(1).kind == :space || !direct_call_start?
+  end
+
+  def contextual_else_candidate?
+    token = peek_token
+    token.kind == :identifier && token.text == 'else' && !direct_call_start?
   end
 
   def direct_call_start?

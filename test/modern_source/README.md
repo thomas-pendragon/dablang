@@ -686,6 +686,26 @@ folding remains EX-005; broader interpolation, nesting, operators,
 parentheses, general expressions, control flow, local right-hand-side
 expansion, new call/member forms, PL-007, and later rows remain separate.
 
+Version 0.0.70 adds bounded structured `if`/`else`/`end` without reserving
+`if` or `else` globally. A condition is exactly `true`, `false`, a Boolean
+parameter, or an earlier local whose latest source-ordered flow value is
+Boolean. The condition is evaluated once. Branches may be empty, optional,
+or nested and may contain only the established value statements, calls,
+literal-member calls, returns, and nested bounded conditionals. Every branch
+`let`, `var`, and local reassignment remains rejected, including dead and
+statically unselected content, so the incoming local environment is unchanged
+after the conditional.
+
+Fixture `0096` is deliberately noncanonical and does not reproduce PL-007. It
+proves dynamic Boolean parameter and latest-flow-local conditions, true and
+false paths, optional and empty branches, nearest-owner nesting, returns and
+fallthrough, and exact native output. Canonical PL-007 remains reserved for
+version 0.0.71. This row reuses `DabNodeTreeBlock` and `DabNodeIf`; it changes
+no opcode, schema, assembler, VM, native, Ring, FFI, formatter, decompiler, or
+trusted-local-input boundary. `elsif`, `unless`, postfix guards, branch-local
+bindings or writes, truthiness, general expressions and operators, loops,
+classes, blocks, closures, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
