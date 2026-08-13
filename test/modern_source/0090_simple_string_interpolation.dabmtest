@@ -29,12 +29,11 @@ second+first
                                  W_END_HEADER 
  
                    _DATA:
-                                 W_STRING "
+                                 W_STRING "" 
+                                 W_STRING "first second first
 " 
-                                 W_STRING " " 
-                                 W_STRING "+" 
-                                 W_STRING "first" 
-                                 W_STRING "second" 
+                                 W_STRING "second+first
+" 
  
                    _CODE:
                                  NOP 
@@ -47,23 +46,14 @@ second+first
  
                    Fmain:
                                  STACK_RESERVE 0
-/* "first"      */               LOAD_STRING R0, _DATA + 6, 5
-/* "second"     */               LOAD_STRING R1, _DATA + 12, 6
-/* " "          */               LOAD_STRING R2, _DATA + 2, 1
-/* +            */               INSTCALL R3, R0, S2, R2
-/* +            */               INSTCALL R4, R3, S2, R1
-/* " "          */               LOAD_STRING R5, _DATA + 2, 1
-/* +            */               INSTCALL R6, R4, S2, R5
-/* +            */               INSTCALL R7, R6, S2, R0
-/* "."          */               LOAD_STRING R8, _DATA + 0, 1
-/* +            */               INSTCALL R9, R7, S2, R8
-/* PRINT        */               SYSCALL RNIL, 0, R9
-/* "+"          */               LOAD_STRING R10, _DATA + 4, 1
-/* +            */               INSTCALL R11, R1, S2, R10
-/* +            */               INSTCALL R12, R11, S2, R0
-/* "."          */               LOAD_STRING R13, _DATA + 0, 1
-/* +            */               INSTCALL R14, R12, S2, R13
-/* PRINT        */               SYSCALL RNIL, 0, R14
+/* ""           */               LOAD_STRING R0, _DATA + 0, 0
+/* "first secon */               LOAD_STRING R1, _DATA + 1, 19
+/* +            */               INSTCALL R2, R0, S2, R1
+/* PRINT        */               SYSCALL RNIL, 0, R2
+/* ""           */               LOAD_STRING R3, _DATA + 0, 0
+/* "second+firs */               LOAD_STRING R4, _DATA + 21, 13
+/* +            */               INSTCALL R5, R3, S2, R4
+/* PRINT        */               SYSCALL RNIL, 0, R5
                                  RETURN RNIL
                    __Fmain_END:
                                  NOP 

@@ -1,0 +1,126 @@
+## SOURCE
+def sink(value : String)
+  print(value)
+end
+
+def build() : String
+  let fixed = "A"
+  var latest = "old"
+  latest = "B"
+  latest = "#{fixed}#{latest}"
+  let chained = "<#{latest}>"
+  sink("call=#{chained}\n")
+  print("repeat=#{fixed}#{fixed}\n")
+  return "return=#{chained}:#{latest}\n"
+  print("dead=#{chained}\n")
+end
+
+def main()
+  print(build())
+end
+## EXPECTED APPLICATION STDOUT
+call=<AB>
+repeat=AA
+return=<AB>:AB
+
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "" 
+                                 W_STRING "call=<AB>
+" 
+                                 W_STRING "repeat=AA
+" 
+                                 W_STRING "return=<AB>:AB
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fbuild:
+                                 STACK_RESERVE 0
+/* ""           */               LOAD_STRING R0, _DATA + 0, 0
+/* "call=<AB>." */               LOAD_STRING R1, _DATA + 1, 10
+/* +            */               INSTCALL R2, R0, S2, R1
+/* sink         */               CALL RNIL, S56, R2
+/* ""           */               LOAD_STRING R3, _DATA + 0, 0
+/* "repeat=AA." */               LOAD_STRING R4, _DATA + 12, 10
+/* +            */               INSTCALL R5, R3, S2, R4
+/* PRINT        */               SYSCALL RNIL, 0, R5
+/* ""           */               LOAD_STRING R6, _DATA + 0, 0
+/* "return=<AB> */               LOAD_STRING R7, _DATA + 23, 15
+/* +            */               INSTCALL R8, R6, S2, R7
+                                 RETURN R8
+                   __Fbuild_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* build        */               CALL R0, S54
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsink:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fsink_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "build" 
+                                 W_STRING "main" 
+                                 W_STRING "sink" 
+                                 W_STRING "value" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* build        */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 18 
+/* sink         */               W_SYMBOL _SDAT + 23 
+/* value        */               W_SYMBOL _SDAT + 28 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* build        */               W_METHOD 54, -1, Fbuild, 0, __Fbuild_END - Fbuild, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* sink         */               W_METHOD 56, -1, Fsink, 1, __Fsink_END - Fsink, 0
+/* value<String */               W_METHOD_ARG 57, 1
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
