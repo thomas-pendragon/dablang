@@ -665,6 +665,27 @@ folding, EX-011 through EX-013, conversion, nested or general interpolation,
 local right-hand-side expansion, new call or member forms, control flow,
 operators, PL-007, and later rows remain separate.
 
+Version 0.0.69 folds only wholly static composed interpolation whose exact
+source-ordered SSA provenance resolves recursively to decoded String literals
+or other wholly static dedicated interpolation. Fixture `0095` covers fixed and
+mutable literal origins, the latest write, prior-version self-read, chains,
+repeated references, call/print/return consumers, and a validated dead tail.
+Each qualifying composed wrapper retains exactly one existing String append as
+`"" + folded-bytes`; this keeps its observable result class `DynamicString`
+while removing runtime component reads and extra pure appends. Fixture `0090`
+locks the same transformation for the original interpolation program without
+changing its application output.
+
+A lone splice remains an identity operation. Any parameter or other runtime
+provenance vetoes folding of the whole wrapper, so fixture `0094` retains its
+byte-identical assembly and artifact. There is no partial folding,
+interprocedural specialization, conversion, coercion, `to_s`, diagnostic,
+preflight, opcode, schema, assembler, VM, native, Ring, FFI, formatter,
+decompiler, or trusted-local-input-boundary change. General literal-expression
+folding remains EX-005; broader interpolation, nesting, operators,
+parentheses, general expressions, control flow, local right-hand-side
+expansion, new call/member forms, PL-007, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

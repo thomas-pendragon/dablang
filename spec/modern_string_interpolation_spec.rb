@@ -1,9 +1,18 @@
 require 'spec_helper'
 
+require 'open3'
+require 'rbconfig'
+require 'tmpdir'
+
 require_relative '../src/compiler/_requires'
 require_relative '../src/compiler/modern_bootstrap_parser'
 
 describe 'bounded Modern String interpolation' do
+  let(:root) { File.expand_path('..', __dir__) }
+  let(:compiler) { File.join(root, 'src/compiler/compiler.rb') }
+  let(:assembler) { File.join(root, 'src/tobinary/tobinary.rb') }
+  let(:stdlib_frontend) { File.join(root, 'src/frontend/frontend_stdlib.rb') }
+  let(:vm) { File.join(root, "bin/cvm#{RbConfig::CONFIG.fetch('EXEEXT')}") }
   let(:source_unit) do
     DabSourceUnit.new(
       input: 'interpolation.dabm',
@@ -21,6 +30,61 @@ describe 'bounded Modern String interpolation' do
 
   def interpolation(source)
     scan(source).value
+  end
+
+  def optimize_interpolations(source)
+    lowered = parse(source).lower_into(DabNodeUnit.new)
+    functions = lowered.is_a?(Array) ? lowered : [lowered]
+    functions.each { |function| SSAify.new.run(function) }
+    loop do
+      changed = functions.map(&:run_optimize_processors!).any?
+      break unless changed
+    end
+    functions
+  end
+
+  def invoke(*command, input: nil, binmode: false)
+    options = {stdin_data: input, chdir: root}
+    options[:binmode] = true if binmode
+    Open3.capture3(*command, **options)
+  end
+
+  def tool_stderr(stderr)
+    stderr.delete_prefix(
+      "clipboard: Could not find required program xsl or xclip (X11) or wl-clipboard (Wayland)\n" \
+      "Using file-based (fake) clipboard\n"
+    )
+  end
+
+  def build_stdlib(directory)
+    artifact = File.join(directory, 'stdlib.dabcb')
+    stdout, stderr, status = invoke(RbConfig.ruby, stdlib_frontend, "--output=#{artifact}")
+    expect([status.exitstatus, stdout, tool_stderr(stderr)]).to eq([0, "PASS #{artifact}\n", ''])
+    artifact
+  end
+
+  def compile_source(directory, basename, extension, source, rings: [])
+    path = File.join(directory, "#{basename}.#{extension}")
+    File.binwrite(path, source)
+    arguments = [RbConfig.ruby, compiler, path, *rings.map { |ring| "--ring-base[]=#{ring}" }]
+    assembly, stderr, status = invoke(*arguments)
+    expect([status.exitstatus, tool_stderr(stderr)]).to eq([0, ''])
+    assembly
+  end
+
+  def assemble(directory, basename, assembly)
+    artifact, stderr, status = invoke(
+      RbConfig.ruby,
+      '-e',
+      'STDOUT.binmode; load ARGV.shift',
+      assembler,
+      input: assembly,
+      binmode: true
+    )
+    expect([status.exitstatus, tool_stderr(stderr)]).to eq([0, ''])
+    path = File.join(directory, "#{basename}.dabcb")
+    File.binwrite(path, artifact)
+    path
   end
 
   it 'retains an immutable scanner wrapper and exact source parts for multiple and adjacent splices' do
@@ -232,5 +296,167 @@ describe 'bounded Modern String interpolation' do
 
     expect(read.real_identifier).to eq('value')
     expect(read.last_var_setter).to be_a(DabNodeDefineLocalVar)
+  end
+
+  it 'folds literal, latest-write, self-read, chained, repeated, and adjacent provenance as one append' do
+    source = <<~'DAB'
+      def main()
+      let fixed = "A"
+      var latest = "old"
+      latest = "B"
+      latest = "#{fixed}#{latest}"
+      let chained = "<#{latest}>"
+      print("#{chained}:#{fixed}#{fixed}")
+      end
+    DAB
+    main = optimize_interpolations(source).fetch(0)
+    wrappers = main.all_nodes(DabNodeModernInterpolatedString)
+
+    expect(wrappers.map { |wrapper| wrapper.formatted_source(syntax_profile: DabSyntaxProfile::MODERN) }).to eq(
+      [
+        "\"\#{fixed}\#{latest}\"",
+        "\"<\#{latest}>\"",
+        "\"\#{chained}:\#{fixed}\#{fixed}\"",
+      ]
+    )
+    expect(wrappers.map { |wrapper| wrapper.all_nodes(DabNodeModernStringAppend).length }).to eq([1, 1, 1])
+    expect(
+      wrappers.map { |wrapper| wrapper.all_nodes(DabNodeLiteralString).map(&:constant_value) }
+    ).to eq(
+      [['', 'AB'], ['', '<AB>'], ['', '<AB>:AA']]
+    )
+    expect(wrappers).to all(satisfy { |wrapper| wrapper.all_nodes(DabNodeSSAGet).empty? })
+  end
+
+  it 'concatenates decoded escapes and UTF-8 bytes once without rescanning them' do
+    source = <<~'DAB'
+      def main()
+      let value = "\u{17B}\n\#{literal}"
+      print("<#{value}>\t#{value}")
+      end
+    DAB
+    main = optimize_interpolations(source).fetch(0)
+    wrapper = main.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+
+    expect(wrapper.all_nodes(DabNodeModernStringAppend).length).to eq(1)
+    expect(wrapper.all_nodes(DabNodeLiteralString).map(&:constant_value)).to eq(
+      ['', "<Ż\n\#{literal}>\tŻ\n\#{literal}".b]
+    )
+  end
+
+  it 'vetoes a whole composed wrapper on parameter provenance and leaves its tree unchanged' do
+    source = <<~'DAB'
+      def greet(name:String)
+      let fixed = "fixed"
+      print("#{fixed}:#{name}:#{fixed}")
+      end
+    DAB
+    greet = optimize_interpolations(source).fetch(0)
+    wrapper = greet.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+
+    expect(wrapper.all_nodes(DabNodeModernStringAppend).length).to eq(4)
+    expect(wrapper.all_nodes(DabNodeLocalVar).map(&:real_identifier)).to include('name')
+    expect(wrapper.all_nodes(DabNodeLiteralString).map(&:constant_value)).to eq([':', ':'])
+  end
+
+  it 'preserves lone-splice identity and the original wrapper source ownership' do
+    source = <<~'DAB'
+      def main()
+      let value = "identity"
+      print("#{value}")
+      end
+    DAB
+    main = optimize_interpolations(source).fetch(0)
+    wrapper = main.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+
+    expect(wrapper.value).to be_a(DabNodeSSAGet)
+    expect(wrapper.all_nodes(DabNodeModernStringAppend)).to be_empty
+    expect(wrapper.source_parts.map(&:to_s).join).to eq("\"\#{value}\"")
+  end
+
+  it 'retains complete source ownership while synthetic folded children have none' do
+    source = <<~'DAB'
+      def main()
+      let value = "value"
+      print("left #{value} right")
+      end
+    DAB
+    main = optimize_interpolations(source).fetch(0)
+    wrapper = main.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+    literals = wrapper.all_nodes(DabNodeLiteralString)
+
+    expect(wrapper.source_parts.map(&:to_s).join).to eq("\"left \#{value} right\"")
+    expect(literals.map(&:source_parts)).to eq([[], []])
+  end
+
+  it 'checks the real folded byte limit and fails closed above it' do
+    wrapper = DabNodeModernInterpolatedString.new(
+      [DabNodeLiteralString.new('a'), DabNodeLiteralString.new('b')],
+      source: '"ab"',
+      consumed: true
+    )
+    maximum = DabNodeModernInterpolatedString::MAX_FOLDED_BYTES
+
+    expect(wrapper.send(:static_concat_in_range?, 0, maximum)).to be(true)
+    expect(wrapper.send(:static_concat_in_range?, maximum - 1, 1)).to be(true)
+    expect(wrapper.send(:static_concat_in_range?, maximum, 0)).to be(true)
+    expect(wrapper.send(:static_concat_in_range?, maximum, 1)).to be(false)
+    expect(wrapper.send(:static_concat_in_range?, maximum + 1, 0)).to be(false)
+  end
+
+  it 'retains composed DynamicString representation and lone-splice identity across Rings', :native do
+    expect(File).to exist(vm)
+
+    Dir.mktmpdir('dab-modern-static-interpolation-classes') do |directory|
+      lower = build_stdlib(directory)
+      modern_assembly = compile_source(
+        directory,
+        'providers',
+        'dabm',
+        <<~'DAB',
+          def composed_value():String
+          let value = "AB"
+          return "<#{value}>"
+          end
+
+          def lone_value():String
+          let value = "AB"
+          return "#{value}"
+          end
+        DAB
+        rings: [lower]
+      )
+      providers = assemble(directory, 'providers', modern_assembly)
+      legacy_assembly = compile_source(
+        directory,
+        'consumer',
+        'dab',
+        <<~DAB,
+          func legacy_main()
+          {
+            var composed = composed_value();
+            var lone = lone_value();
+            print(composed.class);
+            print("|");
+            print(lone.class);
+          }
+        DAB
+        rings: [lower, providers]
+      )
+      consumer = assemble(directory, 'consumer', legacy_assembly)
+      application_output = File.join(directory, 'application.stdout')
+      stdout, stderr, status = invoke(
+        vm,
+        '--entry=legacy_main',
+        "--out=#{application_output}",
+        lower,
+        providers,
+        consumer
+      )
+
+      expect([status.exitstatus, stdout]).to eq([0, ''])
+      expect(stderr).not_to include('ERROR', 'exception:', 'FAILED')
+      expect(File.binread(application_output)).to eq('DynamicString|LiteralString'.b)
+    end
   end
 end
