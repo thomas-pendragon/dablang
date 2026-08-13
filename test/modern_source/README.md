@@ -640,6 +640,31 @@ decompiler, or trusted-local-input boundary. The canonical PL-006 source and
 fixture remain reserved for planned version 0.0.68; IN-014 and later rows remain
 separate.
 
+Version 0.0.68 closes executable ladder row PL-006 through fixture `0094`,
+using the unchanged canonical program that interpolates typed String parameter
+`name` in the greeting returned by `greet` and prints that consumed helper
+result from `main`. Its exact application output is `Hello, Dab!\n`. The
+committed 2,947-byte golden assembly is deterministic: `greet` loads the
+parameter through `LOAD_ARG R0`, performs two ordered String appends into
+`R2` and `R4`, and emits `RETURN R4`; `main` loads `"Dab"`, consumes
+the helper result through `CALL R1`, and passes that same register to unary
+`SYSCALL`.
+
+This fixture-led closure adds no production semantic change. It retains the
+complete EX-003 one-level call-result contract, IN-013 identity-only exact-
+String interpolation, and EX-004 immutable parameter-entry reference contract.
+There is no `to_s`, conversion, coercion, constant folding, or additional
+evaluation. Complete-document preflight, existing diagnostics, transaction
+ordering, register ownership, and declaration-order-independent output remain
+unchanged.
+
+Runtime and generated artifacts remain suitable only for trusted local input.
+This row changes no opcode, schema, assembler, VM, native, Ring, FFI, formatter,
+decompiler, or trust boundary. IN-014, broader literal-expression folding,
+EX-011 through EX-013, conversion, nested or general interpolation, local
+right-hand-side expansion, new call or member forms, control flow, operators,
+PL-007, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
