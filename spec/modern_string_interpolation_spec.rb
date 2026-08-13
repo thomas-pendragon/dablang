@@ -36,11 +36,11 @@ describe 'bounded Modern String interpolation' do
     lowered = parse(source).lower_into(DabNodeUnit.new)
     functions = lowered.is_a?(Array) ? lowered : [lowered]
     functions.each { |function| SSAify.new.run(function) }
-    loop do
+    100.times do
       changed = functions.map(&:run_optimize_processors!).any?
-      break unless changed
+      return functions unless changed
     end
-    functions
+    raise 'Modern interpolation optimization did not converge after 100 passes'
   end
 
   def invoke(*command, input: nil, binmode: false)
