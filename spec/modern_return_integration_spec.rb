@@ -340,9 +340,10 @@ describe 'Modern return integration' do
     expect_parse_error(operator, value_message, '+')
   end
 
-  it 'keeps parameters, member-on-local, and general expressions rejected' do
+  it 'admits parameter returns while keeping member-on-local and general expressions rejected' do
+    expect { parse("def value(arg:String):String\nreturn arg\nend\n") }.not_to raise_error
+
     cases = {
-      'parameter' => ["def value(arg:String):String\nreturn arg\nend\n", 'arg'],
       'member on local' => [
         "def main():Int32\nlet value = \"x\"\nreturn value.length\nend\n",
         'value',

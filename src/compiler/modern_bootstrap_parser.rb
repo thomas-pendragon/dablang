@@ -1315,13 +1315,13 @@ private
   def preflight_locals!
     bindings_by_reference = {}
     @declarations.each do |declaration|
-      parameter_names = declaration.parameters.to_h { |parameter| [parameter.name, true] }
+      parameters_by_name = declaration.parameters.to_h { |parameter| [parameter.name, parameter] }
       bindings = {}
       declaration.body_items.each do |body_item|
         case body_item
         when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
-          preflight_local_binding!(body_item, bindings, parameter_names)
-          preflight_interpolations!(body_item, bindings, parameter_names)
+          preflight_local_binding!(body_item, bindings, parameters_by_name)
+          preflight_interpolations!(body_item, bindings, parameters_by_name)
           preflight_typed_local_initializer!(body_item)
           bindings[body_item.name] = {
             declaration: body_item,
@@ -1344,56 +1344,67 @@ private
             raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
           end
 
-          preflight_interpolations!(body_item, bindings, parameter_names)
+          preflight_interpolations!(body_item, bindings, parameters_by_name)
           preflight_typed_local_write!(body_item, binding_declaration)
           binding[:latest_write] = body_item
         when DabModernBootstrapValueReturn
           unless body_item.value.is_a?(DabModernBootstrapDirectCall)
-            preflight_interpolations!(body_item, bindings, parameter_names)
+            preflight_interpolations!(body_item, bindings, parameters_by_name)
           end
-          preflight_ring_independent_return!(body_item, declaration, bindings, bindings_by_reference)
+          preflight_ring_independent_return!(
+            body_item,
+            declaration,
+            bindings,
+            bindings_by_reference,
+            parameters_by_name
+          )
           if body_item.value.is_a?(DabModernBootstrapDirectCall)
             preflight_call_values!(
               body_item.value,
               bindings,
               bindings_by_reference,
-              parameter_names
+              parameters_by_name
             )
           end
         when DabModernBootstrapDirectCall
-          preflight_call_values!(body_item, bindings, bindings_by_reference, parameter_names)
+          preflight_call_values!(body_item, bindings, bindings_by_reference, parameters_by_name)
         else
-          preflight_interpolations!(body_item, bindings, parameter_names)
+          preflight_interpolations!(body_item, bindings, parameters_by_name)
         end
       end
     end
     bindings_by_reference
   end
 
-  def preflight_interpolations!(value, bindings, parameter_names)
+  def preflight_interpolations!(value, bindings, parameters_by_name)
     interpolation_tokens(value).each do |token|
       token.value.splices.each do |splice|
         name = splice.name
-        if parameter_names.key?(name)
+        binding = bindings[name]
+        if binding
+          actual_type = binding.fetch(:latest_write).initializer_type
+          next if actual_type.type_string == 'String'
+
           raise DabModernBootstrapParseError.new(
-            "unsupported Modern interpolation value \"#{name}\": function parameters are not part of simple interpolation",
+            "cannot interpolate Modern local \"#{name}\" of type #{actual_type.type_string}; " \
+            'simple interpolation requires exact String',
             source_span: splice.name_token.source_span
           )
         end
 
-        binding = bindings[name]
-        unless binding
+        parameter = parameters_by_name[name]
+        unless parameter
           raise DabModernBootstrapParseError.new(
             "unknown Modern interpolation local \"#{name}\"; expected an earlier same-function local binding",
             source_span: splice.name_token.source_span
           )
         end
 
-        actual_type = binding.fetch(:latest_write).initializer_type
+        actual_type = DabType.parse(parameter.type_name.text)
         next if actual_type.type_string == 'String'
 
         raise DabModernBootstrapParseError.new(
-          "cannot interpolate Modern local \"#{name}\" of type #{actual_type.type_string}; " \
+          "cannot interpolate Modern parameter \"#{name}\" of type #{actual_type.type_string}; " \
           'simple interpolation requires exact String',
           source_span: splice.name_token.source_span
         )
@@ -1422,20 +1433,33 @@ private
     []
   end
 
-  def preflight_ring_independent_return!(value_return, function, bindings, bindings_by_reference)
+  def preflight_ring_independent_return!(
+    value_return,
+    function,
+    bindings,
+    bindings_by_reference,
+    parameters_by_name
+  )
     value = value_return.value
     return if value.is_a?(DabModernBootstrapLiteralMemberCall) ||
               value.is_a?(DabModernBootstrapDirectCall)
 
     actual_type = if value.is_a?(DabModernBootstrapLocalReference)
                     binding = bindings[value.name]
-                    raise DabModernBootstrapParseError.new(source_span: value.source_span) unless binding
+                    parameter = parameters_by_name[value.name]
+                    unless binding || parameter
+                      raise DabModernBootstrapParseError.new(source_span: value.source_span)
+                    end
 
-                    declaration = binding.fetch(:declaration)
-                    type = if declaration.annotated?
-                             declaration.declared_type
+                    type = if binding
+                             binding_declaration = binding.fetch(:declaration)
+                             if binding_declaration.annotated?
+                               binding_declaration.declared_type
+                             else
+                               binding.fetch(:latest_write).initializer_type
+                             end
                            else
-                             binding.fetch(:latest_write).initializer_type
+                             DabType.parse(parameter.type_name.text)
                            end
                     bindings_by_reference[value] = type
                     type
@@ -1445,26 +1469,33 @@ private
     preflight_return_type!(value_return, function, actual_type)
   end
 
-  def preflight_call_values!(call, bindings, bindings_by_reference, parameter_names)
+  def preflight_call_values!(call, bindings, bindings_by_reference, parameters_by_name)
     call.arguments.each do |argument|
       if argument.is_a?(DabModernBootstrapDirectCall)
-        preflight_call_values!(argument, bindings, bindings_by_reference, parameter_names)
+        preflight_call_values!(argument, bindings, bindings_by_reference, parameters_by_name)
         next
       end
       if argument.is_a?(DabModernBootstrapToken) && argument.kind == :interpolated_string
-        preflight_interpolations!(argument, bindings, parameter_names)
+        preflight_interpolations!(argument, bindings, parameters_by_name)
         next
       end
       next unless argument.is_a?(DabModernBootstrapLocalReference)
 
       binding = bindings[argument.name]
-      raise DabModernBootstrapParseError.new(source_span: argument.source_span) unless binding
+      parameter = parameters_by_name[argument.name]
+      unless binding || parameter
+        raise DabModernBootstrapParseError.new(source_span: argument.source_span)
+      end
 
-      declaration = binding.fetch(:declaration)
-      bindings_by_reference[argument] = if declaration.annotated?
-                                          declaration.declared_type
+      bindings_by_reference[argument] = if binding
+                                          declaration = binding.fetch(:declaration)
+                                          if declaration.annotated?
+                                            declaration.declared_type
+                                          else
+                                            binding.fetch(:latest_write).initializer_type
+                                          end
                                         else
-                                          binding.fetch(:latest_write).initializer_type
+                                          DabType.parse(parameter.type_name.text)
                                         end
     end
   end
@@ -1484,14 +1515,14 @@ private
     )
   end
 
-  def preflight_local_binding!(binding, bindings, parameter_names)
+  def preflight_local_binding!(binding, bindings, parameters_by_name)
     if bindings.key?(binding.name)
       raise DabModernBootstrapParseError.new(
         %(duplicate Modern local binding "#{binding.name}"),
         source_span: binding.name_token.source_span
       )
     end
-    return unless parameter_names.key?(binding.name)
+    return unless parameters_by_name.key?(binding.name)
 
     raise DabModernBootstrapParseError.new(
       %(Modern local binding "#{binding.name}" conflicts with parameter "#{binding.name}"),

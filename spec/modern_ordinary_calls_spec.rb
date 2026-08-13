@@ -184,9 +184,10 @@ describe 'Modern ordinary parenthesized calls' do
     end
   end
 
-  it 'keeps body references, dot calls, operators, and top-level calls deferred' do
+  it 'admits parameter arguments while keeping dot calls, operators, and top-level calls deferred' do
+    expect { parse("def main(value:String)\nprint(value)\nend\n") }.not_to raise_error
+
     cases = {
-      'body reference argument' => ["def main(value:String)\nprint(value)\nend\n", 29],
       'dot call' => ["def main\nvalue.call()\nend\n", 9],
       'operator argument' => ["def main\nprint(+1)\nend\n", 15],
       'top-level call' => ["print()\n", 0],

@@ -104,7 +104,7 @@ describe 'bounded Modern String interpolation' do
     end
   end
 
-  it 'accepts only an earlier same-function local whose latest preceding flow is exact String' do
+  it 'accepts an exact-String local or parameter and rejects every other binding flow' do
     accepted = <<~DAB
       def main()
       let fixed = "fixed"
@@ -114,6 +114,7 @@ describe 'bounded Modern String interpolation' do
       end
     DAB
     expect { parse(accepted) }.not_to raise_error
+    expect { parse("def main(value:String)\nprint(\"\#{value}\")\nend\n") }.not_to raise_error
 
     cases = {
       unknown: [
@@ -126,9 +127,9 @@ describe 'bounded Modern String interpolation' do
         'unknown Modern interpolation local "later"; expected an earlier same-function local binding',
         'later',
       ],
-      parameter: [
-        "def main(value:String)\nprint(\"\#{value}\")\nend\n",
-        'unsupported Modern interpolation value "value": function parameters are not part of simple interpolation',
+      non_string_parameter: [
+        "def main(value:Int32)\nprint(\"\#{value}\")\nend\n",
+        'cannot interpolate Modern parameter "value" of type Int32; simple interpolation requires exact String',
         'value',
       ],
       non_string: [

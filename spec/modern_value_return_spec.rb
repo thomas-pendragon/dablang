@@ -235,9 +235,10 @@ describe 'Modern value returns' do
     end
   end
 
-  it 'keeps parameters, read-before locals and broader expressions outside the value subset' do
+  it 'admits parameter values while keeping unknown locals and broader expressions outside the value subset' do
+    expect { parse("def value(arg:String):String\nreturn arg\nend\n") }.not_to raise_error
+
     cases = {
-      'parameter' => ["def value(arg:String):String\nreturn arg\nend\n", 'arg'],
       'unknown local' => ["def value():String\nreturn missing\nend\n", 'missing'],
       'read before' => ["def value():String\nreturn later\nlet later = \"x\"\nend\n", 'later'],
       'member on local' => ["def main():Int32\nlet value = \"x\"\nreturn value.length\nend\n", 'value'],

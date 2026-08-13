@@ -614,6 +614,32 @@ bytecode schema, assembler, VM, native class, Ring, FFI, formatter, decompiler,
 or trusted-local-input boundary. EX-004, PL-006, IN-014, EX-011 through EX-013,
 conversion, nesting, broader expressions, and later rows remain deferred.
 
+Version 0.0.67 admits immutable typed function parameters only in the existing
+reference-bearing direct-call argument slots, complete bounded value returns,
+and IN-013 identifier splices. A parameter is visible throughout its own flat
+function body, including dead tails, and retains its declaration-order
+`LOAD_ARG`, declared type, stable entry SSA value, and source register. Existing
+call and return `can_assign_from?` policies are reused without conversion,
+coercion, or a return-site cast. Interpolation remains identity-only and accepts
+only a parameter declared exactly `String`.
+
+Fixture `0092` is the non-PL-006 runtime contract. Its helper/relay program
+passes a parameter directly and through one permitted producer, prints stable
+repeated reads, calls approved unary `puts`, composes two exact-String parameter
+splices, and returns the original parameter value. Its exact output is
+`VV\nVV\nPPP:V\nV`; the golden assembly owns the corresponding `LOAD_ARG` to
+call, syscall, append, and `RETURN` register flow. Fixture `0093` locks the exact
+non-String parameter interpolation diagnostic and full identifier span.
+
+Standalone parameter items, local initializer and write right-hand sides,
+parameter writes, member receivers or arguments, call-target reinterpretation,
+new direct or member forms, parentheses, operators, deeper nesting, defaults,
+blocks, closures, capture, and general expressions remain rejected. This row
+changes no opcode, schema, assembler, VM, native, Ring, FFI, formatter,
+decompiler, or trusted-local-input boundary. The canonical PL-006 source and
+fixture remain reserved for planned version 0.0.68; IN-014 and later rows remain
+separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
