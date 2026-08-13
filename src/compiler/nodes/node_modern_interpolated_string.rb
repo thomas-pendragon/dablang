@@ -86,7 +86,7 @@ class DabNodeModernInterpolatedString < DabNode
   end
 
   def no_side_effects?
-    @static_components_folded
+    @static_components_folded && @consumed
   end
 
   def compile(output)

@@ -389,6 +389,23 @@ describe 'bounded Modern String interpolation' do
     expect(literals.map(&:source_parts)).to eq([[], []])
   end
 
+  it 'keeps a standalone folded append call-like during unused-value stripping' do
+    source = <<~'DAB'
+      def main()
+      let value = "value"
+      "left #{value} right"
+      end
+    DAB
+    main = optimize_interpolations(source).fetch(0)
+    wrapper = main.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+    block = wrapper.parent
+
+    expect(wrapper.all_nodes(DabNodeModernStringAppend).length).to eq(1)
+    expect(wrapper.no_side_effects?).to be(false)
+    StripUnusedValues.new.run(block)
+    expect(block.all_nodes(DabNodeModernInterpolatedString)).to contain_exactly(wrapper)
+  end
+
   it 'checks the real folded byte limit and fails closed above it' do
     wrapper = DabNodeModernInterpolatedString.new(
       [DabNodeLiteralString.new('a'), DabNodeLiteralString.new('b')],
