@@ -98,6 +98,22 @@ describe 'Modern bootstrap literals' do
     expect(literals).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
   end
 
+  it 'keeps elsif as an ordinary identifier token outside contextual parsing' do
+    source = "elsif elsif? elsif!\n".b
+    scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)
+    tokens = []
+    loop do
+      token = scanner.next_token
+      tokens << token
+      break if token.kind == :eof
+    end
+
+    identifiers = tokens.select { |token| token.kind == :identifier }
+    expect(identifiers.map(&:text)).to eq(%w[elsif elsif elsif])
+    expect(identifiers.map { |token| [token.source_span.start_offset, token.source_span.end_offset] })
+      .to eq([[0, 5], [6, 11], [13, 18]])
+  end
+
   it 'lowers literals through the existing Legacy AST nodes with their source spans' do
     declaration = parse_modern(literal_source)
     unit = DabNodeUnit.new

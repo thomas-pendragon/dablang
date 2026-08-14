@@ -728,6 +728,31 @@ guards, PL-008, branch bindings or writes, scope, definite assignment, flow
 merge, SSA phi semantics, truthiness, general expressions and operators,
 loops, classes, blocks, and later rows remain separate.
 
+Version 0.0.72 adds zero or more contextual `elsif` clauses to the bounded
+Modern conditional without reserving `elsif` as a global identifier. Each
+clause requires exactly one ASCII space and reuses the existing Boolean
+literal, parameter, and latest-flow-local condition boundary. Conditions run
+once in source order and stop after the first true branch. An optional final
+`else`, empty clauses, fallthrough, comments and established separators, and
+nearest-owner nesting retain the OR-046 behavior.
+
+Fixture `0098` is explicitly noncanonical OR-047 coverage. It selects and
+returns first, second, third, and fallback results through three Boolean
+parameters; uses a latest-flow Boolean local before a chain; exercises an
+optional final `else`, fallthrough, an empty clause, and nested nearest-owner
+chains; and compares exact native output for every path. Canonical PL-007
+remains fixture `0097`, and PL-008 remains reserved for its later row.
+
+Every clause is recursively parsed and preflighted, including dead and
+unselected content. Branch bindings and writes remain rejected, leaving the
+incoming local environment unchanged. Lowering builds the false tail through
+only existing `DabNodeTreeBlock` and nested `DabNodeIf` values; the shared
+closing `end` remains owned by the outer chain. This row adds no backend chain
+node, opcode, schema, assembler, VM, native, Ring, FFI, formatter, decompiler,
+or trusted-local-input boundary change. `unless`, postfix guards, PL-008,
+branch scope or flow merge, SSA phi behavior, truthiness, general expressions
+and operators, loops, classes, blocks, closures, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

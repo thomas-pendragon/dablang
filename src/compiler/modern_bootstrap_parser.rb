@@ -496,10 +496,49 @@ class DabModernBootstrapValueReturn
   end
 end
 
+class DabModernBootstrapElsifClause
+  attr_reader :elsif_token, :space_token, :condition, :condition_separator,
+              :body, :source_tokens, :source_parts, :source_span
+
+  def initialize(
+    elsif_token:,
+    space_token:,
+    condition:,
+    condition_separator:,
+    body:,
+    end_location:
+  )
+    @elsif_token = elsif_token
+    @space_token = space_token
+    @condition = condition
+    @condition_separator = condition_separator
+    @body = body.freeze
+    @source_tokens = [
+      elsif_token,
+      space_token,
+      condition_token,
+      condition_separator,
+    ].freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: elsif_token.source_span.start_location,
+      end_location: end_location
+    )
+    freeze
+  end
+
+private
+
+  def condition_token
+    condition.is_a?(DabModernBootstrapLocalReference) ? condition.name_token : condition
+  end
+end
+
 class DabModernBootstrapIfStatement
   attr_reader :if_token, :space_token, :condition, :condition_separator,
-              :if_true, :else_token, :else_separator, :if_false, :end_token,
-              :final_separator, :source_tokens, :source_parts, :source_span
+              :if_true, :elsif_clauses, :else_token, :else_separator, :if_false,
+              :end_token, :final_separator, :source_tokens, :source_parts,
+              :source_span
 
   def initialize(
     if_token:,
@@ -507,6 +546,7 @@ class DabModernBootstrapIfStatement
     condition:,
     condition_separator:,
     if_true:,
+    elsif_clauses:,
     else_token:,
     else_separator:,
     if_false:,
@@ -518,6 +558,7 @@ class DabModernBootstrapIfStatement
     @condition = condition
     @condition_separator = condition_separator
     @if_true = if_true.freeze
+    @elsif_clauses = elsif_clauses.freeze
     @else_token = else_token
     @else_separator = else_separator
     @if_false = if_false&.freeze
@@ -528,6 +569,7 @@ class DabModernBootstrapIfStatement
       space_token,
       condition_token,
       condition_separator,
+      *elsif_clauses.flat_map(&:source_tokens),
       else_token,
       else_separator,
       end_token,
@@ -546,14 +588,23 @@ class DabModernBootstrapIfStatement
   end
 
   def branch_items
-    if_true + (if_false || [])
+    if_true + elsif_clauses.flat_map(&:body) + (if_false || [])
+  end
+
+  def branch_item_groups
+    [if_true, *elsif_clauses.map(&:body), if_false].compact.freeze
   end
 
   def lower
+    false_branch = if elsif_clauses.empty?
+                     if_false && lower_branch(if_false)
+                   else
+                     lower_elsif_tail
+                   end
     DabNodeIf.new(
       lower_condition,
       lower_branch(if_true),
-      if_false && lower_branch(if_false)
+      false_branch
     ).tap do |node|
       node.add_source_parts(*source_parts)
     end
@@ -566,9 +617,26 @@ private
   end
 
   def lower_condition
-    return condition.lower if condition.is_a?(DabModernBootstrapLocalReference)
+    lower_condition_value(condition)
+  end
 
-    DabModernBootstrapLiterals.lower(condition, consumed: true)
+  def lower_condition_value(value)
+    return value.lower if value.is_a?(DabModernBootstrapLocalReference)
+
+    DabModernBootstrapLiterals.lower(value, consumed: true)
+  end
+
+  def lower_elsif_tail
+    tail = if_false && lower_branch(if_false)
+    elsif_clauses.reverse_each do |clause|
+      nested = DabNodeIf.new(
+        lower_condition_value(clause.condition),
+        lower_branch(clause.body),
+        tail
+      )
+      tail = DabNodeTreeBlock.new.tap { |block| block.insert(nested) }
+    end
+    tail
   end
 
   def lower_branch(items)
@@ -1430,7 +1498,13 @@ private
     body_items.each do |body_item|
       case body_item
       when DabModernBootstrapIfStatement
-        preflight_if_condition!(body_item, bindings, bindings_by_reference, parameters_by_name)
+        preflight_if_condition!(
+          body_item.condition,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name,
+          DabModernBootstrapParser::EXPECT_IF_CONDITION_MESSAGE
+        )
         preflight_body_items!(
           body_item.if_true,
           declaration,
@@ -1438,6 +1512,22 @@ private
           bindings_by_reference,
           parameters_by_name
         )
+        body_item.elsif_clauses.each do |clause|
+          preflight_if_condition!(
+            clause.condition,
+            bindings,
+            bindings_by_reference,
+            parameters_by_name,
+            DabModernBootstrapParser::EXPECT_ELSIF_CONDITION_MESSAGE
+          )
+          preflight_body_items!(
+            clause.body,
+            declaration,
+            bindings.dup,
+            bindings_by_reference,
+            parameters_by_name
+          )
+        end
         if body_item.if_false
           preflight_body_items!(
             body_item.if_false,
@@ -1502,8 +1592,13 @@ private
     end
   end
 
-  def preflight_if_condition!(if_statement, bindings, bindings_by_reference, parameters_by_name)
-    condition = if_statement.condition
+  def preflight_if_condition!(
+    condition,
+    bindings,
+    bindings_by_reference,
+    parameters_by_name,
+    expectation_message
+  )
     return if condition.is_a?(DabModernBootstrapToken)
 
     binding = bindings[condition.name]
@@ -1515,7 +1610,7 @@ private
                   end
     unless actual_type&.type_string == 'Boolean'
       raise DabModernBootstrapParseError.new(
-        DabModernBootstrapParser::EXPECT_IF_CONDITION_MESSAGE,
+        expectation_message,
         source_span: condition.source_span
       )
     end
@@ -1732,9 +1827,8 @@ private
     items.each do |body_item|
       case body_item
       when DabModernBootstrapIfStatement
-        preflight_calls_in_items!(body_item.if_true, declaration, unit, declarations_by_name)
-        if body_item.if_false
-          preflight_calls_in_items!(body_item.if_false, declaration, unit, declarations_by_name)
+        body_item.branch_item_groups.each do |group|
+          preflight_calls_in_items!(group, declaration, unit, declarations_by_name)
         end
       when DabModernBootstrapDirectCall
         preflight_call!(body_item, unit, declarations_by_name)
@@ -2085,12 +2179,20 @@ class DabModernBootstrapParser
     'invalid Modern if condition: expected true, false, or an earlier Boolean parameter/local'.freeze
   EXPECT_IF_CONDITION_SEPARATOR_MESSAGE =
     'invalid Modern if statement: expected a separator (LF, semicolon, or line comment) after condition'.freeze
+  EXPECT_ELSIF_SPACE_MESSAGE =
+    'invalid Modern elsif clause: expected exactly one ASCII space after "elsif"'.freeze
+  EXPECT_ELSIF_CONDITION_MESSAGE =
+    'invalid Modern elsif condition: expected true, false, or an earlier Boolean parameter/local'.freeze
+  EXPECT_ELSIF_CONDITION_SEPARATOR_MESSAGE =
+    'invalid Modern elsif clause: expected a separator (LF, semicolon, or line comment) after condition'.freeze
   EXPECT_ELSE_SEPARATOR_MESSAGE =
     'invalid Modern else clause: expected a separator (LF, semicolon, or line comment) after "else"'.freeze
   EXPECT_IF_END_SEPARATOR_MESSAGE =
     'invalid Modern if statement: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
   UNEXPECTED_ELSE_MESSAGE = 'unexpected Modern "else": no open if statement'.freeze
   DUPLICATE_ELSE_MESSAGE = 'unexpected Modern "else": if statement already has an else branch'.freeze
+  UNEXPECTED_ELSIF_MESSAGE = 'unexpected Modern "elsif": no open if statement'.freeze
+  DUPLICATE_ELSIF_MESSAGE = 'unexpected Modern "elsif": if statement already has an else branch'.freeze
   EXPECT_IF_END_MESSAGE = 'unterminated Modern if statement: expected closing "end"'.freeze
   BRANCH_BINDING_MESSAGE = 'Modern if branches do not yet support local bindings'.freeze
   BRANCH_REASSIGNMENT_MESSAGE = 'Modern if branches do not yet support local reassignment'.freeze
@@ -2116,6 +2218,7 @@ class DabModernBootstrapParser
     until peek_token.kind == :eof
       reject(peek_token, UNEXPECTED_END_MESSAGE) if peek_token.kind == :end
       reject(peek_token, UNEXPECTED_ELSE_MESSAGE) if contextual_else_candidate?
+      reject(peek_token, UNEXPECTED_ELSIF_MESSAGE) if contextual_elsif_candidate?
       declarations << parse_declaration
       skip_separators
     end
@@ -2366,12 +2469,17 @@ private
     token
   end
 
-  def parse_body(local_bindings:, in_if_branch:, stop_at_else: false)
+  def parse_body(local_bindings:, in_if_branch:, stop_at_if_clause: false)
     items = []
     loop do
       skip_body_separators
       break if peek_token.kind == :end
-      break if stop_at_else && contextual_else_candidate?
+      break if stop_at_if_clause &&
+               (contextual_elsif_candidate? || contextual_else_candidate?)
+
+      if contextual_elsif_candidate?
+        reject(peek_token, in_if_branch ? DUPLICATE_ELSIF_MESSAGE : UNEXPECTED_ELSIF_MESSAGE)
+      end
 
       if contextual_else_candidate?
         reject(peek_token, in_if_branch ? DUPLICATE_ELSE_MESSAGE : UNEXPECTED_ELSE_MESSAGE)
@@ -2446,21 +2554,20 @@ private
     reject(space_token, EXPECT_IF_SPACE_MESSAGE) unless space_token.kind == :space
     reject(peek_token, EXPECT_IF_SPACE_MESSAGE) if peek_token.kind == :space
 
-    condition_token = next_token
-    reject_invalid_separator(condition_token)
-    condition = if %i[boolean_true boolean_false].include?(condition_token.kind)
-                  condition_token
-                elsif condition_token.kind == :identifier
-                  DabModernBootstrapLocalReference.new(condition_token)
-                else
-                  reject_if_condition_form(condition_token)
-                end
-    condition_separator = expect_if_condition_separator(condition_token)
+    condition_token, condition = parse_if_condition(EXPECT_IF_CONDITION_MESSAGE)
+    condition_separator = expect_if_condition_separator(
+      condition_token,
+      EXPECT_IF_CONDITION_SEPARATOR_MESSAGE,
+      EXPECT_IF_CONDITION_MESSAGE
+    )
     if_true = parse_body(
       local_bindings: local_bindings,
       in_if_branch: true,
-      stop_at_else: true
+      stop_at_if_clause: true
     )
+
+    elsif_clauses = []
+    elsif_clauses << parse_elsif_clause(local_bindings) while contextual_elsif_candidate?
 
     else_token = nil
     else_separator = nil
@@ -2471,7 +2578,7 @@ private
       if_false = parse_body(
         local_bindings: local_bindings,
         in_if_branch: true,
-        stop_at_else: false
+        stop_at_if_clause: false
       )
     end
 
@@ -2484,12 +2591,53 @@ private
       condition: condition,
       condition_separator: condition_separator,
       if_true: if_true,
+      elsif_clauses: elsif_clauses,
       else_token: else_token,
       else_separator: else_separator,
       if_false: if_false,
       end_token: end_token,
       final_separator: final_separator
     )
+  end
+
+  def parse_elsif_clause(local_bindings)
+    elsif_token = next_token
+    space_token = next_token
+    reject(space_token, EXPECT_ELSIF_SPACE_MESSAGE) unless space_token.kind == :space
+    reject(peek_token, EXPECT_ELSIF_SPACE_MESSAGE) if peek_token.kind == :space
+
+    condition_token, condition = parse_if_condition(EXPECT_ELSIF_CONDITION_MESSAGE)
+    condition_separator = expect_if_condition_separator(
+      condition_token,
+      EXPECT_ELSIF_CONDITION_SEPARATOR_MESSAGE,
+      EXPECT_ELSIF_CONDITION_MESSAGE
+    )
+    body = parse_body(
+      local_bindings: local_bindings,
+      in_if_branch: true,
+      stop_at_if_clause: true
+    )
+    DabModernBootstrapElsifClause.new(
+      elsif_token: elsif_token,
+      space_token: space_token,
+      condition: condition,
+      condition_separator: condition_separator,
+      body: body,
+      end_location: peek_token.source_span.start_location
+    )
+  end
+
+  def parse_if_condition(expectation_message)
+    condition_token = next_token
+    reject_invalid_separator(condition_token)
+    condition = if %i[boolean_true boolean_false].include?(condition_token.kind)
+                  condition_token
+                elsif condition_token.kind == :identifier
+                  DabModernBootstrapLocalReference.new(condition_token)
+                else
+                  reject_if_condition_form(condition_token, expectation_message)
+                end
+    [condition_token, condition]
   end
 
   def expect_if_separator(message)
@@ -2501,19 +2649,19 @@ private
     reject(token, message)
   end
 
-  def expect_if_condition_separator(condition_token)
+  def expect_if_condition_separator(condition_token, separator_message, condition_message)
     token = peek_token
     reject_invalid_separator(token)
     return next_token if separator?(token)
 
     if horizontal_whitespace?(token)
-      return expect_if_separator(EXPECT_IF_CONDITION_SEPARATOR_MESSAGE)
+      return expect_if_separator(separator_message)
     end
 
-    reject_if_condition_form(condition_token)
+    reject_if_condition_form(condition_token, condition_message)
   end
 
-  def reject_if_condition_form(first_token)
+  def reject_if_condition_form(first_token, expectation_message)
     last_token = first_token
     last_token = next_token until separator?(peek_token) ||
                                   %i[eof end carriage_return].include?(peek_token.kind)
@@ -2521,7 +2669,7 @@ private
       start_location: first_token.source_span.start_location,
       end_location: last_token.source_span.end_location
     )
-    raise DabModernBootstrapParseError.new(EXPECT_IF_CONDITION_MESSAGE, source_span: source_span)
+    raise DabModernBootstrapParseError.new(expectation_message, source_span: source_span)
   end
 
   def contextual_if_candidate?
@@ -2534,6 +2682,11 @@ private
   def contextual_else_candidate?
     token = peek_token
     token.kind == :identifier && token.text == 'else' && !direct_call_start?
+  end
+
+  def contextual_elsif_candidate?
+    token = peek_token
+    token.kind == :identifier && token.text == 'elsif' && !direct_call_start?
   end
 
   def direct_call_start?
