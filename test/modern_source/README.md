@@ -870,6 +870,31 @@ hand sides, loop-local bindings, `break`, `next`, truthiness, general
 expressions/operators, backend/native/schema work, OR-051+, and later rows
 remain outside this fixture and row.
 
+Fixture `0104_structured_break.dabmtest` is the explicitly noncanonical OR-052
+integration contract. Its exact 261-byte source enters the outer loop once,
+prints before and inside a nested literal-true loop, exits only that nearest
+inner loop, prints after it, then selects a postfix outer `break if true`.
+Both post-break print items remain structurally parsed and preflighted but are
+removed as unreachable before assembly. A second false-entry call skips the
+outer body. Exact application stdout is therefore:
+
+```text
+outer-before
+inner
+after-inner
+after-outer
+after-outer
+```
+
+The golden uses only the established conditional and unconditional jumps,
+tree blocks, optimizer, assembler, and VM. It adds no opcode, schema, native,
+Ring, FFI, formatter, or decompiler behavior. Existing PL-009 guard writes keep
+their bounded policy. `next`, break values or labels, loop values or
+expressions, non-loop control flow, truthiness, general expressions/operators,
+OR-053+, and later rows remain outside this fixture and row. The compiler,
+generated artifacts, and native runtime remain suitable only for trusted local
+input.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
