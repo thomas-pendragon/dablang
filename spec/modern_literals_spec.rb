@@ -130,6 +130,22 @@ describe 'Modern bootstrap literals' do
       .to eq([[0, 6], [7, 13], [15, 21]])
   end
 
+  it 'keeps while as an ordinary identifier token outside contextual parsing' do
+    source = "while while? while!\n".b
+    scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)
+    tokens = []
+    loop do
+      token = scanner.next_token
+      tokens << token
+      break if token.kind == :eof
+    end
+
+    identifiers = tokens.select { |token| token.kind == :identifier }
+    expect(identifiers.map(&:text)).to eq(%w[while while while])
+    expect(identifiers.map { |token| [token.source_span.start_offset, token.source_span.end_offset] })
+      .to eq([[0, 5], [6, 11], [13, 18]])
+  end
+
   it 'keeps if as an ordinary identifier token outside contextual parsing' do
     source = "if if? if!\n".b
     scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)

@@ -1,0 +1,300 @@
+## SOURCE
+def zero_iterations()
+  while false
+    print("never\n")
+  end
+  print("zero-fallthrough\n")
+end
+
+def select(flag : Boolean) : String
+  while flag
+    return "selected\n"
+  end
+  return "not-selected\n"
+end
+
+def from_local() : String
+  var running = nil
+  running = true
+  while running
+    return "local-selected\n"
+  end
+  return "local-fallthrough\n"
+end
+
+def nested(outer : Boolean, inner : Boolean) : String
+  while outer
+    while inner
+      return "nested-both\n"
+    end
+    return "outer-only\n"
+  end
+  return "outer-false\n"
+end
+
+def empty(flag : Boolean)
+  while flag
+  end
+  print("empty-fallthrough\n")
+end
+
+def guarded(flag : Boolean)
+  while flag
+    print("guarded-selected\n") if true
+    return
+  end
+  print("guarded-fallthrough\n")
+end
+
+def main()
+  zero_iterations()
+  print(select(true))
+  print(select(false))
+  print(from_local())
+  print(nested(true, true))
+  print(nested(true, false))
+  print(nested(false, true))
+  empty(false)
+  guarded(true)
+  guarded(false)
+end
+## EXPECTED APPLICATION STDOUT
+zero-fallthrough
+selected
+not-selected
+local-selected
+nested-both
+outer-only
+outer-false
+empty-fallthrough
+guarded-selected
+guarded-fallthrough
+
+## NOTE
+Explicitly noncanonical OR-050 coverage; no loop writes and no canonical PL-009 source or completion.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "empty-fallthrough
+" 
+                                 W_STRING "guarded-fallthrough
+" 
+                                 W_STRING "guarded-selected
+" 
+                                 W_STRING "local-selected
+" 
+                                 W_STRING "nested-both
+" 
+                                 W_STRING "not-selected
+" 
+                                 W_STRING "outer-false
+" 
+                                 W_STRING "outer-only
+" 
+                                 W_STRING "selected
+" 
+                                 W_STRING "zero-fallthrough
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fempty:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP L1
+                   L1:
+                                 JMP_IF R0, L1, L2
+                   L2:
+/* "empty-fallt */               LOAD_STRING R1, _DATA + 0, 18
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN RNIL
+                   __Fempty_END:
+                                 NOP 
+ 
+                   Ffrom_local:
+                                 STACK_RESERVE 0
+                                 JMP L3
+                   L3:
+/* "local-selec */               LOAD_STRING R0, _DATA + 58, 15
+                                 RETURN R0
+                                 JMP L3
+                   __Ffrom_local_END:
+                                 NOP 
+ 
+                   Fguarded:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP L4
+                   L4:
+                                 JMP_IF R0, L5, L6
+                   L5:
+/* "guarded-sel */               LOAD_STRING R1, _DATA + 40, 17
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN RNIL
+                                 JMP L4
+                   L6:
+/* "guarded-fal */               LOAD_STRING R2, _DATA + 19, 20
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 RETURN RNIL
+                   __Fguarded_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* zero_iterati */               CALL RNIL, S63
+                                 LOAD_TRUE R0
+/* select       */               CALL R1, S62, R0
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 LOAD_FALSE R2
+/* select       */               CALL R3, S62, R2
+/* PRINT        */               SYSCALL RNIL, 0, R3
+/* from_local   */               CALL R4, S56
+/* PRINT        */               SYSCALL RNIL, 0, R4
+                                 LOAD_TRUE R5
+                                 LOAD_TRUE R6
+/* nested       */               CALL R7, S60, R5, R6
+/* PRINT        */               SYSCALL RNIL, 0, R7
+                                 LOAD_TRUE R8
+                                 LOAD_FALSE R9
+/* nested       */               CALL R10, S60, R8, R9
+/* PRINT        */               SYSCALL RNIL, 0, R10
+                                 LOAD_FALSE R11
+                                 LOAD_TRUE R12
+/* nested       */               CALL R13, S60, R11, R12
+/* PRINT        */               SYSCALL RNIL, 0, R13
+                                 LOAD_FALSE R14
+/* empty        */               CALL RNIL, S54, R14
+                                 LOAD_TRUE R15
+/* guarded      */               CALL RNIL, S57, R15
+                                 LOAD_FALSE R16
+/* guarded      */               CALL RNIL, S57, R16
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fnested:
+                                 STACK_RESERVE 0
+/* outer        */               LOAD_ARG R0, 0
+/* inner        */               LOAD_ARG R1, 1
+                                 JMP L7
+                   L7:
+                                 JMP_IF R0, L8, L9
+                   L8:
+                                 JMP_IF R1, L10, L11
+                   L10:
+/* "nested-both */               LOAD_STRING R2, _DATA + 74, 12
+                                 RETURN R2
+                                 JMP L8
+                   L11:
+/* "outer-only. */               LOAD_STRING R3, _DATA + 114, 11
+                                 RETURN R3
+                                 JMP L7
+                   L9:
+/* "outer-false */               LOAD_STRING R4, _DATA + 101, 12
+                                 RETURN R4
+                   __Fnested_END:
+                                 NOP 
+ 
+                   Fselect:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP L12
+                   L12:
+                                 JMP_IF R0, L13, L14
+                   L13:
+/* "selected."  */               LOAD_STRING R1, _DATA + 126, 9
+                                 RETURN R1
+                                 JMP L12
+                   L14:
+/* "not-selecte */               LOAD_STRING R2, _DATA + 87, 13
+                                 RETURN R2
+                   __Fselect_END:
+                                 NOP 
+ 
+                   Fzero_iterations:
+                                 STACK_RESERVE 0
+/* "zero-fallth */               LOAD_STRING R0, _DATA + 136, 17
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Fzero_iterations_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "empty" 
+                                 W_STRING "flag" 
+                                 W_STRING "from_local" 
+                                 W_STRING "guarded" 
+                                 W_STRING "inner" 
+                                 W_STRING "main" 
+                                 W_STRING "nested" 
+                                 W_STRING "outer" 
+                                 W_STRING "select" 
+                                 W_STRING "zero_iterations" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* empty        */               W_SYMBOL _SDAT + 12 
+/* flag         */               W_SYMBOL _SDAT + 18 
+/* from_local   */               W_SYMBOL _SDAT + 23 
+/* guarded      */               W_SYMBOL _SDAT + 34 
+/* inner        */               W_SYMBOL _SDAT + 42 
+/* main         */               W_SYMBOL _SDAT + 48 
+/* nested       */               W_SYMBOL _SDAT + 53 
+/* outer        */               W_SYMBOL _SDAT + 60 
+/* select       */               W_SYMBOL _SDAT + 66 
+/* zero_iterati */               W_SYMBOL _SDAT + 73 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* empty        */               W_METHOD 54, -1, Fempty, 1, __Fempty_END - Fempty, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* from_local   */               W_METHOD 56, -1, Ffrom_local, 0, __Ffrom_local_END - Ffrom_local, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* guarded      */               W_METHOD 57, -1, Fguarded, 1, __Fguarded_END - Fguarded, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 59, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* nested       */               W_METHOD 60, -1, Fnested, 2, __Fnested_END - Fnested, 0
+/* outer<Boolea */               W_METHOD_ARG 61, 3
+/* inner<Boolea */               W_METHOD_ARG 58, 3
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* select       */               W_METHOD 62, -1, Fselect, 1, __Fselect_END - Fselect, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* zero_iterati */               W_METHOD 63, -1, Fzero_iterations, 0, __Fzero_iterations_END - Fzero_iterations, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

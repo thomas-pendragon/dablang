@@ -828,6 +828,38 @@ opcode, schema, assembler, VM, native, Ring, FFI, formatter, or decompiler
 behavior and does not consume OR-050, PL-009, bindings or writes, flow or phi
 semantics, truthiness, general expressions or operators, or later rows.
 
+### OR-050: bounded structured `while`
+
+Version `0.0.76` adds the contextual block form `while condition ... end` when
+`while` is followed by exactly one ASCII space. Existing declarations,
+parameter and local names, interpolation names, `while?` and `while!`, immediate
+and accepted spaced calls, member calls, strings, comments, recognized local
+reassignment, and `return while(...)` keep their established meanings. The
+condition grammar is deliberately inherited from bounded structured
+conditionals: an exact Boolean literal, Boolean parameter, or latest-flow exact
+Boolean local, followed by LF, a semicolon, or an adjacent line comment.
+
+The condition is evaluated before the first iteration and again before every
+later iteration. False falls through and `return` exits its enclosing function.
+Literal `true` without a reachable return intentionally may not terminate.
+Empty and nested loops accept only the established nonbinding simple items,
+bounded conditionals, and postfix guards. Every `let`, `var`, and recognized
+reassignment anywhere in a loop body is rejected during complete recursive
+preflight, including nested, dead, unreached, and post-return content. This row
+introduces no loop scope, definite-assignment, latest-flow, backedge, or SSA-phi
+policy.
+
+`0102_structured_while.dabmtest` is explicitly noncanonical OR-050 coverage. It
+does not consume the canonical PL-009 source, fixture, or completion and uses no
+loop writes. It locks zero iterations, return-bounded selected iterations,
+nested nearest ownership, parameter and latest-flow-local conditions, false
+fallthrough, and deterministic assembly, artifact, disassembly, and native
+output. Lowering uses only the existing `DabNodeWhile`, `DabNodeTreeBlock`,
+existing jumps, and current passes. There is no backend, opcode, schema,
+assembler, VM, native, Ring, FFI, formatter, or decompiler change, and no
+`break`, `next`, postfix or other loop sugar, truthiness, general expression or
+operator condition, new call or member form, OR-051+, or later-row work.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
