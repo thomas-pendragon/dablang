@@ -494,6 +494,33 @@ class DabModernBootstrapBreak
   end
 end
 
+class DabModernBootstrapNext
+  attr_reader :next_token, :source_tokens, :source_parts, :source_span
+
+  def initialize(next_token)
+    unless next_token.is_a?(DabModernBootstrapToken) &&
+           next_token.kind == :identifier && next_token.text == 'next'
+      raise ArgumentError.new('Modern next requires an exact next identifier token')
+    end
+
+    @next_token = next_token
+    @source_tokens = [next_token].freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = next_token.source_span
+    freeze
+  end
+
+  def kind
+    :next_statement
+  end
+
+  def lower
+    DabNodeNext.new.tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+end
+
 class DabModernBootstrapValueReturn
   attr_reader :keyword_token, :value, :separator_token, :source_tokens, :source_parts, :source_span
 
@@ -1755,7 +1782,8 @@ private
     end
     if body_item.is_a?(DabModernBootstrapBareReturn) ||
        body_item.is_a?(DabModernBootstrapValueReturn) ||
-       body_item.is_a?(DabModernBootstrapBreak)
+       body_item.is_a?(DabModernBootstrapBreak) ||
+       body_item.is_a?(DabModernBootstrapNext)
       return body_item.lower
     end
     if body_item.is_a?(DabModernBootstrapLiteralMemberCall)
@@ -1877,6 +1905,13 @@ private
         unless while_context
           raise DabModernBootstrapParseError.new(
             DabModernBootstrapParser::UNEXPECTED_BREAK_MESSAGE,
+            source_span: body_item.source_span
+          )
+        end
+      when DabModernBootstrapNext
+        unless while_context
+          raise DabModernBootstrapParseError.new(
+            DabModernBootstrapParser::UNEXPECTED_NEXT_MESSAGE,
             source_span: body_item.source_span
           )
         end
@@ -2579,6 +2614,10 @@ class DabModernBootstrapParser
     'invalid Modern break statement: expected a separator (LF, semicolon, or line comment) after "break"'.freeze
   UNEXPECTED_BREAK_MESSAGE =
     'unexpected Modern "break": no enclosing loop in this function'.freeze
+  EXPECT_NEXT_SEPARATOR_MESSAGE =
+    'invalid Modern next statement: expected a separator (LF, semicolon, or line comment) after "next"'.freeze
+  UNEXPECTED_NEXT_MESSAGE =
+    'unexpected Modern "next": no enclosing loop in this function'.freeze
   EXPECT_VALUE_RETURN_SEPARATOR_MESSAGE =
     'invalid Modern function body: expected a separator (LF, semicolon, or line comment) after returned value'.freeze
   EXPECT_END_MESSAGE =
@@ -3065,7 +3104,7 @@ private
 
       if local_reassignment_start?(local_bindings) ||
          (branch_rejection_context == :while && reassignment_syntax_start?) ||
-         (peek_token.text == 'break' && reassignment_syntax_start?)
+         (%w[break next].include?(peek_token.text) && reassignment_syntax_start?)
         if branch_rejection_context && branch_rejection_context != :while
           reject_branch_reassignment(peek_token, branch_rejection_context)
         end
@@ -3099,6 +3138,12 @@ private
       if contextual_break_candidate?
         break_item = DabModernBootstrapBreak.new(next_token)
         items << finish_guardable_item(break_item, :break)
+        next
+      end
+
+      if contextual_next_candidate?
+        next_item = DabModernBootstrapNext.new(next_token)
+        items << finish_guardable_item(next_item, :next)
         next
       end
 
@@ -3355,6 +3400,11 @@ private
   def contextual_break_candidate?
     token = peek_token
     token.kind == :identifier && token.text == 'break'
+  end
+
+  def contextual_next_candidate?
+    token = peek_token
+    token.kind == :identifier && token.text == 'next'
   end
 
   def reject_branch_binding(token, context)
@@ -3969,6 +4019,8 @@ private
       expect_bare_return_separator
     when :break
       expect_break_separator
+    when :next
+      expect_next_separator
     else
       raise ArgumentError.new("unknown Modern guardable-item separator kind #{separator_kind.inspect}")
     end
@@ -3990,6 +4042,15 @@ private
 
     reject_invalid_separator_after_spaces(token)
     reject(token, EXPECT_BREAK_SEPARATOR_MESSAGE)
+  end
+
+  def expect_next_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, EXPECT_NEXT_SEPARATOR_MESSAGE)
   end
 
   def postfix_guard_candidate?

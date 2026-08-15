@@ -1,0 +1,299 @@
+## SOURCE
+def nested()
+var outer = true
+var inner = true
+while outer
+print("outer\n")
+outer = false
+while inner
+print("inner\n")
+inner = false
+next
+print("dead-inner\n")
+break
+end
+print("after-inner\n")
+next
+return
+break
+end
+print("after-outer\n")
+end
+def recursive(flag:Boolean)
+var running = true
+while running
+running = false
+if flag
+unless false
+next
+print("dead-recursive\n")
+end
+end
+print("recursive-fallthrough\n")
+end
+print("after-recursive\n")
+end
+def postfix(flag:Boolean)
+var running = true
+while running
+running = false
+next if flag
+print("postfix-fallthrough\n")
+next unless flag
+print("dead-postfix\n")
+end
+print("after-postfix\n")
+end
+def return_before_next()
+while true
+print("return-before-next\n")
+return
+next
+end
+end
+def break_before_next()
+while true
+print("break-before-next\n")
+break
+next
+end
+print("after-break\n")
+end
+def main()
+nested()
+recursive(true)
+recursive(false)
+postfix(true)
+postfix(false)
+return_before_next()
+break_before_next()
+end
+## EXPECTED APPLICATION STDOUT
+outer
+inner
+after-inner
+after-outer
+after-recursive
+recursive-fallthrough
+after-recursive
+after-postfix
+postfix-fallthrough
+after-postfix
+return-before-next
+break-before-next
+after-break
+
+## NOTE
+Explicitly noncanonical OR-053 coverage for finite guard writes, nearest nested-loop next ownership, recursive and postfix next, transfer ordering, dead tails, and post-loop fallthrough.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "after-break
+" 
+                                 W_STRING "after-inner
+" 
+                                 W_STRING "after-outer
+" 
+                                 W_STRING "after-postfix
+" 
+                                 W_STRING "after-recursive
+" 
+                                 W_STRING "break-before-next
+" 
+                                 W_STRING "dead-postfix
+" 
+                                 W_STRING "inner
+" 
+                                 W_STRING "outer
+" 
+                                 W_STRING "postfix-fallthrough
+" 
+                                 W_STRING "recursive-fallthrough
+" 
+                                 W_STRING "return-before-next
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fbreak_before_next:
+                                 STACK_RESERVE 0
+/* "break-befor */               LOAD_STRING R0, _DATA + 71, 18
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "after-break */               LOAD_STRING R1, _DATA + 0, 12
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN RNIL
+                   __Fbreak_before_next_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* nested       */               CALL RNIL, S57
+                                 LOAD_TRUE R0
+/* recursive    */               CALL RNIL, S59, R0
+                                 LOAD_FALSE R1
+/* recursive    */               CALL RNIL, S59, R1
+                                 LOAD_TRUE R2
+/* postfix      */               CALL RNIL, S58, R2
+                                 LOAD_FALSE R3
+/* postfix      */               CALL RNIL, S58, R3
+/* return_befor */               CALL RNIL, S60
+/* break_before */               CALL RNIL, S54
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fnested:
+                                 STACK_RESERVE 0
+                                 LOAD_TRUE R0
+                                 LOAD_TRUE R1
+                                 JMP L1
+                   L1:
+                                 JMP_IF R0, L2, L3
+                   L2:
+/* "outer."     */               LOAD_STRING R2, _DATA + 111, 6
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 LOAD_FALSE R0
+                                 JMP L4
+                   L4:
+                                 JMP_IF R1, L5, L6
+                   L5:
+/* "inner."     */               LOAD_STRING R3, _DATA + 104, 6
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 LOAD_FALSE R1
+                                 JMP L4
+                   L6:
+/* "after-inner */               LOAD_STRING R4, _DATA + 13, 12
+/* PRINT        */               SYSCALL RNIL, 0, R4
+                                 JMP L1
+                   L3:
+/* "after-outer */               LOAD_STRING R5, _DATA + 26, 12
+/* PRINT        */               SYSCALL RNIL, 0, R5
+                                 RETURN RNIL
+                   __Fnested_END:
+                                 NOP 
+ 
+                   Fpostfix:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 LOAD_TRUE R1
+                                 JMP L7
+                   L7:
+                                 JMP_IF R1, L8, L9
+                   L8:
+                                 LOAD_FALSE R1
+                                 JMP_IF R0, L7, L10
+                   L10:
+/* "postfix-fal */               LOAD_STRING R2, _DATA + 118, 20
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 JMP_IF R0, L11, L7
+                   L11:
+/* "dead-postfi */               LOAD_STRING R3, _DATA + 90, 13
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 JMP L7
+                   L9:
+/* "after-postf */               LOAD_STRING R4, _DATA + 39, 14
+/* PRINT        */               SYSCALL RNIL, 0, R4
+                                 RETURN RNIL
+                   __Fpostfix_END:
+                                 NOP 
+ 
+                   Frecursive:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 LOAD_TRUE R1
+                                 JMP L12
+                   L12:
+                                 JMP_IF R1, L13, L14
+                   L13:
+                                 LOAD_FALSE R1
+                                 JMP_IF R0, L12, L15
+                   L15:
+/* "recursive-f */               LOAD_STRING R2, _DATA + 139, 22
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 JMP L12
+                   L14:
+/* "after-recur */               LOAD_STRING R3, _DATA + 54, 16
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 RETURN RNIL
+                   __Frecursive_END:
+                                 NOP 
+ 
+                   Freturn_before_next:
+                                 STACK_RESERVE 0
+                                 JMP L16
+                   L16:
+/* "return-befo */               LOAD_STRING R0, _DATA + 162, 19
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                                 JMP L16
+                   __Freturn_before_next_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "break_before_next" 
+                                 W_STRING "flag" 
+                                 W_STRING "main" 
+                                 W_STRING "nested" 
+                                 W_STRING "postfix" 
+                                 W_STRING "recursive" 
+                                 W_STRING "return_before_next" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* break_before */               W_SYMBOL _SDAT + 12 
+/* flag         */               W_SYMBOL _SDAT + 30 
+/* main         */               W_SYMBOL _SDAT + 35 
+/* nested       */               W_SYMBOL _SDAT + 40 
+/* postfix      */               W_SYMBOL _SDAT + 47 
+/* recursive    */               W_SYMBOL _SDAT + 55 
+/* return_befor */               W_SYMBOL _SDAT + 65 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* break_before */               W_METHOD 54, -1, Fbreak_before_next, 0, __Fbreak_before_next_END - Fbreak_before_next, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 56, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* nested       */               W_METHOD 57, -1, Fnested, 0, __Fnested_END - Fnested, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* postfix      */               W_METHOD 58, -1, Fpostfix, 1, __Fpostfix_END - Fpostfix, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* recursive    */               W_METHOD 59, -1, Frecursive, 1, __Frecursive_END - Frecursive, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* return_befor */               W_METHOD 60, -1, Freturn_before_next, 0, __Freturn_before_next_END - Freturn_before_next, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
