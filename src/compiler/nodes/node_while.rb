@@ -45,6 +45,8 @@ class DabNodeWhile < DabNodeTreeBlock
     loop_block = DabNodeBasicBlock.new
     after_block = DabNodeBasicBlock.new
 
+    bind_breaks!(loop_node, after_block)
+
     current_block << DabNodeJump.new(condition_block)
 
     blocks << condition_block
@@ -58,6 +60,16 @@ class DabNodeWhile < DabNodeTreeBlock
 
     blocks << after_block
     after_block
+  end
+
+  def bind_breaks!(node, after_block)
+    node.each do |child|
+      if child.is_a?(DabNodeBreak)
+        child.bind_to!(after_block)
+      elsif !child.is_a?(DabNodeWhile)
+        bind_breaks!(child, after_block)
+      end
+    end
   end
 
   def fixup_ssa(variable, last_setter)
