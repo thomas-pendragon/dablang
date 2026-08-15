@@ -800,6 +800,34 @@ suffixing, truthiness, general expressions/operators, branch flow/phi, loops,
 new call/member forms, backend/native/schema changes, and later rows remain
 separate.
 
+Version 0.0.75 closes executable ladder row PL-008 through canonical fixture
+`0101`. The exact 139-byte source has SHA-256
+`60eb71e0e15ee525b3a37770968141fa17f6bb9a27e9cae4fb6d69fef97dff5e`;
+its compiler-generated 3,234-byte assembly has SHA-256
+`4081b391c2b1d49382587638d3db38878c0ac924a296633b7a31139f43ecd4cf`;
+the assembled 561-byte artifact has SHA-256
+`ffdfb00728aaa1ee8d448fe4df2a4cb950d58da89686b16c65f843bf3a49d6c4`;
+and native execution produces exact nine-byte `disabled\n` with SHA-256
+`b5ea375becd3088862c16fc97fe379532c583079829fcf1fdcb549e6808262fb`.
+Reversing declaration order is byte-identical for assembly, artifact, and
+application output.
+
+The golden assembly locks register ownership and selection: `announce` loads
+its Boolean parameter exactly once into `R0`, each of its two guards emits one
+`JMP_IF` over that same register, and only the selected arm reaches its String
+load and `SYSCALL`. `main` emits `LOAD_FALSE R0` and consumes the direct helper
+call as `CALL RNIL`, so no call-result register is introduced.
+
+This is fixture-led closure with no semantic production delta. It retains the
+OR-049 owner-selected B/1 boundary: every established nonbinding simple item
+may carry exactly one postfix guard, while chaining and structured suffixing
+remain rejected. Complete dead, skipped, unselected, and post-return preflight
+remains required. The compiler, generated artifacts, and native runtime remain
+suitable only for trusted local input; this row changes no parser, backend,
+opcode, schema, assembler, VM, native, Ring, FFI, formatter, or decompiler
+behavior and does not consume OR-050, PL-009, bindings or writes, flow or phi
+semantics, truthiness, general expressions or operators, or later rows.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
