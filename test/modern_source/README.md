@@ -860,6 +860,16 @@ assembler, VM, native, Ring, FFI, formatter, or decompiler change, and no
 `break`, `next`, postfix or other loop sugar, truthiness, general expression or
 operator condition, new call or member form, OR-051+, or later-row work.
 
+`0103_p09_run_finite_while.dabmtest` is the canonical PL-009 program. Its
+earlier mutable Boolean `running` local is the loop condition, and the loop body
+immediately assigns only literal `false` to that exact guard. The fixture locks
+one iteration, exact `once\n` output, the existing local-setter and SSA/backedge
+path, and deterministic compiler, assembler, disassembly, and native behavior.
+Writes through conditional arms, auxiliary targets, non-Boolean-literal right-
+hand sides, loop-local bindings, `break`, `next`, truthiness, general
+expressions/operators, backend/native/schema work, OR-051+, and later rows
+remain outside this fixture and row.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

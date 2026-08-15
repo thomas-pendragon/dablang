@@ -149,6 +149,7 @@ describe DabModernSourceFixture do
       0100_postfix_guards.dabmtest
       0101_p08_use_postfix_guards.dabmtest
       0102_structured_while.dabmtest
+      0103_p09_run_finite_while.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|

@@ -175,6 +175,115 @@ describe 'bounded Modern while' do
     expect(loop_node.on_block.to_a).to be_empty
   end
 
+  it 'accepts only immediate Boolean-literal writes to the exact mutable local guard' do
+    source = <<~DAB
+      def main()
+      var running = true
+      while running
+      running = true
+      running = false
+      end
+      end
+    DAB
+    statement = parse(source).declarations.fetch(0).body_items.fetch(1)
+    writes = statement.loop_items
+
+    expect(writes).to all(be_a(DabModernBootstrapLocalReassignment))
+    expect(writes.map(&:name)).to eq(%w[running running])
+    expect(writes.map { |write| write.value_token.kind }).to eq(%i[boolean_true boolean_false])
+
+    loop_node = parse(source).lower_into(DabNodeUnit.new).blocks[0].all_nodes(DabNodeWhile).fetch(0)
+    expect(loop_node.condition).to be_a(DabNodeLocalVar)
+    expect(loop_node.on_block.all_nodes(DabNodeSetLocalVar).length).to eq(2)
+  end
+
+  it 'gives each nested loop authority over only its own immediate guard write' do
+    source = <<~DAB
+      def main()
+      var outer = true
+      var inner = true
+      while outer
+      while inner
+      inner = false
+      end
+      outer = false
+      end
+      end
+    DAB
+    function = parse(source).lower_into(DabNodeUnit.new)
+    loops = function.blocks[0].all_nodes(DabNodeWhile)
+
+    expect(loops.length).to eq(2)
+    expect(loops.map { |loop| loop.on_block.all_nodes(DabNodeSetLocalVar).map { |write| write.identifier.to_s } })
+      .to eq([%w[inner outer], %w[inner]])
+
+    nested_outer_write = <<~DAB
+      def main()
+      var outer = true
+      var inner = true
+      while outer
+      while inner
+      outer = false
+      end
+      end
+      end
+    DAB
+    expect_error(
+      nested_outer_write,
+      DabModernBootstrapParser::WHILE_BODY_REASSIGNMENT_MESSAGE,
+      'outer',
+      occurrence: :last
+    )
+  end
+
+  it 'rejects ineligible loop targets at the full target identifier' do
+    message = DabModernBootstrapParser::WHILE_BODY_REASSIGNMENT_MESSAGE
+    cases = {
+      "def main()\nlet running = true\nwhile running\nrunning = false\nend\nend\n" => 'running',
+      "def main()\nvar running = true\nvar other = true\nwhile running\nother = false\nend\nend\n" => 'other',
+      "def main(flag:Boolean)\nwhile flag\nflag = false\nend\nend\n" => 'flag',
+      "def main()\nwhile true\nmissing = false\nend\nend\n" => 'missing',
+      "def main()\nvar running = true\nwhile running\nif true\nrunning = false\nend\nend\nend\n" => 'running',
+      "def main()\nvar running = true\nwhile running\nunless false\nrunning = false\nend\nend\nend\n" => 'running',
+    }
+
+    cases.each do |source, offending|
+      expect_error(source, message, offending, occurrence: :last)
+    end
+  end
+
+  it 'rejects every non-Boolean-literal guard right-hand side at its complete form' do
+    message = DabModernBootstrapParser::EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE
+    %w[nil 1 value value() value.length true+false (false)].each do |rhs|
+      source = "def main()\nvar running = true\nwhile running\nrunning = #{rhs}\nend\nend\n"
+      expect_error(source, message, rhs, occurrence: :last)
+    end
+  end
+
+  it 'parses and type-checks a qualifying post-return guard write while leaving it dead' do
+    source = <<~DAB
+      def main()
+      var running = true
+      while running
+      return
+      running = false
+      end
+      end
+    DAB
+    statement = parse(source).declarations.fetch(0).body_items.fetch(1)
+    expect(statement.loop_items.map(&:class)).to eq(
+      [DabModernBootstrapBareReturn, DabModernBootstrapLocalReassignment]
+    )
+    expect { parse(source).lower_into(DabNodeUnit.new) }.not_to raise_error
+
+    invalid = source.sub('running = false', 'running = nil')
+    expect_error(
+      invalid,
+      DabModernBootstrapParser::EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE,
+      'nil'
+    )
+  end
+
   it 'rejects unsupported conditions with complete-form and semantic-reference spans' do
     message = DabModernBootstrapParser::EXPECT_WHILE_CONDITION_MESSAGE
     {
@@ -276,6 +385,37 @@ describe 'bounded Modern while' do
     )
     expect(unit.functions.to_a).to eq([existing])
     expect(unit.constants.to_a).to be_empty
+  end
+
+  it 'parses complete loop content before every loop-write semantic check' do
+    malformed_tail = <<~DAB
+      def main()
+      var running = true
+      var other = true
+      while running
+      other = false
+      print(,)
+      end
+      end
+    DAB
+    expect { parse(malformed_tail) }.to raise_error(
+      DabModernBootstrapParseError,
+      DabModernBootstrapParser::EXPECT_CALL_ARGUMENT_OR_CLOSE_MESSAGE
+    )
+
+    invalid_condition = <<~DAB
+      def main()
+      var other = true
+      while missing
+      other = false
+      end
+      end
+    DAB
+    expect_error(
+      invalid_condition,
+      DabModernBootstrapParser::EXPECT_WHILE_CONDITION_MESSAGE,
+      'missing'
+    )
   end
 
   it 'reports pre-Ring loop failures with status 2 and no filesystem publication' do

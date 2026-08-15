@@ -377,6 +377,8 @@ class DabModernBootstrapLocalReassignment
   end
 
   def initializer_type
+    return unless value_token.is_a?(DabModernBootstrapToken)
+
     DabModernBootstrapLiterals.flow_type(value_token)
   end
 
@@ -385,6 +387,23 @@ class DabModernBootstrapLocalReassignment
     DabNodeSetLocalVar.new(name_token.source_string, value, type_name&.lower).tap do |node|
       node.add_source_parts(*source_tokens.map(&:source_string))
     end
+  end
+end
+
+class DabModernBootstrapWhileGuardValueForm
+  attr_reader :source_tokens, :source_span
+
+  def initialize(source_tokens)
+    unless source_tokens.is_a?(Array) && !source_tokens.empty?
+      raise ArgumentError.new('Modern while guard value form requires source tokens')
+    end
+
+    @source_tokens = source_tokens.freeze
+    @source_span = DabSourceSpan.new(
+      start_location: source_tokens.fetch(0).source_span.start_location,
+      end_location: source_tokens.fetch(-1).source_span.end_location
+    )
+    freeze
   end
 end
 
@@ -1783,7 +1802,8 @@ private
     declaration,
     bindings,
     bindings_by_reference,
-    parameters_by_name
+    parameters_by_name,
+    while_context: nil
   )
     body_items.each do |body_item|
       case body_item
@@ -1795,12 +1815,14 @@ private
           parameters_by_name,
           DabModernBootstrapParser::EXPECT_WHILE_CONDITION_MESSAGE
         )
+        loop_guard_name = eligible_loop_guard_name(body_item.condition, bindings)
         preflight_body_items!(
           body_item.loop_items,
           declaration,
-          bindings.dup,
+          duplicate_bindings(bindings),
           bindings_by_reference,
-          parameters_by_name
+          parameters_by_name,
+          while_context: {guard_name: loop_guard_name, immediate: true}.freeze
         )
       when DabModernBootstrapPostfixGuard
         expectation_message = if body_item.keyword_token.text == 'if'
@@ -1818,9 +1840,10 @@ private
         preflight_body_items!(
           body_item.branch_items,
           declaration,
-          bindings.dup,
+          duplicate_bindings(bindings),
           bindings_by_reference,
-          parameters_by_name
+          parameters_by_name,
+          while_context: descend_while_context(while_context)
         )
       when DabModernBootstrapIfStatement
         preflight_if_condition!(
@@ -1833,9 +1856,10 @@ private
         preflight_body_items!(
           body_item.if_true,
           declaration,
-          bindings.dup,
+          duplicate_bindings(bindings),
           bindings_by_reference,
-          parameters_by_name
+          parameters_by_name,
+          while_context: descend_while_context(while_context)
         )
         body_item.elsif_clauses.each do |clause|
           preflight_if_condition!(
@@ -1848,18 +1872,20 @@ private
           preflight_body_items!(
             clause.body,
             declaration,
-            bindings.dup,
+            duplicate_bindings(bindings),
             bindings_by_reference,
-            parameters_by_name
+            parameters_by_name,
+            while_context: descend_while_context(while_context)
           )
         end
         if body_item.if_false
           preflight_body_items!(
             body_item.if_false,
             declaration,
-            bindings.dup,
+            duplicate_bindings(bindings),
             bindings_by_reference,
-            parameters_by_name
+            parameters_by_name,
+            while_context: descend_while_context(while_context)
           )
         end
       when DabModernBootstrapUnlessStatement
@@ -1874,12 +1900,14 @@ private
           preflight_body_items!(
             group,
             declaration,
-            bindings.dup,
+            duplicate_bindings(bindings),
             bindings_by_reference,
-            parameters_by_name
+            parameters_by_name,
+            while_context: descend_while_context(while_context)
           )
         end
       when DabModernBootstrapLocalBinding, DabModernBootstrapMutableLocalBinding
+        reject_while_binding!(body_item) if while_context
         preflight_local_binding!(body_item, bindings, parameters_by_name)
         preflight_interpolations!(body_item, bindings, parameters_by_name)
         preflight_typed_local_initializer!(body_item)
@@ -1888,6 +1916,7 @@ private
           latest_write: body_item,
         }
       when DabModernBootstrapLocalReassignment
+        preflight_while_reassignment!(body_item, bindings, while_context) if while_context
         binding = bindings[body_item.name]
         unless binding
           raise DabModernBootstrapParseError.new(source_span: body_item.name_token.source_span)
@@ -1932,6 +1961,59 @@ private
         preflight_interpolations!(body_item, bindings, parameters_by_name)
       end
     end
+  end
+
+  def duplicate_bindings(bindings)
+    bindings.transform_values(&:dup)
+  end
+
+  def descend_while_context(while_context)
+    return unless while_context
+
+    {guard_name: while_context.fetch(:guard_name), immediate: false}.freeze
+  end
+
+  def eligible_loop_guard_name(condition, bindings)
+    return unless condition.is_a?(DabModernBootstrapLocalReference)
+
+    binding = bindings[condition.name]
+    return unless binding
+    return unless binding.fetch(:declaration).is_a?(DabModernBootstrapMutableLocalBinding)
+
+    condition.name
+  end
+
+  def reject_while_binding!(binding)
+    token = if binding.is_a?(DabModernBootstrapLocalBinding)
+              binding.let_token
+            else
+              binding.var_token
+            end
+    raise DabModernBootstrapParseError.new(
+      DabModernBootstrapParser::WHILE_BODY_BINDING_MESSAGE,
+      source_span: token.source_span
+    )
+  end
+
+  def preflight_while_reassignment!(reassignment, bindings, while_context)
+    eligible = while_context.fetch(:immediate) &&
+               reassignment.name == while_context.fetch(:guard_name) &&
+               bindings.key?(reassignment.name)
+    unless eligible
+      raise DabModernBootstrapParseError.new(
+        DabModernBootstrapParser::WHILE_BODY_REASSIGNMENT_MESSAGE,
+        source_span: reassignment.name_token.source_span
+      )
+    end
+
+    value = reassignment.value_token
+    return if value.is_a?(DabModernBootstrapToken) &&
+              %i[boolean_true boolean_false].include?(value.kind)
+
+    raise DabModernBootstrapParseError.new(
+      DabModernBootstrapParser::EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE,
+      source_span: value.source_span
+    )
   end
 
   def preflight_if_condition!(
@@ -2574,6 +2656,8 @@ class DabModernBootstrapParser
   EXPECT_WHILE_END_MESSAGE = 'unterminated Modern while statement: expected closing "end"'.freeze
   WHILE_BODY_BINDING_MESSAGE = 'Modern while bodies do not yet support local bindings'.freeze
   WHILE_BODY_REASSIGNMENT_MESSAGE = 'Modern while bodies do not yet support local reassignment'.freeze
+  EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE =
+    'invalid Modern while guard reassignment: expected true or false'.freeze
   EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE =
     'invalid Modern postfix guard: expected exactly one ASCII space before "if" or "unless"'.freeze
   EXPECT_POSTFIX_IF_SPACE_MESSAGE =
@@ -2940,14 +3024,22 @@ private
         next
       end
 
-      if local_reassignment_start?(local_bindings)
-        reject_branch_reassignment(peek_token, branch_rejection_context) if branch_rejection_context
-        items << parse_local_reassignment(local_bindings.fetch(peek_token.text))
+      if local_reassignment_start?(local_bindings) ||
+         (branch_rejection_context == :while && reassignment_syntax_start?)
+        if branch_rejection_context && branch_rejection_context != :while
+          reject_branch_reassignment(peek_token, branch_rejection_context)
+        end
+        items << parse_local_reassignment(
+          local_bindings[peek_token.text],
+          allow_while_guard_form: branch_rejection_context == :while
+        )
         next
       end
 
       if contextual_let_start?
-        reject_branch_binding(peek_token, branch_rejection_context) if branch_rejection_context
+        if branch_rejection_context && branch_rejection_context != :while
+          reject_branch_binding(peek_token, branch_rejection_context)
+        end
         binding = parse_local_binding
         items << binding
         local_bindings[binding.name] ||= binding
@@ -2955,7 +3047,9 @@ private
       end
 
       if contextual_var_start?(local_bindings)
-        reject_branch_binding(peek_token, branch_rejection_context) if branch_rejection_context
+        if branch_rejection_context && branch_rejection_context != :while
+          reject_branch_binding(peek_token, branch_rejection_context)
+        end
         binding = parse_mutable_local_binding
         items << binding
         local_bindings[binding.name] = binding
@@ -3125,7 +3219,7 @@ private
       EXPECT_WHILE_CONDITION_MESSAGE
     )
     loop_items = parse_body(
-      local_bindings: local_bindings,
+      local_bindings: local_bindings.dup,
       branch_rejection_context: :while,
       open_structure: :while
     )
@@ -3361,9 +3455,12 @@ private
   end
 
   def local_reassignment_start?(local_bindings)
+    local_bindings.key?(peek_token.text) && reassignment_syntax_start?
+  end
+
+  def reassignment_syntax_start?
     name_token = peek_token
     return false unless name_token.kind == :identifier
-    return false unless local_bindings.key?(name_token.text)
 
     equal_distance = distance_after_horizontal_whitespace(1)
     return false unless peek_token(equal_distance).kind == :equal
@@ -3501,7 +3598,7 @@ private
     type_name
   end
 
-  def parse_local_reassignment(binding)
+  def parse_local_reassignment(binding, allow_while_guard_form: false)
     source_tokens = []
     name_token = next_token
     source_tokens << name_token
@@ -3514,23 +3611,46 @@ private
     value_token = next_token
     reject_invalid_separator(value_token)
     reject(value_token, value_token.diagnostic_message) if value_token.diagnostic_message
-    unless VALUE_KINDS.include?(value_token.kind)
+    if allow_while_guard_form && %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
+      reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
+    end
+    unless VALUE_KINDS.include?(value_token.kind) || allow_while_guard_form
       if %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
         reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
       end
       reject(value_token)
     end
-    reject_integer_overflow(value_token)
+    reject_integer_overflow(value_token) if VALUE_KINDS.include?(value_token.kind)
     source_tokens << value_token
+
+    if allow_while_guard_form && while_guard_value_form_continues?
+      value_tokens = [value_token]
+      value_tokens << next_token until separator?(peek_token) ||
+                                       %i[eof end carriage_return].include?(peek_token.kind)
+      source_tokens.concat(value_tokens.drop(1))
+      value_token = DabModernBootstrapWhileGuardValueForm.new(value_tokens)
+    end
 
     expect_local_body_separator(EXPECT_REASSIGNMENT_SEPARATOR_MESSAGE)
     DabModernBootstrapLocalReassignment.new(
       name_token: name_token,
-      type_name: binding.type_name,
+      type_name: binding&.type_name,
       equal_token: equal_token,
       value_token: value_token,
       source_tokens: source_tokens
     )
+  end
+
+  def while_guard_value_form_continues?
+    return false if separator?(peek_token) || %i[eof end carriage_return].include?(peek_token.kind)
+
+    if horizontal_whitespace?(peek_token)
+      after_whitespace = peek_token(distance_after_horizontal_whitespace(0))
+      return false if separator?(after_whitespace) ||
+                      %i[eof end carriage_return].include?(after_whitespace.kind)
+    end
+
+    true
   end
 
   def literal_member_start?
