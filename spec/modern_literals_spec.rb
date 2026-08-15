@@ -114,6 +114,22 @@ describe 'Modern bootstrap literals' do
       .to eq([[0, 5], [6, 11], [13, 18]])
   end
 
+  it 'keeps unless as an ordinary identifier token outside contextual parsing' do
+    source = "unless unless? unless!\n".b
+    scanner = DabModernBootstrapScanner.new(source, source_unit: source_unit)
+    tokens = []
+    loop do
+      token = scanner.next_token
+      tokens << token
+      break if token.kind == :eof
+    end
+
+    identifiers = tokens.select { |token| token.kind == :identifier }
+    expect(identifiers.map(&:text)).to eq(%w[unless unless unless])
+    expect(identifiers.map { |token| [token.source_span.start_offset, token.source_span.end_offset] })
+      .to eq([[0, 6], [7, 13], [15, 21]])
+  end
+
   it 'lowers literals through the existing Legacy AST nodes with their source spans' do
     declaration = parse_modern(literal_source)
     unit = DabNodeUnit.new
