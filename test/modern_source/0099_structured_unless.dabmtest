@@ -1,0 +1,301 @@
+## SOURCE
+def select(flag : Boolean) : String
+  unless flag
+    return "false-case\n"
+  else
+    return "true-case\n"
+  end
+end
+
+def from_local() : String
+  var current = nil
+  current = false
+  unless current
+    return "local-false\n"
+  else
+    return "local-true\n"
+  end
+end
+
+def optional(flag : Boolean)
+  unless flag
+    print("optional-body\n")
+  end
+  print("optional-fallthrough\n")
+end
+
+def empty(flag : Boolean)
+  unless flag
+  else
+    print("empty-else\n")
+  end
+  print("empty-fallthrough\n")
+end
+
+def nested(outer : Boolean, inner : Boolean)
+  unless outer
+    if inner
+      print("outer-false-inner-true\n")
+    else
+      print("outer-false-inner-false\n")
+    end
+  else
+    unless inner
+      print("outer-true-inner-false\n")
+    else
+      print("outer-true-inner-true\n")
+    end
+  end
+end
+
+def main()
+  print(select(false))
+  print(select(true))
+  print(from_local())
+  optional(false)
+  optional(true)
+  empty(false)
+  empty(true)
+  nested(false, true)
+  nested(false, false)
+  nested(true, false)
+  nested(true, true)
+end
+## EXPECTED APPLICATION STDOUT
+false-case
+true-case
+local-false
+optional-body
+optional-fallthrough
+optional-fallthrough
+empty-fallthrough
+empty-else
+empty-fallthrough
+outer-false-inner-true
+outer-false-inner-false
+outer-true-inner-false
+outer-true-inner-true
+
+## NOTE
+Explicitly noncanonical OR-048 coverage; postfix guards and PL-008 remain reserved.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "empty-else
+" 
+                                 W_STRING "empty-fallthrough
+" 
+                                 W_STRING "false-case
+" 
+                                 W_STRING "local-false
+" 
+                                 W_STRING "optional-body
+" 
+                                 W_STRING "optional-fallthrough
+" 
+                                 W_STRING "outer-false-inner-false
+" 
+                                 W_STRING "outer-false-inner-true
+" 
+                                 W_STRING "outer-true-inner-false
+" 
+                                 W_STRING "outer-true-inner-true
+" 
+                                 W_STRING "true-case
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fempty:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP_IF R0, L1, L2
+                   L1:
+/* "empty-else. */               LOAD_STRING R1, _DATA + 0, 11
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 JMP L2
+                   L2:
+/* "empty-fallt */               LOAD_STRING R2, _DATA + 12, 18
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 RETURN RNIL
+                   __Fempty_END:
+                                 NOP 
+ 
+                   Ffrom_local:
+                                 STACK_RESERVE 0
+/* "local-false */               LOAD_STRING R0, _DATA + 43, 12
+                                 RETURN R0
+                   __Ffrom_local_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 LOAD_FALSE R0
+/* select       */               CALL R1, S62, R0
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 LOAD_TRUE R2
+/* select       */               CALL R3, S62, R2
+/* PRINT        */               SYSCALL RNIL, 0, R3
+/* from_local   */               CALL R4, S56
+/* PRINT        */               SYSCALL RNIL, 0, R4
+                                 LOAD_FALSE R5
+/* optional     */               CALL RNIL, S60, R5
+                                 LOAD_TRUE R6
+/* optional     */               CALL RNIL, S60, R6
+                                 LOAD_FALSE R7
+/* empty        */               CALL RNIL, S54, R7
+                                 LOAD_TRUE R8
+/* empty        */               CALL RNIL, S54, R8
+                                 LOAD_FALSE R9
+                                 LOAD_TRUE R10
+/* nested       */               CALL RNIL, S59, R9, R10
+                                 LOAD_FALSE R11
+                                 LOAD_FALSE R12
+/* nested       */               CALL RNIL, S59, R11, R12
+                                 LOAD_TRUE R13
+                                 LOAD_FALSE R14
+/* nested       */               CALL RNIL, S59, R13, R14
+                                 LOAD_TRUE R15
+                                 LOAD_TRUE R16
+/* nested       */               CALL RNIL, S59, R15, R16
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fnested:
+                                 STACK_RESERVE 0
+/* outer        */               LOAD_ARG R0, 0
+/* inner        */               LOAD_ARG R1, 1
+                                 JMP_IF R0, L3, L4
+                   L3:
+                                 JMP_IF R1, L5, L6
+                   L5:
+/* "outer-true- */               LOAD_STRING R2, _DATA + 166, 22
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 JMP L7
+                   L6:
+/* "outer-true- */               LOAD_STRING R3, _DATA + 142, 23
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 JMP L7
+                   L4:
+                                 JMP_IF R1, L8, L9
+                   L8:
+/* "outer-false */               LOAD_STRING R4, _DATA + 118, 23
+/* PRINT        */               SYSCALL RNIL, 0, R4
+                                 JMP L7
+                   L9:
+/* "outer-false */               LOAD_STRING R5, _DATA + 93, 24
+/* PRINT        */               SYSCALL RNIL, 0, R5
+                                 JMP L7
+                   L7:
+                                 RETURN RNIL
+                   __Fnested_END:
+                                 NOP 
+ 
+                   Foptional:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP_IF R0, L10, L11
+                   L11:
+/* "optional-bo */               LOAD_STRING R1, _DATA + 56, 14
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 JMP L10
+                   L10:
+/* "optional-fa */               LOAD_STRING R2, _DATA + 71, 21
+/* PRINT        */               SYSCALL RNIL, 0, R2
+                                 RETURN RNIL
+                   __Foptional_END:
+                                 NOP 
+ 
+                   Fselect:
+                                 STACK_RESERVE 0
+/* flag         */               LOAD_ARG R0, 0
+                                 JMP_IF R0, L12, L13
+                   L12:
+/* "true-case." */               LOAD_STRING R1, _DATA + 189, 10
+                                 RETURN R1
+                                 JMP L14
+                   L13:
+/* "false-case. */               LOAD_STRING R2, _DATA + 31, 11
+                                 RETURN R2
+                                 JMP L14
+                   L14:
+                                 NOP 
+                   __Fselect_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "empty" 
+                                 W_STRING "flag" 
+                                 W_STRING "from_local" 
+                                 W_STRING "inner" 
+                                 W_STRING "main" 
+                                 W_STRING "nested" 
+                                 W_STRING "optional" 
+                                 W_STRING "outer" 
+                                 W_STRING "select" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* empty        */               W_SYMBOL _SDAT + 12 
+/* flag         */               W_SYMBOL _SDAT + 18 
+/* from_local   */               W_SYMBOL _SDAT + 23 
+/* inner        */               W_SYMBOL _SDAT + 34 
+/* main         */               W_SYMBOL _SDAT + 40 
+/* nested       */               W_SYMBOL _SDAT + 45 
+/* optional     */               W_SYMBOL _SDAT + 52 
+/* outer        */               W_SYMBOL _SDAT + 61 
+/* select       */               W_SYMBOL _SDAT + 67 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* empty        */               W_METHOD 54, -1, Fempty, 1, __Fempty_END - Fempty, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* from_local   */               W_METHOD 56, -1, Ffrom_local, 0, __Ffrom_local_END - Ffrom_local, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 58, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* nested       */               W_METHOD 59, -1, Fnested, 2, __Fnested_END - Fnested, 0
+/* outer<Boolea */               W_METHOD_ARG 61, 3
+/* inner<Boolea */               W_METHOD_ARG 57, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* optional     */               W_METHOD 60, -1, Foptional, 1, __Foptional_END - Foptional, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* select       */               W_METHOD 62, -1, Fselect, 1, __Fselect_END - Fselect, 0
+/* flag<Boolean */               W_METHOD_ARG 55, 3
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

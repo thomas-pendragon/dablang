@@ -534,6 +534,102 @@ private
   end
 end
 
+class DabModernBootstrapUnlessStatement
+  attr_reader :unless_token, :space_token, :condition, :condition_separator,
+              :unless_body, :else_token, :else_separator, :else_body,
+              :end_token, :final_separator, :source_tokens, :source_parts,
+              :source_span
+
+  def initialize(
+    unless_token:,
+    space_token:,
+    condition:,
+    condition_separator:,
+    unless_body:,
+    else_token:,
+    else_separator:,
+    else_body:,
+    end_token:,
+    final_separator:
+  )
+    @unless_token = unless_token
+    @space_token = space_token
+    @condition = condition
+    @condition_separator = condition_separator
+    @unless_body = unless_body.freeze
+    @else_token = else_token
+    @else_separator = else_separator
+    @else_body = else_body&.freeze
+    @end_token = end_token
+    @final_separator = final_separator
+    @source_tokens = [
+      unless_token,
+      space_token,
+      condition_token,
+      condition_separator,
+      else_token,
+      else_separator,
+      end_token,
+      final_separator,
+    ].compact.freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: unless_token.source_span.start_location,
+      end_location: final_separator.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :unless_statement
+  end
+
+  def branch_items
+    unless_body + (else_body || [])
+  end
+
+  def branch_item_groups
+    [unless_body, else_body].compact.freeze
+  end
+
+  def lower
+    DabNodeIf.new(
+      lower_condition,
+      lower_branch(else_body || []),
+      lower_branch(unless_body)
+    ).tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+
+private
+
+  def condition_token
+    condition.is_a?(DabModernBootstrapLocalReference) ? condition.name_token : condition
+  end
+
+  def lower_condition
+    return condition.lower if condition.is_a?(DabModernBootstrapLocalReference)
+
+    DabModernBootstrapLiterals.lower(condition, consumed: true)
+  end
+
+  def lower_branch(items)
+    DabNodeTreeBlock.new.tap do |block|
+      items.each do |item|
+        lowered = if item.is_a?(DabModernBootstrapDirectCall)
+                    item.lower_body_items
+                  elsif item.respond_to?(:lower)
+                    [item.lower]
+                  else
+                    [DabModernBootstrapLiterals.lower(item)]
+                  end
+        lowered.each { |node| block.insert(node) }
+      end
+    end
+  end
+end
+
 class DabModernBootstrapIfStatement
   attr_reader :if_token, :space_token, :condition, :condition_separator,
               :if_true, :elsif_clauses, :else_token, :else_separator, :if_false,
@@ -1416,7 +1512,10 @@ class DabModernBootstrapFunctionDeclaration
 private
 
   def lower_body_item(body_item)
-    return body_item.lower if body_item.is_a?(DabModernBootstrapIfStatement)
+    if body_item.is_a?(DabModernBootstrapIfStatement) ||
+       body_item.is_a?(DabModernBootstrapUnlessStatement)
+      return body_item.lower
+    end
     if body_item.is_a?(DabModernBootstrapBareReturn) ||
        body_item.is_a?(DabModernBootstrapValueReturn)
       return body_item.lower
@@ -1531,6 +1630,23 @@ private
         if body_item.if_false
           preflight_body_items!(
             body_item.if_false,
+            declaration,
+            bindings.dup,
+            bindings_by_reference,
+            parameters_by_name
+          )
+        end
+      when DabModernBootstrapUnlessStatement
+        preflight_if_condition!(
+          body_item.condition,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name,
+          DabModernBootstrapParser::EXPECT_UNLESS_CONDITION_MESSAGE
+        )
+        body_item.branch_item_groups.each do |group|
+          preflight_body_items!(
+            group,
             declaration,
             bindings.dup,
             bindings_by_reference,
@@ -1670,7 +1786,8 @@ private
     if value.is_a?(DabModernBootstrapDirectCall)
       return value.arguments.flat_map { |argument| interpolation_tokens(argument) }
     end
-    if value.is_a?(DabModernBootstrapIfStatement)
+    if value.is_a?(DabModernBootstrapIfStatement) ||
+       value.is_a?(DabModernBootstrapUnlessStatement)
       return value.branch_items.flat_map { |item| interpolation_tokens(item) }
     end
 
@@ -1826,7 +1943,7 @@ private
   def preflight_calls_in_items!(items, declaration, unit, declarations_by_name)
     items.each do |body_item|
       case body_item
-      when DabModernBootstrapIfStatement
+      when DabModernBootstrapIfStatement, DabModernBootstrapUnlessStatement
         body_item.branch_item_groups.each do |group|
           preflight_calls_in_items!(group, declaration, unit, declarations_by_name)
         end
@@ -2196,6 +2313,20 @@ class DabModernBootstrapParser
   EXPECT_IF_END_MESSAGE = 'unterminated Modern if statement: expected closing "end"'.freeze
   BRANCH_BINDING_MESSAGE = 'Modern if branches do not yet support local bindings'.freeze
   BRANCH_REASSIGNMENT_MESSAGE = 'Modern if branches do not yet support local reassignment'.freeze
+  EXPECT_UNLESS_SPACE_MESSAGE =
+    'invalid Modern unless statement: expected exactly one ASCII space after "unless"'.freeze
+  EXPECT_UNLESS_CONDITION_MESSAGE =
+    'invalid Modern unless condition: expected true, false, or an earlier Boolean parameter/local'.freeze
+  EXPECT_UNLESS_CONDITION_SEPARATOR_MESSAGE =
+    'invalid Modern unless statement: expected a separator (LF, semicolon, or line comment) after condition'.freeze
+  EXPECT_UNLESS_END_SEPARATOR_MESSAGE =
+    'invalid Modern unless statement: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
+  DUPLICATE_UNLESS_ELSE_MESSAGE = 'unexpected Modern "else": unless statement already has an else branch'.freeze
+  UNSUPPORTED_UNLESS_ELSIF_MESSAGE =
+    'unexpected Modern "elsif": unless statement does not support elsif clauses'.freeze
+  EXPECT_UNLESS_END_MESSAGE = 'unterminated Modern unless statement: expected closing "end"'.freeze
+  UNLESS_BRANCH_BINDING_MESSAGE = 'Modern unless branches do not yet support local bindings'.freeze
+  UNLESS_BRANCH_REASSIGNMENT_MESSAGE = 'Modern unless branches do not yet support local reassignment'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -2234,7 +2365,7 @@ private
     callable_name = expect_callable_name
     parameters, return_type, header_tokens = parse_declaration_header
     expect_name_separator
-    body_items = parse_body(local_bindings: {}, in_if_branch: false)
+    body_items = parse_body(local_bindings: {})
     end_token = expect(:end)
     final_separator = expect_end_separator
 
@@ -2469,28 +2600,59 @@ private
     token
   end
 
-  def parse_body(local_bindings:, in_if_branch:, stop_at_if_clause: false)
+  def parse_body(
+    local_bindings:,
+    branch_rejection_context: nil,
+    open_structure: nil,
+    stop_at_conditional_clause: false
+  )
     items = []
     loop do
       skip_body_separators
       break if peek_token.kind == :end
-      break if stop_at_if_clause &&
+      break if stop_at_conditional_clause &&
                (contextual_elsif_candidate? || contextual_else_candidate?)
 
       if contextual_elsif_candidate?
-        reject(peek_token, in_if_branch ? DUPLICATE_ELSIF_MESSAGE : UNEXPECTED_ELSIF_MESSAGE)
+        message = if open_structure == :unless
+                    UNSUPPORTED_UNLESS_ELSIF_MESSAGE
+                  elsif open_structure == :if
+                    DUPLICATE_ELSIF_MESSAGE
+                  else
+                    UNEXPECTED_ELSIF_MESSAGE
+                  end
+        reject(peek_token, message)
       end
 
       if contextual_else_candidate?
-        reject(peek_token, in_if_branch ? DUPLICATE_ELSE_MESSAGE : UNEXPECTED_ELSE_MESSAGE)
+        message = if open_structure == :unless
+                    DUPLICATE_UNLESS_ELSE_MESSAGE
+                  elsif open_structure == :if
+                    DUPLICATE_ELSE_MESSAGE
+                  else
+                    UNEXPECTED_ELSE_MESSAGE
+                  end
+        reject(peek_token, message)
       end
 
       if peek_token.kind == :eof
-        reject(peek_token, in_if_branch ? EXPECT_IF_END_MESSAGE : EXPECT_END_MESSAGE)
+        message = if open_structure == :unless
+                    EXPECT_UNLESS_END_MESSAGE
+                  elsif open_structure == :if
+                    EXPECT_IF_END_MESSAGE
+                  else
+                    EXPECT_END_MESSAGE
+                  end
+        reject(peek_token, message)
       end
 
       if contextual_if_candidate?
         items << parse_if_statement(local_bindings)
+        next
+      end
+
+      if contextual_unless_candidate?
+        items << parse_unless_statement(local_bindings)
         next
       end
 
@@ -2511,13 +2673,13 @@ private
       end
 
       if local_reassignment_start?(local_bindings)
-        reject(peek_token, BRANCH_REASSIGNMENT_MESSAGE) if in_if_branch
+        reject_branch_reassignment(peek_token, branch_rejection_context) if branch_rejection_context
         items << parse_local_reassignment(local_bindings.fetch(peek_token.text))
         next
       end
 
       if contextual_let_start?
-        reject(peek_token, BRANCH_BINDING_MESSAGE) if in_if_branch
+        reject_branch_binding(peek_token, branch_rejection_context) if branch_rejection_context
         binding = parse_local_binding
         items << binding
         local_bindings[binding.name] ||= binding
@@ -2525,7 +2687,7 @@ private
       end
 
       if contextual_var_start?(local_bindings)
-        reject(peek_token, BRANCH_BINDING_MESSAGE) if in_if_branch
+        reject_branch_binding(peek_token, branch_rejection_context) if branch_rejection_context
         binding = parse_mutable_local_binding
         items << binding
         local_bindings[binding.name] = binding
@@ -2562,8 +2724,9 @@ private
     )
     if_true = parse_body(
       local_bindings: local_bindings,
-      in_if_branch: true,
-      stop_at_if_clause: true
+      branch_rejection_context: :if,
+      open_structure: :if,
+      stop_at_conditional_clause: true
     )
 
     elsif_clauses = []
@@ -2577,8 +2740,8 @@ private
       else_separator = expect_if_separator(EXPECT_ELSE_SEPARATOR_MESSAGE)
       if_false = parse_body(
         local_bindings: local_bindings,
-        in_if_branch: true,
-        stop_at_if_clause: false
+        branch_rejection_context: :if,
+        open_structure: :if
       )
     end
 
@@ -2600,6 +2763,57 @@ private
     )
   end
 
+  def parse_unless_statement(local_bindings)
+    unless_token = next_token
+    space_token = next_token
+    reject(space_token, EXPECT_UNLESS_SPACE_MESSAGE) unless space_token.kind == :space
+    reject(peek_token, EXPECT_UNLESS_SPACE_MESSAGE) if peek_token.kind == :space
+
+    condition_token, condition = parse_if_condition(EXPECT_UNLESS_CONDITION_MESSAGE)
+    condition_separator = expect_if_condition_separator(
+      condition_token,
+      EXPECT_UNLESS_CONDITION_SEPARATOR_MESSAGE,
+      EXPECT_UNLESS_CONDITION_MESSAGE
+    )
+    unless_body = parse_body(
+      local_bindings: local_bindings,
+      branch_rejection_context: :unless,
+      open_structure: :unless,
+      stop_at_conditional_clause: true
+    )
+
+    reject(peek_token, UNSUPPORTED_UNLESS_ELSIF_MESSAGE) if contextual_elsif_candidate?
+
+    else_token = nil
+    else_separator = nil
+    else_body = nil
+    if contextual_else_candidate?
+      else_token = next_token
+      else_separator = expect_if_separator(EXPECT_ELSE_SEPARATOR_MESSAGE)
+      else_body = parse_body(
+        local_bindings: local_bindings,
+        branch_rejection_context: :unless,
+        open_structure: :unless
+      )
+    end
+
+    reject(peek_token, EXPECT_UNLESS_END_MESSAGE) if peek_token.kind == :eof
+    end_token = expect(:end)
+    final_separator = expect_if_separator(EXPECT_UNLESS_END_SEPARATOR_MESSAGE)
+    DabModernBootstrapUnlessStatement.new(
+      unless_token: unless_token,
+      space_token: space_token,
+      condition: condition,
+      condition_separator: condition_separator,
+      unless_body: unless_body,
+      else_token: else_token,
+      else_separator: else_separator,
+      else_body: else_body,
+      end_token: end_token,
+      final_separator: final_separator
+    )
+  end
+
   def parse_elsif_clause(local_bindings)
     elsif_token = next_token
     space_token = next_token
@@ -2614,8 +2828,9 @@ private
     )
     body = parse_body(
       local_bindings: local_bindings,
-      in_if_branch: true,
-      stop_at_if_clause: true
+      branch_rejection_context: :if,
+      open_structure: :if,
+      stop_at_conditional_clause: true
     )
     DabModernBootstrapElsifClause.new(
       elsif_token: elsif_token,
@@ -2677,6 +2892,23 @@ private
     return false unless token.kind == :identifier && token.text == 'if'
 
     peek_token(1).kind == :space || !direct_call_start?
+  end
+
+  def contextual_unless_candidate?
+    token = peek_token
+    return false unless token.kind == :identifier && token.text == 'unless'
+
+    !direct_call_start?
+  end
+
+  def reject_branch_binding(token, context)
+    message = context == :unless ? UNLESS_BRANCH_BINDING_MESSAGE : BRANCH_BINDING_MESSAGE
+    reject(token, message)
+  end
+
+  def reject_branch_reassignment(token, context)
+    message = context == :unless ? UNLESS_BRANCH_REASSIGNMENT_MESSAGE : BRANCH_REASSIGNMENT_MESSAGE
+    reject(token, message)
   end
 
   def contextual_else_candidate?

@@ -753,6 +753,28 @@ or trusted-local-input boundary change. `unless`, postfix guards, PL-008,
 branch scope or flow merge, SSA phi behavior, truthiness, general expressions
 and operators, loops, classes, blocks, closures, and later rows remain separate.
 
+Version 0.0.73 adds contextual block `unless` without reserving `unless` as a
+global identifier. The statement requires exactly one ASCII space, reuses the
+OR-046 Boolean literal, parameter, and latest-flow-local condition boundary,
+and accepts an optional `else`. Clause-shaped `elsif` is permanently rejected.
+The condition runs exactly once; lowering swaps the two existing `DabNodeIf`
+tree-block arms, using an empty true arm when `else` is omitted.
+
+Fixture `0099` is explicitly noncanonical OR-048 coverage. It selects both
+return arms through a Boolean parameter, uses a latest-flow Boolean local,
+exercises optional and empty arms with fallthrough, and combines nested `if`
+and `unless` statements to lock nearest ownership and exact native output.
+Fixtures `0096` through `0098` remain the earlier byte-compatible conditional
+contracts; canonical PL-008 and postfix guards remain reserved.
+
+Every arm is recursively parsed and preflighted, including dead and unselected
+content. Arm bindings and recognized writes remain rejected, leaving the
+incoming local environment unchanged. This row adds no logical `not`, backend
+node, opcode, schema, assembler, VM, native, Ring, FFI, formatter, decompiler,
+or trusted-local-input boundary change. Branch scope and flow merge, SSA phi
+behavior, truthiness, general expressions and operators, loops, classes,
+blocks, closures, and later rows remain separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
