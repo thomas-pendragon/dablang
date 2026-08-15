@@ -1,0 +1,146 @@
+## SOURCE
+def choose(enabled:Boolean):String
+return "enabled\n" if enabled
+return "disabled\n"
+end
+def local_guard()
+var enabled = nil
+enabled = true
+print("local\n") if enabled
+end
+def main()
+print(choose(true))
+print(choose(false))
+local_guard()
+print("if\n") if true
+print("unless\n") unless false
+print("skipped\n") if false
+"abc".length unless true
+nil if false
+return unless true
+print("tail\n")
+end
+## EXPECTED APPLICATION STDOUT
+enabled
+disabled
+local
+if
+unless
+tail
+
+## NOTE
+Explicitly noncanonical OR-049 coverage; canonical PL-008 remains reserved.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "disabled
+" 
+                                 W_STRING "enabled
+" 
+                                 W_STRING "if
+" 
+                                 W_STRING "local
+" 
+                                 W_STRING "tail
+" 
+                                 W_STRING "unless
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fchoose:
+                                 STACK_RESERVE 0
+/* enabled      */               LOAD_ARG R0, 0
+                                 JMP_IF R0, L1, L2
+                   L1:
+/* "enabled."   */               LOAD_STRING R1, _DATA + 10, 8
+                                 RETURN R1
+                                 JMP L2
+                   L2:
+/* "disabled."  */               LOAD_STRING R2, _DATA + 0, 9
+                                 RETURN R2
+                   __Fchoose_END:
+                                 NOP 
+ 
+                   Flocal_guard:
+                                 STACK_RESERVE 0
+/* "local."     */               LOAD_STRING R0, _DATA + 23, 6
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 RETURN RNIL
+                   __Flocal_guard_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+                                 LOAD_TRUE R0
+/* choose       */               CALL R1, S54, R0
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 LOAD_FALSE R2
+/* choose       */               CALL R3, S54, R2
+/* PRINT        */               SYSCALL RNIL, 0, R3
+/* local_guard  */               CALL RNIL, S56
+/* "if."        */               LOAD_STRING R4, _DATA + 19, 3
+/* PRINT        */               SYSCALL RNIL, 0, R4
+/* "unless."    */               LOAD_STRING R5, _DATA + 36, 7
+/* PRINT        */               SYSCALL RNIL, 0, R5
+/* "tail."      */               LOAD_STRING R6, _DATA + 30, 5
+/* PRINT        */               SYSCALL RNIL, 0, R6
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "choose" 
+                                 W_STRING "enabled" 
+                                 W_STRING "local_guard" 
+                                 W_STRING "main" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* choose       */               W_SYMBOL _SDAT + 12 
+/* enabled      */               W_SYMBOL _SDAT + 19 
+/* local_guard  */               W_SYMBOL _SDAT + 27 
+/* main         */               W_SYMBOL _SDAT + 39 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* choose       */               W_METHOD 54, -1, Fchoose, 1, __Fchoose_END - Fchoose, 0
+/* enabled<Bool */               W_METHOD_ARG 55, 3
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* local_guard  */               W_METHOD 56, -1, Flocal_guard, 0, __Flocal_guard_END - Flocal_guard, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 57, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
