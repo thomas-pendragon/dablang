@@ -775,6 +775,31 @@ or trusted-local-input boundary change. Branch scope and flow merge, SSA phi
 behavior, truthiness, general expressions and operators, loops, classes,
 blocks, closures, and later rows remain separate.
 
+Version 0.0.74 adds exactly one contextual postfix `if` or `unless` guard to
+each established nonbinding simple body item: literal/value statements, direct
+calls, literal-member calls, bare returns, and bounded value returns. The item,
+keyword, and inherited Boolean condition use exact one-ASCII-space boundaries,
+and the condition retains the immediate LF, semicolon, or adjacent line-comment
+separator contract. `return if(flag)` remains a value return containing the
+direct call named `if`. A second same or mixed guard is rejected; completed
+structured conditionals, bindings, recognized writes, and unknown assignment
+shapes remain ineligible.
+
+Lowering uses only the existing `DabNodeIf` and `DabNodeTreeBlock` paths. The
+condition is evaluated once before selection, and the guarded item, receiver,
+arguments, output, or return executes only in the selected arm. Parsing and
+preflight still validate skipped, dead, and post-return content completely
+before any declaration is published.
+
+Fixture `0100` is explicitly noncanonical OR-049 coverage. It exercises
+parameter, latest-flow-local, and literal Boolean guards over direct calls,
+literal/member statements, bare return, and bounded value return, with exact
+native output and deterministic assembly. Fixtures `0096` through `0099`
+remain byte-compatible. Canonical PL-008, postfix chaining, structured-item
+suffixing, truthiness, general expressions/operators, branch flow/phi, loops,
+new call/member forms, backend/native/schema changes, and later rows remain
+separate.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

@@ -437,6 +437,10 @@ class DabModernBootstrapBareReturn
     :bare_return
   end
 
+  def source_tokens
+    [keyword_token].freeze
+  end
+
   def lower
     DabNodeReturn.new(DabNodeLiteralNil.new).tap do |node|
       node.add_source_parts(*source_parts)
@@ -445,7 +449,7 @@ class DabModernBootstrapBareReturn
 end
 
 class DabModernBootstrapValueReturn
-  attr_reader :keyword_token, :value, :separator_token, :source_parts, :source_span
+  attr_reader :keyword_token, :value, :separator_token, :source_tokens, :source_parts, :source_span
 
   def initialize(keyword_token:, space_token:, value:, separator_token:)
     unless keyword_token.is_a?(DabModernBootstrapToken) && keyword_token.kind == :return
@@ -454,8 +458,9 @@ class DabModernBootstrapValueReturn
     unless space_token.is_a?(DabModernBootstrapToken) && space_token.kind == :space && space_token.text == ' '
       raise ArgumentError.new('Modern value return requires exactly one ASCII space after return')
     end
-    unless separator_token.is_a?(DabModernBootstrapToken) &&
-           DabModernBootstrapParser::SEPARATOR_KINDS.include?(separator_token.kind)
+    unless separator_token.nil? ||
+           (separator_token.is_a?(DabModernBootstrapToken) &&
+            DabModernBootstrapParser::SEPARATOR_KINDS.include?(separator_token.kind))
       raise ArgumentError.new('Modern value return requires a body-item separator token')
     end
 
@@ -469,7 +474,8 @@ class DabModernBootstrapValueReturn
     @keyword_token = keyword_token
     @value = value
     @separator_token = separator_token
-    @source_parts = [keyword_token, space_token, *value_tokens].map(&:source_string).freeze
+    @source_tokens = [keyword_token, space_token, *value_tokens].freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
     @source_span = DabSourceSpan.new(
       start_location: keyword_token.source_span.start_location,
       end_location: value.source_span.end_location
@@ -492,6 +498,114 @@ class DabModernBootstrapValueReturn
                     end
     DabNodeReturn.new(lowered_value).tap do |node|
       node.add_source_parts(*source_parts)
+    end
+  end
+end
+
+class DabModernBootstrapPostfixGuard
+  attr_reader :guarded_item, :space_token, :keyword_token, :condition_space_token, :condition,
+              :condition_separator, :source_tokens, :source_parts, :source_span
+
+  def initialize(
+    guarded_item:,
+    space_token:,
+    keyword_token:,
+    condition_space_token:,
+    condition:,
+    condition_separator:
+  )
+    unless space_token.is_a?(DabModernBootstrapToken) &&
+           space_token.kind == :space && space_token.text == ' '
+      raise ArgumentError.new('Modern postfix guard requires exactly one ASCII space before its keyword')
+    end
+    unless keyword_token.is_a?(DabModernBootstrapToken) &&
+           keyword_token.kind == :identifier && %w[if unless].include?(keyword_token.text)
+      raise ArgumentError.new('Modern postfix guard requires an if or unless keyword token')
+    end
+    unless condition_space_token.is_a?(DabModernBootstrapToken) &&
+           condition_space_token.kind == :space && condition_space_token.text == ' '
+      raise ArgumentError.new('Modern postfix guard requires exactly one ASCII space after its keyword')
+    end
+    unless condition_separator.is_a?(DabModernBootstrapToken) &&
+           DabModernBootstrapParser::SEPARATOR_KINDS.include?(condition_separator.kind)
+      raise ArgumentError.new('Modern postfix guard requires a body-item separator token')
+    end
+
+    @guarded_item = guarded_item
+    @space_token = space_token
+    @keyword_token = keyword_token
+    @condition_space_token = condition_space_token
+    @condition = condition
+    @condition_separator = condition_separator
+    @source_tokens = [
+      *guarded_item_tokens,
+      space_token,
+      keyword_token,
+      condition_space_token,
+      condition_token,
+      condition_separator,
+    ].freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: guarded_item.source_span.start_location,
+      end_location: condition_separator.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :postfix_guard
+  end
+
+  def branch_items
+    [guarded_item].freeze
+  end
+
+  def branch_item_groups
+    [branch_items].freeze
+  end
+
+  def lower
+    selected = lower_guarded_item
+    empty = DabNodeTreeBlock.new
+    DabNodeIf.new(
+      lower_condition,
+      keyword_token.text == 'if' ? selected : empty,
+      keyword_token.text == 'if' ? empty : selected
+    ).tap do |node|
+      node.add_source_parts(*source_parts)
+    end
+  end
+
+private
+
+  def guarded_item_tokens
+    return [guarded_item] if guarded_item.is_a?(DabModernBootstrapToken)
+    return guarded_item.source_tokens if guarded_item.respond_to?(:source_tokens)
+
+    raise ArgumentError.new('Modern postfix guard requires a supported guarded item')
+  end
+
+  def condition_token
+    condition.is_a?(DabModernBootstrapLocalReference) ? condition.name_token : condition
+  end
+
+  def lower_condition
+    return condition.lower if condition.is_a?(DabModernBootstrapLocalReference)
+
+    DabModernBootstrapLiterals.lower(condition, consumed: true)
+  end
+
+  def lower_guarded_item
+    DabNodeTreeBlock.new.tap do |block|
+      lowered = if guarded_item.is_a?(DabModernBootstrapDirectCall)
+                  guarded_item.lower_body_items
+                elsif guarded_item.respond_to?(:lower)
+                  [guarded_item.lower]
+                else
+                  [DabModernBootstrapLiterals.lower(guarded_item)]
+                end
+      lowered.each { |node| block.insert(node) }
     end
   end
 end
@@ -1513,7 +1627,8 @@ private
 
   def lower_body_item(body_item)
     if body_item.is_a?(DabModernBootstrapIfStatement) ||
-       body_item.is_a?(DabModernBootstrapUnlessStatement)
+       body_item.is_a?(DabModernBootstrapUnlessStatement) ||
+       body_item.is_a?(DabModernBootstrapPostfixGuard)
       return body_item.lower
     end
     if body_item.is_a?(DabModernBootstrapBareReturn) ||
@@ -1596,6 +1711,26 @@ private
   )
     body_items.each do |body_item|
       case body_item
+      when DabModernBootstrapPostfixGuard
+        expectation_message = if body_item.keyword_token.text == 'if'
+                                DabModernBootstrapParser::EXPECT_POSTFIX_IF_CONDITION_MESSAGE
+                              else
+                                DabModernBootstrapParser::EXPECT_POSTFIX_UNLESS_CONDITION_MESSAGE
+                              end
+        preflight_if_condition!(
+          body_item.condition,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name,
+          expectation_message
+        )
+        preflight_body_items!(
+          body_item.branch_items,
+          declaration,
+          bindings.dup,
+          bindings_by_reference,
+          parameters_by_name
+        )
       when DabModernBootstrapIfStatement
         preflight_if_condition!(
           body_item.condition,
@@ -1790,6 +1925,9 @@ private
        value.is_a?(DabModernBootstrapUnlessStatement)
       return value.branch_items.flat_map { |item| interpolation_tokens(item) }
     end
+    if value.is_a?(DabModernBootstrapPostfixGuard)
+      return interpolation_tokens(value.guarded_item)
+    end
 
     []
   end
@@ -1943,6 +2081,8 @@ private
   def preflight_calls_in_items!(items, declaration, unit, declarations_by_name)
     items.each do |body_item|
       case body_item
+      when DabModernBootstrapPostfixGuard
+        preflight_calls_in_items!(body_item.branch_items, declaration, unit, declarations_by_name)
       when DabModernBootstrapIfStatement, DabModernBootstrapUnlessStatement
         body_item.branch_item_groups.each do |group|
           preflight_calls_in_items!(group, declaration, unit, declarations_by_name)
@@ -2327,6 +2467,22 @@ class DabModernBootstrapParser
   EXPECT_UNLESS_END_MESSAGE = 'unterminated Modern unless statement: expected closing "end"'.freeze
   UNLESS_BRANCH_BINDING_MESSAGE = 'Modern unless branches do not yet support local bindings'.freeze
   UNLESS_BRANCH_REASSIGNMENT_MESSAGE = 'Modern unless branches do not yet support local reassignment'.freeze
+  EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE =
+    'invalid Modern postfix guard: expected exactly one ASCII space before "if" or "unless"'.freeze
+  EXPECT_POSTFIX_IF_SPACE_MESSAGE =
+    'invalid Modern postfix if guard: expected exactly one ASCII space after "if"'.freeze
+  EXPECT_POSTFIX_UNLESS_SPACE_MESSAGE =
+    'invalid Modern postfix unless guard: expected exactly one ASCII space after "unless"'.freeze
+  EXPECT_POSTFIX_IF_CONDITION_MESSAGE =
+    'invalid Modern postfix if condition: expected true, false, or an earlier Boolean parameter/local'.freeze
+  EXPECT_POSTFIX_UNLESS_CONDITION_MESSAGE =
+    'invalid Modern postfix unless condition: expected true, false, or an earlier Boolean parameter/local'.freeze
+  EXPECT_POSTFIX_IF_SEPARATOR_MESSAGE =
+    'invalid Modern postfix if guard: expected a separator (LF, semicolon, or line comment) after condition'.freeze
+  EXPECT_POSTFIX_UNLESS_SEPARATOR_MESSAGE =
+    'invalid Modern postfix unless guard: expected a separator (LF, semicolon, or line comment) after condition'.freeze
+  CHAINED_POSTFIX_GUARD_MESSAGE =
+    'unexpected Modern postfix guard: chained postfix guards are not supported'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -2662,13 +2818,14 @@ private
       end
 
       if literal_member_start?
-        items << parse_literal_member
+        item = parse_literal_member(consume_separator: false)
+        items << finish_guardable_item(item, :member_call)
         next
       end
 
       if direct_call_start?
-        items << parse_direct_call
-        expect_call_body_separator
+        item = parse_direct_call
+        items << finish_guardable_item(item, :call)
         next
       end
 
@@ -2705,7 +2862,7 @@ private
         )
       end
       items << token
-      expect_literal_separator
+      items[-1] = finish_guardable_item(token, :literal)
     end
     items.freeze
   end
@@ -2922,10 +3079,14 @@ private
   end
 
   def direct_call_start?
-    base_token = peek_token
+    direct_call_start_at?(0)
+  end
+
+  def direct_call_start_at?(start_distance)
+    base_token = peek_token(start_distance)
     return false unless base_token.kind == :identifier
 
-    distance = 1
+    distance = start_distance + 1
     suffix_token = peek_token(distance)
     distance += 1 if @callable_name_composer.adjacent_suffix?(base_token, suffix_token)
     distance += 1 while horizontal_whitespace?(peek_token(distance))
@@ -2934,14 +3095,30 @@ private
 
   def parse_return
     keyword_token = expect(:return)
-    token = next_token
+    token = peek_token
     reject_invalid_separator(token)
-    return DabModernBootstrapBareReturn.new(keyword_token) if separator?(token)
-
-    if token.kind == :space && value_return_start?
-      return parse_value_return(keyword_token, token)
+    if separator?(token)
+      return finish_guardable_item(
+        DabModernBootstrapBareReturn.new(keyword_token),
+        :bare_return
+      )
     end
 
+    if token.kind == :space
+      bare_return = DabModernBootstrapBareReturn.new(keyword_token)
+      if !direct_call_start_at?(1) &&
+         (postfix_guard_candidate? || malformed_postfix_guard_prefix?)
+        return finish_guardable_item(bare_return, :bare_return)
+      end
+
+      space_token = next_token
+      return parse_value_return(keyword_token, space_token) if value_return_start?
+
+      reject_invalid_separator_after_spaces(space_token)
+      reject(space_token, EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
+    end
+
+    token = next_token
     reject_invalid_separator_after_spaces(token)
     reject(token, EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
   end
@@ -2969,13 +3146,13 @@ private
             else
               reject(token)
             end
-    separator_token = expect_returned_value_separator
-    DabModernBootstrapValueReturn.new(
+    value_return = DabModernBootstrapValueReturn.new(
       keyword_token: keyword_token,
       space_token: space_token,
       value: value,
-      separator_token: separator_token
+      separator_token: nil
     )
+    finish_guardable_value_return(value_return)
   end
 
   def bare_return_local_reference?
@@ -2991,6 +3168,21 @@ private
 
     reject_invalid_separator_after_spaces(token)
     reject(token, EXPECT_VALUE_RETURN_SEPARATOR_MESSAGE)
+  end
+
+  def finish_guardable_value_return(value_return)
+    return parse_postfix_guard(value_return) if postfix_guard_candidate?
+
+    spacing_error = postfix_before_spacing_error_token
+    reject(spacing_error, EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE) if spacing_error
+
+    separator_token = expect_returned_value_separator
+    DabModernBootstrapValueReturn.new(
+      keyword_token: value_return.keyword_token,
+      space_token: value_return.source_tokens.fetch(1),
+      value: value_return.value,
+      separator_token: separator_token
+    )
   end
 
   def contextual_let_start?
@@ -3186,7 +3378,7 @@ private
       receiver.source_span.end_offset == dot.source_span.start_offset
   end
 
-  def parse_literal_member(argument: false)
+  def parse_literal_member(argument: false, consume_separator: true)
     source_tokens = []
     receiver_token = next_token
     reject_integer_overflow(receiver_token)
@@ -3212,7 +3404,18 @@ private
 
     reject_invalid_separator(peek_token)
     if separator?(peek_token)
-      next_token
+      next_token if consume_separator
+      return build_literal_member_call(
+        receiver_token,
+        dot_token,
+        callable_name,
+        [],
+        source_tokens
+      )
+    end
+
+    if !argument && !consume_separator &&
+       (postfix_guard_candidate? || malformed_postfix_guard_prefix?)
       return build_literal_member_call(
         receiver_token,
         dot_token,
@@ -3243,7 +3446,7 @@ private
       source_tokens,
       closing_parenthesis: closing_parenthesis
     )
-    expect_member_call_body_separator unless argument
+    expect_member_call_body_separator if !argument && consume_separator
     member_call
   end
 
@@ -3409,6 +3612,126 @@ private
       source_tokens: source_tokens,
       closing_parenthesis: closing_parenthesis
     )
+  end
+
+  def finish_guardable_item(item, separator_kind)
+    return parse_postfix_guard(item) if postfix_guard_candidate?
+
+    spacing_error = postfix_before_spacing_error_token
+    reject(spacing_error, EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE) if spacing_error
+
+    expect_guardable_item_separator(separator_kind)
+    item
+  end
+
+  def expect_guardable_item_separator(separator_kind)
+    case separator_kind
+    when :literal
+      expect_literal_separator
+    when :call
+      expect_call_body_separator
+    when :member_call
+      expect_member_call_body_separator
+    when :bare_return
+      expect_bare_return_separator
+    else
+      raise ArgumentError.new("unknown Modern guardable-item separator kind #{separator_kind.inspect}")
+    end
+  end
+
+  def expect_bare_return_separator
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, EXPECT_BARE_RETURN_SEPARATOR_MESSAGE)
+  end
+
+  def postfix_guard_candidate?
+    peek_token.kind == :space && postfix_keyword?(peek_token(1))
+  end
+
+  def malformed_postfix_guard_prefix?
+    !postfix_before_spacing_error_token.nil?
+  end
+
+  def postfix_before_spacing_error_token
+    return peek_token if postfix_keyword?(peek_token)
+    return unless horizontal_whitespace?(peek_token)
+
+    distance = 0
+    distance += 1 while horizontal_whitespace?(peek_token(distance))
+    return unless postfix_keyword?(peek_token(distance))
+    return if distance == 1 && peek_token.kind == :space
+
+    return peek_token if peek_token.kind != :space
+
+    peek_token(1)
+  end
+
+  def postfix_keyword?(token)
+    token.kind == :identifier && %w[if unless].include?(token.text)
+  end
+
+  def parse_postfix_guard(guarded_item)
+    space_token = next_token
+    keyword_token = next_token
+    space_message, condition_message, separator_message = postfix_guard_messages(keyword_token)
+
+    condition_space_token = next_token
+    reject(condition_space_token, space_message) unless condition_space_token.kind == :space
+    reject(peek_token, space_message) if horizontal_whitespace?(peek_token)
+
+    condition_token, condition = parse_if_condition(condition_message)
+    condition_separator = expect_postfix_condition_separator(
+      condition_token,
+      separator_message,
+      condition_message
+    )
+    DabModernBootstrapPostfixGuard.new(
+      guarded_item: guarded_item,
+      space_token: space_token,
+      keyword_token: keyword_token,
+      condition_space_token: condition_space_token,
+      condition: condition,
+      condition_separator: condition_separator
+    )
+  end
+
+  def postfix_guard_messages(keyword_token)
+    if keyword_token.text == 'if'
+      [
+        EXPECT_POSTFIX_IF_SPACE_MESSAGE,
+        EXPECT_POSTFIX_IF_CONDITION_MESSAGE,
+        EXPECT_POSTFIX_IF_SEPARATOR_MESSAGE,
+      ]
+    else
+      [
+        EXPECT_POSTFIX_UNLESS_SPACE_MESSAGE,
+        EXPECT_POSTFIX_UNLESS_CONDITION_MESSAGE,
+        EXPECT_POSTFIX_UNLESS_SEPARATOR_MESSAGE,
+      ]
+    end
+  end
+
+  def expect_postfix_condition_separator(condition_token, separator_message, condition_message)
+    token = peek_token
+    reject_invalid_separator(token)
+    return next_token if separator?(token)
+
+    if horizontal_whitespace?(token)
+      distance = 0
+      distance += 1 while horizontal_whitespace?(peek_token(distance))
+      chained_keyword = peek_token(distance)
+      reject(chained_keyword, CHAINED_POSTFIX_GUARD_MESSAGE) if postfix_keyword?(chained_keyword)
+      reject_invalid_separator(chained_keyword)
+      reject(token, separator_message)
+    end
+
+    reject(token, separator_message) if token.kind == :eof
+
+    reject_if_condition_form(condition_token, condition_message)
   end
 
   def expect_call_body_separator
