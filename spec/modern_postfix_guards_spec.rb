@@ -163,8 +163,11 @@ describe 'bounded Modern postfix guards' do
     after_unless = DabModernBootstrapParser::EXPECT_POSTFIX_UNLESS_SPACE_MESSAGE
 
     expect_error("def main()\nprint()if true\nend\n", before, 'if')
+    expect_error("def main():String\nreturn \"value\"if true\nend\n", before, 'if')
     source = "def main()\nprint()  if true\nend\n"
     expect_error(source, before, ' ', offset: source.index('  if') + 1)
+    source = "def main():String\nreturn \"value\"  unless true\nend\n"
+    expect_error(source, before, ' ', offset: source.index('  unless') + 1)
     expect_error("def main()\nprint()\tif true\nend\n", before, "\t")
     expect_error("def main()\nprint() if(true)\nend\n", after_if, '(', occurrence: :last)
     source = "def main()\nprint() unless  true\nend\n"

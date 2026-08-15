@@ -3171,9 +3171,10 @@ private
   end
 
   def finish_guardable_value_return(value_return)
-    if postfix_guard_candidate? || malformed_postfix_guard_prefix?
-      return finish_guardable_item(value_return, EXPECT_VALUE_RETURN_SEPARATOR_MESSAGE)
-    end
+    return parse_postfix_guard(value_return) if postfix_guard_candidate?
+
+    spacing_error = postfix_before_spacing_error_token
+    reject(spacing_error, EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE) if spacing_error
 
     separator_token = expect_returned_value_separator
     DabModernBootstrapValueReturn.new(
