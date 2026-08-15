@@ -3104,7 +3104,7 @@ private
 
       if local_reassignment_start?(local_bindings) ||
          (branch_rejection_context == :while && reassignment_syntax_start?) ||
-         (%w[break next].include?(peek_token.text) && reassignment_syntax_start?)
+         ((peek_token.text == 'break' || peek_token.text == 'next') && reassignment_syntax_start?)
         if branch_rejection_context && branch_rejection_context != :while
           reject_branch_reassignment(peek_token, branch_rejection_context)
         end
