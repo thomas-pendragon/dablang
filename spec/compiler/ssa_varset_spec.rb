@@ -44,6 +44,32 @@ describe DabNode do
     expect(symbol1.following_nodes(DabNodeSymbol, unscoped: true)).to eq [tree11a, tree2, tree22, tree222, symbol2]
   end
 
+  it 'ssaifies a direct while guard write across the backedge and post-loop read' do
+    tree = DabNodeTreeBlock.new
+    tree << DabNodeDefineLocalVar.new('running', DabNodeLiteralBoolean.new(true))
+    loop_body = DabNodeTreeBlock.new
+    loop_body << DabNodeSetLocalVar.new('running', DabNodeLiteralBoolean.new(false))
+    tree << DabNodeWhile.new(DabNodeLocalVar.new('running'), loop_body)
+    tree << DabNodeSyscall.new(0, DabNode.new << DabNodeLocalVar.new('running'))
+
+    root = DabNodeUnit.new
+    function = DabNodeFunction.new('test', tree, DabNode.new, false)
+    root.add_function(function)
+
+    SSAify.new.run(function)
+
+    loop_node = function.all_nodes(DabNodeWhile).fetch(0)
+    phi_nodes = function.all_nodes(DabNodeSSAPhi)
+    final_print = function.all_nodes(DabNodeSyscall).fetch(0)
+
+    expect(loop_node.condition).to be_a(DabNodeSSAGet)
+    expect(loop_node.on_block.all_nodes(DabNodeSSASet).fetch(0).value)
+      .to be_a(DabNodeLiteralBoolean)
+    expect(phi_nodes.length).to eq(2)
+    expect(phi_nodes.map(&:input_varname).map(&:to_s)).to eq(%w[running running])
+    expect(final_print.all_nodes(DabNodeSSAGet).fetch(0).input_varname.to_s).to eq('running')
+  end
+
   xit 'ssaifies captured variable' do
     arglist = DabNode.new
     arglist << DabNodeArgDefinition.new(0, 'bar', nil, nil)
