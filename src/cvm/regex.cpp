@@ -194,7 +194,8 @@ DabValue dab_regex_create(const std::vector<DabValue> &arguments)
     {
         throw DabRuntimeError("Regex.new expects exactly one argument");
     }
-    if (!arguments[0].is_a($VM->get_class(CLASS_STRING)))
+    if (arguments[0].data.type != TYPE_LITERALSTRING &&
+        arguments[0].data.type != TYPE_DYNAMICSTRING)
     {
         throw DabRuntimeError("Regex.new expects a String pattern");
     }

@@ -95,12 +95,41 @@ describe 'Regex runtime object and engine contract' do
     header = File.binread(File.join(root, 'src/cshared/classes.h'))
     defaults = File.binread(File.join(root, 'src/cvm/default_classes.cpp'))
     implementation = File.binread(File.join(root, 'src/cvm/regex.cpp'))
+    storage_guard = [
+      '    if (arguments[0].data.type != TYPE_LITERALSTRING &&',
+      '        arguments[0].data.type != TYPE_DYNAMICSTRING)',
+      '    {',
+      '        throw DabRuntimeError("Regex.new expects a String pattern");',
+      '    }',
+    ].join("\n")
     expect(header).to include('CLASS_REGEX         = 20')
     expect(defaults.scan('regex_class.add_static_reg_function').length).to eq(1)
     expect(defaults).to include('regex_class.add_static_reg_function("new"')
     expect(defaults).not_to include('regex_class.add_reg_function')
     expect(defaults.scan('dab_regex_verify_engine();').length).to eq(1)
     expect(implementation).not_to include('dab_regex_verify_engine();')
+    expect(implementation).to include(storage_guard)
+    expect(implementation.index(storage_guard)).to be < implementation.index('DabLiteralString *')
+    expect(implementation.index(storage_guard)).to be < implementation.index('DabDynamicString *')
+  end
+
+  it 'accepts source String subclasses through canonical DynamicString storage' do
+    source = <<~DAB
+      class Evil : String
+      {
+      }
+      func main()
+      {
+        var pattern = Evil.new("abc");
+        print(pattern.class);
+        Regex.new(pattern);
+        print("|constructed");
+      }
+    DAB
+    result = execute(source)
+    expect([result.status, result.stdout, runtime_error(result)]).to eq(
+      [0, 'DynamicString|constructed', nil]
+    )
   end
 
   it 'constructs empty, Unicode, property, grapheme, inline-option, and maximum-scalar patterns' do
