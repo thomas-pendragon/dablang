@@ -457,7 +457,7 @@ describe 'sequential literal Modern when patterns' do
       case true
       when nil;
       when true# hash
-      when false// slash
+      when false# second hash
       end
       end
     DAB

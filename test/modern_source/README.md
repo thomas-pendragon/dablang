@@ -138,10 +138,11 @@ declaration spans, and per-token coordinates where only LF advances the line.
 At version 0.0.38, comments, statements, additional declarations, and every
 other Modern syntax feature remain unsupported.
 
-Version 0.0.39 admits exact `#` and `//` line-comment tokens only within those
-same separator runs. `0007_comment.dabmtest` proves both markers around and
-inside the existing empty declaration, including bodies that contain the other
-marker and semicolons, while retaining the canonical assembly exactly. `0015`
+Version 0.0.39 originally admitted exact `#` and `//` line-comment tokens only
+within those same separator runs. As of version 0.0.84, `#` is the sole Modern
+line-comment marker. `0007_comment.dabmtest` proves migrated `#` comments around
+and inside the existing empty declaration, including bodies that contain `//`
+and semicolons, while retaining the canonical assembly exactly. `0015`
 keeps a single `/` fail-closed, and `0016` proves that a comment marker cannot
 split the required `main` identifier. Focused scanner/parser coverage also
 locks marker equivalence, comment-only sources, EOF termination, arbitrary
@@ -461,8 +462,9 @@ returns, control flow, classes, fields, and runtime/schema behavior remain
 unchanged.
 
 Version 0.0.61 reserves exact lowercase ASCII `return` throughout the Modern
-scanner and adds only a bare-return body item. A bare return must be followed
-immediately by LF, semicolon, or an adjacent `#` or `//` line comment; it
+scanner and adds only a bare-return body item. As of version 0.0.84, a bare
+return must be followed immediately by LF, semicolon, or an adjacent `#` line
+comment; it
 produces Nil through the existing return node and `RETURN RNIL` instruction,
 allocates no result register, and exits only the current function. The parser
 still validates the complete document and all unreachable body items before
@@ -1046,6 +1048,26 @@ uses only existing return, tree-block, equality, short-circuit, SSA/MOV,
 general expression/operator, truthiness, exhaustiveness, Regex, backend,
 opcode, schema, VM, native, Ring, FFI, formatter, decompiler, or later-row
 behavior.
+
+### EX-009: Modern regular-expression source lexing
+
+Version `0.0.84` recognizes slash-delimited regular-expression source only at
+existing parser-declared value entries. The body preserves raw bytes and
+escapes, cannot cross LF, CR, or CRLF, and may be empty, so value-entry `//` is
+the valid empty lexeme. Modern `#` is now the only line-comment introducer;
+ordinary-mode `//` is two independent unsupported slash tokens. Legacy is
+unchanged.
+
+Every well-formed candidate is deliberately rejected before document
+construction, Ring loading, lowering, assembly, or runtime publication because
+runtime Regex construction belongs to EX-010 and executable admission belongs
+to OR-057. Fixture `0110_regex_literal_lexing.dabmtest` owns the negative empty-
+regex boundary, status `2`, empty compiler stdout, and its exact full-span
+diagnostic. Fixture `0007` retains byte-identical assembly after mechanical
+comment migration, while `0016` now owns the first ordinary slash diagnostic.
+No Regex value, engine, flag, interpolation, case pattern, matching operator,
+opcode, schema, VM, native, Ring, FFI, formatter, or decompiler behavior is
+introduced.
 
 ## Diagnostic boundary
 

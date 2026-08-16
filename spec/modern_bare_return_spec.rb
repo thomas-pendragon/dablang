@@ -126,7 +126,7 @@ describe 'Modern bare return' do
     expect(lowered.all_nodes(DabNodeLocalVar)).to be_empty
   end
 
-  it 'accepts only LF, semicolon, and adjacent line comments without consuming indentation' do
+  it 'accepts only LF, semicolon, and adjacent hash comments without consuming indentation' do
     source = <<~DAB
       def main()
         return
@@ -135,8 +135,8 @@ describe 'Modern bare return' do
       def hash()
       return# adjacent
       end
-      def slash()
-      return// adjacent
+      def second_hash()
+      return# adjacent
       end
     DAB
     declarations = parse(source).declarations

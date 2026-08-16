@@ -35,6 +35,29 @@ class DabModernBootstrapToken
   end
 end
 
+class DabModernBootstrapRegexLiteralSource
+  attr_reader :opening, :body, :closing, :source_tokens, :source_span, :source_unit
+
+  def initialize(opening:, body:, closing:)
+    @opening = opening
+    @body = body
+    @closing = closing
+    @source_tokens = [opening, body, closing].freeze
+    @source_unit = opening.source_span.source_unit
+    unless @source_tokens.all? do |token|
+      token.is_a?(DabModernBootstrapToken) && token.source_span.source_unit.equal?(@source_unit)
+    end
+      raise ArgumentError.new('Modern regular-expression literal source tokens must share one source unit')
+    end
+
+    @source_span = DabSourceSpan.new(
+      start_location: opening.source_span.start_location,
+      end_location: closing.source_span.end_location
+    )
+    freeze
+  end
+end
+
 class DabModernBootstrapInterpolationSplice
   attr_reader :opener_token, :name_token, :closer_token, :source_tokens, :source_span
 
@@ -1359,7 +1382,7 @@ class DabModernBootstrapScanner < DabScanner
     super(content.b, nl_is_whitespace, source_unit: source_unit)
   end
 
-  def next_token
+  def next_token(value_entry: false)
     start_offset = position
     return token(:eof, '', start_offset) if eof?
 
@@ -1410,7 +1433,7 @@ class DabModernBootstrapScanner < DabScanner
     when '#'
       line_comment_token(start_offset)
     when '/'
-      return line_comment_token(start_offset) if current_char(1) == '/'
+      return regex_literal_token(start_offset) if value_entry
 
       advance!
       token(:unsupported, '/', start_offset)
@@ -1425,6 +1448,93 @@ class DabModernBootstrapScanner < DabScanner
   end
 
 private
+
+  def regex_literal_token(start_offset)
+    opening = string_part_token(:regex_delimiter, '/'.b, start_offset, start_offset + 1)
+    advance!
+    body_start_offset = position
+
+    loop do
+      if eof?
+        return unsupported_token(
+          position,
+          0,
+          diagnostic_message: 'unterminated Modern regular-expression literal: ' \
+                              'expected closing "/" before end of file'
+        )
+      end
+
+      marker_offset = position
+      case current_char
+      when '/'
+        body = string_part_token(
+          :regex_body,
+          content.byteslice(body_start_offset, marker_offset - body_start_offset) || ''.b,
+          body_start_offset,
+          marker_offset
+        )
+        closing = string_part_token(:regex_delimiter, '/'.b, marker_offset, marker_offset + 1)
+        advance!
+        source = DabModernBootstrapRegexLiteralSource.new(
+          opening: opening,
+          body: body,
+          closing: closing
+        )
+        return token(
+          :regex_literal,
+          content.byteslice(start_offset, position - start_offset),
+          start_offset,
+          value: source
+        )
+      when "\n"
+        return unsupported_token(
+          marker_offset,
+          1,
+          diagnostic_message: 'invalid Modern regular-expression literal: literal LF is not allowed'
+        )
+      when "\r"
+        length = current_char(1) == "\n" ? 2 : 1
+        ending = length == 2 ? 'CRLF' : 'CR'
+        return unsupported_token(
+          marker_offset,
+          length,
+          diagnostic_message: "invalid Modern regular-expression literal: literal #{ending} is not allowed"
+        )
+      when '\\'
+        advance!
+        if eof?
+          return unsupported_token(
+            marker_offset,
+            1,
+            diagnostic_message: 'unterminated Modern regular-expression literal escape: ' \
+                                'expected one byte after "\\\\" before end of file'
+          )
+        end
+
+        if current_char == "\n"
+          return unsupported_token(
+            marker_offset,
+            2,
+            diagnostic_message: 'invalid Modern regular-expression literal escape: ' \
+                                'line continuation is not allowed'
+          )
+        end
+        if current_char == "\r"
+          length = current_char(1) == "\n" ? 3 : 2
+          return unsupported_token(
+            marker_offset,
+            length,
+            diagnostic_message: 'invalid Modern regular-expression literal escape: ' \
+                                'line continuation is not allowed'
+          )
+        end
+
+        advance!
+      else
+        advance!
+      end
+    end
+  end
 
   def identifier_token(start_offset)
     text = +''
@@ -3152,6 +3262,9 @@ class DabModernBootstrapParser
     'invalid Modern postfix unless guard: expected a separator (LF, semicolon, or line comment) after condition'.freeze
   CHAINED_POSTFIX_GUARD_MESSAGE =
     'unexpected Modern postfix guard: chained postfix guards are not supported'.freeze
+  UNSUPPORTED_REGEX_LITERAL_MESSAGE =
+    'unsupported Modern regular-expression literal: runtime Regex construction belongs to EX-010 and ' \
+    'executable literal admission belongs to OR-057'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -3235,9 +3348,20 @@ private
     token_buffer.shift || @scanner.next_token
   end
 
-  def peek_token(distance = 0)
-    token_buffer << @scanner.next_token while token_buffer.length <= distance
+  def next_value_token
+    token_buffer.shift || @scanner.next_token(value_entry: true)
+  end
+
+  def peek_token(distance = 0, value_entry: false)
+    while token_buffer.length <= distance
+      scan_value_entry = value_entry && token_buffer.length == distance
+      token_buffer << @scanner.next_token(value_entry: scan_value_entry)
+    end
     token_buffer.fetch(distance)
+  end
+
+  def peek_value_token(distance = 0)
+    peek_token(distance, value_entry: true)
   end
 
   def compose_callable_name(base_token)
@@ -3375,6 +3499,12 @@ private
     tokens
   end
 
+  def consume_value_entry_whitespace
+    tokens = []
+    tokens << next_token while horizontal_whitespace?(peek_value_token)
+    tokens
+  end
+
   def horizontal_whitespace?(token)
     HORIZONTAL_WHITESPACE_KINDS.include?(token.kind)
   end
@@ -3501,12 +3631,6 @@ private
         next
       end
 
-      if direct_call_start?
-        item = parse_direct_call
-        items << finish_guardable_item(item, :call)
-        next
-      end
-
       if local_reassignment_start?(local_bindings) ||
          (branch_rejection_context == :while && reassignment_syntax_start?) ||
          ((peek_token.text == 'break' || peek_token.text == 'next') && reassignment_syntax_start?)
@@ -3522,6 +3646,12 @@ private
 
       if contextual_case_candidate?
         items << parse_case_statement(local_bindings)
+        next
+      end
+
+      if direct_call_start?
+        item = parse_direct_call
+        items << finish_guardable_item(item, :call)
         next
       end
 
@@ -3558,8 +3688,9 @@ private
       end
 
       token = next_token
+      reject_value_token(token)
       unless VALUE_KINDS.include?(token.kind)
-        reject(token, token.diagnostic_message || DabModernBootstrapParseError::GENERIC_MESSAGE)
+        reject(token)
       end
       if token.kind == :integer && integer_overflow?(token.text)
         reject(
@@ -3891,9 +4022,9 @@ private
   end
 
   def parse_case_subject
-    token = peek_token
+    token = peek_value_token
     reject_invalid_separator(token)
-    reject(token, token.diagnostic_message) if token.diagnostic_message
+    reject_value_token(token)
 
     if direct_call_start?
       return parse_direct_call(allow_call_result_arguments: false)
@@ -4018,7 +4149,7 @@ private
   def contextual_case_candidate?
     token = peek_token
     return false unless token.kind == :identifier && token.text == 'case'
-    return false if direct_call_start?
+    return false if direct_call_start_at?(0, value_entry_after_whitespace: true)
 
     !@callable_name_composer.adjacent_suffix?(token, peek_token(1))
   end
@@ -4086,15 +4217,17 @@ private
     direct_call_start_at?(0)
   end
 
-  def direct_call_start_at?(start_distance)
-    base_token = peek_token(start_distance)
+  def direct_call_start_at?(start_distance, value_entry: false, value_entry_after_whitespace: false)
+    base_token = peek_token(start_distance, value_entry: value_entry)
     return false unless base_token.kind == :identifier
 
     distance = start_distance + 1
     suffix_token = peek_token(distance)
     distance += 1 if @callable_name_composer.adjacent_suffix?(base_token, suffix_token)
-    distance += 1 while horizontal_whitespace?(peek_token(distance))
-    peek_token(distance).kind == :left_parenthesis
+    distance += 1 while horizontal_whitespace?(
+      peek_token(distance, value_entry: value_entry_after_whitespace)
+    )
+    peek_token(distance, value_entry: value_entry_after_whitespace).kind == :left_parenthesis
   end
 
   def parse_return
@@ -4110,7 +4243,7 @@ private
 
     if token.kind == :space
       bare_return = DabModernBootstrapBareReturn.new(keyword_token)
-      if !direct_call_start_at?(1) &&
+      if !direct_call_start_at?(1, value_entry: true) &&
          (postfix_guard_candidate? || malformed_postfix_guard_prefix?)
         return finish_guardable_item(bare_return, :bare_return)
       end
@@ -4128,16 +4261,16 @@ private
   end
 
   def value_return_start?
-    token = peek_token
+    token = peek_value_token
     token.kind == :identifier || VALUE_KINDS.include?(token.kind) ||
-      literal_member_start? || !token.diagnostic_message.nil?
+      token.kind == :regex_literal || literal_member_start? || !token.diagnostic_message.nil?
   end
 
   def parse_value_return(keyword_token, space_token)
-    token = peek_token
+    token = peek_value_token
     reject_invalid_separator(token)
     reject(token) if horizontal_whitespace?(token)
-    reject(token, token.diagnostic_message) if token.diagnostic_message
+    reject_value_token(token)
 
     value = if direct_call_start?
               parse_direct_call(allow_call_result_arguments: false)
@@ -4213,8 +4346,8 @@ private
     equal_distance = distance_after_horizontal_whitespace(1)
     return false unless peek_token(equal_distance).kind == :equal
 
-    value_distance = distance_after_horizontal_whitespace(equal_distance + 1)
-    value_token = peek_token(value_distance)
+    value_distance = distance_after_horizontal_whitespace(equal_distance + 1, value_entry: true)
+    value_token = peek_value_token(value_distance)
     return true unless value_token.kind == :equal
 
     peek_token(equal_distance).source_span.end_offset != value_token.source_span.start_offset
@@ -4224,8 +4357,8 @@ private
     peek_token(distance_after_horizontal_whitespace(1))
   end
 
-  def distance_after_horizontal_whitespace(distance)
-    distance += 1 while horizontal_whitespace?(peek_token(distance))
+  def distance_after_horizontal_whitespace(distance, value_entry: false)
+    distance += 1 while horizontal_whitespace?(peek_token(distance, value_entry: value_entry))
     distance
   end
 
@@ -4256,13 +4389,11 @@ private
       reject(equal_token)
     end
     source_tokens << equal_token
-    source_tokens.concat(consume_horizontal_whitespace)
+    source_tokens.concat(consume_value_entry_whitespace)
 
-    initializer_token = next_token
+    initializer_token = next_value_token
     reject_invalid_separator(initializer_token)
-    if initializer_token.diagnostic_message
-      reject(initializer_token, initializer_token.diagnostic_message)
-    end
+    reject_value_token(initializer_token)
     unless VALUE_KINDS.include?(initializer_token.kind)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_LET_INITIALIZER_MESSAGE)
@@ -4310,11 +4441,11 @@ private
       reject(equal_token)
     end
     source_tokens << equal_token
-    source_tokens.concat(consume_horizontal_whitespace)
+    source_tokens.concat(consume_value_entry_whitespace)
 
-    initializer_token = next_token
+    initializer_token = next_value_token
     reject_invalid_separator(initializer_token)
-    reject(initializer_token, initializer_token.diagnostic_message) if initializer_token.diagnostic_message
+    reject_value_token(initializer_token)
     unless VALUE_KINDS.include?(initializer_token.kind)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_VAR_INITIALIZER_MESSAGE)
@@ -4354,11 +4485,11 @@ private
 
     equal_token = expect(:equal)
     source_tokens << equal_token
-    source_tokens.concat(consume_horizontal_whitespace)
+    source_tokens.concat(consume_value_entry_whitespace)
 
-    value_token = next_token
+    value_token = next_value_token
     reject_invalid_separator(value_token)
-    reject(value_token, value_token.diagnostic_message) if value_token.diagnostic_message
+    reject_value_token(value_token)
     if allow_while_guard_form && %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
       reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
     end
@@ -4505,10 +4636,10 @@ private
     allow_call_results: false
   )
     source_tokens << expect(:left_parenthesis)
-    source_tokens.concat(consume_horizontal_whitespace)
+    source_tokens.concat(consume_value_entry_whitespace)
     arguments = []
 
-    if peek_token.kind == :right_parenthesis
+    if peek_value_token.kind == :right_parenthesis
       closing_parenthesis = next_token
       source_tokens << closing_parenthesis
       return [arguments.freeze, closing_parenthesis]
@@ -4537,7 +4668,7 @@ private
         return [arguments.freeze, closing_parenthesis]
       when :comma
         source_tokens << next_token
-        source_tokens.concat(consume_horizontal_whitespace)
+        source_tokens.concat(consume_value_entry_whitespace)
         expectation = EXPECT_CALL_ARGUMENT_AFTER_COMMA_MESSAGE
       when :eof
         reject(token, EXPECT_CALL_CLOSE_MESSAGE)
@@ -4554,14 +4685,12 @@ private
     allow_call_results:,
     allow_interpolated_strings:
   )
-    token = peek_token
+    token = peek_value_token
     reject_invalid_separator(token)
     if token.kind == :eof
       reject(token, expectation == EXPECT_CALL_ARGUMENT_AFTER_COMMA_MESSAGE ? expectation : EXPECT_CALL_CLOSE_MESSAGE)
     end
-    if token.diagnostic_message
-      reject(token, token.diagnostic_message)
-    end
+    reject_value_token(token)
     if allow_member_results && literal_member_start?
       return parse_literal_member(argument: true)
     end
@@ -4865,18 +4994,18 @@ private
   def skip_body_separators
     loop do
       indented = consume_body_line_indentation
-      reject(peek_token) if indented && peek_token.kind == :semicolon
-      reject_invalid_separator(peek_token)
-      break unless separator?(peek_token)
+      reject(peek_value_token) if indented && peek_value_token.kind == :semicolon
+      reject_invalid_separator(peek_value_token)
+      break unless separator?(peek_value_token)
 
       next_token
     end
   end
 
   def consume_body_line_indentation
-    return false unless peek_token.kind == :space && peek_token.source_location.column.zero?
+    return false unless peek_value_token.kind == :space && peek_value_token.source_location.column.zero?
 
-    next_token while peek_token.kind == :space
+    next_token while peek_value_token.kind == :space
     true
   end
 
@@ -4910,6 +5039,11 @@ private
 
   def reject_invalid_separator_after_spaces(token)
     reject_invalid_separator(token_after_spaces) if token.kind == :space
+  end
+
+  def reject_value_token(token)
+    reject(token, token.diagnostic_message) if token.diagnostic_message
+    reject(token, UNSUPPORTED_REGEX_LITERAL_MESSAGE) if token.kind == :regex_literal
   end
 
   def reject(token, message = DabModernBootstrapParseError::GENERIC_MESSAGE)

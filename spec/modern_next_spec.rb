@@ -121,7 +121,7 @@ describe 'bounded lexical Modern next' do
       next
       next;
       next# hash
-      next// slash
+      next# second hash
       next if flag
       next unless false
       end

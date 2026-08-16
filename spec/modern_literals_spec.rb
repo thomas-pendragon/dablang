@@ -17,7 +17,7 @@ describe 'Modern bootstrap literals' do
     DabSourceUnit.new(input: 'literals.dabm', syntax_profile: DabSyntaxProfile::MODERN)
   end
   let(:literal_source) do
-    "def main\nnil;true// bool separator\nfalse;0;01;9223372036854775807\nend\n".b
+    "def main\nnil;true# bool separator\nfalse;0;01;9223372036854775807\nend\n".b
   end
 
   def parse_modern(source)
@@ -82,16 +82,16 @@ describe 'Modern bootstrap literals' do
       ]
     )
     expect(literals.map { |token| [token.source_span.start_offset, token.source_span.end_offset] }).to eq(
-      [[9, 12], [13, 17], [35, 40], [41, 42], [43, 45], [46, 65]]
+      [[9, 12], [13, 17], [34, 39], [40, 41], [42, 44], [45, 64]]
     )
     expect(literals.map { |token| token.source_location.to_h }).to eq(
       [
         {offset: 9, line: 2, column: 0},
         {offset: 13, line: 2, column: 4},
-        {offset: 35, line: 3, column: 0},
-        {offset: 41, line: 3, column: 6},
-        {offset: 43, line: 3, column: 8},
-        {offset: 46, line: 3, column: 11},
+        {offset: 34, line: 3, column: 0},
+        {offset: 40, line: 3, column: 6},
+        {offset: 42, line: 3, column: 8},
+        {offset: 45, line: 3, column: 11},
       ]
     )
     expect(literals.map(&:diagnostic_message)).to all(be_nil)
@@ -182,7 +182,7 @@ describe 'Modern bootstrap literals' do
     )
     expect(body.map(&:constant_value)).to eq([nil, true, false, 0, 1, 9_223_372_036_854_775_807])
     expect(body.map { |node| [node.source_cstart, node.source_cend] }).to eq(
-      [[9, 12], [13, 17], [35, 40], [41, 42], [43, 45], [46, 65]]
+      [[9, 12], [13, 17], [34, 39], [40, 41], [42, 44], [45, 64]]
     )
   end
 
@@ -204,7 +204,7 @@ describe 'Modern bootstrap literals' do
     sources = [
       "def main\nnil\ntrue\nfalse\n0\nend\n",
       'def main;nil;true;false;0;end;',
-      "# lead\ndef main// header\nnil# nil\ntrue// true\nfalse;# false\n0// zero\nend# tail",
+      "# lead\ndef main# header\nnil# nil\ntrue# true\nfalse;# false\n0# zero\nend# tail",
     ]
 
     sources.each do |source|

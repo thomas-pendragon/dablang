@@ -23,8 +23,8 @@ describe 'Modern callable suffix lexical infrastructure' do
     tokens
   end
 
-  it 'emits exact one-byte question_mark and bang tokens outside Strings and comments' do
-    tokens = scan("ready? save! \"opaque?!\" # opaque?!\n// opaque?!\n")
+  it 'emits exact one-byte question_mark and bang tokens outside Strings and hash comments' do
+    tokens = scan("ready? save! \"opaque?!\" # opaque?!\n# second opaque?!\n")
 
     expect(tokens.map(&:kind)).to eq(
       %i[
@@ -39,7 +39,7 @@ describe 'Modern callable suffix lexical infrastructure' do
     )
     expect(tokens.fetch(6).value).to eq('opaque?!')
     expect(tokens.fetch(8).text).to eq('# opaque?!')
-    expect(tokens.fetch(10).text).to eq('// opaque?!')
+    expect(tokens.fetch(10).text).to eq('# second opaque?!')
     expect(tokens).to all(satisfy { |token| token.source_span.source_unit.equal?(source_unit) })
   end
 
@@ -125,8 +125,8 @@ describe 'Modern callable suffix lexical infrastructure' do
     end
   end
 
-  it 'keeps suffix bytes opaque in accepted Modern Strings and comments' do
-    source = "# ?!\ndef main\n\"?!\";// ?!\nend\n".b
+  it 'keeps suffix bytes opaque in accepted Modern Strings and hash comments' do
+    source = "# ?!\ndef main\n\"?!\";# ?!\nend\n".b
     declaration = DabModernBootstrapParser.new(source, source_unit: source_unit).parse
     unit = DabNodeUnit.new
 

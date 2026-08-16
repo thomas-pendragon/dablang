@@ -245,16 +245,16 @@ describe 'exactly-once empty Modern case shell' do
     expect(main.blocks[0].all_nodes(DabNodeWhile).length).to eq(1)
   end
 
-  it 'accepts immediate LF, semicolon, and adjacent hash or slash comments only' do
+  it 'accepts immediate LF, semicolon, and adjacent hash comments only' do
     source = <<~DAB
       def main()
       case true
       end
       case false;# header
       # empty
-      end;// close
-      case nil// header
-      // empty
+      end;# close
+      case nil# header
+      # empty
       end# close
       end
     DAB

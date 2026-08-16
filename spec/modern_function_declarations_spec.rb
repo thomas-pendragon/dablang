@@ -52,7 +52,7 @@ describe 'Modern top-level function declarations' do
   it 'parses and lowers distinct plain and suffixed declarations in source order' do
     document = parse(
       ";def worker;nil;end;# between\n" \
-      "def ready?// header\ntrue\nend// close\n" \
+      "def ready?# header\ntrue\nend# close\n" \
       "def save!\n\"saved\"\nend\n"
     )
 
@@ -61,7 +61,7 @@ describe 'Modern top-level function declarations' do
     expect(document.declarations.map { |declaration| declaration.body_tokens.map(&:kind) })
       .to eq([[:nil], [:boolean_true], [:string]])
     expect(document.declarations.map { |declaration| declaration.callable_name.source_span.start_offset })
-      .to eq([5, 34, 71])
+      .to eq([5, 34, 69])
 
     unit = DabNodeUnit.new
     functions = document.lower_into(unit)

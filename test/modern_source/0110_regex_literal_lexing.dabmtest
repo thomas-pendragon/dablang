@@ -1,0 +1,10 @@
+## SOURCE
+def main
+//
+end
+## SCHEMA VERSION
+1
+## STATUS
+2
+## STDERR
+compiler: 0110_regex_literal_lexing.dabm:2:0: error: unsupported Modern regular-expression literal: runtime Regex construction belongs to EX-010 and executable literal admission belongs to OR-057

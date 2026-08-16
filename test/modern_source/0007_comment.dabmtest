@@ -1,8 +1,8 @@
 ## SOURCE
 # leading // ; body
-def main//# header ; #
+def main# header ; //
 # body // ; #
-end// trailing # ;
+end# trailing // ;
 ## SCHEMA VERSION
 1
 ## STATUS
