@@ -251,7 +251,8 @@ module Dab
     end
 
     def safe_relative_path?(value)
-      return false unless value.is_a?(String) && !value.empty? && !value.include?("\0")
+      return false unless value.is_a?(String) && !value.empty? &&
+                          !value.include?("\0") && !value.include?('//')
 
       path = Pathname.new(value)
       !path.absolute? && path.each_filename.none? { |part| part == '..' || part == '.' || part.empty? }

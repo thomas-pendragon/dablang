@@ -203,6 +203,19 @@ describe Dab::RegexEngineDependency do
     end
   end
 
+  it 'rejects collision-shaped archive paths with consecutive separators' do
+    aliased = 'pcre2-10.47/src//pcre2_compile.c'
+    entries = canonical_entries.merge(aliased => 'aliased source')
+    with_dependency(entries: entries) do |dependency, temporary_root|
+      expect { dependency.prepare! }.to raise_error(
+        described_class::Error,
+        %(Unsafe Regex engine archive path: "#{aliased}")
+      )
+      expect(File.exist?(File.join(temporary_root, 'build/dependencies/pcre2-10.47'))).to be(false)
+      expect(Dir[File.join(temporary_root, 'build/dependencies/.staging-*')]).to be_empty
+    end
+  end
+
   it 'rejects symbolic links, hardlinks, and special device entry types' do
     linked = canonical_entries.merge('pcre2-10.47/src/link' => ['pcre2_compile.c'])
     with_dependency(entries: linked) do |dependency|
