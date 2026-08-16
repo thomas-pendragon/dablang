@@ -77,6 +77,10 @@ describe 'Regex runtime object and engine contract' do
     end
   end
 
+  def normalize_source_lines(source)
+    source.gsub("\r\n".b, "\n".b)
+  end
+
   before do
     skip 'native VM has not been built' unless File.executable?(vm)
   end
@@ -94,7 +98,7 @@ describe 'Regex runtime object and engine contract' do
   it 'appends built-in Regex class 20 and exposes only Regex.new' do
     header = File.binread(File.join(root, 'src/cshared/classes.h'))
     defaults = File.binread(File.join(root, 'src/cvm/default_classes.cpp'))
-    implementation = File.binread(File.join(root, 'src/cvm/regex.cpp'))
+    implementation = normalize_source_lines(File.binread(File.join(root, 'src/cvm/regex.cpp')))
     storage_guard = [
       '    if (arguments[0].data.type != TYPE_LITERALSTRING &&',
       '        arguments[0].data.type != TYPE_DYNAMICSTRING)',
@@ -102,6 +106,7 @@ describe 'Regex runtime object and engine contract' do
       '        throw DabRuntimeError("Regex.new expects a String pattern");',
       '    }',
     ].join("\n")
+    expect(normalize_source_lines(storage_guard.gsub("\n", "\r\n"))).to eq(storage_guard)
     expect(header).to include('CLASS_REGEX         = 20')
     expect(defaults.scan('regex_class.add_static_reg_function').length).to eq(1)
     expect(defaults).to include('regex_class.add_static_reg_function("new"')
