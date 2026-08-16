@@ -858,10 +858,10 @@ private
     end
   end
 
-  def append_clause_tail(block, clauses, subject_identifier)
-    return if clauses.empty?
+  def append_clause_tail(block, clauses, subject_identifier, index = 0)
+    return if index >= clauses.length
 
-    clause = clauses.fetch(0)
+    clause = clauses.fetch(index)
     arguments = DabNode.new
     arguments.insert(DabNodeLocalVar.new(subject_identifier))
     condition = DabNodeInstanceCall.new(
@@ -873,7 +873,7 @@ private
     )
     selected = lower_clause_body(clause.body)
     rejected = DabNodeTreeBlock.new
-    append_clause_tail(rejected, clauses.drop(1), subject_identifier)
+    append_clause_tail(rejected, clauses, subject_identifier, index + 1)
     block.insert(DabNodeIf.new(condition, selected, rejected))
   end
 
@@ -3699,7 +3699,7 @@ private
     when_token = next_token
     space_token = next_token
     reject(space_token, EXPECT_WHEN_SPACE_MESSAGE) unless space_token.kind == :space
-    reject(peek_token, EXPECT_WHEN_SPACE_MESSAGE) if peek_token.kind == :space
+    reject(peek_token, EXPECT_WHEN_SPACE_MESSAGE) if horizontal_whitespace?(peek_token)
 
     pattern = parse_when_pattern
     pattern_separator = expect_when_separator

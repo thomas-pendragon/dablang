@@ -94,7 +94,7 @@ describe 'sequential literal Modern when patterns' do
     expect(function.blocks[0].all_nodes(DabNodeIf).length).to eq(3)
   end
 
-  it 'keeps the compiler verified marker default false and preserves ordinary equality rejection' do
+  it 'keeps the marker default false, checks marked non-equality calls, and preserves equality rejection' do
     arguments = DabNode.new
     arguments.insert(DabNodeLiteralString.new('right'))
     ordinary = DabNodeInstanceCall.new(DabNodeLiteralString.new('left'), '==', arguments, nil)
@@ -105,14 +105,55 @@ describe 'sequential literal Modern when patterns' do
       nil,
       compiler_verified_target: true
     )
+    marked_missing = DabNodeInstanceCall.new(
+      DabNodeLiteralString.new('left'),
+      'missing',
+      DabNode.new,
+      nil,
+      compiler_verified_target: true
+    )
 
     expect(ordinary).not_to be_compiler_verified_target
     expect(marked).to be_compiler_verified_target
+    expect(marked_missing).to be_compiler_verified_target
     expect(DabType.parse('String')).not_to have_function('==')
     expect(CheckInstanceFunctionExistence.new.run(ordinary)).to be(true)
     expect(ordinary.errors).to contain_exactly(be_a(DabCompileUnknownMemberFunctionError))
     expect(CheckInstanceFunctionExistence.new.run(marked)).to be_nil
     expect(marked.errors).to be_empty
+    expect(CheckInstanceFunctionExistence.new.run(marked_missing)).to be(true)
+    expect(marked_missing.errors).to contain_exactly(be_a(DabCompileUnknownMemberFunctionError))
+  end
+
+  it 'traverses clauses by index without copying suffix arrays and preserves their order' do
+    parsed = parse(<<~DAB).declarations.fetch(0).body_items.fetch(0)
+      def main()
+      case true
+      when 1
+      when 2
+      when 3
+      end
+      end
+    DAB
+    no_drop_clauses = Class.new(Array) do
+      def drop(*)
+        raise 'clause suffix arrays must not be copied'
+      end
+    end.new(parsed.when_clauses)
+    statement = DabModernBootstrapCaseStatement.new(
+      case_token: parsed.case_token,
+      space_token: parsed.space_token,
+      subject: parsed.subject,
+      subject_separator: parsed.subject_separator,
+      when_clauses: no_drop_clauses,
+      end_token: parsed.end_token,
+      final_separator: parsed.final_separator
+    )
+
+    comparisons = statement.lower.all_nodes(DabNodeInstanceCall).select do |call|
+      call.real_identifier.to_s == '=='
+    end
+    expect(comparisons.map { |call| call.value.constant_value }).to eq([1, 2, 3])
   end
 
   it 'preserves contextual when declarations, calls, suffixes, locals, members, interpolation, and text' do
@@ -341,6 +382,16 @@ describe 'sequential literal Modern when patterns' do
     cases = [
       [
         "def main()\ncase true\nwhen\ttrue\nend\nend\n",
+        DabModernBootstrapParser::EXPECT_WHEN_SPACE_MESSAGE,
+        "\t",
+      ],
+      [
+        "def main()\ncase true\nwhen \ttrue\nend\nend\n",
+        DabModernBootstrapParser::EXPECT_WHEN_SPACE_MESSAGE,
+        "\t",
+      ],
+      [
+        "def main()\ncase true\nwhen \t true\nend\nend\n",
         DabModernBootstrapParser::EXPECT_WHEN_SPACE_MESSAGE,
         "\t",
       ],
