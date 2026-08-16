@@ -851,7 +851,7 @@ class DabModernBootstrapCaseStatement
   end
 
   def lower
-    return lower_zero_clause unless else_clause || !when_clauses.empty?
+    return lower_zero_clause if when_clauses.empty? && else_clause.nil?
     return lower_else_only if when_clauses.empty?
 
     DabNodeTreeBlock.new.tap do |block|
