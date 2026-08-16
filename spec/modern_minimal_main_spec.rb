@@ -59,18 +59,18 @@ describe 'minimal Modern main bootstrap' do
   let(:comment_declarations) do
     [
       "# leading\ndef main\nend\n".b,
-      "// leading\ndef main\nend\n".b,
-      "# leading // ;\ndef main# header // ;\n// body # ;\nend# trailing // ;".b,
-      "// leading # ;\ndef main// header # ;\n# body // ;\nend// trailing # ;".b,
+      "# second leading\ndef main\nend\n".b,
+      "# leading // ;\ndef main# header // ;\n# body # ;\nend# trailing // ;".b,
+      "# leading # ;\ndef main# header # ;\n# body // ;\nend# trailing # ;".b,
       "# arbitrary // ;\0\r\t\xff bytes\ndef main;# body // ;\0\r\t\x80\nend;".b,
     ]
   end
   let(:comment_only_sources) do
     [
       '# comment at EOF'.b,
-      '// comment at EOF'.b,
-      "# first\n// second\n".b,
-      ";# first\n;// second\n;".b,
+      '# second comment at EOF'.b,
+      "# first\n# second\n".b,
+      ";# first\n;# second\n;".b,
     ]
   end
   let(:separator_near_misses) do
@@ -94,7 +94,7 @@ describe 'minimal Modern main bootstrap' do
     {
       'single slash' => ["/ comment\ndef main\nend\n".b, {offset: 0, line: 1, column: 0}],
       'hash embedded in def' => ["de# split\nf main\nend\n".b, {offset: 0, line: 1, column: 0}],
-      'comment after a shorter callable name' => ["def ma// split\nin\nend\n".b, {offset: 15, line: 2, column: 0}],
+      'double slash after a shorter callable name' => ["def ma// split\nin\nend\n".b, {offset: 6, line: 1, column: 6}],
       'slash before a hash' => ["def main/# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
       'body statement after a comment' => ["def main\n# body\nvalue\nend\n".b, {offset: 16, line: 3, column: 0}],
       'CR before a comment marker' => ["def main\r# comment\nend\n".b, {offset: 8, line: 1, column: 8}],
@@ -436,7 +436,7 @@ describe 'minimal Modern main bootstrap' do
     end
   end
 
-  it 'treats both exact line-comment markers equivalently within existing separator runs' do
+  it 'treats hash line comments as separators while preserving opaque double slash bytes' do
     source_unit = DabSourceUnit.new(
       input: 'comment-separator-main.dabm',
       syntax_profile: DabSyntaxProfile::MODERN
@@ -572,7 +572,7 @@ describe 'minimal Modern main bootstrap' do
     expect(declaration.source_span.end_location.to_h).to eq(offset: 14, line: 1, column: 14)
   end
 
-  it 'keeps comment bodies and LF boundaries as exact, separate scanner tokens' do
+  it 'keeps hash-comment bodies, ordinary slashes, and LF boundaries as separate scanner tokens' do
     source = "#a//;\0\r\t\xff\n//#;a\0\r\t\x80\n".b
     source_unit = DabSourceUnit.new(
       input: 'comment-tokens.dabm',
@@ -586,16 +586,22 @@ describe 'minimal Modern main bootstrap' do
       break if token.kind == :eof
     end
 
-    expect(tokens.map(&:kind)).to eq(%i[line_comment line_feed line_comment line_feed eof])
-    expect(tokens.map(&:text)).to eq(["#a//;\0\r\t\xff".b, "\n".b, "//#;a\0\r\t\x80".b, "\n".b, ''.b])
+    expect(tokens.map(&:kind)).to eq(
+      %i[line_comment line_feed unsupported unsupported line_comment line_feed eof]
+    )
+    expect(tokens.map(&:text)).to eq(
+      ["#a//;\0\r\t\xff".b, "\n".b, '/'.b, '/'.b, "#;a\0\r\t\x80".b, "\n".b, ''.b]
+    )
     expect(tokens.map { |token| [token.source_span.start_offset, token.source_span.end_offset] }).to eq(
-      [[0, 9], [9, 10], [10, 19], [19, 20], [20, 20]]
+      [[0, 9], [9, 10], [10, 11], [11, 12], [12, 19], [19, 20], [20, 20]]
     )
     expect(tokens.map { |token| token.source_location.to_h }).to eq(
       [
         {offset: 0, line: 1, column: 0},
         {offset: 9, line: 2, column: 0},
         {offset: 10, line: 2, column: 0},
+        {offset: 11, line: 2, column: 1},
+        {offset: 12, line: 2, column: 2},
         {offset: 19, line: 3, column: 0},
         {offset: 20, line: 3, column: 0},
       ]
@@ -604,6 +610,8 @@ describe 'minimal Modern main bootstrap' do
       [
         {offset: 9, line: 2, column: 0},
         {offset: 10, line: 2, column: 0},
+        {offset: 11, line: 2, column: 1},
+        {offset: 12, line: 2, column: 2},
         {offset: 19, line: 3, column: 0},
         {offset: 20, line: 3, column: 0},
         {offset: 20, line: 3, column: 0},
@@ -613,7 +621,7 @@ describe 'minimal Modern main bootstrap' do
   end
 
   it 'ends a declaration span after an EOF-terminated trailing comment' do
-    source = "# lead\n;def main// header\n# body\n;end# tail".b
+    source = "# lead\n;def main# header\n# body\n;end# tail".b
     source_unit = DabSourceUnit.new(
       input: 'comment-separator-span.dabm',
       syntax_profile: DabSyntaxProfile::MODERN
@@ -621,7 +629,7 @@ describe 'minimal Modern main bootstrap' do
     declaration = DabModernBootstrapParser.new(source, source_unit: source_unit).parse
 
     expect(declaration.source_span.start_location.to_h).to eq(offset: 8, line: 2, column: 1)
-    expect(declaration.source_span.end_location.to_h).to eq(offset: 43, line: 4, column: 10)
+    expect(declaration.source_span.end_location.to_h).to eq(offset: 42, line: 4, column: 10)
   end
 
   it 'reports the eight recognized-main diagnostics with exact scanner or zero-width EOF spans' do

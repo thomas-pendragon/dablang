@@ -254,7 +254,7 @@ describe 'final explicit Modern case else' do
       else# hash
       end
       case 3
-      else// slash
+      else# second hash
       end
       end
     DAB

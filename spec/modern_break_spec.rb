@@ -119,7 +119,7 @@ describe 'bounded lexical Modern break' do
       break
       break;
       break# hash
-      break// slash
+      break# second hash
       break if flag
       break unless false
       end

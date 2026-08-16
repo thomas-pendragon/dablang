@@ -226,8 +226,9 @@ function parsing remain unsupported.
 
 ## Modern line comments
 
-Version 0.0.39 adds two exact line-comment markers: byte `0x23` (`#`) and the
-two-byte sequence `0x2f 0x2f` (`//`). The scanner emits one `line_comment`
+Version 0.0.39 originally added two exact line-comment markers: byte `0x23`
+(`#`) and the two-byte sequence `0x2f 0x2f` (`//`). The scanner emitted one
+`line_comment`
 token containing the marker and every following non-LF byte. The token ends
 immediately before the next LF or at EOF. It never consumes the LF: that byte
 remains its own `line_feed` token with the shared scanner's existing offset,
@@ -238,23 +239,49 @@ abstraction. Comments may therefore appear in separator runs before or after
 the one supported empty `main` declaration, between its header and `end`, or
 throughout a separator-only source. A comment may be the required first
 separator after `main` or `end`, including an EOF-terminated comment, so
-`def main# header\nend// trailing` is accepted without treating any ordinary
+`def main# header\nend# trailing` is accepted without treating any ordinary
 space as trivia. If the first separator after `end` is a comment, the
 declaration span ends at that comment's half-open end; a following LF and later
 separators remain outside the declaration.
 
-The two markers have identical separator meaning. Their bodies are opaque and
-may contain the other marker, more copies of their own marker, semicolons,
+As of version 0.0.84, `#` is the only Modern line-comment marker. Its body is
+opaque and may contain `//`, more copies of `#`, semicolons,
 spaces, tabs, NUL, CR, or any other non-LF byte. In particular, CR inside a
 comment body remains ordinary body data rather than a line ending; this does
 not normalize or accept CR or CRLF at structural separator positions.
 
-This is not general whitespace or token-internal comment support. A single
-`/` is still unsupported. A marker cannot split or join `def`, `main`, `end`,
+This is not general whitespace or token-internal comment support. A comment
+marker cannot split or join `def`, `main`, `end`,
 or another identifier, and an ASCII space before a marker remains invalid
 where the prior grammar did not accept a space. Comments do not permit a body
 statement, a second declaration, a literal, an operator or division, a call,
 a variable, a type, a general function, or any later Modern production.
+
+## Modern regular-expression source lexing
+
+Version 0.0.84 reserves slash-delimited regular-expression source only at an
+existing parser-declared value entry. The grammar is `/`, zero or more raw body
+items, then `/`. A body item is either backslash plus exactly one non-line-ending
+byte or one byte other than slash, backslash, LF, or CR. The empty `//` form is
+therefore a valid source lexeme in value mode. Backslash affects delimiter
+finding only: body bytes, escapes, `#`, interpolation-like text, NUL, and invalid
+UTF-8 remain raw and undecoded. Apparent flags are subsequent identifier tokens.
+
+The scanner freezes opening, body, and closing source tokens, their shared source
+unit and half-open spans in `DabModernBootstrapRegexLiteralSource`; an empty body
+has a zero-width span. The outer `regex_literal` token covers the complete
+lexeme. Raw LF, CR, and CRLF, escaped line endings, EOF without a closer, and an
+EOF-trailing backslash each have a byte-exact diagnostic span.
+
+This row does not admit an executable literal. Every well-formed candidate is
+rejected across its full span because runtime Regex construction belongs to
+EX-010 and executable admission belongs to OR-057. The token is not a literal or
+value kind and has no lowering path. In ordinary mode each slash remains an
+independent one-byte unsupported token, so `//` is never a separator or comment
+and is never swallowed to LF or EOF. Boolean conditions, postfix guards, `when`
+patterns, headers, separator positions, and the position after a completed
+value remain ordinary mode. Legacy slash division and `//` comments are
+unchanged.
 
 ## Modern top-level function declarations
 
@@ -338,7 +365,7 @@ normalizing source:
 - the cursor exposes the location at EOF, lookahead uses cloned scanner state,
   failed speculative parses retain the parent position, and an accepted parse
   commits only the child position through `merge!`;
-- unterminated block, `#`, and `//` comments retain their existing
+- unterminated Legacy block, `#`, and `//` comments retain their existing
   `DabEndOfStreamError` boundary, and the compiler's established unknown-token
   and unexpected-EOF fallback diagnostics remain attributed to line and offset
   zero.

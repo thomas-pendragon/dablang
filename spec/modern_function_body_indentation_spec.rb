@@ -55,7 +55,7 @@ describe 'Modern function-body indentation' do
       "   \n",
       "  print(\"one\")\n",
       "    nil\n",
-      "  // later comment\n",
+      "  # later comment\n",
       " print(\"two\")\n",
       "   end\n",
     ].join
