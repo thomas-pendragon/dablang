@@ -149,6 +149,56 @@ describe 'sequential literal Modern when patterns' do
     expect(clause_body.map { |item| item.callable_name.text }).to eq(%w[when when?])
   end
 
+  it 'parses existing when-local reassignments before rejecting them with the clause diagnostic' do
+    ['when = false', 'when=false', "when\t=\tfalse"].each do |reassignment|
+      source = <<~DAB
+        def main()
+        var when = true
+        case true
+        when true
+        #{reassignment}
+        end
+        end
+      DAB
+      expect_error(
+        source,
+        DabModernBootstrapParser::CASE_CLAUSE_REASSIGNMENT_MESSAGE,
+        'when',
+        offset: source.index(reassignment)
+      )
+    end
+  end
+
+  it 'parses true clause boundaries and contextual when calls before semantic rejection' do
+    source = <<~DAB
+      def when(value:Boolean):Boolean
+      return value
+      end
+      def when?(value:Boolean):Boolean
+      return value
+      end
+      def main()
+      var when = true
+      case true
+      when true
+      when = false
+      when false
+      when(false)
+      when?(true)
+      when
+      end
+      end
+    DAB
+    malformed_when = source.rindex("when\n")
+
+    expect_error(
+      source,
+      DabModernBootstrapParser::EXPECT_WHEN_SPACE_MESSAGE,
+      "\n",
+      offset: malformed_when + 'when'.bytesize
+    )
+  end
+
   it 'accepts established nonbinding bodies recursively and lexical transfers only under while' do
     source = <<~DAB
       def main(flag:Boolean)

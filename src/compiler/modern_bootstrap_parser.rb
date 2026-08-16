@@ -3905,8 +3905,12 @@ private
 
   def contextual_case_clause_candidate?(name)
     token = peek_token
-    token.kind == :identifier && token.text == name && !direct_call_start? &&
-      !@callable_name_composer.adjacent_suffix?(token, peek_token(1))
+    return false unless token.kind == :identifier && token.text == name
+    return false if direct_call_start?
+    return false if @callable_name_composer.adjacent_suffix?(token, peek_token(1))
+
+    distance = distance_after_horizontal_whitespace(1)
+    peek_token(distance).kind != :equal
   end
 
   def nested_rejection_context(enclosing_context, default_context)
