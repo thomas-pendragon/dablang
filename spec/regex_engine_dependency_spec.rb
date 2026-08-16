@@ -151,13 +151,17 @@ describe Dab::RegexEngineDependency do
 
   it 'stops streaming when a response exceeds the configured bound' do
     bytes = archive(canonical_entries)
+    maximum_download_bytes = bytes.bytesize
     oversized = response(200, body: "#{bytes}overflow")
     with_dependency(
       archive_bytes: bytes,
       responses: [oversized],
-      configuration: {'maximum_download_bytes' => bytes.bytesize}
+      configuration: {'maximum_download_bytes' => maximum_download_bytes}
     ) do |dependency|
-      expect { dependency.prepare! }.to raise_error(described_class::Error, /exceeded 4 MiB/)
+      expect { dependency.prepare! }.to raise_error(
+        described_class::Error,
+        "Regex engine download exceeded configured maximum of #{maximum_download_bytes} bytes"
+      )
     end
   end
 

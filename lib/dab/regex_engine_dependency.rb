@@ -176,11 +176,14 @@ module Dab
 
     def stream_response!(response, destination)
       bytes = 0
+      maximum_download_bytes = configuration.fetch('maximum_download_bytes')
       File.open(destination, 'wb', 0o600) do |file|
         response.read_body do |chunk|
           bytes += chunk.bytesize
-          if bytes > configuration.fetch('maximum_download_bytes')
-            raise Error.new('Regex engine download exceeded 4 MiB')
+          if bytes > maximum_download_bytes
+            raise Error.new(
+              "Regex engine download exceeded configured maximum of #{maximum_download_bytes} bytes"
+            )
           end
 
           file.write(chunk)
