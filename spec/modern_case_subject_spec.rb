@@ -178,6 +178,7 @@ describe 'exactly-once empty Modern case shell' do
 
     expect(statements.length).to eq(9)
     expect(statements).to all(be_frozen)
+    expect(statements.map(&:else_clause)).to all(be_nil)
     expect(statements.flat_map { |statement| [statement.source_tokens, statement.source_parts] })
       .to all(be_frozen)
     expect(statements.map { |statement| statement.lower.to_a.length }).to all(eq(1))
@@ -289,11 +290,6 @@ describe 'exactly-once empty Modern case shell' do
         DabModernBootstrapParser::EXPECT_CASE_SUBJECT_SEPARATOR_MESSAGE,
         ' ',
         :last,
-      ],
-      [
-        "def main()\ncase true\nelse\nend\nend\n",
-        DabModernBootstrapParser::UNEXPECTED_CASE_ELSE_MESSAGE,
-        'else',
       ],
       [
         "def main()\ncase true\nprint(\"body\")\nend\nend\n",

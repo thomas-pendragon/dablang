@@ -1,0 +1,123 @@
+## SOURCE
+def label(value : Int32) : String
+  case value
+  when 1
+    return "one\n"
+  when 2, 3
+    return "few\n"
+  else
+    return "many\n"
+  end
+end
+
+def main()
+  print(label(3))
+end
+## EXPECTED APPLICATION STDOUT
+few
+
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "few
+" 
+                                 W_STRING "many
+" 
+                                 W_STRING "one
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Flabel:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* 1            */               LOAD_NUMBER R1, 1
+/* ==           */               INSTCALL R2, R1, S5, R0
+                                 JMP_IF R2, L1, L2
+                   L1:
+/* "one."       */               LOAD_STRING R3, _DATA + 11, 4
+                                 RETURN R3
+                                 JMP L3
+                   L2:
+/* 2            */               LOAD_NUMBER R4, 2
+/* ==           */               INSTCALL R5, R4, S5, R0
+                                 JMP_IF R5, L4, L5
+                   L5:
+/* 3            */               LOAD_NUMBER R6, 3
+/* ==           */               INSTCALL R5, R6, S5, R0
+                                 JMP L4
+                   L4:
+                                 JMP_IF R5, L6, L7
+                   L6:
+/* "few."       */               LOAD_STRING R7, _DATA + 0, 4
+                                 RETURN R7
+                                 JMP L3
+                   L7:
+/* "many."      */               LOAD_STRING R8, _DATA + 5, 5
+                                 RETURN R8
+                                 JMP L3
+                   L3:
+                                 NOP 
+                   __Flabel_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* 3            */               LOAD_NUMBER R0, 3
+/* label        */               CALL R1, S54, R0
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "label" 
+                                 W_STRING "main" 
+                                 W_STRING "value" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* label        */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 18 
+/* value        */               W_SYMBOL _SDAT + 23 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* label        */               W_METHOD 54, -1, Flabel, 1, __Flabel_END - Flabel, 0
+/* value<Int32> */               W_METHOD_ARG 56, 12
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
