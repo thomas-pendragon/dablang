@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+require 'digest'
 require 'open3'
 require 'rbconfig'
 require 'tmpdir'
@@ -17,6 +18,8 @@ describe 'Regex runtime object and engine contract' do
       File.join(root, 'bin', "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}")
     )
   end
+  let(:disassembler) { File.join(root, 'bin', "cdisasm#{RbConfig::CONFIG.fetch('EXEEXT')}") }
+  let(:modern_stdlib) { File.join(root, 'tmp', 'stdlib.dabcb') }
 
   def invoke_binary_ruby(script, stdin_data: '')
     Open3.capture3(
@@ -49,6 +52,46 @@ describe 'Regex runtime object and engine contract' do
         environment, vm, bytecode, chdir: root, binmode: true
       )
       return RegexRuntimeResult.new(stdout: stdout.b, stderr: stderr.b, status: status.exitstatus)
+    end
+  end
+
+  def compile_modern(source)
+    Dir.mktmpdir('dab-modern-regex-runtime-spec') do |directory|
+      source_path = File.join(directory, 'program.dabm')
+      bytecode_path = File.join(directory, 'program.dabcb')
+      File.binwrite(source_path, source.b)
+      assembly, compiler_error, compiler_status = Open3.capture3(
+        RbConfig.ruby,
+        File.join(root, 'src/compiler/compiler.rb'),
+        source_path,
+        "--ring-base[]=#{modern_stdlib}",
+        chdir: root,
+        binmode: true
+      )
+      expect(compiler_status.exitstatus).to eq(0), compiler_error
+      bytecode, assembler_error, assembler_status = invoke_binary_ruby(
+        File.join(root, 'src/tobinary/tobinary.rb'), stdin_data: assembly
+      )
+      expect(assembler_status.exitstatus).to eq(0), assembler_error
+      File.binwrite(bytecode_path, bytecode)
+      yield assembly.b, bytecode.b, bytecode_path
+    end
+  end
+
+  def execute_modern(source, environment = {})
+    compile_modern(source) do |_assembly, _bytecode, upper_ring|
+      stdout, stderr, status = Open3.capture3(
+        environment, vm, modern_stdlib, upper_ring, '--entry=main', chdir: root, binmode: true
+      )
+      return RegexRuntimeResult.new(stdout: stdout.b, stderr: stderr.b, status: status.exitstatus)
+    end
+  end
+
+  def modern_artifact(source)
+    compile_modern(source) do |assembly, bytecode, bytecode_path|
+      disassembly, error, status = Open3.capture3(disassembler, bytecode_path, chdir: root, binmode: true)
+      expect(status.exitstatus).to eq(0), error
+      return [assembly, bytecode, disassembly.b]
     end
   end
 
@@ -280,12 +323,72 @@ describe 'Regex runtime object and engine contract' do
     expect(result.stderr.scan('regex-test: compiled handle freed').length).to eq(1)
   end
 
-  it 'keeps Modern regex construction rejected by EX-009' do
-    source_unit = DabSourceUnit.new(input: 'regex.dabm', syntax_profile: DabSyntaxProfile::MODERN)
-    parser = DabModernBootstrapParser.new("def main\n/a/\nend\n".b, source_unit: source_unit)
-    expect { parser.parse }.to raise_error(
-      DabModernBootstrapParseError,
-      /runtime Regex construction belongs to EX-010 and executable literal admission belongs to OR-057/
+  it 'constructs reached Modern literals while leaving dead and unselected patterns uncompiled' do
+    source = <<~DAB.b
+      def main
+        /[/ if false
+        if false
+          /#{"\xFF".b}/
+        end
+        //
+        /a\\/b/
+        print("constructed")
+      end
+    DAB
+    result = execute_modern(source)
+
+    expect([result.status, result.stdout, runtime_error(result)]).to eq([0, 'constructed', nil])
+  end
+
+  it 'preserves raw Modern NUL, quote, hash, slash escape, and invalid UTF bytes' do
+    valid_body = "a\0\"#\\/b".b
+    valid = execute_modern("def main\n/#{valid_body}/\nprint(\"valid\")\nend\n".b)
+    expect([valid.status, valid.stdout, runtime_error(valid)]).to eq([0, 'valid', nil])
+
+    invalid = execute_modern("def main\nprint(\"before\")\n/a\xFF/\nprint(\"after\")\nend\n".b)
+    expect([invalid.status, invalid.stdout]).to eq([1, 'before'])
+    expect(runtime_error(invalid)).to match(
+      /\Avm: invalid UTF-8 Regex pattern at byte 1 \(PCRE2 error -\d+\): .+\.\z/
     )
+  end
+
+  it 'keeps Modern engine and length failures at runtime with prior output visible' do
+    malformed = execute_modern("def main\nprint(\"before\")\n/[/\nprint(\"after\")\nend\n")
+    expect([malformed.status, malformed.stdout]).to eq([1, 'before'])
+    expect(runtime_error(malformed)).to match(
+      /\Avm: invalid Regex pattern at byte \d+ \(PCRE2 error \d+\): .+\.\z/
+    )
+
+    too_long = execute_modern("def main\n/#{'a' * 65_536}/\nend\n")
+    expect([too_long.status, too_long.stdout, runtime_error(too_long)]).to eq(
+      [1, '', 'vm: Regex pattern is too long: maximum is 65535 bytes.']
+    )
+    boundary = execute_modern("def main\n/#{'a' * 65_535}/\nend\n")
+    expect(runtime_error(boundary)).not_to eq('vm: Regex pattern is too long: maximum is 65535 bytes.')
+  end
+
+  it 'emits only existing Regex construction instructions deterministically' do
+    source = <<~DAB
+      def main
+        /a\\/b/
+        print("or057-proof")
+      end
+    DAB
+    first = modern_artifact(source)
+    second = modern_artifact(source)
+
+    expect(second).to eq(first)
+    assembly = first.fetch(0)
+    expect(assembly).to include('LOAD_STRING', 'LOAD_CLASS')
+    expect(assembly).to match(/LOAD_CLASS R\d+, 20/)
+    expect(assembly).to match(/INSTCALL (?:R\d+|RNIL), R\d+, S\d+/)
+    expect(assembly).not_to match(/^\s+(?:REGEX|PCRE)[A-Z_]*\b/i)
+    expect(first.map { |bytes| Digest::SHA256.hexdigest(bytes) }).to all(match(/\A[0-9a-f]{64}\z/))
+
+    run_a = execute_modern(source)
+    run_b = execute_modern(source)
+    expect([run_a.status, run_a.stdout]).to eq([0, 'or057-proof'])
+    expect(runtime_error(run_a)).to be_nil
+    expect(run_b).to eq(run_a)
   end
 end

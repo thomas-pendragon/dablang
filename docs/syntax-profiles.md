@@ -257,7 +257,7 @@ where the prior grammar did not accept a space. Comments do not permit a body
 statement, a second declaration, a literal, an operator or division, a call,
 a variable, a type, a general function, or any later Modern production.
 
-## Modern regular-expression source lexing
+## Modern regular-expression literals
 
 Version 0.0.84 reserves slash-delimited regular-expression source only at an
 existing parser-declared value entry. The grammar is `/`, zero or more raw body
@@ -273,15 +273,32 @@ has a zero-width span. The outer `regex_literal` token covers the complete
 lexeme. Raw LF, CR, and CRLF, escaped line endings, EOF without a closer, and an
 EOF-trailing backslash each have a byte-exact diagnostic span.
 
-This row does not admit an executable literal. Every well-formed candidate is
-rejected across its full span because runtime Regex construction belongs to
-EX-010 and executable admission belongs to OR-057. The token is not a literal or
-value kind and has no lowering path. In ordinary mode each slash remains an
-independent one-byte unsupported token, so `//` is never a separator or comment
-and is never swallowed to LF or EOF. Boolean conditions, postfix guards, `when`
-patterns, headers, separator positions, and the position after a completed
-value remain ordinary mode. Legacy slash division and `//` comments are
-unchanged.
+Version 0.0.86 admits that frozen source wrapper as a runtime Regex value in
+exactly eight contextual value entries: a standalone body value, a value return,
+a `let` initializer, a `var` initializer, an ordinary reassignment right-hand
+side, direct or nested call arguments, a literal/member receiver, and a `case`
+subject. Regex remains outside the shared literal/value kind sets so `when`
+patterns and comma alternatives do not consume the later matching row. Written
+`: Regex` annotations also remain unsupported.
+
+Each admitted body lowers without decoding through the existing `Regex.new`
+constructor shape and existing `LOAD_STRING`, `LOAD_CLASS 20`, and `INSTCALL`
+instructions. Regex-origin String constants use byte-wise assembly so NUL and
+arbitrary raw bytes reach the strict EX-010 UTF/UCP runtime unchanged; this does
+not alter ordinary Modern String transport. PCRE2 construction occurs only when
+execution reaches the literal. Engine-invalid, invalid-UTF, or oversized bodies
+therefore fail at runtime with the EX-010 status-1 diagnostics, while dead and
+unselected literals are not constructed.
+
+In ordinary mode each slash remains an independent one-byte unsupported token,
+so `//` is never a separator or comment and is never swallowed to LF or EOF.
+Boolean conditions, postfix conditions, the Boolean-only `while` guard write,
+`when` patterns, headers, separator positions, and the position after a
+completed value remain excluded. A pattern-relative PCRE2 byte offset `N` maps
+without decoding to the zero-width compiler source point at body start plus
+`N`, including the point before the closing slash at body length. Native stderr
+remains pattern-relative because bytecode has no source map. Legacy slash
+division and `//` comments are unchanged.
 
 ## Modern top-level function declarations
 

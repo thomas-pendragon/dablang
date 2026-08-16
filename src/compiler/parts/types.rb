@@ -16,6 +16,7 @@ class DabType
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
     return DabTypeByteBuffer.new if typename == 'ByteBuffer'
+    return DabTypeRegex.new if typename == 'Regex'
 
     raise "Unknown type #{typename}"
   end
@@ -90,6 +91,20 @@ class DabTypeString < DabType
     return true if identifiers.include?(identifier)
 
     super
+  end
+end
+
+class DabTypeRegex < DabType
+  def type_string
+    'Regex'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeRegex
+  end
+
+  def concrete?
+    true
   end
 end
 
