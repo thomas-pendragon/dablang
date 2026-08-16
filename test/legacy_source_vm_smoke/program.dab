@@ -1,5 +1,6 @@
 func main()
 {
+	Regex.new("[[:alpha:]]+");
 	print("legacy source-to-VM smoke: ");
 	print(6 * 7);
 }

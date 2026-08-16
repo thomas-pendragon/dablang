@@ -1,6 +1,7 @@
 #include "cvm.h"
 
 #include "defaults_shared.h"
+#include "regex.h"
 
 DabClass &DabVM::define_builtin_class(const std::string &name, dab_class_t class_index,
                                       dab_class_t superclass_index)
@@ -38,6 +39,7 @@ void DabVM::predefine_default_classes()
     define_builtin_class("LiteralString", CLASS_LITERALSTRING, CLASS_STRING);
     define_builtin_class("DynamicString", CLASS_DYNAMICSTRING, CLASS_STRING);
     define_builtin_class("Float", CLASS_FLOAT);
+    define_builtin_class("Regex", CLASS_REGEX);
 }
 
 void DabVM::define_default_classes()
@@ -129,6 +131,11 @@ void DabVM::define_default_classes()
             auto        arg2   = $VM->cast(args[1], CLASS_FIXNUM);
             const auto &buffer = arg1.bytebuffer();
             const auto  length = arg2.data.fixnum;
+            if (length < 0 || static_cast<uint64_t>(length) > buffer.size())
+            {
+                throw DabRuntimeError(
+                    "String.new length must be between 0 and the ByteBuffer length");
+            }
             if (length)
             {
                 s = std::string((const char *)&buffer[0], (size_t)length);
@@ -138,7 +145,11 @@ void DabVM::define_default_classes()
         {
             s = args[0].string();
         }
-        return DabValue::allocate_dynstr(s.c_str());
+        DabValue klass = $VM->get_class(CLASS_DYNAMICSTRING);
+        auto     ret   = klass.create_instance();
+        auto    *value = (DabDynamicString *)ret.data.object->object;
+        value->value   = s;
+        return ret;
     });
     string_class.add_reg_function("to_s", [](DabValue self, std::vector<DabValue> args) {
         assert(args.size() == 0);
@@ -150,6 +161,12 @@ void DabVM::define_default_classes()
     });
     DAB_MEMBER_EQUALS_OPERATORS(string_class, CLASS_STRING, .string());
     DAB_MEMBER_COMPARE_OPERATORS(string_class, CLASS_STRING, .string());
+
+    auto &regex_class = get_class(CLASS_REGEX);
+    dab_regex_verify_engine();
+    regex_class.add_static_reg_function("new", [](DabValue, std::vector<DabValue> args) {
+        return dab_regex_create(args);
+    });
 
     auto &fixnum_class = get_class(CLASS_FIXNUM);
     fixnum_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {

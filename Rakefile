@@ -9,6 +9,7 @@ if ENV['COVERAGE']
 end
 
 require_relative 'setup'
+require_relative 'lib/dab/regex_engine_dependency'
 require_relative 'src/shared/system'
 
 $autorun = false
@@ -75,11 +76,18 @@ classes_docs_task = './tasks/classes_docs.rb'
 ffi_file = './src/cvm/ffi_signatures.h'
 ffi_task = './tasks/ffi_signatures.rb'
 
+regex_engine_config = 'config/regex_engine.json'
+regex_engine_dependency = 'lib/dab/regex_engine_dependency.rb'
+regex_engine_marker = 'build/dependencies/pcre2-10.47/.dab-regex-engine-ready.json'
+
 csources_type = {}
 %w[cvm cdisasm cdumpcov cffitest].each do |ctype|
   sources = Dir.glob("src/{#{ctype},cshared}/**/*")
   sources = Dir.glob("src/{#{ctype}}/**/*") if ctype == 'cffitest'
   sources += [cvm_opcodes, cvm_classes, cvm_opcodes_debug, cvm_syscalls]
+  if ctype == 'cvm'
+    sources += [regex_engine_config, regex_engine_dependency, regex_engine_marker]
+  end
   sources.sort!
   sources.uniq!
 
@@ -151,7 +159,14 @@ file cvm_opcodes_debug => [opcodes, opcode_debug_task] do
   psystem("ruby #{opcode_debug_task} | #{clang_format_app} > #{cvm_opcodes_debug}")
 end
 
-file makefile => [premake_source, version_file] do
+file regex_engine_marker => [regex_engine_config, regex_engine_dependency] do
+  Dab::RegexEngineDependency.prepare!(root: __dir__)
+end
+
+desc 'Download and verify the pinned Regex engine dependency'
+task regex_engine_dependency: regex_engine_marker
+
+file makefile => [premake_source, version_file, regex_engine_marker] do
   psystem(premake.to_s)
   FileUtils.mv(original_makefile, makefile)
 end
@@ -278,6 +293,7 @@ address_sanitizer_files = [
   'test/address_sanitizer/heap_buffer_overflow.cpp',
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
+  regex_engine_marker,
   *unsafe_ffi_capability_files,
   *legacy_source_vm_smoke_files,
 ]
@@ -293,6 +309,7 @@ undefined_behavior_sanitizer_files = [
   'test/undefined_behavior_sanitizer/signed_integer_overflow.cpp',
   'test/native/string_intptr_lifetime.cpp',
   'src/cvm/string_intptr_storage.h',
+  regex_engine_marker,
   *unsafe_ffi_capability_files,
   *legacy_source_vm_smoke_files,
 ]
