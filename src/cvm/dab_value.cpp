@@ -1,4 +1,5 @@
 #include "cvm.h"
+#include "regex.h"
 
 void DabValue::dump(FILE *file) const
 {
@@ -376,6 +377,10 @@ DabValue DabValue::create_instance() const
     {
         object = new DabDynamicString;
         type   = TYPE_DYNAMICSTRING;
+    }
+    else if (data.fixnum == CLASS_REGEX)
+    {
+        object = new DabRegex;
     }
     else
     {

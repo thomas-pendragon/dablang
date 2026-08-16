@@ -1,0 +1,17 @@
+## CODE
+
+func main()
+{
+	Regex.new("");
+	Regex.new("[[:alpha:]]+");
+	Regex.new("(?i)unicode");
+	print("regex runtime: ok");
+}
+
+## RUN
+
+main
+
+## EXPECT OK
+
+regex runtime: ok

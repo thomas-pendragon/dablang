@@ -99,6 +99,10 @@ pages:
     output: classes/object.html
     classification: public_reference
     generated: true
+  - source: classes/regex.md
+    output: classes/regex.html
+    classification: public_reference
+    generated: true
   - source: classes/string.md
     output: classes/string.html
     classification: public_reference
