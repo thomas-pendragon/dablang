@@ -131,6 +131,11 @@ void DabVM::define_default_classes()
             auto        arg2   = $VM->cast(args[1], CLASS_FIXNUM);
             const auto &buffer = arg1.bytebuffer();
             const auto  length = arg2.data.fixnum;
+            if (length < 0 || static_cast<uint64_t>(length) > buffer.size())
+            {
+                throw DabRuntimeError(
+                    "String.new length must be between 0 and the ByteBuffer length");
+            }
             if (length)
             {
                 s = std::string((const char *)&buffer[0], (size_t)length);

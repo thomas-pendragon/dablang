@@ -11,7 +11,12 @@ RegexRuntimeResult = Struct.new(:stdout, :stderr, :status, keyword_init: true)
 
 describe 'Regex runtime object and engine contract' do
   let(:root) { File.expand_path('..', __dir__) }
-  let(:vm) { File.join(root, 'bin', "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}") }
+  let(:vm) do
+    ENV.fetch(
+      'DAB_REGEX_RUNTIME_VM',
+      File.join(root, 'bin', "cvm#{RbConfig::CONFIG.fetch('EXEEXT')}")
+    )
+  end
 
   def compile(source)
     Dir.mktmpdir('dab-regex-runtime-spec') do |directory|
@@ -62,7 +67,7 @@ describe 'Regex runtime object and engine contract' do
 
   def runtime_error(result)
     result.stderr.lines.map(&:strip).find do |line|
-      line.start_with?('vm: Regex', 'vm: invalid', 'vm: incompatible')
+      line.start_with?('vm: Regex', 'vm: String', 'vm: invalid', 'vm: incompatible')
     end
   end
 
@@ -73,10 +78,13 @@ describe 'Regex runtime object and engine contract' do
   it 'appends built-in Regex class 20 and exposes only Regex.new' do
     header = File.binread(File.join(root, 'src/cshared/classes.h'))
     defaults = File.binread(File.join(root, 'src/cvm/default_classes.cpp'))
+    implementation = File.binread(File.join(root, 'src/cvm/regex.cpp'))
     expect(header).to include('CLASS_REGEX         = 20')
     expect(defaults.scan('regex_class.add_static_reg_function').length).to eq(1)
     expect(defaults).to include('regex_class.add_static_reg_function("new"')
     expect(defaults).not_to include('regex_class.add_reg_function')
+    expect(defaults.scan('dab_regex_verify_engine();').length).to eq(1)
+    expect(implementation).not_to include('dab_regex_verify_engine();')
   end
 
   it 'constructs empty, Unicode, property, grapheme, inline-option, and maximum-scalar patterns' do
@@ -92,10 +100,32 @@ describe 'Regex runtime object and engine contract' do
     end
   end
 
-  it 'constructs a byte-exact pattern containing an embedded NUL' do
+  it 'accepts zero and the exact ByteBuffer boundary with embedded NUL bytes' do
+    empty = execute(main("\tvar pattern = ByteBuffer.new(0);\n" \
+                         "\tRegex.new(String.new(pattern, 0));\n\tprint(\"empty\");"))
+    expect([empty.status, empty.stdout, runtime_error(empty)]).to eq([0, 'empty', nil])
+
     result = execute(main("#{constructor_bytes("a\0b".b)}\n\tprint(\"constructed\");"))
     expect([result.status, result.stdout]).to eq([0, 'constructed'])
     expect(runtime_error(result)).to be_nil
+  end
+
+  it 'rejects negative and oversized String.new ByteBuffer lengths deterministically' do
+    cases = ['0 - 1', '2']
+    cases.each do |length|
+      source = <<~DAB
+        \tvar pattern = ByteBuffer.new(1);
+        \tpattern[0] = 97;
+        \tprint("before");
+        \tString.new(pattern, #{length});
+        \tprint("after");
+      DAB
+      result = execute(main(source))
+      expect([result.status, result.stdout, runtime_error(result)]).to eq(
+        [1, 'before', 'vm: String.new length must be between 0 and the ByteBuffer length.']
+      )
+      expect(result.stderr).not_to match(/AddressSanitizer|length_error|heap-buffer-overflow/)
+    end
   end
 
   it 'rejects invalid arity and non-String arguments with exact status and diagnostics' do

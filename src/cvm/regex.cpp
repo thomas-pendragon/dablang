@@ -220,7 +220,6 @@ DabValue dab_regex_create(const std::vector<DabValue> &arguments)
 
     try
     {
-        dab_regex_verify_engine();
         if (allocation_failure("source"))
         {
             throw std::bad_alloc();
