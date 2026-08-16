@@ -266,7 +266,7 @@ describe 'exactly-once empty Modern case shell' do
       .to eq(%i[line_feed semicolon line_comment])
   end
 
-  it 'implements all eight case diagnostics with exact token and EOF spans' do
+  it 'preserves zero-clause case diagnostics with exact token and EOF spans' do
     cases = [
       [
         "def main()\ncase\ttrue\nend\nend\n",
@@ -291,18 +291,13 @@ describe 'exactly-once empty Modern case shell' do
         :last,
       ],
       [
-        "def main()\ncase true\nwhen 1\nend\nend\n",
-        DabModernBootstrapParser::UNEXPECTED_CASE_WHEN_MESSAGE,
-        'when',
-      ],
-      [
         "def main()\ncase true\nelse\nend\nend\n",
         DabModernBootstrapParser::UNEXPECTED_CASE_ELSE_MESSAGE,
         'else',
       ],
       [
         "def main()\ncase true\nprint(\"body\")\nend\nend\n",
-        DabModernBootstrapParser::CASE_NOT_EMPTY_MESSAGE,
+        DabModernBootstrapParser::EXPECT_CASE_CLAUSE_OR_END_MESSAGE,
         'print',
       ],
       [
@@ -376,7 +371,7 @@ describe 'exactly-once empty Modern case shell' do
     %w[nil let if unless while return break next when? else?].each do |item|
       source = "def main()\ncase true\n#{item}\nend\nend\n"
       token = item.delete_suffix('?')
-      expect_error(source, DabModernBootstrapParser::CASE_NOT_EMPTY_MESSAGE, token)
+      expect_error(source, DabModernBootstrapParser::EXPECT_CASE_CLAUSE_OR_END_MESSAGE, token)
     end
   end
 

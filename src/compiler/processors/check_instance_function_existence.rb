@@ -1,8 +1,10 @@
 class CheckInstanceFunctionExistence
   def run(node)
+    identifier = node.real_identifier.to_s
+    return if node.compiler_verified_target? && identifier == '=='
+
     value = node.value
     type = value.my_type
-    identifier = node.real_identifier.to_s
     return unless type.concrete?
 
     if klass = value.my_class_type

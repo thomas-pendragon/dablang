@@ -9,12 +9,17 @@ class DabNodeInstanceCall < DabNodeExternalBasecall
   lower_with Uncomplexify
   early_after_init BlockToVariable
 
-  def initialize(value, identifier, arglist, block)
+  def initialize(value, identifier, arglist, block, compiler_verified_target: false)
+    @compiler_verified_target = compiler_verified_target
     super(arglist)
     pre_insert(DabNodeLiteralNil.new)
     pre_insert(identifier)
     pre_insert(block || DabNodeLiteralNil.new)
     pre_insert(value)
+  end
+
+  def compiler_verified_target?
+    @compiler_verified_target
   end
 
   def children_info

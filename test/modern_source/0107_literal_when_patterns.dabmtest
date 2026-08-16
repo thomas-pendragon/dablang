@@ -1,0 +1,188 @@
+## SOURCE
+def subject():Fixnum
+print("subject\n")
+return 2
+end
+def empty_subject():Boolean
+print("empty-subject\n")
+return true
+end
+def main()
+case subject()
+when 1
+print("wrong-one\n")
+when 2
+print("matched-two\n")
+when 2
+print("wrong-duplicate\n")
+when "2"
+print("wrong-string\n")
+end
+print("after-first\n")
+case empty_subject()
+when true
+when true
+print("wrong-empty-fallthrough\n")
+end
+print("after-empty\n")
+end
+## EXPECTED APPLICATION STDOUT
+subject
+matched-two
+after-first
+empty-subject
+after-empty
+
+## NOTE
+Explicitly noncanonical OR-055 sequential literal-pattern coverage; no comma alternatives, explicit else, bindings, case result, PL-010, Regex, or backend behavior.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "2" 
+                                 W_STRING "after-empty
+" 
+                                 W_STRING "after-first
+" 
+                                 W_STRING "empty-subject
+" 
+                                 W_STRING "matched-two
+" 
+                                 W_STRING "subject
+" 
+                                 W_STRING "wrong-duplicate
+" 
+                                 W_STRING "wrong-empty-fallthrough
+" 
+                                 W_STRING "wrong-one
+" 
+                                 W_STRING "wrong-string
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fempty_subject:
+                                 STACK_RESERVE 0
+/* "empty-subje */               LOAD_STRING R0, _DATA + 28, 14
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 LOAD_TRUE R1
+                                 RETURN R1
+                   __Fempty_subject_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* subject      */               CALL R0, S56
+/* 1            */               LOAD_NUMBER R1, 1
+/* ==           */               INSTCALL R2, R1, S5, R0
+                                 JMP_IF R2, L1, L2
+                   L1:
+/* "wrong-one." */               LOAD_STRING R3, _DATA + 107, 10
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 JMP L3
+                   L2:
+/* 2            */               LOAD_NUMBER R4, 2
+/* ==           */               INSTCALL R5, R4, S5, R0
+                                 JMP_IF R5, L4, L5
+                   L4:
+/* "matched-two */               LOAD_STRING R6, _DATA + 43, 12
+/* PRINT        */               SYSCALL RNIL, 0, R6
+                                 JMP L3
+                   L5:
+/* 2            */               LOAD_NUMBER R7, 2
+/* ==           */               INSTCALL R8, R7, S5, R0
+                                 JMP_IF R8, L6, L7
+                   L6:
+/* "wrong-dupli */               LOAD_STRING R9, _DATA + 65, 16
+/* PRINT        */               SYSCALL RNIL, 0, R9
+                                 JMP L3
+                   L7:
+/* "2"          */               LOAD_STRING R10, _DATA + 0, 1
+/* ==           */               INSTCALL R11, R10, S5, R0
+                                 JMP_IF R11, L8, L3
+                   L8:
+/* "wrong-strin */               LOAD_STRING R12, _DATA + 118, 13
+/* PRINT        */               SYSCALL RNIL, 0, R12
+                                 JMP L3
+                   L3:
+/* "after-first */               LOAD_STRING R13, _DATA + 15, 12
+/* PRINT        */               SYSCALL RNIL, 0, R13
+/* empty_subjec */               CALL R14, S54
+                                 LOAD_TRUE R15
+/* ==           */               INSTCALL R16, R15, S5, R14
+                                 JMP_IF R16, L9, L10
+                   L10:
+                                 LOAD_TRUE R17
+/* ==           */               INSTCALL R18, R17, S5, R14
+                                 JMP_IF R18, L11, L9
+                   L11:
+/* "wrong-empty */               LOAD_STRING R19, _DATA + 82, 24
+/* PRINT        */               SYSCALL RNIL, 0, R19
+                                 JMP L9
+                   L9:
+/* "after-empty */               LOAD_STRING R20, _DATA + 2, 12
+/* PRINT        */               SYSCALL RNIL, 0, R20
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsubject:
+                                 STACK_RESERVE 0
+/* "subject."   */               LOAD_STRING R0, _DATA + 56, 8
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* 2            */               LOAD_NUMBER R1, 2
+                                 RETURN R1
+                   __Fsubject_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "empty_subject" 
+                                 W_STRING "main" 
+                                 W_STRING "subject" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* empty_subjec */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 26 
+/* subject      */               W_SYMBOL _SDAT + 31 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* empty_subjec */               W_METHOD 54, -1, Fempty_subject, 0, __Fempty_subject_END - Fempty_subject, 0
+/* $ret<Boolean */               W_METHOD_ARG -1, 3
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* subject      */               W_METHOD 56, -1, Fsubject, 0, __Fsubject_END - Fsubject, 0
+/* $ret<Fixnum> */               W_METHOD_ARG -1, 2
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
