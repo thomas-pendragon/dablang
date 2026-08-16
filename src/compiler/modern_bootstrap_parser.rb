@@ -758,6 +758,67 @@ private
   end
 end
 
+class DabModernBootstrapCaseStatement
+  attr_reader :case_token, :space_token, :subject, :subject_separator,
+              :end_token, :final_separator, :source_tokens, :source_parts,
+              :source_span
+
+  def initialize(
+    case_token:,
+    space_token:,
+    subject:,
+    subject_separator:,
+    end_token:,
+    final_separator:
+  )
+    @case_token = case_token
+    @space_token = space_token
+    @subject = subject
+    @subject_separator = subject_separator
+    @end_token = end_token
+    @final_separator = final_separator
+    @source_tokens = [
+      case_token,
+      space_token,
+      *subject_tokens,
+      subject_separator,
+      end_token,
+      final_separator,
+    ].freeze
+    @source_parts = source_tokens.map(&:source_string).freeze
+    @source_span = DabSourceSpan.new(
+      start_location: case_token.source_span.start_location,
+      end_location: final_separator.source_span.end_location
+    )
+    freeze
+  end
+
+  def kind
+    :case_statement
+  end
+
+  def lower
+    DabNodeTreeBlock.new.tap do |block|
+      block.insert(lower_subject)
+    end
+  end
+
+private
+
+  def subject_tokens
+    return subject.source_tokens if subject.respond_to?(:source_tokens)
+
+    [subject]
+  end
+
+  def lower_subject
+    return subject.lower if subject.is_a?(DabModernBootstrapLocalReference) ||
+                            subject.is_a?(DabModernBootstrapDirectCall)
+
+    DabModernBootstrapLiterals.lower(subject)
+  end
+end
+
 class DabModernBootstrapElsifClause
   attr_reader :elsif_token, :space_token, :condition, :condition_separator,
               :body, :source_tokens, :source_parts, :source_span
@@ -1777,6 +1838,7 @@ private
     if body_item.is_a?(DabModernBootstrapIfStatement) ||
        body_item.is_a?(DabModernBootstrapUnlessStatement) ||
        body_item.is_a?(DabModernBootstrapWhileStatement) ||
+       body_item.is_a?(DabModernBootstrapCaseStatement) ||
        body_item.is_a?(DabModernBootstrapPostfixGuard)
       return body_item.lower
     end
@@ -1821,6 +1883,7 @@ class DabModernBootstrapDocument
       end_location: declarations.fetch(-1).source_span.end_location
     )
     @bindings_by_reference = preflight_locals!.freeze
+    preflight_case_subject_calls!
     freeze
   end
 
@@ -1863,6 +1926,13 @@ private
   )
     body_items.each do |body_item|
       case body_item
+      when DabModernBootstrapCaseStatement
+        preflight_case_subject!(
+          body_item.subject,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name
+        )
       when DabModernBootstrapWhileStatement
         preflight_if_condition!(
           body_item.condition,
@@ -2111,6 +2181,37 @@ private
     bindings_by_reference[condition] = actual_type
   end
 
+  def preflight_case_subject!(subject, bindings, bindings_by_reference, parameters_by_name)
+    if subject.is_a?(DabModernBootstrapDirectCall)
+      preflight_call_values!(subject, bindings, bindings_by_reference, parameters_by_name)
+      return
+    end
+
+    if subject.is_a?(DabModernBootstrapLocalReference)
+      binding = bindings[subject.name]
+      parameter = parameters_by_name[subject.name]
+      unless binding || parameter
+        raise DabModernBootstrapParseError.new(
+          DabModernBootstrapParser::EXPECT_CASE_SUBJECT_MESSAGE,
+          source_span: subject.source_span
+        )
+      end
+
+      bindings_by_reference[subject] = if binding
+                                         declaration = binding.fetch(:declaration)
+                                         if declaration.annotated?
+                                           declaration.declared_type
+                                         else
+                                           binding.fetch(:latest_write).initializer_type
+                                         end
+                                       else
+                                         DabType.parse(parameter.type_name.text)
+                                       end
+    end
+
+    preflight_interpolations!(subject, bindings, parameters_by_name)
+  end
+
   def preflight_interpolations!(value, bindings, parameters_by_name)
     interpolation_tokens(value).each do |token|
       token.value.splices.each do |splice|
@@ -2173,6 +2274,9 @@ private
     end
     if value.is_a?(DabModernBootstrapPostfixGuard)
       return interpolation_tokens(value.guarded_item)
+    end
+    if value.is_a?(DabModernBootstrapCaseStatement)
+      return interpolation_tokens(value.subject)
     end
 
     []
@@ -2324,9 +2428,82 @@ private
     end
   end
 
+  def preflight_case_subject_calls!
+    declarations_by_name = @declarations.to_h { |declaration| [declaration.callable_name.text, declaration] }
+    @declarations.each do |declaration|
+      each_case_statement(declaration.body_items) do |statement|
+        next unless statement.subject.is_a?(DabModernBootstrapDirectCall)
+
+        preflight_ring_independent_case_call!(statement.subject, declarations_by_name)
+      end
+    end
+  end
+
+  def each_case_statement(items, &block)
+    items.each do |item|
+      case item
+      when DabModernBootstrapCaseStatement
+        yield item
+      when DabModernBootstrapWhileStatement
+        each_case_statement(item.loop_items, &block)
+      when DabModernBootstrapPostfixGuard
+        each_case_statement(item.branch_items, &block)
+      when DabModernBootstrapIfStatement, DabModernBootstrapUnlessStatement
+        item.branch_item_groups.each { |group| each_case_statement(group, &block) }
+      end
+    end
+  end
+
+  def preflight_ring_independent_case_call!(call, declarations_by_name)
+    target = declarations_by_name[call.callable_name.text]
+    unless target
+      reject_call(
+        call,
+        %(unknown Modern call target "#{call.callable_name.text}"),
+        call.callable_name.source_span
+      )
+    end
+
+    preflight_arity!(call, target.parameters.length)
+    call.arguments.zip(target.parameters).each do |argument, parameter|
+      actual_type = ring_independent_case_argument_type(argument)
+      expected_type = DabType.parse(parameter.type_name.text)
+      next if expected_type.can_assign_from?(actual_type)
+
+      reject_argument_type!(call, argument, parameter, actual_type)
+    end
+  end
+
+  def ring_independent_case_argument_type(argument)
+    if argument.is_a?(DabModernBootstrapLocalReference)
+      return @bindings_by_reference.fetch(argument)
+    end
+
+    if argument.is_a?(DabModernBootstrapLiteralMemberCall)
+      call = argument
+      target = "#{call.receiver_type_name}##{call.callable_name.text}"
+      unless target == 'String#length'
+        reject_call(
+          call,
+          %(unknown Modern member target "#{target}"),
+          call.callable_name.source_span
+        )
+      end
+      preflight_member_arity!(call, target, 0)
+      preflight_member_result_range!(call)
+      return DabType.parse('Int32')
+    end
+
+    DabModernBootstrapLiterals.flow_type(argument)
+  end
+
   def preflight_calls_in_items!(items, declaration, unit, declarations_by_name)
     items.each do |body_item|
       case body_item
+      when DabModernBootstrapCaseStatement
+        if body_item.subject.is_a?(DabModernBootstrapDirectCall)
+          preflight_call_result!(body_item.subject, unit, declarations_by_name)
+        end
       when DabModernBootstrapWhileStatement
         preflight_calls_in_items!(body_item.loop_items, declaration, unit, declarations_by_name)
       when DabModernBootstrapPostfixGuard
@@ -2736,6 +2913,22 @@ class DabModernBootstrapParser
   WHILE_BODY_REASSIGNMENT_MESSAGE = 'Modern while bodies do not yet support local reassignment'.freeze
   EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE =
     'invalid Modern while guard reassignment: expected true or false'.freeze
+  EXPECT_CASE_SPACE_MESSAGE =
+    'invalid Modern case statement: expected exactly one ASCII space after "case"'.freeze
+  EXPECT_CASE_SUBJECT_MESSAGE =
+    'invalid Modern case subject: expected an existing Modern literal, earlier local/parameter, or same-document call result'.freeze
+  EXPECT_CASE_SUBJECT_SEPARATOR_MESSAGE =
+    'invalid Modern case statement: expected a separator (LF, semicolon, or line comment) after subject'.freeze
+  UNEXPECTED_CASE_WHEN_MESSAGE =
+    'unexpected Modern "when": OR-054 does not support when clauses'.freeze
+  UNEXPECTED_CASE_ELSE_MESSAGE =
+    'unexpected Modern "else": OR-054 does not support else clauses'.freeze
+  CASE_NOT_EMPTY_MESSAGE =
+    'invalid Modern case statement: OR-054 case shell must be empty'.freeze
+  EXPECT_CASE_END_MESSAGE =
+    'unterminated Modern case statement: expected closing "end"'.freeze
+  EXPECT_CASE_END_SEPARATOR_MESSAGE =
+    'invalid Modern case statement: expected a separator (LF, semicolon, or line comment) after closing "end"'.freeze
   EXPECT_POSTFIX_SPACE_BEFORE_MESSAGE =
     'invalid Modern postfix guard: expected exactly one ASCII space before "if" or "unless"'.freeze
   EXPECT_POSTFIX_IF_SPACE_MESSAGE =
@@ -3115,6 +3308,11 @@ private
         next
       end
 
+      if contextual_case_candidate?
+        items << parse_case_statement
+        next
+      end
+
       if contextual_let_start?
         if branch_rejection_context && branch_rejection_context != :while
           reject_branch_binding(peek_token, branch_rejection_context)
@@ -3329,6 +3527,90 @@ private
     )
   end
 
+  def parse_case_statement
+    case_token = next_token
+    space_token = next_token
+    reject(space_token, EXPECT_CASE_SPACE_MESSAGE) unless space_token.kind == :space
+    reject(peek_token, EXPECT_CASE_SPACE_MESSAGE) if peek_token.kind == :space
+
+    subject = parse_case_subject
+    subject_separator = expect_case_separator(EXPECT_CASE_SUBJECT_SEPARATOR_MESSAGE)
+    skip_body_separators
+
+    reject(peek_token, EXPECT_CASE_END_MESSAGE) if peek_token.kind == :eof
+    reject(peek_token, UNEXPECTED_CASE_WHEN_MESSAGE) if contextual_case_clause_candidate?('when')
+    reject(peek_token, UNEXPECTED_CASE_ELSE_MESSAGE) if contextual_case_clause_candidate?('else')
+    reject(peek_token, CASE_NOT_EMPTY_MESSAGE) unless peek_token.kind == :end
+
+    end_token = next_token
+    final_separator = expect_case_separator(EXPECT_CASE_END_SEPARATOR_MESSAGE)
+    DabModernBootstrapCaseStatement.new(
+      case_token: case_token,
+      space_token: space_token,
+      subject: subject,
+      subject_separator: subject_separator,
+      end_token: end_token,
+      final_separator: final_separator
+    )
+  end
+
+  def parse_case_subject
+    token = peek_token
+    reject_invalid_separator(token)
+    reject(token, token.diagnostic_message) if token.diagnostic_message
+
+    if direct_call_start?
+      return parse_direct_call(allow_call_result_arguments: false)
+    end
+
+    if literal_member_start?
+      member = parse_literal_member(argument: true)
+      return reject_case_subject(EXPECT_CASE_SUBJECT_MESSAGE, member)
+    end
+
+    if VALUE_KINDS.include?(token.kind)
+      return next_token.tap { |literal| reject_integer_overflow(literal) }
+    end
+
+    if token.kind == :identifier
+      return reject_case_subject_form if adjacent_member_tail?(token)
+
+      return DabModernBootstrapLocalReference.new(next_token)
+    end
+
+    reject_case_subject_form
+  end
+
+  def reject_case_subject(message, subject)
+    raise DabModernBootstrapParseError.new(message, source_span: subject.source_span)
+  end
+
+  def reject_case_subject_form
+    first_token = next_token
+    last_token = first_token
+    last_token = next_token until separator?(peek_token) ||
+                                  %i[eof end carriage_return].include?(peek_token.kind)
+    source_span = DabSourceSpan.new(
+      start_location: first_token.source_span.start_location,
+      end_location: last_token.source_span.end_location
+    )
+    raise DabModernBootstrapParseError.new(EXPECT_CASE_SUBJECT_MESSAGE, source_span: source_span)
+  end
+
+  def adjacent_member_tail?(token)
+    dot = peek_token(1)
+    dot.kind == :dot && token.source_span.end_offset == dot.source_span.start_offset
+  end
+
+  def expect_case_separator(message)
+    token = next_token
+    reject_invalid_separator(token)
+    return token if separator?(token)
+
+    reject_invalid_separator_after_spaces(token)
+    reject(token, message)
+  end
+
   def parse_if_condition(expectation_message)
     condition_token = next_token
     reject_invalid_separator(condition_token)
@@ -3395,6 +3677,20 @@ private
 
     distance = distance_after_horizontal_whitespace(1)
     peek_token(distance).kind != :equal
+  end
+
+  def contextual_case_candidate?
+    token = peek_token
+    return false unless token.kind == :identifier && token.text == 'case'
+    return false if direct_call_start?
+
+    !@callable_name_composer.adjacent_suffix?(token, peek_token(1))
+  end
+
+  def contextual_case_clause_candidate?(name)
+    token = peek_token
+    token.kind == :identifier && token.text == name && !direct_call_start? &&
+      !@callable_name_composer.adjacent_suffix?(token, peek_token(1))
   end
 
   def contextual_break_candidate?
