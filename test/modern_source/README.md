@@ -1030,6 +1030,23 @@ result, binding, general expression/operator or truthiness policy, PL-010
 program, Regex pattern, opcode, schema, backend/native behavior, Ring or FFI
 expansion, formatter, decompiler, or later-row behavior.
 
+### PL-010: select with explicit `case` else
+
+Version `0.0.83` adds one optional final contextual `else` to the existing
+statement-only Modern `case`. The subject still executes once, alternatives
+remain lazy and ordered, and the first matching clause terminates the case.
+When no pattern matches, the explicit else body executes. The same recursive
+nonbinding body and lexical transfer rules apply to every clause.
+
+Fixture `0109_select_with_case.dabmtest` is the exact canonical PL-010 program.
+It selects the second clause through comma-separated alternatives, returns
+`"few\n"` from the helper, and prints exact native output `few\n`. The golden
+uses only existing return, tree-block, equality, short-circuit, SSA/MOV,
+`JMP_IF`, and `JMP` machinery. It adds no case result, implicit nil, binding,
+general expression/operator, truthiness, exhaustiveness, Regex, backend,
+opcode, schema, VM, native, Ring, FFI, formatter, decompiler, or later-row
+behavior.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

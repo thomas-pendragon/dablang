@@ -153,6 +153,7 @@ describe 'sequential literal Modern when patterns' do
     comparisons = statement.lower.all_nodes(DabNodeInstanceCall).select do |call|
       call.real_identifier.to_s == '=='
     end
+    expect(statement.else_clause).to be_nil
     expect(comparisons.map { |call| call.value.constant_value }).to eq([1, 2, 3])
   end
 
@@ -411,11 +412,6 @@ describe 'sequential literal Modern when patterns' do
         DabModernBootstrapParser::EXPECT_WHEN_PATTERN_SEPARATOR_MESSAGE,
         ' ',
         :last,
-      ],
-      [
-        "def main()\ncase true\nwhen true\nelse\nend\nend\n",
-        DabModernBootstrapParser::UNEXPECTED_CASE_ELSE_MESSAGE,
-        'else',
       ],
       [
         "def main()\ncase true\nprint(\"body\")\nend\nend\n",
