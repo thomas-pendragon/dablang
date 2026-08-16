@@ -1,5 +1,7 @@
 class CheckInstanceFunctionExistence
   def run(node)
+    return if node.compiler_verified_target?
+
     value = node.value
     type = value.my_type
     identifier = node.real_identifier.to_s

@@ -961,6 +961,38 @@ Literal patterns, comma alternatives, `case` `else`, body clauses, case
 results, matching, general expressions or operators, OR-055, OR-056, PL-010,
 and later rows remain outside this fixture and row.
 
+### OR-055: sequential literal `when` patterns
+
+Version `0.0.81` extends the statement-only `case` shell with zero or more
+sequential clauses, each headed by exactly one existing Modern value literal.
+The subject is evaluated once and frozen in a compiler-generated local. Each
+reached pattern is evaluated lazily in source order as `pattern == subject`;
+the first true match terminates the case even when its body is empty, while no
+match continues after the closing `end`.
+
+Fixture `0107_literal_when_patterns.dabmtest` is explicitly noncanonical
+OR-055 coverage. Its Fixnum-returning subject prints `subject\n` before the
+second of four ordered clauses matches, and its Boolean-returning subject
+prints `empty-subject\n` before an empty first clause terminates matching. It
+locks this exact native output and order:
+
+```text
+subject
+matched-two
+after-first
+empty-subject
+after-empty
+```
+
+The golden uses only an impossible-source hidden local, existing literal
+nodes, compiler-generated marked `==` instance calls, tree blocks, conditional
+and unconditional jumps, and the existing assembler and VM. Clause bodies use
+only established nonbinding statements; bindings and reassignments remain
+rejected recursively. Comma alternatives, explicit `else`, case values or
+results, PL-010, general expressions/operators/truthiness, Regex patterns,
+backend/schema/native changes, Ring expansion, FFI, formatter, decompiler, and
+later rows remain outside this fixture and row.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
