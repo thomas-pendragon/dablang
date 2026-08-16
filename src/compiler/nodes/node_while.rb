@@ -46,6 +46,7 @@ class DabNodeWhile < DabNodeTreeBlock
     after_block = DabNodeBasicBlock.new
 
     bind_breaks!(loop_node, after_block)
+    bind_nexts!(loop_node, condition_block)
 
     current_block << DabNodeJump.new(condition_block)
 
@@ -68,6 +69,16 @@ class DabNodeWhile < DabNodeTreeBlock
         child.bind_to!(after_block)
       elsif !child.is_a?(DabNodeWhile)
         bind_breaks!(child, after_block)
+      end
+    end
+  end
+
+  def bind_nexts!(node, condition_block)
+    node.each do |child|
+      if child.is_a?(DabNodeNext)
+        child.bind_to!(condition_block)
+      elsif !child.is_a?(DabNodeWhile)
+        bind_nexts!(child, condition_block)
       end
     end
   end

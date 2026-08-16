@@ -895,6 +895,44 @@ OR-053+, and later rows remain outside this fixture and row. The compiler,
 generated artifacts, and native runtime remain suitable only for trusted local
 input.
 
+Fixture `0105_structured_next.dabmtest` is the explicitly noncanonical OR-053
+integration contract. Its finite outer and inner Boolean guards are assigned
+literal `false` before selected `next` items, proving that each owning loop
+reevaluates its existing condition exactly once without hanging. The nested
+item advances only the nearest inner loop, after which the outer body resumes;
+the direct outer item then skips its post-`next` return and `break` before
+falling through after the loop.
+
+Separate calls select recursive conditional `next`, both selected and
+unselected postfix forms, a return before `next`, and a break before `next`.
+Dead calls after each transfer remain structurally parsed and preflighted. The
+fixture's exact native output is:
+
+```text
+outer
+inner
+after-inner
+after-outer
+after-recursive
+recursive-fallthrough
+after-recursive
+after-postfix
+postfix-fallthrough
+after-postfix
+return-before-next
+break-before-next
+after-break
+```
+
+The golden uses only the existing conditional and unconditional jumps, tree
+blocks, optimizer, assembler, and VM. It adds no opcode, schema, native, Ring,
+FFI, formatter, or decompiler behavior. Existing PL-009 guard writes and
+OR-052 `break` ownership keep their bounded policies. Loop values or labels,
+loop expressions, `for`/`until`/`case`, non-loop control flow, broader loop
+writes/bindings/flow/phi, truthiness, general expressions/operators, OR-054+,
+and later rows remain outside this fixture and row. The compiler, generated
+artifacts, and native runtime remain suitable only for trusted local input.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
