@@ -18,6 +18,13 @@ describe 'Regex runtime object and engine contract' do
     )
   end
 
+  def invoke_binary_ruby(script, stdin_data: '')
+    Open3.capture3(
+      RbConfig.ruby, '-e', 'STDOUT.binmode; load ARGV.shift', script,
+      stdin_data: stdin_data, binmode: true, chdir: root
+    )
+  end
+
   def compile(source)
     Dir.mktmpdir('dab-regex-runtime-spec') do |directory|
       source_path = File.join(directory, 'program.dab')
@@ -27,9 +34,8 @@ describe 'Regex runtime object and engine contract' do
         RbConfig.ruby, File.join(root, 'src/compiler/compiler.rb'), source_path, chdir: root
       )
       expect(compiler_status.exitstatus).to eq(0), compiler_error
-      bytecode, assembler_error, assembler_status = Open3.capture3(
-        RbConfig.ruby, File.join(root, 'src/tobinary/tobinary.rb'),
-        stdin_data: assembly, binmode: true, chdir: root
+      bytecode, assembler_error, assembler_status = invoke_binary_ruby(
+        File.join(root, 'src/tobinary/tobinary.rb'), stdin_data: assembly
       )
       expect(assembler_status.exitstatus).to eq(0), assembler_error
       File.binwrite(bytecode_path, bytecode)
@@ -73,6 +79,16 @@ describe 'Regex runtime object and engine contract' do
 
   before do
     skip 'native VM has not been built' unless File.executable?(vm)
+  end
+
+  it 'transports child Ruby stdout byte-for-byte' do
+    Dir.mktmpdir('dab-regex-binary-transport') do |directory|
+      emitter = File.join(directory, 'emitter.rb')
+      expected = (0..255).to_a.pack('C*')
+      File.binwrite(emitter, "STDOUT.write((0..255).to_a.pack('C*'))\n")
+      stdout, stderr, status = invoke_binary_ruby(emitter)
+      expect([status.exitstatus, stdout, stderr]).to eq([0, expected, ''])
+    end
   end
 
   it 'appends built-in Regex class 20 and exposes only Regex.new' do
