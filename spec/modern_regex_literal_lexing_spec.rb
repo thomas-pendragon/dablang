@@ -43,6 +43,10 @@ describe 'Modern regular-expression literal lexing' do
     bytes.byteslice(body_start, body_end - body_start)
   end
 
+  def normalized_fixture_sha256(path)
+    Digest::SHA256.hexdigest(File.binread(path).gsub("\r\n", "\n"))
+  end
+
   it 'normalizes CRLF fixture transport before locating sections' do
     Dir.mktmpdir('dab-modern-regex-crlf') do |directory|
       path = File.join(directory, 'fixture.dabmtest')
@@ -52,6 +56,18 @@ describe 'Modern regular-expression literal lexing' do
       )
 
       expect(fixture_section(path, 'STDOUT')).to eq("assembly\n")
+    end
+  end
+
+  it 'normalizes CRLF fixture transport before hashing canonical bytes' do
+    canonical_path = File.join(root, 'test/modern_source/0106_case_subject_once.dabmtest')
+    canonical = File.binread(canonical_path).gsub("\r\n", "\n")
+
+    Dir.mktmpdir('dab-modern-regex-crlf-hash') do |directory|
+      path = File.join(directory, 'fixture.dabmtest')
+      File.binwrite(path, canonical.gsub("\n", "\r\n"))
+
+      expect(normalized_fixture_sha256(path)).to eq(Digest::SHA256.hexdigest(canonical))
     end
   end
 
@@ -313,7 +329,7 @@ describe 'Modern regular-expression literal lexing' do
         '5d6f7e67ad4cbc95d4938d98de370640467cafe0e9b6ddad06f61bd92cf067ae',
     }
     expected_hashes.each do |basename, expected|
-      expect(Digest::SHA256.file(File.join(modern, basename)).hexdigest).to eq(expected)
+      expect(normalized_fixture_sha256(File.join(modern, basename))).to eq(expected)
     end
   end
 end
