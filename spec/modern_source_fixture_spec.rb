@@ -154,6 +154,7 @@ describe DabModernSourceFixture do
       0105_structured_next.dabmtest
       0106_case_subject_once.dabmtest
       0107_literal_when_patterns.dabmtest
+      0108_comma_when_alternatives.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|
