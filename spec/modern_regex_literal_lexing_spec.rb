@@ -33,7 +33,7 @@ describe 'Modern regular-expression literal lexing' do
   end
 
   def fixture_section(path, name)
-    bytes = File.binread(path)
+    bytes = File.binread(path).gsub("\r\n", "\n")
     marker = "## #{name}\n"
     start = bytes.index(marker)
     raise "missing fixture section #{name} in #{path}" unless start
@@ -41,6 +41,18 @@ describe 'Modern regular-expression literal lexing' do
     body_start = start + marker.bytesize
     body_end = bytes.index(/^## [A-Z ]+\n/, body_start) || bytes.bytesize
     bytes.byteslice(body_start, body_end - body_start)
+  end
+
+  it 'normalizes CRLF fixture transport before locating sections' do
+    Dir.mktmpdir('dab-modern-regex-crlf') do |directory|
+      path = File.join(directory, 'fixture.dabmtest')
+      File.binwrite(
+        path,
+        "## SOURCE\r\ndef main\r\nend\r\n## STDOUT\r\nassembly\r\n## STATUS\r\n0\r\n"
+      )
+
+      expect(fixture_section(path, 'STDOUT')).to eq("assembly\n")
+    end
   end
 
   it 'keeps hash as the sole comment marker and freezes two ordinary slash tokens' do
