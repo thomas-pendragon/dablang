@@ -759,23 +759,26 @@ private
 end
 
 class DabModernBootstrapWhenClause
-  attr_reader :when_token, :space_token, :pattern, :pattern_separator,
-              :body, :source_tokens, :source_parts, :source_span
+  attr_reader :when_token, :space_token, :pattern, :patterns, :pattern_tokens,
+              :pattern_separator, :body, :source_tokens, :source_parts, :source_span
 
   def initialize(
     when_token:,
     space_token:,
-    pattern:,
+    patterns:,
+    pattern_tokens:,
     pattern_separator:,
     body:,
     end_location:
   )
     @when_token = when_token
     @space_token = space_token
-    @pattern = pattern
+    @patterns = patterns.freeze
+    @pattern = @patterns.fetch(0)
+    @pattern_tokens = pattern_tokens.freeze
     @pattern_separator = pattern_separator
     @body = body.freeze
-    @source_tokens = [when_token, space_token, pattern, pattern_separator].freeze
+    @source_tokens = [when_token, space_token, *pattern_tokens, pattern_separator].freeze
     @source_parts = source_tokens.map(&:source_string).freeze
     @source_span = DabSourceSpan.new(
       start_location: when_token.source_span.start_location,
@@ -862,19 +865,28 @@ private
     return if index >= clauses.length
 
     clause = clauses.fetch(index)
-    arguments = DabNode.new
-    arguments.insert(DabNodeLocalVar.new(subject_identifier))
-    condition = DabNodeInstanceCall.new(
-      DabModernBootstrapLiterals.lower(clause.pattern, consumed: true),
-      '==',
-      arguments,
-      nil,
-      compiler_verified_target: true
-    )
+    condition = lower_clause_condition(clause.patterns, subject_identifier)
     selected = lower_clause_body(clause.body)
     rejected = DabNodeTreeBlock.new
     append_clause_tail(rejected, clauses, subject_identifier, index + 1)
     block.insert(DabNodeIf.new(condition, selected, rejected))
+  end
+
+  def lower_clause_condition(patterns, subject_identifier)
+    comparisons = patterns.map do |pattern|
+      arguments = DabNode.new
+      arguments.insert(DabNodeLocalVar.new(subject_identifier))
+      DabNodeInstanceCall.new(
+        DabModernBootstrapLiterals.lower(pattern, consumed: true),
+        '==',
+        arguments,
+        nil,
+        compiler_verified_target: true
+      )
+    end
+    comparisons.reverse_each.reduce do |right, left|
+      DabNodeOperator.new(left, right, :'||')
+    end
   end
 
   def lower_clause_body(items)
@@ -2009,7 +2021,9 @@ private
           parameters_by_name
         )
         body_item.when_clauses.each do |clause|
-          preflight_interpolations!(clause.pattern, bindings, parameters_by_name)
+          clause.patterns.each do |pattern|
+            preflight_interpolations!(pattern, bindings, parameters_by_name)
+          end
           preflight_body_items!(
             clause.body,
             declaration,
@@ -2392,7 +2406,8 @@ private
 
     if value.is_a?(DabModernBootstrapCaseStatement)
       return interpolation_tokens(value.subject) + value.when_clauses.flat_map do |clause|
-        interpolation_tokens(clause.pattern) + clause.body.flat_map { |item| interpolation_tokens(item) }
+        clause.patterns.flat_map { |pattern| interpolation_tokens(pattern) } +
+        clause.body.flat_map { |item| interpolation_tokens(item) }
       end
     end
 
@@ -3052,6 +3067,8 @@ class DabModernBootstrapParser
     'invalid Modern when clause: expected exactly one ASCII space after "when"'.freeze
   EXPECT_WHEN_PATTERN_MESSAGE =
     'invalid Modern when pattern: expected one existing Modern literal'.freeze
+  EXPECT_WHEN_ALTERNATIVE_MESSAGE =
+    'invalid Modern when alternative: expected one existing Modern literal after ","'.freeze
   EXPECT_WHEN_PATTERN_SEPARATOR_MESSAGE =
     'invalid Modern when clause: expected a separator (LF, semicolon, or line comment) after pattern'.freeze
   UNEXPECTED_WHEN_COMMA_MESSAGE =
@@ -3702,6 +3719,25 @@ private
     reject(peek_token, EXPECT_WHEN_SPACE_MESSAGE) if horizontal_whitespace?(peek_token)
 
     pattern = parse_when_pattern
+    patterns = [pattern]
+    pattern_tokens = [pattern]
+    loop do
+      whitespace = consume_horizontal_whitespace
+      unless peek_token.kind == :comma
+        unless whitespace.empty?
+          reject_invalid_separator(peek_token)
+          reject(whitespace.fetch(0), EXPECT_WHEN_PATTERN_SEPARATOR_MESSAGE)
+        end
+        break
+      end
+
+      pattern_tokens.concat(whitespace)
+      pattern_tokens << next_token
+      pattern_tokens.concat(consume_horizontal_whitespace)
+      alternative = parse_when_pattern(EXPECT_WHEN_ALTERNATIVE_MESSAGE)
+      patterns << alternative
+      pattern_tokens << alternative
+    end
     pattern_separator = expect_when_separator
     body = parse_body(
       local_bindings: local_bindings.dup,
@@ -3712,42 +3748,44 @@ private
     DabModernBootstrapWhenClause.new(
       when_token: when_token,
       space_token: space_token,
-      pattern: pattern,
+      patterns: patterns,
+      pattern_tokens: pattern_tokens,
       pattern_separator: pattern_separator,
       body: body,
       end_location: peek_token.source_span.start_location
     )
   end
 
-  def parse_when_pattern
+  def parse_when_pattern(expectation = EXPECT_WHEN_PATTERN_MESSAGE)
     token = peek_token
     reject_invalid_separator(token)
     reject(token, token.diagnostic_message) if token.diagnostic_message
-    reject(token, EXPECT_WHEN_PATTERN_MESSAGE) if token.kind == :eof
+    reject(token, expectation) if token.kind == :eof || token.kind == :comma ||
+                                  token.kind == :end || separator?(token)
 
     if direct_call_start?
-      return reject_when_pattern(parse_direct_call)
+      return reject_when_pattern(parse_direct_call, expectation)
     end
 
     if literal_member_start?
-      return reject_when_pattern(parse_literal_member(argument: true))
+      return reject_when_pattern(parse_literal_member(argument: true), expectation)
     end
 
     if VALUE_KINDS.include?(token.kind)
       return next_token.tap { |literal| reject_integer_overflow(literal) }
     end
 
-    reject_when_pattern_form
+    reject_when_pattern_form(expectation)
   end
 
-  def reject_when_pattern(pattern)
+  def reject_when_pattern(pattern, expectation)
     raise DabModernBootstrapParseError.new(
-      EXPECT_WHEN_PATTERN_MESSAGE,
+      expectation,
       source_span: pattern.source_span
     )
   end
 
-  def reject_when_pattern_form
+  def reject_when_pattern_form(expectation)
     first_token = next_token
     last_token = first_token
     last_token = next_token until separator?(peek_token) ||
@@ -3756,7 +3794,7 @@ private
       start_location: first_token.source_span.start_location,
       end_location: last_token.source_span.end_location
     )
-    raise DabModernBootstrapParseError.new(EXPECT_WHEN_PATTERN_MESSAGE, source_span: source_span)
+    raise DabModernBootstrapParseError.new(expectation, source_span: source_span)
   end
 
   def expect_when_separator

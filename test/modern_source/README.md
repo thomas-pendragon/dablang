@@ -993,6 +993,43 @@ results, PL-010, general expressions/operators/truthiness, Regex patterns,
 backend/schema/native changes, Ring expansion, FFI, formatter, decompiler, and
 later rows remain outside this fixture and row.
 
+### OR-056: lazy comma-separated `when` alternatives
+
+Version `0.0.82` extends each existing literal `when` pattern to an ordered
+list of one or more existing Modern value literals. Optional ASCII SPACE or
+TAB is accepted around each comma, but line breaks, semicolons, and comments
+remain final clause-header separators. Alternatives compare lazily from left
+to right as `pattern == subject`; the first true alternative selects the one
+shared clause body and terminates the case.
+
+Fixture `0108_comma_when_alternatives.dabmtest` is explicitly noncanonical
+OR-056 coverage. It proves one effectful subject evaluation, lazy order within
+and across clauses, duplicate and type-mismatched alternatives, first-match
+selection, a selected empty body, reached interpolation, and post-case
+continuation. It locks this exact native output and order:
+
+```text
+subject
+matched-two-alternative
+after-first
+second-subject
+matched-second-clause
+after-second
+matched-after-mismatch
+empty-subject
+after-empty
+matched-interpolation
+after-interpolation
+```
+
+The golden reuses the scanner-impossible subject local, existing literal and
+interpolation lowering, compiler-generated marked `==` instance calls,
+compiler-internal short-circuit `||`, one conditional per clause, and the
+existing assembler and VM. It introduces no explicit `else`, case value or
+result, binding, general expression/operator or truthiness policy, PL-010
+program, Regex pattern, opcode, schema, backend/native behavior, Ring or FFI
+expansion, formatter, decompiler, or later-row behavior.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

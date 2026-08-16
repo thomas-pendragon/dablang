@@ -378,7 +378,7 @@ describe 'sequential literal Modern when patterns' do
     expect(unit.constants.to_a).to be_empty
   end
 
-  it 'implements when spacing, pattern, separator, comma, else, and body diagnostics with exact spans' do
+  it 'implements when spacing, pattern, separator, else, and body diagnostics with exact spans' do
     cases = [
       [
         "def main()\ncase true\nwhen\ttrue\nend\nend\n",
@@ -411,11 +411,6 @@ describe 'sequential literal Modern when patterns' do
         DabModernBootstrapParser::EXPECT_WHEN_PATTERN_SEPARATOR_MESSAGE,
         ' ',
         :last,
-      ],
-      [
-        "def main()\ncase true\nwhen 1, 2\nend\nend\n",
-        DabModernBootstrapParser::UNEXPECTED_WHEN_COMMA_MESSAGE,
-        ',',
       ],
       [
         "def main()\ncase true\nwhen true\nelse\nend\nend\n",
