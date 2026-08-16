@@ -928,10 +928,38 @@ The golden uses only the existing conditional and unconditional jumps, tree
 blocks, optimizer, assembler, and VM. It adds no opcode, schema, native, Ring,
 FFI, formatter, or decompiler behavior. Existing PL-009 guard writes and
 OR-052 `break` ownership keep their bounded policies. Loop values or labels,
-loop expressions, `for`/`until`/`case`, non-loop control flow, broader loop
-writes/bindings/flow/phi, truthiness, general expressions/operators, OR-054+,
+loop expressions, `for`/`until`, non-loop control flow, broader loop
+writes/bindings/flow/phi, truthiness, general expressions/operators, OR-055+,
 and later rows remain outside this fixture and row. The compiler, generated
 artifacts, and native runtime remain suitable only for trusted local input.
+
+### OR-054: exactly-once empty `case` shell
+
+Version `0.0.80` adds a contextual statement-only `case subject ... end`
+shell. It accepts one existing literal, earlier same-function local or
+parameter, or one-level same-document direct-call result as its subject. The
+shell must otherwise be empty: `when`, `else`, and body items are rejected.
+The subject is evaluated once in existing source order, after which execution
+continues after the closing separator. The statement exposes no value and adds
+no matching, comparison, truthiness, exhaustiveness, or binding behavior.
+
+Fixture `0106_case_subject_once.dabmtest` is explicitly noncanonical OR-054
+coverage. Its Boolean-returning `subject` helper prints `subject\n` as the
+observable subject effect. `main` uses that call as the empty shell subject and
+then prints `after\n`, locking this exact native output and order:
+
+```text
+subject
+after
+```
+
+The golden lowers the shell only through an existing `DabNodeTreeBlock` with
+the existing standalone call node, which emits `CALL RNIL` exactly once. It
+adds no hidden local, branch, jump, comparison, opcode, schema, assembler, VM,
+native, Ring, serializer, loader, FFI, formatter, or decompiler behavior.
+Literal patterns, comma alternatives, `case` `else`, body clauses, case
+results, matching, general expressions or operators, OR-055, OR-056, PL-010,
+and later rows remain outside this fixture and row.
 
 ## Diagnostic boundary
 
