@@ -16,7 +16,6 @@ class DabType
     return DabTypeNil.new if typename == 'NilClass'
     return DabTypeFloat.new if typename == 'Float'
     return DabTypeByteBuffer.new if typename == 'ByteBuffer'
-    return DabTypeRegex.new if typename == 'Regex'
 
     raise "Unknown type #{typename}"
   end

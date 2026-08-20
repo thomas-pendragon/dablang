@@ -297,7 +297,7 @@ module_function
 
   def flow_type(token)
     return DabType.parse('String') if token.kind == :interpolated_string
-    return DabType.parse('Regex') if regex_literal?(token)
+    return DabTypeRegex.new if regex_literal?(token)
 
     DabType.parse(FLOW_TYPE_NAMES.fetch(token.kind))
   end
@@ -2880,6 +2880,7 @@ private
 
   def preflight_member_call!(call, unit)
     receiver = call.receiver_type_name
+    receiver_type = DabModernBootstrapLiterals.flow_type(call.receiver_token)
     name = call.callable_name.text
     target = "#{receiver}##{name}"
 
@@ -2893,7 +2894,7 @@ private
       end
       preflight_member_arity!(call, target, 0)
       preflight_member_result_range!(call)
-    elsif known_member_target?(unit, receiver, name)
+    elsif known_member_target?(unit, receiver, receiver_type, name)
       reject_call(
         call,
         %(unsupported Modern member target "#{target}" in the R40 dot/property-call subset),
@@ -3087,8 +3088,8 @@ private
     end
   end
 
-  def known_member_target?(unit, receiver, name)
-    DabType.parse(receiver).has_function?(name) || unit.classes.to_a.any? do |klass|
+  def known_member_target?(unit, receiver, receiver_type, name)
+    receiver_type.has_function?(name) || unit.classes.to_a.any? do |klass|
       klass.identifier.to_s == receiver && klass.functions.to_a.any? do |function|
         !function.is_static? && function.identifier.to_s == name
       end

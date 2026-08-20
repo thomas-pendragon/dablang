@@ -56,6 +56,8 @@ describe 'Regex runtime object and engine contract' do
   end
 
   def compile_modern(source)
+    skip 'Modern stdlib Ring has not been built' unless File.file?(modern_stdlib)
+
     Dir.mktmpdir('dab-modern-regex-runtime-spec') do |directory|
       source_path = File.join(directory, 'program.dabm')
       bytecode_path = File.join(directory, 'program.dabcb')
@@ -88,6 +90,8 @@ describe 'Regex runtime object and engine contract' do
   end
 
   def modern_artifact(source)
+    skip 'native disassembler has not been built' unless File.executable?(disassembler)
+
     compile_modern(source) do |assembly, bytecode, bytecode_path|
       disassembly, error, status = Open3.capture3(disassembler, bytecode_path, chdir: root, binmode: true)
       expect(status.exitstatus).to eq(0), error

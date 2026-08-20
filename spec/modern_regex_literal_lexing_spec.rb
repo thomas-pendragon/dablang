@@ -263,7 +263,6 @@ describe 'Modern regular-expression literal lexing' do
     expect([pattern.class, pattern.string]).to eq([DabNodeLiteralString, "a\0\xFF".b])
     expect(DabModernBootstrapLiterals.flow_type(token)).to be_a(DabTypeRegex)
     expect(DabModernBootstrapLiterals.type(token)).to be_a(DabTypeRegex)
-    expect(DabType.parse('Regex')).to be_a(DabTypeRegex)
 
     pattern.compile_string(DabOutput.new(double(stdout: output)))
     expect(output.string).not_to include('W_STRING')
@@ -378,6 +377,20 @@ describe 'Modern regular-expression literal lexing' do
       [offset, offset + 5]
     )
     expect(DabModernBootstrapParser::SUPPORTED_TYPE_NAMES).not_to include('Regex')
+  end
+
+  it 'keeps Regex out of general Legacy type parsing and annotation sites' do
+    expect { DabType.parse('Regex') }.to raise_error(RuntimeError, 'Unknown type Regex')
+
+    annotations = [
+      'func main<Regex>() {}',
+      'func main(value<Regex>) {}',
+      'func main() { var<Regex> value; }',
+    ]
+    annotations.each do |source|
+      stream = DabProgramStream.new(source, true, 'legacy-regex-annotation.dab')
+      expect { DabCompiler.new(stream).program }.to raise_error(RuntimeError, 'Unknown type Regex')
+    end
   end
 
   it 'gives an earlier true parser error priority over a later candidate' do
