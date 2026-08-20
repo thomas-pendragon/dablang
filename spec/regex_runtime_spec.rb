@@ -177,6 +177,11 @@ describe 'Regex runtime object and engine contract' do
     expect(defaults).to include('regex_class.add_static_reg_function("new"')
     expect(defaults.scan('regex_class.add_reg_function').length).to eq(1)
     expect(defaults).to include('"$modern_regex_case_match"')
+    registration = defaults[/for \(const auto &symbol : symbols\).+?auto &fixnum_class/m]
+    expect(registration).to include('symbol.value == "$modern_regex_case_match"')
+    guard_index = registration.index('symbol.value == "$modern_regex_case_match"')
+    method_index = registration.index('regex_class.add_reg_function')
+    expect(guard_index).to be < method_index
     regex_section = defaults[/auto &regex_class.+?auto &fixnum_class/m]
     expect(regex_section).not_to include('"matches?"', '"=="')
     expect(defaults.scan('dab_regex_verify_engine();').length).to eq(1)
