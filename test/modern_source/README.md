@@ -1049,7 +1049,7 @@ general expression/operator, truthiness, exhaustiveness, Regex, backend,
 opcode, schema, VM, native, Ring, FFI, formatter, decompiler, or later-row
 behavior.
 
-### EX-009: Modern regular-expression source lexing
+### EX-009 and OR-057: Modern regular-expression literals
 
 Version `0.0.84` recognizes slash-delimited regular-expression source only at
 existing parser-declared value entries. The body preserves raw bytes and
@@ -1058,16 +1058,22 @@ the valid empty lexeme. Modern `#` is now the only line-comment introducer;
 ordinary-mode `//` is two independent unsupported slash tokens. Legacy is
 unchanged.
 
-Every well-formed candidate is deliberately rejected before document
-construction, Ring loading, lowering, assembly, or runtime publication because
-runtime Regex construction belongs to EX-010 and executable admission belongs
-to OR-057. Fixture `0110_regex_literal_lexing.dabmtest` owns the negative empty-
-regex boundary, status `2`, empty compiler stdout, and its exact full-span
-diagnostic. Fixture `0007` retains byte-identical assembly after mechanical
-comment migration, while `0016` now owns the first ordinary slash diagnostic.
-No Regex value, engine, flag, interpolation, case pattern, matching operator,
-opcode, schema, VM, native, Ring, FFI, formatter, or decompiler behavior is
-introduced.
+Version `0.0.86` admits that frozen wrapper in the eight existing contextual
+value entries: standalone body values, value returns, `let` and `var`
+initializers, ordinary reassignment right-hand sides, direct/nested call
+arguments, literal/member receivers, and `case` subjects. It lowers the exact
+raw body through the existing `Regex.new` runtime constructor and existing
+instructions; PCRE2 compilation happens only when execution reaches the value.
+Regex stays outside the shared literal/value kinds, so `when` patterns and
+matching remain excluded, and written `: Regex` annotations stay unsupported.
+
+Fixture `0110_regex_literal_lexing.dabmtest` is the positive native integration:
+it constructs empty and raw nonempty literals, prints exact `regex literals\n`,
+and proves that value-entry `//` is not a comment. Fixture `0007` retains
+byte-identical assembly after mechanical comment migration, while `0016` owns
+the first ordinary slash diagnostic. No flag, interpolation, case Regex pattern,
+matching operator, new opcode/schema, native API, Ring, FFI, formatter, or
+decompiler behavior is introduced.
 
 ## Diagnostic boundary
 

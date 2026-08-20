@@ -93,6 +93,20 @@ class DabTypeString < DabType
   end
 end
 
+class DabTypeRegex < DabType
+  def type_string
+    'Regex'
+  end
+
+  def can_assign_from?(other_type)
+    other_type.is_a? DabTypeRegex
+  end
+
+  def concrete?
+    true
+  end
+end
+
 class DabTypeFixnum < DabType
   def type_string
     'Fixnum'

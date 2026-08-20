@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'digest'
 require 'open3'
 require 'rbconfig'
+require 'stringio'
 require 'tmpdir'
 
 require_relative '../src/compiler/_requires'
@@ -14,8 +15,6 @@ describe 'Modern regular-expression literal lexing' do
   let(:source_unit) do
     DabSourceUnit.new(input: 'regex-literal.dabm', syntax_profile: DabSyntaxProfile::MODERN)
   end
-  let(:unsupported_message) { DabModernBootstrapParser::UNSUPPORTED_REGEX_LITERAL_MESSAGE }
-
   def scanner(source)
     DabModernBootstrapScanner.new(source.b, source_unit: source_unit)
   end
@@ -30,6 +29,15 @@ describe 'Modern regular-expression literal lexing' do
       expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(span)
       expect(error.source_span.source_unit).to equal(source_unit)
     }
+  end
+
+  def expect_lower_error(source, message, span)
+    expect { parse(source).lower_into(DabNodeUnit.new) }
+      .to raise_error(DabModernBootstrapParseError) { |error|
+        expect(error.message).to eq(message)
+        expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(span)
+        expect(error.source_span.source_unit).to equal(source_unit)
+      }
   end
 
   def fixture_section(path, name)
@@ -124,14 +132,14 @@ describe 'Modern regular-expression literal lexing' do
     end
   end
 
-  it 'leaves apparent flags as a later identifier and rejects the candidate first' do
+  it 'leaves apparent flags as a later identifier for the enclosing grammar to reject' do
     stream = scanner('/a/im')
     literal = stream.next_token(value_entry: true)
     flags = stream.next_token
 
     expect([literal.kind, literal.text]).to eq([:regex_literal, '/a/'])
     expect([flags.kind, flags.text]).to eq([:identifier, 'im'])
-    expect_parse_error("def main\n/a/im\nend\n", unsupported_message, [9, 12])
+    expect_parse_error("def main\n/a/im\nend\n", DabModernBootstrapParseError::GENERIC_MESSAGE, [12, 14])
   end
 
   it 'emits every EOF and physical-line diagnostic at its exact byte span' do
@@ -170,21 +178,21 @@ describe 'Modern regular-expression literal lexing' do
     end
   end
 
-  it 'requests regex scanning in every existing parser-declared value-entry slot' do
+  it 'admits Regex values in exactly the eight parser-declared value-entry forms' do
     sources = [
-      "def main\n//\nend\n",
+      "def main\n// if false\nend\n",
       "def main\nreturn //\nend\n",
       "def main\nlet value = //\nend\n",
       "def main\nvar value = //\nend\n",
-      "def main\nvar value = nil\nvalue = //\nend\n",
+      "def main\nvar value = //\nvalue = /a/\nend\n",
       "def main\nprint(//)\nend\n",
-      "def main\n//.length\nend\n",
+      "def main\nprint(print(//))\nend\n",
+      "def main\n//.class\nend\n",
       "def main\ncase //\nend\nend\n",
     ]
 
     sources.each do |source|
-      offset = source.index('//')
-      expect_parse_error(source, unsupported_message, [offset, offset + 2])
+      expect { parse(source) }.not_to raise_error
     end
   end
 
@@ -215,6 +223,11 @@ describe 'Modern regular-expression literal lexing' do
         DabModernBootstrapParser::EXPECT_WHEN_PATTERN_MESSAGE,
         [24, 27],
       ],
+      [
+        "def main\ncase true\nwhen true, /a/\nend\nend\n",
+        DabModernBootstrapParser::EXPECT_WHEN_ALTERNATIVE_MESSAGE,
+        [30, 33],
+      ],
       ["def main\nnil//\nend\n", DabModernBootstrapParseError::GENERIC_MESSAGE, [12, 13]],
     ]
 
@@ -235,14 +248,48 @@ describe 'Modern regular-expression literal lexing' do
     expect(parser.send(:peek_token).source_span.start_offset).to eq(1)
   end
 
-  it 'keeps regex tokens outside literal and value kinds with no lowering surface' do
-    token = scanner('//').next_token(value_entry: true)
+  it 'keeps Regex contextual while lowering raw bodies through the existing constructor shape' do
+    token = scanner("/a\0\xFF/".b).next_token(value_entry: true)
+    lowered = DabModernBootstrapLiterals.lower(token)
+    pattern = lowered.args.fetch(0)
+    output = StringIO.new
 
     expect(DabModernBootstrapParser::LITERAL_KINDS).not_to include(:regex_literal)
     expect(DabModernBootstrapParser::VALUE_KINDS).not_to include(:regex_literal)
     expect(token.value).not_to respond_to(:lower)
-    expect { DabModernBootstrapLiterals.lower(token) }
-      .to raise_error(ArgumentError, /unsupported Modern bootstrap literal token :regex_literal/)
+    expect(lowered).to be_a(DabNodeInstanceCall)
+    expect([lowered.value.class, lowered.value.identifier, lowered.real_identifier])
+      .to eq([DabNodeClass, 'Regex', 'new'])
+    expect([pattern.class, pattern.string]).to eq([DabNodeLiteralString, "a\0\xFF".b])
+    expect(DabModernBootstrapLiterals.flow_type(token)).to be_a(DabTypeRegex)
+    expect(DabModernBootstrapLiterals.type(token)).to be_a(DabTypeRegex)
+
+    pattern.compile_string(DabOutput.new(double(stdout: output)))
+    expect(output.string).not_to include('W_STRING')
+    expect(output.string.scan('W_BYTE').length).to eq(pattern.string.bytesize + 1)
+    ordinary = DabNodeLiteralString.new(pattern.string, modern_source: true)
+    expect(pattern.constant_table_key).not_to eq(ordinary.constant_table_key)
+
+    source_spans = lowered.source_parts.map { |part| [part.source_cstart, part.source_cend] }
+    expect(source_spans).to include([0, 1], [1, 4], [4, 5])
+    expect(pattern.source_parts.map { |part| [part.source_cstart, part.source_cend] }).to include([1, 4])
+  end
+
+  it 'maps every pattern-relative byte offset to a zero-width raw source point' do
+    literal = scanner('/a\\/b/'.b).next_token(value_entry: true).value
+
+    (0..literal.body.text.bytesize).each do |offset|
+      point = literal.source_span_for_pattern_offset(offset)
+      absolute = literal.body.source_span.start_offset + offset
+      expect([point.start_offset, point.end_offset]).to eq([absolute, absolute])
+      expect(point.source_unit).to equal(source_unit)
+      expect(point.start_location.line).to eq(literal.body.source_span.start_location.line)
+      expect(point.start_location.column).to eq(literal.body.source_span.start_location.column + offset)
+    end
+    expect { literal.source_span_for_pattern_offset(-1) }
+      .to raise_error(DabSourceLocationError, 'Regex pattern byte offset is outside literal body')
+    expect { literal.source_span_for_pattern_offset(literal.body.text.bytesize + 1) }
+      .to raise_error(DabSourceLocationError, 'Regex pattern byte offset is outside literal body')
   end
 
   it 'preserves double slash inside Strings and hash comments' do
@@ -254,7 +301,7 @@ describe 'Modern regular-expression literal lexing' do
     expect(legacy.errors).to be_empty
   end
 
-  it 'parse-checks nested, unselected, unreachable, and post-return candidates before preflight' do
+  it 'parse-checks nested, unselected, unreachable, and post-return Regex values' do
     sources = [
       "def main\nif false\n//\nend\nend\n",
       "def main\nwhile false\nif true\n//\nend\nend\nend\n",
@@ -265,8 +312,84 @@ describe 'Modern regular-expression literal lexing' do
     ]
 
     sources.each do |source|
-      offset = source.index('//')
-      expect_parse_error(source, unsupported_message, [offset, offset + 2])
+      expect { parse(source) }.not_to raise_error
+    end
+
+    malformed = "def main\nif false\n/unterminated\nend\nend\n"
+    offset = malformed.index("\n", malformed.index('/'))
+    expect_parse_error(
+      malformed,
+      'invalid Modern regular-expression literal: literal LF is not allowed',
+      [offset, offset + 1]
+    )
+  end
+
+  it 'keeps the while guard Boolean-only and preserves Regex member exclusions' do
+    while_source = "def main\nvar guard = true\nwhile guard\nguard = /a/\nend\nend\n"
+    offset = while_source.index('/a/')
+    expect_parse_error(
+      while_source,
+      DabModernBootstrapParser::EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE,
+      [offset, offset + 3]
+    )
+
+    class_source = "def main\n/a/.class\nend\n"
+    expect_lower_error(
+      class_source,
+      'unsupported Modern member target "Regex#class" in the R40 dot/property-call subset',
+      [class_source.index('class'), class_source.index('class') + 5]
+    )
+    match_source = "def main\n/a/.matches?(\"x\")\nend\n"
+    expect_lower_error(
+      match_source,
+      'unknown Modern member target "Regex#matches?"',
+      [match_source.index('matches?'), match_source.index('matches?') + 8]
+    )
+  end
+
+  it 'uses the internal Regex flow type without admitting written Regex annotations' do
+    cases = [
+      [
+        "def main\nlet value : String = /a/\nend\n",
+        'cannot initialize Modern local "value" of type String with literal of type Regex',
+      ],
+      [
+        "def main : String\nreturn /a/\nend\n",
+        'cannot return Modern value of type Regex from function "main" with declared return type String',
+      ],
+      [
+        "def take(value : String)\nend\ndef main\ntake(/a/)\nend\n",
+        'cannot pass Modern argument of type Regex to parameter "value" of type String in call "take"',
+      ],
+    ]
+    cases.each do |source, message|
+      offset = source.index('/a/')
+      expect_lower_error(source, message, [offset, offset + 3])
+    end
+
+    annotation = "def main(value : Regex)\nend\n"
+    offset = annotation.index('Regex')
+    supported = DabModernBootstrapParser::SUPPORTED_TYPE_NAMES
+    expect_parse_error(
+      annotation,
+      %(unknown Modern type "Regex"; supported types are ) \
+      "#{supported[0...-1].join(', ')}, and #{supported.fetch(-1)}",
+      [offset, offset + 5]
+    )
+    expect(DabModernBootstrapParser::SUPPORTED_TYPE_NAMES).not_to include('Regex')
+  end
+
+  it 'keeps Regex out of general Legacy type parsing and annotation sites' do
+    expect { DabType.parse('Regex') }.to raise_error(RuntimeError, 'Unknown type Regex')
+
+    annotations = [
+      'func main<Regex>() {}',
+      'func main(value<Regex>) {}',
+      'func main() { var<Regex> value; }',
+    ]
+    annotations.each do |source|
+      stream = DabProgramStream.new(source, true, 'legacy-regex-annotation.dab')
+      expect { DabCompiler.new(stream).program }.to raise_error(RuntimeError, 'Unknown type Regex')
     end
   end
 
@@ -280,18 +403,20 @@ describe 'Modern regular-expression literal lexing' do
     )
   end
 
-  it 'rejects before missing Ring loading and leaves destination and filesystem state unpublished' do
+  it 'keeps compiler failures transactional and ahead of missing Ring loading' do
+    source = "def main\nlet value : String = //\nend\n"
+    diagnostic = 'cannot initialize Modern local "value" of type String with literal of type Regex'
     unit = DabNodeUnit.new
     existing = DabNodeFunction.new('existing', DabNodeTreeBlock.new, DabNode.new)
     unit.add_function(existing)
-    expect { parse("def main\n//\nend\n") }.to raise_error(DabModernBootstrapParseError, unsupported_message)
+    expect { parse(source) }.to raise_error(DabModernBootstrapParseError, diagnostic)
     expect(unit.functions.to_a).to eq([existing])
     expect(unit.constants.to_a).to be_empty
 
     Dir.mktmpdir('dab-modern-regex') do |directory|
       source_path = File.join(directory, 'invalid.dabm')
       missing_ring = File.join(directory, 'missing.dabcb')
-      File.binwrite(source_path, "def main\n//\nend\n")
+      File.binwrite(source_path, source)
       stdout, stderr, status = Open3.capture3(
         RbConfig.ruby,
         compiler,
@@ -301,22 +426,21 @@ describe 'Modern regular-expression literal lexing' do
       )
 
       expect([status.exitstatus, stdout]).to eq([2, ''])
-      expect(stderr).to include("#{source_path}:2:0: error: #{unsupported_message}\n")
+      expect(stderr).to include("#{source_path}:2:21: error: #{diagnostic}\n")
       expect(stderr).not_to include('missing.dabcb')
       expect(Dir.children(directory)).to eq(['invalid.dabm'])
     end
   end
 
-  it 'locks fixture migration, negative publication, and prior fixture hashes' do
+  it 'locks positive fixture admission and prior fixture hashes' do
     modern = File.join(root, 'test/modern_source')
     expect(fixture_section(File.join(modern, '0007_comment.dabmtest'), 'STDOUT')).to eq(
       fixture_section(File.join(modern, '0009_minimal_main.dabmtest'), 'STDOUT')
     )
-    expect(fixture_section(File.join(modern, '0110_regex_literal_lexing.dabmtest'), 'STATUS')).to eq("2\n")
-    expect(File.binread(File.join(modern, '0110_regex_literal_lexing.dabmtest'))).not_to include(
-      '## STDOUT',
-      '## EXPECTED APPLICATION STDOUT'
-    )
+    fixture = File.join(modern, '0110_regex_literal_lexing.dabmtest')
+    expect(fixture_section(fixture, 'STATUS')).to eq("0\n")
+    expect(fixture_section(fixture, 'EXPECTED APPLICATION STDOUT')).to eq("regex literals\n\n")
+    expect(fixture_section(fixture, 'STDOUT')).to include('LOAD_CLASS', ' 20', 'INSTCALL', 'new')
 
     expected_hashes = {
       '0106_case_subject_once.dabmtest' =>

@@ -4,10 +4,11 @@ require_relative '../modern_string_escapes'
 class DabNodeLiteralString < DabNodeExtractableLiteral
   attr_reader :string
 
-  def initialize(string, modern_source: false)
+  def initialize(string, modern_source: false, force_byte_assembly: false)
     super()
     @string = string
     @modern_source = modern_source
+    @force_byte_assembly = force_byte_assembly
   end
 
   def extra_dump
@@ -19,7 +20,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def compile_string(output)
-    if safe_modern_assembly?
+    if byte_assembly?
       string.each_byte { |byte| output.print('W_BYTE', byte) }
       output.print('W_BYTE', 0)
     else
@@ -36,7 +37,7 @@ class DabNodeLiteralString < DabNodeExtractableLiteral
   end
 
   def constant_table_key
-    return extra_value unless safe_modern_assembly?
+    return extra_value unless byte_assembly?
 
     [extra_value, :modern_byte_assembly]
   end
@@ -62,6 +63,10 @@ private
 
   def safe_modern_assembly?
     @modern_source && string.include?('\\')
+  end
+
+  def byte_assembly?
+    @force_byte_assembly || safe_modern_assembly?
   end
 
   def assembly_literal

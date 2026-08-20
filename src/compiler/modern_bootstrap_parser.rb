@@ -56,6 +56,20 @@ class DabModernBootstrapRegexLiteralSource
     )
     freeze
   end
+
+  def source_span_for_pattern_offset(offset)
+    unless offset.is_a?(Integer) && offset.between?(0, body.text.bytesize)
+      raise DabSourceLocationError.new('Regex pattern byte offset is outside literal body')
+    end
+
+    start = body.source_span.start_location
+    DabSourceSpan.point(
+      source_unit: source_unit,
+      offset: start.offset + offset,
+      line: start.line,
+      column: start.column + offset
+    )
+  end
 end
 
 class DabModernBootstrapInterpolationSplice
@@ -268,6 +282,7 @@ module_function
            when :boolean_false then DabNodeLiteralBoolean.new(false)
            when :integer then DabNodeLiteralNumber.new(Integer(token.text, 10))
            when :string then DabNodeLiteralString.new(token.value, modern_source: true)
+           when :regex_literal then lower_regex(token)
            else raise ArgumentError.new("unsupported Modern bootstrap literal token #{token.kind.inspect}")
            end
     node.add_source_part(token.source_string)
@@ -275,13 +290,34 @@ module_function
   end
 
   def type(token)
+    return flow_type(token) if regex_literal?(token)
+
     lower(token).my_type
   end
 
   def flow_type(token)
     return DabType.parse('String') if token.kind == :interpolated_string
+    return DabTypeRegex.new if regex_literal?(token)
 
     DabType.parse(FLOW_TYPE_NAMES.fetch(token.kind))
+  end
+
+  def regex_literal?(token)
+    token.is_a?(DabModernBootstrapToken) && token.kind == :regex_literal
+  end
+
+  def lower_regex(token)
+    source = token.value
+    pattern = DabNodeLiteralString.new(
+      source.body.text,
+      modern_source: true,
+      force_byte_assembly: true
+    ).tap do |node|
+      node.add_source_part(source.body.source_string)
+    end
+    DabNodeInstanceCall.new(DabNodeClass.new('Regex'), 'new', [pattern], nil).tap do |node|
+      node.add_source_parts(*source.source_tokens.map(&:source_string))
+    end
   end
 end
 
@@ -1294,6 +1330,7 @@ class DabModernBootstrapLiteralMemberCall
     boolean_false: 'Boolean',
     integer: 'Fixnum',
     string: 'String',
+    regex_literal: 'Regex',
   }.freeze
 
   attr_reader :receiver_token, :dot_token, :callable_name, :arguments, :source_span, :source_tokens
@@ -2843,6 +2880,7 @@ private
 
   def preflight_member_call!(call, unit)
     receiver = call.receiver_type_name
+    receiver_type = DabModernBootstrapLiterals.flow_type(call.receiver_token)
     name = call.callable_name.text
     target = "#{receiver}##{name}"
 
@@ -2856,7 +2894,7 @@ private
       end
       preflight_member_arity!(call, target, 0)
       preflight_member_result_range!(call)
-    elsif known_member_target?(unit, receiver, name)
+    elsif known_member_target?(unit, receiver, receiver_type, name)
       reject_call(
         call,
         %(unsupported Modern member target "#{target}" in the R40 dot/property-call subset),
@@ -3050,8 +3088,8 @@ private
     end
   end
 
-  def known_member_target?(unit, receiver, name)
-    DabType.parse(receiver).has_function?(name) || unit.classes.to_a.any? do |klass|
+  def known_member_target?(unit, receiver, receiver_type, name)
+    receiver_type.has_function?(name) || unit.classes.to_a.any? do |klass|
       klass.identifier.to_s == receiver && klass.functions.to_a.any? do |function|
         !function.is_static? && function.identifier.to_s == name
       end
@@ -3262,9 +3300,6 @@ class DabModernBootstrapParser
     'invalid Modern postfix unless guard: expected a separator (LF, semicolon, or line comment) after condition'.freeze
   CHAINED_POSTFIX_GUARD_MESSAGE =
     'unexpected Modern postfix guard: chained postfix guards are not supported'.freeze
-  UNSUPPORTED_REGEX_LITERAL_MESSAGE =
-    'unsupported Modern regular-expression literal: runtime Regex construction belongs to EX-010 and ' \
-    'executable literal admission belongs to OR-057'.freeze
   # This is the checked-in VM Fixnum representation boundary, not a broader
   # decision about the future Dab Numeric contract.
   MAX_LEGACY_FIXNUM_DECIMAL = '9223372036854775807'.freeze
@@ -3689,7 +3724,7 @@ private
 
       token = next_token
       reject_value_token(token)
-      unless VALUE_KINDS.include?(token.kind)
+      unless executable_value?(token)
         reject(token)
       end
       if token.kind == :integer && integer_overflow?(token.text)
@@ -4035,7 +4070,7 @@ private
       return reject_case_subject(EXPECT_CASE_SUBJECT_MESSAGE, member)
     end
 
-    if VALUE_KINDS.include?(token.kind)
+    if executable_value?(token)
       return next_token.tap { |literal| reject_integer_overflow(literal) }
     end
 
@@ -4262,8 +4297,8 @@ private
 
   def value_return_start?
     token = peek_value_token
-    token.kind == :identifier || VALUE_KINDS.include?(token.kind) ||
-      token.kind == :regex_literal || literal_member_start? || !token.diagnostic_message.nil?
+    token.kind == :identifier || executable_value?(token) ||
+      literal_member_start? || !token.diagnostic_message.nil?
   end
 
   def parse_value_return(keyword_token, space_token)
@@ -4276,7 +4311,7 @@ private
               parse_direct_call(allow_call_result_arguments: false)
             elsif literal_member_start?
               parse_literal_member(argument: true)
-            elsif VALUE_KINDS.include?(token.kind)
+            elsif executable_value?(token)
               next_token.tap { |literal| reject_integer_overflow(literal) }
             elsif token.kind == :identifier && bare_return_local_reference?
               DabModernBootstrapLocalReference.new(next_token)
@@ -4394,7 +4429,7 @@ private
     initializer_token = next_value_token
     reject_invalid_separator(initializer_token)
     reject_value_token(initializer_token)
-    unless VALUE_KINDS.include?(initializer_token.kind)
+    unless executable_value?(initializer_token)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_LET_INITIALIZER_MESSAGE)
       end
@@ -4446,7 +4481,7 @@ private
     initializer_token = next_value_token
     reject_invalid_separator(initializer_token)
     reject_value_token(initializer_token)
-    unless VALUE_KINDS.include?(initializer_token.kind)
+    unless executable_value?(initializer_token)
       if %i[eof end line_feed semicolon line_comment].include?(initializer_token.kind)
         reject(initializer_token, EXPECT_VAR_INITIALIZER_MESSAGE)
       end
@@ -4490,16 +4525,19 @@ private
     value_token = next_value_token
     reject_invalid_separator(value_token)
     reject_value_token(value_token)
+    if allow_while_guard_form && regex_literal?(value_token)
+      reject(value_token, EXPECT_WHILE_GUARD_REASSIGNMENT_VALUE_MESSAGE)
+    end
     if allow_while_guard_form && %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
       reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
     end
-    unless VALUE_KINDS.include?(value_token.kind) || allow_while_guard_form
+    unless executable_value?(value_token) || allow_while_guard_form
       if %i[eof end line_feed semicolon line_comment].include?(value_token.kind)
         reject(value_token, EXPECT_REASSIGNMENT_VALUE_MESSAGE)
       end
       reject(value_token)
     end
-    reject_integer_overflow(value_token) if VALUE_KINDS.include?(value_token.kind)
+    reject_integer_overflow(value_token) if executable_value?(value_token)
     source_tokens << value_token
 
     if allow_while_guard_form && while_guard_value_form_continues?
@@ -4535,7 +4573,7 @@ private
   def literal_member_start?
     receiver = peek_token
     dot = peek_token(1)
-    LITERAL_KINDS.include?(receiver.kind) && dot.kind == :dot &&
+    executable_literal?(receiver) && dot.kind == :dot &&
       receiver.source_span.end_offset == dot.source_span.start_offset
   end
 
@@ -4708,7 +4746,7 @@ private
       reject(token, expectation)
     end
 
-    unless VALUE_KINDS.include?(token.kind)
+    unless executable_value?(token)
       reject(token) if deferred_call_argument_start?(token)
 
       reject(token, expectation)
@@ -5043,7 +5081,18 @@ private
 
   def reject_value_token(token)
     reject(token, token.diagnostic_message) if token.diagnostic_message
-    reject(token, UNSUPPORTED_REGEX_LITERAL_MESSAGE) if token.kind == :regex_literal
+  end
+
+  def executable_value?(token)
+    VALUE_KINDS.include?(token.kind) || regex_literal?(token)
+  end
+
+  def executable_literal?(token)
+    LITERAL_KINDS.include?(token.kind) || regex_literal?(token)
+  end
+
+  def regex_literal?(token)
+    DabModernBootstrapLiterals.regex_literal?(token)
   end
 
   def reject(token, message = DabModernBootstrapParseError::GENERIC_MESSAGE)
