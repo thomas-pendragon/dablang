@@ -865,6 +865,8 @@ class DabModernBootstrapCaseElseClause
 end
 
 class DabModernBootstrapCaseStatement
+  REGEX_MATCH_TARGET = '$modern_regex_case_match'.freeze
+
   attr_reader :case_token, :space_token, :subject, :subject_separator,
               :when_clauses, :else_clause, :end_token, :final_separator,
               :source_tokens, :source_parts, :source_span
@@ -966,6 +968,16 @@ private
     comparisons = patterns.map do |pattern|
       arguments = DabNode.new
       arguments.insert(DabNodeLocalVar.new(subject_identifier))
+      if DabModernBootstrapLiterals.regex_literal?(pattern)
+        next DabNodeInstanceCall.new(
+          DabModernBootstrapLiterals.lower(pattern, consumed: true),
+          REGEX_MATCH_TARGET,
+          arguments,
+          nil,
+          compiler_verified_target: true
+        )
+      end
+
       DabNodeInstanceCall.new(
         DabModernBootstrapLiterals.lower(pattern, consumed: true),
         '==',
@@ -2152,6 +2164,7 @@ class DabModernBootstrapDocument
     )
     @bindings_by_reference = preflight_locals!.freeze
     preflight_case_subject_calls!
+    preflight_regex_case_subjects!
     freeze
   end
 
@@ -2764,6 +2777,37 @@ private
         preflight_ring_independent_case_call!(statement.subject, declarations_by_name)
       end
     end
+  end
+
+  def preflight_regex_case_subjects!
+    declarations_by_name = @declarations.to_h { |declaration| [declaration.callable_name.text, declaration] }
+    @declarations.each do |declaration|
+      each_case_statement(declaration.body_items) do |statement|
+        next unless statement.when_clauses.any? do |clause|
+          clause.patterns.any? { |pattern| DabModernBootstrapLiterals.regex_literal?(pattern) }
+        end
+
+        actual_type = regex_case_subject_type(statement.subject, declarations_by_name)
+        next if actual_type.type_string == 'String'
+
+        raise DabModernBootstrapParseError.new(
+          "invalid Modern Regex case subject: expected String, got #{actual_type.type_string}",
+          source_span: statement.subject.source_span
+        )
+      end
+    end
+  end
+
+  def regex_case_subject_type(subject, declarations_by_name)
+    if subject.is_a?(DabModernBootstrapDirectCall)
+      target = declarations_by_name.fetch(subject.callable_name.text)
+      return DabType.parse(target.return_type&.text)
+    end
+    if subject.is_a?(DabModernBootstrapLocalReference)
+      return @bindings_by_reference.fetch(subject)
+    end
+
+    DabModernBootstrapLiterals.flow_type(subject)
   end
 
   def each_case_statement(items, &block)
@@ -3981,7 +4025,7 @@ private
 
       pattern_tokens.concat(whitespace)
       pattern_tokens << next_token
-      pattern_tokens.concat(consume_horizontal_whitespace)
+      pattern_tokens.concat(consume_value_entry_whitespace)
       alternative = parse_when_pattern(EXPECT_WHEN_ALTERNATIVE_MESSAGE)
       patterns << alternative
       pattern_tokens << alternative
@@ -4005,7 +4049,7 @@ private
   end
 
   def parse_when_pattern(expectation = EXPECT_WHEN_PATTERN_MESSAGE)
-    token = peek_token
+    token = peek_value_token
     reject_invalid_separator(token)
     reject(token, token.diagnostic_message) if token.diagnostic_message
     reject(token, expectation) if token.kind == :eof || token.kind == :comma ||
@@ -4019,7 +4063,7 @@ private
       return reject_when_pattern(parse_literal_member(argument: true), expectation)
     end
 
-    if VALUE_KINDS.include?(token.kind)
+    if token.kind == :regex_literal || VALUE_KINDS.include?(token.kind)
       return next_token.tap { |literal| reject_integer_overflow(literal) }
     end
 
@@ -4192,11 +4236,13 @@ private
   def contextual_case_clause_candidate?(name)
     token = peek_token
     return false unless token.kind == :identifier && token.text == name
-    return false if direct_call_start?
+
+    value_entry = name == 'when'
+    return false if direct_call_start_at?(0, value_entry_after_whitespace: value_entry)
     return false if @callable_name_composer.adjacent_suffix?(token, peek_token(1))
 
-    distance = distance_after_horizontal_whitespace(1)
-    peek_token(distance).kind != :equal
+    distance = distance_after_horizontal_whitespace(1, value_entry: value_entry)
+    peek_token(distance, value_entry: value_entry).kind != :equal
   end
 
   def nested_rejection_context(enclosing_context, default_context)

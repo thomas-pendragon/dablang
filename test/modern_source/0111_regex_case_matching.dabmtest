@@ -1,0 +1,208 @@
+## SOURCE
+def subject():String
+  print("subject\n")
+  return "prefix-Καλημέρα-suffix"
+end
+def main
+  case subject()
+  when /^Καλημέρα/
+    print("wrong-anchor\n")
+  when /\p{sc=Greek}+/
+    print("matched-unicode\n")
+  when /[/
+    print("wrong-later\n")
+  else
+    print("wrong-else\n")
+  end
+  print("after\n")
+  case "anything"
+  when //
+    print("matched-empty\n")
+  else
+    print("wrong-empty-else\n")
+  end
+end
+## EXPECTED APPLICATION STDOUT
+subject
+matched-unicode
+after
+matched-empty
+
+## NOTE
+Canonical OR-058 coverage for exact-String case subjects, subject-once evaluation, ordered lazy Regex search, explicit anchors, Unicode properties, empty matching, explicit else, and unconstructed later invalid patterns; no captures, binding, public Regex API, or later-row behavior.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_BYTE 0
+                                 W_BYTE 91
+                                 W_BYTE 0
+                                 W_BYTE 92
+                                 W_BYTE 112
+                                 W_BYTE 123
+                                 W_BYTE 115
+                                 W_BYTE 99
+                                 W_BYTE 61
+                                 W_BYTE 71
+                                 W_BYTE 114
+                                 W_BYTE 101
+                                 W_BYTE 101
+                                 W_BYTE 107
+                                 W_BYTE 125
+                                 W_BYTE 43
+                                 W_BYTE 0
+                                 W_BYTE 94
+                                 W_BYTE 206
+                                 W_BYTE 154
+                                 W_BYTE 206
+                                 W_BYTE 177
+                                 W_BYTE 206
+                                 W_BYTE 187
+                                 W_BYTE 206
+                                 W_BYTE 183
+                                 W_BYTE 206
+                                 W_BYTE 188
+                                 W_BYTE 206
+                                 W_BYTE 173
+                                 W_BYTE 207
+                                 W_BYTE 129
+                                 W_BYTE 206
+                                 W_BYTE 177
+                                 W_BYTE 0
+                                 W_STRING "after
+" 
+                                 W_STRING "anything" 
+                                 W_STRING "matched-empty
+" 
+                                 W_STRING "matched-unicode
+" 
+                                 W_STRING "prefix-Καλημέρα-suffix" 
+                                 W_STRING "subject
+" 
+                                 W_STRING "wrong-anchor
+" 
+                                 W_STRING "wrong-else
+" 
+                                 W_STRING "wrong-empty-else
+" 
+                                 W_STRING "wrong-later
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* subject      */               CALL R0, S56
+/* "^Καλημ */               LOAD_STRING R1, _DATA + 17, 17
+/* Regex        */               LOAD_CLASS R2, 20
+/* new          */               INSTCALL R3, R2, S37, R1
+/* $modern_rege */               INSTCALL R4, R3, S53, R0
+                                 JMP_IF R4, L1, L2
+                   L1:
+/* "wrong-ancho */               LOAD_STRING R5, _DATA + 123, 13
+/* PRINT        */               SYSCALL RNIL, 0, R5
+                                 JMP L3
+                   L2:
+/* "\p{sc=Greek */               LOAD_STRING R6, _DATA + 3, 13
+/* Regex        */               LOAD_CLASS R7, 20
+/* new          */               INSTCALL R8, R7, S37, R6
+/* $modern_rege */               INSTCALL R9, R8, S53, R0
+                                 JMP_IF R9, L4, L5
+                   L4:
+/* "matched-uni */               LOAD_STRING R10, _DATA + 66, 16
+/* PRINT        */               SYSCALL RNIL, 0, R10
+                                 JMP L3
+                   L5:
+/* "["          */               LOAD_STRING R11, _DATA + 1, 1
+/* Regex        */               LOAD_CLASS R12, 20
+/* new          */               INSTCALL R13, R12, S37, R11
+/* $modern_rege */               INSTCALL R14, R13, S53, R0
+                                 JMP_IF R14, L6, L7
+                   L6:
+/* "wrong-later */               LOAD_STRING R15, _DATA + 167, 12
+/* PRINT        */               SYSCALL RNIL, 0, R15
+                                 JMP L3
+                   L7:
+/* "wrong-else. */               LOAD_STRING R16, _DATA + 137, 11
+/* PRINT        */               SYSCALL RNIL, 0, R16
+                                 JMP L3
+                   L3:
+/* "after."     */               LOAD_STRING R17, _DATA + 35, 6
+/* PRINT        */               SYSCALL RNIL, 0, R17
+/* "anything"   */               LOAD_STRING R18, _DATA + 42, 8
+/* ""           */               LOAD_STRING R19, _DATA + 0, 0
+/* Regex        */               LOAD_CLASS R20, 20
+/* new          */               INSTCALL R21, R20, S37, R19
+/* $modern_rege */               INSTCALL R22, R21, S53, R18
+                                 JMP_IF R22, L8, L9
+                   L8:
+/* "matched-emp */               LOAD_STRING R23, _DATA + 51, 14
+/* PRINT        */               SYSCALL RNIL, 0, R23
+                                 JMP L10
+                   L9:
+/* "wrong-empty */               LOAD_STRING R24, _DATA + 149, 17
+/* PRINT        */               SYSCALL RNIL, 0, R24
+                                 JMP L10
+                   L10:
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsubject:
+                                 STACK_RESERVE 0
+/* "subject."   */               LOAD_STRING R0, _DATA + 114, 8
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "prefix-Κα */               LOAD_STRING R1, _DATA + 83, 30
+                                 RETURN R1
+                   __Fsubject_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "$modern_regex_case_match" 
+                                 W_STRING "__init_4589" 
+                                 W_STRING "main" 
+                                 W_STRING "subject" 
+ 
+                   _SYMB:
+/* $modern_rege */               W_SYMBOL _SDAT + 0 
+/* __init_4589  */               W_SYMBOL _SDAT + 25 
+/* main         */               W_SYMBOL _SDAT + 37 
+/* subject      */               W_SYMBOL _SDAT + 42 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 54, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* subject      */               W_METHOD 56, -1, Fsubject, 0, __Fsubject_END - Fsubject, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

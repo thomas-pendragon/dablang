@@ -89,6 +89,24 @@ describe 'Regex runtime object and engine contract' do
     end
   end
 
+  def execute_transformed_modern(source, environment = {})
+    compile_modern(source) do |assembly, _bytecode, _upper_ring|
+      transformed = yield assembly
+      bytecode, assembler_error, assembler_status = invoke_binary_ruby(
+        File.join(root, 'src/tobinary/tobinary.rb'), stdin_data: transformed
+      )
+      expect(assembler_status.exitstatus).to eq(0), assembler_error
+      Dir.mktmpdir('dab-modern-regex-transformed-spec') do |directory|
+        upper_ring = File.join(directory, 'program.dabcb')
+        File.binwrite(upper_ring, bytecode)
+        stdout, stderr, status = Open3.capture3(
+          environment, vm, modern_stdlib, upper_ring, '--entry=main', chdir: root, binmode: true
+        )
+        return RegexRuntimeResult.new(stdout: stdout.b, stderr: stderr.b, status: status.exitstatus)
+      end
+    end
+  end
+
   def modern_artifact(source)
     skip 'native disassembler has not been built' unless File.executable?(disassembler)
 
@@ -142,7 +160,7 @@ describe 'Regex runtime object and engine contract' do
     end
   end
 
-  it 'appends built-in Regex class 20 and exposes only Regex.new' do
+  it 'appends built-in Regex class 20 with public new and only one source-unspellable instance target' do
     header = File.binread(File.join(root, 'src/cshared/classes.h'))
     defaults = File.binread(File.join(root, 'src/cvm/default_classes.cpp'))
     implementation = normalize_source_lines(File.binread(File.join(root, 'src/cvm/regex.cpp')))
@@ -157,12 +175,23 @@ describe 'Regex runtime object and engine contract' do
     expect(header).to include('CLASS_REGEX         = 20')
     expect(defaults.scan('regex_class.add_static_reg_function').length).to eq(1)
     expect(defaults).to include('regex_class.add_static_reg_function("new"')
-    expect(defaults).not_to include('regex_class.add_reg_function')
+    expect(defaults.scan('regex_class.add_reg_function').length).to eq(1)
+    expect(defaults).to include('"$modern_regex_case_match"')
+    regex_section = defaults[/auto &regex_class.+?auto &fixnum_class/m]
+    expect(regex_section).not_to include('"matches?"', '"=="')
     expect(defaults.scan('dab_regex_verify_engine();').length).to eq(1)
     expect(implementation).not_to include('dab_regex_verify_engine();')
     expect(implementation).to include(storage_guard)
     expect(implementation.index(storage_guard)).to be < implementation.index('DabLiteralString *')
     expect(implementation.index(storage_guard)).to be < implementation.index('DabDynamicString *')
+    expect(implementation.index('arguments.size() != 1', implementation.index('dab_regex_match')))
+      .to be < implementation.index('dynamic_cast<DabRegex *>', implementation.index('dab_regex_match'))
+    expect(implementation).to include(
+      'subject_value.data.type != TYPE_LITERALSTRING',
+      'subject_value.data.type != TYPE_DYNAMICSTRING',
+      'storage->klass != CLASS_LITERALSTRING',
+      'storage->klass != CLASS_DYNAMICSTRING'
+    )
   end
 
   it 'accepts source String subclasses through canonical DynamicString storage' do
@@ -394,5 +423,152 @@ describe 'Regex runtime object and engine contract' do
     expect([run_a.status, run_a.stdout]).to eq([0, 'or057-proof'])
     expect(runtime_error(run_a)).to be_nil
     expect(run_b).to eq(run_a)
+  end
+
+  it 'matches reached Modern Regex case patterns with ordinary search, explicit anchors, and Unicode' do
+    source = <<~'DAB'
+      def subject():String
+      print("subject|")
+      return "prefix-Καλημέρα-suffix"
+      end
+      def main
+      case subject()
+      when /^Καλημέρα/
+      print("wrong-anchor|")
+      when /\p{sc=Greek}+/
+      print("unicode|")
+      when /[/
+      print("wrong-later|")
+      else
+      print("wrong-else|")
+      end
+      case "anything"
+      when //
+      print("empty|")
+      end
+      case "abc"
+      when /^b/
+      print("wrong-second-anchor|")
+      else
+      print("anchored")
+      end
+      end
+    DAB
+    result = execute_modern(source, 'DAB_REGEX_TEST_TRACE_LIFETIME' => '1')
+
+    expect([result.status, result.stdout, runtime_error(result)])
+      .to eq([0, 'subject|unicode|empty|anchored', nil])
+    expect(result.stderr.scan('regex-test: compiled handle freed').length).to eq(4)
+  end
+
+  it 'preserves embedded NUL in the exact-length subject storage used by matching' do
+    source = <<~'DAB'
+      def main
+      case "ab"
+      when /\x00/
+      print("nul")
+      else
+      print("wrong")
+      end
+      end
+    DAB
+    result = execute_transformed_modern(source) do |assembly|
+      replacement = [
+        '                                 W_BYTE 97',
+        '                                 W_BYTE 0',
+        '                                 W_BYTE 0',
+      ].join("\n")
+      expect(assembly.scan('W_STRING "ab"').length).to eq(1)
+      assembly.sub(/\s+W_STRING "ab" /, "\n#{replacement}")
+    end
+
+    expect([result.status, result.stdout, runtime_error(result)]).to eq([0, 'nul', nil])
+  end
+
+  it 'reports invalid UTF-8 subjects at exact zero-based byte offsets and stops later code' do
+    source = <<~DAB
+      def main
+      print("before|")
+      case "abc"
+      when /./
+      print("wrong-match|")
+      end
+      print("after")
+      end
+    DAB
+    result = execute_transformed_modern(source) do |assembly|
+      replacement = [
+        '                                 W_BYTE 97',
+        '                                 W_BYTE 128',
+        '                                 W_BYTE 99',
+        '                                 W_BYTE 0',
+      ].join("\n")
+      expect(assembly.scan('W_STRING "abc"').length).to eq(1)
+      assembly.sub(/\s+W_STRING "abc" /, "\n#{replacement}")
+    end
+
+    expect([result.status, result.stdout]).to eq([1, 'before|'])
+    expect(runtime_error(result)).to match(
+      /\Avm: invalid UTF-8 Regex match subject at byte 1 \(PCRE2 error -\d+\): .+\.\z/
+    )
+  end
+
+  it 'maps all bounded matching failures exactly without publishing a Boolean or running later code' do
+    cases = {
+      'match_limit' => 'vm: Regex match limit exceeded.',
+      'depth_limit' => 'vm: Regex match depth limit exceeded.',
+      'heap_limit' => 'vm: Regex match heap limit exceeded.',
+      'out_of_memory' => 'vm: Regex match failed: out of memory.',
+    }
+    source = <<~DAB
+      def main
+      print("before")
+      case "subject"
+      when /subject/
+      print("after")
+      end
+      end
+    DAB
+    cases.each do |injected, diagnostic|
+      result = execute_modern(source, 'DAB_REGEX_TEST_MATCH_ERROR' => injected)
+      expect([result.status, result.stdout, runtime_error(result)]).to eq([1, 'before', diagnostic])
+    end
+  end
+
+  it 'lets pattern-side limits lower but not raise the configured match ceilings' do
+    failing_subject = "#{'a' * 20_000}X"
+    cases = {
+      '(*LIMIT_MATCH=10)(?:a+)+$' => 'vm: Regex match limit exceeded.',
+      '(*LIMIT_MATCH=200000)(?:a+)+$' => 'vm: Regex match limit exceeded.',
+      '(*LIMIT_DEPTH=1)(?:a+)+$' => 'vm: Regex match depth limit exceeded.',
+      '(*LIMIT_HEAP=1)(?:a|b)+$' => 'vm: Regex match heap limit exceeded.',
+    }
+    cases.each do |pattern, diagnostic|
+      subject = pattern.include?('LIMIT_HEAP') ? 'a' * 20_000 : failing_subject
+      source = <<~DAB
+        def main
+        print("before")
+        case "#{subject}"
+        when /#{pattern}/
+        print("after")
+        end
+        end
+      DAB
+      result = execute_modern(source)
+      expect([result.status, result.stdout, runtime_error(result)]).to eq([1, 'before', diagnostic])
+    end
+  end
+
+  it 'pins one bounded match context, minimal match data, strict checking, and exact limits' do
+    implementation = normalize_source_lines(File.binread(File.join(root, 'src/cvm/regex.cpp')))
+
+    expect(implementation).to include(
+      'pcre2_set_match_limit(context.get(), 100000)',
+      'pcre2_set_depth_limit(context.get(), 1000)',
+      'pcre2_set_heap_limit(context.get(), 8192)',
+      'pcre2_match_data_create(1, nullptr)',
+      'pcre2_match(code, subject, subject_size, 0, 0, match_data.get(), context.get())'
+    )
+    expect(implementation).not_to include('PCRE2_NO_UTF_CHECK')
   end
 end

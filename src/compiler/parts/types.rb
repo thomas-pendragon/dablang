@@ -94,6 +94,8 @@ class DabTypeString < DabType
 end
 
 class DabTypeRegex < DabType
+  INTERNAL_MATCH_TARGET = '$modern_regex_case_match'.freeze
+
   def type_string
     'Regex'
   end
@@ -104,6 +106,12 @@ class DabTypeRegex < DabType
 
   def concrete?
     true
+  end
+
+  def has_function?(identifier)
+    return true if identifier == INTERNAL_MATCH_TARGET
+
+    super
   end
 end
 
