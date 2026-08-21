@@ -434,11 +434,11 @@ describe 'Regex runtime object and engine contract' do
     source = <<~'DAB'
       def subject():String
       print("subject|")
-      return "prefix-Καλημέρα-suffix"
+      return "prefix-abcdefghijklmnop-suffix"
       end
       def main
       case subject()
-      when /^Καλημέρα/
+      when /^abcdefghijklmnop/
       print("wrong-anchor|")
       when /\p{sc=Greek}+/
       print("unicode|")
@@ -459,7 +459,17 @@ describe 'Regex runtime object and engine contract' do
       end
       end
     DAB
-    result = execute_modern(source, 'DAB_REGEX_TEST_TRACE_LIFETIME' => '1')
+    result = execute_transformed_modern(source, 'DAB_REGEX_TEST_TRACE_LIFETIME' => '1') do |assembly|
+      unicode_subject = 'prefix-Καλημέρα-suffix'.b
+      replacement = (unicode_subject.bytes + [0]).map do |byte|
+        "                                 W_BYTE #{byte}"
+      end.join("\n")
+      placeholder = 'prefix-abcdefghijklmnop-suffix'
+      expect(assembly.scan(%(W_STRING "#{placeholder}")).length).to eq(1)
+      transformed = assembly.sub(/\s+W_STRING "#{placeholder}" /, "\n#{replacement}")
+      expect(transformed).to be_ascii_only
+      transformed
+    end
 
     expect([result.status, result.stdout, runtime_error(result)])
       .to eq([0, 'subject|unicode|empty|anchored', nil])
