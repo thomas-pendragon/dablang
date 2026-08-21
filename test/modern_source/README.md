@@ -1075,6 +1075,50 @@ the first ordinary slash diagnostic. No flag, interpolation, case Regex pattern,
 matching operator, new opcode/schema, native API, Ring, FFI, formatter, or
 decompiler behavior is introduced.
 
+### OR-058: Regex matching in `case`
+
+Version `0.0.87` admits a frozen `regex_literal` only at the first and
+after-comma pattern boundary in an existing `when` header. Regex remains out of
+the shared literal and value kind sets. If any pattern in a complete `case` is
+Regex, complete-document preflight requires the subject to have statically
+known exact type String and rejects every other type at the complete subject
+span before lowering or Ring loading.
+
+The subject still evaluates exactly once. Reached alternatives construct,
+compile, and search their Regex once each in source order, while a successful
+match short-circuits every later alternative and clause. Search is ordinary
+unanchored strict UTF/UCP PCRE2 from byte offset zero; anchors are explicit, an
+empty pattern matches at zero, Unicode 16.0.0 has no normalization step, and
+embedded NUL remains part of the subject through its explicit byte length.
+Captures and bindings remain unavailable and each successful search yields only
+Boolean.
+
+Fixture `0111_regex_case_matching.dabmtest` is the canonical OR-058 native
+integration. Its effectful String subject proves subject-once order, an anchored
+near miss falls through to a Unicode-property search, the selected clause keeps
+a later invalid Regex unconstructed, and a second `case` selects the empty
+pattern. It locks this output:
+
+```text
+subject
+matched-unicode
+after
+matched-empty
+```
+
+Lowering uses the existing `Regex.new`, hidden subject local, short-circuit
+tree, `INSTCALL`, and Boolean jump machinery. The only matching entry is a
+compiler-internal `$`-prefixed Regex instance target; it is not a public
+`Regex#matches?` or operator. The VM defensively validates arity, exact payload,
+and concrete String storage before casts, then uses one RAII match context and
+minimal match data with match, depth, and heap ceilings of 100000, 1000, and
+8192 KiB. Pattern limits may lower but not raise them. Runtime failure preserves
+prior stdout, returns status 1 without a Boolean, and stops later code; subject
+preflight remains transactional status 2. This row adds no capture/binding API,
+public Regex annotation, general expression, opcode/schema, assembler/loader,
+Ring, FFI, formatter, decompiler, or later-row behavior. The runtime remains for
+trusted local input and is not a sandbox.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

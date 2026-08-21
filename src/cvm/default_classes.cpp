@@ -167,6 +167,18 @@ void DabVM::define_default_classes()
     regex_class.add_static_reg_function("new", [](DabValue, std::vector<DabValue> args) {
         return dab_regex_create(args);
     });
+    const char regex_case_match_target[] = "$modern_regex_case_match";
+    for (const auto &symbol : symbols)
+    {
+        if (symbol.value == regex_case_match_target)
+        {
+            regex_class.add_reg_function(regex_case_match_target,
+                                         [](DabValue self, std::vector<DabValue> args) {
+                                             return dab_regex_match(self, args);
+                                         });
+            break;
+        }
+    }
 
     auto &fixnum_class = get_class(CLASS_FIXNUM);
     fixnum_class.add_static_reg_function("new", [](DabValue self, std::vector<DabValue> args) {
