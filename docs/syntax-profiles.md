@@ -316,12 +316,13 @@ no source-spellable member, operator, capture, binding, or annotation API and
 adds no opcode, schema, assembler, loader, Ring, FFI, or normalization path.
 The runtime uses strict UTF/UCP Unicode 16.0.0 checking for every search, keeps
 String storage alive through the call, preserves embedded NUL by explicit byte
-length, returns only Boolean, and sets match, depth, and heap ceilings of
-100000, 1000, and 8192 KiB. Pattern-side limits may lower but not raise those
-ceilings. A match failure preserves earlier stdout, publishes no Boolean, stops
-later code with status 1, and reports the bounded or invalid-UTF diagnostic;
-compile-time subject rejection retains status 2 transactional output. The VM
-continues to support trusted local input only and is not a sandbox.
+length, returns only Boolean for match/non-match outcomes, and sets match,
+depth, and heap ceilings of 100000, 1000, and 8192 KiB. Pattern-side limits may
+lower but not raise those ceilings. A match failure preserves earlier stdout,
+publishes no Boolean, stops later code with status 1, and reports the bounded or
+invalid-UTF diagnostic; compile-time subject rejection retains status 2
+transactional output. The VM continues to support trusted local input only and
+is not a sandbox.
 
 ## Modern top-level function declarations
 

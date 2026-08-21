@@ -865,7 +865,7 @@ class DabModernBootstrapCaseElseClause
 end
 
 class DabModernBootstrapCaseStatement
-  REGEX_MATCH_TARGET = '$modern_regex_case_match'.freeze
+  REGEX_MATCH_TARGET = DabTypeRegex::INTERNAL_MATCH_TARGET
 
   attr_reader :case_token, :space_token, :subject, :subject_separator,
               :when_clauses, :else_clause, :end_token, :final_separator,
@@ -2571,7 +2571,7 @@ private
         end
 
         actual_type = DabType.parse(parameter.type_name.text)
-        next if actual_type.type_string == 'String'
+        next if actual_type.instance_of?(DabTypeString)
 
         raise DabModernBootstrapParseError.new(
           "cannot interpolate Modern parameter \"#{name}\" of type #{actual_type.type_string}; " \

@@ -1090,7 +1090,8 @@ match short-circuits every later alternative and clause. Search is ordinary
 unanchored strict UTF/UCP PCRE2 from byte offset zero; anchors are explicit, an
 empty pattern matches at zero, Unicode 16.0.0 has no normalization step, and
 embedded NUL remains part of the subject through its explicit byte length.
-Captures and bindings remain unavailable and each search yields only Boolean.
+Captures and bindings remain unavailable and each successful search yields only
+Boolean.
 
 Fixture `0111_regex_case_matching.dabmtest` is the canonical OR-058 native
 integration. Its effectful String subject proves subject-once order, an anchored

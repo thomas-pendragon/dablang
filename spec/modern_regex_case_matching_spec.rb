@@ -10,7 +10,7 @@ require_relative '../src/compiler/modern_bootstrap_parser'
 describe 'Modern Regex matching in case' do
   let(:root) { File.expand_path('..', __dir__) }
   let(:compiler) { File.join(root, 'src/compiler/compiler.rb') }
-  let(:internal_match_target) { '$modern_regex_case_match' }
+  let(:internal_match_target) { DabTypeRegex::INTERNAL_MATCH_TARGET }
   let(:source_unit) do
     DabSourceUnit.new(input: 'regex-case-matching.dabm', syntax_profile: DabSyntaxProfile::MODERN)
   end
@@ -158,6 +158,7 @@ describe 'Modern Regex matching in case' do
     expect(matches.map(&:value)).to all(be_a(DabNodeInstanceCall))
     expect(matches.map { |call| call.args.fetch(0).real_identifier.to_s }.uniq.length).to eq(1)
     expect(matches).to all(be_compiler_verified_target)
+    expect(DabModernBootstrapCaseStatement::REGEX_MATCH_TARGET).to equal(internal_match_target)
     expect(DabTypeRegex.new).to have_function(internal_match_target)
     expect(DabTypeRegex.new).not_to have_function('matches?')
     expect(internal_match_target).to start_with('$')
