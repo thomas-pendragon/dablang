@@ -2571,7 +2571,7 @@ private
         end
 
         actual_type = DabType.parse(parameter.type_name.text)
-        next if actual_type.instance_of?(DabTypeString)
+        next if actual_type.type_string == 'String'
 
         raise DabModernBootstrapParseError.new(
           "cannot interpolate Modern parameter \"#{name}\" of type #{actual_type.type_string}; " \
@@ -2788,7 +2788,7 @@ private
         end
 
         actual_type = regex_case_subject_type(statement.subject, declarations_by_name)
-        next if actual_type.type_string == 'String'
+        next if actual_type.instance_of?(DabTypeString)
 
         raise DabModernBootstrapParseError.new(
           "invalid Modern Regex case subject: expected String, got #{actual_type.type_string}",
