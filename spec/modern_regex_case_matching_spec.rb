@@ -56,6 +56,13 @@ describe 'Modern Regex matching in case' do
     }
   end
 
+  it 'enables Regex at the first boundary within the when-clause parser itself' do
+    parser = DabModernBootstrapParser.new("when /direct/\nend\n".b, source_unit: source_unit)
+    clause = parser.send(:parse_when_clause, {})
+
+    expect(clause.patterns.map(&:kind)).to eq([:regex_literal])
+  end
+
   it 'retains strict Regex literal diagnostics when a when-pattern boundary enables value scanning' do
     source = "def main(subject:String)\ncase subject\nwhen /unterminated\nend\nend\n".b
     offset = source.index("\n", source.index('/'))

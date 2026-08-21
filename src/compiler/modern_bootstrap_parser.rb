@@ -4008,7 +4008,7 @@ private
     when_token = next_token
     space_token = next_token
     reject(space_token, EXPECT_WHEN_SPACE_MESSAGE) unless space_token.kind == :space
-    reject(peek_token, EXPECT_WHEN_SPACE_MESSAGE) if horizontal_whitespace?(peek_token)
+    reject(peek_value_token, EXPECT_WHEN_SPACE_MESSAGE) if horizontal_whitespace?(peek_value_token)
 
     pattern = parse_when_pattern
     patterns = [pattern]
