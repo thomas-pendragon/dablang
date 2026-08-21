@@ -178,8 +178,11 @@ describe 'Regex runtime object and engine contract' do
     expect(defaults.scan('regex_class.add_reg_function').length).to eq(1)
     expect(defaults).to include('"$modern_regex_case_match"')
     registration = defaults[/for \(const auto &symbol : symbols\).+?auto &fixnum_class/m]
-    expect(registration).to include('symbol.value == "$modern_regex_case_match"')
-    guard_index = registration.index('symbol.value == "$modern_regex_case_match"')
+    target_definition = 'const char regex_case_match_target[] = "$modern_regex_case_match";'
+    expect(defaults.scan(target_definition).length).to eq(1)
+    expect(registration).to include('symbol.value == regex_case_match_target')
+    expect(registration).to include('regex_class.add_reg_function(regex_case_match_target')
+    guard_index = registration.index('symbol.value == regex_case_match_target')
     method_index = registration.index('regex_class.add_reg_function')
     expect(guard_index).to be < method_index
     regex_section = defaults[/auto &regex_class.+?auto &fixnum_class/m]
