@@ -940,6 +940,7 @@ private
   def lower_zero_clause
     DabNodeTreeBlock.new.tap do |block|
       block.insert(lower_subject)
+      block.insert(DabNodeLiteralNil.new)
     end
   end
 
@@ -952,7 +953,11 @@ private
 
   def append_clause_tail(block, clauses, subject_identifier, index = 0)
     if index >= clauses.length
-      append_body(block, else_clause.body) if else_clause
+      if else_clause
+        append_body(block, else_clause.body)
+      else
+        block.insert(DabNodeLiteralNil.new)
+      end
       return
     end
 
