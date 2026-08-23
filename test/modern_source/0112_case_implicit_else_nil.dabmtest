@@ -1,0 +1,164 @@
+## SOURCE
+def subject():Int32
+  print("subject\n")
+  return 9
+end
+def main
+  case subject()
+  when 1
+    print("wrong-unmatched\n")
+  end
+  print("after-unmatched\n")
+  case 2
+  when 1
+    print("wrong-first\n")
+  when 2
+    print("matched\n")
+  end
+  print("after-matched\n")
+  case 3
+  when 3
+  when 3
+    print("wrong-empty-fallthrough\n")
+  end
+  print("after-empty\n")
+end
+## EXPECTED APPLICATION STDOUT
+subject
+after-unmatched
+matched
+after-matched
+after-empty
+
+## NOTE
+Canonical OR-059 coverage for implicit else nil: unmatched no-else continuation, subject-once evaluation, a selected nonempty clause, a selected empty clause that stops later clauses, and post-case execution.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "after-empty
+" 
+                                 W_STRING "after-matched
+" 
+                                 W_STRING "after-unmatched
+" 
+                                 W_STRING "matched
+" 
+                                 W_STRING "subject
+" 
+                                 W_STRING "wrong-empty-fallthrough
+" 
+                                 W_STRING "wrong-first
+" 
+                                 W_STRING "wrong-unmatched
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* subject      */               CALL R0, S55
+/* 1            */               LOAD_NUMBER R1, 1
+/* ==           */               INSTCALL R2, R1, S5, R0
+                                 JMP_IF R2, L1, L2
+                   L1:
+/* "wrong-unmat */               LOAD_STRING R3, _DATA + 101, 16
+/* PRINT        */               SYSCALL RNIL, 0, R3
+                                 JMP L2
+                   L2:
+/* "after-unmat */               LOAD_STRING R4, _DATA + 28, 16
+/* PRINT        */               SYSCALL RNIL, 0, R4
+/* 2            */               LOAD_NUMBER R5, 2
+/* 1            */               LOAD_NUMBER R6, 1
+/* ==           */               INSTCALL R7, R6, S5, R5
+                                 JMP_IF R7, L3, L4
+                   L3:
+/* "wrong-first */               LOAD_STRING R8, _DATA + 88, 12
+/* PRINT        */               SYSCALL RNIL, 0, R8
+                                 JMP L5
+                   L4:
+/* 2            */               LOAD_NUMBER R9, 2
+/* ==           */               INSTCALL R10, R9, S5, R5
+                                 JMP_IF R10, L6, L5
+                   L6:
+/* "matched."   */               LOAD_STRING R11, _DATA + 45, 8
+/* PRINT        */               SYSCALL RNIL, 0, R11
+                                 JMP L5
+                   L5:
+/* "after-match */               LOAD_STRING R12, _DATA + 13, 14
+/* PRINT        */               SYSCALL RNIL, 0, R12
+/* 3            */               LOAD_NUMBER R13, 3
+/* 3            */               LOAD_NUMBER R14, 3
+/* ==           */               INSTCALL R15, R14, S5, R13
+                                 JMP_IF R15, L7, L8
+                   L8:
+/* 3            */               LOAD_NUMBER R16, 3
+/* ==           */               INSTCALL R17, R16, S5, R13
+                                 JMP_IF R17, L9, L7
+                   L9:
+/* "wrong-empty */               LOAD_STRING R18, _DATA + 63, 24
+/* PRINT        */               SYSCALL RNIL, 0, R18
+                                 JMP L7
+                   L7:
+/* "after-empty */               LOAD_STRING R19, _DATA + 0, 12
+/* PRINT        */               SYSCALL RNIL, 0, R19
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsubject:
+                                 STACK_RESERVE 0
+/* "subject."   */               LOAD_STRING R0, _DATA + 54, 8
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* 9            */               LOAD_NUMBER R1, 9
+                                 RETURN R1
+                   __Fsubject_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "main" 
+                                 W_STRING "subject" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* main         */               W_SYMBOL _SDAT + 12 
+/* subject      */               W_SYMBOL _SDAT + 17 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* main         */               W_METHOD 54, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* subject      */               W_METHOD 55, -1, Fsubject, 0, __Fsubject_END - Fsubject, 0
+/* $ret<Int32>  */               W_METHOD_ARG -1, 12
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

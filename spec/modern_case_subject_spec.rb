@@ -155,7 +155,7 @@ describe 'exactly-once empty Modern case shell' do
     )
   end
 
-  it 'builds frozen wrappers and lowers every bounded subject through one existing tree-block child' do
+  it 'builds frozen wrappers and lowers every bounded subject before one implicit nil child' do
     source = <<~DAB
       def effect():Boolean
       return true
@@ -181,7 +181,7 @@ describe 'exactly-once empty Modern case shell' do
     expect(statements.map(&:else_clause)).to all(be_nil)
     expect(statements.flat_map { |statement| [statement.source_tokens, statement.source_parts] })
       .to all(be_frozen)
-    expect(statements.map { |statement| statement.lower.to_a.length }).to all(eq(1))
+    expect(statements.map { |statement| statement.lower.to_a.length }).to all(eq(2))
     expect(statements.map { |statement| statement.lower.to_a.fetch(0).class }).to eq(
       [
         DabNodeLiteralNil,
@@ -195,6 +195,10 @@ describe 'exactly-once empty Modern case shell' do
         DabNodeCall,
       ]
     )
+    expect(statements.map { |statement| statement.lower.to_a.fetch(1) })
+      .to all(be_a(DabNodeLiteralNil))
+    expect(statements.map { |statement| statement.lower.to_a.fetch(1).source_parts })
+      .to all(be_empty)
     expect(statements.last.lower.to_a.fetch(0).real_identifier).to eq('effect')
     expect([statements.first.source_span.start_offset, statements.first.source_span.end_offset]).to eq(
       [source.index('case nil'), source.index('case nil') + 'case nil;end;'.bytesize]

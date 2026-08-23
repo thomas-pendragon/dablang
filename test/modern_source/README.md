@@ -1119,6 +1119,41 @@ public Regex annotation, general expression, opcode/schema, assembler/loader,
 Ring, FFI, formatter, decompiler, or later-row behavior. The runtime remains for
 trusted local input and is not a sandbox.
 
+### OR-059: implicit `nil` arm for `case`
+
+Version `0.0.88` gives a statement-only Modern `case` without a written `else`
+exactly one source-less `nil` node in its terminal no-match lowering path. A
+zero-clause case evaluates its subject before that node. A case with clauses
+reaches it only after every source-ordered alternative fails. The shape matches
+an explicit `else` body containing `nil`; it is not `return nil`, a case result,
+or an inferred branch value.
+
+Parser source fidelity is unchanged: the missing `else` remains absent from the
+parsed wrapper, and a written `else`, including an empty one, receives no
+implicit arm. Subject-once evaluation, clause and alternative order, lazy
+short-circuiting, shared and empty selected bodies, Regex behavior, post-case
+continuation, declared-return fallthrough, complete-document transactionality,
+and Legacy behavior remain unchanged.
+
+Fixture `0112_case_implicit_else_nil.dabmtest` covers an unmatched no-else case,
+a selected nonempty clause, a selected empty clause that stops a later matching
+clause, and execution after every case. It locks this output:
+
+```text
+subject
+after-unmatched
+matched
+after-matched
+after-empty
+```
+
+The existing unused-value pass removes the side-effect-free implicit node, so
+previously accepted source retains byte-identical assembly, artifacts,
+disassembly, runtime behavior, and output. OR-059 changes no grammar, token,
+diagnostic, type, backend, opcode, schema, assembler, loader, VM, native, Ring,
+serializer, FFI, or public API behavior. The runtime remains for trusted local
+input and is not a sandbox.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit
