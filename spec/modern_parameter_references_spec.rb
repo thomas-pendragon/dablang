@@ -355,8 +355,7 @@ describe 'Modern parameter references' do
     expect(rejection.expected_stdout).to eq('')
     expect(rejection.expected_stderr).to eq(
       'compiler: 0093_non_string_parameter_interpolation.dabm:2:11: error: ' \
-      'cannot interpolate Modern parameter "value" of type Int32; ' \
-      "simple interpolation requires exact String\n"
+      "cannot interpolate Modern expression of type Int32; EX-011 requires exact String\n"
     )
   end
 end
