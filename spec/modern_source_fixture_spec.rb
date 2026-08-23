@@ -159,6 +159,7 @@ describe DabModernSourceFixture do
       0110_regex_literal_lexing.dabmtest
       0111_regex_case_matching.dabmtest
       0112_case_implicit_else_nil.dabmtest
+      0113_interpolation_expression_splice.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|
@@ -181,6 +182,20 @@ describe DabModernSourceFixture do
     final_lf = described_class.load(paths.fetch(4)).expected_application_stdout
     expect([no_final_lf, no_final_lf.bytes]).to eq(['3', [51]])
     expect([final_lf, final_lf.bytes]).to eq(["3\n", [51, 10]])
+  end
+
+  it 'loads the canonical EX-011 runtime fixture with two ordered producer calls and no conversion' do
+    path = File.expand_path(
+      '../test/modern_source/0113_interpolation_expression_splice.dabmtest',
+      __dir__
+    )
+    fixture = described_class.load(path)
+
+    expect(fixture.expected_application_stdout).to eq("first-call\nsecond-call\n<A|middle|B>\n")
+    expect(fixture.expected_stdout.scan(%r{/\* first_value\s+\*/\s+CALL}).length).to eq(1)
+    expect(fixture.expected_stdout.scan(%r{/\* second_value\s+\*/\s+CALL}).length).to eq(1)
+    expect(fixture.expected_stdout.index('/* first_value')).to be < fixture.expected_stdout.index('/* second_value')
+    expect(fixture.expected_stdout).not_to include('to_s', 'TO_STRING', 'CONVERT')
   end
 
   it 'normalizes fixture transport CRLF while retaining exact section bodies' do

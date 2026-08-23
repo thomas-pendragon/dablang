@@ -119,6 +119,256 @@ describe 'bounded Modern String interpolation' do
     )
   end
 
+  it 'retains exact wrapper, splice, padding, and expression spans for bounded expression splices' do
+    source = "\"\#{  producer(\"}\") }/\#{value}/\#{ \"literal\"}\""
+    value = interpolation(source)
+    first, second, third = value.splices
+
+    expect(value.source_span.source_unit).to equal(source_unit)
+    expect([value.source_span.start_offset, value.source_span.end_offset]).to eq([0, source.bytesize])
+    expect(first.expression).to be_a(DabModernBootstrapDirectCall)
+    expect(second.expression).to be_a(DabModernBootstrapLocalReference)
+    expect(third.expression).to be_a(DabModernBootstrapToken)
+    expect(third.expression.kind).to eq(:string)
+    expect(value.splices).to all(satisfy { |splice| splice.source_span.source_unit.equal?(source_unit) })
+    expect(value.splices.map { |splice| [splice.source_span.start_offset, splice.source_span.end_offset] }).to eq(
+      [[1, 20], [21, 29], [30, 43]]
+    )
+    expect(value.splices.map do |splice|
+      [splice.expression.source_span.start_offset,
+       splice.expression.source_span.end_offset]
+    end).to eq(
+      [[5, 18], [23, 28], [33, 42]]
+    )
+    expect(first.leading_padding_tokens.map(&:text)).to eq([' ', ' '])
+    expect(first.trailing_padding_tokens.map(&:text)).to eq([' '])
+    expect(value.source_tokens.map(&:text).join).to eq(source)
+  end
+
+  it 'accepts bounded exact-String literal, reference, member-free call, and mixed repeated splices' do
+    source = <<~'DAB'
+      def producer(value:String):String
+      return value
+      end
+      def main(parameter:String)
+      let local = "local"
+      print("#{ "literal" }#{local}:#{producer(parameter)}:#{local}")
+      end
+    DAB
+    document = parse(source)
+    functions = document.lower_into(DabNodeUnit.new)
+    main = functions.fetch(1)
+    wrapper = main.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+
+    expect(wrapper.my_type.type_string).to eq('String')
+    expect(wrapper.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(['producer'])
+    expect(wrapper.all_nodes(DabNodeLocalVar).map(&:real_identifier)).to eq(%w[local parameter local])
+    expect(wrapper.all_nodes(DabNodeInstanceCall).map { |call| call.identifier.to_s }).to all(eq('+'))
+  end
+
+  it 'accepts all four ASCII SPACE boundary combinations and preserves direct-call horizontal whitespace' do
+    source = <<~'DAB'
+      def producer(value:String):String
+      return value
+      end
+      def main()
+      print("#{producer("zero")}#{ producer("leading")}#{producer("trailing") }#{ producer 	 ( "both" ) }")
+      end
+    DAB
+    document = parse(source)
+    main = document.lower_into(DabNodeUnit.new).fetch(1)
+    splices = document.declarations.fetch(1).body_items.fetch(0).arguments.fetch(0).value.splices
+
+    expect(splices.map do |splice|
+      [splice.leading_padding_tokens.length,
+       splice.trailing_padding_tokens.length]
+    end).to eq(
+      [[0, 0], [1, 0], [0, 1], [1, 1]]
+    )
+    expect(main.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[print producer producer producer producer])
+  end
+
+  it 'lets nested ordinary String and Regex tokens own internal braces and escaped openers' do
+    source = <<~'DAB'
+      def text(value:String):String
+      return value
+      end
+      def main()
+      print("#{text("}")}:#{text("\#{escaped}")}")
+      end
+    DAB
+    document = parse(source)
+    main = document.lower_into(DabNodeUnit.new).fetch(1)
+    regex = interpolation("\"\#{ /a}b/ }\"").splices.fetch(0).expression
+
+    expect(main.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[print text text])
+    expect(document.declarations.fetch(1).body_items.fetch(0).arguments.fetch(0).value.splices.length).to eq(2)
+    expect([regex.kind, regex.value.body.text]).to eq([:regex_literal, 'a}b'])
+  end
+
+  it 'rejects TAB, comments, LF, CR, and CRLF as splice boundary padding' do
+    cases = {
+      "\"\#{\tvalue}\"".b => [3, 4],
+      "\"\#{value\t}\"".b => [8, 9],
+      "\"\#{#comment}\"".b => [3, 13],
+      "\"\#{value#comment}\"".b => [8, 18],
+      "\"\#{\nvalue}\"".b => [3, 4],
+      "\"\#{value\r}\"".b => [8, 9],
+      "\"\#{value\r\n}\"".b => [8, 10],
+    }
+
+    cases.each do |source, span|
+      token = scan(source)
+      expect(token.kind).to eq(:unsupported), source.inspect
+      expect([token.source_span.start_offset, token.source_span.end_offset]).to eq(span), source.inspect
+    end
+  end
+
+  it 'rejects nesting, call-result arguments, grouping, operators, unary negatives, receivers, and chains' do
+    cases = {
+      "\"\#{ \"\#{value}\" }\"" => "\#{value}",
+      "\"\#{outer(\"\#{value}\")}\"" => "\#{value}",
+      "\"\#{outer(inner())}\"" => 'inner',
+      "\"\#{(value)}\"" => '(',
+      "\"\#{value + value}\"" => '+',
+      "\"\#{-1}\"" => '-',
+      "\"\#{value.call()}\"" => '.',
+      "\"\#{producer().length}\"" => '.',
+    }
+
+    cases.each do |source, marker|
+      token = scan(source.b)
+      expect(token.kind).to eq(:unsupported), source
+      start_offset = source.index(marker)
+      expect(token.source_span.start_offset).to eq(start_offset), source
+    end
+    nested = scan("\"\#{ \"\#{value}\" }\"")
+    expect(nested.diagnostic_message).to eq('nested Modern String interpolation is not supported until EX-012')
+  end
+
+  it 'rejects every supported non-String expression on its complete unpadded expression span' do
+    cases = {
+      'nil' => 'NilClass',
+      'true' => 'Boolean',
+      '1' => 'Fixnum',
+      '/x}/' => 'Regex',
+      '"abc".length' => 'Int32',
+    }
+
+    cases.each do |expression, actual|
+      source = "def main()\nprint(\"\#{  #{expression} }\")\nend\n"
+      expect { parse(source).lower_into(DabNodeUnit.new) }.to raise_error(
+        DabModernBootstrapParseError,
+        "cannot interpolate Modern expression of type #{actual}; EX-011 requires exact String"
+      ) { |error|
+        start_offset = source.index(expression)
+        expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+          [start_offset, start_offset + expression.bytesize]
+        )
+      }, expression
+    end
+  end
+
+  it 'rejects non-String local, parameter, call-result, and absent-result expressions uniformly' do
+    cases = [
+      ["def main(value:Int32)\nprint(\"\#{ value }\")\nend\n", 'value', 'Int32'],
+      ["def main()\nlet value = /x/\nprint(\"\#{value}\")\nend\n", 'value', 'Regex'],
+      ["def value():Boolean\nreturn true\nend\ndef main()\nprint(\"\#{ value() }\")\nend\n", 'value()', 'Boolean'],
+      ["def value()\nend\ndef main()\nprint(\"\#{value()}\")\nend\n", 'value()', 'Object'],
+    ]
+
+    cases.each do |source, expression, actual|
+      expect { parse(source).lower_into(DabNodeUnit.new) }.to raise_error(
+        DabModernBootstrapParseError,
+        "cannot interpolate Modern expression of type #{actual}; EX-011 requires exact String"
+      ) { |error|
+        start_offset = source.index(expression, source.index('#{'))
+        expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+          [start_offset, start_offset + expression.bytesize]
+        )
+      }
+    end
+  end
+
+  it 'preserves target, arity, argument, and member validation before the EX-011 result check' do
+    cases = {
+      <<~'DAB' => 'unknown Modern call target "missing"',
+        def main()
+        print("#{missing()}")
+        end
+      DAB
+      <<~'DAB' => 'incorrect Modern call arity for "producer": got 0, expected 1',
+        def producer(value:String):String
+        return value
+        end
+        def main()
+        print("#{producer()}")
+        end
+      DAB
+      <<~'DAB' => 'cannot pass Modern argument of type Fixnum to parameter "value" of type String in call "producer"',
+        def producer(value:String):String
+        return value
+        end
+        def main()
+        print("#{producer(1)}")
+        end
+      DAB
+      <<~'DAB' => 'unknown Modern member target "String#missing"',
+        def main()
+        print("#{"value".missing}")
+        end
+      DAB
+    }
+
+    cases.each do |source, message|
+      expect { parse(source).lower_into(DabNodeUnit.new) }
+        .to raise_error(DabModernBootstrapParseError, message)
+    end
+  end
+
+  it 'preflights invalid expression calls in dead branches without partially publishing functions' do
+    source = <<~'DAB'
+      def valid():String
+      return "valid"
+      end
+      def invalid():String
+      if false
+      return "#{missing()}"
+      end
+      return "unselected"
+      end
+    DAB
+    document = parse(source)
+    unit = DabNodeUnit.new
+
+    expect { document.lower_into(unit) }.to raise_error(
+      DabModernBootstrapParseError,
+      'unknown Modern call target "missing"'
+    )
+    expect(unit.functions.to_a).to be_empty
+  end
+
+  it 'retains malformed nested String, UTF-8, NUL, escape, and newline precedence' do
+    invalid_utf8 = "\"\#{ \"".b + [0xFF].pack('C') + '" }"'.b
+    invalid_boundary_utf8 = "\"\#{value".b + [0xFF].pack('C') + '}"'.b
+    nul = "\"\#{ \"a\0b\" }\"".b
+    cases = {
+      "\"\#{ \"\\q\" }\"".b => 'invalid Modern String literal escape',
+      invalid_utf8 => 'invalid UTF-8 byte 0xFF in Modern String literal',
+      invalid_boundary_utf8 => 'invalid UTF-8 byte 0xFF in Modern String literal',
+      nul => 'invalid Modern String literal: NUL is not allowed',
+      "\"\#{value\0}\"".b => 'invalid Modern String literal: NUL is not allowed',
+      "\"\#{ \"a\nb\" }\"".b => 'invalid Modern String literal: literal LF is not allowed',
+      "\"\#{ \"a\rb\" }\"".b => 'invalid Modern String literal: literal CR is not allowed',
+    }
+
+    cases.each do |source, message|
+      token = scan(source)
+      expect(token.kind).to eq(:unsupported), source.inspect
+      expect(token.diagnostic_message).to include(message), source.inspect
+    end
+  end
+
   it 'keeps escaped openers literal, honors backslash parity, and never rescans decoded escapes' do
     literal = scan('"literal \\#{name} and \\u0023{name}"')
     even = scan('"\\\\#{name}"')
@@ -129,27 +379,17 @@ describe 'bounded Modern String interpolation' do
     expect([odd.kind, odd.value]).to eq([:string, '\\#{name}'.b])
   end
 
-  it 'emits the two structural diagnostic families with present-token and EOF spans' do
+  it 'emits bounded-expression and closer diagnostics with present-token and EOF spans' do
     cases = {
       "\"\#{}\"" => [
-        'invalid Modern String interpolation: expected an ASCII local identifier immediately after "#{"',
-        3,
-        4,
-      ],
-      "\"\#{ nil}\"" => [
-        'invalid Modern String interpolation: expected an ASCII local identifier immediately after "#{"',
-        3,
-        4,
-      ],
-      "\"\#{nil}\"" => [
-        'invalid Modern String interpolation: expected an ASCII local identifier immediately after "#{"',
-        3,
-        6,
-      ],
-      "\"\#{name()}\"" => [
         'invalid Modern String interpolation: expected "}" immediately after local identifier',
-        7,
-        8,
+        3,
+        4,
+      ],
+      "\"\#{ }\"" => [
+        'invalid Modern String interpolation: expected "}" immediately after local identifier',
+        4,
+        5,
       ],
       '"#{name' => [
         'invalid Modern String interpolation: expected "}" immediately after local identifier',
@@ -193,12 +433,12 @@ describe 'bounded Modern String interpolation' do
       ],
       non_string_parameter: [
         "def main(value:Int32)\nprint(\"\#{value}\")\nend\n",
-        'cannot interpolate Modern parameter "value" of type Int32; simple interpolation requires exact String',
+        'cannot interpolate Modern expression of type Int32; EX-011 requires exact String',
         'value',
       ],
       non_string: [
         "def main()\nvar value = \"first\"\nvalue = 1\nprint(\"\#{value}\")\nend\n",
-        'cannot interpolate Modern local "value" of type Fixnum; simple interpolation requires exact String',
+        'cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String',
         'value',
       ],
       cross_function: [

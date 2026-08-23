@@ -1154,6 +1154,28 @@ diagnostic, type, backend, opcode, schema, assembler, loader, VM, native, Ring,
 serializer, FFI, or public API behavior. The runtime remains for trusted local
 input and is not a sandbox.
 
+### EX-011: bounded expression splices in String interpolation
+
+Version `0.0.89` lets each Modern interpolated String splice contain exactly
+one expression from the existing bounded return-value union. The boundary is
+`#{` followed by zero or more ASCII SPACE bytes, the expression, zero or more
+ASCII SPACE bytes, and `}`. TAB, comments, and line endings are not boundary
+padding. Multiple calls, references, and literal segments retain exact
+left-to-right, once-only evaluation through the existing String composition
+lowering.
+
+Every splice must be statically exactly `String`. Other supported expressions
+retain their existing reference, target, arity, argument, member, and result
+validation before the EX-011 type diagnostic. There is no implicit conversion,
+runtime guard, nested interpolation, grouping, operator, receiver-call, chain,
+bytecode, VM, native, Ring, or FFI expansion.
+
+Fixture `0113_interpolation_expression_splice.dabmtest` places an identifier
+read between two effectful exact-String producer calls and uses leading-only
+and trailing-only SPACE padding. Its exact application output and assembly
+lock once-only source order, exactly one `CALL` per producer, ordered existing
+String `+` composition, and the absence of conversion.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

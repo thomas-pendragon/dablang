@@ -422,7 +422,7 @@ describe 'final explicit Modern case else' do
       ],
       [
         "def main(name:Int32)\ncase 1\nelse\n\"\#{name}\"\nend\nend\n",
-        'cannot interpolate Modern parameter "name" of type Int32; simple interpolation requires exact String',
+        'cannot interpolate Modern expression of type Int32; EX-011 requires exact String',
       ],
       [
         "def main():String\ncase 1\nelse\nreturn 2\nend\nend\n",

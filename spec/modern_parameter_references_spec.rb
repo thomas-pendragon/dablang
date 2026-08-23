@@ -148,8 +148,8 @@ describe 'Modern parameter references' do
         parse(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
         expect(error.message).to eq(
-          "cannot interpolate Modern parameter \"value\" of type #{type_name}; " \
-          'simple interpolation requires exact String'
+          "cannot interpolate Modern expression of type #{type_name}; " \
+          'EX-011 requires exact String'
         )
         start = source.index('value', source.index('#{'))
         expect([error.source_span.start_offset, error.source_span.end_offset]).to eq([start, start + 5])
