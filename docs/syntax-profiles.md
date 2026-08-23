@@ -278,8 +278,18 @@ exactly eight contextual value entries: a standalone body value, a value return,
 a `let` initializer, a `var` initializer, an ordinary reassignment right-hand
 side, direct or nested call arguments, a literal/member receiver, and a `case`
 subject. Regex remains outside the shared literal/value kind sets so `when`
-patterns and comma alternatives do not consume the later matching row. Written
-`: Regex` annotations also remain unsupported.
+patterns and comma alternatives did not consume the later matching row. Written
+`: Regex` annotations remain unsupported.
+
+Version 0.0.87 admits that same frozen wrapper only at the first and
+after-comma pattern boundary of an existing `when` header. Any complete `case`
+containing at least one Regex pattern requires a statically known exact String
+subject; `Object`, Regex, and every other type are rejected transactionally at
+the complete subject span. The subject is still evaluated once, and reached
+patterns are constructed, compiled, and searched once each in source order.
+The first successful ordinary unanchored PCRE2 search selects its clause;
+anchors remain explicit, an empty pattern matches at byte zero, and later or
+unselected Regex patterns are never constructed.
 
 Each admitted body lowers without decoding through the existing `Regex.new`
 constructor shape and existing `LOAD_STRING`, `LOAD_CLASS 20`, and `INSTCALL`
@@ -293,12 +303,26 @@ unselected literals are not constructed.
 In ordinary mode each slash remains an independent one-byte unsupported token,
 so `//` is never a separator or comment and is never swallowed to LF or EOF.
 Boolean conditions, postfix conditions, the Boolean-only `while` guard write,
-`when` patterns, headers, separator positions, and the position after a
-completed value remain excluded. A pattern-relative PCRE2 byte offset `N` maps
+non-pattern headers, separator positions, and the position after a completed
+value remain excluded. A pattern-relative PCRE2 byte offset `N` maps
 without decoding to the zero-width compiler source point at body start plus
 `N`, including the point before the closing slash at body length. Native stderr
 remains pattern-relative because bytecode has no source map. Legacy slash
 division and `//` comments are unchanged.
+
+Regex case matching lowers only through existing `INSTCALL` using a
+compiler-internal `$`-prefixed instance target registered on Regex. It exposes
+no source-spellable member, operator, capture, binding, or annotation API and
+adds no opcode, schema, assembler, loader, Ring, FFI, or normalization path.
+The runtime uses strict UTF/UCP Unicode 16.0.0 checking for every search, keeps
+String storage alive through the call, preserves embedded NUL by explicit byte
+length, returns only Boolean for match/non-match outcomes, and sets match,
+depth, and heap ceilings of 100000, 1000, and 8192 KiB. Pattern-side limits may
+lower but not raise those ceilings. A match failure preserves earlier stdout,
+publishes no Boolean, stops later code with status 1, and reports the bounded or
+invalid-UTF diagnostic; compile-time subject rejection retains status 2
+transactional output. The VM continues to support trusted local input only and
+is not a sandbox.
 
 ## Modern top-level function declarations
 

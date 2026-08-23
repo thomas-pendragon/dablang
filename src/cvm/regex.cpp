@@ -35,8 +35,26 @@ struct Pcre2CompileContextDeleter
     }
 };
 
+struct Pcre2MatchContextDeleter
+{
+    void operator()(pcre2_match_context *context) const
+    {
+        pcre2_match_context_free(context);
+    }
+};
+
+struct Pcre2MatchDataDeleter
+{
+    void operator()(pcre2_match_data *data) const
+    {
+        pcre2_match_data_free(data);
+    }
+};
+
 typedef std::unique_ptr<pcre2_code, Pcre2CodeDeleter>                      Pcre2Code;
 typedef std::unique_ptr<pcre2_compile_context, Pcre2CompileContextDeleter> Pcre2CompileContext;
+typedef std::unique_ptr<pcre2_match_context, Pcre2MatchContextDeleter>     Pcre2MatchContext;
+typedef std::unique_ptr<pcre2_match_data, Pcre2MatchDataDeleter>           Pcre2MatchData;
 
 bool test_mode(const char *name)
 {
@@ -48,6 +66,11 @@ bool allocation_failure(const char *stage)
 {
     const char *value = std::getenv("DAB_REGEX_TEST_FAIL_ALLOCATION");
     return value && std::strcmp(value, stage) == 0;
+}
+
+const char *test_value(const char *name)
+{
+    return std::getenv(name);
 }
 
 [[noreturn]] void throw_out_of_memory()
@@ -90,6 +113,70 @@ void throw_compile_error(int error_code, PCRE2_SIZE error_offset)
     }
     message << static_cast<size_t>(error_offset) << " (PCRE2 error " << error_code
             << "): " << error_message(error_code);
+    throw DabRuntimeError(message.str());
+}
+
+bool utf8_error(int error_code)
+{
+    return error_code <= PCRE2_ERROR_UTF8_ERR1 && error_code >= PCRE2_ERROR_UTF8_ERR21;
+}
+
+int injected_match_error(int result)
+{
+    const char *value = test_value("DAB_REGEX_TEST_MATCH_ERROR");
+    if (!value)
+    {
+        return result;
+    }
+    if (std::strcmp(value, "match_limit") == 0)
+    {
+        return PCRE2_ERROR_MATCHLIMIT;
+    }
+    if (std::strcmp(value, "depth_limit") == 0)
+    {
+        return PCRE2_ERROR_DEPTHLIMIT;
+    }
+    if (std::strcmp(value, "heap_limit") == 0)
+    {
+        return PCRE2_ERROR_HEAPLIMIT;
+    }
+    if (std::strcmp(value, "out_of_memory") == 0)
+    {
+        return PCRE2_ERROR_NOMEMORY;
+    }
+    return result;
+}
+
+[[noreturn]] void throw_match_error(int error_code, pcre2_match_data *match_data)
+{
+    if (error_code == PCRE2_ERROR_MATCHLIMIT)
+    {
+        throw DabRuntimeError("Regex match limit exceeded");
+    }
+    if (error_code == PCRE2_ERROR_DEPTHLIMIT)
+    {
+        throw DabRuntimeError("Regex match depth limit exceeded");
+    }
+    if (error_code == PCRE2_ERROR_HEAPLIMIT)
+    {
+        throw DabRuntimeError("Regex match heap limit exceeded");
+    }
+    if (error_code == PCRE2_ERROR_NOMEMORY)
+    {
+        throw DabRuntimeError("Regex match failed: out of memory");
+    }
+
+    std::ostringstream message;
+    if (utf8_error(error_code))
+    {
+        message << "invalid UTF-8 Regex match subject at byte "
+                << static_cast<size_t>(pcre2_get_startchar(match_data));
+    }
+    else
+    {
+        message << "Regex match failed";
+    }
+    message << " (PCRE2 error " << error_code << "): " << error_message(error_code);
     throw DabRuntimeError(message.str());
 }
 
@@ -280,4 +367,95 @@ DabValue dab_regex_create(const std::vector<DabValue> &arguments)
     {
         throw_out_of_memory();
     }
+}
+
+DabValue dab_regex_match(DabValue self, const std::vector<DabValue> &arguments)
+{
+    if (arguments.size() != 1)
+    {
+        throw DabRuntimeError("internal Regex match expects exactly one argument");
+    }
+    if (self.data.type != TYPE_OBJECT || !self.data.object || !self.data.object->object)
+    {
+        throw DabRuntimeError("internal Regex match expects a Regex receiver");
+    }
+
+    DabBaseObject *receiver_storage = self.data.object->object;
+    if (receiver_storage->klass != CLASS_REGEX)
+    {
+        throw DabRuntimeError("internal Regex match expects a Regex receiver");
+    }
+    DabRegex *regex = dynamic_cast<DabRegex *>(receiver_storage);
+    if (!regex || !regex->compiled)
+    {
+        throw DabRuntimeError("internal Regex match received invalid Regex storage");
+    }
+
+    const DabValue &subject_value = arguments[0];
+    if ((subject_value.data.type != TYPE_LITERALSTRING &&
+         subject_value.data.type != TYPE_DYNAMICSTRING) ||
+        !subject_value.data.object || !subject_value.data.object->object)
+    {
+        throw DabRuntimeError("internal Regex match expects a String subject");
+    }
+
+    PCRE2_SPTR subject;
+    PCRE2_SIZE subject_size;
+    if (subject_value.data.type == TYPE_LITERALSTRING)
+    {
+        DabBaseObject *storage = subject_value.data.object->object;
+        if (storage->klass != CLASS_LITERALSTRING)
+        {
+            throw DabRuntimeError("internal Regex match received invalid String storage");
+        }
+        DabLiteralString *literal = dynamic_cast<DabLiteralString *>(storage);
+        if (!literal || (!literal->pointer && literal->length != 0))
+        {
+            throw DabRuntimeError("internal Regex match received invalid String storage");
+        }
+        subject      = reinterpret_cast<PCRE2_SPTR>(literal->pointer ? literal->pointer : "");
+        subject_size = static_cast<PCRE2_SIZE>(literal->length);
+    }
+    else
+    {
+        DabBaseObject *storage = subject_value.data.object->object;
+        if (storage->klass != CLASS_DYNAMICSTRING)
+        {
+            throw DabRuntimeError("internal Regex match received invalid String storage");
+        }
+        DabDynamicString *dynamic = dynamic_cast<DabDynamicString *>(storage);
+        if (!dynamic)
+        {
+            throw DabRuntimeError("internal Regex match received invalid String storage");
+        }
+        subject      = reinterpret_cast<PCRE2_SPTR>(dynamic->value.data());
+        subject_size = static_cast<PCRE2_SIZE>(dynamic->value.size());
+    }
+
+    Pcre2MatchContext context(pcre2_match_context_create(nullptr));
+    Pcre2MatchData    match_data(pcre2_match_data_create(1, nullptr));
+    if (!context || !match_data)
+    {
+        throw DabRuntimeError("Regex match failed: out of memory");
+    }
+    if (pcre2_set_match_limit(context.get(), 100000) != 0 ||
+        pcre2_set_depth_limit(context.get(), 1000) != 0 ||
+        pcre2_set_heap_limit(context.get(), 8192) != 0)
+    {
+        throw DabRuntimeError("Regex match failed: out of memory");
+    }
+
+    pcre2_code *code = static_cast<pcre2_code *>(regex->compiled);
+    int result = pcre2_match(code, subject, subject_size, 0, 0, match_data.get(), context.get());
+    result     = injected_match_error(result);
+    if (result >= 0)
+    {
+        return DabValue(true);
+    }
+    if (result == PCRE2_ERROR_NOMATCH)
+    {
+        return DabValue(false);
+    }
+
+    throw_match_error(result, match_data.get());
 }

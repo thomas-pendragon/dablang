@@ -20,3 +20,4 @@ struct DabRegex : public DabBaseObject
 
 void     dab_regex_verify_engine();
 DabValue dab_regex_create(const std::vector<DabValue> &arguments);
+DabValue dab_regex_match(DabValue self, const std::vector<DabValue> &arguments);

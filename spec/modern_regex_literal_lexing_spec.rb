@@ -196,7 +196,7 @@ describe 'Modern regular-expression literal lexing' do
     end
   end
 
-  it 'does not enable regex scanning in declarations, separators, transfer tails, conditions, or patterns' do
+  it 'does not enable regex scanning in declarations, separators, transfer tails, conditions, or non-pattern positions' do
     cases = [
       ["//\n", DabModernBootstrapParseError::GENERIC_MESSAGE, [0, 1]],
       ["def //\nend\n", DabModernBootstrapParser::EXPECT_CALLABLE_NAME_MESSAGE, [4, 5]],
@@ -217,16 +217,6 @@ describe 'Modern regular-expression literal lexing' do
         "def main\nnil if //\nend\n",
         DabModernBootstrapParser::EXPECT_POSTFIX_IF_CONDITION_MESSAGE,
         [16, 18],
-      ],
-      [
-        "def main\ncase true\nwhen /a/\nend\nend\n",
-        DabModernBootstrapParser::EXPECT_WHEN_PATTERN_MESSAGE,
-        [24, 27],
-      ],
-      [
-        "def main\ncase true\nwhen true, /a/\nend\nend\n",
-        DabModernBootstrapParser::EXPECT_WHEN_ALTERNATIVE_MESSAGE,
-        [30, 33],
       ],
       ["def main\nnil//\nend\n", DabModernBootstrapParseError::GENERIC_MESSAGE, [12, 13]],
     ]
