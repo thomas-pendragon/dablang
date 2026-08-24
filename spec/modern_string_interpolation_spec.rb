@@ -379,20 +379,25 @@ describe 'bounded Modern String interpolation' do
     expect([odd.kind, odd.value]).to eq([:string, '\\#{name}'.b])
   end
 
-  it 'emits bounded-expression and closer diagnostics with present-token and EOF spans' do
+  it 'emits the exact expression closer diagnostic with extra-token and EOF spans' do
     cases = {
       "\"\#{}\"" => [
-        'invalid Modern String interpolation: expected "}" immediately after local identifier',
+        'invalid Modern String interpolation: expected "}" after expression',
         3,
         4,
       ],
       "\"\#{ }\"" => [
-        'invalid Modern String interpolation: expected "}" immediately after local identifier',
+        'invalid Modern String interpolation: expected "}" after expression',
         4,
         5,
       ],
+      "\"\#{name  extra}\"" => [
+        'invalid Modern String interpolation: expected "}" after expression',
+        9,
+        14,
+      ],
       '"#{name' => [
-        'invalid Modern String interpolation: expected "}" immediately after local identifier',
+        'invalid Modern String interpolation: expected "}" after expression',
         7,
         7,
       ],

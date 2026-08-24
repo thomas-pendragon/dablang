@@ -1458,11 +1458,8 @@ class DabModernBootstrapScanner < DabScanner
   BRACED_UNICODE_MESSAGE =
     'invalid Modern Unicode escape: expected exactly one code point written as 1..6 hexadecimal ' \
     'digits inside "\\u{...}"'.freeze
-  EXPECT_INTERPOLATION_IDENTIFIER_MESSAGE =
-    'invalid Modern String interpolation: expected an ASCII local identifier immediately after "#{"'.freeze
   EXPECT_INTERPOLATION_CLOSE_MESSAGE =
-    'invalid Modern String interpolation: expected "}" immediately after local identifier'.freeze
-  INTERPOLATION_RESERVED_NAMES = %w[def end return nil true false].freeze
+    'invalid Modern String interpolation: expected "}" after expression'.freeze
 
   def initialize(content, nl_is_whitespace = true, source_unit:)
     super(content.b, nl_is_whitespace, source_unit: source_unit)
