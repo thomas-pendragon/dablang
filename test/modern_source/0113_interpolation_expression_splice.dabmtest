@@ -1,0 +1,131 @@
+## SOURCE
+def first_value():String
+  print("first-call\n")
+  return "A"
+end
+def second_value(value:String):String
+  print("second-call\n")
+  return value
+end
+def main()
+  let middle = "middle"
+  print("<#{ first_value()}|#{middle}|#{second_value("B") }>\n")
+end
+## EXPECTED APPLICATION STDOUT
+first-call
+second-call
+<A|middle|B>
+
+## NOTE
+Canonical EX-011 coverage for two effectful exact-String calls, leading-only and trailing-only ASCII SPACE padding, an identifier read between the calls, once-only source order, and existing String composition without conversion.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "<" 
+                                 W_STRING ">
+" 
+                                 W_STRING "A" 
+                                 W_STRING "B" 
+                                 W_STRING "first-call
+" 
+                                 W_STRING "middle" 
+                                 W_STRING "second-call
+" 
+                                 W_STRING "|" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Ffirst_value:
+                                 STACK_RESERVE 0
+/* "first-call. */               LOAD_STRING R0, _DATA + 9, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "A"          */               LOAD_STRING R1, _DATA + 5, 1
+                                 RETURN R1
+                   __Ffirst_value_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "middle"     */               LOAD_STRING R0, _DATA + 21, 6
+/* "<"          */               LOAD_STRING R1, _DATA + 0, 1
+/* first_value  */               CALL R2, S54
+/* +            */               INSTCALL R3, R1, S2, R2
+/* "|"          */               LOAD_STRING R4, _DATA + 41, 1
+/* +            */               INSTCALL R5, R3, S2, R4
+/* +            */               INSTCALL R6, R5, S2, R0
+/* "|"          */               LOAD_STRING R7, _DATA + 41, 1
+/* +            */               INSTCALL R8, R6, S2, R7
+/* "B"          */               LOAD_STRING R9, _DATA + 7, 1
+/* second_value */               CALL R10, S56, R9
+/* +            */               INSTCALL R11, R8, S2, R10
+/* ">."         */               LOAD_STRING R12, _DATA + 2, 2
+/* +            */               INSTCALL R13, R11, S2, R12
+/* PRINT        */               SYSCALL RNIL, 0, R13
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsecond_value:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* "second-call */               LOAD_STRING R1, _DATA + 28, 12
+/* PRINT        */               SYSCALL RNIL, 0, R1
+                                 RETURN R0
+                   __Fsecond_value_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "first_value" 
+                                 W_STRING "main" 
+                                 W_STRING "second_value" 
+                                 W_STRING "value" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* first_value  */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 24 
+/* second_value */               W_SYMBOL _SDAT + 29 
+/* value        */               W_SYMBOL _SDAT + 42 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* first_value  */               W_METHOD 54, -1, Ffirst_value, 0, __Ffirst_value_END - Ffirst_value, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* second_value */               W_METHOD 56, -1, Fsecond_value, 1, __Fsecond_value_END - Fsecond_value, 0
+/* value<String */               W_METHOD_ARG 57, 1
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
