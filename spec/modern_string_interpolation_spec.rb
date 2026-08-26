@@ -145,6 +145,63 @@ describe 'bounded Modern String interpolation' do
     expect(value.source_tokens.map(&:text).join).to eq(source)
   end
 
+  it 'retains recursive wrapper identity, exact nested spans, and byte round-trip' do
+    source = "\"A\#{wrap(\"B\#{leaf(name)}C\")}D\""
+    outer = interpolation(source)
+    outer_splice = outer.splices.fetch(0)
+    middle_token = outer_splice.expression.arguments.fetch(0)
+    middle = middle_token.value
+    inner_splice = middle.splices.fetch(0)
+
+    expect(outer_splice.expression).to be_a(DabModernBootstrapDirectCall)
+    expect(middle_token.kind).to eq(:interpolated_string)
+    expect(inner_splice.expression).to be_a(DabModernBootstrapDirectCall)
+    expect(outer.source_tokens.map(&:text).join).to eq(source)
+    expect(middle.source_tokens.map(&:text).join).to eq("\"B\#{leaf(name)}C\"")
+    expect([outer.source_span.start_offset, outer.source_span.end_offset]).to eq([0, 30])
+    expect([outer_splice.source_span.start_offset, outer_splice.source_span.end_offset]).to eq([2, 28])
+    expect([outer_splice.expression.source_span.start_offset,
+            outer_splice.expression.source_span.end_offset]).to eq([4, 27])
+    expect([middle.source_span.start_offset, middle.source_span.end_offset]).to eq([9, 26])
+    expect([inner_splice.source_span.start_offset, inner_splice.source_span.end_offset]).to eq([11, 24])
+    expect([inner_splice.expression.source_span.start_offset,
+            inner_splice.expression.source_span.end_offset]).to eq([13, 23])
+    expect([outer, outer_splice, middle_token, middle, inner_splice]).to all(be_frozen)
+    expect(
+      [outer, outer_splice, middle_token, middle, inner_splice, inner_splice.expression].map do |part|
+        part.source_span.source_unit
+      end
+    ).to all(equal(source_unit))
+  end
+
+  it 'admits direct, direct-call-argument, three-level, and generated deep recursive interpolation' do
+    source = <<~'DAB'
+      def leaf(value:String):String
+      return value
+      end
+      def wrap(value:String):String
+      return value
+      end
+      def main(name:String)
+      print("#{ "direct #{name}" }")
+      print("#{wrap("argument #{name}")}")
+      print("#{ "two #{ "three #{name}" }" }")
+      end
+    DAB
+    main = parse(source).lower_into(DabNodeUnit.new).fetch(2)
+
+    expect(main.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[print print wrap print])
+    expect(main.all_nodes(DabNodeModernInterpolatedString).length).to eq(7)
+
+    deep_expression = 'name'
+    128.times { deep_expression = "\"\#{#{deep_expression}}\"" }
+    deep_source = "def deep(name:String):String\nreturn #{deep_expression}\nend\n"
+    deep = parse(deep_source).lower_into(DabNodeUnit.new)
+
+    expect(deep.all_nodes(DabNodeModernInterpolatedString).length).to eq(128)
+    expect(deep.all_nodes(DabNodeLocalVar).map(&:real_identifier)).to eq(['name'])
+  end
+
   it 'accepts bounded exact-String literal, reference, member-free call, and mixed repeated splices' do
     source = <<~'DAB'
       def producer(value:String):String
@@ -224,16 +281,16 @@ describe 'bounded Modern String interpolation' do
     end
   end
 
-  it 'rejects nesting, call-result arguments, grouping, operators, unary negatives, receivers, and chains' do
+  it 'preserves exclusions for call-result arguments, grouping, operators, unary negatives, receivers, and chains' do
     cases = {
-      "\"\#{ \"\#{value}\" }\"" => "\#{value}",
-      "\"\#{outer(\"\#{value}\")}\"" => "\#{value}",
-      "\"\#{outer(inner())}\"" => 'inner',
+      "\"\#{outer(inner(\"\#{value}\"))}\"" => 'inner',
       "\"\#{(value)}\"" => '(',
       "\"\#{value + value}\"" => '+',
       "\"\#{-1}\"" => '-',
       "\"\#{value.call()}\"" => '.',
       "\"\#{producer().length}\"" => '.',
+      "\"\#{ \"\#{value}\".length }\"" => '.',
+      "\"\#{ \"value\".missing(\"\#{value}\") }\"" => "\"\#{value}\"",
     }
 
     cases.each do |source, marker|
@@ -242,8 +299,6 @@ describe 'bounded Modern String interpolation' do
       start_offset = source.index(marker)
       expect(token.source_span.start_offset).to eq(start_offset), source
     end
-    nested = scan("\"\#{ \"\#{value}\" }\"")
-    expect(nested.diagnostic_message).to eq('nested Modern String interpolation is not supported until EX-012')
   end
 
   it 'rejects every supported non-String expression on its complete unpadded expression span' do
@@ -348,6 +403,66 @@ describe 'bounded Modern String interpolation' do
     expect(unit.functions.to_a).to be_empty
   end
 
+  it 'recursively preflights inner references and dead inner calls before publication' do
+    invalid_reference = <<~'DAB'
+      def main()
+      if false
+      print("outer #{ "inner #{missing}" }")
+      end
+      end
+    DAB
+    expect { parse(invalid_reference) }.to raise_error(
+      DabModernBootstrapParseError,
+      'unknown Modern interpolation local "missing"; expected an earlier same-function local binding'
+    ) { |error|
+      start_offset = invalid_reference.index('missing')
+      expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+        [start_offset, start_offset + 'missing'.bytesize]
+      )
+    }
+
+    invalid_type = <<~'DAB'
+      def main()
+      if false
+      print("outer #{ "inner #{1}" }")
+      end
+      end
+    DAB
+    expect { parse(invalid_type) }.to raise_error(
+      DabModernBootstrapParseError,
+      'cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String'
+    ) { |error|
+      start_offset = invalid_type.index('1')
+      expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+        [start_offset, start_offset + 1]
+      )
+    }
+
+    invalid_call = <<~'DAB'
+      def valid():String
+      return "valid"
+      end
+      def main()
+      if false
+      print("outer #{ "inner #{missing()}" }")
+      end
+      end
+    DAB
+    document = parse(invalid_call)
+    unit = DabNodeUnit.new
+
+    expect { document.lower_into(unit) }.to raise_error(
+      DabModernBootstrapParseError,
+      'unknown Modern call target "missing"'
+    ) { |error|
+      start_offset = invalid_call.index('missing')
+      expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+        [start_offset, start_offset + 'missing'.bytesize]
+      )
+    }
+    expect(unit.functions.to_a).to be_empty
+  end
+
   it 'retains malformed nested String, UTF-8, NUL, escape, and newline precedence' do
     invalid_utf8 = "\"\#{ \"".b + [0xFF].pack('C') + '" }"'.b
     invalid_boundary_utf8 = "\"\#{value".b + [0xFF].pack('C') + '}"'.b
@@ -377,6 +492,46 @@ describe 'bounded Modern String interpolation' do
     expect([literal.kind, literal.value]).to eq([:string, "literal \#{name} and \#{name}".b])
     expect([even.kind, even.value.splices.map(&:name)]).to eq([:interpolated_string, ['name']])
     expect([odd.kind, odd.value]).to eq([:string, '\\#{name}'.b])
+  end
+
+  it 'gives nested String and Regex tokens ownership of delimiters, escapes, and ordinary extra closers' do
+    accepted = [
+      "\"\#{wrap(\"}\")}\"",
+      "\"\#{wrap(\")\")}\"",
+      "\"\#{wrap(\"\\\#{name}\")}\"",
+      "\"\#{ /a}b\\/c/ }\"",
+      "\"\#{ \"inner \#{name}}\" }\"",
+      "\"\#{name}})\"",
+    ]
+
+    accepted.each do |source|
+      expect(scan(source).kind).to eq(:interpolated_string), source
+    end
+    expect(scan("\"\#{wrap(\"\\\#{name}\")}\"").value.splices.fetch(0).expression.arguments.fetch(0).value)
+      .to eq("\#{name}".b)
+  end
+
+  it 'retains nested UTF-8, NUL, escape, and line-ending diagnostic precedence' do
+    invalid_utf8 = '"#{ "inner #{na'.b + [0xFF].pack('C') + 'me}" }"'.b
+    cases = {
+      invalid_utf8 => ['invalid UTF-8 byte 0xFF in Modern String literal', 15, 16],
+      "\"\#{ \"inner \#{na\0me}\" }\"".b => ['invalid Modern String literal: NUL is not allowed', 15, 16],
+      "\"\#{ \"inner \#{name\n}\" }\"".b => [
+        'invalid Modern String literal: literal LF is not allowed; use "\\n"',
+        17,
+        18,
+      ],
+      "\"\#{ \"inner \#{\"\\q\"}\" }\"".b => ['invalid Modern String literal escape', 14, 16],
+    }
+
+    cases.each do |source, (message, start_offset, end_offset)|
+      token = scan(source)
+      expect(token.kind).to eq(:unsupported), source.inspect
+      expect(token.diagnostic_message).to include(message), source.inspect
+      expect([token.source_span.start_offset, token.source_span.end_offset]).to eq(
+        [start_offset, end_offset]
+      ), source.inspect
+    end
   end
 
   it 'emits the exact expression closer diagnostic with extra-token and EOF spans' do
@@ -411,6 +566,66 @@ describe 'bounded Modern String interpolation' do
         [start_offset, end_offset]
       ), source
     end
+  end
+
+  it 'uses nearest-open ownership and the first unmet existing delimiter production recursively' do
+    cases = {
+      "\"\#{name\"" => [
+        'invalid Modern String interpolation: expected "}" after expression',
+        7,
+        8,
+      ],
+      "\"\#{ \"inner \#{name\" }\"" => [
+        'invalid Modern String interpolation: expected "}" after expression',
+        17,
+        18,
+      ],
+      "\"\#{wrap(\"inner\"}\"" => [
+        'invalid Modern call argument list: expected "," or closing ")" after argument',
+        15,
+        16,
+      ],
+      "\"\#{name}" => ['unterminated Modern String literal', 8, 8],
+    }
+
+    cases.each do |source, (message, start_offset, end_offset)|
+      token = scan(source)
+      expect(token.kind).to eq(:unsupported), source
+      expect(token.diagnostic_message).to eq(message), source
+      expect([token.source_span.start_offset, token.source_span.end_offset]).to eq(
+        [start_offset, end_offset]
+      ), source
+    end
+  end
+
+  it 'lowers recursive calls exactly once with nested arguments inside enclosing calls' do
+    source = <<~'DAB'
+      def first():String
+      return "first"
+      end
+      def second():String
+      return "second"
+      end
+      def third():String
+      return "third"
+      end
+      def wrap(value:String):String
+      return value
+      end
+      def main()
+      print("#{first()}|#{wrap("inner #{second()} #{ "deep #{third()}" }")}|end")
+      end
+    DAB
+    main = parse(source).lower_into(DabNodeUnit.new).fetch(4)
+    outer = main.all_nodes(DabNodeModernInterpolatedString).first
+    calls = main.all_nodes(DabNodeCall)
+
+    expect(calls.map(&:real_identifier).tally).to eq(
+      'print' => 1, 'first' => 1, 'wrap' => 1, 'second' => 1, 'third' => 1
+    )
+    expect(outer.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[first wrap second third])
+    wrap = calls.find { |call| call.real_identifier == 'wrap' }
+    expect(wrap.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[wrap second third])
   end
 
   it 'accepts an exact-String local or parameter and rejects every other binding flow' do

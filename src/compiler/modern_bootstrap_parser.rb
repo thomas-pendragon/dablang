@@ -1529,7 +1529,12 @@ class DabModernBootstrapScanner < DabScanner
       advance!
       token(:bang, '!', start_offset)
     when '"'
-      string_token(start_offset)
+      if @interpolation_depth.positive? && !value_entry
+        advance!
+        token(:containing_string_quote, '"', start_offset)
+      else
+        string_token(start_offset)
+      end
     when '#'
       line_comment_token(start_offset)
     when '/'
@@ -1774,14 +1779,6 @@ private
         advance!
       when '#'
         if current_char(1) == '{'
-          if @interpolation_depth.positive?
-            return unsupported_token(
-              marker_offset,
-              2,
-              diagnostic_message: 'nested Modern String interpolation is not supported until EX-012'
-            )
-          end
-
           segment_text = content.byteslice(segment_start_offset, marker_offset - segment_start_offset) || ''.b
           parts << string_part_token(
             :string_text,
@@ -2590,12 +2587,27 @@ private
     preflight_interpolations!(subject, bindings, bindings_by_reference, parameters_by_name)
   end
 
-  def preflight_interpolations!(value, bindings, bindings_by_reference, parameters_by_name)
+  def preflight_interpolations!(
+    value,
+    bindings,
+    bindings_by_reference,
+    parameters_by_name,
+    seen_interpolations = {}
+  )
     interpolation_tokens(value).each do |token|
+      next if seen_interpolations[token]
+
+      seen_interpolations[token] = true
       token.value.splices.each do |splice|
         expression = splice.expression
         if expression.is_a?(DabModernBootstrapDirectCall)
-          preflight_call_values!(expression, bindings, bindings_by_reference, parameters_by_name)
+          preflight_call_values!(
+            expression,
+            bindings,
+            bindings_by_reference,
+            parameters_by_name,
+            seen_interpolations
+          )
           next
         end
         next if expression.is_a?(DabModernBootstrapLiteralMemberCall)
@@ -2650,7 +2662,10 @@ private
 
   def interpolation_tokens(value)
     if value.is_a?(DabModernBootstrapToken)
-      return value.kind == :interpolated_string ? [value] : []
+      return [] unless value.kind == :interpolated_string
+
+      nested = value.value.splices.flat_map { |splice| interpolation_tokens(splice.expression) }
+      return [value, *nested]
     end
     if value.is_a?(DabModernBootstrapLocalBinding) ||
        value.is_a?(DabModernBootstrapMutableLocalBinding)
@@ -2724,14 +2739,32 @@ private
     preflight_return_type!(value_return, function, actual_type)
   end
 
-  def preflight_call_values!(call, bindings, bindings_by_reference, parameters_by_name)
+  def preflight_call_values!(
+    call,
+    bindings,
+    bindings_by_reference,
+    parameters_by_name,
+    seen_interpolations = {}
+  )
     call.arguments.each do |argument|
       if argument.is_a?(DabModernBootstrapDirectCall)
-        preflight_call_values!(argument, bindings, bindings_by_reference, parameters_by_name)
+        preflight_call_values!(
+          argument,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name,
+          seen_interpolations
+        )
         next
       end
       if argument.is_a?(DabModernBootstrapToken) && argument.kind == :interpolated_string
-        preflight_interpolations!(argument, bindings, bindings_by_reference, parameters_by_name)
+        preflight_interpolations!(
+          argument,
+          bindings,
+          bindings_by_reference,
+          parameters_by_name,
+          seen_interpolations
+        )
         next
       end
       next unless argument.is_a?(DabModernBootstrapLocalReference)
@@ -2994,7 +3027,10 @@ private
 
   def current_interpolation_tokens(value)
     if value.is_a?(DabModernBootstrapToken)
-      return value.kind == :interpolated_string ? [value] : []
+      return [] unless value.kind == :interpolated_string
+
+      nested = value.value.splices.flat_map { |splice| current_interpolation_tokens(splice.expression) }
+      return [value, *nested]
     end
     if value.is_a?(DabModernBootstrapLocalBinding) ||
        value.is_a?(DabModernBootstrapMutableLocalBinding)
@@ -4494,7 +4530,7 @@ private
     leading_padding_tokens = []
     leading_padding_tokens << next_token while peek_value_token.kind == :space
     expression = parse_bounded_value_expression(
-      allow_interpolated_strings: false,
+      allow_interpolated_strings: true,
       local_reference_padding_kinds: [:space],
       local_reference_terminator_kinds: [:right_brace]
     )

@@ -1,0 +1,183 @@
+## SOURCE
+def first_value():String
+  print("first-call\n")
+  return "A"
+end
+def second_value():String
+  print("second-call\n")
+  return "B"
+end
+def third_value():String
+  print("third-call\n")
+  return "C"
+end
+def wrap(value:String):String
+  print("wrap-call\n")
+  return "<#{value}>"
+end
+def main()
+  print("[#{first_value()}|#{wrap("middle #{second_value()} #{ "deep #{third_value()}" }")}|end]\n")
+end
+## EXPECTED APPLICATION STDOUT
+first-call
+second-call
+third-call
+wrap-call
+[A|<middle B deep C>|end]
+
+## NOTE
+Canonical EX-012 coverage for recursive exact-String interpolation, a nested direct-call argument, three recursive levels, once-only source order with the inner argument complete before wrap, existing String composition, and no conversion.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING " " 
+                                 W_STRING "<" 
+                                 W_STRING ">" 
+                                 W_STRING "A" 
+                                 W_STRING "B" 
+                                 W_STRING "C" 
+                                 W_STRING "[" 
+                                 W_STRING "deep " 
+                                 W_STRING "first-call
+" 
+                                 W_STRING "middle " 
+                                 W_STRING "second-call
+" 
+                                 W_STRING "third-call
+" 
+                                 W_STRING "wrap-call
+" 
+                                 W_STRING "|" 
+                                 W_STRING "|end]
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Ffirst_value:
+                                 STACK_RESERVE 0
+/* "first-call. */               LOAD_STRING R0, _DATA + 20, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "A"          */               LOAD_STRING R1, _DATA + 6, 1
+                                 RETURN R1
+                   __Ffirst_value_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "["          */               LOAD_STRING R0, _DATA + 12, 1
+/* first_value  */               CALL R1, S54
+/* +            */               INSTCALL R2, R0, S2, R1
+/* "|"          */               LOAD_STRING R3, _DATA + 76, 1
+/* +            */               INSTCALL R4, R2, S2, R3
+/* "middle "    */               LOAD_STRING R5, _DATA + 32, 7
+/* second_value */               CALL R6, S56
+/* +            */               INSTCALL R7, R5, S2, R6
+/* " "          */               LOAD_STRING R8, _DATA + 0, 1
+/* +            */               INSTCALL R9, R7, S2, R8
+/* "deep "      */               LOAD_STRING R10, _DATA + 14, 5
+/* third_value  */               CALL R11, S57
+/* +            */               INSTCALL R12, R10, S2, R11
+/* +            */               INSTCALL R13, R9, S2, R12
+/* wrap         */               CALL R14, S59, R13
+/* +            */               INSTCALL R15, R4, S2, R14
+/* "|end]."     */               LOAD_STRING R16, _DATA + 78, 6
+/* +            */               INSTCALL R17, R15, S2, R16
+/* PRINT        */               SYSCALL RNIL, 0, R17
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fsecond_value:
+                                 STACK_RESERVE 0
+/* "second-call */               LOAD_STRING R0, _DATA + 40, 12
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "B"          */               LOAD_STRING R1, _DATA + 8, 1
+                                 RETURN R1
+                   __Fsecond_value_END:
+                                 NOP 
+ 
+                   Fthird_value:
+                                 STACK_RESERVE 0
+/* "third-call. */               LOAD_STRING R0, _DATA + 53, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* "C"          */               LOAD_STRING R1, _DATA + 10, 1
+                                 RETURN R1
+                   __Fthird_value_END:
+                                 NOP 
+ 
+                   Fwrap:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* "wrap-call." */               LOAD_STRING R1, _DATA + 65, 10
+/* PRINT        */               SYSCALL RNIL, 0, R1
+/* "<"          */               LOAD_STRING R2, _DATA + 2, 1
+/* +            */               INSTCALL R3, R2, S2, R0
+/* ">"          */               LOAD_STRING R4, _DATA + 4, 1
+/* +            */               INSTCALL R5, R3, S2, R4
+                                 RETURN R5
+                   __Fwrap_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "first_value" 
+                                 W_STRING "main" 
+                                 W_STRING "second_value" 
+                                 W_STRING "third_value" 
+                                 W_STRING "value" 
+                                 W_STRING "wrap" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* first_value  */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 24 
+/* second_value */               W_SYMBOL _SDAT + 29 
+/* third_value  */               W_SYMBOL _SDAT + 42 
+/* value        */               W_SYMBOL _SDAT + 54 
+/* wrap         */               W_SYMBOL _SDAT + 60 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* first_value  */               W_METHOD 54, -1, Ffirst_value, 0, __Ffirst_value_END - Ffirst_value, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* second_value */               W_METHOD 56, -1, Fsecond_value, 0, __Fsecond_value_END - Fsecond_value, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* third_value  */               W_METHOD 57, -1, Fthird_value, 0, __Fthird_value_END - Fthird_value, 0
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* wrap         */               W_METHOD 59, -1, Fwrap, 1, __Fwrap_END - Fwrap, 0
+/* value<String */               W_METHOD_ARG 58, 1
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 
