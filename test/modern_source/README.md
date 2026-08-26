@@ -1176,6 +1176,32 @@ and trailing-only SPACE padding. Its exact application output and assembly
 lock once-only source order, exactly one `CALL` per producer, ordered existing
 String `+` composition, and the absence of conversion.
 
+### EX-012: recursive nested String interpolation
+
+Version `0.0.90` admits interpolation recursively, without an artificial
+language nesting limit, in every String literal and direct-call-argument slot
+already supported by the bounded EX-011 expression grammar. Every splice at
+every depth must remain statically exactly `String`; grouping, operators,
+unary negatives, call-result arguments, receiver calls and chains,
+interpolated member receivers and member arguments, and raw Regex
+interpolation remain closed. No coercion, `to_s`, nil conversion, runtime
+fallback, node, opcode, VM, native, Ring, serializer, or FFI behavior changes.
+
+Delimiter ownership follows the nearest open construction and reports the
+first unmet existing grammar production. A missing splice `}` before its
+containing quote reports the interpolation closer diagnostic on that quote, a
+missing call `)` before `}` retains the call-argument diagnostic, and a
+balanced splice with no containing quote retains the zero-width EOF
+unterminated-String diagnostic. Ordinary String and Regex tokens continue to
+own their internal delimiters and escapes, and extra braces or parentheses in
+String text remain literal.
+
+Fixture `0114_nested_interpolation.dabmtest` composes a nested direct-call
+argument with three recursive levels. Its exact output and assembly lock the
+order `first_value`, `second_value`, `third_value`, then `wrap`, exactly one
+`CALL` for each, completion of the inner argument before the enclosing call,
+the outer component order, and the absence of conversion.
+
 ## Diagnostic boundary
 
 Before the source-attributed diagnostic contract, inferred `.dabm`, explicit

@@ -160,6 +160,7 @@ describe DabModernSourceFixture do
       0111_regex_case_matching.dabmtest
       0112_case_implicit_else_nil.dabmtest
       0113_interpolation_expression_splice.dabmtest
+      0114_nested_interpolation.dabmtest
     ]
     fixture_directory = File.expand_path('../test/modern_source', __dir__)
     paths = Dir.children(fixture_directory).filter_map do |basename|
@@ -195,6 +196,23 @@ describe DabModernSourceFixture do
     expect(fixture.expected_stdout.scan(%r{/\* first_value\s+\*/\s+CALL}).length).to eq(1)
     expect(fixture.expected_stdout.scan(%r{/\* second_value\s+\*/\s+CALL}).length).to eq(1)
     expect(fixture.expected_stdout.index('/* first_value')).to be < fixture.expected_stdout.index('/* second_value')
+    expect(fixture.expected_stdout).not_to include('to_s', 'TO_STRING', 'CONVERT')
+  end
+
+  it 'loads the canonical EX-012 runtime fixture with recursive once-only call order and no conversion' do
+    path = File.expand_path('../test/modern_source/0114_nested_interpolation.dabmtest', __dir__)
+    fixture = described_class.load(path)
+
+    expect(fixture.expected_application_stdout).to eq(
+      "first-call\nsecond-call\nthird-call\nwrap-call\n[A|<middle B deep C>|end]\n"
+    )
+    %w[first_value second_value third_value wrap].each do |name|
+      expect(fixture.expected_stdout.scan(%r{/\* #{name}\s+\*/\s+CALL}).length).to eq(1)
+    end
+    call_offsets = %w[first_value second_value third_value wrap].map do |name|
+      fixture.expected_stdout.index("/* #{name}")
+    end
+    expect(call_offsets).to eq(call_offsets.sort)
     expect(fixture.expected_stdout).not_to include('to_s', 'TO_STRING', 'CONVERT')
   end
 
