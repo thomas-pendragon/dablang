@@ -152,10 +152,176 @@ void DabVM::kernel_print(dab_register_t out_reg, std::vector<dab_register_t> reg
     register_set(out_reg, nullptr);
 }
 
+static bool modern_return_supported_class(int64_t target)
+{
+    switch (target)
+    {
+    case CLASS_FIXNUM:
+    case CLASS_UINT8:
+    case CLASS_UINT16:
+    case CLASS_UINT32:
+    case CLASS_UINT64:
+    case CLASS_INT8:
+    case CLASS_INT16:
+    case CLASS_INT32:
+    case CLASS_INT64:
+    case CLASS_STRING:
+    case CLASS_BOOLEAN:
+    case CLASS_NILCLASS:
+    case CLASS_INTPTR:
+    case CLASS_FLOAT:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool modern_return_integer_bits(const DabValue &value, uint64_t &bits)
+{
+    // Signed-to-unsigned conversion sign-extends modulo 2^64 before narrowing.
+    switch (value.data.type)
+    {
+    case TYPE_FIXNUM:
+        bits = static_cast<uint64_t>(value.data.fixnum);
+        return true;
+    case TYPE_UINT8:
+        bits = value.data.num_uint8;
+        return true;
+    case TYPE_UINT16:
+        bits = value.data.num_uint16;
+        return true;
+    case TYPE_UINT32:
+        bits = value.data.num_uint32;
+        return true;
+    case TYPE_UINT64:
+        bits = value.data.num_uint64;
+        return true;
+    case TYPE_INT8:
+        bits = static_cast<uint64_t>(value.data.num_int8);
+        return true;
+    case TYPE_INT16:
+        bits = static_cast<uint64_t>(value.data.num_int16);
+        return true;
+    case TYPE_INT32:
+        bits = static_cast<uint64_t>(value.data.num_int32);
+        return true;
+    case TYPE_INT64:
+        bits = static_cast<uint64_t>(value.data.num_int64);
+        return true;
+    default:
+        return false;
+    }
+}
+
+static int64_t modern_return_signed(uint64_t bits, unsigned width)
+{
+    const auto mask = width == 64 ? UINT64_MAX : (uint64_t(1) << width) - 1;
+    bits &= mask;
+    // Both casts are in range, including INT64_MIN; no signed overflow or
+    // implementation-defined unsigned-to-signed conversion is needed.
+    if (bits & (uint64_t(1) << (width - 1)))
+    {
+        return -1 - static_cast<int64_t>((~bits) & mask);
+    }
+    return static_cast<int64_t>(bits);
+}
+
+static DabValue modern_return_normalize(const DabValue &value, dab_class_t target)
+{
+    if (value.nil())
+    {
+        return value;
+    }
+    uint64_t bits = 0;
+    if (modern_return_integer_bits(value, bits))
+    {
+        switch (target)
+        {
+        case CLASS_FIXNUM:
+        {
+            DabValue result;
+            result.data.type   = TYPE_FIXNUM;
+            result.data.fixnum = modern_return_signed(bits, 64);
+            return result;
+        }
+        case CLASS_UINT8:
+            return DabValue(target, static_cast<uint8_t>(bits));
+        case CLASS_UINT16:
+            return DabValue(target, static_cast<uint16_t>(bits));
+        case CLASS_UINT32:
+            return DabValue(target, static_cast<uint32_t>(bits));
+        case CLASS_UINT64:
+            return DabValue(target, bits);
+        case CLASS_INT8:
+            return DabValue(target, static_cast<int8_t>(modern_return_signed(bits, 8)));
+        case CLASS_INT16:
+            return DabValue(target, static_cast<int16_t>(modern_return_signed(bits, 16)));
+        case CLASS_INT32:
+            return DabValue(target, static_cast<int32_t>(modern_return_signed(bits, 32)));
+        case CLASS_INT64:
+            return DabValue(target, modern_return_signed(bits, 64));
+        default:
+            break;
+        }
+    }
+    const bool string =
+        value.data.type == TYPE_LITERALSTRING || value.data.type == TYPE_DYNAMICSTRING;
+    if ((target == CLASS_STRING && string) ||
+        (target == CLASS_BOOLEAN && value.data.type == TYPE_BOOLEAN) ||
+        (target == CLASS_INTPTR && value.data.type == TYPE_INTPTR) ||
+        (target == CLASS_FLOAT && value.data.type == TYPE_FLOAT))
+    {
+        return value;
+    }
+    const auto actual = string                          ? "String"
+                        : value.data.type == TYPE_CLASS ? "Class"
+                                                        : value.class_name();
+    throw DabRuntimeError("Modern return expected " + $VM->get_class(target).name + ", got " +
+                          actual);
+}
+
 void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist)
 {
     switch (call)
     {
+    case KERNEL_MODERN_RETURN_NORMALIZE:
+    {
+        if (reglist.size() != 2)
+        {
+            throw DabRuntimeError("internal Modern return normalization expects 2 arguments, got " +
+                                  std::to_string(reglist.size()));
+        }
+        if (out_reg.nil())
+        {
+            throw DabRuntimeError(
+                "internal Modern return normalization requires a result register");
+        }
+        const auto valid_register = [this](dab_register_t reg)
+        {
+            return !reg.nil() && reg.value() < _registers.size() &&
+                   _registers[reg.value()].data.type != TYPE_INVALID;
+        };
+        if (!valid_register(reglist[0]))
+        {
+            throw DabRuntimeError(
+                "internal Modern return normalization received an invalid value register");
+        }
+        if (!valid_register(reglist[1]))
+        {
+            throw DabRuntimeError(
+                "internal Modern return normalization received an invalid target register");
+        }
+        const auto target = register_get(reglist[1]);
+        if (target.data.type != TYPE_CLASS || !modern_return_supported_class(target.data.fixnum))
+        {
+            throw DabRuntimeError(
+                "internal Modern return normalization expects a supported declared result Class");
+        }
+        const auto value = register_get(reglist[0]);
+        register_set(out_reg,
+                     modern_return_normalize(value, static_cast<dab_class_t>(target.data.fixnum)));
+        break;
+    }
     case KERNEL_PRINT:
     {
         kernel_print(out_reg, reglist);
