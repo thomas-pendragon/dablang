@@ -290,13 +290,17 @@ describe 'Modern declared-return representation normalization' do
     fixtures = names.map do |name|
       DabModernSourceFixture.load(Dir.glob(File.join(root, "test/modern_source/#{name}_*.dabmtest")).fetch(0))
     end
-    [fixtures, fixtures.reverse, fixtures].each do |ordered|
-      ordered.each do |fixture|
-        expect(compile(fixture.source)).to eq(fixture.expected_stdout), fixture.path
+    compilations = [fixtures, fixtures.reverse, fixtures].map do |ordered|
+      ordered.to_h do |fixture|
+        assembly = compile(fixture.source)
+        expect(assembly).to eq(fixture.expected_stdout), fixture.path
+        [fixture.path, assembly]
       end
     end
     fixtures.each do |fixture|
-      expect(assemble(fixture.expected_stdout)).to eq(assemble(fixture.expected_stdout)), fixture.path
+      forward_artifact = assemble(compilations.fetch(0).fetch(fixture.path))
+      reverse_artifact = assemble(compilations.fetch(1).fetch(fixture.path))
+      expect(forward_artifact).to eq(reverse_artifact), fixture.path
     end
   end
 
