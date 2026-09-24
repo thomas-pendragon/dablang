@@ -49,7 +49,9 @@ Hello, Dab!
 /* +            */               INSTCALL R2, R1, S2, R0
 /* "!."         */               LOAD_STRING R3, _DATA + 0, 2
 /* +            */               INSTCALL R4, R2, S2, R3
-                                 RETURN R4
+/* String       */               LOAD_CLASS R5, 1
+/* MODERN_RETUR */               SYSCALL R6, 13, R4, R5
+                                 RETURN R6
                    __Fgreet_END:
                                  NOP 
  

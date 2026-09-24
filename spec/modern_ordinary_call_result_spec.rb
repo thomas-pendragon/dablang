@@ -364,7 +364,7 @@ describe 'Modern one-level ordinary-call results' do
     expect(unit.constants.to_a).to be_empty
   end
 
-  it 'emits standalone RNIL and consumed CALL registers deterministically without conversion' do
+  it 'emits standalone RNIL and consumed CALL registers with a guarded declared return' do
     source = <<~DAB
       def producer():String
       print("producer\\n")
@@ -407,7 +407,7 @@ describe 'Modern one-level ordinary-call results' do
       expect(producer_destinations.fetch(0)).to eq('RNIL')
       expect(producer_destinations.drop(1)).to all(match(/\AR\d+\z/))
       expect(producer_destinations.length).to eq(3)
-      expect(main).to match(%r{/\* producer\s+\*/\s+CALL (R\d+), S\d+\n\s+RETURN \1})
+      expect(main).to match(%r{/\* producer\s+\*/\s+CALL (R\d+), S\d+\n.*?SYSCALL (R\d+), 13, \1, R\d+\n\s+RETURN \2}m)
       expect(main).to match(%r{LOAD_STRING R\d+.*?/\* producer\s+\*/\s+CALL R\d+.*?LOAD_STRING R\d+.*?/\* sink\s+\*/\s+CALL RNIL}m)
       expect(main).not_to include('CAST')
     end

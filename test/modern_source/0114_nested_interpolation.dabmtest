@@ -137,7 +137,9 @@ Canonical EX-012 coverage for recursive exact-String interpolation, a nested dir
 /* +            */               INSTCALL R3, R2, S2, R0
 /* ">"          */               LOAD_STRING R4, _DATA + 4, 1
 /* +            */               INSTCALL R5, R3, S2, R4
-                                 RETURN R5
+/* String       */               LOAD_CLASS R6, 1
+/* MODERN_RETUR */               SYSCALL R7, 13, R5, R6
+                                 RETURN R7
                    __Fwrap_END:
                                  NOP 
  

@@ -72,7 +72,9 @@ return=<AB>:AB
 /* ""           */               LOAD_STRING R6, _DATA + 0, 0
 /* "return=<AB> */               LOAD_STRING R7, _DATA + 23, 15
 /* +            */               INSTCALL R8, R6, S2, R7
-                                 RETURN R8
+/* String       */               LOAD_CLASS R9, 1
+/* MODERN_RETUR */               SYSCALL R10, 13, R8, R9
+                                 RETURN R10
                    __Fbuild_END:
                                  NOP 
  

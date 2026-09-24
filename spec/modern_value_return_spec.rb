@@ -362,7 +362,7 @@ describe 'Modern value returns' do
       [0, "before\nproducer\n"]
     )
     main_assembly = call_result.expected_stdout.match(/Fmain:.*?__Fmain_END:/m).to_s
-    expect(main_assembly).to match(%r{/\* produce\s+\*/\s+CALL (R\d+), S\d+\n\s+RETURN \1})
+    expect(main_assembly).to match(%r{/\* produce\s+\*/\s+CALL (R\d+), S\d+\n.*?SYSCALL (R\d+), 13, \1, R\d+\n\s+RETURN \2}m)
     expect(call_result.expected_stdout).not_to include('dead-after-return')
   end
 end

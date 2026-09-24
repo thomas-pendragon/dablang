@@ -338,7 +338,7 @@ describe 'Modern parameter references' do
     echo_assembly = success.expected_stdout.match(/Fecho:.*?__Fecho_END:/m).to_s
     emit_assembly = success.expected_stdout.match(/Femit:.*?__Femit_END:/m).to_s
     relay_assembly = success.expected_stdout.match(/Frelay:.*?__Frelay_END:/m).to_s
-    expect(echo_assembly).to include('LOAD_ARG R0, 0', 'RETURN R0')
+    expect(echo_assembly).to include('LOAD_ARG R0, 0', 'SYSCALL R2, 13, R0, R1', 'RETURN R2')
     expect(emit_assembly).to include('LOAD_ARG R0, 0', 'SYSCALL RNIL, 0, R0', 'CALL RNIL, S40, R0')
     expect(relay_assembly).to include(
       'LOAD_ARG R0, 0',
@@ -348,7 +348,8 @@ describe 'Modern parameter references' do
       'SYSCALL RNIL, 0, R0',
       'INSTCALL R4, R0, S2, R3',
       'INSTCALL R5, R4, S2, R1',
-      'RETURN R1'
+      'SYSCALL R9, 13, R1, R8',
+      'RETURN R9'
     )
     expect(relay_assembly.scan('SYSCALL RNIL, 0, R0').length).to eq(2)
     expect(rejection.expected_status).to eq(2)

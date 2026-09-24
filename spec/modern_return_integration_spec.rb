@@ -88,14 +88,14 @@ describe 'Modern return integration' do
     [path, artifact]
   end
 
-  it 'locks fixture 0086 and preserves fixtures 0080 through 0084 byte-for-byte' do
+  it 'locks fixture 0086 and the preserved return fixtures, with 0083 migrated for normalization' do
     expected_hashes = {
       '0080_bare_return.dabmtest' => 'a26d5bb5c568b1224680f3e29793f4335c92d939ed4290fb94b558f18caff1ce',
       '0081_reserved_return_function_name.dabmtest' =>
         '7b9c15431d1ca1c29a9ac1acfedd51218f4f1005e72a74659b82ae89b0b77a87',
       '0082_return_local_read_before.dabmtest' =>
         '5f9bbcd78cf2c012e7b9fa176e38f5d68f0c584287d9a267dd83f5439482654f',
-      '0083_value_return.dabmtest' => 'c3e83c127e8e61c02b6fa1fd1bf9dce59ed3e94935f3a4913f094cf177b5f3a2',
+      '0083_value_return.dabmtest' => '1b31e23a6f737edc0d5ab871147ca13079254f0538b976b6386505c29ffa937a',
       '0084_return_contract_mismatch.dabmtest' =>
         '8c22b5dedcf8b9e1a3ee914762f3fa1056a13ae6ebc9fe1b6adfcf1e75ba567d',
     }

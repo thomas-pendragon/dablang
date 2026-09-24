@@ -59,7 +59,9 @@ V
                    Fecho:
                                  STACK_RESERVE 0
 /* value        */               LOAD_ARG R0, 0
-                                 RETURN R0
+/* String       */               LOAD_CLASS R1, 1
+/* MODERN_RETUR */               SYSCALL R2, 13, R0, R1
+                                 RETURN R2
                    __Fecho_END:
                                  NOP 
  
@@ -97,7 +99,9 @@ V
 /* "."          */               LOAD_STRING R6, _DATA + 0, 1
 /* +            */               INSTCALL R7, R5, S2, R6
 /* PRINT        */               SYSCALL RNIL, 0, R7
-                                 RETURN R1
+/* String       */               LOAD_CLASS R8, 1
+/* MODERN_RETUR */               SYSCALL R9, 13, R1, R8
+                                 RETURN R9
                    __Frelay_END:
                                  NOP 
  

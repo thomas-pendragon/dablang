@@ -51,7 +51,9 @@ producer
 /* "before."    */               LOAD_STRING R0, _DATA + 0, 7
 /* PRINT        */               SYSCALL RNIL, 0, R0
 /* produce      */               CALL R1, S55
-                                 RETURN R1
+/* String       */               LOAD_CLASS R2, 1
+/* MODERN_RETUR */               SYSCALL R3, 13, R1, R2
+                                 RETURN R3
                    __Fmain_END:
                                  NOP 
  
