@@ -274,6 +274,7 @@ static DabValue modern_return_normalize(const DabValue &value, dab_class_t targe
         return value;
     }
     const auto actual = string                          ? "String"
+                        : value.data.type == TYPE_BOX   ? "Box"
                         : value.data.type == TYPE_CLASS ? "Class"
                                                         : value.class_name();
     throw DabRuntimeError("Modern return expected " + $VM->get_class(target).name + ", got " +
