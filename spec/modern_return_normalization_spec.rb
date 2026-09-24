@@ -325,7 +325,24 @@ describe 'Modern declared-return representation normalization' do
       assembly = load + "LOAD_CLASS R1, #{STANDARD_CLASSES_REV.fetch(expected)}\nSYSCALL R2, 13, R0, R1\n"
       status, stdout, stderr = execute_assembly(assembly, raw: true)
       expect([status, stdout]).to eq([1, ''])
-      expect(stderr.lines.grep(/vm: Modern return/)).to eq(["vm: Modern return expected #{expected}, got #{actual}.\n"])
+      expect(stderr.lines(chomp: true).grep(/vm: Modern return/)).to eq(
+        ["vm: Modern return expected #{expected}, got #{actual}."]
+      )
+    end
+  end
+
+  it 'rejects boxed values without unboxing even nil or values matching the declared type', :native do
+    loads = ["LOAD_INT8 R0, -1\n", "LOAD_NIL R0\n", "LOAD_TRUE R0\n"]
+    loads.product([1, 2], DabModernBootstrapParser::SUPPORTED_TYPE_NAMES).each do |load, depth, target|
+      assembly = load + ("BOX R0, R0\n" * depth) + <<~ASM
+        LOAD_CLASS R1, #{STANDARD_CLASSES_REV.fetch(target)}
+        SYSCALL R2, #{private_code}, R0, R1
+      ASM
+      status, stdout, stderr = execute_assembly(assembly, raw: true)
+      expect([status, stdout]).to eq([1, ''])
+      expect(stderr.lines(chomp: true).grep(/vm: Modern return/)).to eq(
+        ["vm: Modern return expected #{target}, got Box."]
+      ), "#{load.strip}, box depth #{depth}, target #{target}"
     end
   end
 
@@ -348,8 +365,8 @@ describe 'Modern declared-return representation normalization' do
     cases.each do |instructions, message|
       status, stdout, stderr = execute_assembly("#{prefix}#{instructions}\n", raw: true)
       expect([status, stdout]).to eq([1, '']), instructions
-      expect(stderr.lines.grep(/vm: internal Modern/)).to eq(
-        ["vm: internal Modern return normalization #{message}.\n"]
+      expect(stderr.lines(chomp: true).grep(/vm: internal Modern/)).to eq(
+        ["vm: internal Modern return normalization #{message}."]
       ), instructions
     end
   end
@@ -368,7 +385,7 @@ describe 'Modern declared-return representation normalization' do
     DAB
     assembly = assembly.sub(/LOAD_ARG (R\d+), 0/, 'LOAD_TRUE \1')
     status, stdout, stderr = execute_assembly(assembly)
-    expect([status, stdout]).to eq([1, "before\n"])
-    expect(stderr.lines.grep(/vm: Modern return/)).to eq(["vm: Modern return expected Int16, got Boolean.\n"])
+    expect([status, stdout.gsub("\r\n", "\n")]).to eq([1, "before\n"])
+    expect(stderr.lines(chomp: true).grep(/vm: Modern return/)).to eq(['vm: Modern return expected Int16, got Boolean.'])
   end
 end
