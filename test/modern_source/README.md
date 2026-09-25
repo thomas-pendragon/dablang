@@ -1292,6 +1292,56 @@ semantic normalization. This is still a trusted-local-input runtime; stream
 truncation, unknown syscall behavior, loader/schema/frame contracts, FFI, and
 hostile-bytecode safety are unchanged.
 
+## Built-in explicit String conversion
+
+Fixture `0116` covers the contextual, one-level `ATOM to String` form in
+ordinary-call arguments, returns, and local initializers or reassignments.
+Each slot retains its prior atom subset: locals still cannot initialize or
+reassign from an identifier or call result. The supported static sources are
+exact String, NilClass, Boolean, Fixnum, Int8/16/32/64, and Uint8/16/32/64.
+Regex, Object or absent result metadata, IntPtr, and Float are rejected.
+Grouping, operators, receiver calls, deeper call-result arguments, explicit
+conversions within interpolation splices, and `to?` remain unsupported.
+Callable identifiers such as `to()` and `to?()` remain valid.
+
+Exactly one ASCII space belongs on each side of `to`; its target is exact,
+case-sensitive `String`. Parsing and preflight of the complete left atom
+precede target validation, which precedes source-type admission. A second
+contextual `to` is diagnosed on that token. Failed compilations exit with
+status 2 and empty compiler stdout, including unreachable source.
+For compatibility, parenthesized returns retain the existing bare-return
+separator diagnostic on the space immediately after `return`; parenthesized
+call arguments and local values retain their diagnostic on the opening `(`.
+
+Exact String conversion is identity and emits no conversion syscall.
+Primitive conversion produces an owned String: `nil`, lowercase `true` or
+`false`, or untagged ASCII decimal. Only negative signed integers have a minus;
+there is no plus, padding, grouping, width suffix, locale, or exponent.
+The declared-return normalization boundary still runs before a call result
+is converted, so an Int8 result containing 255 converts to `-1`.
+
+The new compiler-private syscall uses the existing SYSCALL instruction,
+without public `to_s` calls or Ring override dispatch. Its ABI validates
+operand count, a real result register, then an initialized value register
+before inspecting the runtime tag. Actual nil remains distinct from RNIL.
+Unsupported runtime values raise `DabRuntimeError` with
+`Modern conversion to String does not support ACTUAL`; converter-local
+allocation failure raises `Modern conversion to String failed: out of memory`.
+Uncaught errors use the VM's `vm: MESSAGE.` line and exit status 1.
+Earlier effects remain, the failing conversion publishes no result, and later
+code does not execute. This retains the trusted-local bytecode boundary.
+
+The focused specs cover all integer boundaries, ordered diagnostics, exact
+String identity, unchanged Legacy artifacts, the EX-038 handoff, malformed
+private calls, dead-source transactionality, and normal/reverse/repeated
+fixture compilation. A native fault-injection harness exercises each allocation
+failure, verifies object/proxy ownership, and checks catch-and-retry recovery
+without public dispatch. Linux RSpec also runs that harness with ASan and
+UBSan; supplementary local runs can select those profiles with
+`DAB_MODERN_TO_STRING_SANITIZERS=address,undefined`. macOS uses ownership
+counters for leak evidence because its ASan runtime does not support
+LeakSanitizer. Existing fixture goldens are unchanged.
+
 ## Owned harness boundary
 
 The inherited fixture formats remain unchanged. Their shared loose section
