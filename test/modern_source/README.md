@@ -498,7 +498,7 @@ Literal and local returns use the established literal-flow or declared-local
 type plus current assignability. Annotated locals use their declared type;
 unannotated locals use their latest preceding literal-flow type. String length
 results remain contained to exact `Int32` or an omitted `Object` return
-contract. Return checking never inserts a cast or conversion, and lowering
+contract. At that version return checking inserted no cast or conversion, and lowering
 evaluates the source value exactly once through the existing literal, local,
 or consumed-member path. Nil emits `RETURN RNIL`; other values use one SSA
 destination and `RETURN Rn`.
@@ -552,9 +552,9 @@ parenthesized/general expressions, and parameter body references remain
 rejected.
 
 The producer's declared return metadata is the only static result type; an
-omitted contract means `Object`. Consumption requires an exact type match or
-an `Object` consumer and performs no cast, conversion, broad assignability, or
-return-path completeness analysis. Standalone calls remain `CALL RNIL`.
+omitted contract means `Object`. At that version consumption required an exact
+type match or an `Object` consumer and performed no cast, conversion, broad
+assignability, or return-path completeness analysis. Standalone calls remain `CALL RNIL`.
 Consumed calls execute once in the consumer-owned register, producing
 `CALL Rn` followed by `RETURN Rn`, outer `CALL RNIL ... Rn`, or
 `SYSCALL RNIL ... Rn`.
@@ -1256,6 +1256,41 @@ Fixture schema failures remain separate and happen before
 compiler and a result mismatch raises `DabModernSourceExpectationError` only
 after exact status, stdout, and stderr capture. The reporter's concise success,
 verbose action detail, and attributed failure replay behavior is unchanged.
+
+## Modern declared-return representation
+
+EX-038 normalizes non-nil results of explicitly annotated Modern functions to
+the declared representation before `RETURN`. A compiler-private syscall uses
+the existing `SYSCALL` opcode and is absent from source-callable builtins.
+Legacy functions and Modern functions with omitted result metadata retain
+their existing assembly and bytecode. Exact literal representations and known
+nil may retain their original instructions; dynamic values keep the guard.
+
+All pairs among Fixnum and the signed and unsigned 8-, 16-, 32-, and 64-bit
+integer types use modulo 2^N, with two's-complement interpretation for signed
+targets. Fixnum is signed 64-bit. Numeric direct-call returns now admit those
+same pairs; argument and String-length admission remain unchanged. Actual nil
+passes unchanged for every supported annotation. Exact nonnumeric values pass
+unchanged; another non-nil runtime value raises a catchable `DabRuntimeError`.
+An uncaught mismatch exits with status 1 and the exact line
+`vm: Modern return expected EXPECTED, got ACTUAL.` Earlier effects remain and
+later code does not run.
+
+Fixture `0115` covers literal, parameter, local, and direct-call returns,
+signed widening, unsigned widening, narrowing, wrap boundaries, and unchanged
+nil, String, and Boolean values. Fixtures `0083`, `0085`, `0092`, `0094`, `0095`,
+`0112`, `0113`, and `0114` migrate only necessary return-site assembly. The
+source, application output, and case behavior of `0112` are unchanged.
+Fixture `0086` and the existing bare/dead-return controls remain byte-identical.
+
+The normalization spec covers the complete 9x9 runtime matrix, exact-type
+pass-through, malformed private-call precedence and diagnostics, dynamic
+mismatch effect ordering, and repeated compilation and artifact generation.
+Private ABI validation rejects wrong arity, a missing result register, invalid
+value/target registers (including RNIL), and unsupported target Classes before
+semantic normalization. This is still a trusted-local-input runtime; stream
+truncation, unknown syscall behavior, loader/schema/frame contracts, FFI, and
+hostile-bytecode safety are unchanged.
 
 ## Owned harness boundary
 

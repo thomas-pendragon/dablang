@@ -4,7 +4,31 @@ require_relative '../processors/uncomplexify'
 
 class DabNodeReturn < DabNode
   check_with CheckReturnType
+  lower_with :normalize_modern_declared_return!
   lower_with Uncomplexify
+
+  attr_accessor :modern_declared_return_type
+
+  def normalize_modern_declared_return!
+    return unless modern_declared_return_type
+
+    target_type = modern_declared_return_type
+    self.modern_declared_return_type = nil
+    return if value.literal_nil?
+
+    literal = value
+    if value.is_a?(DabNodeSSAGet) && value.setters.one?
+      literal = value.setters.first.value
+    end
+    if literal.is_a?(DabNodeLiteral)
+      literal_type = literal.is_a?(DabNodeLiteralBoolean) ? 'Boolean' : literal.my_type.type_string
+      return if literal_type == target_type.type_string
+    end
+
+    normalized = DabNodeModernReturnNormalization.new(value.extract, target_type)
+    insert(normalized)
+    true
+  end
 
   def initialize(value)
     super()

@@ -93,7 +93,9 @@ Canonical EX-011 coverage for two effectful exact-String calls, leading-only and
 /* value        */               LOAD_ARG R0, 0
 /* "second-call */               LOAD_STRING R1, _DATA + 28, 12
 /* PRINT        */               SYSCALL RNIL, 0, R1
-                                 RETURN R0
+/* String       */               LOAD_CLASS R2, 1
+/* MODERN_RETUR */               SYSCALL R3, 13, R0, R2
+                                 RETURN R3
                    __Fsecond_value_END:
                                  NOP 
  

@@ -133,7 +133,9 @@ Canonical OR-059 coverage for implicit else nil: unmatched no-else continuation,
 /* "subject."   */               LOAD_STRING R0, _DATA + 54, 8
 /* PRINT        */               SYSCALL RNIL, 0, R0
 /* 9            */               LOAD_NUMBER R1, 9
-                                 RETURN R1
+/* Int32        */               LOAD_CLASS R2, 12
+/* MODERN_RETUR */               SYSCALL R3, 13, R1, R2
+                                 RETURN R3
                    __Fsubject_END:
                                  NOP 
  

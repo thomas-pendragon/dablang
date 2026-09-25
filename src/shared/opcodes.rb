@@ -143,6 +143,10 @@ METHOD_FLAGS = {
   static: 1 << 0,
 }.freeze
 
+PRIVATE_KERNELCODES = {
+  0x0D => 'MODERN_RETURN_NORMALIZE',
+}.freeze
+
 KERNELCODES = {
   0x00 => 'PRINT',
   0x01 => 'EXIT',
@@ -157,11 +161,11 @@ KERNELCODES = {
   0x0A => 'GET_INSTVAR',
   0x0B => 'SET_INSTVAR',
   0x0C => 'ANSI_COLOR',
-}.freeze
+}.merge(PRIVATE_KERNELCODES).freeze
 
 KERNELCODES_REV = KERNELCODES.map { |k, v| [v, k] }.to_h
 
-SYSCALLS = KERNELCODES.values.map { "__#{_1.downcase}" }
+SYSCALLS = KERNELCODES.reject { |code, _| PRIVATE_KERNELCODES.key?(code) }.values.map { "__#{_1.downcase}" }
 
 require_relative 'classes'
 

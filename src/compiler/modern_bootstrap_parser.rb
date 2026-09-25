@@ -2128,6 +2128,11 @@ class DabModernBootstrapFunctionDeclaration
       end
     end
     arglist = DabNode.new
+    if @return_type
+      body.all_nodes(DabNodeReturn).each do |node|
+        node.modern_declared_return_type = DabType.parse(@return_type.text)
+      end
+    end
     @parameters.each_with_index do |parameter, index|
       arglist.insert(parameter.lower(index))
     end
@@ -3145,6 +3150,7 @@ private
     actual_type = preflight_call_result!(value_return.value, unit, declarations_by_name)
     expected_type = DabType.parse(function.return_type&.text)
     return if exact_call_result_type?(actual_type, expected_type)
+    return if actual_type.is_a?(DabTypeFixnum) && expected_type.is_a?(DabTypeFixnum)
 
     reject_return_type!(value_return, function, actual_type, expected_type)
   end
