@@ -2,6 +2,9 @@
 
 #include "../cshared/opcodes_syscalls.h"
 
+#include <memory>
+#include <new>
+
 #ifndef DAB_PLATFORM_WINDOWS
 #include <dlfcn.h>
 #endif
@@ -281,10 +284,122 @@ static DabValue modern_return_normalize(const DabValue &value, dab_class_t targe
                           actual);
 }
 
+static DabValue modern_to_string(const DabValue &value)
+{
+    if (value.data.type == TYPE_LITERALSTRING || value.data.type == TYPE_DYNAMICSTRING)
+    {
+        return value;
+    }
+
+    const char *text   = nullptr;
+    size_t      length = 0;
+    char        digits[21];
+    uint64_t    bits = 0;
+    if (value.data.type == TYPE_NIL)
+    {
+        text   = "nil";
+        length = 3;
+    }
+    else if (value.data.type == TYPE_BOOLEAN)
+    {
+        text   = value.data.boolean ? "true" : "false";
+        length = value.data.boolean ? 4 : 5;
+    }
+    else if (modern_return_integer_bits(value, bits))
+    {
+        bool negative = false;
+        switch (value.data.type)
+        {
+        case TYPE_FIXNUM:
+            negative = value.data.fixnum < 0;
+            break;
+        case TYPE_INT8:
+            negative = value.data.num_int8 < 0;
+            break;
+        case TYPE_INT16:
+            negative = value.data.num_int16 < 0;
+            break;
+        case TYPE_INT32:
+            negative = value.data.num_int32 < 0;
+            break;
+        case TYPE_INT64:
+            negative = value.data.num_int64 < 0;
+            break;
+        default:
+            break;
+        }
+        // Unsigned magnitude handles INT64_MIN without negating a signed value.
+        uint64_t magnitude = negative ? uint64_t(0) - bits : bits;
+        char    *cursor    = digits + sizeof(digits);
+        do
+        {
+            *--cursor = static_cast<char>('0' + magnitude % 10);
+            magnitude /= 10;
+        } while (magnitude);
+        if (negative)
+        {
+            *--cursor = '-';
+        }
+        text   = cursor;
+        length = static_cast<size_t>(digits + sizeof(digits) - cursor);
+    }
+    else
+    {
+        const auto actual = value.data.type == TYPE_BOX     ? "Box"
+                            : value.data.type == TYPE_CLASS ? "Class"
+                                                            : value.class_name();
+        throw DabRuntimeError("Modern conversion to String does not support " + actual);
+    }
+
+    // Keep partial allocations owned locally until a complete value can be
+    // published. This bypasses public methods and class/Ring override dispatch.
+    std::unique_ptr<DabDynamicString> object(new DabDynamicString);
+    object->klass = CLASS_DYNAMICSTRING;
+    object->value.assign(text, length);
+    std::unique_ptr<DabObjectProxy> proxy(new DabObjectProxy);
+    proxy->object       = object.get();
+    proxy->count_strong = 1;
+    DabValue result;
+    result.data.type   = TYPE_DYNAMICSTRING;
+    result.data.object = proxy.release();
+    object.release();
+    return result;
+}
+
 void DabVM::kernelcall(dab_register_t out_reg, int call, std::vector<dab_register_t> reglist)
 {
     switch (call)
     {
+    case KERNEL_MODERN_TO_STRING:
+    {
+        if (reglist.size() != 1)
+        {
+            throw DabRuntimeError("internal Modern conversion to String expects 1 argument, got " +
+                                  std::to_string(reglist.size()));
+        }
+        if (out_reg.nil())
+        {
+            throw DabRuntimeError(
+                "internal Modern conversion to String requires a result register");
+        }
+        const auto reg = reglist[0];
+        if (reg.nil() || reg.value() >= _registers.size() ||
+            _registers[reg.value()].data.type == TYPE_INVALID)
+        {
+            throw DabRuntimeError(
+                "internal Modern conversion to String received an invalid value register");
+        }
+        const auto value = register_get(reg);
+        try
+        {
+            register_set(out_reg, modern_to_string(value));
+        }
+        catch (const std::bad_alloc &)
+        {
+            throw DabRuntimeError("Modern conversion to String failed: out of memory");
+        }
+        break;
+    }
     case KERNEL_MODERN_RETURN_NORMALIZE:
     {
         if (reglist.size() != 2)
