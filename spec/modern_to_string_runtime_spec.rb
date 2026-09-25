@@ -112,8 +112,10 @@ describe 'Modern private to String runtime boundary' do
   end
 
   it 'catches every converter allocation failure, retains ownership, and recovers without public dispatch', :native_harness do
-    library = File.join(root, 'bin/libpcre2.a')
-    skip 'native dependency is built by the complete gate' unless File.file?(library)
+    skip 'native VM is built by the complete gate' unless File.executable?(vm)
+
+    library = File.join(root, 'bin', Gem.win_platform? ? 'pcre2.lib' : 'libpcre2.a')
+    expect(File.file?(library)).to be(true), "Expected built PCRE2 dependency at #{library}"
 
     Dir.mktmpdir('dab-to-string-faults') do |directory|
       source = File.join(directory, 'faults.cpp')
