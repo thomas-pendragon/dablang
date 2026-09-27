@@ -3145,6 +3145,8 @@ private
       preflight_conversions!(value.value_token, unit, declarations_by_name)
     when DabModernBootstrapValueReturn
       preflight_conversions!(value.value, unit, declarations_by_name)
+    when DabModernBootstrapCaseStatement
+      preflight_conversions!(value.subject, unit, declarations_by_name)
     when DabModernBootstrapDirectCall
       value.arguments.each { |argument| preflight_conversions!(argument, unit, declarations_by_name) }
     end

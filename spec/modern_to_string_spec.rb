@@ -306,6 +306,119 @@ describe 'Modern explicit built-in to String conversion' do
     expect { lower(source) }.not_to raise_error
   end
 
+  it 'resolves conversions in case-subject call arguments for every admitted static type and atom' do
+    target = "def target(value:String):String\nreturn value\nend\n"
+    (numeric_types + %w[String NilClass Boolean]).each do |type|
+      source = target + "def check(actual:#{type})\ncase target(actual to String)\nend\nend\n"
+      expect { lower(source) }.not_to raise_error, type
+    end
+    ['1', 'true', 'nil', '"text"', '"abc".length', '"abc".length()', "\"\#{text}\"", 'text'].each do |atom|
+      source = target + "def main()\nlet text = \"text\"\ncase target(#{atom} to String)\nend\nend\n"
+      expect { lower(source) }.not_to raise_error, atom
+    end
+    source = "#{target}def main()\nlet text:String = nil\ncase target(text%s)\nend\nend\n"
+    expect(assembly(sprintf(source, ' to String'))).to eq(assembly(sprintf(source, '')))
+  end
+
+  it 'evaluates case-subject argument effects in order and the subject call exactly once' do
+    helpers = <<~'DAB'
+      def first():String
+      print("first\n")
+      return "1"
+      end
+      def second():String
+      print("second\n")
+      return "2"
+      end
+      def target(first:String, second:String, third:String):Boolean
+      print(first)
+      print("|")
+      print(second)
+      print("|")
+      print(third)
+      print("\n")
+      return true
+      end
+    DAB
+    bodies = {
+      '' => '',
+      "else\nprint(\"else\\n\")\n" => "else\n",
+      "when false\nprint(\"wrong\\n\")\nwhen true\nprint(\"match\\n\")\nelse\nprint(\"wrong\\n\")\n" => "match\n",
+    }
+    bodies.each do |body, expected|
+      source = helpers + <<~'DAB'.sub('BODY', body)
+        def main()
+        case target("#{first()}" to String, "#{second()}" to String, 3 to String)
+        BODYend
+        print("after\n")
+        end
+      DAB
+      output = assembly(source)
+      status, stdout, error = execute(output)
+      expect([status, stdout]).to eq([0, "first\nsecond\n1|2|3\n#{expected}after\n"]), error
+    end
+  end
+
+  it 'preserves case-call target, arity, and argument checks before conversion preflight' do
+    target = "def target(value:String):String\nreturn value\nend\n"
+    cases = [
+      ['missing(1 to Wrong)', 'unknown Modern call target "missing"', 'missing'],
+      ['target(1 to Wrong, 2 to String)', 'incorrect Modern call arity for "target": got 2, expected 1',
+       'target(1 to Wrong, 2 to String)'],
+      ['target(1)', 'cannot pass Modern argument of type Fixnum to parameter "value" of type String in call "target"', '1'],
+      ['target(1 to Wrong)', 'invalid Modern conversion target: expected String', 'Wrong'],
+      ['target(1  to String)', 'invalid Modern conversion: expected exactly one ASCII space before "to"', '  '],
+      ['target(/x/ to Wrong)', 'invalid Modern conversion target: expected String', 'Wrong'],
+      ['target(/x/ to String)', 'Modern conversion to String does not support Regex', '/x/'],
+      ['target("abc".missing to Wrong)', 'unknown Modern member target "String#missing"', 'missing'],
+      ['target("abc".length(1) to Wrong)', 'incorrect Modern member-call arity for "String#length": got 1, expected 0',
+       '"abc".length(1)'],
+      ['target(1 to String to String)', 'unexpected Modern conversion: chained conversions are not supported', 'to'],
+    ]
+    cases.each do |call, message, offending|
+      source = target + "def main()\ncase #{call}\nend\nend\n"
+      expect_error(source, message, offending, offset: source.rindex(offending))
+    end
+    source = "def target(value:Boolean):Boolean\nreturn value\nend\ndef main()\ncase target(1 to Wrong)\nend\nend\n"
+    expect_error(source, 'cannot pass Modern argument of type String to parameter "value" of type Boolean in call "target"',
+                 '1 to Wrong')
+    source = "#{target}def main(actual:Float)\ncase target(actual to String)\nend\nend\n"
+    expect_error(source, 'Modern conversion to String does not support Float', 'actual', offset: source.rindex('actual'))
+  end
+
+  it 'rejects invalid case-call conversions transactionally throughout dead and unselected source' do
+    invalid_case = "case target(/x/ to String)\nend\n"
+    bodies = [invalid_case, "return\n#{invalid_case}", "if false\n#{invalid_case}end\n",
+              "while false\n#{invalid_case}end\n", "case true\nwhen false\n#{invalid_case}end\n",
+              "case true\nwhen true\nprint(\"selected\")\nelse\n#{invalid_case}end\n"]
+    bodies.each do |body|
+      source = "def target(value:String):String\nreturn value\nend\ndef main()\n#{body}end\n"
+      unit = DabNodeUnit.new
+      existing = DabNodeFunction.new('existing', DabNodeTreeBlock.new, DabNode.new)
+      unit.add_function(existing)
+      expect { parse(source).lower_into(unit) }.to raise_error(
+        DabModernBootstrapParseError, 'Modern conversion to String does not support Regex'
+      )
+      expect(unit.functions.to_a).to eq([existing])
+      expect(unit.constants.to_a).to be_empty
+      status, output, error = compile(source)
+      expect([status, output]).to eq([2, ''])
+      expect(error).to include('Modern conversion to String does not support Regex')
+      expect(Dir.glob(File.join(@directory, '*.dabcb')).map { |path| File.basename(path) }).to eq(['stdlib.dabcb'])
+    end
+  end
+
+  it 'keeps direct case-subject conversion and deeper subject-call arguments outside the grammar' do
+    target = "def target(value:String):String\nreturn value\nend\n"
+    ['1 to String', 'target(1 to String) to String'].each do |subject|
+      source = target + "def main()\ncase #{subject}\nend\nend\n"
+      expect_error(source, DabModernBootstrapParser::EXPECT_CASE_SUBJECT_SEPARATOR_MESSAGE, ' ',
+                   offset: source.rindex(' to String'))
+    end
+    source = "#{target}def main()\ncase target(target(\"text\") to String)\nend\nend\n"
+    expect { lower(source) }.to raise_error(DabModernBootstrapParseError)
+  end
+
   it 'does not broaden local atoms, grouping, expressions, receivers, nesting, or interpolation splices' do
     values = [
       'let copy = value to String', 'var copy = value to String', 'value = value to String',
@@ -320,6 +433,20 @@ describe 'Modern explicit built-in to String conversion' do
     values.each do |body|
       source = "def producer(value:Fixnum):Fixnum\nreturn value\nend\ndef main()\nvar value = 1\n#{body}\nend\n"
       expect { lower(source) }.to raise_error(DabModernBootstrapParseError), body
+    end
+  end
+
+  it 'rejects identifier local conversion atoms transactionally before reference lookup' do
+    ['let copy = value to String', 'var copy = value to String', 'value = value to String'].each do |body|
+      ["\n", ';'].each do |separator|
+        source = "def main()\nvar value = 1#{separator}#{body}\nend\n"
+        expect_error(source, DabModernBootstrapParseError::GENERIC_MESSAGE, 'value',
+                     offset: source.rindex('value'))
+        status, output, error = compile(source)
+        expect([status, output]).to eq([2, ''])
+        expect(error).to include(DabModernBootstrapParseError::GENERIC_MESSAGE)
+        expect(Dir.glob(File.join(@directory, '*.dabcb')).map { |path| File.basename(path) }).to eq(['stdlib.dabcb'])
+      end
     end
   end
 
