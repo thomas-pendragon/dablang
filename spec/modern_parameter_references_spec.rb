@@ -140,16 +140,15 @@ describe 'Modern parameter references' do
     expect(interpolations.flat_map { |node| node.all_nodes(DabNodeInstanceCall) }).to be_empty
   end
 
-  it 'rejects every non-String parameter interpolation with its exact type and identifier span' do
-    non_string_types = DabModernBootstrapParser::SUPPORTED_TYPE_NAMES - ['String']
+  it 'rejects every unsupported parameter interpolation with its exact type and identifier span' do
+    non_string_types = DabModernBootstrapParser::SUPPORTED_TYPE_NAMES - DabModernBootstrapToString::SOURCE_TYPES
     non_string_types.each do |type_name|
       source = "def relay(value:#{type_name})\nprint(\"\#{value}\")\nend\n"
       expect do
         parse(source)
       end.to raise_error(DabModernBootstrapParseError) { |error|
         expect(error.message).to eq(
-          "cannot interpolate Modern expression of type #{type_name}; " \
-          'EX-011 requires exact String'
+          "Modern interpolation does not support #{type_name}"
         )
         start = source.index('value', source.index('#{'))
         expect([error.source_span.start_offset, error.source_span.end_offset]).to eq([start, start + 5])
@@ -356,7 +355,7 @@ describe 'Modern parameter references' do
     expect(rejection.expected_stdout).to eq('')
     expect(rejection.expected_stderr).to eq(
       'compiler: 0093_non_string_parameter_interpolation.dabm:2:11: error: ' \
-      "cannot interpolate Modern expression of type Int32; EX-011 requires exact String\n"
+      "Modern interpolation does not support Float\n"
     )
   end
 end

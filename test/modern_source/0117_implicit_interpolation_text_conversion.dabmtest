@@ -1,0 +1,266 @@
+## SOURCE
+def first_value():Int8
+  print("first-call\n")
+  return 255
+end
+def second_value():Uint8
+  print("second-call\n")
+  return 256
+end
+def third_value():Boolean
+  print("third-call\n")
+  return true
+end
+def wrap(value:String):String
+  print("wrap-call\n")
+  return "<#{value}>"
+end
+def parameter(value:Int16):String
+  return "#{value}"
+end
+def main()
+  print("[#{first_value()}|#{wrap("middle #{second_value()} #{ "deep #{third_value()}" }")}|end]\n")
+  let fixed = 42
+  var changing = false
+  print("#{nil}|#{true}|#{changing}|#{fixed}\n")
+  changing = 7
+  print("#{changing}|#{parameter(32767)}|#{"abc".length}|#{"abcd".length()}\n")
+  let identity = "identity"
+  print("#{identity}")
+end
+## EXPECTED APPLICATION STDOUT
+first-call
+second-call
+third-call
+wrap-call
+[-1|<middle 0 deep true>|end]
+nil|true|false|42
+7|32767|3|4
+identity
+## NOTE
+Implicit EX-036 conversion in bounded recursive interpolation; immediate once-only left-to-right conversion, normalized returns, literal/member/local/parameter provenance, and lone String identity.
+## SCHEMA VERSION
+1
+## STATUS
+0
+## STDOUT
+/* Dab dev 2    */                
+ 
+                                 W_HEADER 3
+                                 W_OFFSET 4589
+                                 W_SECTION _DATA, "data"
+                                 W_SECTION _CODE, "code"
+                                 W_SECTION _CLAS, "clas"
+                                 W_SECTION _SDAT, "symd"
+                                 W_SECTION _SYMB, "symb"
+                                 W_SECTION _FUNC, "fext"
+                                 W_SECTION _NDAT, "ndat"
+                                 W_END_HEADER 
+ 
+                   _DATA:
+                                 W_STRING "
+" 
+                                 W_STRING " " 
+                                 W_STRING "<" 
+                                 W_STRING ">" 
+                                 W_STRING "[" 
+                                 W_STRING "abc" 
+                                 W_STRING "abcd" 
+                                 W_STRING "deep " 
+                                 W_STRING "first-call
+" 
+                                 W_STRING "identity" 
+                                 W_STRING "middle " 
+                                 W_STRING "second-call
+" 
+                                 W_STRING "third-call
+" 
+                                 W_STRING "wrap-call
+" 
+                                 W_STRING "|" 
+                                 W_STRING "|end]
+" 
+ 
+                   _CODE:
+                                 NOP 
+ 
+                   F__init_4589:
+                                 STACK_RESERVE 0
+                                 RETURN RNIL
+                   __F__init_4589_END:
+                                 NOP 
+ 
+                   Ffirst_value:
+                                 STACK_RESERVE 0
+/* "first-call. */               LOAD_STRING R0, _DATA + 25, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* 255          */               LOAD_NUMBER R1, 255
+/* Int8         */               LOAD_CLASS R2, 10
+/* MODERN_RETUR */               SYSCALL R3, 13, R1, R2
+                                 RETURN R3
+                   __Ffirst_value_END:
+                                 NOP 
+ 
+                   Fmain:
+                                 STACK_RESERVE 0
+/* "["          */               LOAD_STRING R0, _DATA + 8, 1
+/* first_value  */               CALL R1, S54
+/* MODERN_TO_ST */               SYSCALL R2, 14, R1
+/* +            */               INSTCALL R3, R0, S2, R2
+/* "|"          */               LOAD_STRING R4, _DATA + 90, 1
+/* +            */               INSTCALL R5, R3, S2, R4
+/* "middle "    */               LOAD_STRING R6, _DATA + 46, 7
+/* second_value */               CALL R7, S57
+/* MODERN_TO_ST */               SYSCALL R8, 14, R7
+/* +            */               INSTCALL R9, R6, S2, R8
+/* " "          */               LOAD_STRING R10, _DATA + 2, 1
+/* +            */               INSTCALL R11, R9, S2, R10
+/* "deep "      */               LOAD_STRING R12, _DATA + 19, 5
+/* third_value  */               CALL R13, S58
+/* MODERN_TO_ST */               SYSCALL R14, 14, R13
+/* +            */               INSTCALL R15, R12, S2, R14
+/* +            */               INSTCALL R16, R11, S2, R15
+/* wrap         */               CALL R17, S60, R16
+/* +            */               INSTCALL R18, R5, S2, R17
+/* "|end]."     */               LOAD_STRING R19, _DATA + 92, 6
+/* +            */               INSTCALL R20, R18, S2, R19
+/* PRINT        */               SYSCALL RNIL, 0, R20
+/* 42           */               LOAD_NUMBER R21, 42
+                                 LOAD_FALSE R22
+                                 LOAD_NIL R23
+/* MODERN_TO_ST */               SYSCALL R24, 14, R23
+/* "|"          */               LOAD_STRING R25, _DATA + 90, 1
+/* +            */               INSTCALL R26, R24, S2, R25
+                                 LOAD_TRUE R27
+/* MODERN_TO_ST */               SYSCALL R28, 14, R27
+/* +            */               INSTCALL R29, R26, S2, R28
+/* "|"          */               LOAD_STRING R30, _DATA + 90, 1
+/* +            */               INSTCALL R31, R29, S2, R30
+/* MODERN_TO_ST */               SYSCALL R32, 14, R22
+/* +            */               INSTCALL R33, R31, S2, R32
+/* "|"          */               LOAD_STRING R34, _DATA + 90, 1
+/* +            */               INSTCALL R35, R33, S2, R34
+/* MODERN_TO_ST */               SYSCALL R36, 14, R21
+/* +            */               INSTCALL R37, R35, S2, R36
+/* "."          */               LOAD_STRING R38, _DATA + 0, 1
+/* +            */               INSTCALL R39, R37, S2, R38
+/* PRINT        */               SYSCALL RNIL, 0, R39
+/* 7            */               LOAD_NUMBER R40, 7
+/* MODERN_TO_ST */               SYSCALL R41, 14, R40
+/* "|"          */               LOAD_STRING R42, _DATA + 90, 1
+/* +            */               INSTCALL R43, R41, S2, R42
+/* 32767        */               LOAD_NUMBER R44, 32767
+/* parameter    */               CALL R45, S56, R44
+/* +            */               INSTCALL R46, R43, S2, R45
+/* "|"          */               LOAD_STRING R47, _DATA + 90, 1
+/* +            */               INSTCALL R48, R46, S2, R47
+/* "abc"        */               LOAD_STRING R49, _DATA + 10, 3
+/* length       */               INSTCALL R50, R49, S33
+/* MODERN_TO_ST */               SYSCALL R51, 14, R50
+/* +            */               INSTCALL R52, R48, S2, R51
+/* "|"          */               LOAD_STRING R53, _DATA + 90, 1
+/* +            */               INSTCALL R54, R52, S2, R53
+/* "abcd"       */               LOAD_STRING R55, _DATA + 14, 4
+/* length       */               INSTCALL R56, R55, S33
+/* MODERN_TO_ST */               SYSCALL R57, 14, R56
+/* +            */               INSTCALL R58, R54, S2, R57
+/* "."          */               LOAD_STRING R59, _DATA + 0, 1
+/* +            */               INSTCALL R60, R58, S2, R59
+/* PRINT        */               SYSCALL RNIL, 0, R60
+/* "identity"   */               LOAD_STRING R61, _DATA + 37, 8
+                                 MOV R62, R61
+/* PRINT        */               SYSCALL RNIL, 0, R62
+                                 RETURN RNIL
+                   __Fmain_END:
+                                 NOP 
+ 
+                   Fparameter:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* MODERN_TO_ST */               SYSCALL R1, 14, R0
+/* String       */               LOAD_CLASS R2, 1
+/* MODERN_RETUR */               SYSCALL R3, 13, R1, R2
+                                 RETURN R3
+                   __Fparameter_END:
+                                 NOP 
+ 
+                   Fsecond_value:
+                                 STACK_RESERVE 0
+/* "second-call */               LOAD_STRING R0, _DATA + 54, 12
+/* PRINT        */               SYSCALL RNIL, 0, R0
+/* 256          */               LOAD_NUMBER R1, 256
+/* Uint8        */               LOAD_CLASS R2, 6
+/* MODERN_RETUR */               SYSCALL R3, 13, R1, R2
+                                 RETURN R3
+                   __Fsecond_value_END:
+                                 NOP 
+ 
+                   Fthird_value:
+                                 STACK_RESERVE 0
+/* "third-call. */               LOAD_STRING R0, _DATA + 67, 11
+/* PRINT        */               SYSCALL RNIL, 0, R0
+                                 LOAD_TRUE R1
+                                 RETURN R1
+                   __Fthird_value_END:
+                                 NOP 
+ 
+                   Fwrap:
+                                 STACK_RESERVE 0
+/* value        */               LOAD_ARG R0, 0
+/* "wrap-call." */               LOAD_STRING R1, _DATA + 79, 10
+/* PRINT        */               SYSCALL RNIL, 0, R1
+/* "<"          */               LOAD_STRING R2, _DATA + 4, 1
+/* +            */               INSTCALL R3, R2, S2, R0
+/* ">"          */               LOAD_STRING R4, _DATA + 6, 1
+/* +            */               INSTCALL R5, R3, S2, R4
+/* String       */               LOAD_CLASS R6, 1
+/* MODERN_RETUR */               SYSCALL R7, 13, R5, R6
+                                 RETURN R7
+                   __Fwrap_END:
+                                 NOP 
+ 
+                   _CLAS:
+/* Set          */               W_CLASS 256, 0, 6
+/* __block_join */               W_CLASS 257, 14, 8
+ 
+                   _SDAT:
+                                 W_STRING "__init_4589" 
+                                 W_STRING "first_value" 
+                                 W_STRING "main" 
+                                 W_STRING "parameter" 
+                                 W_STRING "second_value" 
+                                 W_STRING "third_value" 
+                                 W_STRING "value" 
+                                 W_STRING "wrap" 
+ 
+                   _SYMB:
+/* __init_4589  */               W_SYMBOL _SDAT + 0 
+/* first_value  */               W_SYMBOL _SDAT + 12 
+/* main         */               W_SYMBOL _SDAT + 24 
+/* parameter    */               W_SYMBOL _SDAT + 29 
+/* second_value */               W_SYMBOL _SDAT + 39 
+/* third_value  */               W_SYMBOL _SDAT + 52 
+/* value        */               W_SYMBOL _SDAT + 64 
+/* wrap         */               W_SYMBOL _SDAT + 70 
+ 
+                   _FUNC:
+/* __init_4589  */               W_METHOD 53, -1, F__init_4589, 0, __F__init_4589_END - F__init_4589, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* first_value  */               W_METHOD 54, -1, Ffirst_value, 0, __Ffirst_value_END - Ffirst_value, 0
+/* $ret<Int8>   */               W_METHOD_ARG -1, 10
+/* main         */               W_METHOD 55, -1, Fmain, 0, __Fmain_END - Fmain, 0
+/* $ret<Object> */               W_METHOD_ARG -1, 0
+/* parameter    */               W_METHOD 56, -1, Fparameter, 1, __Fparameter_END - Fparameter, 0
+/* value<Int16> */               W_METHOD_ARG 59, 11
+/* $ret<String> */               W_METHOD_ARG -1, 1
+/* second_value */               W_METHOD 57, -1, Fsecond_value, 0, __Fsecond_value_END - Fsecond_value, 0
+/* $ret<Uint8>  */               W_METHOD_ARG -1, 6
+/* third_value  */               W_METHOD 58, -1, Fthird_value, 0, __Fthird_value_END - Fthird_value, 0
+/* $ret<Boolean */               W_METHOD_ARG -1, 3
+/* wrap         */               W_METHOD 60, -1, Fwrap, 1, __Fwrap_END - Fwrap, 0
+/* value<String */               W_METHOD_ARG 59, 1
+/* $ret<String> */               W_METHOD_ARG -1, 1
+ 
+                   _NDAT:
+                                 W_BYTE 0 
+ 

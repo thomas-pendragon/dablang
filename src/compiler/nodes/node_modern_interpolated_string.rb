@@ -90,6 +90,10 @@ class DabNodeModernInterpolatedString < DabNode
   end
 
   def compile(output)
+    if value.is_a?(DabNodeModernToString) && output_register.nil?
+      return value.compile_top_level(output)
+    end
+
     if value.is_a?(DabNodeInstanceCall) && output_register.nil?
       raise 'Modern interpolated String has no allocated append result register'
     end

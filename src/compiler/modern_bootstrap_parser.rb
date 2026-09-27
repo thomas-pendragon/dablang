@@ -86,6 +86,7 @@ class DabModernBootstrapInterpolationSplice
     @opener_token = opener_token
     @leading_padding_tokens = leading_padding_tokens.freeze
     @expression = expression
+    @resolved_source_type = []
     @trailing_padding_tokens = trailing_padding_tokens.freeze
     @closer_token = closer_token
     expression_tokens = if expression.respond_to?(:source_tokens)
@@ -110,6 +111,25 @@ class DabModernBootstrapInterpolationSplice
       end_location: closer_token.source_span.end_location
     )
     freeze
+  end
+
+  def resolve_source_type!(type)
+    name = type.type_string
+    return if @resolved_source_type == [name]
+
+    # Preserve the validated source type before optimization can expose a
+    # different representation, including a declared String's nil sentinel.
+    @resolved_source_type.push(name.freeze).freeze
+  end
+
+  def lower
+    lowered = DabModernBootstrapValues.lower(expression, consumed: true)
+    return lowered if @resolved_source_type.fetch(0) == 'String'
+
+    DabNodeModernToString.new(lowered).tap do |node|
+      tokens = expression.respond_to?(:source_tokens) ? expression.source_tokens : [expression]
+      node.add_source_parts(*tokens.map(&:source_string))
+    end
   end
 
   def name
@@ -147,7 +167,7 @@ class DabModernBootstrapInterpolatedString
   def lower(consumed:)
     components = parts.filter_map do |part|
       if part.is_a?(DabModernBootstrapInterpolationSplice)
-        DabModernBootstrapValues.lower(part.expression, consumed: true)
+        part.lower
       elsif !part.value.empty?
         DabNodeLiteralString.new(part.value, modern_source: true).tap do |node|
           node.add_source_part(part.source_string)
@@ -2674,7 +2694,7 @@ private
                       else
                         DabModernBootstrapLiterals.flow_type(expression)
                       end
-        reject_interpolation_type!(expression, actual_type) unless actual_type.type_string == 'String'
+        resolve_interpolation_type!(splice, actual_type)
       end
     end
   end
@@ -2704,12 +2724,14 @@ private
     actual_type
   end
 
-  def reject_interpolation_type!(expression, actual_type)
-    raise DabModernBootstrapParseError.new(
-      "cannot interpolate Modern expression of type #{actual_type.type_string}; " \
-      'EX-011 requires exact String',
-      source_span: expression.source_span
-    )
+  def resolve_interpolation_type!(splice, actual_type)
+    unless DabModernBootstrapToString::SOURCE_TYPES.include?(actual_type.type_string)
+      raise DabModernBootstrapParseError.new(
+        "Modern interpolation does not support #{actual_type.type_string}",
+        source_span: splice.expression.source_span
+      )
+    end
+    splice.resolve_source_type!(actual_type)
   end
 
   def interpolation_tokens(value)
@@ -3152,17 +3174,21 @@ private
     end
   end
 
-  def preflight_interpolation_expression_calls!(value, unit, declarations_by_name)
+  def preflight_interpolation_expression_calls!(value, unit, declarations_by_name, seen_interpolations = {})
     current_interpolation_tokens(value).each do |token|
+      next if seen_interpolations[token]
+
+      seen_interpolations[token] = true
       token.value.splices.each do |splice|
         expression = splice.expression
+        preflight_interpolation_expression_calls!(expression, unit, declarations_by_name, seen_interpolations)
         actual_type = if expression.is_a?(DabModernBootstrapDirectCall)
                         preflight_call_result!(expression, unit, declarations_by_name)
                       elsif expression.is_a?(DabModernBootstrapLiteralMemberCall)
                         preflight_member_call!(expression, unit)
                         DabType.parse('Int32')
                       end
-        reject_interpolation_type!(expression, actual_type) if actual_type && actual_type.type_string != 'String'
+        resolve_interpolation_type!(splice, actual_type) if actual_type
       end
     end
   end
