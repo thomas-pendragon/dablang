@@ -16,4 +16,5 @@ enum
     KERNEL_SET_INSTVAR             = 0xB,
     KERNEL_ANSI_COLOR              = 0xC,
     KERNEL_MODERN_RETURN_NORMALIZE = 0xD,
+    KERNEL_MODERN_TO_STRING        = 0xE,
 };
