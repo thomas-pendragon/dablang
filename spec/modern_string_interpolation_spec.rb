@@ -2,10 +2,15 @@ require 'spec_helper'
 
 require 'open3'
 require 'rbconfig'
+require 'shellwords'
 require 'tmpdir'
 
 require_relative '../src/compiler/_requires'
 require_relative '../src/compiler/modern_bootstrap_parser'
+previous_autorun = defined?($autorun) ? $autorun : nil
+$autorun = false
+require_relative '../src/frontend/frontend_modern_source'
+$autorun = previous_autorun
 
 describe 'bounded Modern String interpolation' do
   let(:root) { File.expand_path('..', __dir__) }
@@ -301,20 +306,16 @@ describe 'bounded Modern String interpolation' do
     end
   end
 
-  it 'rejects every supported non-String expression on its complete unpadded expression span' do
+  it 'rejects unsupported expressions on its complete unpadded expression span' do
     cases = {
-      'nil' => 'NilClass',
-      'true' => 'Boolean',
-      '1' => 'Fixnum',
       '/x}/' => 'Regex',
-      '"abc".length' => 'Int32',
     }
 
     cases.each do |expression, actual|
       source = "def main()\nprint(\"\#{  #{expression} }\")\nend\n"
       expect { parse(source).lower_into(DabNodeUnit.new) }.to raise_error(
         DabModernBootstrapParseError,
-        "cannot interpolate Modern expression of type #{actual}; EX-011 requires exact String"
+        "Modern interpolation does not support #{actual}"
       ) { |error|
         start_offset = source.index(expression)
         expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
@@ -324,18 +325,18 @@ describe 'bounded Modern String interpolation' do
     end
   end
 
-  it 'rejects non-String local, parameter, call-result, and absent-result expressions uniformly' do
+  it 'rejects unsupported local, parameter, call-result, and absent-result expressions uniformly' do
     cases = [
-      ["def main(value:Int32)\nprint(\"\#{ value }\")\nend\n", 'value', 'Int32'],
+      ["def main(value:Float)\nprint(\"\#{ value }\")\nend\n", 'value', 'Float'],
       ["def main()\nlet value = /x/\nprint(\"\#{value}\")\nend\n", 'value', 'Regex'],
-      ["def value():Boolean\nreturn true\nend\ndef main()\nprint(\"\#{ value() }\")\nend\n", 'value()', 'Boolean'],
+      ["def value():IntPtr\nreturn nil\nend\ndef main()\nprint(\"\#{ value() }\")\nend\n", 'value()', 'IntPtr'],
       ["def value()\nend\ndef main()\nprint(\"\#{value()}\")\nend\n", 'value()', 'Object'],
     ]
 
     cases.each do |source, expression, actual|
       expect { parse(source).lower_into(DabNodeUnit.new) }.to raise_error(
         DabModernBootstrapParseError,
-        "cannot interpolate Modern expression of type #{actual}; EX-011 requires exact String"
+        "Modern interpolation does not support #{actual}"
       ) { |error|
         start_offset = source.index(expression, source.index('#{'))
         expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
@@ -424,17 +425,17 @@ describe 'bounded Modern String interpolation' do
     invalid_type = <<~'DAB'
       def main()
       if false
-      print("outer #{ "inner #{1}" }")
+      print("outer #{ "inner #{/x/}" }")
       end
       end
     DAB
     expect { parse(invalid_type) }.to raise_error(
       DabModernBootstrapParseError,
-      'cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String'
+      'Modern interpolation does not support Regex'
     ) { |error|
-      start_offset = invalid_type.index('1')
+      start_offset = invalid_type.index('/x/')
       expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
-        [start_offset, start_offset + 1]
+        [start_offset, start_offset + 3]
       )
     }
 
@@ -628,7 +629,7 @@ describe 'bounded Modern String interpolation' do
     expect(wrap.all_nodes(DabNodeCall).map(&:real_identifier)).to eq(%w[wrap second third])
   end
 
-  it 'accepts an exact-String local or parameter and rejects every other binding flow' do
+  it 'accepts String binding flow and rejects unsupported or unknown references' do
     accepted = <<~DAB
       def main()
       let fixed = "fixed"
@@ -652,13 +653,13 @@ describe 'bounded Modern String interpolation' do
         'later',
       ],
       non_string_parameter: [
-        "def main(value:Int32)\nprint(\"\#{value}\")\nend\n",
-        'cannot interpolate Modern expression of type Int32; EX-011 requires exact String',
+        "def main(value:Float)\nprint(\"\#{value}\")\nend\n",
+        'Modern interpolation does not support Float',
         'value',
       ],
       non_string: [
-        "def main()\nvar value = \"first\"\nvalue = 1\nprint(\"\#{value}\")\nend\n",
-        'cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String',
+        "def main()\nvar value = \"first\"\nvalue = /x/\nprint(\"\#{value}\")\nend\n",
+        'Modern interpolation does not support Regex',
         'value',
       ],
       cross_function: [
@@ -934,6 +935,327 @@ describe 'bounded Modern String interpolation' do
       expect([status.exitstatus, stdout]).to eq([0, ''])
       expect(stderr).not_to include('ERROR', 'exception:', 'FAILED')
       expect(File.binread(application_output)).to eq('DynamicString|LiteralString'.b)
+    end
+  end
+
+  it 'converts the closed type set once per splice while preserving exact String identity' do
+    DabModernBootstrapToString::SOURCE_TYPES.each do |type|
+      source = "def text(value:#{type}):String\nreturn \"\#{value}\"\nend\n"
+      function = parse(source).lower_into(DabNodeUnit.new)
+      wrapper = function.all_nodes(DabNodeModernInterpolatedString).fetch(0)
+      expect(wrapper.all_nodes(DabNodeModernToString).length).to eq(type == 'String' ? 0 : 1), type
+      expect(wrapper.all_nodes(DabNodeLocalVar).map(&:real_identifier)).to eq(['value'])
+      expect(wrapper.all_nodes(DabNodeModernStringAppend)).to be_empty
+    end
+  end
+
+  it 'keeps declared String identity even when optimization exposes the nil sentinel' do
+    source = "def main()\nlet value:String = nil\nprint(\"\#{value}\")\nend\n"
+    function = optimize_interpolations(source).fetch(0)
+    expect(function.all_nodes(DabNodeModernToString)).to be_empty
+  end
+
+  it 'admits primitive literals, all boundary padding, latest local flow, and both member spellings' do
+    ['nil', 'true', 'false', '0', '42', '9223372036854775807', '"abc".length', '"abc".length()'].each do |expression|
+      ['', ' '].product(['', ' ']).each do |left, right|
+        source = "def main()\nprint(\"\#{#{left}#{expression}#{right}}\")\nend\n"
+        function = parse(source).lower_into(DabNodeUnit.new)
+        expect(function.all_nodes(DabNodeModernToString).length).to eq(1), source
+      end
+    end
+    source = <<~'DAB'
+      def main()
+      var value = "old"
+      value = 42
+      print("#{value}")
+      end
+    DAB
+    expect(parse(source).lower_into(DabNodeUnit.new).all_nodes(DabNodeModernToString).length).to eq(1)
+  end
+
+  it 'keeps explicit conversion closed at every recursive splice and argument depth' do
+    ['42 to String', 'take(42 to String)', "\"inner \#{42 to String}\"",
+     "take(\"inner \#{take(42 to String)}\")"].each do |expression|
+      source = "def take(value:String):String\nreturn value\nend\ndef main()\nprint(\"\#{#{expression}}\")\nend\n"
+      expect { parse(source) }.to raise_error(DabModernBootstrapParseError), expression
+    end
+  end
+
+  it 'rejects recursive unsupported values in dead and unselected source without publication' do
+    Dir.mktmpdir('dab-interpolation-rejections') do |directory|
+      lower = build_stdlib(directory)
+      expressions = {'/x/' => 'Regex', 'value' => 'Float', 'absent()' => 'Object', 'pointer()' => 'IntPtr'}
+      expressions.each do |expression, type|
+        [0, 1, 3].each do |depth|
+          text = "\"\#{  #{expression} }\""
+          depth.times { text = "\"outer \#{#{text}}\"" }
+          statement = "print(#{text})\n"
+          bodies = [statement, "return\n#{statement}", "if false\n#{statement}end\n",
+                    "while false\n#{statement}end\n", "case true\nwhen false\n#{statement}end\n",
+                    "case true\nwhen true\nreturn\nelse\n#{statement}end\n"]
+          bodies.each do |body|
+            source = "def absent()\nend\ndef pointer():IntPtr\nreturn nil\nend\ndef main(value:Float)\n#{body}end\n"
+            unit = DabNodeUnit.new
+            existing = DabNodeFunction.new('existing', DabNodeTreeBlock.new, DabNode.new)
+            unit.add_function(existing)
+            expect { parse(source).lower_into(unit) }.to raise_error(
+              DabModernBootstrapParseError, "Modern interpolation does not support #{type}"
+            ) do |error|
+              offset = source.rindex(expression)
+              expect([error.source_span.start_offset, error.source_span.end_offset]).to eq(
+                [offset, offset + expression.bytesize]
+              )
+            end
+            expect(unit.functions.to_a).to eq([existing])
+            expect(unit.constants.to_a).to be_empty
+            path = File.join(directory, 'rejected.dabm')
+            File.binwrite(path, source)
+            output, error, status = invoke(RbConfig.ruby, compiler, path, "--ring-base[]=#{lower}")
+            expect([status.exitstatus, output]).to eq([2, ''])
+            expect(error).to include("Modern interpolation does not support #{type}")
+            expect(Dir.children(directory).sort).to eq(%w[rejected.dabm stdlib.dabca stdlib.dabcb])
+          end
+        end
+      end
+    end
+  end
+
+  it 'preflights nested member errors before an enclosing unsupported result' do
+    source = <<~'DAB'
+      def unsupported(value:String):Float
+      return nil
+      end
+      def main()
+      print("#{ unsupported("inner #{"abc".missing}") }")
+      end
+    DAB
+    unit = DabNodeUnit.new
+    expect { parse(source).lower_into(unit) }.to raise_error(
+      DabModernBootstrapParseError, 'unknown Modern member target "String#missing"'
+    )
+    expect(unit.functions.to_a).to be_empty
+  end
+
+  def run_interpolation(source, transform: nil)
+    skip 'native VM is built by the complete gate' unless File.executable?(vm)
+
+    Dir.mktmpdir('dab-implicit-interpolation') do |directory|
+      lower = build_stdlib(directory)
+      output = compile_source(directory, 'program', 'dabm', source, rings: [lower])
+      output = transform.call(output) if transform
+      path = assemble(directory, 'program', output)
+      stdout, error, status = invoke(vm, lower, path, binmode: true)
+      [status.exitstatus, stdout.gsub("\r\n", "\n"), error, output]
+    end
+  end
+
+  it 'spells all integer width boundaries after return normalization plus nil and Booleans', :native do
+    types = %w[Fixnum Int8 Int16 Int32 Int64 Uint8 Uint16 Uint32 Uint64]
+    declarations = []
+    statements = []
+    expected = []
+    types.each do |type|
+      bits = type == 'Fixnum' ? 64 : type[/\d+/].to_i
+      signed = !type.start_with?('Uint')
+      values = signed ? [-(1 << (bits - 1)), -1, 0, 1, (1 << (bits - 1)) - 1] : [0, 1, (1 << bits) - 1]
+      declarations << "def text_#{type}(value:#{type})\nprint(\"\#{value}|\")\nend\n"
+      values.each_with_index do |value, index|
+        name = "number_#{type}_#{index}"
+        # Modern has no negative literals. Obtain high bits via the existing
+        # EX-038 signed widening and wrapping contract, without new syntax.
+        atom = value.negative? && bits < 64 ? (value % (1 << bits)).to_s : value.to_s
+        atom = 'negative()' if value == -1 || (!signed && bits == 64 && value == (1 << 64) - 1)
+        atom = 'minimum()' if value == -(1 << 63)
+        declarations << "def #{name}():#{type}\nreturn #{atom}\nend\n"
+        statements << "print(\"\#{#{name}()}|\")\ntext_#{type}(#{name}())\n"
+        expected.push(value.to_s, value.to_s)
+      end
+    end
+    declarations.unshift("def negative():Int8\nreturn 255\nend\ndef minimum():Int64\nreturn 9223372036854775807\nend\n")
+    source = declarations.join + "def main()\n#{statements.join}print(\"\#{nil}|\#{true}|\#{false}\")\nend\n"
+    # The lowest signed 64-bit value has no source literal. Change only the
+    # provider's literal operand in trusted-local assembly to characterize it.
+    transform = lambda do |assembly|
+      assembly.sub(/(Fminimum:.*?LOAD_NUMBER R\d+, )9223372036854775807/m, '\\1-9223372036854775808')
+    end
+    status, output, error, = run_interpolation(source, transform: transform)
+    expect([status, output]).to eq([0, (expected + %w[nil true false]).join('|')]), error
+  end
+
+  it 'converts each effectful expression immediately and cuts off later and enclosing calls on failure', :native do
+    source = <<~'DAB'
+      def first():Int8
+      print("first|")
+      return 255
+      end
+      def second(value:Int16):String
+      print("second|")
+      return "#{value}"
+      end
+      def third():Boolean
+      print("third|")
+      return true
+      end
+      def wrap(value:String):String
+      print("wrap|")
+      return value
+      end
+      def main()
+      print("#{first()}|#{wrap("inner #{second(7)} #{third()}")}")
+      print("|later")
+      end
+    DAB
+    status, output, error, assembly = run_interpolation(source)
+    expect([status, output]).to eq([0, 'first|second|third|wrap|-1|inner 7 true|later']), error
+    expect(assembly).not_to include('to_s')
+    transform = ->(text) { text.sub(/LOAD_ARG (R\d+), 0/, 'LOAD_FLOAT \\1, 1.5') }
+    status, output, error, = run_interpolation(source, transform: transform)
+    expect([status, output]).to eq([1, 'first|second|'])
+    expect(error.lines(chomp: true).grep(/vm: Modern/)).to eq(
+      ['vm: Modern conversion to String does not support Float.']
+    )
+  end
+
+  it 'allocates real conversion results in discarded body and local value slots', :native do
+    source = <<~'DAB'
+      def number():Fixnum
+      print("once|")
+      return 42
+      end
+      def main()
+      "#{number()}"
+      let unused = "#{false}"
+      let fixed = "#{nil}"
+      var changing = "#{true}"
+      changing = "#{false}"
+      print("#{fixed}|#{changing}")
+      end
+    DAB
+    status, output, error, assembly = run_interpolation(source)
+    expect([status, output]).to eq([0, 'once|nil|false']), error
+    expect(assembly).not_to match(/SYSCALL (?:R|RNIL), 14/)
+  end
+
+  it 'retains the trusted-local embedded-NUL append limitation and lone String identity', :native do
+    skip 'native VM is built by the complete gate' unless File.executable?(vm)
+
+    Dir.mktmpdir('dab-interpolation-nul') do |directory|
+      lower = build_stdlib(directory)
+      providers = compile_source(directory, 'providers', 'dabm', <<~'DAB', rings: [lower])
+        def text(value:String):String
+        return "#{value}"
+        end
+        def composed(value:String):String
+        return "<#{value}>#{1}"
+        end
+      DAB
+      provider_ring = assemble(directory, 'providers', providers)
+      consumer = compile_source(directory, 'consumer', 'dab', <<~DAB, rings: [lower, provider_ring])
+        func legacy_main()
+        {
+          var input = "aXb";
+          var lone = text(input);
+          var combined = composed(input);
+          print(lone.length);
+          print("|");
+          print(combined.length);
+          print("|");
+          print(lone);
+          print("|");
+          print(combined);
+        }
+      DAB
+      expect(consumer.scan('W_STRING "aXb"').length).to eq(1)
+      consumer = consumer.sub('W_STRING "aXb"', "W_BYTE 97\nW_BYTE 0\nW_BYTE 98\nW_BYTE 0")
+      application = assemble(directory, 'consumer', consumer)
+      output, error, status = invoke(vm, '--entry=legacy_main', lower, provider_ring, application, binmode: true)
+      # Printing also uses the existing C-string path. Length distinguishes
+      # the intact lone value from the append's truncated constructed value.
+      expect([status.exitstatus, output]).to eq([0, '3|4|a|<a>1']), error
+    end
+  end
+
+  it 'cuts off later recursive effects on the existing converter allocation failure', :native do
+    skip 'native VM is built by the complete gate' unless File.executable?(vm)
+
+    Dir.mktmpdir('dab-interpolation-oom') do |directory|
+      lower = build_stdlib(directory)
+      source = <<~'DAB'
+        def first():String
+        print("first|")
+        return "first"
+        end
+        def number():Int8
+        print("number|")
+        return 255
+        end
+        def later():String
+        print("later|")
+        return "later"
+        end
+        def wrap(value:String):String
+        print("wrap|")
+        return value
+        end
+        def main()
+        print("#{first()}|#{wrap("inner #{number()} #{later()}")}")
+        end
+      DAB
+      output = compile_source(directory, 'program', 'dabm', source, rings: [lower])
+      application = assemble(directory, 'program', output)
+      syscall_source = File.join(root, 'src/cvm/syscalls.cpp')
+      runtime = File.read(syscall_source)
+      allocation = '    std::unique_ptr<DabDynamicString> object(new DabDynamicString);'
+      expect(runtime.scan(allocation).length).to eq(1)
+      instrumented = File.join(directory, 'syscalls.cpp')
+      # Inject only in a temporary translation unit at the existing converter
+      # allocation, so its real catch boundary and compiled ordering are tested.
+      File.write(instrumented, runtime.sub(allocation, "    throw std::bad_alloc();\n#{allocation}"))
+      sources = Dir.glob(File.join(root, 'src/{cvm,cshared}/*.cpp')).reject { |path| path == syscall_source }
+      binary = File.join(directory, "cvm-oom#{RbConfig::CONFIG.fetch('EXEEXT')}")
+      cxx = Shellwords.split(ENV.fetch('CXX', RbConfig::CONFIG.fetch('CXX')))
+      architecture = RUBY_PLATFORM.include?('darwin') ? %w[-arch x86_64] : []
+      library = File.join(root, 'bin', Gem.win_platform? ? 'pcre2.lib' : 'libpcre2.a')
+      command = [*cxx, '-std=c++11', *architecture, '-iquote', File.join(root, 'src/cvm'),
+                 "-I#{File.join(root, 'build/dependencies/pcre2-10.47/src')}",
+                 '-DPCRE2_CODE_UNIT_WIDTH=8', '-DPCRE2_STATIC',
+                 %(-DDAB_VERSION="#{File.read(File.join(root, 'VERSION')).strip}"),
+                 instrumented, *sources, library, '-o', binary]
+      command << '-ldl' if RUBY_PLATFORM.include?('linux')
+      output, error, status = invoke(*command)
+      expect(status.exitstatus).to eq(0), "#{output}\n#{error}"
+      output, error, status = invoke(binary, lower, application, binmode: true)
+      expect([status.exitstatus, output]).to eq([1, 'first|number|'])
+      expect(error.lines(chomp: true).grep(/vm: Modern/)).to eq(
+        ['vm: Modern conversion to String failed: out of memory.']
+      )
+    end
+  end
+
+  it 'compiles fixture 0117 repeatedly around reversed earlier fixtures with identical artifacts', :determinism do
+    Dir.mktmpdir('dab-interpolation-determinism') do |directory|
+      lower = build_stdlib(directory)
+      fixtures = Dir.glob(File.join(root, 'test/modern_source/*.dabmtest')).sort.map do |path|
+        DabModernSourceFixture.load(path)
+      end
+      selected = fixtures.find { |fixture| File.basename(fixture.path).start_with?('0117_') }
+      expect(selected).not_to be_nil
+      outputs = []
+      [fixtures, fixtures.reverse, fixtures].each do |order|
+        order.each do |fixture|
+          source_path = File.join(directory, fixture.source_filename)
+          File.binwrite(source_path, fixture.source)
+          result = DabModernSourceCompiler.new.compile(fixture, source_path: source_path, ring_base: lower)
+          expect([result.status, result.stdout, result.stderr]).to eq(
+            [fixture.expected_status, fixture.expected_stdout, fixture.expected_stderr]
+          ), fixture.path
+          outputs << result.stdout if fixture == selected
+        end
+      end
+      expect(outputs.uniq.length).to eq(1)
+      bytes = outputs.map.with_index { |output, index| File.binread(assemble(directory, "fixture-#{index}", output)) }
+      expect(bytes.uniq.length).to eq(1)
+      expect(outputs.first).not_to match(/SYSCALL RNIL, 14/)
     end
   end
 end

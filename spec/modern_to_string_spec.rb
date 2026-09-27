@@ -269,8 +269,8 @@ describe 'Modern explicit built-in to String conversion' do
     expect_error(source, DabModernBootstrapParseError::GENERIC_MESSAGE, 'missing')
     source = "def main()\nprint(\"abc\".missing to Wrong)\nend\n"
     expect_error(source, 'unknown Modern member target "String#missing"', 'missing')
-    source = "def main()\nprint(\"\#{1}\" to Wrong)\nend\n"
-    expect_error(source, 'cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String', '1')
+    source = "def main()\nprint(\"\#{/x/}\" to Wrong)\nend\n"
+    expect_error(source, 'Modern interpolation does not support Regex', '/x/')
     source = "def main()\nlet value:String = /x/ to Wrong\nend\n"
     expect_error(source, 'invalid Modern conversion target: expected String', 'Wrong')
   end

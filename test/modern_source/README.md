@@ -611,7 +611,7 @@ Fixture `0025` now locks unknown/read-before-local rejection. Fixture `0090`
 is the sequential runtime contract for multiple and repeated String-local
 splices, prior-value reassignment, deterministic left-to-right `INSTCALL`
 composition, and exact output `first second first\nsecond+first\n`. Fixture
-`0091` locks latest-flow non-String rejection. This row changes no opcode,
+`0091` now locks unsupported Regex-flow rejection under EX-013. This row changes no opcode,
 bytecode schema, assembler, VM, native class, Ring, FFI, formatter, decompiler,
 or trusted-local-input boundary. EX-004, PL-006, IN-014, EX-011 through EX-013,
 conversion, nesting, broader expressions, and later rows remain deferred.
@@ -631,7 +631,8 @@ repeated reads, calls approved unary `puts`, composes two exact-String parameter
 splices, and returns the original parameter value. Its exact output is
 `VV\nVV\nPPP:V\nV`; the golden assembly owns the corresponding `LOAD_ARG` to
 call, syscall, append, and `RETURN` register flow. Fixture `0093` locks the exact
-non-String parameter interpolation diagnostic and full identifier span.
+unsupported Float parameter interpolation diagnostic and full identifier span
+under EX-013.
 
 Standalone parameter items, local initializer and write right-hand sides,
 parameter writes, member receivers or arguments, call-target reinterpretation,
@@ -1368,3 +1369,42 @@ Rake task. Therefore the inherited Rake stage, every effective normal CI job,
 and the complete gate reach it exactly once. It is not added to the separate
 sanitizer tasks because its optional native execution is a language-result
 contract over trusted generated artifacts, not a malformed-input safety claim.
+
+
+### Implicit interpolation text conversion (EX-013)
+
+Fixture `0117` adds implicit text conversion to every expression already
+admitted by bounded EX-011 and recursive EX-012 interpolation. Exact String
+is identity; nil spells `nil`, Booleans spell `true`/`false`, and Fixnum and
+all signed/unsigned integer widths use canonical untagged decimal through the
+existing private EX-036 converter. Declared numeric returns first undergo
+EX-038 normalization. No explicit `to String` syntax is admitted inside a
+splice, including nested call arguments.
+
+Each expression completes and converts exactly once before the next splice;
+inner interpolation completes before its enclosing call. Runtime type and
+allocation failures retain EX-036 diagnostics, stop later effects, and retain
+earlier output without rollback. No public conversion dispatch is introduced.
+
+Unsupported Regex, Object/absent result metadata, IntPtr, and Float splices
+fail with `Modern interpolation does not support ACTUAL` on the complete inner
+expression, excluding delimiter and boundary padding. Inner diagnostics retain
+precedence. Compile failures remain status 2 with empty stdout and no artifact
+or application publication, including recursive, dead, and unselected source.
+Fixtures `0091` and `0093` retain their original error locations using Regex
+local and Float parameter rejection respectively; their former numeric inputs
+are covered as accepted values by interpolation specs and `0117`.
+
+The fixture records exact effect order, normalized signed/unsigned returns,
+recursive call arguments, primitive literals, local flow, parameter and member
+results, and lone String identity. Focused specs cover the closed type set,
+integer boundaries, grammar near misses, diagnostic precedence, transactionality,
+runtime failure cutoff, and deterministic assembly and artifacts. All earlier
+Modern goldens except the two intentional diagnostic migrations remain unchanged;
+Legacy behavior remains unchanged.
+
+Composition still uses existing left-associated String `+`. The trusted-local
+embedded-NUL limitation remains: concatenation may truncate embedded NUL, while
+a lone String splice retains identity. This change adds no opcode, schema,
+loader, native implementation, or broader expression grammar. Future variadic
+interpolation lowering is separate work.

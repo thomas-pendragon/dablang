@@ -421,8 +421,8 @@ describe 'final explicit Modern case else' do
         'incorrect Modern call arity for "helper": got 0, expected 1',
       ],
       [
-        "def main(name:Int32)\ncase 1\nelse\n\"\#{name}\"\nend\nend\n",
-        'cannot interpolate Modern expression of type Int32; EX-011 requires exact String',
+        "def main(name:Float)\ncase 1\nelse\n\"\#{name}\"\nend\nend\n",
+        'Modern interpolation does not support Float',
       ],
       [
         "def main():String\ncase 1\nelse\nreturn 2\nend\nend\n",

@@ -1,6 +1,6 @@
 ## SOURCE
 def main()
-  let value = 1
+  let value = /x/
   print("#{value}")
 end
 ## SCHEMA VERSION
@@ -8,4 +8,4 @@ end
 ## STATUS
 2
 ## STDERR
-compiler: 0091_non_string_interpolation.dabm:3:11: error: cannot interpolate Modern expression of type Fixnum; EX-011 requires exact String
+compiler: 0091_non_string_interpolation.dabm:3:11: error: Modern interpolation does not support Regex
